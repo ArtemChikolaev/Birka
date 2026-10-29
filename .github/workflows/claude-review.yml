@@ -69,6 +69,19 @@ jobs:
           fetch-depth: 0 # history for git log and git blame
           persist-credentials: false
 
+      # The env scrub runs Bash in a bubblewrap sandbox. The action installs it
+      # only together with allowed_non_write_users, and without it every Bash
+      # call fails and the review ends without a word.
+      - name: Install subprocess isolation
+        if: steps.scope.outputs.review == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends bubblewrap socat
+          # Ubuntu 24.04 restricts unprivileged user namespaces via AppArmor.
+          if [ -f /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+
       - name: Review
         if: steps.scope.outputs.review == 'true'
         uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
