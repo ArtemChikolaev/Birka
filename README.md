@@ -63,8 +63,10 @@ make test-core COMPILER=dart2wasm   # core tests in Chrome via WebAssembly
 Every change, ours included, lands in `main` through a pull request with green
 checks, and changes from other contributors also need the maintainer's
 approval; repository rulesets enforce both
-([ADR 0004](docs/adr/0004-branches-and-releases.md)). People and coding agents
-follow the same rules: [CLAUDE.md](CLAUDE.md).
+([ADR 0004](docs/adr/0004-branches-and-releases.md)). Pull requests that
+change code also get an advisory review from Claude
+([ADR 0005](docs/adr/0005-claude-review.md)). People and coding agents follow
+the same rules: [CLAUDE.md](CLAUDE.md).
 
 ## License
 
