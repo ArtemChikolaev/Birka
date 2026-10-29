@@ -68,7 +68,8 @@ Extend what exists instead of duplicating it.
 ## Process
 
 - Every change lands through a pull request into `main` with green checks,
-  merged with squash. Rulesets enforce it for everyone, the owner included
+  merged with squash. Rulesets enforce it for everyone, the owner included,
+  and pull requests from anyone else also need the owner's approval
   ([ADR 0004](docs/adr/0004-branches-and-releases.md)).
 - The only required check is `All checks` in `ci.yml`. Add every new CI job
   to its `needs`, and never put path filters on a workflow with required
