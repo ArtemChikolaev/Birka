@@ -1,0 +1,21 @@
+# Dart and Flutter
+.dart_tool/
+build/
+coverage/
+pubspec_overrides.yaml
+.flutter-plugins
+.flutter-plugins-dependencies
+.fvm/
+
+# IDE and OS
+.idea/
+*.iml
+.DS_Store
+
+# Private data and secrets: never commit
+private/
+.env
+*.jks
+*.keystore
+key.properties
+local.properties

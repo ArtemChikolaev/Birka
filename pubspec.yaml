@@ -1,0 +1,13 @@
+name: birka_workspace
+description: Workspace root for Birka. Members are listed explicitly.
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+workspace:
+  - packages/money
+  - tools
+
+dev_dependencies:
+  very_good_analysis: ^10.1.0

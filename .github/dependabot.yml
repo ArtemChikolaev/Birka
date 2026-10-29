@@ -1,0 +1,9 @@
+# pub updates are left out on purpose: the toolchain is pinned to
+# Flutter 3.38.10 and many newer package versions need a newer Dart
+# (docs/adr/0002-toolchain.md). Package upgrades come with Flutter upgrades.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

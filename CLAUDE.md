@@ -1,0 +1,87 @@
+# CLAUDE.md — Birka
+
+Rules for everyone who changes this repository, people and coding agents
+alike. `AGENTS.md` is a symlink to this file.
+
+## Project
+
+Birka is a local-first expense tracker for money across currencies, banks and
+countries. A pure-Dart core is shared by a Flutter app (Android, iOS) and a
+Jaspr web app; a small Go server for end-to-end encrypted sync comes later.
+Decisions live in [docs/adr](docs/adr/).
+
+## Rule 0 — Reuse first
+
+Before writing code or adding a dependency, look for an existing package,
+type or helper in this repository and among the dependencies we already have.
+Extend what exists instead of duplicating it.
+
+## Pillars
+
+- **Local-first.** The UI reads only the local database; network work
+  catches up in the background.
+- **Exact money.** Amounts are integers in minor units
+  ([ADR 0003](docs/adr/0003-money-representation.md)).
+- **One core, two hosts.** Logic lives in pure Dart; Flutter and Jaspr only
+  render and wire dependencies.
+- **Private by default.** No bank passwords, no real personal data in the
+  repository, nothing readable on the server.
+
+## Architecture and boundaries
+
+- Zones ([ADR 0001](docs/adr/0001-single-repository.md)): the app in `apps/`
+  and `packages/`, the design system in `packages/design/`, the server in
+  `server/` and `proto/`.
+- Core packages and every `*/common` package are pure Dart: no `flutter`, no
+  `jaspr`.
+- A feature never depends on another feature; shared code moves to the core.
+- The design system knows nothing about money or features.
+- Our packages depend on each other through `path:`.
+- `make check-deps` enforces these rules in CI. Fix the code, not the rule.
+
+## Money and data invariants
+
+- `Money(minorUnits, currency)`: `int` minor units within ±(2^53 − 1), never
+  `double`. No bitwise operators on amounts: on the web they work on 32 bits.
+- Split amounts with `Money.allocate`; never divide and round by hand.
+- Exchange rates are `Decimal` with an explicit rounding mode.
+- A transaction date is a civil date; period boundaries use the user's time
+  zone.
+
+## Toolchain
+
+- Flutter 3.38.10 and Dart 3.10.9, pinned in `.fvmrc`
+  ([ADR 0002](docs/adr/0002-toolchain.md)). Never upgrade it as a side effect
+  of another change.
+- Take versions from ADR 0002 and write explicit caret constraints, never
+  `any`.
+- Never name a package like a pub.dev package such as `web`, `test` or
+  `http`: the hosts are `birka_mobile` and `birka_web`.
+
+## Privacy and security
+
+- Test fixtures are synthetic. Real statements, exports and screenshots with
+  data stay in `private/`, which git ignores.
+- Never commit secrets, keystores or tokens; CI reads them from GitHub
+  secrets.
+
+## Process
+
+- Every change lands through a pull request into `main` with green checks,
+  merged with squash. Rulesets enforce it for everyone, the owner included,
+  and pull requests from anyone else also need the owner's approval
+  ([ADR 0004](docs/adr/0004-branches-and-releases.md)).
+- The only required check is `All checks` in `ci.yml`. Add every new CI job
+  to its `needs`, and never put path filters on a workflow with required
+  checks.
+- PR titles follow Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`);
+  the description says what, why and how it was verified.
+- Code, docs, commits and comments are in English.
+- Push is not deploy: after a merge, wait for CI and check the result.
+
+## Before "done"
+
+Run `make check`. After changes in core packages also run
+`make test-core COMPILER=dart2js` and `make test-core COMPILER=dart2wasm`.
+When a decision or a command changes, update the ADR or the README in the
+same pull request.

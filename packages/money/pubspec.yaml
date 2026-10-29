@@ -1,0 +1,15 @@
+name: money
+description: >-
+  Money and currency value types for Birka: integer minor units, exact
+  allocation and parsing, no floating point.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  meta: ^1.17.0
+
+dev_dependencies:
+  test: ^1.26.3
