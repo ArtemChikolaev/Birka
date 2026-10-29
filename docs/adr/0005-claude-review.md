@@ -32,10 +32,11 @@
 5. The job uses `GITHUB_TOKEN` with `contents: read` and `pull-requests: write`
    instead of the Claude GitHub App, so the review can read the repository and
    comment, and nothing else.
-6. Claude may only read code, run `gh pr view`, `gh pr diff` and
-   `gh pr comment`, and post inline comments. Editing, writing and web tools
-   are removed, and tokens are scrubbed from the environment of its shell
-   commands.
+6. Claude may only read code and its history (`git log`, `git blame`,
+   `git show`), run `gh pr view`, `gh pr diff` and `gh pr comment`, and post
+   inline comments. Editing, writing and web tools are removed, and tokens
+   are scrubbed from the environment of its shell commands, which run in a
+   bubblewrap sandbox.
 7. The model is Sonnet 5.5, or Opus 5.5 when the pull request touches core
    packages, `server/` or `proto/`, or carries the `claude-opus` label. A run
    stops after 40 turns, $5 of estimated usage or 20 minutes.
