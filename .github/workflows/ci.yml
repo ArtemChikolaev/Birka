@@ -47,3 +47,17 @@ jobs:
       - run: make test-core COMPILER=${{ matrix.compiler }}
       - if: matrix.compiler == 'vm'
         run: make test-tools
+
+  all-checks:
+    name: All checks
+    # The only check the ruleset for main requires (ADR 0004). GitHub counts a
+    # skipped job as passed, so this job runs even when a job it needs fails.
+    # Every new job goes into needs.
+    if: always()
+    needs: [analyze, test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fail if a needed job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

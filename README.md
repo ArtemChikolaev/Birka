@@ -60,7 +60,9 @@ make test-core COMPILER=dart2wasm   # core tests in Chrome via WebAssembly
 
 ## Contributing
 
-Changes land through pull requests with green checks. People and coding agents
+Every change, ours included, lands in `main` through a pull request with green
+checks; repository rulesets enforce it
+([ADR 0004](docs/adr/0004-branches-and-releases.md)). People and coding agents
 follow the same rules: [CLAUDE.md](CLAUDE.md).
 
 ## License
