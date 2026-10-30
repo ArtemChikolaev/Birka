@@ -2,9 +2,9 @@
 
 Local-first expense tracker for money across currencies, banks and countries.
 
-**Status:** early development. The repository is being set up; there is
-nothing to install yet. The first milestone is manual tracking with several
-currencies and reports.
+**Status:** early development. There is nothing to install yet, only a
+[first page](https://artemchikolaev.github.io/Birka/) on the web. The first
+milestone is manual tracking with several currencies and reports.
 
 ## Why
 
@@ -57,9 +57,11 @@ These are mockups of the first version; every screen is in
 
 ```text
 apps/mobile              Flutter host: Android, iOS, macOS during development
+apps/web                 Jaspr host: a static site with interactive islands
 packages/core/money      Money and Currency value types
 packages/design/tokens   design tokens and their generator for Dart and CSS
 packages/design/flutter  theme, fonts and glass widgets for Flutter
+packages/design/jaspr    styles, web fonts and glass components for Jaspr
 packages/design/brand    the app icon: a glass coin in SVG and its PNG masters
 tools                    repository tooling: package boundary checks, dev scripts
 docs/adr                 architecture decision records
@@ -78,11 +80,12 @@ make bootstrap                      # fetch dependencies
 make check                          # format, analysis, boundaries, tests
 make test-core COMPILER=dart2wasm   # core tests in Chrome via WebAssembly
 make run-mobile                     # the Flutter app on macOS
+make run-web                        # the site on localhost:8080
 make tokens                         # regenerate the design tokens
 ```
 
-In VS Code, Run and Debug has a configuration for macOS, the iOS simulator
-and the Android emulator, and one that starts all three. The iOS and Android
+In VS Code, Run and Debug has a configuration for the site, for macOS, the iOS
+simulator and the Android emulator, and one that starts all three apps. The iOS and Android
 ones boot the device first; `BIRKA_IOS_DEVICE` and `BIRKA_AVD` pick which.
 
 ## Contributing

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Turns the icon masters in packages/design/brand/png into the app icons and
-# launch screens of apps/mobile: flutter_launcher_icons writes the icons, and
-# sips scales the coin for the launch screens. Run it after
+# launch screens of apps/mobile and the favicons of apps/web:
+# flutter_launcher_icons writes the app icons, and sips scales the rest. Run it after
 # tools/dev/render_icons.sh. Needs macOS for sips.
 set -euo pipefail
 
@@ -38,4 +38,10 @@ images="$app/ios/Runner/Assets.xcassets/LaunchImage.imageset"
 scale "$png/launch.png" 256 "$images/LaunchImage.png"
 scale "$png/launch.png" 512 "$images/LaunchImage@2x.png"
 scale "$png/launch.png" 768 "$images/LaunchImage@3x.png"
-echo "Updated the icons and launch screens of apps/mobile."
+
+# The site: the rounded tile as the favicon, the full icon for iOS home
+# screens.
+web="$root/apps/web/web"
+scale "$png/icon-macos.png" 64 "$web/favicon.png"
+scale "$png/icon.png" 180 "$web/apple-touch-icon.png"
+echo "Updated the icons and launch screens of apps/mobile and apps/web."

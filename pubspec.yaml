@@ -7,8 +7,10 @@ environment:
 
 workspace:
   - apps/mobile
+  - apps/web
   - packages/core/money
   - packages/design/flutter
+  - packages/design/jaspr
   - packages/design/tokens
   - tools
 

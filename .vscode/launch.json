@@ -28,6 +28,17 @@
       "program": "lib/main.dart",
       "deviceId": "emulator",
       "preLaunchTask": "Boot Android Emulator"
+    },
+    {
+      "name": "Web · localhost:8080",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "make run-web",
+      "serverReadyAction": {
+        "pattern": "Serving at http://localhost:([0-9]+)",
+        "uriFormat": "http://localhost:%s",
+        "action": "openExternally"
+      }
     }
   ],
   "compounds": [

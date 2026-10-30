@@ -11,7 +11,7 @@ import 'package:path/path.dart' as p;
 const dartOutput = 'lib/src/tokens.g.dart';
 
 /// Where the CSS goes, relative to the package root.
-const cssOutput = 'css/tokens.css';
+const cssOutput = 'lib/css/tokens.css';
 
 /// Reads every `tokens/*.tokens.json` under the package [root] into one
 /// document. A top-level group may live in one file only.

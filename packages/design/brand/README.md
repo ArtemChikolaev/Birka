@@ -14,11 +14,11 @@ the [mockups](../../../docs/design/).
 
 | Master | Where it goes |
 |---|---|
-| `icon.png` | iOS; the system rounds the corners |
+| `icon.png` | iOS, where the system rounds the corners, and the home screen icon of the site |
 | `icon-dark.png` | the dark and tinted icons of iOS 18: the coin without the background |
 | `icon-foreground.png`, `icon-background.png` | the adaptive icon of Android: the coin, smaller, and the background as separate layers |
 | `icon-monochrome.png` | the themed icon of Android 13, which the system paints in one color |
-| `icon-macos.png` | macOS and Android before 8, which show an icon as it is: a rounded tile with a shadow |
+| `icon-macos.png` | macOS, Android before 8 and the favicon of the site, which show an icon as it is: a rounded tile with a shadow |
 | `launch.png` | the launch screens of iOS and of Android before 12: the coin on black |
 | `launch-android-12.png` | the launch icon of Android 12, whose glow fades out before the circle Android cuts it to |
 
@@ -29,8 +29,8 @@ the [mockups](../../../docs/design/).
 2. `make icon-masters` renders the masters with headless Chrome:
    `tools/dev/render_icons.sh`.
 3. `make icons` writes the platform icons with `flutter_launcher_icons` and
-   scales the launch images with `sips`: `tools/dev/apply_icons.sh`. It
-   needs macOS.
+   scales the launch images and favicons with `sips`:
+   `tools/dev/apply_icons.sh`. It needs macOS.
 4. Look at the result in the iOS simulator and the Android emulator.
 
 The launch screens are plain platform files: `LaunchScreen.storyboard` on
