@@ -1,8 +1,8 @@
 import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/placeholder_page.dart';
-import 'package:birka_mobile/app/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:l10n/l10n.dart';
 
 /// The paths of the app.
 abstract final class Paths {
@@ -26,14 +26,15 @@ abstract final class Paths {
 /// opens over them.
 GoRouter buildRouter() {
   final rootKey = GlobalKey<NavigatorState>();
-  StatefulShellBranch tab(String path, String title) => StatefulShellBranch(
-    routes: [
-      GoRoute(
-        path: path,
-        builder: (context, state) => PlaceholderPage(title: title),
-      ),
-    ],
-  );
+  StatefulShellBranch tab(String path, String Function() title) =>
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: path,
+            builder: (context, state) => PlaceholderPage(title: title()),
+          ),
+        ],
+      );
   return GoRouter(
     navigatorKey: rootKey,
     initialLocation: Paths.overview,
@@ -41,10 +42,10 @@ GoRouter buildRouter() {
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
-          tab(Paths.overview, Strings.overview),
-          tab(Paths.operations, Strings.operations),
-          tab(Paths.reports, Strings.reports),
-          tab(Paths.more, Strings.more),
+          tab(Paths.overview, () => t.app.overview),
+          tab(Paths.operations, () => t.app.operations),
+          tab(Paths.reports, () => t.app.reports),
+          tab(Paths.more, () => t.app.more),
         ],
       ),
       GoRoute(

@@ -2,7 +2,7 @@
 .DEFAULT_GOAL := help
 
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
-CORE_PACKAGES := packages/core/money packages/core/ledger
+CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger
 
 COMPILER ?= vm
 ifeq ($(COMPILER),vm)
@@ -51,7 +51,8 @@ check-deps: ## Package boundary rules from ADR 0001
 check-tokens: ## Generated tokens match their sources (ADR 0007)
 	cd packages/design/tokens && dart run design_tokens:generate --check
 
-gen: ## Generate the Drift code and the snapshot of the schema
+gen: ## Generate the strings, the Drift code and the snapshot of the schema
+	cd packages/core/l10n && dart run slang
 	cd packages/core/database && \
 		dart run build_runner build --delete-conflicting-outputs && \
 		dart run drift_dev make-migrations

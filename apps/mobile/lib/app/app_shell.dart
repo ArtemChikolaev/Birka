@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:birka_mobile/app/router.dart';
-import 'package:birka_mobile/app/strings.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:l10n/l10n.dart';
 
 /// The frame of the app: the backdrop, the tabs and the floating navigation
 /// bar above them.
@@ -19,13 +19,6 @@ class AppShell extends StatelessWidget {
   static const double navBarClearance =
       BirkaTokens.sizeNavBar + BirkaTokens.spaceXl * 2;
 
-  static const _destinations = [
-    GlassNavDestination(glyph: BirkaGlyph.home, label: Strings.overview),
-    GlassNavDestination(glyph: BirkaGlyph.list, label: Strings.operations),
-    GlassNavDestination(glyph: BirkaGlyph.reports, label: Strings.reports),
-    GlassNavDestination(glyph: BirkaGlyph.more, label: Strings.more),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
@@ -39,13 +32,30 @@ class AppShell extends StatelessWidget {
               right: BirkaTokens.spaceXxl,
               bottom: max(BirkaTokens.spaceXl, bottomInset),
               child: GlassNavBar(
-                destinations: _destinations,
+                destinations: [
+                  GlassNavDestination(
+                    glyph: BirkaGlyph.home,
+                    label: t.app.overview,
+                  ),
+                  GlassNavDestination(
+                    glyph: BirkaGlyph.list,
+                    label: t.app.operations,
+                  ),
+                  GlassNavDestination(
+                    glyph: BirkaGlyph.reports,
+                    label: t.app.reports,
+                  ),
+                  GlassNavDestination(
+                    glyph: BirkaGlyph.more,
+                    label: t.app.more,
+                  ),
+                ],
                 selectedIndex: shell.currentIndex,
                 onSelected: (index) => shell.goBranch(
                   index,
                   initialLocation: index == shell.currentIndex,
                 ),
-                actionLabel: Strings.newOperation,
+                actionLabel: t.app.newOperation,
                 onAction: () => context.push(Paths.quickAdd),
               ),
             ),

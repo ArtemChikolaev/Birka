@@ -27,8 +27,8 @@ jobs:
       - run: flutter pub get
       - run: make analyze
       - run: make gen
-      - name: Fail if the generated database code is stale
-        run: test -z "$(git status --porcelain packages/core/database)"
+      - name: Fail if the generated code is stale
+        run: test -z "$(git status --porcelain packages/core)"
 
   test:
     name: Test (${{ matrix.compiler }})

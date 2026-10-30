@@ -374,6 +374,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.14.4"
+  flutter_localizations:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_svg:
     dependency: transitive
     description:
@@ -472,6 +477,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.12.0"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
   io:
     dependency: transitive
     description:
@@ -760,6 +773,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.2"
+  serial_csv:
+    dependency: transitive
+    description:
+      name: serial_csv
+      sha256: "2d62bb70cb3ce7251383fc86ea9aae1298ab1e57af6ef4e93b6a9751c5c268dd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   shelf:
     dependency: transitive
     description:
@@ -813,6 +834,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  slang:
+    dependency: transitive
+    description:
+      name: slang
+      sha256: "6091c2b4cd9f663080ede24fde6bcb9ee43f9fad1f9eaa66e2801eee47684e24"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.19.2"
   source_gen:
     dependency: transitive
     description:

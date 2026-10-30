@@ -1,7 +1,7 @@
-import 'package:birka_mobile/app/strings.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:l10n/l10n.dart';
 
 /// A tab until its feature lands.
 class PlaceholderPage extends StatelessWidget {
@@ -25,7 +25,7 @@ class PlaceholderPage extends StatelessWidget {
             const SizedBox(height: BirkaTokens.spaceMd),
             GlassSurface(
               child: Text(
-                Strings.comingSoon,
+                t.app.comingSoon,
                 style: styles.body.copyWith(
                   color: BirkaColors.of(context).textSecondary,
                 ),
@@ -57,10 +57,10 @@ class QuickAddPlaceholder extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(Strings.newOperation, style: styles.heading),
+                    Text(t.app.newOperation, style: styles.heading),
                     Semantics(
                       button: true,
-                      label: Strings.close,
+                      label: t.app.close,
                       excludeSemantics: true,
                       child: GestureDetector(
                         onTap: () => context.pop(),
@@ -75,7 +75,7 @@ class QuickAddPlaceholder extends StatelessWidget {
                 const SizedBox(height: BirkaTokens.spaceMd),
                 GlassSurface(
                   child: Text(
-                    Strings.comingSoon,
+                    t.app.comingSoon,
                     style: styles.body.copyWith(
                       color: BirkaColors.of(context).textSecondary,
                     ),
