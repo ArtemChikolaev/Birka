@@ -89,8 +89,9 @@ test-design: ## Tests of the token generator and both kits
 	cd packages/design/flutter && flutter test
 	cd packages/design/jaspr && dart test
 
-test-features: ## Widget tests of the features
+test-features: ## Tests of the screens of the features
 	cd packages/features/accounts/flutter && flutter test
+	cd packages/features/accounts/jaspr && dart test
 	cd packages/features/categories/flutter && flutter test
 
 test-web: ## Tests of the Jaspr host

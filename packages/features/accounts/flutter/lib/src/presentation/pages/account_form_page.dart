@@ -6,16 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
-import 'package:money/money.dart';
-
-/// The types the form offers. The rest come later, with their own rules.
-const _offeredTypes = <AccountType>[
-  AccountType.debit,
-  AccountType.cash,
-  AccountType.credit,
-  AccountType.savings,
-  AccountType.deposit,
-];
 
 /// The form of a new or an existing account.
 ///
@@ -86,7 +76,6 @@ class _FormState extends State<_Form> {
     return BlocBuilder<AccountFormCubit, AccountFormState>(
       builder: (context, state) {
         final form = t.accounts.form;
-        final preview = _previewAmount(state);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -132,7 +121,7 @@ class _FormState extends State<_Form> {
                       type: state.type,
                       lastDigits: state.lastDigits,
                     ),
-                    amount: preview,
+                    amount: formatMoney(state.previewBalance),
                   ),
                   const SizedBox(height: BirkaTokens.spaceLg),
                   BirkaTextField(
@@ -152,9 +141,9 @@ class _FormState extends State<_Form> {
                     spacing: BirkaTokens.spaceXs,
                     runSpacing: BirkaTokens.spaceXs,
                     children: [
-                      for (final type in _types(state))
+                      for (final type in state.types)
                         BirkaChip(
-                          label: typeLabel(type),
+                          label: accountTypeLabel(type),
                           selected: type == state.type,
                           onTap: () => cubit.typeChanged(type),
                         ),
@@ -166,7 +155,7 @@ class _FormState extends State<_Form> {
                     spacing: BirkaTokens.spaceXs,
                     runSpacing: BirkaTokens.spaceXs,
                     children: [
-                      for (final currency in _currencies(state))
+                      for (final currency in state.currencies)
                         BirkaChip(
                           label: currency.code,
                           selected: currency == state.currency,
@@ -286,29 +275,6 @@ class _FormState extends State<_Form> {
         );
       },
     );
-  }
-
-  /// A type the form does not offer stays on the form of its account.
-  List<AccountType> _types(AccountFormState state) => [
-    ..._offeredTypes,
-    if (!_offeredTypes.contains(state.type)) state.type,
-  ];
-
-  /// An existing account shows only its own currency, which cannot change.
-  List<Currency> _currencies(AccountFormState state) =>
-      state.isNew ? offeredCurrencies : [state.currency];
-
-  /// What the card shows while the amount is being typed.
-  String _previewAmount(AccountFormState state) {
-    final text = state.amount.replaceAll(RegExp(r'\s'), '');
-    try {
-      final amount = text.isEmpty
-          ? Money.zero(state.currency)
-          : Money.parse(text, state.currency);
-      return formatMoney(state.isDebt ? -amount : amount);
-    } on FormatException {
-      return formatMoney(Money.zero(state.currency));
-    }
   }
 }
 

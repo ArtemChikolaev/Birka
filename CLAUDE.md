@@ -58,15 +58,18 @@ Extend what exists instead of duplicating it.
   generated files, and never hard-code a color or a size that a token has.
   Flutter widgets read `BirkaColors.of(context)` and
   `BirkaTextStyles.of(context)`. New icons go into
-  `packages/design/flutter/icons/` and `BirkaGlyph`.
+  `packages/design/flutter/icons/` and into `BirkaGlyph` of both kits, and a
+  test keeps the two in step.
 - Strings for people live in `packages/core/l10n/lib/i18n`, one file per
   feature and language ([ADR 0010](docs/adr/0010-strings.md)): add a key to
   every language and run `make gen`. Amounts reach the screen through
   `formatMoney`, never through string building.
 - The site is static ([ADR 0008](docs/adr/0008-web-host.md)): code that needs
   the browser stays inside `@client` components, and paths stay relative to
-  `<base href>`. After adding a `@client` component or `@css` styles, run
-  `make build-web` and commit the regenerated `*.options.dart` files.
+  `<base href>`. Pages are listed in `apps/web/lib/app.dart`, and what depends
+  on an id stays on its page behind a fragment. After adding a `@client`
+  component or `@css` styles, run `make build-web` and commit the regenerated
+  `*.options.dart` files.
 - The Flutter app draws edge to edge behind see-through system bars, so
   screens keep their content out of the bars with `SafeArea`.
 - The app icons and launch screens come from

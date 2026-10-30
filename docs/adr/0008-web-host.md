@@ -33,6 +33,18 @@
    job publishes it to GitHub Pages once `All checks` has passed. The
    generated `*.options.dart` files are committed, so analysis needs no build,
    and the web job fails when they are stale.
+7. Every page is a static route, listed in `apps/web/lib/app.dart`.
+   `jaspr_router` runs only when the build renders them, so it never meets
+   `/Birka/`, and the browser moves between pages by plain links.
+8. Static routes have no parameters, so what depends on an id stays on its page
+   behind a fragment: `accounts/#new` and `accounts/#<id>`. The island of the
+   page follows the fragment, so a form opens at once on the database that is
+   already open, and the back button and deep links work without anything on
+   the server. Links keep the path, because `<base href>` would send a bare
+   `#new` to the first page.
+9. The build knows no language and no data, so the text of a page lives in its
+   island, which takes the language from the browser. The HTML of such a page
+   is a frame with a placeholder.
 
 ## Options considered
 
@@ -43,14 +55,18 @@
 | TTF on the web | 1 MB of fonts instead of 84 KB for a page in English |
 | A stylesheet of the kit instead of `@css` | one more request, and styles away from their components |
 | A separate deploy workflow | it would not know that the checks of the same commit passed |
+| A static page for each form | a reload and a new connection to the database on every step |
+| Addresses with an id in the path, through a `404.html` | Pages answers them with the status 404, and the fallback page has to be the whole app |
+| One island for the whole site | the first page would have to carry the app |
 
 ## Consequences
 
-- The first page is about 155 KB of JavaScript and 372 KB of files in all.
-- `jaspr_router` 0.8.1 does not follow `<base href>`, so the second page has
-  to deal with the `/Birka/` prefix itself or wait for a newer Jaspr.
+- The first page is about 236 KB of JavaScript, 73 KB compressed, and loads
+  nothing of Drift.
+- `jaspr_router` 0.8.1 does not follow `<base href>`, which is harmless while
+  it runs only in the build. Moving between pages reloads them and opens the
+  database again, and a shell shared by the pages will have to change that.
 - Static mode runs the component tree on the build machine: code that needs
   the browser, such as Drift, stays inside `@client` behind `@Import.onWeb`.
 - `jaspr_bloc` follows state only in the browser, so tests on the VM call
   `setIsClientForTesting(true)`.
-- The storage of Drift under the headers of Pages is still to be tried.

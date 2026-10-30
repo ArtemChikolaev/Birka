@@ -8,6 +8,17 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 
+/// The types the form offers. The rest come later, with their own rules.
+const _offeredTypes = <AccountType>[
+  AccountType.debit,
+  AccountType.cash,
+  AccountType.credit,
+  AccountType.savings,
+  AccountType.deposit,
+];
+
+final _spaces = RegExp(r'\s');
+
 /// Why the form cannot be saved.
 enum AccountFormError {
   /// The name is empty.
@@ -94,6 +105,33 @@ final class AccountFormState {
 
   /// Whether this form asks for the last digits of a card.
   bool get hasCard => type == AccountType.debit || type == AccountType.credit;
+
+  /// The types to pick from. A type the form does not offer stays on the form
+  /// of its account.
+  List<AccountType> get types => [
+    ..._offeredTypes,
+    if (!_offeredTypes.contains(type)) type,
+  ];
+
+  /// The currencies to pick from. An existing account keeps its own.
+  List<Currency> get currencies => isNew ? offeredCurrencies : [currency];
+
+  /// The amount as money, or `null` if it is not a number. People paste
+  /// amounts with spaces between the groups of digits.
+  Money? get openingBalance {
+    final text = amount.replaceAll(_spaces, '');
+    try {
+      final parsed = text.isEmpty
+          ? Money.zero(currency)
+          : Money.parse(text, currency);
+      return isDebt ? -parsed : parsed;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  /// What a preview shows while the amount is being typed.
+  Money get previewBalance => openingBalance ?? Money.zero(currency);
 
   /// A copy with the given fields changed.
   AccountFormState copyWith({
@@ -190,7 +228,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     if (lastDigits.isNotEmpty && !_lastDigits.hasMatch(lastDigits)) {
       errors.add(AccountFormError.lastDigitsInvalid);
     }
-    final balance = _openingBalance();
+    final balance = state.openingBalance;
     if (balance == null) errors.add(AccountFormError.amountInvalid);
     if (errors.isNotEmpty) {
       emit(state.copyWith(errors: errors));
@@ -221,21 +259,6 @@ class AccountFormCubit extends Cubit<AccountFormState> {
   }
 
   static final _lastDigits = RegExp(r'^\d{4}$');
-  static final _spaces = RegExp(r'\s');
-
-  /// The amount as money, or `null` if it is not a number. People paste
-  /// amounts with spaces between the groups of digits.
-  Money? _openingBalance() {
-    final text = state.amount.replaceAll(_spaces, '');
-    try {
-      final amount = text.isEmpty
-          ? Money.zero(state.currency)
-          : Money.parse(text, state.currency);
-      return state.isDebt ? -amount : amount;
-    } on FormatException {
-      return null;
-    }
-  }
 
   void _edit(AccountFormState next, AccountFormError cleared) =>
       emit(next.copyWith(errors: {...next.errors}..remove(cleared)));

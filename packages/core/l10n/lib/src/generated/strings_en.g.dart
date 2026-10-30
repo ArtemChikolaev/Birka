@@ -103,6 +103,18 @@ class Translations$accounts$en {
   /// en: 'Try again'
   String get retry => 'Try again';
 
+  /// en: 'Your accounts stay in this browser and nowhere else.'
+  String get storedHere =>
+      'Your accounts stay in this browser and nowhere else.';
+
+  /// en: 'This browser cannot keep data, so the accounts go when you close the tab.'
+  String get notStored =>
+      'This browser cannot keep data, so the accounts go when you close the tab.';
+
+  /// en: 'Birka is open in another tab. Close it and try again.'
+  String get openElsewhere =>
+      'Birka is open in another tab. Close it and try again.';
+
   Map<String, String> get types => {
     'cash': 'Cash',
     'debit': 'Debit card',
@@ -382,6 +394,12 @@ extension on Translations {
       'accounts.archive' => 'Archive',
       'accounts.failed' => 'Could not read the accounts.',
       'accounts.retry' => 'Try again',
+      'accounts.storedHere' =>
+        'Your accounts stay in this browser and nowhere else.',
+      'accounts.notStored' =>
+        'This browser cannot keep data, so the accounts go when you close the tab.',
+      'accounts.openElsewhere' =>
+        'Birka is open in another tab. Close it and try again.',
       'accounts.types.cash' => 'Cash',
       'accounts.types.debit' => 'Debit card',
       'accounts.types.credit' => 'Credit card',

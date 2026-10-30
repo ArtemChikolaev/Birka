@@ -12,6 +12,8 @@ dependencies:
   bloc: ^9.2.1
   drift: ^2.31.0
   get_it: ^9.3.0
+  l10n:
+    path: ../../../core/l10n
   ledger:
     path: ../../../core/ledger
   meta: ^1.17.0

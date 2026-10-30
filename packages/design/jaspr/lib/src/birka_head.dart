@@ -22,4 +22,10 @@ List<StyleRule> get birkaBaseStyles => [
       '-webkit-font-smoothing': 'antialiased',
     },
   ),
+  css(':focus-visible').styles(
+    raw: {
+      'outline': '2px solid var(--color-accent)',
+      'outline-offset': '2px',
+    },
+  ),
 ];

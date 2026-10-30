@@ -106,6 +106,14 @@ class _Translations$accounts$ru extends Translations$accounts$en {
   @override
   String get retry => 'Повторить';
   @override
+  String get storedHere => 'Счета хранятся только в этом браузере.';
+  @override
+  String get notStored =>
+      'Этот браузер не хранит данные, поэтому счета исчезнут, когда вы закроете вкладку.';
+  @override
+  String get openElsewhere =>
+      'Birka открыта в другой вкладке. Закройте её и попробуйте снова.';
+  @override
   Map<String, String> get types => {
     'cash': 'Наличные',
     'debit': 'Дебетовая карта',
@@ -345,6 +353,11 @@ extension on TranslationsRu {
       'accounts.archive' => 'Архив',
       'accounts.failed' => 'Не удалось прочитать счета.',
       'accounts.retry' => 'Повторить',
+      'accounts.storedHere' => 'Счета хранятся только в этом браузере.',
+      'accounts.notStored' =>
+        'Этот браузер не хранит данные, поэтому счета исчезнут, когда вы закроете вкладку.',
+      'accounts.openElsewhere' =>
+        'Birka открыта в другой вкладке. Закройте её и попробуйте снова.',
       'accounts.types.cash' => 'Наличные',
       'accounts.types.debit' => 'Дебетовая карта',
       'accounts.types.credit' => 'Кредитная карта',

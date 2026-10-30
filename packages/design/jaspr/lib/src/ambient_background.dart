@@ -22,7 +22,15 @@ class AmbientBackground extends StatelessComponent {
   static List<StyleRule> get styles => [
     css('.ambient').styles(
       raw: {
-        'min-height': '100vh',
+        'isolation': 'isolate',
+        'min-height': '100dvh',
+        'position': 'relative',
+      },
+    ),
+    // The glow stays with the screen, as in the app, and goes under the bars
+    // of a phone.
+    css('.ambient::before').styles(
+      raw: {
         'background':
             'radial-gradient(62% 34% at 0% 0%, '
             'var(--color-ambient) 0%, transparent 74%), '
@@ -31,6 +39,13 @@ class AmbientBackground extends StatelessComponent {
             'radial-gradient(64% 20% at 0% 72%, '
             'var(--color-ambient) 0%, transparent 72%), '
             'var(--color-background)',
+        'content': '""',
+        'height': '100lvh',
+        'left': '0',
+        'position': 'fixed',
+        'right': '0',
+        'top': '0',
+        'z-index': '-1',
       },
     ),
   ];

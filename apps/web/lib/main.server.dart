@@ -1,5 +1,6 @@
 import 'package:birka_web/app.dart';
 import 'package:birka_web/main.server.options.dart';
+import 'package:birka_web/pages/home_route.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
@@ -17,7 +18,9 @@ void main() {
       // The analyzer sees the default; the build for Pages sets another path.
       // ignore: avoid_redundant_argument_values
       base: _basePath,
-      meta: {'description': App.tagline},
+      // The glow of the backdrop goes under the bars of a phone.
+      viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
+      meta: {'description': HomeRoute.tagline},
       head: [
         ...birkaHead,
         link(rel: 'icon', type: 'image/png', href: 'favicon.png'),

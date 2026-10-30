@@ -5,12 +5,32 @@
 // Generated with jaspr_builder
 
 import 'package:jaspr/server.dart';
+import 'package:accounts_jaspr/src/presentation/components/account_hero_card.dart'
+    as _account_hero_card;
+import 'package:accounts_jaspr/src/presentation/components/account_row.dart'
+    as _account_row;
+import 'package:accounts_jaspr/src/presentation/components/accounts_header.dart'
+    as _accounts_header;
+import 'package:accounts_jaspr/src/presentation/pages/account_form_page.dart'
+    as _account_form_page;
+import 'package:accounts_jaspr/src/presentation/pages/accounts_page.dart'
+    as _accounts_page;
 import 'package:birka_web/components/capital_preview.dart' as _capital_preview;
-import 'package:birka_web/app.dart' as _app;
+import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
+import 'package:birka_web/pages/accounts_route.dart' as _accounts_route;
+import 'package:birka_web/pages/home_route.dart' as _home_route;
 import 'package:design_jaspr/src/ambient_background.dart'
     as _ambient_background;
 import 'package:design_jaspr/src/amount_text.dart' as _amount_text;
+import 'package:design_jaspr/src/birka_button.dart' as _birka_button;
+import 'package:design_jaspr/src/birka_chip.dart' as _birka_chip;
 import 'package:design_jaspr/src/birka_head.dart' as _birka_head;
+import 'package:design_jaspr/src/birka_icon.dart' as _birka_icon;
+import 'package:design_jaspr/src/birka_switch.dart' as _birka_switch;
+import 'package:design_jaspr/src/birka_text_field.dart' as _birka_text_field;
+import 'package:design_jaspr/src/card_art.dart' as _card_art;
+import 'package:design_jaspr/src/glass_icon_button.dart' as _glass_icon_button;
+import 'package:design_jaspr/src/glass_list.dart' as _glass_list;
 import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
 
@@ -35,13 +55,32 @@ ServerOptions get defaultServerOptions => ServerOptions(
   clients: {
     _capital_preview.CapitalPreview:
         ClientTarget<_capital_preview.CapitalPreview>('capital_preview'),
+    _accounts_island.AccountsIsland:
+        ClientTarget<_accounts_island.AccountsIsland>('accounts_island'),
   },
   styles: () => [
+    ..._account_hero_card.AccountHeroCard.styles,
+    ..._account_row.AccountRow.styles,
+    ..._accounts_header.AccountsHeader.styles,
+    ..._account_form_page.AccountFormPage.styles,
+    ..._accounts_page.AccountsPage.styles,
     ..._capital_preview.CapitalPreview.styles,
-    ..._app.App.styles,
+    ..._accounts_island.AccountsIsland.styles,
+    ..._accounts_route.AccountsRoute.styles,
+    ..._home_route.HomeRoute.styles,
     ..._ambient_background.AmbientBackground.styles,
     ..._amount_text.AmountText.styles,
+    ..._birka_button.BirkaButton.styles,
+    ..._birka_chip.BirkaChip.styles,
     ..._birka_head.birkaBaseStyles,
+    ..._birka_icon.BirkaIcon.styles,
+    ..._birka_switch.BirkaSwitch.styles,
+    ..._birka_text_field.BirkaTextField.styles,
+    ..._card_art.CardArtSurface.styles,
+    ..._card_art.CardArtThumbnail.styles,
+    ..._glass_icon_button.GlassIconButton.styles,
+    ..._glass_list.GlassListGroup.styles,
+    ..._glass_list.GlassListRow.styles,
     ..._glass_surface.GlassSurface.styles,
     ..._section_label.SectionLabel.styles,
   ],

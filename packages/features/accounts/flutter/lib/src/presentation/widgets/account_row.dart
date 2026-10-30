@@ -50,7 +50,7 @@ class AccountRow extends StatelessWidget {
               tone: row.balance.isNegative
                   ? AmountTone.negative
                   : AmountTone.neutral,
-              style: styles.amount.copyWith(color: colors.text),
+              style: styles.bodyStrong.copyWith(color: colors.text),
             ),
             if (main)
               Text(
