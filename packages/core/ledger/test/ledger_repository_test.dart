@@ -166,6 +166,115 @@ void main() {
     });
   });
 
+  group('categories', () {
+    test('go after the others of their kind', () async {
+      await ledger.addCategory(kind: CategoryKind.expense, name: 'Taxi');
+      await ledger.addCategory(kind: CategoryKind.income, name: 'Bonus');
+      await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'First',
+        sortOrder: -1,
+      );
+
+      final names = (await ledger.watchCategories(CategoryKind.expense).first)
+          .map((category) => category.name);
+      expect(names, ['First', 'Cafe', 'Taxi']);
+    });
+
+    test('change their fields and can lose their color', () async {
+      await ledger.updateCategory(
+        cafe.id,
+        name: 'Coffee',
+        icon: const Value('cup'),
+        color: const Value('#fbbf24'),
+      );
+      var category = (await ledger.category(cafe.id))!;
+      expect(category.name, 'Coffee');
+      expect(category.icon, 'cup');
+      expect(category.color, '#fbbf24');
+
+      await ledger.updateCategory(cafe.id, color: const Value(null));
+      category = (await ledger.category(cafe.id))!;
+      expect(category.color, isNull);
+      expect(category.icon, 'cup');
+    });
+
+    test('an archived one leaves the list unless asked', () async {
+      await ledger.updateCategory(cafe.id, archived: true);
+
+      expect(await ledger.watchCategories(CategoryKind.expense).first, isEmpty);
+      final all = await ledger
+          .watchCategories(CategoryKind.expense, includeArchived: true)
+          .first;
+      expect(all.single.archived, isTrue);
+    });
+
+    test('are found by id, and an unknown one is not', () async {
+      expect((await ledger.category(cafe.id))?.name, 'Cafe');
+      expect(await ledger.category('nobody'), isNull);
+    });
+
+    test('an unknown category cannot be updated', () {
+      expect(
+        ledger.updateCategory('nobody', name: 'Ghost'),
+        throwsA(isA<LedgerException>()),
+      );
+    });
+
+    test('a subcategory keeps to the kind of its parent', () {
+      expect(
+        ledger.addCategory(
+          kind: CategoryKind.income,
+          name: 'Tips',
+          parentId: cafe.id,
+        ),
+        throwsA(isA<LedgerException>()),
+      );
+    });
+
+    test('there are two levels and no more', () async {
+      final child = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Coffee',
+        parentId: cafe.id,
+      );
+      await expectLater(
+        ledger.addCategory(
+          kind: CategoryKind.expense,
+          name: 'Espresso',
+          parentId: child.id,
+        ),
+        throwsA(isA<LedgerException>()),
+      );
+
+      final other = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Taxi',
+      );
+      await expectLater(
+        ledger.updateCategory(cafe.id, parentId: Value(other.id)),
+        throwsA(isA<LedgerException>()),
+      );
+    });
+
+    test('a category cannot be its own parent', () {
+      expect(
+        ledger.updateCategory(cafe.id, parentId: Value(cafe.id)),
+        throwsA(isA<LedgerException>()),
+      );
+    });
+
+    test('a subcategory can move to the top', () async {
+      final child = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Coffee',
+        parentId: cafe.id,
+      );
+      await ledger.updateCategory(child.id, parentId: const Value(null));
+      expect((await ledger.category(child.id))?.parentId, isNull);
+    });
+  });
+
   group('balance', () {
     test('is the opening balance plus the entries', () async {
       await ledger.record(coffee(rub(25000)));

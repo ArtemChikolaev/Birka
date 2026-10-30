@@ -33,7 +33,8 @@ class MorePage extends StatelessWidget {
               Expanded(
                 child: _Tile(
                   color: const Color(BirkaTokens.colorPaletteAmber),
-                  label: t.app.categories,
+                  label: t.categories.title,
+                  onTap: () => context.push(Paths.categories),
                 ),
               ),
             ],

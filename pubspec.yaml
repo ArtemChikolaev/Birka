@@ -17,6 +17,8 @@ workspace:
   - packages/design/tokens
   - packages/features/accounts/common
   - packages/features/accounts/flutter
+  - packages/features/categories/common
+  - packages/features/categories/flutter
   - tools
 
 dev_dependencies:

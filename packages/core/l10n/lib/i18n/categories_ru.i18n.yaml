@@ -1,0 +1,48 @@
+title: Категории
+back: Назад
+add: Добавить категорию
+expense: Расходы
+income: Доходы
+emptyTitle: Пока нет категорий
+emptyHint: Возьмите готовый набор или создайте свои.
+addPresets: Добавить готовый набор
+addOwn: Создать свою
+archive: Архив
+failed: Не удалось прочитать категории.
+retry: Повторить
+subcategories(n):
+  one: $n подкатегория
+  few: $n подкатегории
+  many: $n подкатегорий
+  other: $n подкатегории
+presets(map):
+  groceries: Продукты
+  cafe: Кафе
+  transport: Транспорт
+  home: Дом
+  health: Здоровье
+  leisure: Досуг
+  subscriptions: Подписки
+  clothes: Одежда
+  travel: Поездки
+  education: Обучение
+  gifts: Подарки
+  salary: Зарплата
+  freelance: Подработка
+  interest: Проценты
+  giftsReceived: Подарки
+form:
+  newTitle: Новая категория
+  editTitle: Категория
+  name: Название
+  namePlaceholder: Продукты
+  kind: Тип
+  parent: Внутри
+  noParent: Отдельно
+  color: Цвет
+  icon: Значок
+  save: Сохранить
+  archive: Убрать в архив
+  restore: Вернуть из архива
+  nameMissing: Дайте категории название.
+  failed: Не удалось сохранить. Попробуйте ещё раз.

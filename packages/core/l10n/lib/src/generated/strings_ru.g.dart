@@ -60,6 +60,9 @@ class TranslationsRu extends Translations
   );
   @override
   late final _Translations$app$ru app = _Translations$app$ru._(_root);
+  @override
+  late final _Translations$categories$ru categories =
+      _Translations$categories$ru._(_root);
 }
 
 // Path: accounts
@@ -157,11 +160,74 @@ class _Translations$app$ru extends Translations$app$en {
     'THB': 'Баты',
   };
   @override
-  String get categories => 'Категории';
-  @override
   String get import => 'Импорт';
   @override
   String get backup => 'Бэкап';
+}
+
+// Path: categories
+class _Translations$categories$ru extends Translations$categories$en {
+  _Translations$categories$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Категории';
+  @override
+  String get back => 'Назад';
+  @override
+  String get add => 'Добавить категорию';
+  @override
+  String get expense => 'Расходы';
+  @override
+  String get income => 'Доходы';
+  @override
+  String get emptyTitle => 'Пока нет категорий';
+  @override
+  String get emptyHint => 'Возьмите готовый набор или создайте свои.';
+  @override
+  String get addPresets => 'Добавить готовый набор';
+  @override
+  String get addOwn => 'Создать свою';
+  @override
+  String get archive => 'Архив';
+  @override
+  String get failed => 'Не удалось прочитать категории.';
+  @override
+  String get retry => 'Повторить';
+  @override
+  String subcategories({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} подкатегория',
+        few: '${n} подкатегории',
+        many: '${n} подкатегорий',
+        other: '${n} подкатегории',
+      );
+  @override
+  Map<String, String> get presets => {
+    'groceries': 'Продукты',
+    'cafe': 'Кафе',
+    'transport': 'Транспорт',
+    'home': 'Дом',
+    'health': 'Здоровье',
+    'leisure': 'Досуг',
+    'subscriptions': 'Подписки',
+    'clothes': 'Одежда',
+    'travel': 'Поездки',
+    'education': 'Обучение',
+    'gifts': 'Подарки',
+    'salary': 'Зарплата',
+    'freelance': 'Подработка',
+    'interest': 'Проценты',
+    'giftsReceived': 'Подарки',
+  };
+  @override
+  late final _Translations$categories$form$ru form =
+      _Translations$categories$form$ru._(_root);
 }
 
 // Path: accounts.form
@@ -207,6 +273,45 @@ class _Translations$accounts$form$ru extends Translations$accounts$form$en {
   String get amountInvalid => 'Введите сумму, например 1250,50.';
   @override
   String get lastDigitsInvalid => 'Введите четыре цифры.';
+  @override
+  String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+}
+
+// Path: categories.form
+class _Translations$categories$form$ru extends Translations$categories$form$en {
+  _Translations$categories$form$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get newTitle => 'Новая категория';
+  @override
+  String get editTitle => 'Категория';
+  @override
+  String get name => 'Название';
+  @override
+  String get namePlaceholder => 'Продукты';
+  @override
+  String get kind => 'Тип';
+  @override
+  String get parent => 'Внутри';
+  @override
+  String get noParent => 'Отдельно';
+  @override
+  String get color => 'Цвет';
+  @override
+  String get icon => 'Значок';
+  @override
+  String get save => 'Сохранить';
+  @override
+  String get archive => 'Убрать в архив';
+  @override
+  String get restore => 'Вернуть из архива';
+  @override
+  String get nameMissing => 'Дайте категории название.';
   @override
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
 }
@@ -284,9 +389,58 @@ extension on TranslationsRu {
       'app.currencies.KZT' => 'Тенге',
       'app.currencies.AED' => 'Дирхамы',
       'app.currencies.THB' => 'Баты',
-      'app.categories' => 'Категории',
       'app.import' => 'Импорт',
       'app.backup' => 'Бэкап',
+      'categories.title' => 'Категории',
+      'categories.back' => 'Назад',
+      'categories.add' => 'Добавить категорию',
+      'categories.expense' => 'Расходы',
+      'categories.income' => 'Доходы',
+      'categories.emptyTitle' => 'Пока нет категорий',
+      'categories.emptyHint' => 'Возьмите готовый набор или создайте свои.',
+      'categories.addPresets' => 'Добавить готовый набор',
+      'categories.addOwn' => 'Создать свою',
+      'categories.archive' => 'Архив',
+      'categories.failed' => 'Не удалось прочитать категории.',
+      'categories.retry' => 'Повторить',
+      'categories.subcategories' =>
+        ({required num n}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+              n,
+              one: '${n} подкатегория',
+              few: '${n} подкатегории',
+              many: '${n} подкатегорий',
+              other: '${n} подкатегории',
+            ),
+      'categories.presets.groceries' => 'Продукты',
+      'categories.presets.cafe' => 'Кафе',
+      'categories.presets.transport' => 'Транспорт',
+      'categories.presets.home' => 'Дом',
+      'categories.presets.health' => 'Здоровье',
+      'categories.presets.leisure' => 'Досуг',
+      'categories.presets.subscriptions' => 'Подписки',
+      'categories.presets.clothes' => 'Одежда',
+      'categories.presets.travel' => 'Поездки',
+      'categories.presets.education' => 'Обучение',
+      'categories.presets.gifts' => 'Подарки',
+      'categories.presets.salary' => 'Зарплата',
+      'categories.presets.freelance' => 'Подработка',
+      'categories.presets.interest' => 'Проценты',
+      'categories.presets.giftsReceived' => 'Подарки',
+      'categories.form.newTitle' => 'Новая категория',
+      'categories.form.editTitle' => 'Категория',
+      'categories.form.name' => 'Название',
+      'categories.form.namePlaceholder' => 'Продукты',
+      'categories.form.kind' => 'Тип',
+      'categories.form.parent' => 'Внутри',
+      'categories.form.noParent' => 'Отдельно',
+      'categories.form.color' => 'Цвет',
+      'categories.form.icon' => 'Значок',
+      'categories.form.save' => 'Сохранить',
+      'categories.form.archive' => 'Убрать в архив',
+      'categories.form.restore' => 'Вернуть из архива',
+      'categories.form.nameMissing' => 'Дайте категории название.',
+      'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
       _ => null,
     };
   }

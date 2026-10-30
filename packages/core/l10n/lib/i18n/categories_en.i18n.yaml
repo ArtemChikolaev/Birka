@@ -1,0 +1,46 @@
+title: Categories
+back: Back
+add: Add category
+expense: Expenses
+income: Income
+emptyTitle: No categories yet
+emptyHint: Take a ready set or make your own.
+addPresets: Add a ready set
+addOwn: Make my own
+archive: Archive
+failed: Could not read the categories.
+retry: Try again
+subcategories(n):
+  one: $n subcategory
+  other: $n subcategories
+presets(map):
+  groceries: Groceries
+  cafe: Cafes
+  transport: Transport
+  home: Home
+  health: Health
+  leisure: Leisure
+  subscriptions: Subscriptions
+  clothes: Clothes
+  travel: Travel
+  education: Education
+  gifts: Gifts
+  salary: Salary
+  freelance: Freelance
+  interest: Interest
+  giftsReceived: Gifts
+form:
+  newTitle: New category
+  editTitle: Category
+  name: Name
+  namePlaceholder: Groceries
+  kind: Type
+  parent: Inside
+  noParent: On its own
+  color: Color
+  icon: Icon
+  save: Save
+  archive: Move to the archive
+  restore: Bring back from the archive
+  nameMissing: Give the category a name.
+  failed: Could not save. Try again.
