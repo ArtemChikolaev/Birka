@@ -26,18 +26,29 @@ final class LedgerRepository {
   final DateTime Function() _now;
   final String Function() _newId;
 
-  /// Adds an account. The currency of [openingBalance] becomes the currency
-  /// of the account for good.
+  /// Adds an account, after the others unless [sortOrder] says otherwise.
+  /// The currency of [openingBalance] becomes the currency of the account for
+  /// good.
   Future<Account> addAccount({
     required String name,
     required AccountType type,
     required Money openingBalance,
+    String? lastDigits,
+    AccountArt art = AccountArt.emerald,
     bool includeInTotals = true,
-    int sortOrder = 0,
+    int? sortOrder,
   }) {
     return _db.transaction(() async {
       final id = _newId();
       final at = _timestamp();
+      final last = _db.accounts.sortOrder.max();
+      final position =
+          sortOrder ??
+          await (_db.selectOnly(_db.accounts)
+                ..addColumns([last])
+                ..where(_db.accounts.deletedAt.isNull()))
+              .map((row) => (row.read(last) ?? -1) + 1)
+              .getSingle();
       final row = await _db
           .into(_db.accounts)
           .insertReturning(
@@ -50,8 +61,10 @@ final class LedgerRepository {
               currency: openingBalance.currency.code,
               decimalDigits: openingBalance.currency.decimalDigits,
               openingBalanceMinor: Value(openingBalance.minorUnits),
+              lastDigits: Value(lastDigits),
+              art: Value(art.name),
               includeInTotals: Value(includeInTotals),
-              sortOrder: Value(sortOrder),
+              sortOrder: Value(position),
             ),
           );
       await _log(_db.accounts, id, 'insert', at);
@@ -59,16 +72,30 @@ final class LedgerRepository {
     });
   }
 
-  /// Changes the given fields of an account.
+  /// Changes the given fields of an account. The currency of
+  /// [openingBalance] has to stay the currency of the account.
   Future<void> updateAccount(
     String id, {
     String? name,
+    AccountType? type,
+    Money? openingBalance,
+    Value<String?> lastDigits = const Value.absent(),
+    AccountArt? art,
     bool? includeInTotals,
     bool? archived,
     int? sortOrder,
   }) {
     return _db.transaction(() async {
       final at = _timestamp();
+      if (openingBalance != null) {
+        final account = await this.account(id);
+        if (account != null && account.currency != openingBalance.currency) {
+          throw LedgerException(
+            'Account ${account.name} is in ${account.currency}, not in '
+            '${openingBalance.currency}',
+          );
+        }
+      }
       final updated =
           await (_db.update(
             _db.accounts,
@@ -76,6 +103,12 @@ final class LedgerRepository {
             AccountsCompanion(
               updatedAt: Value(at),
               name: Value.absentIfNull(name),
+              type: Value.absentIfNull(type?.name),
+              openingBalanceMinor: Value.absentIfNull(
+                openingBalance?.minorUnits,
+              ),
+              lastDigits: lastDigits,
+              art: Value.absentIfNull(art?.name),
               includeInTotals: Value.absentIfNull(includeInTotals),
               archived: Value.absentIfNull(archived),
               sortOrder: Value.absentIfNull(sortOrder),
@@ -84,6 +117,15 @@ final class LedgerRepository {
       if (updated == 0) throw LedgerException('No account $id');
       await _log(_db.accounts, id, 'update', at);
     });
+  }
+
+  /// The account [id], if it exists.
+  Future<Account?> account(String id) async {
+    final row =
+        await (_db.select(_db.accounts)
+              ..where((row) => row.id.equals(id) & row.deletedAt.isNull()))
+            .getSingleOrNull();
+    return row == null ? null : _accountOf(row);
   }
 
   /// The accounts in their order, without archived ones unless asked.
@@ -101,21 +143,47 @@ final class LedgerRepository {
     return query.watch().map((rows) => rows.map(_accountOf).toList());
   }
 
+  /// The accounts in their order with what each one holds, without archived
+  /// ones unless asked. One query gives both, so a list never shows an account
+  /// with a balance from before its last change.
+  Stream<List<AccountBalance>> watchAccountBalances({
+    bool includeArchived = false,
+  }) {
+    return _db
+        .customSelect(
+          '''
+          SELECT a.*, $_balance AS balance
+          FROM accounts a
+          WHERE a.deleted_at IS NULL AND (? OR NOT a.archived)
+          ORDER BY a.sort_order, a.name
+          ''',
+          variables: [
+            Variable.withString(TransactionStatus.planned.name),
+            Variable.withBool(includeArchived),
+          ],
+          readsFrom: {_db.accounts, _db.entries, _db.transactions},
+        )
+        .watch()
+        .asyncMap(
+          (rows) => Future.wait(
+            rows.map((row) async {
+              final account = _accountOf(await _db.accounts.mapFromRow(row));
+              return AccountBalance(
+                account,
+                Money(row.read<int>('balance'), account.currency),
+              );
+            }),
+          ),
+        );
+  }
+
   /// The balance of an account: the opening balance plus every entry that is
   /// not planned. It is computed each time and stored nowhere.
   Stream<Money> watchBalance(String accountId) {
     return _db
         .customSelect(
           '''
-          SELECT a.currency, a.decimal_digits,
-            a.opening_balance_minor + COALESCE((
-              SELECT SUM(e.amount_minor) FROM entries e
-              JOIN transactions t ON t.id = e.transaction_id
-              WHERE e.account_id = a.id
-                AND e.deleted_at IS NULL
-                AND t.deleted_at IS NULL
-                AND t.status <> ?
-            ), 0) AS balance
+          SELECT a.currency, a.decimal_digits, $_balance AS balance
           FROM accounts a WHERE a.id = ?
           ''',
           variables: [
@@ -277,6 +345,19 @@ final class LedgerRepository {
       ..limit(limit);
     return query.watch().asyncMap(_withLegs);
   }
+
+  /// The balance of the account `a` in SQL. Its one variable is the status
+  /// that does not count.
+  static const _balance = '''
+    a.opening_balance_minor + COALESCE((
+      SELECT SUM(e.amount_minor) FROM entries e
+      JOIN transactions t ON t.id = e.transaction_id
+      WHERE e.account_id = a.id
+        AND e.deleted_at IS NULL
+        AND t.deleted_at IS NULL
+        AND t.status <> ?
+    ), 0)
+  ''';
 
   DateTime _timestamp() => _now().toUtc();
 
@@ -479,6 +560,8 @@ final class LedgerRepository {
       row.openingBalanceMinor,
       _currency(row.currency, row.decimalDigits),
     ),
+    lastDigits: row.lastDigits,
+    art: AccountArt.values.byName(row.art),
     includeInTotals: row.includeInTotals,
     archived: row.archived,
     sortOrder: row.sortOrder,

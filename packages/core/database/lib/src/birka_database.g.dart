@@ -102,6 +102,27 @@ class $AccountsTable extends Accounts
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _lastDigitsMeta = const VerificationMeta(
+    'lastDigits',
+  );
+  @override
+  late final GeneratedColumn<String> lastDigits = GeneratedColumn<String>(
+    'last_digits',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _artMeta = const VerificationMeta('art');
+  @override
+  late final GeneratedColumn<String> art = GeneratedColumn<String>(
+    'art',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('emerald'),
+  );
   static const VerificationMeta _includeInTotalsMeta = const VerificationMeta(
     'includeInTotals',
   );
@@ -155,6 +176,8 @@ class $AccountsTable extends Accounts
     currency,
     decimalDigits,
     openingBalanceMinor,
+    lastDigits,
+    art,
     includeInTotals,
     archived,
     sortOrder,
@@ -242,6 +265,18 @@ class $AccountsTable extends Accounts
         ),
       );
     }
+    if (data.containsKey('last_digits')) {
+      context.handle(
+        _lastDigitsMeta,
+        lastDigits.isAcceptableOrUnknown(data['last_digits']!, _lastDigitsMeta),
+      );
+    }
+    if (data.containsKey('art')) {
+      context.handle(
+        _artMeta,
+        art.isAcceptableOrUnknown(data['art']!, _artMeta),
+      );
+    }
     if (data.containsKey('include_in_totals')) {
       context.handle(
         _includeInTotalsMeta,
@@ -308,6 +343,14 @@ class $AccountsTable extends Accounts
         DriftSqlType.int,
         data['${effectivePrefix}opening_balance_minor'],
       )!,
+      lastDigits: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_digits'],
+      ),
+      art: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}art'],
+      )!,
       includeInTotals: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}include_in_totals'],
@@ -360,6 +403,12 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
   /// The balance before the first entry, in minor units.
   final int openingBalanceMinor;
 
+  /// The last digits of the card, when the user gives them.
+  final String? lastDigits;
+
+  /// One of the names of `AccountArt` in the ledger.
+  final String art;
+
   /// Whether the account counts towards the capital.
   final bool includeInTotals;
 
@@ -378,6 +427,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     required this.currency,
     required this.decimalDigits,
     required this.openingBalanceMinor,
+    this.lastDigits,
+    required this.art,
     required this.includeInTotals,
     required this.archived,
     required this.sortOrder,
@@ -396,6 +447,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     map['currency'] = Variable<String>(currency);
     map['decimal_digits'] = Variable<int>(decimalDigits);
     map['opening_balance_minor'] = Variable<int>(openingBalanceMinor);
+    if (!nullToAbsent || lastDigits != null) {
+      map['last_digits'] = Variable<String>(lastDigits);
+    }
+    map['art'] = Variable<String>(art);
     map['include_in_totals'] = Variable<bool>(includeInTotals);
     map['archived'] = Variable<bool>(archived);
     map['sort_order'] = Variable<int>(sortOrder);
@@ -415,6 +470,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       currency: Value(currency),
       decimalDigits: Value(decimalDigits),
       openingBalanceMinor: Value(openingBalanceMinor),
+      lastDigits: lastDigits == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastDigits),
+      art: Value(art),
       includeInTotals: Value(includeInTotals),
       archived: Value(archived),
       sortOrder: Value(sortOrder),
@@ -438,6 +497,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       openingBalanceMinor: serializer.fromJson<int>(
         json['openingBalanceMinor'],
       ),
+      lastDigits: serializer.fromJson<String?>(json['lastDigits']),
+      art: serializer.fromJson<String>(json['art']),
       includeInTotals: serializer.fromJson<bool>(json['includeInTotals']),
       archived: serializer.fromJson<bool>(json['archived']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
@@ -456,6 +517,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       'currency': serializer.toJson<String>(currency),
       'decimalDigits': serializer.toJson<int>(decimalDigits),
       'openingBalanceMinor': serializer.toJson<int>(openingBalanceMinor),
+      'lastDigits': serializer.toJson<String?>(lastDigits),
+      'art': serializer.toJson<String>(art),
       'includeInTotals': serializer.toJson<bool>(includeInTotals),
       'archived': serializer.toJson<bool>(archived),
       'sortOrder': serializer.toJson<int>(sortOrder),
@@ -472,6 +535,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     String? currency,
     int? decimalDigits,
     int? openingBalanceMinor,
+    Value<String?> lastDigits = const Value.absent(),
+    String? art,
     bool? includeInTotals,
     bool? archived,
     int? sortOrder,
@@ -485,6 +550,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     currency: currency ?? this.currency,
     decimalDigits: decimalDigits ?? this.decimalDigits,
     openingBalanceMinor: openingBalanceMinor ?? this.openingBalanceMinor,
+    lastDigits: lastDigits.present ? lastDigits.value : this.lastDigits,
+    art: art ?? this.art,
     includeInTotals: includeInTotals ?? this.includeInTotals,
     archived: archived ?? this.archived,
     sortOrder: sortOrder ?? this.sortOrder,
@@ -504,6 +571,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       openingBalanceMinor: data.openingBalanceMinor.present
           ? data.openingBalanceMinor.value
           : this.openingBalanceMinor,
+      lastDigits: data.lastDigits.present
+          ? data.lastDigits.value
+          : this.lastDigits,
+      art: data.art.present ? data.art.value : this.art,
       includeInTotals: data.includeInTotals.present
           ? data.includeInTotals.value
           : this.includeInTotals,
@@ -524,6 +595,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           ..write('currency: $currency, ')
           ..write('decimalDigits: $decimalDigits, ')
           ..write('openingBalanceMinor: $openingBalanceMinor, ')
+          ..write('lastDigits: $lastDigits, ')
+          ..write('art: $art, ')
           ..write('includeInTotals: $includeInTotals, ')
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder')
@@ -542,6 +615,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     currency,
     decimalDigits,
     openingBalanceMinor,
+    lastDigits,
+    art,
     includeInTotals,
     archived,
     sortOrder,
@@ -559,6 +634,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           other.currency == this.currency &&
           other.decimalDigits == this.decimalDigits &&
           other.openingBalanceMinor == this.openingBalanceMinor &&
+          other.lastDigits == this.lastDigits &&
+          other.art == this.art &&
           other.includeInTotals == this.includeInTotals &&
           other.archived == this.archived &&
           other.sortOrder == this.sortOrder);
@@ -574,6 +651,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
   final Value<String> currency;
   final Value<int> decimalDigits;
   final Value<int> openingBalanceMinor;
+  final Value<String?> lastDigits;
+  final Value<String> art;
   final Value<bool> includeInTotals;
   final Value<bool> archived;
   final Value<int> sortOrder;
@@ -588,6 +667,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     this.currency = const Value.absent(),
     this.decimalDigits = const Value.absent(),
     this.openingBalanceMinor = const Value.absent(),
+    this.lastDigits = const Value.absent(),
+    this.art = const Value.absent(),
     this.includeInTotals = const Value.absent(),
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
@@ -603,6 +684,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     required String currency,
     required int decimalDigits,
     this.openingBalanceMinor = const Value.absent(),
+    this.lastDigits = const Value.absent(),
+    this.art = const Value.absent(),
     this.includeInTotals = const Value.absent(),
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
@@ -624,6 +707,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Expression<String>? currency,
     Expression<int>? decimalDigits,
     Expression<int>? openingBalanceMinor,
+    Expression<String>? lastDigits,
+    Expression<String>? art,
     Expression<bool>? includeInTotals,
     Expression<bool>? archived,
     Expression<int>? sortOrder,
@@ -640,6 +725,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       if (decimalDigits != null) 'decimal_digits': decimalDigits,
       if (openingBalanceMinor != null)
         'opening_balance_minor': openingBalanceMinor,
+      if (lastDigits != null) 'last_digits': lastDigits,
+      if (art != null) 'art': art,
       if (includeInTotals != null) 'include_in_totals': includeInTotals,
       if (archived != null) 'archived': archived,
       if (sortOrder != null) 'sort_order': sortOrder,
@@ -657,6 +744,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Value<String>? currency,
     Value<int>? decimalDigits,
     Value<int>? openingBalanceMinor,
+    Value<String?>? lastDigits,
+    Value<String>? art,
     Value<bool>? includeInTotals,
     Value<bool>? archived,
     Value<int>? sortOrder,
@@ -672,6 +761,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       currency: currency ?? this.currency,
       decimalDigits: decimalDigits ?? this.decimalDigits,
       openingBalanceMinor: openingBalanceMinor ?? this.openingBalanceMinor,
+      lastDigits: lastDigits ?? this.lastDigits,
+      art: art ?? this.art,
       includeInTotals: includeInTotals ?? this.includeInTotals,
       archived: archived ?? this.archived,
       sortOrder: sortOrder ?? this.sortOrder,
@@ -709,6 +800,12 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     if (openingBalanceMinor.present) {
       map['opening_balance_minor'] = Variable<int>(openingBalanceMinor.value);
     }
+    if (lastDigits.present) {
+      map['last_digits'] = Variable<String>(lastDigits.value);
+    }
+    if (art.present) {
+      map['art'] = Variable<String>(art.value);
+    }
     if (includeInTotals.present) {
       map['include_in_totals'] = Variable<bool>(includeInTotals.value);
     }
@@ -736,6 +833,8 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
           ..write('currency: $currency, ')
           ..write('decimalDigits: $decimalDigits, ')
           ..write('openingBalanceMinor: $openingBalanceMinor, ')
+          ..write('lastDigits: $lastDigits, ')
+          ..write('art: $art, ')
           ..write('includeInTotals: $includeInTotals, ')
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder, ')
@@ -3456,6 +3555,8 @@ typedef $$AccountsTableCreateCompanionBuilder =
       required String currency,
       required int decimalDigits,
       Value<int> openingBalanceMinor,
+      Value<String?> lastDigits,
+      Value<String> art,
       Value<bool> includeInTotals,
       Value<bool> archived,
       Value<int> sortOrder,
@@ -3472,6 +3573,8 @@ typedef $$AccountsTableUpdateCompanionBuilder =
       Value<String> currency,
       Value<int> decimalDigits,
       Value<int> openingBalanceMinor,
+      Value<String?> lastDigits,
+      Value<String> art,
       Value<bool> includeInTotals,
       Value<bool> archived,
       Value<int> sortOrder,
@@ -3553,6 +3656,16 @@ class $$AccountsTableFilterComposer
 
   ColumnFilters<int> get openingBalanceMinor => $composableBuilder(
     column: $table.openingBalanceMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastDigits => $composableBuilder(
+    column: $table.lastDigits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get art => $composableBuilder(
+    column: $table.art,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3651,6 +3764,16 @@ class $$AccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get lastDigits => $composableBuilder(
+    column: $table.lastDigits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get art => $composableBuilder(
+    column: $table.art,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get includeInTotals => $composableBuilder(
     column: $table.includeInTotals,
     builder: (column) => ColumnOrderings(column),
@@ -3706,6 +3829,14 @@ class $$AccountsTableAnnotationComposer
     column: $table.openingBalanceMinor,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get lastDigits => $composableBuilder(
+    column: $table.lastDigits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get art =>
+      $composableBuilder(column: $table.art, builder: (column) => column);
 
   GeneratedColumn<bool> get includeInTotals => $composableBuilder(
     column: $table.includeInTotals,
@@ -3781,6 +3912,8 @@ class $$AccountsTableTableManager
                 Value<String> currency = const Value.absent(),
                 Value<int> decimalDigits = const Value.absent(),
                 Value<int> openingBalanceMinor = const Value.absent(),
+                Value<String?> lastDigits = const Value.absent(),
+                Value<String> art = const Value.absent(),
                 Value<bool> includeInTotals = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
@@ -3795,6 +3928,8 @@ class $$AccountsTableTableManager
                 currency: currency,
                 decimalDigits: decimalDigits,
                 openingBalanceMinor: openingBalanceMinor,
+                lastDigits: lastDigits,
+                art: art,
                 includeInTotals: includeInTotals,
                 archived: archived,
                 sortOrder: sortOrder,
@@ -3811,6 +3946,8 @@ class $$AccountsTableTableManager
                 required String currency,
                 required int decimalDigits,
                 Value<int> openingBalanceMinor = const Value.absent(),
+                Value<String?> lastDigits = const Value.absent(),
+                Value<String> art = const Value.absent(),
                 Value<bool> includeInTotals = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
@@ -3825,6 +3962,8 @@ class $$AccountsTableTableManager
                 currency: currency,
                 decimalDigits: decimalDigits,
                 openingBalanceMinor: openingBalanceMinor,
+                lastDigits: lastDigits,
+                art: art,
                 includeInTotals: includeInTotals,
                 archived: archived,
                 sortOrder: sortOrder,

@@ -2,7 +2,8 @@
 .DEFAULT_GOAL := help
 
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
-CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger
+CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
+	packages/features/accounts/common
 
 COMPILER ?= vm
 ifeq ($(COMPILER),vm)
@@ -27,7 +28,7 @@ BUILD_NUMBER ?= 1
 
 .PHONY: help bootstrap format analyze check-deps check-tokens tokens gen icons \
 	icon-masters web-fonts test test-core test-database test-tools test-design \
-	test-web test-mobile run-mobile run-web build-web build-apk check
+	test-features test-web test-mobile run-mobile run-web build-web build-apk check
 
 help: ## Show the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -69,7 +70,7 @@ icons: ## App icons and launch screens from the masters (macOS)
 web-fonts: ## WOFF2 subsets for the web from the Flutter kit's fonts
 	tools/dev/build_web_fonts.sh
 
-test: test-core test-database test-tools test-design test-web test-mobile ## All tests on the VM
+test: test-core test-database test-tools test-design test-features test-web test-mobile ## All tests on the VM
 
 test-core: ## Core tests; COMPILER=vm|dart2js|dart2wasm
 	@for package in $(CORE_PACKAGES); do \
@@ -87,6 +88,9 @@ test-design: ## Tests of the token generator and both kits
 	cd packages/design/tokens && dart test
 	cd packages/design/flutter && flutter test
 	cd packages/design/jaspr && dart test
+
+test-features: ## Widget tests of the features
+	cd packages/features/accounts/flutter && flutter test
 
 test-web: ## Tests of the Jaspr host
 	cd apps/web && dart test

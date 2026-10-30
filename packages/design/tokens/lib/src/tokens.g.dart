@@ -70,6 +70,21 @@ abstract final class BirkaTokens {
   /// `color.palette.slate` as ARGB.
   static const int colorPaletteSlate = 0xFF3A3A3C;
 
+  /// `color.palette.steel` as ARGB.
+  static const int colorPaletteSteel = 0xFF6E6E73;
+
+  /// `color.palette.sapphire` as ARGB.
+  static const int colorPaletteSapphire = 0xFF2368B3;
+
+  /// `color.palette.bronze` as ARGB.
+  static const int colorPaletteBronze = 0xFFA8650F;
+
+  /// `color.palette.iris` as ARGB.
+  static const int colorPaletteIris = 0xFF6A4EC4;
+
+  /// `color.palette.ruby` as ARGB.
+  static const int colorPaletteRuby = 0xFFB83A58;
+
   /// `color.background` as ARGB.
   static const int colorBackground = 0xFF000000;
 
@@ -119,6 +134,24 @@ abstract final class BirkaTokens {
 
   /// `color.hairline` as ARGB.
   static const int colorHairline = 0x17FFFFFF;
+
+  /// `color.art.emerald` as ARGB.
+  static const int colorArtEmerald = 0xFF248A56;
+
+  /// `color.art.graphite` as ARGB.
+  static const int colorArtGraphite = 0xFF6E6E73;
+
+  /// `color.art.sapphire` as ARGB.
+  static const int colorArtSapphire = 0xFF2368B3;
+
+  /// `color.art.amber` as ARGB.
+  static const int colorArtAmber = 0xFFA8650F;
+
+  /// `color.art.violet` as ARGB.
+  static const int colorArtViolet = 0xFF6A4EC4;
+
+  /// `color.art.rose` as ARGB.
+  static const int colorArtRose = 0xFFB83A58;
 
   /// `color.glass.fillTop` as ARGB.
   static const int colorGlassFillTop = 0x1AFFFFFF;

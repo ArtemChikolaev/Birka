@@ -21,6 +21,11 @@
   --color-palette-orange: #fb923c;
   --color-palette-cyan: #22d3ee;
   --color-palette-slate: #3a3a3c;
+  --color-palette-steel: #6e6e73;
+  --color-palette-sapphire: #2368b3;
+  --color-palette-bronze: #a8650f;
+  --color-palette-iris: #6a4ec4;
+  --color-palette-ruby: #b83a58;
   --color-background: #000000;
   --color-surface: #0e0e0f;
   --color-surface-raised: #161617;
@@ -38,6 +43,12 @@
   --color-positive: #3ddc97;
   --color-negative: #ff8e7f;
   --color-hairline: rgb(255 255 255 / 0.09);
+  --color-art-emerald: #248a56;
+  --color-art-graphite: #6e6e73;
+  --color-art-sapphire: #2368b3;
+  --color-art-amber: #a8650f;
+  --color-art-violet: #6a4ec4;
+  --color-art-rose: #b83a58;
   --color-glass-fill-top: rgb(255 255 255 / 0.1);
   --color-glass-fill-bottom: rgb(255 255 255 / 0.03);
   --color-glass-border: rgb(255 255 255 / 0.14);

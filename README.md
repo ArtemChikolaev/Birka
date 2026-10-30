@@ -61,21 +61,24 @@ apps/web                 Jaspr host: a static site with interactive islands
 packages/core/money      Money and Currency value types
 packages/core/database   the one Drift database: its schema and migrations
 packages/core/ledger     accounts, categories, transactions and their rules
+packages/core/l10n       strings in Russian and English, amounts for people
 packages/design/tokens   design tokens and their generator for Dart and CSS
 packages/design/flutter  theme, fonts and glass widgets for Flutter
 packages/design/jaspr    styles, web fonts and glass components for Jaspr
 packages/design/brand    the app icon: a glass coin in SVG and its PNG masters
+packages/features        one folder per feature, such as accounts
 tools                    repository tooling: package boundary checks, dev scripts
 docs/adr                 architecture decision records
 ```
 
-Each feature will live in one folder, `packages/features/<feature>/`, with
-its data, domain and presentation layers and a Flutter and a Jaspr UI
+Each feature lives in one folder, `packages/features/<feature>/`, with its
+data, domain and presentation layers and a Flutter and a Jaspr UI
 ([ADR 0006](docs/adr/0006-feature-first-packages.md)).
 
 ## Getting started
 
-You need Flutter 3.38.10 (pinned in `.fvmrc`) and GNU Make.
+You need Flutter 3.38.10 (pinned in `.fvmrc`) and GNU Make, and CocoaPods to
+build for iOS and macOS.
 
 ```bash
 make bootstrap                      # fetch dependencies

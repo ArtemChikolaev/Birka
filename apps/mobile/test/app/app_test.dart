@@ -1,18 +1,50 @@
 import 'dart:convert';
 
+import 'package:accounts_common/accounts_common.dart';
+import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:birka_mobile/app/app.dart';
 import 'package:birka_mobile/app/placeholder_page.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 import 'package:l10n/l10n.dart';
+
+/// The accounts in memory: the app under test needs no database.
+final class _NoAccounts implements AccountsRepository {
+  @override
+  Stream<List<AccountBalance>> watchAccounts() => Stream.value(const []);
+
+  @override
+  Future<Account?> account(String id) async => null;
+
+  @override
+  Future<void> add(AccountDraft draft) async {}
+
+  @override
+  Future<void> update(String id, AccountDraft draft) async {}
+
+  @override
+  Future<void> setArchived(String id, {required bool archived}) async {}
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  late GetIt getIt;
+
+  setUp(() {
+    getIt = GetIt.asNewInstance();
+    final AccountsRepository accounts = _NoAccounts();
+    getIt
+      ..registerFactory(() => AccountsCubit(accounts))
+      ..registerFactoryParam<AccountFormCubit, String?, void>(
+        (accountId, _) => AccountFormCubit(accounts, accountId: accountId),
+      );
+  });
 
   testWidgets('opens on the overview', (tester) async {
-    await tester.pumpWidget(const BirkaApp());
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
     await tester.pumpAndSettle();
 
     // The title of the page and the label of the tab.
@@ -21,7 +53,7 @@ void main() {
   });
 
   testWidgets('dresses the app in the Birka theme', (tester) async {
-    await tester.pumpWidget(const BirkaApp());
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
     await tester.pumpAndSettle();
 
     final theme = Theme.of(tester.element(find.byType(GlassNavBar)));
@@ -30,7 +62,7 @@ void main() {
   });
 
   testWidgets('a tab opens its page, and the bar follows', (tester) async {
-    await tester.pumpWidget(const BirkaApp());
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text(t.app.reports));
@@ -44,7 +76,7 @@ void main() {
   testWidgets('the action opens quick add, and closing returns', (
     tester,
   ) async {
-    await tester.pumpWidget(const BirkaApp());
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
     await tester.pumpAndSettle();
 
     await tester.tap(find.bySemanticsLabel(t.app.newOperation));
@@ -55,6 +87,31 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.app.close));
     await tester.pumpAndSettle();
     expect(find.byType(QuickAddPlaceholder), findsNothing);
+    expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('accounts open from the more tab, over the bar', (tester) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.accounts.title));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AccountsPage), findsOneWidget);
+    expect(find.byType(GlassNavBar), findsNothing);
+
+    await tester.tap(find.bySemanticsLabel(t.accounts.add));
+    await tester.pumpAndSettle();
+    expect(find.byType(AccountFormPage), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel(t.app.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(AccountsPage), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel(t.accounts.back));
+    await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
   });
 

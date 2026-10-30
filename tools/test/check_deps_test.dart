@@ -215,4 +215,87 @@ dev_dependencies:
         'is pure Dart but depends on flutter_test';
     expect(violations.map((violation) => violation.toString()), [expected]);
   });
+
+  group('layers of a common package', () {
+    late Directory root;
+    final budgets = package(
+      'packages/features/budgets/common',
+      'budgets_common',
+    );
+
+    void write(String path, String source) {
+      File(p.join(root.path, budgets.path, 'lib', 'src', path))
+        ..createSync(recursive: true)
+        ..writeAsStringSync(source);
+    }
+
+    List<String> layers() => [
+      for (final violation in checkLayers(root, budgets)) violation.message,
+    ];
+
+    setUp(() => root = Directory.systemTemp.createTempSync('layers'));
+    tearDown(() => root.deleteSync(recursive: true));
+
+    test('follow the direction presentation, domain, data', () {
+      write('domain/budget.dart', "import 'package:ledger/ledger.dart';");
+      write(
+        'data/ledger_budgets.dart',
+        "import 'package:budgets_common/src/domain/budget.dart';\n"
+            "import 'package:database/database.dart';",
+      );
+      write(
+        'presentation/budgets_cubit.dart',
+        "import 'package:budgets_common/src/domain/budget.dart';",
+      );
+      write(
+        'di/register.dart',
+        "import 'package:budgets_common/src/data/ledger_budgets.dart';\n"
+            "import 'package:budgets_common/src/presentation/budgets_cubit.dart';",
+      );
+      expect(layers(), isEmpty);
+    });
+
+    test('the domain cannot import data or the database', () {
+      write(
+        'domain/budget.dart',
+        "import 'package:budgets_common/src/data/ledger_budgets.dart';\n"
+            "import 'package:drift/drift.dart';",
+      );
+      expect(layers(), [
+        contains('domain code that imports its data layer'),
+        contains('domain code that imports package:drift'),
+      ]);
+    });
+
+    test('a cubit cannot import data', () {
+      write(
+        'presentation/budgets_cubit.dart',
+        "import 'package:budgets_common/src/data/ledger_budgets.dart';",
+      );
+      expect(layers(), [
+        contains('presentation code that imports its data layer'),
+      ]);
+    });
+
+    test('data cannot import presentation', () {
+      write(
+        'data/ledger_budgets.dart',
+        "import 'package:budgets_common/src/presentation/budgets_cubit.dart';",
+      );
+      expect(layers(), [
+        contains('data code that imports its presentation layer'),
+      ]);
+    });
+
+    test('a violation points at the file', () {
+      write(
+        'presentation/budgets_cubit.dart',
+        "import 'package:database/database.dart';",
+      );
+      expect(
+        checkLayers(root, budgets).single.file,
+        '${budgets.path}/lib/src/presentation/budgets_cubit.dart',
+      );
+    });
+  });
 }
