@@ -1,0 +1,27 @@
+# The app icon on every platform, from the masters that
+# tools/dev/render_icons.sh renders from packages/design/brand/coin.svg.
+# `make icons` regenerates the platform files.
+flutter_launcher_icons:
+  image_path: ../../packages/design/brand/png/icon.png
+
+  ios: true
+  remove_alpha_ios: true
+  background_color_ios: "#020604"
+  # iOS 18 home screens in the dark and tinted styles.
+  image_path_ios_dark_transparent: ../../packages/design/brand/png/icon-dark.png
+  image_path_ios_tinted_grayscale: ../../packages/design/brand/png/icon-dark.png
+  desaturate_tinted_to_grayscale_ios: true
+
+  android: true
+  min_sdk_android: 24
+  # Before Android 8 a launcher shows the icon as it is: the rounded tile.
+  image_path_android: ../../packages/design/brand/png/icon-macos.png
+  adaptive_icon_background: ../../packages/design/brand/png/icon-background.png
+  # The coin already sits in the safe zone, so no extra inset.
+  adaptive_icon_foreground: ../../packages/design/brand/png/icon-foreground.png
+  adaptive_icon_foreground_inset: 0
+  adaptive_icon_monochrome: ../../packages/design/brand/png/icon-monochrome.png
+
+  macos:
+    generate: true
+    image_path: ../../packages/design/brand/png/icon-macos.png

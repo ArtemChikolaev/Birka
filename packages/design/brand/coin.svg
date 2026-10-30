@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Birka: a glass coin with a milled edge and the letter B</title>
+  <style>
+    @font-face {
+      font-family: "Manrope";
+      src: url("../flutter/fonts/Manrope-Variable.ttf") format("truetype");
+      font-weight: 200 800;
+    }
+    .letter {
+      font-family: "Manrope", sans-serif;
+      font-size: 335.13px;
+      font-weight: 800;
+    }
+  </style>
+  <defs>
+    <radialGradient id="glow-top-left" gradientUnits="userSpaceOnUse" cx="286.72" cy="184.32" r="819.2" gradientTransform="translate(286.72 184.32) scale(1 0.875) translate(-286.72 -184.32)">
+      <stop offset="0" stop-color="#248A56" stop-opacity="0.55"/>
+      <stop offset="0.7" stop-color="#248A56" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-bottom-right" gradientUnits="userSpaceOnUse" cx="942.08" cy="1024" r="716.8" gradientTransform="translate(942.08 1024) scale(1 0.857) translate(-942.08 -1024)">
+      <stop offset="0" stop-color="#248A56" stop-opacity="0.42"/>
+      <stop offset="0.7" stop-color="#248A56" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="coin-back" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#13704A"/>
+      <stop offset="0.6" stop-color="#062E1D"/>
+      <stop offset="1" stop-color="#031109"/>
+    </linearGradient>
+    <radialGradient id="coin-shine" cx="0.3" cy="0.24" r="1.0332">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.62"/>
+      <stop offset="0.3" stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="0.58" stop-color="#3DDC97" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#3DDC97" stop-opacity="0.4"/>
+    </radialGradient>
+    <clipPath id="coin-inside">
+      <circle cx="516.65" cy="507.35" r="342.11"/>
+    </clipPath>
+    <!-- The macOS tile before it is scaled to 824 x 824. -->
+    <clipPath id="tile">
+      <rect width="1024" height="1024" rx="230.4"/>
+    </clipPath>
+    <filter id="blur-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="139.64"/>
+    </filter>
+    <filter id="blur-inner" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="60.51"/>
+    </filter>
+    <filter id="blur-letter" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="51.2"/>
+    </filter>
+    <filter id="blur-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+
+  <!-- Hidden here; render.html shows it for the macOS icon. -->
+  <g id="tile-shadow" display="none">
+    <rect x="100" y="110" width="824" height="824" rx="185.4" fill="#000000" fill-opacity="0.35" filter="url(#blur-shadow)"/>
+  </g>
+
+  <g id="icon">
+    <g id="background">
+      <rect width="1024" height="1024" fill="#020604"/>
+      <rect width="1024" height="1024" fill="url(#glow-top-left)"/>
+      <rect width="1024" height="1024" fill="url(#glow-bottom-right)"/>
+      <!-- The light line along the top edge of the macOS tile. -->
+      <path id="tile-highlight" display="none" clip-path="url(#tile)" fill="#FFFFFF" fill-opacity="0.18" fill-rule="evenodd" d="M-10 -10H1034V1040H-10Z M230.4 4.65H793.6A230.4 230.4 0 0 1 1024 235.05V798.25A230.4 230.4 0 0 1 793.6 1028.65H230.4A230.4 230.4 0 0 1 0 798.25V235.05A230.4 230.4 0 0 1 230.4 4.65Z"/>
+    </g>
+
+    <g id="art">
+      <!-- The back of the coin, which gives it thickness. -->
+      <circle cx="558.54" cy="525.97" r="349.09" fill="url(#coin-back)"/>
+      <circle cx="516.65" cy="507.35" r="349.09" fill="#3DDC97" fill-opacity="0.45" filter="url(#blur-glow)"/>
+      <circle cx="516.65" cy="507.35" r="349.09" fill="#0B2C1E"/>
+      <circle cx="516.65" cy="507.35" r="349.09" fill="url(#coin-shine)"/>
+      <g clip-path="url(#coin-inside)">
+        <!-- A glow that rises from the bottom edge. -->
+        <path fill="#3DDC97" fill-opacity="0.42" fill-rule="evenodd" filter="url(#blur-inner)" d="M-200 -200H1224V1224H-200Z M174.54 460.8a342.11 342.11 0 1 0 684.22 0a342.11 342.11 0 1 0 -684.22 0Z"/>
+        <!-- A light line along the top edge. -->
+        <path fill="#FFFFFF" fill-opacity="0.55" fill-rule="evenodd" d="M-200 -200H1224V1224H-200Z M174.54 516.66a342.11 342.11 0 1 0 684.22 0a342.11 342.11 0 1 0 -684.22 0Z"/>
+      </g>
+      <circle cx="516.65" cy="507.35" r="345.6" fill="none" stroke="#FFFFFF" stroke-opacity="0.42" stroke-width="6.98"/>
+      <!-- The milled edge: 56 ridges of 1.4 degrees. -->
+      <circle cx="516.65" cy="507.35" r="296.27" fill="none" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="49.78" pathLength="360" stroke-dasharray="1.4 5.0286" transform="rotate(-90 516.65 507.35)"/>
+      <circle cx="516.65" cy="507.35" r="235.05" fill="none" stroke="#FFFFFF" stroke-opacity="0.26" stroke-width="4.65"/>
+      <text class="letter" x="523.36" y="635.58" text-anchor="middle" fill="#3DDC97" fill-opacity="0.8" filter="url(#blur-letter)">B</text>
+      <text class="letter" x="523.36" y="635.58" text-anchor="middle" fill="#F4FFF9">B</text>
+    </g>
+  </g>
+
+  <!-- One color for the themed icon of Android 13: the system paints it. -->
+  <g id="monochrome" display="none">
+    <g transform="translate(-4.65 4.65)" fill="#FFFFFF">
+      <circle cx="516.65" cy="507.35" r="338" fill="none" stroke="#FFFFFF" stroke-width="22"/>
+      <circle cx="516.65" cy="507.35" r="296.27" fill="none" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="49.78" pathLength="360" stroke-dasharray="1.4 5.0286" transform="rotate(-90 516.65 507.35)"/>
+      <text class="letter" x="523.36" y="635.58" text-anchor="middle">B</text>
+    </g>
+  </g>
+</svg>

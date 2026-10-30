@@ -31,6 +31,7 @@
 | Strings | slang, slang_flutter | 4.19.2, 4.19.0 |
 | Testing and lints | test, mocktail, very_good_analysis | 1.26.3, 1.0.5, 10.1.0 |
 | Monitoring | sentry_flutter | 9.30.1 |
+| App icons | flutter_launcher_icons | 0.14.4 |
 | Sync client (later) | connectrpc, protobuf | 2.0.1, 6.1.0 |
 
 3. Every dependency gets an explicit caret constraint taken from this table.

@@ -60,6 +60,7 @@ apps/mobile              Flutter host: Android, iOS, macOS during development
 packages/core/money      Money and Currency value types
 packages/design/tokens   design tokens and their generator for Dart and CSS
 packages/design/flutter  theme, fonts and glass widgets for Flutter
+packages/design/brand    the app icon: a glass coin in SVG and its PNG masters
 tools                    repository tooling: package boundary checks, dev scripts
 docs/adr                 architecture decision records
 ```

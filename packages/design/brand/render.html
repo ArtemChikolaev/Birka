@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Birka icon</title>
+<!--
+  Shows one variant of coin.svg for tools/dev/render_icons.sh:
+  render.html?variant=ios|dark|foreground|background|monochrome|macos|launch|
+  launch-android-12.
+  The SVG is inlined rather than loaded as an image, because an image may not
+  load the Manrope font for the letter.
+-->
+<style>
+  html, body { margin: 0; background: transparent; }
+  svg { display: block; width: 100vw; height: 100vh; }
+
+  /* The coin without the background: the dark icon of iOS. */
+  [data-variant="dark"] #background { display: none; }
+
+  /* The layers of the Android adaptive icon. Android shows a circle of two
+     thirds of the width, so the coin shrinks to keep the margin it has on
+     iOS. */
+  [data-variant="foreground"] #background { display: none; }
+  [data-variant="foreground"] #art { transform: scale(0.68); transform-origin: 512px 512px; }
+  [data-variant="background"] #art { display: none; }
+  [data-variant="monochrome"] #icon { display: none; }
+  [data-variant="monochrome"] #monochrome { display: inline; transform: scale(0.68); transform-origin: 512px 512px; }
+
+  /* The coin on the launch screens, on black. */
+  [data-variant="launch"] #background,
+  [data-variant="launch-android-12"] #background { display: none; }
+  [data-variant="launch"] #art { transform: scale(0.8); transform-origin: 512px 512px; }
+
+  /* Android 12 cuts its launch icon to a circle of two thirds of the width:
+     the glow fades out before that edge instead of being cut. */
+  [data-variant="launch-android-12"] #art { transform: scale(0.72); transform-origin: 512px 512px; }
+  [data-variant="launch-android-12"] svg {
+    mask-image: radial-gradient(closest-side, #000 83%, transparent 100%);
+    mask-size: 66.667% 66.667%;
+    mask-position: center;
+    mask-repeat: no-repeat;
+  }
+
+  /* macOS draws an icon as it is: a rounded tile of 824 x 824 with a shadow. */
+  [data-variant="macos"] #tile-shadow,
+  [data-variant="macos"] #tile-highlight { display: inline; }
+  [data-variant="macos"] #icon { transform: scale(0.8047); transform-origin: 512px 512px; clip-path: url(#tile); }
+</style>
+</head>
+<body>
+<script>
+  document.documentElement.dataset.variant =
+    new URLSearchParams(location.search).get('variant') ?? 'ios';
+  fetch('coin.svg')
+    .then((response) => response.text())
+    .then(async (svg) => {
+      document.body.innerHTML = svg;
+      await document.fonts.load('800 100px Manrope');
+      await document.fonts.ready;
+    });
+</script>
+</body>
+</html>
