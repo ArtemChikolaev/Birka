@@ -7,3 +7,4 @@
 | [0003](0003-money-representation.md) | Money as integer minor units | accepted 2026-10-29 |
 | [0004](0004-branches-and-releases.md) | GitHub flow with a protected main | accepted 2026-10-29 |
 | [0005](0005-claude-review.md) | An advisory Claude review of pull requests | accepted 2026-10-30 |
+| [0006](0006-feature-first-packages.md) | Feature-first packages with Clean layers inside | accepted 2026-10-30 |

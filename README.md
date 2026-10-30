@@ -43,10 +43,14 @@ from many countries changed hands.
 ## Repository layout
 
 ```text
-packages/money   Money and Currency value types
-tools            repository tooling: package boundary checks
-docs/adr         architecture decision records
+packages/core/money   Money and Currency value types
+tools                 repository tooling: package boundary checks
+docs/adr              architecture decision records
 ```
+
+Each feature will live in one folder, `packages/features/<feature>/`, with
+its data, domain and presentation layers and a Flutter and a Jaspr UI
+([ADR 0006](docs/adr/0006-feature-first-packages.md)).
 
 ## Getting started
 

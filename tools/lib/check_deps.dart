@@ -1,4 +1,5 @@
-/// Package boundary rules for the Birka workspace, described in ADR 0001.
+/// Package boundary rules for the Birka workspace, described in ADR 0001 and
+/// ADR 0006.
 library;
 
 import 'dart:io';
@@ -11,7 +12,7 @@ enum Zone {
   /// An app host in `apps/`.
   host,
 
-  /// A pure-Dart core package directly in `packages/`.
+  /// A pure-Dart package in `packages/core/` that several features share.
   core,
 
   /// A design system package in `packages/design/`.
@@ -22,6 +23,21 @@ enum Zone {
 
   /// Repository tooling in `tools/`.
   tooling,
+}
+
+/// The UI framework a package is written for.
+enum Framework {
+  /// Flutter: the mobile host, `flutter/` layers and the catalog.
+  flutter('Flutter'),
+
+  /// Jaspr: the web host and `jaspr/` layers.
+  jaspr('Jaspr')
+  ;
+
+  const Framework(this.label);
+
+  /// How reports name the framework.
+  final String label;
 }
 
 /// A workspace package, as the boundary rules see it.
@@ -68,9 +84,9 @@ final class WorkspacePackage {
   /// The zone this package belongs to, or `null` if it is in none.
   Zone? get zone => switch (_segments) {
     ['apps', _] => Zone.host,
+    ['packages', 'core', _] => Zone.core,
     ['packages', 'design', _] => Zone.design,
     ['packages', 'features', _, _] => Zone.feature,
-    ['packages', _] => Zone.core,
     ['tools'] => Zone.tooling,
     _ => null,
   };
@@ -78,14 +94,22 @@ final class WorkspacePackage {
   /// The feature of a feature layer, for example `budgets`.
   String? get feature => zone == Zone.feature ? _segments[2] : null;
 
-  /// The last directory of [path]: `common`, `flutter`, `web` and so on.
+  /// The last directory of [path]: `common`, `flutter`, `jaspr` and so on.
   String get layer => _segments.last;
+
+  /// The UI framework of the package, or `null` for pure Dart and tooling.
+  Framework? get framework => switch ((zone, layer)) {
+    (Zone.host, 'mobile') => Framework.flutter,
+    (Zone.host, 'web') => Framework.jaspr,
+    (Zone.feature || Zone.design, 'flutter' || 'catalog') => Framework.flutter,
+    (Zone.feature || Zone.design, 'jaspr') => Framework.jaspr,
+    _ => null,
+  };
 
   /// Whether the package must not depend on Flutter or Jaspr.
   bool get isPureDart => switch (zone) {
     Zone.core => true,
-    Zone.feature => layer == 'common',
-    Zone.design => !const {'flutter', 'web', 'catalog'}.contains(layer),
+    Zone.feature || Zone.design => framework == null,
     _ => false,
   };
 }
@@ -129,21 +153,22 @@ List<Violation> checkPackages(List<WorkspacePackage> packages) {
 
     final zone = package.zone;
     if (zone == null) {
-      report('is outside the known zones: apps/, packages/, tools/');
+      report(
+        'is outside the known zones: apps/, packages/core/, '
+        'packages/design/, packages/features/, tools/',
+      );
       continue;
     }
+    final framework = package.framework;
     for (final MapEntry(key: name, value: spec)
         in package.dependencies.entries) {
-      if (_isFlutter(name) && package.isPureDart) {
+      if ((_isFlutter(name) || _isJaspr(name)) && package.isPureDart) {
         report('is pure Dart but depends on $name');
       }
-      if (_isJaspr(name) && package.isPureDart) {
-        report('is pure Dart but depends on $name');
+      if (_isFlutter(name) && framework == Framework.jaspr) {
+        report('is a Jaspr package but depends on $name');
       }
-      if (_isFlutter(name) && package.layer == 'web') {
-        report('is a web package but depends on $name');
-      }
-      if (_isJaspr(name) && package.layer == 'flutter') {
+      if (_isJaspr(name) && framework == Framework.flutter) {
         report('is a Flutter package but depends on $name');
       }
 
@@ -151,6 +176,18 @@ List<Violation> checkPackages(List<WorkspacePackage> packages) {
       if (target == null) continue;
       if (spec is! Map || !spec.containsKey('path')) {
         report('must depend on $name through `path:`');
+      }
+      final targetFramework = target.framework;
+      if (targetFramework != null && package.isPureDart) {
+        report('is pure Dart but depends on $name');
+      }
+      if (targetFramework != null &&
+          framework != null &&
+          targetFramework != framework) {
+        report(
+          'is a ${framework.label} package but depends on the '
+          '${targetFramework.label} package $name',
+        );
       }
       final targetZone = target.zone;
       if (targetZone == Zone.host) {

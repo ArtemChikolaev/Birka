@@ -2,7 +2,7 @@
 .DEFAULT_GOAL := help
 
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
-CORE_PACKAGES := packages/money
+CORE_PACKAGES := packages/core/money
 
 COMPILER ?= vm
 ifeq ($(COMPILER),vm)

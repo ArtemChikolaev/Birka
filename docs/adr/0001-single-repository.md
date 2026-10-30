@@ -24,7 +24,7 @@
 
 | Zone | Where | Root | Boundary |
 |---|---|---|---|
-| App | `apps/`, `packages/` (core and features) | the Dart workspace, one `pubspec.lock` | core and `*/common` packages are pure Dart |
+| App | `apps/`, `packages/core/`, `packages/features/` ([ADR 0006](0006-feature-first-packages.md)) | the Dart workspace, one `pubspec.lock` | core and `*/common` packages are pure Dart |
 | Design system | `packages/design/` | the same Dart workspace | depends on nothing from the core or features |
 | Server | `server/`, `proto/` (later) | its own `go.mod` and `buf.yaml` | shares only `proto/` with the app; `buf breaking` guards compatibility |
 
