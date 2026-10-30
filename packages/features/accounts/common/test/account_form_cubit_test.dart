@@ -35,7 +35,7 @@ void main() {
     test('is saved with its fields, without spaces at the ends', () async {
       final form = newForm()
         ..nameChanged('  Card ')
-        ..typeChanged(AccountType.savings)
+        ..typeChanged(AccountType.credit)
         ..currencyChanged(Currency.eur)
         ..amountChanged('1 250,50')
         ..lastDigitsChanged('4568')
@@ -46,8 +46,8 @@ void main() {
       expect(form.state.status, AccountFormStatus.saved);
       final draft = repository.added.single;
       expect(draft.name, 'Card');
-      expect(draft.type, AccountType.savings);
-      expect(draft.openingBalance, Money(125050, Currency.eur));
+      expect(draft.type, AccountType.credit);
+      expect(draft.openingBalance, Money(-125050, Currency.eur));
       expect(draft.lastDigits, '4568');
       expect(draft.art, AccountArt.sapphire);
       expect(draft.includeInTotals, isFalse);
@@ -90,6 +90,17 @@ void main() {
         ..lastDigitsChanged('45');
       await form.save();
       expect(form.state.errors, {AccountFormError.lastDigitsInvalid});
+    });
+
+    test('ignores digits that the form no longer shows', () async {
+      final form = newForm()
+        ..nameChanged('Savings')
+        ..lastDigitsChanged('45')
+        ..typeChanged(AccountType.savings);
+      await form.save();
+
+      expect(form.state.errors, isEmpty);
+      expect(repository.added.single.lastDigits, isNull);
     });
 
     test('clears an error when its field changes', () async {
@@ -148,6 +159,14 @@ void main() {
       expect(draft.name, 'Visa');
       expect(draft.openingBalance, rub(-100000));
       expect(draft.lastDigits, isNull);
+    });
+
+    test('drops its digits when it stops being a card', () async {
+      final form = await formOf('Credit');
+      form.typeChanged(AccountType.savings);
+      await form.save();
+
+      expect(repository.updated['Credit']!.lastDigits, isNull);
     });
 
     test('can be put away and brought back', () async {
