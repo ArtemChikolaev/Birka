@@ -1,6 +1,7 @@
 import 'package:design_flutter/src/theme/birka_colors.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Birka's [ThemeData], built from the design tokens.
 ///
@@ -9,6 +10,19 @@ import 'package:flutter/material.dart';
 /// theme carries as extensions. The theme sets no `fontFamily`: Material
 /// would apply it to every style and replace Manrope in the headings.
 abstract final class BirkaTheme {
+  /// See-through system bars with light icons, so the glow of the background
+  /// reaches the edges of the screen.
+  static const SystemUiOverlayStyle systemBars = SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarBrightness: Brightness.dark,
+    statusBarIconBrightness: Brightness.light,
+    systemStatusBarContrastEnforced: false,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarDividerColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
+    systemNavigationBarContrastEnforced: false,
+  );
+
   /// The dark theme: a black base with emerald accents.
   static ThemeData dark() {
     const colors = BirkaColors.dark;
