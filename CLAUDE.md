@@ -6,8 +6,9 @@ alike. `AGENTS.md` is a symlink to this file.
 ## Project
 
 Birka is a local-first expense tracker for money across currencies, banks and
-countries. A pure-Dart core is shared by a Flutter app (Android, iOS) and a
-Jaspr web app; a small Go server for end-to-end encrypted sync comes later.
+countries. A pure-Dart core is shared by a Flutter app (Android and iOS; it
+also runs on macOS during development) and a Jaspr web app; a small Go server
+for end-to-end encrypted sync comes later.
 Decisions live in [docs/adr](docs/adr/).
 
 ## Rule 0 — Reuse first
@@ -29,12 +30,26 @@ Extend what exists instead of duplicating it.
 
 ## Architecture and boundaries
 
-- Zones ([ADR 0001](docs/adr/0001-single-repository.md)): the app in `apps/`
-  and `packages/`, the design system in `packages/design/`, the server in
-  `server/` and `proto/`.
-- Core packages and every `*/common` package are pure Dart: no `flutter`, no
-  `jaspr`.
-- A feature never depends on another feature; shared code moves to the core.
+- Layout ([ADR 0006](docs/adr/0006-feature-first-packages.md)):
+  - `packages/features/<feature>/` holds everything about one feature:
+    `common/` (pure Dart: `data/`, `domain/`, `presentation/` with the
+    BLoCs, `di/`), `flutter/` and `jaspr/` (pages and widgets or
+    components);
+  - `packages/core/` holds only what several features share: money, the
+    database, the ledger rules, rates, strings, networking;
+  - `packages/design/` is the design system, `apps/` are the hosts, and the
+    server lives in `server/` and `proto/`
+    ([ADR 0001](docs/adr/0001-single-repository.md)).
+- Inside `common`, `presentation → domain ← data`: the domain imports
+  neither the database nor the UI.
+- Core packages and every `common` package are pure Dart: no `flutter`, no
+  `jaspr`. Flutter packages never use Jaspr, and Jaspr packages never use
+  Flutter.
+- A feature never depends on another feature. Code that a second feature
+  needs moves to the core.
+- `get_it` appears only in the hosts and in each feature's registration
+  function; every other class gets its dependencies through its
+  constructor.
 - The design system knows nothing about money or features.
 - Our packages depend on each other through `path:`.
 - `make check-deps` enforces these rules in CI. Fix the code, not the rule.

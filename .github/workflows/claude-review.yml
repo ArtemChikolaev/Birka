@@ -57,7 +57,7 @@ jobs:
             echo "::notice::Only docs, assets or lockfiles changed. Add the claude-review label to ask for a review."
           fi
           if [ "$FORCE_OPUS" = true ] ||
-             grep -qE '^(packages/(money|domain|database|sync)|server|proto)/' <<< "$files"; then
+             grep -qE '^(packages/core|server|proto)/' <<< "$files"; then
             echo "model=claude-opus-5-5" >> "$GITHUB_OUTPUT"
           else
             echo "model=claude-sonnet-5-5" >> "$GITHUB_OUTPUT"
