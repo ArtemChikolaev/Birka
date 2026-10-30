@@ -19,8 +19,8 @@ endif
 # or emulator (`flutter devices` lists them).
 DEVICE ?= macos
 
-.PHONY: help bootstrap format analyze check-deps test test-core test-tools \
-	test-mobile run-mobile check
+.PHONY: help bootstrap format analyze check-deps check-tokens tokens test \
+	test-core test-tools test-design test-mobile run-mobile check
 
 help: ## Show the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -32,15 +32,22 @@ bootstrap: ## Fetch dependencies for the whole workspace
 format: ## Format all Dart code
 	dart format .
 
-analyze: ## Formatting, static analysis and package boundaries
+analyze: ## Formatting, analysis, package boundaries, generated tokens
 	dart format --output=none --set-exit-if-changed .
 	dart analyze --fatal-infos
 	$(MAKE) check-deps
+	$(MAKE) check-tokens
 
 check-deps: ## Package boundary rules from ADR 0001
 	dart run birka_tools:check_deps
 
-test: test-core test-tools test-mobile ## All tests on the Dart VM
+check-tokens: ## Generated tokens match their sources (ADR 0007)
+	cd packages/design/tokens && dart run design_tokens:generate --check
+
+tokens: ## Regenerate the Dart and CSS design tokens
+	cd packages/design/tokens && dart run design_tokens:generate
+
+test: test-core test-tools test-design test-mobile ## All tests on the Dart VM
 
 test-core: ## Core tests; COMPILER=vm|dart2js|dart2wasm
 	@for package in $(CORE_PACKAGES); do \
@@ -50,6 +57,10 @@ test-core: ## Core tests; COMPILER=vm|dart2js|dart2wasm
 
 test-tools: ## Tests of the repository tooling
 	cd tools && dart test
+
+test-design: ## Tests of the token generator and the Flutter kit
+	cd packages/design/tokens && dart test
+	cd packages/design/flutter && flutter test
 
 test-mobile: ## Widget tests of the Flutter host
 	cd apps/mobile && flutter test

@@ -1,0 +1,31 @@
+name: design_flutter
+description: >-
+  Birka's design system for Flutter: the theme built from the design tokens,
+  the bundled fonts and the glass components.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_tokens:
+    path: ../tokens
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  assets:
+    - fonts/Inter-OFL.txt
+    - fonts/Manrope-OFL.txt
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: fonts/Inter-Variable.ttf
+    - family: Manrope
+      fonts:
+        - asset: fonts/Manrope-Variable.ttf

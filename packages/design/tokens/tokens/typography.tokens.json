@@ -1,0 +1,51 @@
+{
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "display": { "$description": "Headlines and large amounts.", "$value": ["Manrope", "Inter", "system-ui", "sans-serif"] },
+      "text": { "$value": ["Inter", "system-ui", "sans-serif"] }
+    },
+    "weight": {
+      "$type": "fontWeight",
+      "regular": { "$value": 400 },
+      "medium": { "$value": 500 },
+      "semibold": { "$value": 600 },
+      "bold": { "$value": 700 },
+      "extrabold": { "$value": 800 }
+    }
+  },
+  "text": {
+    "$type": "typography",
+    "display": {
+      "$value": { "fontFamily": "{font.family.display}", "fontSize": { "value": 46, "unit": "px" }, "fontWeight": "{font.weight.extrabold}", "letterSpacing": { "value": -1.6, "unit": "px" }, "lineHeight": 1.02 },
+      "$extensions": { "io.github.artemchikolaev.birka": { "tabular": true } }
+    },
+    "title": {
+      "$value": { "fontFamily": "{font.family.display}", "fontSize": { "value": 28, "unit": "px" }, "fontWeight": "{font.weight.extrabold}", "letterSpacing": { "value": -0.56, "unit": "px" }, "lineHeight": 1.1 }
+    },
+    "heading": {
+      "$value": { "fontFamily": "{font.family.display}", "fontSize": { "value": 22, "unit": "px" }, "fontWeight": "{font.weight.extrabold}", "letterSpacing": { "value": -0.22, "unit": "px" }, "lineHeight": 1.2 }
+    },
+    "amount": {
+      "$value": { "fontFamily": "{font.family.display}", "fontSize": { "value": 22, "unit": "px" }, "fontWeight": "{font.weight.extrabold}", "letterSpacing": { "value": -0.44, "unit": "px" }, "lineHeight": 1.1 },
+      "$extensions": { "io.github.artemchikolaev.birka": { "tabular": true } }
+    },
+    "body": {
+      "$value": { "fontFamily": "{font.family.text}", "fontSize": { "value": 15, "unit": "px" }, "fontWeight": "{font.weight.regular}", "letterSpacing": { "value": 0, "unit": "px" }, "lineHeight": 1.4 }
+    },
+    "bodyStrong": {
+      "$value": { "fontFamily": "{font.family.text}", "fontSize": { "value": 15, "unit": "px" }, "fontWeight": "{font.weight.semibold}", "letterSpacing": { "value": 0, "unit": "px" }, "lineHeight": 1.4 }
+    },
+    "caption": {
+      "$value": { "fontFamily": "{font.family.text}", "fontSize": { "value": 13, "unit": "px" }, "fontWeight": "{font.weight.regular}", "letterSpacing": { "value": 0, "unit": "px" }, "lineHeight": 1.35 }
+    },
+    "label": {
+      "$description": "Short section labels in capitals, such as ACCOUNTS.",
+      "$value": { "fontFamily": "{font.family.text}", "fontSize": { "value": 12, "unit": "px" }, "fontWeight": "{font.weight.bold}", "letterSpacing": { "value": 0.96, "unit": "px" }, "lineHeight": 1.2 },
+      "$extensions": { "io.github.artemchikolaev.birka": { "uppercase": true } }
+    },
+    "tab": {
+      "$value": { "fontFamily": "{font.family.text}", "fontSize": { "value": 10, "unit": "px" }, "fontWeight": "{font.weight.bold}", "letterSpacing": { "value": 0, "unit": "px" }, "lineHeight": 1.2 }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "radius": {
+    "$type": "dimension",
+    "xs": { "$value": { "value": 8, "unit": "px" } },
+    "sm": { "$value": { "value": 12, "unit": "px" } },
+    "md": { "$value": { "value": 16, "unit": "px" } },
+    "lg": { "$value": { "value": 22, "unit": "px" } },
+    "xl": { "$value": { "value": 28, "unit": "px" } },
+    "pill": { "$value": { "value": 999, "unit": "px" } }
+  },
+  "space": {
+    "$type": "dimension",
+    "xxs": { "$value": { "value": 4, "unit": "px" } },
+    "xs": { "$value": { "value": 8, "unit": "px" } },
+    "sm": { "$value": { "value": 12, "unit": "px" } },
+    "md": { "$value": { "value": 16, "unit": "px" } },
+    "lg": { "$value": { "value": 20, "unit": "px" } },
+    "xl": { "$value": { "value": 24, "unit": "px" } },
+    "xxl": { "$value": { "value": 32, "unit": "px" } }
+  },
+  "size": {
+    "$type": "dimension",
+    "touchTarget": { "$description": "The smallest tap area.", "$value": { "value": 44, "unit": "px" } },
+    "navBar": { "$value": { "value": 64, "unit": "px" } }
+  }
+}

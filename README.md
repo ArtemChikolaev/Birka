@@ -38,16 +38,21 @@ from many countries changed hands.
   the same result ([ADR 0003](docs/adr/0003-money-representation.md)).
 - **One repository, three zones:** the app, the design system and, later, a Go
   sync relay ([ADR 0001](docs/adr/0001-single-repository.md)).
+- **One look on every platform:** colors, glass, type and motion are design
+  tokens in the DTCG format, generated into Dart and CSS
+  ([ADR 0007](docs/adr/0007-design-tokens.md)).
 - **Toolchain:** Flutter 3.38.10 and Dart 3.10.9
   ([ADR 0002](docs/adr/0002-toolchain.md)).
 
 ## Repository layout
 
 ```text
-apps/mobile           Flutter host: Android, iOS, macOS during development
-packages/core/money   Money and Currency value types
-tools                 repository tooling: package boundary checks, dev scripts
-docs/adr              architecture decision records
+apps/mobile              Flutter host: Android, iOS, macOS during development
+packages/core/money      Money and Currency value types
+packages/design/tokens   design tokens and their generator for Dart and CSS
+packages/design/flutter  theme, fonts and glass widgets for Flutter
+tools                    repository tooling: package boundary checks, dev scripts
+docs/adr                 architecture decision records
 ```
 
 Each feature will live in one folder, `packages/features/<feature>/`, with
@@ -63,6 +68,7 @@ make bootstrap                      # fetch dependencies
 make check                          # format, analysis, boundaries, tests
 make test-core COMPILER=dart2wasm   # core tests in Chrome via WebAssembly
 make run-mobile                     # the Flutter app on macOS
+make tokens                         # regenerate the design tokens
 ```
 
 In VS Code, Run and Debug has a configuration for macOS, the iOS simulator
@@ -81,4 +87,5 @@ the same rules: [CLAUDE.md](CLAUDE.md).
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE). The bundled Inter and Manrope fonts come under the SIL Open
+Font License 1.1: see `packages/design/flutter/fonts/`.

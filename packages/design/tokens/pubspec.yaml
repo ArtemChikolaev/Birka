@@ -1,0 +1,15 @@
+name: design_tokens
+description: >-
+  Birka's design tokens: one DTCG source in tokens/, generated into Dart
+  constants and CSS custom properties.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  path: ^1.9.1
+
+dev_dependencies:
+  test: ^1.26.3

@@ -1,0 +1,14 @@
+{
+  "blur": {
+    "$type": "dimension",
+    "control": { "$value": { "value": 14, "unit": "px" } },
+    "glass": { "$value": { "value": 18, "unit": "px" } },
+    "nav": { "$value": { "value": 22, "unit": "px" } }
+  },
+  "saturation": {
+    "$type": "number",
+    "$description": "How much glass boosts the colors behind it: 1 keeps them, 1.6 is 160%.",
+    "glass": { "$value": 1.6 },
+    "nav": { "$value": 1.7 }
+  }
+}
