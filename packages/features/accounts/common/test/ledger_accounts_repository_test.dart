@@ -44,8 +44,8 @@ void main() {
       id,
       AccountDraft(
         name: 'Salary',
-        type: AccountType.debit,
-        openingBalance: Money(50000, Currency.rub),
+        type: AccountType.credit,
+        openingBalance: Money(-50000, Currency.rub),
         art: AccountArt.amber,
         includeInTotals: false,
       ),
@@ -53,7 +53,8 @@ void main() {
 
     final account = (await repository.account(id))!;
     expect(account.name, 'Salary');
-    expect(account.openingBalance, Money(50000, Currency.rub));
+    expect(account.type, AccountType.credit);
+    expect(account.openingBalance, Money(-50000, Currency.rub));
     expect(account.lastDigits, isNull);
     expect(account.art, AccountArt.amber);
     expect(account.includeInTotals, isFalse);

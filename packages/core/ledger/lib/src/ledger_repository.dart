@@ -77,6 +77,7 @@ final class LedgerRepository {
   Future<void> updateAccount(
     String id, {
     String? name,
+    AccountType? type,
     Money? openingBalance,
     Value<String?> lastDigits = const Value.absent(),
     AccountArt? art,
@@ -102,6 +103,7 @@ final class LedgerRepository {
             AccountsCompanion(
               updatedAt: Value(at),
               name: Value.absentIfNull(name),
+              type: Value.absentIfNull(type?.name),
               openingBalanceMinor: Value.absentIfNull(
                 openingBalance?.minorUnits,
               ),

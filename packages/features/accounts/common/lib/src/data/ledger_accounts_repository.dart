@@ -31,6 +31,7 @@ final class LedgerAccountsRepository implements AccountsRepository {
   Future<void> update(String id, AccountDraft draft) => _ledger.updateAccount(
     id,
     name: draft.name,
+    type: draft.type,
     openingBalance: draft.openingBalance,
     lastDigits: Value(draft.lastDigits),
     art: draft.art,
