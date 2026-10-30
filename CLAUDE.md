@@ -58,6 +58,10 @@ Extend what exists instead of duplicating it.
   generated files, and never hard-code a color or a size that a token has.
   Flutter widgets read `BirkaColors.of(context)` and
   `BirkaTextStyles.of(context)`.
+- The site is static ([ADR 0008](docs/adr/0008-web-host.md)): code that needs
+  the browser stays inside `@client` components, and paths stay relative to
+  `<base href>`. After adding a `@client` component or `@css` styles, run
+  `make build-web` and commit the regenerated `*.options.dart` files.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
   `make icons`, and never edit the generated icons by hand.

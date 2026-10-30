@@ -1,0 +1,28 @@
+name: birka_web
+description: >-
+  The Jaspr host of Birka for the browser: a static site with interactive
+  islands on GitHub Pages.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  bloc: ^9.2.1
+  design_jaspr:
+    path: ../../packages/design/jaspr
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+
+dev_dependencies:
+  build_runner: ^2.15.1
+  build_web_compilers: ^4.8.0
+  jaspr_builder: ^0.22.3
+  jaspr_cli: ^0.22.3
+  jaspr_test: ^0.22.3
+  test: ^1.26.3
+
+jaspr:
+  mode: static

@@ -46,7 +46,26 @@ jobs:
       - run: flutter pub get
       - run: make test-core COMPILER=${{ matrix.compiler }}
       - if: matrix.compiler == 'vm'
-        run: make test-tools test-design test-mobile
+        run: make test-tools test-design test-web test-mobile
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+          cache: true
+      - run: flutter pub get
+      - run: make build-web BASE=/${{ github.event.repository.name }}/
+      - name: Fail if the generated Jaspr options are stale
+        run: git diff --exit-code -- apps/web/lib
+      - if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: apps/web/build/jaspr
 
   all-checks:
     name: All checks
@@ -54,10 +73,31 @@ jobs:
     # skipped job as passed, so this job runs even when a job it needs fails.
     # Every new job goes into needs.
     if: always()
-    needs: [analyze, test]
+    needs: [analyze, test, web]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Fail if a needed job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
+
+  deploy:
+    name: Deploy to GitHub Pages
+    # Publishes the site that the web job built, once every check of main has
+    # passed (ADR 0008).
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: all-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

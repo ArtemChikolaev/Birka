@@ -25,8 +25,8 @@
    uppercase and tabular figures, go into `$extensions` under
    `io.github.artemchikolaev.birka`.
 2. Our generator, `make tokens`, writes `lib/src/tokens.g.dart`, pure-Dart
-   constants for both kits, and `css/tokens.css`, custom properties and text
-   classes for the web. It supports the subset of DTCG that Birka uses and
+   constants for both kits, and `lib/css/tokens.css`, custom properties and
+   text classes for the web. It supports the subset of DTCG that Birka uses and
    rejects anything else with the name of the token. The generated files are
    committed, and `make check-tokens` fails in CI when they are out of date.
 3. `packages/design/flutter` turns the tokens into a `ThemeData` with two
@@ -58,4 +58,5 @@
 - Only the dark theme exists. A light theme adds a second set of role colors.
 - Shadows are not tokens yet: the floating navigation bar will add the DTCG
   `shadow` type when it lands.
-- The Jaspr kit will take `css/tokens.css` and the same font files.
+- The Jaspr kit takes `tokens.css` as it is and its own WOFF2 subsets of the
+  same fonts ([ADR 0008](0008-web-host.md)).

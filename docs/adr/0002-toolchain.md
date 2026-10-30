@@ -24,7 +24,7 @@
 | Area | Packages | Versions |
 |---|---|---|
 | Code generation | build_runner, analyzer | 2.15.1, 8.4.0 |
-| Web | jaspr, jaspr_builder, jaspr_router, jaspr_bloc, jaspr_test, jaspr_lints, jaspr_cli | 0.22.3, 0.22.3, 0.8.1, 1.0.1, 0.22.3, 0.6.0, 0.22.3 |
+| Web | jaspr, jaspr_builder, jaspr_router, jaspr_bloc, jaspr_test, jaspr_lints, jaspr_cli, build_web_compilers | 0.22.3, 0.22.3, 0.8.1, 1.0.1, 0.22.3, 0.6.0, 0.22.3, 4.8.0 |
 | Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0, 2.31.0, 0.2.8, 2.9.4 |
 | State | bloc, flutter_bloc, bloc_test, bloc_concurrency | 9.2.1, 9.1.1, 10.0.0, 0.3.0 |
 | Navigation and DI | go_router, get_it | 17.5.0, 9.3.0 |

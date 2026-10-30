@@ -1,0 +1,17 @@
+name: design_jaspr
+description: >-
+  Birka's design system for Jaspr: the styles built from the design tokens,
+  the fonts and the glass components.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_tokens:
+    path: ../tokens
+  jaspr: ^0.22.3
+
+dev_dependencies:
+  jaspr_test: ^0.22.3
