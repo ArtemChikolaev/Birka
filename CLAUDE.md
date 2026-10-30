@@ -6,8 +6,9 @@ alike. `AGENTS.md` is a symlink to this file.
 ## Project
 
 Birka is a local-first expense tracker for money across currencies, banks and
-countries. A pure-Dart core is shared by a Flutter app (Android, iOS) and a
-Jaspr web app; a small Go server for end-to-end encrypted sync comes later.
+countries. A pure-Dart core is shared by a Flutter app (Android and iOS; it
+also runs on macOS during development) and a Jaspr web app; a small Go server
+for end-to-end encrypted sync comes later.
 Decisions live in [docs/adr](docs/adr/).
 
 ## Rule 0 — Reuse first

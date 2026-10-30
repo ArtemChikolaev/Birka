@@ -40,8 +40,9 @@
    feature), `network` (Dio) and, later, `sync`. Core packages are pure Dart.
 4. `packages/design/` is the design system: tokens, chart geometry, the
    Flutter and Jaspr kits and the catalog.
-5. The hosts in `apps/` are the composition roots: `mobile` for Android, iOS
-   and macOS, `web` for the browser. They call each feature's registration
+5. The hosts in `apps/` are the composition roots: `mobile` for Android and
+   iOS, which also runs on macOS during development as the quickest loop,
+   and `web` for the browser. They call each feature's registration
    function, build the router and pick the theme and the locale. `get_it`
    appears only in the hosts and in those registration functions; every
    other class gets its dependencies through its constructor.

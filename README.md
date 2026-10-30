@@ -30,7 +30,8 @@ from many countries changed hands.
 ## How it is built
 
 - **One pure-Dart core** (money, domain rules, storage, BLoC state) shared by
-  two thin hosts: a **Flutter** app for Android and iOS and a **Jaspr** web app.
+  two thin hosts: a **Flutter** app for Android and iOS, which also runs on
+  macOS during development, and a **Jaspr** web app.
 - **Local-first:** SQLite through Drift on every platform, including the web.
 - **Exact money:** amounts are integers in minor units, never `double`. Core
   tests run on the Dart VM, dart2js and dart2wasm, so every platform computes
