@@ -31,9 +31,9 @@
    committed, and `make check-tokens` fails in CI when they are out of date.
 3. `packages/design/flutter` turns the tokens into a `ThemeData` with two
    extensions, `BirkaColors` and `BirkaTextStyles`, and holds the shared
-   widgets: `GlassSurface`, `AmbientBackground`, `AmountText` and
-   `SectionLabel`. It re-exports the tokens, so a feature depends on it
-   alone.
+   widgets: `GlassSurface`, `GlassNavBar`, `AmbientBackground`, `AmountText`,
+   `SectionLabel` and `BirkaIcon`, whose SVG files live in `icons/`. It
+   re-exports the tokens, so a feature depends on it alone.
 4. The fonts are bundled: the variable Inter and Manrope from google/fonts,
    with their SIL Open Font License shown on the license page. Every text
    style sets its weight both as `fontWeight` and on the `wght` axis, and
@@ -56,7 +56,7 @@
 - A token changes in the JSON, then `make tokens`; the pull request shows
   the change in the generated files too.
 - Only the dark theme exists. A light theme adds a second set of role colors.
-- Shadows are not tokens yet: the floating navigation bar will add the DTCG
-  `shadow` type when it lands.
+- Tokens cover outer shadows only. Inner lines along an edge stay with the
+  components, which paint them from color tokens.
 - The Jaspr kit takes `tokens.css` as it is and its own WOFF2 subsets of the
   same fonts ([ADR 0008](0008-web-host.md)).

@@ -2,6 +2,7 @@
 // tokens/*.tokens.json. Change the tokens and regenerate instead
 // of editing this file.
 
+import 'package:design_tokens/src/shadow_token.dart';
 import 'package:design_tokens/src/text_token.dart';
 
 /// Every design token of Birka.
@@ -99,6 +100,9 @@ abstract final class BirkaTokens {
   /// `color.onAccent` as ARGB.
   static const int colorOnAccent = 0xFF02130B;
 
+  /// `color.accentHighlight` as ARGB.
+  static const int colorAccentHighlight = 0x73FFFFFF;
+
   /// `color.accentSoft` as ARGB.
   static const int colorAccentSoft = 0x243DDC97;
 
@@ -134,8 +138,17 @@ abstract final class BirkaTokens {
   /// `color.nav.highlight` as ARGB.
   static const int colorNavHighlight = 0x38FFFFFF;
 
+  /// `color.nav.lowlight` as ARGB.
+  static const int colorNavLowlight = 0x0DFFFFFF;
+
   /// `color.nav.bubble` as ARGB.
   static const int colorNavBubble = 0x21FFFFFF;
+
+  /// `color.nav.bubbleHighlight` as ARGB.
+  static const int colorNavBubbleHighlight = 0x47FFFFFF;
+
+  /// `color.nav.label` as ARGB.
+  static const int colorNavLabel = 0xFFB4B4B2;
 
   /// `blur.control` in logical pixels.
   static const double blurControl = 14;
@@ -151,6 +164,38 @@ abstract final class BirkaTokens {
 
   /// `saturation.nav`.
   static const double saturationNav = 1.7;
+
+  /// `shadow.glass`.
+  static const List<ShadowToken> shadowGlass = [
+    ShadowToken(
+      color: 0x66000000,
+      offsetX: 0,
+      offsetY: 10,
+      blur: 28,
+      spread: 0,
+    ),
+  ];
+
+  /// `shadow.nav`.
+  static const List<ShadowToken> shadowNav = [
+    ShadowToken(
+      color: 0x8C000000,
+      offsetX: 0,
+      offsetY: 12,
+      blur: 32,
+      spread: 0,
+    ),
+  ];
+
+  /// `shadow.navBubble`.
+  static const List<ShadowToken> shadowNavBubble = [
+    ShadowToken(color: 0x59000000, offsetX: 0, offsetY: 4, blur: 14, spread: 0),
+  ];
+
+  /// `shadow.accentGlow`.
+  static const List<ShadowToken> shadowAccentGlow = [
+    ShadowToken(color: 0x8C248A56, offsetX: 0, offsetY: 6, blur: 22, spread: 0),
+  ];
 
   /// `duration.fast` in milliseconds.
   static const int durationFastMs = 150;

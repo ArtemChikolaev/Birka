@@ -29,6 +29,7 @@
 | Ids | uuid | 4.6.0 |
 | State | bloc, flutter_bloc, bloc_test, bloc_concurrency | 9.2.1, 9.1.1, 10.0.0, 0.3.0 |
 | Navigation and DI | go_router, get_it | 17.5.0, 9.3.0 |
+| Icons | flutter_svg | 2.3.0 |
 | Strings | slang, slang_flutter | 4.19.2, 4.19.0 |
 | Testing and lints | test, mocktail, very_good_analysis | 1.26.3, 1.0.5, 10.1.0 |
 | Monitoring | sentry_flutter | 9.30.1 |

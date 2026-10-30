@@ -15,6 +15,7 @@ List<Color> colorsOf(BirkaColors c) => [
   c.accent,
   c.onAccent,
   c.accentSoft,
+  c.accentHighlight,
   c.ambient,
   c.positive,
   c.negative,
@@ -25,7 +26,10 @@ List<Color> colorsOf(BirkaColors c) => [
   c.glassHighlight,
   c.navFill,
   c.navHighlight,
+  c.navLowlight,
   c.navBubble,
+  c.navBubbleHighlight,
+  c.navLabel,
 ];
 
 /// Colors that differ from each other, so that a field mixed up with another
@@ -45,6 +49,7 @@ BirkaColors numbered() {
     accent: next(),
     onAccent: next(),
     accentSoft: next(),
+    accentHighlight: next(),
     ambient: next(),
     positive: next(),
     negative: next(),
@@ -55,7 +60,10 @@ BirkaColors numbered() {
     glassHighlight: next(),
     navFill: next(),
     navHighlight: next(),
+    navLowlight: next(),
     navBubble: next(),
+    navBubbleHighlight: next(),
+    navLabel: next(),
   );
 }
 

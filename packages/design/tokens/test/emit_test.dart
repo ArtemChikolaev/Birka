@@ -50,6 +50,22 @@ void main() {
         r'$value': ['Inter', 'system-ui', 'Open Sans'],
       },
     },
+    'shadow': {
+      'nav': {
+        r'$type': 'shadow',
+        r'$value': {
+          'color': {
+            'colorSpace': 'srgb',
+            'components': [0, 0, 0],
+            'alpha': 0.55,
+          },
+          'offsetX': {'value': 0, 'unit': 'px'},
+          'offsetY': {'value': 12, 'unit': 'px'},
+          'blur': {'value': 32, 'unit': 'px'},
+          'spread': {'value': 0, 'unit': 'px'},
+        },
+      },
+    },
     'text': {
       'label': {
         r'$type': 'typography',
@@ -93,6 +109,14 @@ void main() {
       ),
     );
     expect(dart, contains('uppercase: true, tabular: true)'));
+    expect(
+      dart,
+      contains(
+        'static const List<ShadowToken> shadowNav = '
+        '[ShadowToken(color: 0x8C000000, offsetX: 0, offsetY: 12, blur: 32, '
+        'spread: 0)];',
+      ),
+    );
   });
 
   test('CSS output has custom properties and a class per text style', () {
@@ -114,6 +138,7 @@ void main() {
       contains('--easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);'),
     );
     expect(css, contains('--font-text: Inter, system-ui, "Open Sans";'));
+    expect(css, contains('--shadow-nav: 0px 12px 32px 0px rgb(0 0 0 / 0.55);'));
     expect(css, contains('.text-label {'));
     expect(css, contains('  text-transform: uppercase;'));
     expect(css, contains('  font-variant-numeric: tabular-nums;'));

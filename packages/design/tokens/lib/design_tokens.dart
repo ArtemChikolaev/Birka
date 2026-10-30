@@ -2,5 +2,6 @@
 /// `tokens/` (ADR 0007).
 library;
 
+export 'src/shadow_token.dart';
 export 'src/text_token.dart';
 export 'src/tokens.g.dart';

@@ -38,6 +38,33 @@ final class TypographyValue {
   final double lineHeight;
 }
 
+/// One layer of a resolved DTCG `shadow` token.
+final class ShadowValue {
+  /// Creates a layer.
+  const ShadowValue({
+    required this.color,
+    required this.offsetX,
+    required this.offsetY,
+    required this.blur,
+    required this.spread,
+  });
+
+  /// The color as ARGB.
+  final int color;
+
+  /// The horizontal offset in pixels.
+  final double offsetX;
+
+  /// The vertical offset in pixels.
+  final double offsetY;
+
+  /// The blur radius in pixels.
+  final double blur;
+
+  /// The spread in pixels.
+  final double spread;
+}
+
 /// A design token with its type and resolved value.
 final class DesignToken {
   /// Creates a token.
@@ -58,8 +85,8 @@ final class DesignToken {
   /// The resolved value. Its Dart type follows [type]: `color` is an ARGB
   /// [int], `dimension` and `number` are [double]s, `duration` is an [int]
   /// of milliseconds, `fontFamily` is a `List<String>`, `fontWeight` is an
-  /// [int], `cubicBezier` is a `List<double>` and `typography` is a
-  /// [TypographyValue].
+  /// [int], `cubicBezier` is a `List<double>`, `typography` is a
+  /// [TypographyValue] and `shadow` is a `List<ShadowValue>`.
   final Object value;
 
   /// The token's `$description`, if it has one.

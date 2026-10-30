@@ -13,6 +13,7 @@ String emitDart(List<DesignToken> tokens) {
     )
     ..writeln('// of editing this file.')
     ..writeln()
+    ..writeln("import 'package:design_tokens/src/shadow_token.dart';")
     ..writeln("import 'package:design_tokens/src/text_token.dart';")
     ..writeln()
     ..writeln('/// Every design token of Birka.')
@@ -67,12 +68,12 @@ String _dartType(String type) => switch (type) {
   'fontFamily' => 'List<String>',
   'cubicBezier' => 'List<double>',
   'typography' => 'TextToken',
+  'shadow' => 'List<ShadowToken>',
   _ => throw TokenFormatException('no Dart type for $type'),
 };
 
 String _dartValue(DesignToken token) => switch (token.value) {
-  final int argb when token.type == 'color' =>
-    '0x${argb.toRadixString(16).toUpperCase().padLeft(8, '0')}',
+  final int argb when token.type == 'color' => _argb(argb),
   final int whole => '$whole',
   final double number => formatNumber(number),
   final List<String> names => '[${names.map(_quote).join(', ')}]',
@@ -84,10 +85,21 @@ String _dartValue(DesignToken token) => switch (token.value) {
         'lineHeight: ${formatNumber(text.lineHeight)}'
         '${token.extensions['uppercase'] == true ? ', uppercase: true' : ''}'
         '${token.extensions['tabular'] == true ? ', tabular: true' : ''})',
+  final List<ShadowValue> layers => '[${layers.map(_shadowToken).join(', ')}]',
   final other => throw TokenFormatException(
     '${token.name}: cannot write ${other.runtimeType} as Dart',
   ),
 };
+
+String _shadowToken(ShadowValue layer) =>
+    'ShadowToken(color: ${_argb(layer.color)}, '
+    'offsetX: ${formatNumber(layer.offsetX)}, '
+    'offsetY: ${formatNumber(layer.offsetY)}, '
+    'blur: ${formatNumber(layer.blur)}, '
+    'spread: ${formatNumber(layer.spread)})';
+
+String _argb(int color) =>
+    '0x${color.toRadixString(16).toUpperCase().padLeft(8, '0')}';
 
 /// Splits [text] at spaces into lines of at most [width] characters, so that
 /// doc comments stay within the line length.

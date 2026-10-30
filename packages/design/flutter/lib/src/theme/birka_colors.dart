@@ -17,6 +17,7 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
     required this.accent,
     required this.onAccent,
     required this.accentSoft,
+    required this.accentHighlight,
     required this.ambient,
     required this.positive,
     required this.negative,
@@ -27,7 +28,10 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
     required this.glassHighlight,
     required this.navFill,
     required this.navHighlight,
+    required this.navLowlight,
     required this.navBubble,
+    required this.navBubbleHighlight,
+    required this.navLabel,
   });
 
   /// The dark theme: a black base with emerald accents.
@@ -43,6 +47,7 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
     accent: Color(BirkaTokens.colorAccent),
     onAccent: Color(BirkaTokens.colorOnAccent),
     accentSoft: Color(BirkaTokens.colorAccentSoft),
+    accentHighlight: Color(BirkaTokens.colorAccentHighlight),
     ambient: Color(BirkaTokens.colorAmbient),
     positive: Color(BirkaTokens.colorPositive),
     negative: Color(BirkaTokens.colorNegative),
@@ -53,7 +58,10 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
     glassHighlight: Color(BirkaTokens.colorGlassHighlight),
     navFill: Color(BirkaTokens.colorNavFill),
     navHighlight: Color(BirkaTokens.colorNavHighlight),
+    navLowlight: Color(BirkaTokens.colorNavLowlight),
     navBubble: Color(BirkaTokens.colorNavBubble),
+    navBubbleHighlight: Color(BirkaTokens.colorNavBubbleHighlight),
+    navLabel: Color(BirkaTokens.colorNavLabel),
   );
 
   /// The colors of the nearest [Theme], or [dark] if it has none.
@@ -93,6 +101,9 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
   /// A light tint of [accent] behind selected items.
   final Color accentSoft;
 
+  /// The light line along the top edge of a button in [accent].
+  final Color accentHighlight;
+
   /// The glow in the corners of the screen.
   final Color ambient;
 
@@ -123,8 +134,17 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
   /// The light line along the top edge of the navigation bar.
   final Color navHighlight;
 
+  /// The dim line along the bottom edge of the navigation bar.
+  final Color navLowlight;
+
   /// The bubble behind the selected tab.
   final Color navBubble;
+
+  /// The light line along the top edge of the bubble.
+  final Color navBubbleHighlight;
+
+  /// The labels and icons of the tabs that are not selected.
+  final Color navLabel;
 
   @override
   BirkaColors copyWith({
@@ -139,6 +159,7 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
     Color? accent,
     Color? onAccent,
     Color? accentSoft,
+    Color? accentHighlight,
     Color? ambient,
     Color? positive,
     Color? negative,
@@ -149,7 +170,10 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
     Color? glassHighlight,
     Color? navFill,
     Color? navHighlight,
+    Color? navLowlight,
     Color? navBubble,
+    Color? navBubbleHighlight,
+    Color? navLabel,
   }) {
     return BirkaColors(
       background: background ?? this.background,
@@ -163,6 +187,7 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
       accent: accent ?? this.accent,
       onAccent: onAccent ?? this.onAccent,
       accentSoft: accentSoft ?? this.accentSoft,
+      accentHighlight: accentHighlight ?? this.accentHighlight,
       ambient: ambient ?? this.ambient,
       positive: positive ?? this.positive,
       negative: negative ?? this.negative,
@@ -173,7 +198,10 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
       glassHighlight: glassHighlight ?? this.glassHighlight,
       navFill: navFill ?? this.navFill,
       navHighlight: navHighlight ?? this.navHighlight,
+      navLowlight: navLowlight ?? this.navLowlight,
       navBubble: navBubble ?? this.navBubble,
+      navBubbleHighlight: navBubbleHighlight ?? this.navBubbleHighlight,
+      navLabel: navLabel ?? this.navLabel,
     );
   }
 
@@ -193,6 +221,7 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
       accent: mix(accent, other.accent),
       onAccent: mix(onAccent, other.onAccent),
       accentSoft: mix(accentSoft, other.accentSoft),
+      accentHighlight: mix(accentHighlight, other.accentHighlight),
       ambient: mix(ambient, other.ambient),
       positive: mix(positive, other.positive),
       negative: mix(negative, other.negative),
@@ -203,7 +232,10 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
       glassHighlight: mix(glassHighlight, other.glassHighlight),
       navFill: mix(navFill, other.navFill),
       navHighlight: mix(navHighlight, other.navHighlight),
+      navLowlight: mix(navLowlight, other.navLowlight),
       navBubble: mix(navBubble, other.navBubble),
+      navBubbleHighlight: mix(navBubbleHighlight, other.navBubbleHighlight),
+      navLabel: mix(navLabel, other.navLabel),
     );
   }
 }

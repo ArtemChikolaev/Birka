@@ -57,7 +57,8 @@ Extend what exists instead of duplicating it.
   `packages/design/tokens/tokens/` and run `make tokens`, never edit the
   generated files, and never hard-code a color or a size that a token has.
   Flutter widgets read `BirkaColors.of(context)` and
-  `BirkaTextStyles.of(context)`.
+  `BirkaTextStyles.of(context)`. New icons go into
+  `packages/design/flutter/icons/` and `BirkaGlyph`.
 - The site is static ([ADR 0008](docs/adr/0008-web-host.md)): code that needs
   the browser stays inside `@client` components, and paths stay relative to
   `<base href>`. After adding a `@client` component or `@css` styles, run
