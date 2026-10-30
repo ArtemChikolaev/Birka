@@ -6,6 +6,7 @@ environment:
   sdk: ^3.10.0
 
 workspace:
+  - apps/mobile
   - packages/core/money
   - tools
 

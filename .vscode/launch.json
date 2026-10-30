@@ -1,0 +1,44 @@
+{
+  // Pick a configuration under Run and Debug and press F5. The iOS and Android
+  // ones boot a simulator or an emulator first (tasks.json).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Mobile · macOS",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "deviceId": "macos"
+    },
+    {
+      "name": "Mobile · iOS Simulator",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "deviceId": "iPhone",
+      "preLaunchTask": "Boot iOS Simulator"
+    },
+    {
+      "name": "Mobile · Android Emulator",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/mobile",
+      "program": "lib/main.dart",
+      "deviceId": "emulator",
+      "preLaunchTask": "Boot Android Emulator"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Mobile · all three",
+      "configurations": [
+        "Mobile · macOS",
+        "Mobile · iOS Simulator",
+        "Mobile · Android Emulator"
+      ],
+      "stopAll": true
+    }
+  ]
+}
