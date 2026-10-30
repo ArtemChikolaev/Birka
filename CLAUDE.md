@@ -103,6 +103,8 @@ Extend what exists instead of duplicating it.
 - The only required check is `All checks` in `ci.yml`. Add every new CI job
   to its `needs`, keep the advisory Claude review out of it, and never put
   path filters on a workflow with required checks.
+- Actions in workflows are pinned by SHA with the version in a comment;
+  Dependabot updates them.
 - Claude reviews pull requests that change code
   ([ADR 0005](docs/adr/0005-claude-review.md)). Fix Important findings,
   answer the rest and resolve every thread. The `claude-review` label asks

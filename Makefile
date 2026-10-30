@@ -22,9 +22,12 @@ DEVICE ?= macos
 # Where the site lives: / locally and /Birka/ on GitHub Pages.
 BASE ?= /
 
+# The build number of the APK: CI passes the number of its run.
+BUILD_NUMBER ?= 1
+
 .PHONY: help bootstrap format analyze check-deps check-tokens tokens icons \
 	icon-masters web-fonts test test-core test-tools test-design test-web \
-	test-mobile run-mobile run-web build-web check
+	test-mobile run-mobile run-web build-web build-apk check
 
 help: ## Show the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -95,5 +98,9 @@ build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 		! -name 'design_*' -exec rm -rf {} +
 	find apps/web/build/jaspr/packages -name '*.json' -delete
 	rm -rf apps/web/build/jaspr/.dart_tool apps/web/build/jaspr/.build.manifest
+
+build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
+	cd apps/mobile && flutter build apk --release \
+		--target-platform android-arm64 --build-number=$(BUILD_NUMBER)
 
 check: analyze test ## What CI checks on every pull request (VM only)
