@@ -190,8 +190,7 @@ class _FormState extends State<_Form> {
                     ),
                     textStyle: styles.amount,
                   ),
-                  if (state.type == AccountType.debit ||
-                      state.type == AccountType.credit) ...[
+                  if (state.hasCard) ...[
                     const SizedBox(height: BirkaTokens.spaceMd),
                     BirkaTextField(
                       label: form.lastDigits,

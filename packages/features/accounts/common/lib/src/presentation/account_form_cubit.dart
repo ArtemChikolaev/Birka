@@ -92,6 +92,9 @@ final class AccountFormState {
   /// Whether the amount of this form is a debt, typed without a sign.
   bool get isDebt => type == AccountType.credit;
 
+  /// Whether this form asks for the last digits of a card.
+  bool get hasCard => type == AccountType.debit || type == AccountType.credit;
+
   /// A copy with the given fields changed.
   AccountFormState copyWith({
     AccountFormStatus? status,
@@ -183,7 +186,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     final errors = <AccountFormError>{};
     final name = state.name.trim();
     if (name.isEmpty) errors.add(AccountFormError.nameMissing);
-    final lastDigits = state.lastDigits.trim();
+    final lastDigits = state.hasCard ? state.lastDigits.trim() : '';
     if (lastDigits.isNotEmpty && !_lastDigits.hasMatch(lastDigits)) {
       errors.add(AccountFormError.lastDigitsInvalid);
     }
