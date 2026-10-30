@@ -59,6 +59,8 @@ These are mockups of the first version; every screen is in
 apps/mobile              Flutter host: Android, iOS, macOS during development
 apps/web                 Jaspr host: a static site with interactive islands
 packages/core/money      Money and Currency value types
+packages/core/database   the one Drift database: its schema and migrations
+packages/core/ledger     accounts, categories, transactions and their rules
 packages/design/tokens   design tokens and their generator for Dart and CSS
 packages/design/flutter  theme, fonts and glass widgets for Flutter
 packages/design/jaspr    styles, web fonts and glass components for Jaspr

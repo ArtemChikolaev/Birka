@@ -26,6 +26,7 @@
 | Code generation | build_runner, analyzer | 2.15.1, 8.4.0 |
 | Web | jaspr, jaspr_builder, jaspr_router, jaspr_bloc, jaspr_test, jaspr_lints, jaspr_cli, build_web_compilers | 0.22.3, 0.22.3, 0.8.1, 1.0.1, 0.22.3, 0.6.0, 0.22.3, 4.8.0 |
 | Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0, 2.31.0, 0.2.8, 2.9.4 |
+| Ids | uuid | 4.6.0 |
 | State | bloc, flutter_bloc, bloc_test, bloc_concurrency | 9.2.1, 9.1.1, 10.0.0, 0.3.0 |
 | Navigation and DI | go_router, get_it | 17.5.0, 9.3.0 |
 | Strings | slang, slang_flutter | 4.19.2, 4.19.0 |
@@ -63,7 +64,6 @@
   `sqlite3_flutter_libs` (a dependency of `drift_flutter`). The web build needs
   `sqlite3.wasm` from the matching release, and the Jaspr build compiles the
   Drift worker ([ADR 0009](0009-data-model.md)).
-- Until `drift_dev` is in the workspace, nothing holds drift back: a package
-  that uses it also needs `sqlite3: ^2.9.4`, or pub picks drift 2.35 and
-  sqlite3 3.
+- `drift_dev` in `packages/core/database` is what holds drift at 2.31. Without
+  it pub picks drift 2.35 and sqlite3 3.
 - pub updates from Dependabot are off; GitHub Actions updates stay on.

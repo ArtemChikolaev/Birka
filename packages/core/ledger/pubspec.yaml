@@ -1,0 +1,21 @@
+name: ledger
+description: >-
+  The ledger of Birka: accounts, categories and transactions, and the rules
+  every write keeps (ADR 0009).
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  database:
+    path: ../database
+  drift: ^2.31.0
+  meta: ^1.17.0
+  money:
+    path: ../money
+  uuid: ^4.6.0
+
+dev_dependencies:
+  test: ^1.26.3

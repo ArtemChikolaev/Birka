@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # ISO 8601 text keeps milliseconds and reads the same in any tool.
+          store_date_time_values_as_text: true
+          databases:
+            birka: lib/src/birka_database.dart
+          schema_dir: drift_schemas/
+          test_dir: test/drift/
