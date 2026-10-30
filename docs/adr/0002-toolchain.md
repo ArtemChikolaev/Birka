@@ -60,6 +60,10 @@
   sentry 10 wait for a Flutter upgrade. Every upgrade starts with the same
   resolution check and an update of this ADR.
 - On Flutter 3.38.10 the native SQLite library comes through
-  `sqlite3_flutter_libs` (a dependency of `drift_flutter`), and the web build
-  needs `sqlite3.wasm` and `drift_worker.js` from the matching releases.
+  `sqlite3_flutter_libs` (a dependency of `drift_flutter`). The web build needs
+  `sqlite3.wasm` from the matching release, and the Jaspr build compiles the
+  Drift worker ([ADR 0009](0009-data-model.md)).
+- Until `drift_dev` is in the workspace, nothing holds drift back: a package
+  that uses it also needs `sqlite3: ^2.9.4`, or pub picks drift 2.35 and
+  sqlite3 3.
 - pub updates from Dependabot are off; GitHub Actions updates stay on.

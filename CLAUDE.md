@@ -78,6 +78,11 @@ Extend what exists instead of duplicating it.
 - Exchange rates are `Decimal` with an explicit rounding mode.
 - A transaction date is a civil date; period boundaries use the user's time
   zone.
+- A transaction has one entry, or two for a transfer, and its allocations add
+  up to the amount. Balances are computed from entries, never stored
+  ([ADR 0009](docs/adr/0009-data-model.md)).
+- Deleting leaves a tombstone, nothing cascades, and every change also goes
+  into the `changes` outbox.
 
 ## Toolchain
 
