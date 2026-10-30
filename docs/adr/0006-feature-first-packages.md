@@ -52,8 +52,8 @@
 7. `make check-deps` enforces the package rules: pure Dart where required,
    no Flutter in Jaspr packages and no Jaspr in Flutter ones, no
    feature-to-feature dependencies, and the core and the design system
-   depend on nothing above them. The direction of imports inside `common`
-   will be checked once the first feature lands.
+   depend on nothing above them. It also checks the direction of imports
+   inside `common`, where only `data` and `di` may touch the database.
 
 ## Options considered
 

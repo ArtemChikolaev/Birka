@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Android 12 and later draw the launch screen themselves: a black
          background with the coin from launch_icon. -->
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
@@ -9,5 +9,8 @@
     </style>
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- A physical keyboard would otherwise frame the whole app in the
+             color of keyboard focus. -->
+        <item name="android:defaultFocusHighlightEnabled" tools:targetApi="o">false</item>
     </style>
 </resources>

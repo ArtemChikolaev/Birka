@@ -46,6 +46,15 @@ abstract final class BirkaTheme {
       scaffoldBackgroundColor: colors.background,
       canvasColor: colors.background,
       dividerColor: colors.hairline,
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStatePropertyAll(colors.text),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? colors.accent
+              : colors.surfaceSelected,
+        ),
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
       textTheme: textTheme,
       primaryTextTheme: textTheme,
       extensions: [colors, styles],

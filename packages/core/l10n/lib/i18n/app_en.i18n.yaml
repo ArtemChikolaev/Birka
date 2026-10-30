@@ -5,3 +5,17 @@ more: More
 newOperation: New operation
 close: Close
 comingSoon: This screen is coming soon.
+soon: soon
+currencies(map):
+  RUB: Rubles
+  USD: Dollars
+  EUR: Euro
+  USDT: USDT
+  GEL: Lari
+  TRY: Lira
+  KZT: Tenge
+  AED: Dirhams
+  THB: Baht
+categories: Categories
+import: Import
+backup: Backup

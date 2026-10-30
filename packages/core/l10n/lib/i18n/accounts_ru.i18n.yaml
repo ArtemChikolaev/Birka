@@ -1,0 +1,45 @@
+title: Счета
+back: Назад
+add: Добавить счёт
+capital: Капитал
+and: и
+inAccounts(n):
+  one: в $n счёте
+  few: в $n счетах
+  many: в $n счетах
+  other: в $n счетах
+main: основной
+emptyTitle: Пока нет счетов
+emptyHint: Добавьте первый, чтобы видеть, где лежат деньги.
+archive: Архив
+failed: Не удалось прочитать счета.
+retry: Повторить
+types(map):
+  cash: Наличные
+  debit: Дебетовая карта
+  credit: Кредитная карта
+  savings: Накопительный
+  deposit: Вклад
+  loan: Кредит
+  debt: Долг
+  investment: Инвестиции
+  crypto: Криптокошелёк
+form:
+  newTitle: Новый счёт
+  editTitle: Счёт
+  name: Название
+  namePlaceholder: Зарплатная
+  type: Тип
+  currency: Валюта
+  openingBalance: Остаток сейчас
+  debt: Долг по карте
+  lastDigits: Последние 4 цифры карты
+  art: Оформление
+  includeInTotals: Учитывать в капитале
+  save: Сохранить
+  archive: Убрать в архив
+  restore: Вернуть из архива
+  nameMissing: Дайте счёту название.
+  amountInvalid: Введите сумму, например 1250,50.
+  lastDigitsInvalid: Введите четыре цифры.
+  failed: Не удалось сохранить. Попробуйте ещё раз.

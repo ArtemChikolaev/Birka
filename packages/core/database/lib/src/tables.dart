@@ -43,6 +43,12 @@ class Accounts extends Table with SyncedRow {
   IntColumn get openingBalanceMinor =>
       integer().withDefault(const Constant(0))();
 
+  /// The last digits of the card, when the user gives them.
+  TextColumn get lastDigits => text().nullable()();
+
+  /// One of the names of `AccountArt` in the ledger.
+  TextColumn get art => text().withDefault(const Constant('emerald'))();
+
   /// Whether the account counts towards the capital.
   BoolColumn get includeInTotals =>
       boolean().withDefault(const Constant(true))();

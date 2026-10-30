@@ -20,6 +20,15 @@ enum BirkaGlyph {
 
   /// A cross.
   close,
+
+  /// An arrow to the previous screen.
+  back,
+
+  /// An arrow to the next screen.
+  chevron,
+
+  /// A check mark.
+  check,
 }
 
 /// An icon in the color of [color] or of the surrounding [IconTheme].

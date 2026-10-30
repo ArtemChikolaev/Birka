@@ -1,0 +1,43 @@
+title: Accounts
+back: Back
+add: Add account
+capital: Capital
+and: and
+inAccounts(n):
+  one: in $n account
+  other: in $n accounts
+main: main
+emptyTitle: No accounts yet
+emptyHint: Add the first one to see where your money is.
+archive: Archive
+failed: Could not read the accounts.
+retry: Try again
+types(map):
+  cash: Cash
+  debit: Debit card
+  credit: Credit card
+  savings: Savings
+  deposit: Deposit
+  loan: Loan
+  debt: Debt
+  investment: Investments
+  crypto: Crypto wallet
+form:
+  newTitle: New account
+  editTitle: Account
+  name: Name
+  namePlaceholder: Salary card
+  type: Type
+  currency: Currency
+  openingBalance: Balance now
+  debt: Debt on the card
+  lastDigits: Last 4 digits of the card
+  art: Look
+  includeInTotals: Count in the capital
+  save: Save
+  archive: Move to the archive
+  restore: Bring back from the archive
+  nameMissing: Give the account a name.
+  amountInvalid: Enter an amount, such as 1250.50.
+  lastDigitsInvalid: Enter four digits.
+  failed: Could not save. Try again.

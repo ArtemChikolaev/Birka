@@ -5,3 +5,17 @@ more: Ещё
 newOperation: Новая операция
 close: Закрыть
 comingSoon: Этот экран появится скоро.
+soon: скоро
+currencies(map):
+  RUB: Рубли
+  USD: Доллары
+  EUR: Евро
+  USDT: USDT
+  GEL: Лари
+  TRY: Лиры
+  KZT: Тенге
+  AED: Дирхамы
+  THB: Баты
+categories: Категории
+import: Импорт
+backup: Бэкап

@@ -3,3 +3,5 @@
 *.g.dart linguist-generated=true
 packages/design/tokens/lib/css/tokens.css linguist-generated=true
 packages/core/database/drift_schemas/** linguist-generated=true
+packages/core/database/lib/src/birka_database.steps.dart linguist-generated=true
+packages/core/database/test/drift/birka/generated/** linguist-generated=true

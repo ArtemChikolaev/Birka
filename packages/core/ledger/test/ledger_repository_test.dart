@@ -99,6 +99,60 @@ void main() {
       );
     });
 
+    test('go after the others unless told otherwise', () async {
+      await ledger.addAccount(
+        name: 'Another',
+        type: AccountType.cash,
+        openingBalance: rub(0),
+      );
+      await ledger.addAccount(
+        name: 'First',
+        type: AccountType.cash,
+        openingBalance: rub(0),
+        sortOrder: -1,
+      );
+      expect((await ledger.watchAccounts().first).map((a) => a.name), [
+        'First',
+        'Card',
+        'Euro',
+        'Another',
+      ]);
+    });
+
+    test('keep their art and last digits until they change', () async {
+      final savings = await ledger.addAccount(
+        name: 'Savings',
+        type: AccountType.savings,
+        openingBalance: rub(0),
+        lastDigits: '4568',
+        art: AccountArt.graphite,
+      );
+      expect(savings.lastDigits, '4568');
+      expect(savings.art, AccountArt.graphite);
+
+      await ledger.updateAccount(savings.id, name: 'Reserve');
+      expect((await ledger.account(savings.id))?.lastDigits, '4568');
+
+      await ledger.updateAccount(savings.id, lastDigits: const Value(null));
+      expect((await ledger.account(savings.id))?.lastDigits, isNull);
+    });
+
+    test('can change their opening balance within their currency', () async {
+      await ledger.updateAccount(card.id, openingBalance: rub(500));
+      expect(await balanceOf(card), rub(500));
+
+      await expectLater(
+        ledger.updateAccount(card.id, openingBalance: eur(500)),
+        throwsA(isA<LedgerException>()),
+      );
+      expect(await balanceOf(card), rub(500));
+    });
+
+    test('are found by id, and an unknown one is not', () async {
+      expect((await ledger.account(card.id))?.name, 'Card');
+      expect(await ledger.account('nobody'), isNull);
+    });
+
     test('an unknown account cannot be updated', () {
       expect(
         ledger.updateAccount('no such account', name: 'New'),
@@ -167,6 +221,37 @@ void main() {
       await ledger.record(coffee(rub(10000)));
 
       await expectation;
+    });
+
+    test('comes with each account in one stream', () async {
+      await ledger.record(coffee(rub(250)));
+      await ledger.record(coffee(rub(100), status: TransactionStatus.planned));
+      await ledger.updateAccount(euro.id, archived: true);
+
+      final active = await ledger.watchAccountBalances().first;
+      expect(active.map((row) => row.account.name), ['Card']);
+      expect(active.single.balance, await balanceOf(card));
+
+      final all = await ledger
+          .watchAccountBalances(includeArchived: true)
+          .first;
+      expect(all.map((row) => row.account.name), ['Card', 'Euro']);
+      expect(all.last.balance, await balanceOf(euro));
+    });
+
+    test('a list of balances follows each write', () async {
+      final seen = <Money>[];
+      final subscription = ledger.watchAccountBalances().listen(
+        (rows) => seen.add(rows.first.balance),
+      );
+      await pumpEventQueue();
+      final opening = await balanceOf(card);
+
+      await ledger.record(coffee(rub(250)));
+      await pumpEventQueue();
+      await subscription.cancel();
+
+      expect(seen, [opening, opening - rub(250)]);
     });
 
     test('equals the opening balance plus every live entry', () async {

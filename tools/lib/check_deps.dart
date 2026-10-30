@@ -117,7 +117,7 @@ final class WorkspacePackage {
 /// A boundary rule broken by one package.
 final class Violation {
   /// Creates a violation of [package] described by [message].
-  const Violation(this.package, this.message);
+  const Violation(this.package, this.message, {String? file}) : _file = file;
 
   /// The package that breaks the rule.
   final WorkspacePackage package;
@@ -125,8 +125,9 @@ final class Violation {
   /// What is wrong, phrased to follow the package name.
   final String message;
 
-  /// The pubspec to point at in reports.
-  String get file => '${package.path}/pubspec.yaml';
+  /// The file to point at in reports, by default the pubspec.
+  String get file => _file ?? '${package.path}/pubspec.yaml';
+  final String? _file;
 
   @override
   String toString() => '${package.name} ($file) $message';
@@ -138,10 +139,80 @@ List<Violation> checkWorkspace(Directory root) {
   final pubspec = loadYaml(pubspecFile.readAsStringSync()) as YamlMap;
   final members = pubspec['workspace'];
   if (members is! YamlList) return const [];
-  return checkPackages([
+  final packages = [
     for (final member in members)
       WorkspacePackage.read(root, (member as String).replaceAll(r'\', '/')),
-  ]);
+  ];
+  return [
+    ...checkPackages(packages),
+    for (final package in packages)
+      if (package.zone == Zone.feature && package.layer == 'common')
+        ...checkLayers(root, package),
+  ];
+}
+
+/// The layers of a `common` package and the layers each may not import:
+/// `presentation → domain ← data` (ADR 0006).
+const _forbiddenLayers = {
+  'domain': {'data', 'presentation', 'di'},
+  'presentation': {'data', 'di'},
+  'data': {'presentation', 'di'},
+};
+
+/// Packages that only `data` and `di` may import.
+const _storagePackages = {'database', 'drift'};
+
+final _packageImport = RegExp(
+  r"^\s*import\s+'package:([a-z0-9_]+)/([^']*)'",
+  multiLine: true,
+);
+
+/// Returns the imports in the `common` [package] at [root] that go against
+/// the direction of its layers.
+List<Violation> checkLayers(Directory root, WorkspacePackage package) {
+  final source = Directory(p.join(root.path, package.path, 'lib', 'src'));
+  if (!source.existsSync()) return const [];
+  final violations = <Violation>[];
+  final files = source.listSync(recursive: true).whereType<File>();
+  for (final file in files.where((file) => file.path.endsWith('.dart'))) {
+    final path = p.relative(file.path, from: source.path);
+    final layer = p.split(path).first;
+    final forbidden = _forbiddenLayers[layer];
+    if (forbidden == null) continue;
+    final location = p.posix.joinAll([
+      ...p.split(package.path),
+      'lib',
+      'src',
+      ...p.split(path),
+    ]);
+    for (final match in _packageImport.allMatches(file.readAsStringSync())) {
+      final imported = match[1]!;
+      final target = p.posix.split(match[2]!);
+      final importsForbiddenLayer =
+          imported == package.name &&
+          target.length > 2 &&
+          target[0] == 'src' &&
+          forbidden.contains(target[1]);
+      if (importsForbiddenLayer) {
+        violations.add(
+          Violation(
+            package,
+            'has $layer code that imports its ${target[1]} layer: $location',
+            file: location,
+          ),
+        );
+      } else if (layer != 'data' && _storagePackages.contains(imported)) {
+        violations.add(
+          Violation(
+            package,
+            'has $layer code that imports package:$imported: $location',
+            file: location,
+          ),
+        );
+      }
+    }
+  }
+  return violations;
 }
 
 /// Returns every broken boundary rule among [packages].

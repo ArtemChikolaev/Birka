@@ -10,15 +10,26 @@ environment:
   sdk: ^3.10.0
 
 dependencies:
+  accounts_common:
+    path: ../../packages/features/accounts/common
+  accounts_flutter:
+    path: ../../packages/features/accounts/flutter
+  database:
+    path: ../../packages/core/database
   design_flutter:
     path: ../../packages/design/flutter
+  drift_flutter: ^0.2.8
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
   flutter_localizations:
     sdk: flutter
+  get_it: ^9.3.0
   go_router: ^17.5.0
   l10n:
     path: ../../packages/core/l10n
+  ledger:
+    path: ../../packages/core/ledger
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
