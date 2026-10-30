@@ -13,6 +13,7 @@ dependencies:
     path: ../tokens
   flutter:
     sdk: flutter
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -22,6 +23,7 @@ flutter:
   assets:
     - fonts/Inter-OFL.txt
     - fonts/Manrope-OFL.txt
+    - icons/
   fonts:
     - family: Inter
       fonts:

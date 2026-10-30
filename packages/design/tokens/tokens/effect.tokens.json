@@ -10,5 +10,13 @@
     "$description": "How much glass boosts the colors behind it: 1 keeps them, 1.6 is 160%.",
     "glass": { "$value": 1.6 },
     "nav": { "$value": 1.7 }
+  },
+  "shadow": {
+    "$type": "shadow",
+    "$description": "Drop shadows, which only show over the glow and other content.",
+    "glass": { "$value": { "color": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0.4, "hex": "#000000" }, "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 10, "unit": "px" }, "blur": { "value": 28, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "nav": { "$value": { "color": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0.55, "hex": "#000000" }, "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 12, "unit": "px" }, "blur": { "value": 32, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "navBubble": { "$value": { "color": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0.35, "hex": "#000000" }, "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 4, "unit": "px" }, "blur": { "value": 14, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "accentGlow": { "$value": { "color": { "colorSpace": "srgb", "components": [0.1412, 0.5412, 0.3373], "alpha": 0.55, "hex": "#248a56" }, "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 6, "unit": "px" }, "blur": { "value": 22, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } }
   }
 }

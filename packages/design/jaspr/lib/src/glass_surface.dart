@@ -30,7 +30,8 @@ class GlassSurface extends StatelessComponent {
         'background':
             'linear-gradient(160deg, var(--color-glass-fill-top) 0%, '
             'var(--color-glass-fill-bottom) 100%)',
-        'box-shadow': 'inset 0 1px 0 var(--color-glass-highlight)',
+        'box-shadow':
+            'inset 0 1px 0 var(--color-glass-highlight), var(--shadow-glass)',
         '-webkit-backdrop-filter':
             'blur(var(--blur-glass)) saturate(var(--saturation-glass))',
         'backdrop-filter':

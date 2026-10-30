@@ -184,6 +184,57 @@ void main() {
     });
   });
 
+  group('shadow', () {
+    Map<String, Object?> layer({Object? inset}) => {
+      'color': srgb([0, 0, 0], alpha: 0.4),
+      'offsetX': {'value': 0, 'unit': 'px'},
+      'offsetY': {'value': 10, 'unit': 'px'},
+      'blur': {'value': 28, 'unit': 'px'},
+      'spread': {'value': 0, 'unit': 'px'},
+      'inset': ?inset,
+    };
+
+    test('becomes a list of layers from one object or a list', () {
+      final one = valueOf({
+        's': {r'$type': 'shadow', r'$value': layer()},
+      }, 's');
+      final two = valueOf({
+        's': {
+          r'$type': 'shadow',
+          r'$value': [layer(), layer()],
+        },
+      }, 's');
+
+      expect((one as List<ShadowValue>).single.offsetY, 10);
+      expect(one.single.blur, 28);
+      expect(one.single.color, 0x66000000);
+      expect(two as List<ShadowValue>, hasLength(2));
+    });
+
+    test('resolves an alias to a color', () {
+      final value = valueOf({
+        'black': {
+          r'$type': 'color',
+          r'$value': srgb([0, 0, 0]),
+        },
+        's': {
+          r'$type': 'shadow',
+          r'$value': {...layer(), 'color': '{black}'},
+        },
+      }, 's');
+
+      expect((value as List<ShadowValue>).single.color, 0xFF000000);
+    });
+
+    test('inset layers are rejected', () {
+      final document = {
+        's': {r'$type': 'shadow', r'$value': layer(inset: true)},
+      };
+
+      expect(() => parseTokens(document), throwsFormat('inset'));
+    });
+  });
+
   test('typography resolves its aliases and keeps extensions', () {
     final document = {
       'font': {

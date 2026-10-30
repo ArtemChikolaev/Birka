@@ -71,8 +71,18 @@ String _cssValue(DesignToken token) => switch (token.type) {
   'fontFamily' => _families(token.value as List<String>),
   'fontWeight' => '${token.value}',
   'cubicBezier' => _cubicBezier(token.value as List<double>),
+  'shadow' => _shadow(token.value as List<ShadowValue>),
   final type => throw TokenFormatException('no CSS value for $type'),
 };
+
+String _shadow(List<ShadowValue> layers) => layers
+    .map(
+      (layer) =>
+          '${formatNumber(layer.offsetX)}px ${formatNumber(layer.offsetY)}px '
+          '${formatNumber(layer.blur)}px ${formatNumber(layer.spread)}px '
+          '${_color(layer.color)}',
+    )
+    .join(', ');
 
 String _cubicBezier(List<double> points) =>
     'cubic-bezier(${points.map(formatNumber).join(', ')})';

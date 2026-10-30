@@ -31,7 +31,8 @@ const _weightKeywords = {
 /// resolved.
 ///
 /// Supports the types Birka uses: `color` in sRGB, `dimension`, `duration`,
-/// `number`, `fontFamily`, `fontWeight`, `cubicBezier` and `typography`.
+/// `number`, `fontFamily`, `fontWeight`, `cubicBezier`, `typography` and
+/// outer `shadow`.
 List<DesignToken> parseTokens(Map<String, Object?> document) {
   final raw = <String, _RawToken>{};
   _collect(document, const [], null, raw);
@@ -161,6 +162,7 @@ Object _convert(String name, String type, Object? value) => switch (type) {
   'fontWeight' => _fontWeight(name, value),
   'cubicBezier' => _cubicBezier(name, value),
   'typography' => _typography(name, value),
+  'shadow' => _shadow(name, value),
   _ => throw TokenFormatException('$name has an unsupported type: $type'),
 };
 
@@ -270,6 +272,29 @@ List<double> _cubicBezier(String name, Object? value) {
   }
   throw TokenFormatException(
     '$name: a cubic bezier is [x1, y1, x2, y2] with x in 0..1',
+  );
+}
+
+List<ShadowValue> _shadow(String name, Object? value) {
+  final layers = value is List<Object?> ? value : [value];
+  return [for (final layer in layers) _shadowLayer(name, layer)];
+}
+
+ShadowValue _shadowLayer(String name, Object? value) {
+  if (value is! Map<String, Object?>) {
+    throw TokenFormatException(
+      '$name: a shadow is an object or a list of them',
+    );
+  }
+  if (value['inset'] == true) {
+    throw TokenFormatException('$name: inset shadows are not supported');
+  }
+  return ShadowValue(
+    color: _color('$name.color', value['color']),
+    offsetX: _dimension('$name.offsetX', value['offsetX']),
+    offsetY: _dimension('$name.offsetY', value['offsetY']),
+    blur: _dimension('$name.blur', value['blur']),
+    spread: _dimension('$name.spread', value['spread']),
   );
 }
 
