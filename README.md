@@ -44,8 +44,9 @@ from many countries changed hands.
 ## Repository layout
 
 ```text
+apps/mobile           Flutter host: Android, iOS, macOS during development
 packages/core/money   Money and Currency value types
-tools                 repository tooling: package boundary checks
+tools                 repository tooling: package boundary checks, dev scripts
 docs/adr              architecture decision records
 ```
 
@@ -61,7 +62,12 @@ You need Flutter 3.38.10 (pinned in `.fvmrc`) and GNU Make.
 make bootstrap                      # fetch dependencies
 make check                          # format, analysis, boundaries, tests
 make test-core COMPILER=dart2wasm   # core tests in Chrome via WebAssembly
+make run-mobile                     # the Flutter app on macOS
 ```
+
+In VS Code, Run and Debug has a configuration for macOS, the iOS simulator
+and the Android emulator, and one that starts all three. The iOS and Android
+ones boot the device first; `BIRKA_IOS_DEVICE` and `BIRKA_AVD` pick which.
 
 ## Contributing
 

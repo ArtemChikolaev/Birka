@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Boot iOS Simulator",
+      "detail": "Boots BIRKA_IOS_DEVICE or the first available iPhone",
+      "type": "shell",
+      "command": "tools/dev/boot_ios_simulator.sh",
+      "presentation": { "reveal": "silent" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Boot Android Emulator",
+      "detail": "Starts BIRKA_AVD or the first Android virtual device",
+      "type": "shell",
+      "command": "tools/dev/boot_android_emulator.sh",
+      "presentation": { "reveal": "silent" },
+      "problemMatcher": []
+    }
+  ]
+}

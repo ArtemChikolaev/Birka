@@ -15,7 +15,12 @@ else
   $(error COMPILER must be vm, dart2js or dart2wasm)
 endif
 
-.PHONY: help bootstrap format analyze check-deps test test-core test-tools check
+# Device for run-mobile: macos, or the start of a device name such as iPhone
+# or emulator (`flutter devices` lists them).
+DEVICE ?= macos
+
+.PHONY: help bootstrap format analyze check-deps test test-core test-tools \
+	test-mobile run-mobile check
 
 help: ## Show the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -35,7 +40,7 @@ analyze: ## Formatting, static analysis and package boundaries
 check-deps: ## Package boundary rules from ADR 0001
 	dart run birka_tools:check_deps
 
-test: test-core test-tools ## All tests on the Dart VM
+test: test-core test-tools test-mobile ## All tests on the Dart VM
 
 test-core: ## Core tests; COMPILER=vm|dart2js|dart2wasm
 	@for package in $(CORE_PACKAGES); do \
@@ -45,5 +50,11 @@ test-core: ## Core tests; COMPILER=vm|dart2js|dart2wasm
 
 test-tools: ## Tests of the repository tooling
 	cd tools && dart test
+
+test-mobile: ## Widget tests of the Flutter host
+	cd apps/mobile && flutter test
+
+run-mobile: ## Run the Flutter host; DEVICE=macos|iPhone|emulator
+	cd apps/mobile && flutter run -d $(DEVICE)
 
 check: analyze test ## What CI checks on every pull request (VM only)
