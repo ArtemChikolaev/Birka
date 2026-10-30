@@ -16,6 +16,5 @@ currencies(map):
   KZT: Tenge
   AED: Dirhams
   THB: Baht
-categories: Categories
 import: Import
 backup: Backup

@@ -199,18 +199,31 @@ final class LedgerRepository {
         );
   }
 
-  /// Adds a category.
+  /// Adds a category, after the others of its [kind]. A subcategory has a
+  /// parent of the same kind, which is not a subcategory itself.
   Future<Category> addCategory({
     required CategoryKind kind,
     required String name,
     String? parentId,
     String? icon,
     String? color,
-    int sortOrder = 0,
+    int? sortOrder,
   }) {
     return _db.transaction(() async {
+      if (parentId != null) await _checkParent(parentId, kind);
       final id = _newId();
       final at = _timestamp();
+      final last = _db.categories.sortOrder.max();
+      final position =
+          sortOrder ??
+          await (_db.selectOnly(_db.categories)
+                ..addColumns([last])
+                ..where(
+                  _db.categories.deletedAt.isNull() &
+                      _db.categories.kind.equals(kind.name),
+                ))
+              .map((row) => (row.read(last) ?? -1) + 1)
+              .getSingle();
       final row = await _db
           .into(_db.categories)
           .insertReturning(
@@ -223,7 +236,7 @@ final class LedgerRepository {
               parentId: Value(parentId),
               icon: Value(icon),
               color: Value(color),
-              sortOrder: Value(sortOrder),
+              sortOrder: Value(position),
             ),
           );
       await _log(_db.categories, id, 'insert', at);
@@ -231,14 +244,81 @@ final class LedgerRepository {
     });
   }
 
-  /// The categories of [kind] in their order, without archived ones.
-  Stream<List<Category>> watchCategories(CategoryKind kind) {
+  /// Changes the given fields of a category. Its kind never changes, and a
+  /// category with subcategories cannot become one itself.
+  Future<void> updateCategory(
+    String id, {
+    String? name,
+    Value<String?> parentId = const Value.absent(),
+    Value<String?> icon = const Value.absent(),
+    Value<String?> color = const Value.absent(),
+    bool? archived,
+    int? sortOrder,
+  }) {
+    return _db.transaction(() async {
+      final at = _timestamp();
+      final parent = parentId.value;
+      if (parentId.present && parent != null) {
+        final category = await this.category(id);
+        if (category != null) {
+          if (parent == id) {
+            throw LedgerException(
+              'Category ${category.name} is its own parent',
+            );
+          }
+          await _checkParent(parent, category.kind);
+          final children =
+              await (_db.select(_db.categories)..where(
+                    (row) => row.parentId.equals(id) & row.deletedAt.isNull(),
+                  ))
+                  .get();
+          if (children.isNotEmpty) {
+            throw LedgerException(
+              'Category ${category.name} has subcategories',
+            );
+          }
+        }
+      }
+      final updated =
+          await (_db.update(
+            _db.categories,
+          )..where((row) => row.id.equals(id) & row.deletedAt.isNull())).write(
+            CategoriesCompanion(
+              updatedAt: Value(at),
+              name: Value.absentIfNull(name),
+              parentId: parentId,
+              icon: icon,
+              color: color,
+              archived: Value.absentIfNull(archived),
+              sortOrder: Value.absentIfNull(sortOrder),
+            ),
+          );
+      if (updated == 0) throw LedgerException('No category $id');
+      await _log(_db.categories, id, 'update', at);
+    });
+  }
+
+  /// The category [id], if it exists.
+  Future<Category?> category(String id) async {
+    final row =
+        await (_db.select(_db.categories)
+              ..where((row) => row.id.equals(id) & row.deletedAt.isNull()))
+            .getSingleOrNull();
+    return row == null ? null : _categoryOf(row);
+  }
+
+  /// The categories of [kind] in their order, without archived ones unless
+  /// asked.
+  Stream<List<Category>> watchCategories(
+    CategoryKind kind, {
+    bool includeArchived = false,
+  }) {
     final query = _db.select(_db.categories)
       ..where(
         (row) =>
             row.kind.equals(kind.name) &
             row.deletedAt.isNull() &
-            row.archived.not(),
+            (includeArchived ? const Constant(true) : row.archived.not()),
       )
       ..orderBy([
         (row) => OrderingTerm(expression: row.sortOrder),
@@ -414,6 +494,19 @@ final class LedgerRepository {
           'Category ${category.name} is not for ${draft.kind.name}',
         );
       }
+    }
+  }
+
+  /// Checks that [parentId] can hold a subcategory of [kind]: categories have
+  /// two levels.
+  Future<void> _checkParent(String parentId, CategoryKind kind) async {
+    final parent = await category(parentId);
+    if (parent == null) throw LedgerException('No category $parentId');
+    if (parent.kind != kind) {
+      throw LedgerException('Category ${parent.name} is not for ${kind.name}');
+    }
+    if (parent.parentId != null) {
+      throw LedgerException('Category ${parent.name} is a subcategory');
     }
   }
 

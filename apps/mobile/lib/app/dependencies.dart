@@ -1,4 +1,5 @@
 import 'package:accounts_common/accounts_common.dart';
+import 'package:categories_common/categories_common.dart';
 import 'package:database/database.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:get_it/get_it.dart';
@@ -12,4 +13,5 @@ void registerDependencies(GetIt getIt) {
     ..registerSingleton(database)
     ..registerSingleton(LedgerRepository(database));
   registerAccounts(getIt);
+  registerCategories(getIt);
 }

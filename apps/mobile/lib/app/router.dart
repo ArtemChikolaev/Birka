@@ -3,6 +3,8 @@ import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:birka_mobile/app/placeholder_page.dart';
+import 'package:categories_common/categories_common.dart';
+import 'package:categories_flutter/categories_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -34,6 +36,16 @@ abstract final class Paths {
 
   /// The form of account [id].
   static String account(String id) => '/accounts/$id';
+
+  /// The list of categories.
+  static const categories = '/categories';
+
+  /// The form of a new category of [kind].
+  static String newCategory(CategoryKind kind) =>
+      '/categories/new?kind=${kind.name}';
+
+  /// The form of category [id].
+  static String category(String id) => '/categories/$id';
 }
 
 /// Builds the router: the tabs keep their state in a shell, and everything
@@ -95,6 +107,37 @@ GoRouter buildRouter(GetIt getIt) {
         ],
       ),
       GoRoute(
+        path: Paths.categories,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<CategoriesCubit>(),
+          child: CategoriesPage(
+            onBack: () => context.pop(),
+            onAdd: (kind) => context.push(Paths.newCategory(kind)),
+            onOpen: (id) => context.push(Paths.category(id)),
+          ),
+        ),
+        routes: [
+          GoRoute(
+            path: 'new',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) => _categoryFormPage(
+              getIt,
+              kind: CategoryKind.values
+                  .asNameMap()[state.uri.queryParameters['kind']],
+            ),
+          ),
+          GoRoute(
+            path: ':id',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) => _categoryFormPage(
+              getIt,
+              categoryId: state.pathParameters['id'],
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
         path: Paths.quickAdd,
         parentNavigatorKey: rootKey,
         pageBuilder: (context, state) => const MaterialPage(
@@ -112,6 +155,20 @@ Page<void> _formPage(GetIt getIt, String? accountId) => MaterialPage(
     create: (_) => getIt<AccountFormCubit>(param1: accountId),
     child: Builder(
       builder: (context) => AccountFormPage(onClose: () => context.pop()),
+    ),
+  ),
+);
+
+Page<void> _categoryFormPage(
+  GetIt getIt, {
+  String? categoryId,
+  CategoryKind? kind,
+}) => MaterialPage(
+  fullscreenDialog: true,
+  child: BlocProvider(
+    create: (_) => getIt<CategoryFormCubit>(param1: categoryId, param2: kind),
+    child: Builder(
+      builder: (context) => CategoryFormPage(onClose: () => context.pop()),
     ),
   ),
 );

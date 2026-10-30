@@ -29,6 +29,45 @@ enum BirkaGlyph {
 
   /// A check mark.
   check,
+
+  /// A shopping cart.
+  cart,
+
+  /// A cup.
+  cup,
+
+  /// A bus.
+  bus,
+
+  /// A heart.
+  heart,
+
+  /// A strip of film.
+  ticket,
+
+  /// Two arrows in a circle.
+  repeat,
+
+  /// A shirt.
+  shirt,
+
+  /// A paper plane.
+  plane,
+
+  /// A book.
+  book,
+
+  /// A gift box.
+  gift,
+
+  /// A briefcase.
+  briefcase,
+
+  /// A wallet.
+  wallet,
+
+  /// A percent sign.
+  percent,
 }
 
 /// An icon in the color of [color] or of the surrounding [IconTheme].

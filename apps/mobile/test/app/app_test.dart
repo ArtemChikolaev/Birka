@@ -4,9 +4,12 @@ import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:birka_mobile/app/app.dart';
 import 'package:birka_mobile/app/placeholder_page.dart';
+import 'package:categories_common/categories_common.dart';
+import 'package:categories_flutter/categories_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:l10n/l10n.dart';
@@ -29,6 +32,27 @@ final class _NoAccounts implements AccountsRepository {
   Future<void> setArchived(String id, {required bool archived}) async {}
 }
 
+final class _NoCategories implements CategoriesRepository {
+  @override
+  Stream<List<Category>> watchCategories(CategoryKind kind) =>
+      Stream.value(const []);
+
+  @override
+  Future<Category?> category(String id) async => null;
+
+  @override
+  Future<void> add(CategoryDraft draft) async {}
+
+  @override
+  Future<void> addAll(List<CategoryDraft> drafts) async {}
+
+  @override
+  Future<void> update(String id, CategoryDraft draft) async {}
+
+  @override
+  Future<void> setArchived(String id, {required bool archived}) async {}
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late GetIt getIt;
@@ -36,10 +60,19 @@ void main() {
   setUp(() {
     getIt = GetIt.asNewInstance();
     final AccountsRepository accounts = _NoAccounts();
+    final CategoriesRepository categories = _NoCategories();
     getIt
       ..registerFactory(() => AccountsCubit(accounts))
       ..registerFactoryParam<AccountFormCubit, String?, void>(
         (accountId, _) => AccountFormCubit(accounts, accountId: accountId),
+      )
+      ..registerFactory(() => CategoriesCubit(categories))
+      ..registerFactoryParam<CategoryFormCubit, String?, CategoryKind?>(
+        (categoryId, kind) => CategoryFormCubit(
+          categories,
+          categoryId: categoryId,
+          kind: kind ?? CategoryKind.expense,
+        ),
       );
   });
 
@@ -113,6 +146,34 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.accounts.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('categories open from the more tab with the kind on screen', (
+    tester,
+  ) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.categories.title));
+    await tester.pumpAndSettle();
+    expect(find.byType(CategoriesPage), findsOneWidget);
+
+    await tester.tap(find.text(t.categories.income.toUpperCase()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(t.categories.add));
+    await tester.pumpAndSettle();
+
+    final form = tester.element(find.byType(CategoryFormPage));
+    expect(
+      form.read<CategoryFormCubit>().state.kind,
+      CategoryKind.income,
+    );
+
+    await tester.tap(find.bySemanticsLabel(t.app.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(CategoriesPage), findsOneWidget);
   });
 
   test('bundles the fonts of the design system and their licenses', () async {

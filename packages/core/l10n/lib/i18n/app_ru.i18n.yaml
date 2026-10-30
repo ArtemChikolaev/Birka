@@ -16,6 +16,5 @@ currencies(map):
   KZT: Тенге
   AED: Дирхамы
   THB: Баты
-categories: Категории
 import: Импорт
 backup: Бэкап

@@ -44,9 +44,10 @@ class AccountsCubit extends Cubit<AccountsState> {
 
   /// Reads the accounts again after a failure.
   Future<void> retry() async {
-    await _subscription?.cancel();
+    final cancelled = _subscription?.cancel();
     emit(const AccountsLoading());
     _follow();
+    await cancelled;
   }
 
   /// Hides account [id] from everyday lists, or brings it back.

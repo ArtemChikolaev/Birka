@@ -184,8 +184,6 @@ void main() {
       ..broken = false
       ..rows = [row('Карта', rub(100))];
     await tester.tap(find.text('ПОВТОРИТЬ'));
-    // Cancelling a finished stream completes outside the fake clock.
-    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
     await tester.pumpAndSettle();
     expect(find.text('Карта'), findsOneWidget);
   });
