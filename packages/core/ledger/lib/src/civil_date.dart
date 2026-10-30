@@ -8,8 +8,10 @@ import 'package:meta/meta.dart';
 @immutable
 final class CivilDate implements Comparable<CivilDate> {
   /// Creates a date. Throws an [ArgumentError] if it does not exist, such as
-  /// February 30.
+  /// February 30, or if its year does not fit the four digits of the stored
+  /// form, because such a date could not be read back.
   CivilDate(this.year, this.month, this.day) {
+    RangeError.checkValueInInterval(year, 0, 9999, 'year');
     final date = DateTime.utc(year, month, day);
     if (date.year != year || date.month != month || date.day != day) {
       throw ArgumentError('No such date: $year-$month-$day');

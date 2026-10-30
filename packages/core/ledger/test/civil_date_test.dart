@@ -34,6 +34,13 @@ void main() {
     expect(() => CivilDate(2026, 2, 29), throwsArgumentError);
   });
 
+  test('rejects years that the stored form cannot hold', () {
+    expect(() => CivilDate(20026, 10, 30), throwsArgumentError);
+    expect(() => CivilDate(-1, 10, 30), throwsArgumentError);
+    expect(CivilDate.parse('0001-01-01'), CivilDate(1, 1, 1));
+    expect(CivilDate(9999, 12, 31).toString(), '9999-12-31');
+  });
+
   test('rejects dates that do not exist and other formats', () {
     expect(() => CivilDate(2026, 13, 1), throwsArgumentError);
     expect(() => CivilDate.parse('2026-02-30'), throwsArgumentError);
