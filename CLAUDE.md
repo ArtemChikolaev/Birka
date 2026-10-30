@@ -62,6 +62,8 @@ Extend what exists instead of duplicating it.
   the browser stays inside `@client` components, and paths stay relative to
   `<base href>`. After adding a `@client` component or `@css` styles, run
   `make build-web` and commit the regenerated `*.options.dart` files.
+- The Flutter app draws edge to edge behind see-through system bars, so
+  screens keep their content out of the bars with `SafeArea`.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
   `make icons`, and never edit the generated icons by hand.

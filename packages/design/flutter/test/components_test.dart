@@ -4,6 +4,7 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:design_flutter/src/components/glass_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget app(Widget child) => MaterialApp(
@@ -97,6 +98,20 @@ void main() {
       final corner = pixel(2, 2);
       expect(corner.g, greaterThan(corner.r));
       expect(pixel(195, 422), colors.background);
+    });
+
+    testWidgets('makes the system bars see-through', (tester) async {
+      await tester.pumpWidget(
+        const AmbientBackground(child: SizedBox.expand()),
+      );
+
+      final region = tester.widget<AnnotatedRegion<SystemUiOverlayStyle>>(
+        find.byType(AnnotatedRegion<SystemUiOverlayStyle>),
+      );
+      expect(region.value.statusBarColor, Colors.transparent);
+      expect(region.value.systemNavigationBarColor, Colors.transparent);
+      expect(region.value.statusBarIconBrightness, Brightness.light);
+      expect(region.value.systemNavigationBarIconBrightness, Brightness.light);
     });
   });
 

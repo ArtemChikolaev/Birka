@@ -1,4 +1,6 @@
 import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_theme.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 /// Birka's backdrop: the background color with a faint glow of
@@ -6,6 +8,8 @@ import 'package:flutter/widgets.dart';
 /// left edge.
 ///
 /// It goes behind a whole screen, and glass on top of it picks up the glow.
+/// It also makes the system bars see-through; the app has to draw edge to
+/// edge for the glow to reach behind them.
 class AmbientBackground extends StatelessWidget {
   /// Creates the backdrop behind [child].
   const AmbientBackground({required this.child, super.key});
@@ -16,13 +20,16 @@ class AmbientBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
-    return ColoredBox(
-      color: colors.background,
-      child: CustomPaint(
-        painter: _GlowPainter(colors.ambient),
-        // Content that repaints, such as a scrolling list, leaves the glow
-        // as it is.
-        child: RepaintBoundary(child: child),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: BirkaTheme.systemBars,
+      child: ColoredBox(
+        color: colors.background,
+        child: CustomPaint(
+          painter: _GlowPainter(colors.ambient),
+          // Content that repaints, such as a scrolling list, leaves the glow
+          // as it is.
+          child: RepaintBoundary(child: child),
+        ),
       ),
     );
   }
