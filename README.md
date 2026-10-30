@@ -88,8 +88,8 @@ make tokens                         # regenerate the design tokens
 ```
 
 In VS Code, Run and Debug has a configuration for the site, for macOS, the iOS
-simulator and the Android emulator, and one that starts all three apps. The iOS and Android
-ones boot the device first; `BIRKA_IOS_DEVICE` and `BIRKA_AVD` pick which.
+simulator and the Android emulator, and one that starts all three apps. The iOS
+and Android ones start the device if none is running.
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 {
   // Pick a configuration under Run and Debug and press F5. The iOS and Android
-  // ones boot a simulator or an emulator first (tasks.json).
+  // ones start a simulator or an emulator if none is running.
   "version": "0.2.0",
   "configurations": [
     {
@@ -17,8 +17,7 @@
       "request": "launch",
       "cwd": "apps/mobile",
       "program": "lib/main.dart",
-      "deviceId": "iPhone",
-      "preLaunchTask": "Boot iOS Simulator"
+      "emulatorId": "apple_ios_simulator"
     },
     {
       "name": "Mobile · Android Emulator",
@@ -26,8 +25,9 @@
       "request": "launch",
       "cwd": "apps/mobile",
       "program": "lib/main.dart",
-      "deviceId": "emulator",
-      "preLaunchTask": "Boot Android Emulator"
+      // Matches the first virtual device with its API level in the name, the
+      // way Android Studio names them. `flutter emulators` lists the ids.
+      "emulatorId": "API"
     },
     {
       "name": "Web · localhost:8080",
