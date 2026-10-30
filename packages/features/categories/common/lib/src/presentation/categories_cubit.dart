@@ -59,15 +59,17 @@ class CategoriesCubit extends Cubit<CategoriesState> {
   /// Reads the categories again after a failure.
   Future<void> retry() => _restart(state.kind);
 
-  /// Adds the ready set, in the language of the user.
+  /// Adds the ready set of this kind, in the language of the user. The other
+  /// kind stays as it is, because it may already hold categories of the user.
   Future<void> addPresets() => _repository.addAll([
     for (final preset in categoryPresets)
-      CategoryDraft(
-        kind: preset.kind,
-        name: t.categories.presets[preset.key] ?? preset.key,
-        icon: preset.icon,
-        color: preset.color,
-      ),
+      if (preset.kind == state.kind)
+        CategoryDraft(
+          kind: preset.kind,
+          name: t.categories.presets[preset.key] ?? preset.key,
+          icon: preset.icon,
+          color: preset.color,
+        ),
   ]);
 
   /// Moves to [kind] at once and lets the old stream finish cancelling.

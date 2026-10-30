@@ -70,11 +70,34 @@ void main() {
 
     await cubit.addPresets();
 
-    expect(repository.added, hasLength(categoryPresets.length));
     final first = repository.added.first;
     expect(first.name, 'Продукты');
     expect(first.kind, CategoryKind.expense);
     expect(first.icon, 'cart');
     expect(first.color, categoryColors.first);
+  });
+
+  test('adds the ready set only of the kind on the screen', () async {
+    final repository = FakeCategoriesRepository([food]);
+    final cubit = CategoriesCubit(repository);
+    addTearDown(cubit.close);
+    await settle();
+
+    await cubit.kindChanged(CategoryKind.income);
+    await settle();
+    await cubit.addPresets();
+
+    expect(
+      repository.added.map((draft) => draft.name),
+      unorderedEquals([
+        for (final preset in categoryPresets)
+          if (preset.kind == CategoryKind.income)
+            t.categories.presets[preset.key],
+      ]),
+    );
+    expect(
+      repository.added.map((draft) => draft.kind),
+      everyElement(CategoryKind.income),
+    );
   });
 }

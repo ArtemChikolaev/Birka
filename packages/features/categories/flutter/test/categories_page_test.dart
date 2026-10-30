@@ -52,8 +52,11 @@ void main() {
     await tester.tap(find.text('ДОБАВИТЬ ГОТОВЫЙ НАБОР'));
     await tester.pump();
 
-    expect(repository.added, hasLength(categoryPresets.length));
     expect(repository.added.first.name, 'Продукты');
+    expect(
+      repository.added.map((draft) => draft.kind),
+      everyElement(CategoryKind.expense),
+    );
   });
 
   testWidgets('without categories it also lets you make your own', (
