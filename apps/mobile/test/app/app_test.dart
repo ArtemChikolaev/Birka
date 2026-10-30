@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:birka_mobile/app/app.dart';
 import 'package:birka_mobile/app/placeholder_page.dart';
-import 'package:birka_mobile/app/strings.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:l10n/l10n.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -16,8 +16,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // The title of the page and the label of the tab.
-    expect(find.text(Strings.overview), findsNWidgets(2));
-    expect(find.text(Strings.operations), findsOneWidget);
+    expect(find.text(t.app.overview), findsNWidgets(2));
+    expect(find.text(t.app.operations), findsOneWidget);
   });
 
   testWidgets('dresses the app in the Birka theme', (tester) async {
@@ -33,10 +33,10 @@ void main() {
     await tester.pumpWidget(const BirkaApp());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text(Strings.reports));
+    await tester.tap(find.text(t.app.reports));
     await tester.pumpAndSettle();
 
-    expect(find.text(Strings.reports), findsNWidgets(2));
+    expect(find.text(t.app.reports), findsNWidgets(2));
     final bar = tester.widget<GlassNavBar>(find.byType(GlassNavBar));
     expect(bar.selectedIndex, 2);
   });
@@ -47,12 +47,12 @@ void main() {
     await tester.pumpWidget(const BirkaApp());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.bySemanticsLabel(Strings.newOperation));
+    await tester.tap(find.bySemanticsLabel(t.app.newOperation));
     await tester.pumpAndSettle();
     expect(find.byType(QuickAddPlaceholder), findsOneWidget);
     expect(find.byType(GlassNavBar), findsNothing);
 
-    await tester.tap(find.bySemanticsLabel(Strings.close));
+    await tester.tap(find.bySemanticsLabel(t.app.close));
     await tester.pumpAndSettle();
     expect(find.byType(QuickAddPlaceholder), findsNothing);
     expect(find.byType(GlassNavBar), findsOneWidget);

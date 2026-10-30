@@ -9,6 +9,7 @@ workspace:
   - apps/mobile
   - apps/web
   - packages/core/database
+  - packages/core/l10n
   - packages/core/ledger
   - packages/core/money
   - packages/design/flutter

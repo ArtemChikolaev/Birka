@@ -11,3 +11,4 @@
 | [0007](0007-design-tokens.md) | Design tokens in DTCG with our own generator | accepted 2026-10-30 |
 | [0008](0008-web-host.md) | The web host: a static Jaspr site on GitHub Pages | accepted 2026-10-30 |
 | [0009](0009-data-model.md) | The data model: a ledger of entries in one Drift database | accepted 2026-10-30 |
+| [0010](0010-strings.md) | Strings in one pure-Dart package with slang | accepted 2026-10-30 |

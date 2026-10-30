@@ -1,0 +1,18 @@
+name: l10n
+description: >-
+  The strings of Birka in every language and the formatting of amounts for
+  people. Pure Dart, shared by both hosts.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  intl: ^0.20.2
+  money:
+    path: ../money
+  slang: ^4.19.2
+
+dev_dependencies:
+  test: ^1.26.3
