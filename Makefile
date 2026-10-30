@@ -19,8 +19,9 @@ endif
 # or emulator (`flutter devices` lists them).
 DEVICE ?= macos
 
-.PHONY: help bootstrap format analyze check-deps check-tokens tokens test \
-	test-core test-tools test-design test-mobile run-mobile check
+.PHONY: help bootstrap format analyze check-deps check-tokens tokens icons \
+	icon-masters test test-core test-tools test-design test-mobile run-mobile \
+	check
 
 help: ## Show the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -46,6 +47,12 @@ check-tokens: ## Generated tokens match their sources (ADR 0007)
 
 tokens: ## Regenerate the Dart and CSS design tokens
 	cd packages/design/tokens && dart run design_tokens:generate
+
+icon-masters: ## Render the icon masters from coin.svg (needs Chrome)
+	tools/dev/render_icons.sh
+
+icons: ## App icons and launch screens from the masters (macOS)
+	tools/dev/apply_icons.sh
 
 test: test-core test-tools test-design test-mobile ## All tests on the Dart VM
 

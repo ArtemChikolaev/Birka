@@ -58,6 +58,9 @@ Extend what exists instead of duplicating it.
   generated files, and never hard-code a color or a size that a token has.
   Flutter widgets read `BirkaColors.of(context)` and
   `BirkaTextStyles.of(context)`.
+- The app icons and launch screens come from
+  `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
+  `make icons`, and never edit the generated icons by hand.
 - Our packages depend on each other through `path:`.
 - `make check-deps` enforces these rules in CI. Fix the code, not the rule.
 
