@@ -9,7 +9,8 @@ Birka is a local-first expense tracker for money across currencies, banks and
 countries. A pure-Dart core is shared by a Flutter app (Android and iOS; it
 also runs on macOS during development) and a Jaspr web app; a small Go server
 for end-to-end encrypted sync comes later.
-Decisions live in [docs/adr](docs/adr/).
+Decisions live in [docs/adr](docs/adr/), the mockups of the first version in
+[docs/design](docs/design/).
 
 ## Rule 0 — Reuse first
 

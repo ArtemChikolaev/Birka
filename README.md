@@ -27,6 +27,15 @@ from many countries changed hands.
 - Android, iOS and the web from one codebase; the data stays on the device.
 - Later: end-to-end encrypted sync through a small self-hosted server.
 
+<p>
+  <img src="docs/design/mockups/01-overview.png" width="240" alt="Overview">
+  <img src="docs/design/mockups/02-quick-add.png" width="240" alt="Quick add">
+  <img src="docs/design/mockups/05-reports.png" width="240" alt="Reports">
+</p>
+
+These are mockups of the first version; every screen is in
+[docs/design](docs/design/).
+
 ## How it is built
 
 - **One pure-Dart core** (money, domain rules, storage, BLoC state) shared by
