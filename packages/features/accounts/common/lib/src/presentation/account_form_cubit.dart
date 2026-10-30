@@ -249,6 +249,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
   Future<void> _load(String id) async {
     try {
       final account = await _repository.account(id);
+      if (isClosed) return;
       if (account == null) {
         emit(state.copyWith(status: AccountFormStatus.failed));
         return;

@@ -137,6 +137,11 @@ void main() {
       expect((await ledger.account(savings.id))?.lastDigits, isNull);
     });
 
+    test('can change their type', () async {
+      await ledger.updateAccount(card.id, type: AccountType.credit);
+      expect((await ledger.account(card.id))?.type, AccountType.credit);
+    });
+
     test('can change their opening balance within their currency', () async {
       await ledger.updateAccount(card.id, openingBalance: rub(500));
       expect(await balanceOf(card), rub(500));
