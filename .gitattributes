@@ -1,0 +1,4 @@
+# Generated files: GitHub folds them in diffs and leaves them out of the
+# language statistics. Change their sources instead (ADR 0007).
+*.g.dart linguist-generated=true
+packages/design/tokens/css/tokens.css linguist-generated=true

@@ -8,6 +8,8 @@ environment:
 workspace:
   - apps/mobile
   - packages/core/money
+  - packages/design/flutter
+  - packages/design/tokens
   - tools
 
 dev_dependencies:

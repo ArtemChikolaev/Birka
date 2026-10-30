@@ -1,0 +1,14 @@
+{
+  "duration": {
+    "$type": "duration",
+    "fast": { "$value": { "value": 150, "unit": "ms" } },
+    "base": { "$value": { "value": 220, "unit": "ms" } },
+    "slow": { "$value": { "value": 320, "unit": "ms" } },
+    "spring": { "$description": "The tab bar bubble and switches.", "$value": { "value": 560, "unit": "ms" } }
+  },
+  "easing": {
+    "$type": "cubicBezier",
+    "standard": { "$value": [0.2, 0, 0, 1] },
+    "spring": { "$description": "Overshoots a little, like a spring.", "$value": [0.34, 1.56, 0.64, 1] }
+  }
+}

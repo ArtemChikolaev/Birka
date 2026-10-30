@@ -46,7 +46,7 @@ jobs:
       - run: flutter pub get
       - run: make test-core COMPILER=${{ matrix.compiler }}
       - if: matrix.compiler == 'vm'
-        run: make test-tools test-mobile
+        run: make test-tools test-design test-mobile
 
   all-checks:
     name: All checks

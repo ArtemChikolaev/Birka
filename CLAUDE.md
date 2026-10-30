@@ -51,6 +51,12 @@ Extend what exists instead of duplicating it.
   function; every other class gets its dependencies through its
   constructor.
 - The design system knows nothing about money or features.
+- Colors, sizes, type and motion come from the design tokens
+  ([ADR 0007](docs/adr/0007-design-tokens.md)): change them in
+  `packages/design/tokens/tokens/` and run `make tokens`, never edit the
+  generated files, and never hard-code a color or a size that a token has.
+  Flutter widgets read `BirkaColors.of(context)` and
+  `BirkaTextStyles.of(context)`.
 - Our packages depend on each other through `path:`.
 - `make check-deps` enforces these rules in CI. Fix the code, not the rule.
 
