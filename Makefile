@@ -103,8 +103,9 @@ test-mobile: ## Widget tests of the Flutter host
 run-mobile: ## Run the Flutter host; DEVICE=macos|iPhone|emulator
 	cd apps/mobile && flutter run -d $(DEVICE)
 
-run-web: ## Serve the site with hot reload on localhost:8080
-	cd apps/web && dart run jaspr_cli:jaspr serve
+run-web: ## Serve the site on localhost:8080, rebuilt on every change
+	# In release mode, because the worker of Drift cannot run as DDC modules.
+	cd apps/web && dart run jaspr_cli:jaspr serve --release
 
 build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 	cd apps/web && dart run jaspr_cli:jaspr build --dart-define=BASE_PATH=$(BASE)

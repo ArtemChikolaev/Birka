@@ -55,9 +55,10 @@
 8. On the web we take the storage that Drift chooses under Pages.
    `sqlite3.wasm` from the matching release of `sqlite3` is committed to
    `apps/web/web`, and the Jaspr build compiles the worker from
-   `web/drift_worker.dart`. With `unsafeIndexedDb`, a Web Lock keeps the app to
-   one tab at a time: a second tab says so and takes over once the first one
-   closes.
+   `web/drift_worker.dart`. A worker cannot run as DDC modules, so `make
+   run-web` serves the site in release mode too. With `unsafeIndexedDb`, a Web
+   Lock keeps the app to one tab at a time: a second tab says so and takes over
+   once the first one closes.
 9. Search uses FTS5 on every platform.
 
 ## Options considered
