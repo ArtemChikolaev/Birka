@@ -8,6 +8,8 @@ environment:
 workspace:
   - apps/mobile
   - apps/web
+  - packages/core/database
+  - packages/core/ledger
   - packages/core/money
   - packages/design/flutter
   - packages/design/jaspr

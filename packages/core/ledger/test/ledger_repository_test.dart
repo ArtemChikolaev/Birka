@@ -1,0 +1,422 @@
+@TestOn('vm')
+library;
+
+import 'dart:math';
+
+import 'package:database/database.dart';
+import 'package:drift/drift.dart' hide isNull;
+import 'package:drift/native.dart';
+import 'package:ledger/ledger.dart';
+import 'package:money/money.dart';
+import 'package:test/test.dart';
+
+Money rub(int minorUnits) => Money(minorUnits, Currency.rub);
+Money eur(int minorUnits) => Money(minorUnits, Currency.eur);
+
+void main() {
+  final today = CivilDate(2026, 10, 30);
+  final at = DateTime.utc(2026, 10, 30, 12);
+  late BirkaDatabase database;
+  late LedgerRepository ledger;
+  late Account card;
+  late Account euro;
+  late Category cafe;
+  late Category salary;
+
+  Future<Money> balanceOf(Account account) =>
+      ledger.watchBalance(account.id).first;
+
+  TransactionDraft coffee(Money amount, {TransactionStatus? status}) {
+    return TransactionDraft.expense(
+      accountId: card.id,
+      allocations: [Allocation(categoryId: cafe.id, amount: amount)],
+      occurredOn: today,
+      status: status ?? TransactionStatus.cleared,
+    );
+  }
+
+  Future<List<String>> outbox() async {
+    final changes = await (database.select(
+      database.changes,
+    )..orderBy([(row) => OrderingTerm(expression: row.sequence)])).get();
+    return [
+      for (final change in changes) '${change.operation} ${change.entity}',
+    ];
+  }
+
+  setUp(() async {
+    database = BirkaDatabase(NativeDatabase.memory());
+    ledger = LedgerRepository(database, now: () => at);
+    card = await ledger.addAccount(
+      name: 'Card',
+      type: AccountType.debit,
+      openingBalance: rub(100000),
+    );
+    euro = await ledger.addAccount(
+      name: 'Euro',
+      type: AccountType.savings,
+      openingBalance: eur(0),
+    );
+    cafe = await ledger.addCategory(kind: CategoryKind.expense, name: 'Cafe');
+    salary = await ledger.addCategory(
+      kind: CategoryKind.income,
+      name: 'Salary',
+    );
+  });
+
+  tearDown(() => database.close());
+
+  group('accounts', () {
+    test('keep their currency and opening balance', () async {
+      final bitcoin = await ledger.addAccount(
+        name: 'Wallet',
+        type: AccountType.crypto,
+        openingBalance: Money(
+          12345678,
+          Currency.custom('BTC', decimalDigits: 8),
+        ),
+      );
+
+      final accounts = await ledger.watchAccounts().first;
+      final stored = accounts.singleWhere((a) => a.id == bitcoin.id);
+      expect(stored.currency.decimalDigits, 8);
+      expect(stored.openingBalance, bitcoin.openingBalance);
+    });
+
+    test('are listed in their order and without archived ones', () async {
+      await ledger.updateAccount(card.id, sortOrder: 2);
+      await ledger.updateAccount(euro.id, sortOrder: 1);
+      expect((await ledger.watchAccounts().first).map((a) => a.name), [
+        'Euro',
+        'Card',
+      ]);
+
+      await ledger.updateAccount(euro.id, archived: true);
+      expect((await ledger.watchAccounts().first).map((a) => a.name), ['Card']);
+      expect(
+        await ledger.watchAccounts(includeArchived: true).first,
+        hasLength(2),
+      );
+    });
+
+    test('an unknown account cannot be updated', () {
+      expect(
+        ledger.updateAccount('no such account', name: 'New'),
+        throwsA(isA<LedgerException>()),
+      );
+    });
+  });
+
+  group('balance', () {
+    test('is the opening balance plus the entries', () async {
+      await ledger.record(coffee(rub(25000)));
+      await ledger.record(
+        TransactionDraft.income(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: salary.id, amount: rub(5000))],
+          occurredOn: today,
+        ),
+      );
+
+      expect(await balanceOf(card), rub(80000));
+    });
+
+    test('leaves out what is only planned', () async {
+      await ledger.record(
+        coffee(rub(25000), status: TransactionStatus.planned),
+      );
+
+      expect(await balanceOf(card), rub(100000));
+    });
+
+    test('a transfer between currencies moves both balances', () async {
+      await ledger.record(
+        TransactionDraft.transfer(
+          fromAccountId: card.id,
+          sent: rub(50000),
+          toAccountId: euro.id,
+          received: eur(500),
+          occurredOn: today,
+        ),
+      );
+
+      expect(await balanceOf(card), rub(50000));
+      expect(await balanceOf(euro), eur(500));
+    });
+
+    test('an adjustment changes it without categories', () async {
+      await ledger.record(
+        TransactionDraft.adjustment(
+          accountId: card.id,
+          change: rub(-100),
+          occurredOn: today,
+        ),
+      );
+
+      expect(await balanceOf(card), rub(99900));
+    });
+
+    test('updates in the stream after each write', () async {
+      final balances = ledger.watchBalance(card.id);
+      final expectation = expectLater(
+        balances,
+        emitsInOrder([rub(100000), rub(90000)]),
+      );
+      await balanceOf(card);
+
+      await ledger.record(coffee(rub(10000)));
+
+      await expectation;
+    });
+
+    test('equals the opening balance plus every live entry', () async {
+      final random = Random(20261030);
+      var expected = 100000;
+      final ids = <String, int>{};
+      for (var i = 0; i < 200; i++) {
+        final amount = 1 + random.nextInt(10000);
+        switch (random.nextInt(3)) {
+          case 0:
+            ids[await ledger.record(coffee(rub(amount)))] = amount;
+            expected -= amount;
+          case 1 when ids.isNotEmpty:
+            final id = ids.keys.elementAt(random.nextInt(ids.length));
+            await ledger.delete(id);
+            expected += ids.remove(id)!;
+          case 2 when ids.isNotEmpty:
+            final id = ids.keys.elementAt(random.nextInt(ids.length));
+            await ledger.amend(id, coffee(rub(amount)));
+            expected += ids[id]! - amount;
+            ids[id] = amount;
+        }
+      }
+
+      expect(await balanceOf(card), rub(expected));
+    });
+  });
+
+  group('transactions', () {
+    test('come back with their entries and allocations', () async {
+      final id = await ledger.record(coffee(rub(25000)));
+
+      final transaction = (await ledger.watchTransactions().first).single;
+      expect(transaction.id, id);
+      expect(transaction.kind, TransactionKind.expense);
+      expect(transaction.occurredOn, today);
+      expect(transaction.entries.single.amount, rub(-25000));
+      expect(transaction.allocations.single.categoryId, cafe.id);
+      expect(transaction.allocations.single.amount, rub(25000));
+    });
+
+    test('are listed by date, the latest first', () async {
+      await ledger.record(
+        TransactionDraft.adjustment(
+          accountId: card.id,
+          change: rub(1),
+          occurredOn: CivilDate(2026, 10, 1),
+        ),
+      );
+      await ledger.record(
+        TransactionDraft.adjustment(
+          accountId: card.id,
+          change: rub(2),
+          occurredOn: CivilDate(2026, 10, 20),
+        ),
+      );
+
+      final dates = (await ledger.watchTransactions().first).map(
+        (transaction) => transaction.occurredOn.day,
+      );
+      expect(dates, [20, 1]);
+    });
+
+    test('can be listed by account', () async {
+      await ledger.record(coffee(rub(100)));
+      await ledger.record(
+        TransactionDraft.adjustment(
+          accountId: euro.id,
+          change: eur(1),
+          occurredOn: today,
+        ),
+      );
+
+      final ofEuro = await ledger.watchTransactions(accountId: euro.id).first;
+      expect(ofEuro.single.entries.single.accountId, euro.id);
+    });
+
+    test('an amendment replaces the entries and allocations', () async {
+      final id = await ledger.record(coffee(rub(25000)));
+
+      await ledger.amend(id, coffee(rub(10000)));
+
+      final transaction = (await ledger.watchTransactions().first).single;
+      expect(transaction.id, id);
+      expect(transaction.entries.single.amount, rub(-10000));
+      expect(transaction.allocations.single.amount, rub(10000));
+      expect(await balanceOf(card), rub(90000));
+    });
+
+    test('deleting leaves tombstones and returns the money', () async {
+      final id = await ledger.record(coffee(rub(25000)));
+
+      await ledger.delete(id);
+
+      expect(await ledger.watchTransactions().first, isEmpty);
+      expect(await balanceOf(card), rub(100000));
+      final row = await database.select(database.transactions).getSingle();
+      expect(row.deletedAt, at);
+      final entry = await database.select(database.entries).getSingle();
+      expect(entry.deletedAt, at);
+      final allocation = await database
+          .select(database.allocations)
+          .getSingle();
+      expect(allocation.deletedAt, at);
+    });
+
+    test('a deleted transaction cannot be amended or deleted again', () async {
+      final id = await ledger.record(coffee(rub(100)));
+      await ledger.delete(id);
+
+      expect(
+        ledger.amend(id, coffee(rub(200))),
+        throwsA(isA<LedgerException>()),
+      );
+      expect(ledger.delete(id), throwsA(isA<LedgerException>()));
+    });
+  });
+
+  group('rules of the database', () {
+    final fails = throwsA(isA<LedgerException>());
+
+    test('an account has to exist', () {
+      expect(
+        ledger.record(
+          TransactionDraft.adjustment(
+            accountId: 'no such account',
+            change: rub(1),
+            occurredOn: today,
+          ),
+        ),
+        fails,
+      );
+    });
+
+    test('an amount has to be in the currency of the account', () {
+      expect(
+        ledger.record(
+          TransactionDraft.adjustment(
+            accountId: card.id,
+            change: eur(1),
+            occurredOn: today,
+          ),
+        ),
+        fails,
+      );
+    });
+
+    test('a category has to exist', () {
+      expect(
+        ledger.record(
+          TransactionDraft.expense(
+            accountId: card.id,
+            allocations: [
+              Allocation(categoryId: 'no such category', amount: rub(1)),
+            ],
+            occurredOn: today,
+          ),
+        ),
+        fails,
+      );
+    });
+
+    test('a category has to fit the kind of the transaction', () {
+      expect(
+        ledger.record(
+          TransactionDraft.expense(
+            accountId: card.id,
+            allocations: [Allocation(categoryId: salary.id, amount: rub(1))],
+            occurredOn: today,
+          ),
+        ),
+        fails,
+      );
+    });
+
+    test('a rejected write leaves nothing behind', () async {
+      final before = await outbox();
+
+      await expectLater(
+        ledger.record(
+          TransactionDraft.transfer(
+            fromAccountId: card.id,
+            sent: rub(100),
+            toAccountId: 'no such account',
+            received: rub(100),
+            occurredOn: today,
+          ),
+        ),
+        fails,
+      );
+
+      expect(await database.select(database.transactions).get(), isEmpty);
+      expect(await outbox(), before);
+    });
+  });
+
+  group('sync readiness', () {
+    test('every change lands in the outbox in order', () async {
+      await database.delete(database.changes).go();
+
+      final id = await ledger.record(coffee(rub(100)));
+      await ledger.amend(id, coffee(rub(200)));
+      await ledger.delete(id);
+
+      expect(await outbox(), [
+        'insert transactions',
+        'insert entries',
+        'insert allocations',
+        'update transactions',
+        'delete entries',
+        'delete allocations',
+        'insert entries',
+        'insert allocations',
+        'delete transactions',
+        'delete entries',
+        'delete allocations',
+      ]);
+    });
+
+    test('ids are UUIDv7 strings by default', () async {
+      final fresh = LedgerRepository(database);
+
+      final account = await fresh.addAccount(
+        name: 'Cash',
+        type: AccountType.cash,
+        openingBalance: rub(0),
+      );
+
+      expect(
+        account.id,
+        matches(RegExp('^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab]')),
+      );
+    });
+
+    test('rows carry their timestamps in UTC', () async {
+      final local = DateTime(2026, 10, 30, 15);
+      final fresh = LedgerRepository(database, now: () => local);
+
+      final id = (await fresh.addAccount(
+        name: 'Cash',
+        type: AccountType.cash,
+        openingBalance: rub(0),
+      )).id;
+
+      final row = await (database.select(
+        database.accounts,
+      )..where((row) => row.id.equals(id))).getSingle();
+      expect(row.createdAt, local.toUtc());
+      expect(row.updatedAt, local.toUtc());
+      expect(row.deletedAt, isNull);
+    });
+  });
+}

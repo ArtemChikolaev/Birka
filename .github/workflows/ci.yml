@@ -26,6 +26,9 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: make analyze
+      - run: make gen
+      - name: Fail if the generated database code is stale
+        run: test -z "$(git status --porcelain packages/core/database)"
 
   test:
     name: Test (${{ matrix.compiler }})
@@ -46,7 +49,7 @@ jobs:
       - run: flutter pub get
       - run: make test-core COMPILER=${{ matrix.compiler }}
       - if: matrix.compiler == 'vm'
-        run: make test-tools test-design test-web test-mobile
+        run: make test-database test-tools test-design test-web test-mobile
 
   web:
     name: Web

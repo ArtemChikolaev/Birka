@@ -82,7 +82,10 @@ Extend what exists instead of duplicating it.
   up to the amount. Balances are computed from entries, never stored
   ([ADR 0009](docs/adr/0009-data-model.md)).
 - Deleting leaves a tombstone, nothing cascades, and every change also goes
-  into the `changes` outbox.
+  into the `changes` outbox. Everything that touches the ledger goes through
+  `LedgerRepository`, which keeps these rules.
+- After a change to the tables, bump `schemaVersion`, run `make gen` and add
+  the migration step. Past steps never change.
 
 ## Toolchain
 

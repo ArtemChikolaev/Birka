@@ -2,7 +2,7 @@
 .DEFAULT_GOAL := help
 
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
-CORE_PACKAGES := packages/core/money
+CORE_PACKAGES := packages/core/money packages/core/ledger
 
 COMPILER ?= vm
 ifeq ($(COMPILER),vm)
@@ -25,9 +25,9 @@ BASE ?= /
 # The build number of the APK: CI passes the number of its run.
 BUILD_NUMBER ?= 1
 
-.PHONY: help bootstrap format analyze check-deps check-tokens tokens icons \
-	icon-masters web-fonts test test-core test-tools test-design test-web \
-	test-mobile run-mobile run-web build-web build-apk check
+.PHONY: help bootstrap format analyze check-deps check-tokens tokens gen icons \
+	icon-masters web-fonts test test-core test-database test-tools test-design \
+	test-web test-mobile run-mobile run-web build-web build-apk check
 
 help: ## Show the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -51,6 +51,11 @@ check-deps: ## Package boundary rules from ADR 0001
 check-tokens: ## Generated tokens match their sources (ADR 0007)
 	cd packages/design/tokens && dart run design_tokens:generate --check
 
+gen: ## Generate the Drift code and the snapshot of the schema
+	cd packages/core/database && \
+		dart run build_runner build --delete-conflicting-outputs && \
+		dart run drift_dev make-migrations
+
 tokens: ## Regenerate the Dart and CSS design tokens
 	cd packages/design/tokens && dart run design_tokens:generate
 
@@ -63,13 +68,16 @@ icons: ## App icons and launch screens from the masters (macOS)
 web-fonts: ## WOFF2 subsets for the web from the Flutter kit's fonts
 	tools/dev/build_web_fonts.sh
 
-test: test-core test-tools test-design test-web test-mobile ## All tests on the VM
+test: test-core test-database test-tools test-design test-web test-mobile ## All tests on the VM
 
 test-core: ## Core tests; COMPILER=vm|dart2js|dart2wasm
 	@for package in $(CORE_PACKAGES); do \
 		echo "== $$package ($(COMPILER))"; \
 		(cd $$package && dart test $(TEST_FLAGS)) || exit 1; \
 	done
+
+test-database: ## Tests of the schema, on the VM only
+	cd packages/core/database && dart test
 
 test-tools: ## Tests of the repository tooling
 	cd tools && dart test
