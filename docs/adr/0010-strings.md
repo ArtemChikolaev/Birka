@@ -43,7 +43,9 @@
 - `t` is not reactive. When settings can change the language, the host has to
   rebuild from the root, listening to `LocaleSettings.getLocaleStream()`.
 - Tests run in English unless they set a language.
-- The site still has its text in English in the code, until its pages move to
-  this package.
+- The first page of the site keeps its few lines in English in the code. Only
+  an island knows the language of a visitor
+  ([ADR 0008](0008-web-host.md)), and one on that page would bring all the
+  strings to the lightest page of the site.
 - Only currencies whose signs both fonts can draw get a sign; the others show
   their code.

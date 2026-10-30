@@ -11,4 +11,5 @@ export 'src/domain/accounts_overview.dart';
 export 'src/domain/accounts_repository.dart';
 export 'src/domain/offered_currencies.dart';
 export 'src/presentation/account_form_cubit.dart';
+export 'src/presentation/account_labels.dart';
 export 'src/presentation/accounts_cubit.dart';

@@ -55,8 +55,10 @@
 8. On the web we take the storage that Drift chooses under Pages.
    `sqlite3.wasm` from the matching release of `sqlite3` is committed to
    `apps/web/web`, and the Jaspr build compiles the worker from
-   `web/drift_worker.dart`. With `unsafeIndexedDb`, the app works in one tab
-   at a time.
+   `web/drift_worker.dart`. A worker cannot run as DDC modules, so `make
+   run-web` serves the site in release mode too. With `unsafeIndexedDb`, a Web
+   Lock keeps the app to one tab at a time: a second tab says so and takes over
+   once the first one closes.
 9. Search uses FTS5 on every platform.
 
 ## Options considered
@@ -75,10 +77,12 @@
 
 - The first stage starts with `packages/core/database` and
   `packages/core/ledger`.
-- Drift adds about 1.4 MB to the site: 730 KB of WASM, 380 KB of worker and
-  250 KB of deferred JavaScript. Only the pages of the app should load it, so
-  the first page stays light.
+- Drift and the accounts add about 1.5 MB to the site, 580 KB compressed:
+  730 KB of WASM, 380 KB of worker and 400 KB of deferred JavaScript. Only the
+  pages of the app load it, so the first page stays light.
 - A browser can evict the data of a site, so the web app needs the same file
-  backup as the phones and has to say where the data lives.
-- Firefox and a current Chrome on Android still have to be checked when the
-  web app starts to store data.
+  backup as the phones. Until then the accounts page says that the data stays
+  in the browser, and warns when the browser keeps it only in memory.
+- Chrome on macOS, Safari on iOS and Chrome 113 on Android store accounts and
+  keep them. Firefox, where Drift prefers `opfsShared`, and a current Chrome on
+  Android still have to be checked.

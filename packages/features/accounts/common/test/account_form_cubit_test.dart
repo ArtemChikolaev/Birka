@@ -103,6 +103,22 @@ void main() {
       expect(repository.added.single.lastDigits, isNull);
     });
 
+    test('previews the amount, and zero until it is a number', () {
+      final form = newForm()..amountChanged('1 250,50');
+      expect(form.state.previewBalance, rub(125050));
+
+      form.typeChanged(AccountType.credit);
+      expect(form.state.previewBalance, rub(-125050));
+
+      form.amountChanged('12a');
+      expect(form.state.openingBalance, isNull);
+      expect(form.state.previewBalance, rub(0));
+    });
+
+    test('offers every currency', () {
+      expect(newForm().state.currencies, offeredCurrencies);
+    });
+
     test('clears an error when its field changes', () async {
       final form = newForm();
       await form.save();
@@ -146,6 +162,19 @@ void main() {
       final form = await formOf('Credit');
       form.currencyChanged(Currency.eur);
       expect(form.state.currency, Currency.rub);
+      expect(form.state.currencies, [Currency.rub]);
+    });
+
+    test('keeps a type the form does not offer', () async {
+      repository = FakeAccountsRepository([
+        AccountBalance(
+          account('Loan', rub(0), type: AccountType.loan),
+          rub(0),
+        ),
+      ]);
+      final form = await formOf('Loan');
+      expect(form.state.types, contains(AccountType.loan));
+      expect(newForm().state.types, isNot(contains(AccountType.loan)));
     });
 
     test('saves over itself and can drop its digits', () async {

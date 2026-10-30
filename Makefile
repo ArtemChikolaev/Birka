@@ -89,8 +89,9 @@ test-design: ## Tests of the token generator and both kits
 	cd packages/design/flutter && flutter test
 	cd packages/design/jaspr && dart test
 
-test-features: ## Widget tests of the features
+test-features: ## Tests of the screens of the features
 	cd packages/features/accounts/flutter && flutter test
+	cd packages/features/accounts/jaspr && dart test
 	cd packages/features/categories/flutter && flutter test
 
 test-web: ## Tests of the Jaspr host
@@ -102,8 +103,9 @@ test-mobile: ## Widget tests of the Flutter host
 run-mobile: ## Run the Flutter host; DEVICE=macos|iPhone|emulator
 	cd apps/mobile && flutter run -d $(DEVICE)
 
-run-web: ## Serve the site with hot reload on localhost:8080
-	cd apps/web && dart run jaspr_cli:jaspr serve
+run-web: ## Serve the site on localhost:8080, rebuilt on every change
+	# In release mode, because the worker of Drift cannot run as DDC modules.
+	cd apps/web && dart run jaspr_cli:jaspr serve --release
 
 build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 	cd apps/web && dart run jaspr_cli:jaspr build --dart-define=BASE_PATH=$(BASE)

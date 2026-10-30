@@ -17,6 +17,7 @@ workspace:
   - packages/design/tokens
   - packages/features/accounts/common
   - packages/features/accounts/flutter
+  - packages/features/accounts/jaspr
   - packages/features/categories/common
   - packages/features/categories/flutter
   - tools
