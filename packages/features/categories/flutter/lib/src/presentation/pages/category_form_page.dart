@@ -1,5 +1,4 @@
 import 'package:categories_common/categories_common.dart';
-import 'package:categories_flutter/src/presentation/widgets/category_look.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,8 +79,8 @@ class _FormState extends State<_Form> {
             child: Row(
               children: [
                 GlyphBadge(
-                  glyph: glyphOf(state.icon),
-                  color: colorOf(state.color),
+                  glyph: BirkaGlyph.named(state.icon),
+                  color: BirkaColors.fromHex(state.color),
                   size: BirkaTokens.sizeTouchTarget,
                 ),
                 const SizedBox(width: BirkaTokens.spaceSm),
@@ -157,7 +156,7 @@ class _FormState extends State<_Form> {
                         child: AspectRatio(
                           aspectRatio: 1,
                           child: _Swatch(
-                            color: colorOf(color),
+                            color: BirkaColors.fromHex(color),
                             selected: color == state.color,
                             label: '${form.color} ${color.substring(1)}',
                             onTap: () => cubit.colorChanged(color),
@@ -182,9 +181,9 @@ class _FormState extends State<_Form> {
                           behavior: HitTestBehavior.opaque,
                           onTap: () => cubit.iconChanged(icon),
                           child: GlyphBadge(
-                            glyph: glyphOf(icon),
+                            glyph: BirkaGlyph.named(icon),
                             color: icon == state.icon
-                                ? colorOf(state.color)
+                                ? BirkaColors.fromHex(state.color)
                                 : colors.textMuted,
                             size: BirkaTokens.sizeTouchTarget,
                           ),

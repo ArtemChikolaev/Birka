@@ -8,6 +8,10 @@ const _minus = '\u2212';
 /// system can draw. The rest show their code.
 const _symbols = {'RUB': '₽', 'USD': r'$', 'EUR': '€', 'GBP': '£', 'JPY': '¥'};
 
+/// The mark between the whole part and the fraction in the current language.
+String get decimalSeparator =>
+    LocaleSettings.currentLocale == AppLocale.ru ? ',' : '.';
+
 /// Formats [amount] for people in the current language, or in [locale].
 ///
 /// Russian gives `1 284 560,50 ₽` and English `₽1,284,560.50`. A currency

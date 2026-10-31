@@ -14,6 +14,7 @@ export 'src/components/birka_icon.dart';
 export 'src/components/birka_text_field.dart';
 export 'src/components/card_art.dart';
 export 'src/components/glass_icon_button.dart';
+export 'src/components/glass_keypad.dart';
 export 'src/components/glass_list.dart';
 export 'src/components/glass_nav_bar.dart';
 export 'src/components/glass_segmented.dart';

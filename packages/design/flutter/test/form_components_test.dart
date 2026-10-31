@@ -346,4 +346,128 @@ void main() {
     expect(theme.trackColor?.resolve({WidgetState.selected}), colors.accent);
     expect(theme.trackColor?.resolve({}), colors.surfaceSelected);
   });
+
+  group('GlassKeypad', () {
+    late List<String> pressed;
+
+    Future<void> pump(WidgetTester tester) async {
+      pressed = [];
+      await tester.pumpWidget(
+        app(
+          SizedBox(
+            width: 340,
+            height: GlassKeypad.minHeight + 40,
+            child: GlassKeypad(
+              point: ',',
+              pointLabel: 'Point',
+              backspaceLabel: 'Erase',
+              operatorLabels: const {KeypadOperator.add: 'Plus'},
+              onDigit: (digit) => pressed.add('$digit'),
+              onPoint: () => pressed.add('.'),
+              onOperator: (key) => pressed.add(key.name),
+              onBackspace: () => pressed.add('<'),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('has every digit', (tester) async {
+      await pump(tester);
+
+      for (var digit = 0; digit < 10; digit++) {
+        await tester.tap(find.bySemanticsLabel('$digit'));
+      }
+
+      expect(pressed, [for (var digit = 0; digit < 10; digit++) '$digit']);
+    });
+
+    testWidgets('reports the keys that are not digits', (tester) async {
+      await pump(tester);
+
+      await tester.tap(find.bySemanticsLabel('Point'));
+      await tester.tap(find.bySemanticsLabel('Erase'));
+      await tester.tap(find.bySemanticsLabel('Plus'));
+      await tester.tap(find.bySemanticsLabel('÷'));
+
+      expect(pressed, ['.', '<', 'add', 'divide']);
+    });
+
+    testWidgets('shows the decimal mark it is given', (tester) async {
+      await pump(tester);
+
+      expect(find.text(','), findsOneWidget);
+    });
+  });
+
+  group('BirkaChip', () {
+    testWidgets('can stand with an icon', (tester) async {
+      await tester.pumpWidget(
+        app(
+          BirkaChip(
+            label: 'Card',
+            selected: false,
+            onTap: () {},
+            glyph: BirkaGlyph.wallet,
+          ),
+        ),
+      );
+
+      final icon = tester.widget<BirkaIcon>(find.byType(BirkaIcon));
+      expect(icon.glyph, BirkaGlyph.wallet);
+      expect(find.text('Card'), findsOneWidget);
+    });
+
+    testWidgets('a long label stops at the edge of the screen', (tester) async {
+      await tester.pumpWidget(
+        app(
+          SizedBox(
+            width: 120,
+            child: BirkaChip(
+              label: 'A very long name of an account',
+              selected: false,
+              onTap: () {},
+              glyph: BirkaGlyph.wallet,
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a dashed one has no fill', (tester) async {
+      await tester.pumpWidget(
+        app(
+          BirkaChip(
+            label: 'Add',
+            selected: false,
+            onTap: () {},
+            dashed: true,
+          ),
+        ),
+      );
+
+      final box = tester.widget<AnimatedContainer>(
+        find.byType(AnimatedContainer),
+      );
+      final decoration = box.decoration! as BoxDecoration;
+      expect(decoration.color, const Color(0x00000000));
+    });
+  });
+
+  group('what a database keeps as text', () {
+    test('a glyph comes by its name', () {
+      expect(BirkaGlyph.named('cart'), BirkaGlyph.cart);
+    });
+
+    test('a name from a newer version falls back', () {
+      expect(BirkaGlyph.named('hologram'), BirkaGlyph.more);
+      expect(BirkaGlyph.named(null), BirkaGlyph.more);
+    });
+
+    test('a color comes from its hex', () {
+      expect(BirkaColors.fromHex('#4ade80'), const Color(0xFF4ADE80));
+    });
+  });
 }

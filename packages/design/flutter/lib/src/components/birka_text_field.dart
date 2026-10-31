@@ -14,6 +14,8 @@ class BirkaTextField extends StatelessWidget {
     this.hint,
     this.error,
     this.onChanged,
+    this.onSubmitted,
+    this.autofocus = false,
     this.keyboardType,
     this.textInputAction,
     this.textCapitalization = TextCapitalization.none,
@@ -36,6 +38,12 @@ class BirkaTextField extends StatelessWidget {
 
   /// Called on every change.
   final ValueChanged<String>? onChanged;
+
+  /// Called by the action key of the keyboard.
+  final ValueChanged<String>? onSubmitted;
+
+  /// Whether the field takes the focus as soon as it appears.
+  final bool autofocus;
 
   /// The keyboard of the field.
   final TextInputType? keyboardType;
@@ -79,6 +87,8 @@ class BirkaTextField extends StatelessWidget {
           child: TextField(
             controller: controller,
             onChanged: onChanged,
+            onSubmitted: onSubmitted,
+            autofocus: autofocus,
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             textCapitalization: textCapitalization,
