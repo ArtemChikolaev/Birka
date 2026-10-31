@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/dependencies.dart';
+import 'package:birka_web/app/fragment_trail.dart';
 import 'package:birka_web/app/opened_database.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:get_it/get_it.dart';
@@ -22,9 +23,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   _Stage _stage = _Stage.opening;
   var _persists = true;
   var _fragment = '';
-
-  /// The fragment before this one, once the page has moved.
-  String? _previous;
+  final _trail = FragmentTrail();
 
   /// How far down the list was when a form took its place.
   var _listScroll = 0.0;
@@ -92,10 +91,9 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
 
   void _onFragmentChanged() {
     if (_fragment.isEmpty) _listScroll = pageScroll;
-    setState(() {
-      _previous = _fragment;
-      _fragment = addressFragment;
-    });
+    final next = addressFragment;
+    _trail.moved(from: _fragment, to: next);
+    setState(() => _fragment = next);
     _placePage();
   }
 
@@ -110,15 +108,12 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   /// there, and otherwise the form leaves the history, so that the back button
   /// does not reopen it.
   void closeForm([String parent = '']) {
-    if (_previous == parent) {
+    if (_trail.leadsBackTo(parent)) {
       goBackInHistory();
       return;
     }
     replaceAddressFragment(parent);
-    setState(() {
-      _previous = null;
-      _fragment = parent;
-    });
+    setState(() => _fragment = parent);
     _placePage();
   }
 
