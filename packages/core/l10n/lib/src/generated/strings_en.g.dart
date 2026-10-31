@@ -54,6 +54,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
       Translations$categories$en.internal(_root);
   late final Translations$overview$en overview =
       Translations$overview$en.internal(_root);
+  late final Translations$reports$en reports = Translations$reports$en.internal(
+    _root,
+  );
   late final Translations$transactions$en transactions =
       Translations$transactions$en.internal(_root);
 }
@@ -158,9 +161,6 @@ class Translations$app$en {
   /// en: 'Birka is open in another tab. Close it and try again.'
   String get openElsewhere =>
       'Birka is open in another tab. Close it and try again.';
-
-  /// en: 'This screen is coming soon.'
-  String get comingSoon => 'This screen is coming soon.';
 
   /// en: 'soon'
   String get soon => 'soon';
@@ -343,6 +343,68 @@ class Translations$overview$en {
     'in October',
     'in November',
     'in December',
+  ];
+}
+
+// Path: reports
+class Translations$reports$en {
+  Translations$reports$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Expenses'
+  String get expenses => 'Expenses';
+
+  /// en: 'Income'
+  String get income => 'Income';
+
+  /// en: 'By month'
+  String get byMonth => 'By month';
+
+  /// en: 'average $amount'
+  String average({required Object amount}) => 'average ${amount}';
+
+  /// en: 'Nothing spent this month.'
+  String get noExpenses => 'Nothing spent this month.';
+
+  /// en: 'Nothing earned this month.'
+  String get noIncome => 'Nothing earned this month.';
+
+  /// en: 'Shares of the categories'
+  String get ring => 'Shares of the categories';
+
+  /// en: 'Could not read the report.'
+  String get failed => 'Could not read the report.';
+
+  List<String> get against => [
+    'vs January',
+    'vs February',
+    'vs March',
+    'vs April',
+    'vs May',
+    'vs June',
+    'vs July',
+    'vs August',
+    'vs September',
+    'vs October',
+    'vs November',
+    'vs December',
+  ];
+  List<String> get monthsShort => [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 }
 
@@ -769,7 +831,6 @@ extension on Translations {
         'This browser cannot keep data, so it goes when you close the tab.',
       'app.openElsewhere' =>
         'Birka is open in another tab. Close it and try again.',
-      'app.comingSoon' => 'This screen is coming soon.',
       'app.soon' => 'soon',
       'app.currencies.RUB' => 'Rubles',
       'app.currencies.USD' => 'Dollars',
@@ -875,6 +936,38 @@ extension on Translations {
       'overview.changeIn.9' => 'in October',
       'overview.changeIn.10' => 'in November',
       'overview.changeIn.11' => 'in December',
+      'reports.expenses' => 'Expenses',
+      'reports.income' => 'Income',
+      'reports.byMonth' => 'By month',
+      'reports.average' => ({required Object amount}) => 'average ${amount}',
+      'reports.noExpenses' => 'Nothing spent this month.',
+      'reports.noIncome' => 'Nothing earned this month.',
+      'reports.ring' => 'Shares of the categories',
+      'reports.failed' => 'Could not read the report.',
+      'reports.against.0' => 'vs January',
+      'reports.against.1' => 'vs February',
+      'reports.against.2' => 'vs March',
+      'reports.against.3' => 'vs April',
+      'reports.against.4' => 'vs May',
+      'reports.against.5' => 'vs June',
+      'reports.against.6' => 'vs July',
+      'reports.against.7' => 'vs August',
+      'reports.against.8' => 'vs September',
+      'reports.against.9' => 'vs October',
+      'reports.against.10' => 'vs November',
+      'reports.against.11' => 'vs December',
+      'reports.monthsShort.0' => 'Jan',
+      'reports.monthsShort.1' => 'Feb',
+      'reports.monthsShort.2' => 'Mar',
+      'reports.monthsShort.3' => 'Apr',
+      'reports.monthsShort.4' => 'May',
+      'reports.monthsShort.5' => 'Jun',
+      'reports.monthsShort.6' => 'Jul',
+      'reports.monthsShort.7' => 'Aug',
+      'reports.monthsShort.8' => 'Sep',
+      'reports.monthsShort.9' => 'Oct',
+      'reports.monthsShort.10' => 'Nov',
+      'reports.monthsShort.11' => 'Dec',
       'transactions.expense' => 'Expense',
       'transactions.income' => 'Income',
       'transactions.transfer' => 'Transfer',

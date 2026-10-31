@@ -38,6 +38,10 @@ dependencies:
     path: ../../packages/features/overview/common
   overview_flutter:
     path: ../../packages/features/overview/flutter
+  reports_common:
+    path: ../../packages/features/reports/common
+  reports_flutter:
+    path: ../../packages/features/reports/flutter
   transactions_common:
     path: ../../packages/features/transactions/common
   transactions_flutter:

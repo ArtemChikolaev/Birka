@@ -1,0 +1,34 @@
+expenses: Expenses
+income: Income
+byMonth: By month
+average: average $amount
+noExpenses: Nothing spent this month.
+noIncome: Nothing earned this month.
+ring: Shares of the categories
+failed: Could not read the report.
+against:
+  - vs January
+  - vs February
+  - vs March
+  - vs April
+  - vs May
+  - vs June
+  - vs July
+  - vs August
+  - vs September
+  - vs October
+  - vs November
+  - vs December
+monthsShort:
+  - Jan
+  - Feb
+  - Mar
+  - Apr
+  - May
+  - Jun
+  - Jul
+  - Aug
+  - Sep
+  - Oct
+  - Nov
+  - Dec

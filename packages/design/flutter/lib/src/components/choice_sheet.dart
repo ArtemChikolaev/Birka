@@ -1,5 +1,7 @@
-import 'package:design_flutter/design_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_text_styles.dart';
+import 'package:design_tokens/design_tokens.dart';
+import 'package:flutter/widgets.dart';
 
 /// What a sheet from the bottom of the screen holds: an optional title and
 /// the choices under it.

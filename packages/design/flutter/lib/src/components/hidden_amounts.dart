@@ -11,7 +11,9 @@ class HiddenAmounts extends InheritedNotifier<ValueNotifier<bool>> {
     super.key,
   });
 
-  static final _digits = RegExp(r'\d(?:[\d\s.,]*\d)?');
+  /// A number with its groups, and the letter of a compact one: `1 250,50`, or
+  /// `78k`, whose letter would tell its size.
+  static final _digits = RegExp(r'\d(?:[\d\s.,]*\d)?[kMB]?');
 
   /// Whether the amounts around [context] are hidden.
   static bool of(BuildContext context) =>

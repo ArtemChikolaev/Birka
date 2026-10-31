@@ -574,6 +574,62 @@ final class LedgerRepository {
         );
   }
 
+  /// What went through the categories of [kind] in each month from the one of
+  /// [from] to the one of [to], the earliest first: one row for each month and
+  /// currency, and none for a month with nothing in it.
+  Stream<List<MonthTotal>> watchMonthTotals(
+    CategoryKind kind, {
+    required CivilDate from,
+    required CivilDate to,
+  }) {
+    return _db
+        .customSelect(
+          '''
+          SELECT substr(t.occurred_on, 1, 7) AS month, a.currency,
+            a.decimal_digits, SUM(al.amount_minor) AS total
+          FROM allocations al
+          JOIN transactions t ON t.id = al.transaction_id
+          JOIN entries e ON e.transaction_id = t.id AND e.deleted_at IS NULL
+          JOIN accounts a ON a.id = e.account_id
+          JOIN categories c ON c.id = al.category_id
+          WHERE al.deleted_at IS NULL
+            AND t.deleted_at IS NULL
+            AND t.status <> ?
+            AND t.occurred_on BETWEEN ? AND ?
+            AND c.kind = ?
+          GROUP BY month, a.currency, a.decimal_digits
+          ORDER BY month, a.currency
+          ''',
+          variables: [
+            Variable.withString(TransactionStatus.planned.name),
+            Variable.withString(from.toString()),
+            Variable.withString(to.toString()),
+            Variable.withString(kind.name),
+          ],
+          readsFrom: {
+            _db.allocations,
+            _db.transactions,
+            _db.entries,
+            _db.accounts,
+            _db.categories,
+          },
+        )
+        .watch()
+        .map(
+          (rows) => [
+            for (final row in rows)
+              MonthTotal(
+                CivilDate.parse('${row.read<String>('month')}-01'),
+                _sum(
+                  row.read('total'),
+                  row.read('currency'),
+                  row.read('decimal_digits'),
+                ),
+              ),
+          ],
+        );
+  }
+
   /// A sum from SQL as money. It can pass the limit of an amount, where it
   /// stops, so that a list survives two absurd amounts.
   Money _sum(int minorUnits, String code, int decimalDigits) => Money(

@@ -24,6 +24,9 @@ import 'package:ledger/ledger.dart'
 import 'package:money/money.dart';
 import 'package:overview_common/overview_common.dart' hide Category;
 import 'package:overview_flutter/overview_flutter.dart';
+import 'package:reports_common/reports_common.dart'
+    show MonthTotal, ReportsCubit, ReportsRepository;
+import 'package:reports_flutter/reports_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -119,6 +122,28 @@ final class _Overview implements OverviewRepository {
   }) => Stream.value(const []);
 }
 
+final class _NoReports implements ReportsRepository {
+  @override
+  Stream<Currency?> watchMainCurrency() => Stream.value(null);
+
+  @override
+  Stream<List<CategoryTotal>> watchTotals(
+    CategoryKind kind, {
+    required CivilDate from,
+    required CivilDate to,
+  }) => Stream.value(const []);
+
+  @override
+  Stream<List<MonthTotal>> watchMonthTotals(
+    CategoryKind kind, {
+    required CivilDate from,
+    required CivilDate to,
+  }) => Stream.value(const []);
+
+  @override
+  Future<List<CivilDate>> months() async => const [];
+}
+
 /// A coffee of today on an account of its own.
 Operation _coffee() {
   const card = Account(
@@ -171,6 +196,7 @@ void main() {
         ),
       )
       ..registerFactory(() => OverviewCubit(overview))
+      ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerFactory(() => OperationsCubit(transactions))
       ..registerFactoryParam<OperationCubit, String, void>(
         (id, _) => OperationCubit(transactions, id),
@@ -204,6 +230,7 @@ void main() {
     await tester.tap(find.text(t.app.reports));
     await tester.pumpAndSettle();
 
+    expect(find.byType(ReportsPage), findsOneWidget);
     expect(find.text(t.app.reports), findsNWidgets(2));
     final bar = tester.widget<GlassNavBar>(find.byType(GlassNavBar));
     expect(bar.selectedIndex, 2);
