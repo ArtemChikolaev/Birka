@@ -33,7 +33,7 @@ final class _NoAccounts implements AccountsRepository {
   Stream<List<AccountBalance>> watchAccounts() => Stream.value(const []);
 
   @override
-  Future<Account?> account(String id) async => null;
+  Future<AccountBalance?> account(String id) async => null;
 
   @override
   Future<void> add(AccountDraft draft) async {}

@@ -7,13 +7,14 @@ abstract interface class AccountsRepository {
   /// order.
   Stream<List<AccountBalance>> watchAccounts();
 
-  /// The account [id], if it exists.
-  Future<Account?> account(String id);
+  /// The account [id] with what it holds now, if it exists.
+  Future<AccountBalance?> account(String id);
 
   /// Adds an account after the others.
   Future<void> add(AccountDraft draft);
 
-  /// Changes account [id]. Its currency stays as it is.
+  /// Changes account [id]. Its currency stays as it is, and what it held so far
+  /// stays in its history: a new balance becomes a correction of today.
   Future<void> update(String id, AccountDraft draft);
 
   /// Hides account [id] from everyday lists, or brings it back.

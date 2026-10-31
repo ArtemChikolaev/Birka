@@ -287,6 +287,7 @@ void main() {
     await pump(tester);
 
     expect(find.text('Корректировка'), findsOneWidget);
+    expect(glyph(BirkaGlyph.check), findsOneWidget);
     expect(glyph(BirkaGlyph.copy), findsNothing);
     expect(glyph(BirkaGlyph.trash), findsOneWidget);
   });

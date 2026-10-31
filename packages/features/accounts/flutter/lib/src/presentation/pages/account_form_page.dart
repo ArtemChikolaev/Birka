@@ -72,7 +72,12 @@ class _FormState extends State<_Form> {
     final cubit = context.read<AccountFormCubit>();
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
-    return BlocBuilder<AccountFormCubit, AccountFormState>(
+    return BlocConsumer<AccountFormCubit, AccountFormState>(
+      // A new type can change the sign of what was not typed here.
+      listenWhen: (previous, current) => previous.amount != current.amount,
+      listener: (context, state) {
+        if (_amount.text != state.amount) _amount.text = state.amount;
+      },
       builder: (context, state) {
         final form = t.accounts.form;
         return Column(
@@ -166,7 +171,7 @@ class _FormState extends State<_Form> {
                   ),
                   const SizedBox(height: BirkaTokens.spaceMd),
                   BirkaTextField(
-                    label: state.isDebt ? form.debt : form.openingBalance,
+                    label: state.isDebt ? form.debt : form.balance,
                     controller: _amount,
                     hint: '0',
                     error: state.errors.contains(AccountFormError.amountInvalid)

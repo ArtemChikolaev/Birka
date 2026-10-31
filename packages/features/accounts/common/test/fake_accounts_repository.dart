@@ -39,9 +39,9 @@ final class FakeAccountsRepository implements AccountsRepository {
   }
 
   @override
-  Future<Account?> account(String id) async {
+  Future<AccountBalance?> account(String id) async {
     for (final row in _accounts) {
-      if (row.account.id == id) return row.account;
+      if (row.account.id == id) return row;
     }
     return null;
   }

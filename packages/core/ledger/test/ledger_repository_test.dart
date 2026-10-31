@@ -625,6 +625,27 @@ void main() {
     });
   });
 
+  group('a balance', () {
+    test('can be read once, the same as it is followed', () async {
+      await ledger.record(coffee(rub(25000)));
+
+      expect(await ledger.balance(card.id), await balanceOf(card));
+      expect(await ledger.balance(card.id), rub(75000));
+    });
+
+    test(
+      'can be read inside one write, with what the write has done',
+      () async {
+        final seen = await ledger.atomically(() async {
+          await ledger.record(coffee(rub(25000)));
+          return ledger.balance(card.id);
+        });
+
+        expect(seen, rub(75000));
+      },
+    );
+  });
+
   group('transactions', () {
     test('come back with their entries and allocations', () async {
       final id = await ledger.record(coffee(rub(25000)));
