@@ -355,6 +355,7 @@ class _Amount extends StatelessWidget {
           fit: BoxFit.scaleDown,
           child: AmountText(
             amountLabel(state.kind, state.sent, account.currency),
+            alwaysShown: true,
             style: styles.display.copyWith(color: colors.text),
           ),
         ),
@@ -409,6 +410,7 @@ class _Line extends StatelessWidget {
                     fit: BoxFit.scaleDown,
                     child: AmountText(
                       amountLabel(kind, expression, account.currency),
+                      alwaysShown: true,
                       style: styles.title.copyWith(
                         color: active ? colors.text : colors.textSubtle,
                       ),

@@ -1,5 +1,4 @@
 import 'package:accounts_common/accounts_common.dart';
-import 'package:accounts_flutter/src/presentation/widgets/account_hero_card.dart';
 import 'package:accounts_flutter/src/presentation/widgets/account_labels.dart';
 import 'package:accounts_flutter/src/presentation/widgets/account_row.dart';
 import 'package:design_flutter/design_flutter.dart';
@@ -83,7 +82,7 @@ class AccountsPage extends StatelessWidget {
       ],
       const SizedBox(height: BirkaTokens.spaceLg),
       if (first != null) ...[
-        AccountHeroCard(
+        AccountCard(
           art: cardArtOf(first.account.art),
           name: first.account.name,
           subtitle: accountSubtitle(
@@ -166,7 +165,10 @@ class _Capital extends StatelessWidget {
           TextSpan(text: '${t.accounts.capital} '),
           for (final (index, total) in overview.totals.indexed) ...[
             if (index > 0) TextSpan(text: ' ${t.accounts.and} '),
-            TextSpan(text: formatMoney(total), style: strong),
+            TextSpan(
+              text: HiddenAmounts.mask(context, formatMoney(total)),
+              style: strong,
+            ),
           ],
           TextSpan(
             text: ' ${t.accounts.inAccounts(n: overview.countedAccounts)}',

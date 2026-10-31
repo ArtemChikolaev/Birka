@@ -57,6 +57,29 @@ void main() {
     });
   });
 
+  testWidgets('the cross is a button of its own for screen readers', (
+    tester,
+  ) async {
+    final controller = TextEditingController(text: 'cafe');
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      app(
+        GlassSearchField(
+          label: 'Search',
+          clearLabel: 'Clear',
+          controller: controller,
+          onChanged: (_) {},
+        ),
+      ),
+    );
+
+    final button = tester.getRect(find.bySemanticsLabel('Clear'));
+    final field = tester.getRect(find.byType(GlassSearchField));
+
+    expect(button.width, lessThan(field.width / 2));
+    expect(button.right, closeTo(field.right, 24));
+  });
+
   testWidgets('the cross keeps the keyboard for a new word', (tester) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);

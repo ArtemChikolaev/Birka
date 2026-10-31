@@ -52,6 +52,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$app$en app = Translations$app$en.internal(_root);
   late final Translations$categories$en categories =
       Translations$categories$en.internal(_root);
+  late final Translations$overview$en overview =
+      Translations$overview$en.internal(_root);
   late final Translations$transactions$en transactions =
       Translations$transactions$en.internal(_root);
 }
@@ -250,6 +252,98 @@ class Translations$categories$en {
   };
   late final Translations$categories$form$en form =
       Translations$categories$form$en.internal(_root);
+}
+
+// Path: overview
+class Translations$overview$en {
+  Translations$overview$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Capital'
+  String get capital => 'Capital';
+
+  /// en: '(one) {$n currency} (other) {$n currencies}'
+  String currencies({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} currency',
+        other: '${n} currencies',
+      );
+
+  /// en: 'Week'
+  String get week => 'Week';
+
+  /// en: 'Month'
+  String get month => 'Month';
+
+  /// en: 'Year'
+  String get year => 'Year';
+
+  /// en: 'this week'
+  String get inWeek => 'this week';
+
+  /// en: 'this year'
+  String get inYear => 'this year';
+
+  /// en: 'The capital over time'
+  String get chart => 'The capital over time';
+
+  /// en: 'Accounts'
+  String get accounts => 'Accounts';
+
+  /// en: 'All $n'
+  String allAccounts({required Object n}) => 'All ${n}';
+
+  /// en: 'Spending $month'
+  String spendingIn({required Object month}) => 'Spending ${month}';
+
+  List<String> get monthsIn => [
+    'in January',
+    'in February',
+    'in March',
+    'in April',
+    'in May',
+    'in June',
+    'in July',
+    'in August',
+    'in September',
+    'in October',
+    'in November',
+    'in December',
+  ];
+
+  /// en: 'Nothing spent this month yet.'
+  String get noSpending => 'Nothing spent this month yet.';
+
+  /// en: 'Spending by category'
+  String get ring => 'Spending by category';
+
+  /// en: 'Could not read the overview.'
+  String get failed => 'Could not read the overview.';
+
+  /// en: 'Hide the amounts'
+  String get hideAmounts => 'Hide the amounts';
+
+  /// en: 'Show the amounts'
+  String get showAmounts => 'Show the amounts';
+
+  List<String> get changeIn => [
+    'in January',
+    'in February',
+    'in March',
+    'in April',
+    'in May',
+    'in June',
+    'in July',
+    'in August',
+    'in September',
+    'in October',
+    'in November',
+    'in December',
+  ];
 }
 
 // Path: transactions
@@ -735,6 +829,52 @@ extension on Translations {
       'categories.form.restore' => 'Bring back from the archive',
       'categories.form.nameMissing' => 'Give the category a name.',
       'categories.form.failed' => 'Could not save. Try again.',
+      'overview.capital' => 'Capital',
+      'overview.currencies' =>
+        ({required num n}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+              n,
+              one: '${n} currency',
+              other: '${n} currencies',
+            ),
+      'overview.week' => 'Week',
+      'overview.month' => 'Month',
+      'overview.year' => 'Year',
+      'overview.inWeek' => 'this week',
+      'overview.inYear' => 'this year',
+      'overview.chart' => 'The capital over time',
+      'overview.accounts' => 'Accounts',
+      'overview.allAccounts' => ({required Object n}) => 'All ${n}',
+      'overview.spendingIn' => ({required Object month}) => 'Spending ${month}',
+      'overview.monthsIn.0' => 'in January',
+      'overview.monthsIn.1' => 'in February',
+      'overview.monthsIn.2' => 'in March',
+      'overview.monthsIn.3' => 'in April',
+      'overview.monthsIn.4' => 'in May',
+      'overview.monthsIn.5' => 'in June',
+      'overview.monthsIn.6' => 'in July',
+      'overview.monthsIn.7' => 'in August',
+      'overview.monthsIn.8' => 'in September',
+      'overview.monthsIn.9' => 'in October',
+      'overview.monthsIn.10' => 'in November',
+      'overview.monthsIn.11' => 'in December',
+      'overview.noSpending' => 'Nothing spent this month yet.',
+      'overview.ring' => 'Spending by category',
+      'overview.failed' => 'Could not read the overview.',
+      'overview.hideAmounts' => 'Hide the amounts',
+      'overview.showAmounts' => 'Show the amounts',
+      'overview.changeIn.0' => 'in January',
+      'overview.changeIn.1' => 'in February',
+      'overview.changeIn.2' => 'in March',
+      'overview.changeIn.3' => 'in April',
+      'overview.changeIn.4' => 'in May',
+      'overview.changeIn.5' => 'in June',
+      'overview.changeIn.6' => 'in July',
+      'overview.changeIn.7' => 'in August',
+      'overview.changeIn.8' => 'in September',
+      'overview.changeIn.9' => 'in October',
+      'overview.changeIn.10' => 'in November',
+      'overview.changeIn.11' => 'in December',
       'transactions.expense' => 'Expense',
       'transactions.income' => 'Income',
       'transactions.transfer' => 'Transfer',

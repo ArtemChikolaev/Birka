@@ -283,7 +283,7 @@ class _Total extends StatelessWidget {
         children: [
           TextSpan(text: '$label '),
           TextSpan(
-            text: amounts,
+            text: HiddenAmounts.mask(context, amounts),
             style: styles.bodyStrong.copyWith(color: color),
           ),
         ],

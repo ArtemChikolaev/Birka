@@ -1,15 +1,20 @@
-import 'package:design_flutter/design_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:design_flutter/src/components/amount_text.dart';
+import 'package:design_flutter/src/components/card_art.dart';
+import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_text_styles.dart';
+import 'package:design_tokens/design_tokens.dart';
+import 'package:flutter/widgets.dart';
 
-/// The big card of an account, with its art behind the name and the amount.
-class AccountHeroCard extends StatelessWidget {
+/// The card of an account, with its art behind the name and the amount.
+class AccountCard extends StatelessWidget {
   /// Creates a card.
-  const AccountHeroCard({
+  const AccountCard({
     required this.art,
     required this.name,
     required this.subtitle,
     required this.amount,
     this.onTap,
+    this.compact = false,
     super.key,
   });
 
@@ -28,8 +33,14 @@ class AccountHeroCard extends StatelessWidget {
   /// Called on a tap.
   final VoidCallback? onTap;
 
+  /// Whether the card is one of several in a row.
+  final bool compact;
+
   /// The height of the card.
   static const double height = 190;
+
+  /// The height of a compact card.
+  static const double compactHeight = 146;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +50,13 @@ class AccountHeroCard extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: SizedBox(
-        height: height,
+        height: compact ? compactHeight : height,
         child: CardArtSurface(
           art: art,
           child: Padding(
-            padding: const EdgeInsets.all(BirkaTokens.spaceLg),
+            padding: EdgeInsets.all(
+              compact ? BirkaTokens.spaceMd : BirkaTokens.spaceLg,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -80,7 +93,9 @@ class AccountHeroCard extends StatelessWidget {
                 const Spacer(),
                 AmountText(
                   amount,
-                  style: styles.display.copyWith(color: colors.text),
+                  style: (compact ? styles.title : styles.display).copyWith(
+                    color: colors.text,
+                  ),
                 ),
               ],
             ),

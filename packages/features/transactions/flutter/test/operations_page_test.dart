@@ -152,7 +152,7 @@ void main() {
     expect(find.text('Кофейня у дома'), findsOneWidget);
     expect(find.text('Продукты'), findsNothing);
 
-    await tester.tap(glyph(BirkaGlyph.close));
+    await tester.tap(find.bySemanticsLabel('Очистить поиск'));
     await tester.pumpAndSettle();
     expect(find.text('Продукты'), findsOneWidget);
   });

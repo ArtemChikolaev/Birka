@@ -78,6 +78,7 @@ class GlassSearchField extends StatelessWidget {
                 // Part of the field, so that the keyboard stays for a new word.
                 return TextFieldTapRegion(
                   child: Semantics(
+                    container: true,
                     button: true,
                     label: clearLabel,
                     excludeSemantics: true,

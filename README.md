@@ -67,7 +67,7 @@ packages/design/tokens   design tokens and their generator for Dart and CSS
 packages/design/flutter  theme, fonts and glass widgets for Flutter
 packages/design/jaspr    styles, web fonts and glass components for Jaspr
 packages/design/brand    the app icon: a glass coin in SVG and its PNG masters
-packages/features        one folder per feature: accounts, categories, transactions
+packages/features        one folder per feature: accounts, categories, overview, transactions
 tools                    repository tooling: package boundary checks, dev scripts
 docs/adr                 architecture decision records
 ```

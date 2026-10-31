@@ -1,0 +1,44 @@
+capital: Capital
+currencies(n):
+  one: $n currency
+  other: $n currencies
+week: Week
+month: Month
+year: Year
+inWeek: this week
+inYear: this year
+chart: The capital over time
+accounts: Accounts
+allAccounts: All $n
+spendingIn: Spending $month
+monthsIn:
+  - in January
+  - in February
+  - in March
+  - in April
+  - in May
+  - in June
+  - in July
+  - in August
+  - in September
+  - in October
+  - in November
+  - in December
+noSpending: Nothing spent this month yet.
+ring: Spending by category
+failed: Could not read the overview.
+hideAmounts: Hide the amounts
+showAmounts: Show the amounts
+changeIn:
+  - in January
+  - in February
+  - in March
+  - in April
+  - in May
+  - in June
+  - in July
+  - in August
+  - in September
+  - in October
+  - in November
+  - in December

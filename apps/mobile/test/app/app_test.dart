@@ -15,12 +15,15 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart'
     show
         AccountType,
+        DayChange,
         Entry,
         Transaction,
         TransactionDraft,
         TransactionSource,
         TransactionStatus;
 import 'package:money/money.dart';
+import 'package:overview_common/overview_common.dart' hide Category;
+import 'package:overview_flutter/overview_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -99,6 +102,23 @@ final class _Transactions implements TransactionsRepository {
   Future<void> delete(String id) async {}
 }
 
+final class _Overview implements OverviewRepository {
+  List<AccountBalance> accounts = const [];
+
+  @override
+  Stream<List<AccountBalance>> watchAccounts() => Stream.value(accounts);
+
+  @override
+  Stream<List<DayChange>> watchDayChanges({required CivilDate from}) =>
+      Stream.value(const []);
+
+  @override
+  Stream<List<CategoryTotal>> watchSpending({
+    required CivilDate from,
+    required CivilDate to,
+  }) => Stream.value(const []);
+}
+
 /// A coffee of today on an account of its own.
 Operation _coffee() {
   const card = Account(
@@ -129,12 +149,14 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late GetIt getIt;
   late _Transactions transactions;
+  late _Overview overview;
 
   setUp(() {
     getIt = GetIt.asNewInstance();
     final AccountsRepository accounts = _NoAccounts();
     final CategoriesRepository categories = _NoCategories();
     transactions = _Transactions();
+    overview = _Overview();
     getIt
       ..registerFactory(() => AccountsCubit(accounts))
       ..registerFactoryParam<AccountFormCubit, String?, void>(
@@ -148,6 +170,7 @@ void main() {
           kind: kind ?? CategoryKind.expense,
         ),
       )
+      ..registerFactory(() => OverviewCubit(overview))
       ..registerFactory(() => OperationsCubit(transactions))
       ..registerFactoryParam<OperationCubit, String, void>(
         (id, _) => OperationCubit(transactions, id),
@@ -161,9 +184,8 @@ void main() {
     await tester.pumpWidget(BirkaApp(getIt: getIt));
     await tester.pumpAndSettle();
 
-    // The title of the page and the label of the tab.
-    expect(find.text(t.app.overview), findsNWidgets(2));
-    expect(find.text(t.app.operations), findsOneWidget);
+    expect(find.byType(OverviewPage), findsOneWidget);
+    expect(find.text(t.accounts.emptyTitle), findsOneWidget);
   });
 
   testWidgets('dresses the app in the Birka theme', (tester) async {
@@ -202,6 +224,55 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(QuickAddPage), findsNothing);
     expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('the overview leads to an account and to all of them', (
+    tester,
+  ) async {
+    final coffee = _coffee();
+    overview.accounts = [
+      AccountBalance(coffee.account!, Money(100, Currency.rub)),
+    ];
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('CARD'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AccountFormPage), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel(t.app.close));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.overview.allAccounts(n: 1).toUpperCase()));
+    await tester.pumpAndSettle();
+    expect(find.byType(AccountsPage), findsOneWidget);
+  });
+
+  testWidgets('without accounts the overview leads to adding one', (
+    tester,
+  ) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.accounts.add.toUpperCase()));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AccountFormPage), findsOneWidget);
+  });
+
+  testWidgets('the eye reaches the other tabs', (tester) async {
+    transactions.operations = [_coffee()];
+    overview.accounts = [
+      AccountBalance(_coffee().account!, Money(100, Currency.rub)),
+    ];
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel(t.overview.hideAmounts));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.app.operations));
+    await tester.pumpAndSettle();
+
+    expect(find.text(formatMoney(Money(-100, Currency.rub))), findsNothing);
   });
 
   testWidgets('the operations tab tells when there are none', (tester) async {
@@ -259,7 +330,8 @@ void main() {
     expect(find.byType(AccountsPage), findsOneWidget);
     expect(find.byType(GlassNavBar), findsNothing);
 
-    await tester.tap(find.bySemanticsLabel(t.accounts.add));
+    // The button of the header and the one of the empty list.
+    await tester.tap(find.bySemanticsLabel(t.accounts.add).first);
     await tester.pumpAndSettle();
     expect(find.byType(AccountFormPage), findsOneWidget);
 

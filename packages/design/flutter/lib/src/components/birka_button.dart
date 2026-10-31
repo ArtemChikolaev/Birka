@@ -40,6 +40,7 @@ class BirkaButton extends StatelessWidget {
       (false, false) => (colors.accent, colors.onAccent),
     };
     return Semantics(
+      container: true,
       button: true,
       enabled: onPressed != null,
       label: label,

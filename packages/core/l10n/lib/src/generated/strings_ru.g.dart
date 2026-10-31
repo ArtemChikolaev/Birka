@@ -64,6 +64,10 @@ class TranslationsRu extends Translations
   late final _Translations$categories$ru categories =
       _Translations$categories$ru._(_root);
   @override
+  late final _Translations$overview$ru overview = _Translations$overview$ru._(
+    _root,
+  );
+  @override
   late final _Translations$transactions$ru transactions =
       _Translations$transactions$ru._(_root);
 }
@@ -237,6 +241,86 @@ class _Translations$categories$ru extends Translations$categories$en {
   @override
   late final _Translations$categories$form$ru form =
       _Translations$categories$form$ru._(_root);
+}
+
+// Path: overview
+class _Translations$overview$ru extends Translations$overview$en {
+  _Translations$overview$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get capital => 'Капитал';
+  @override
+  String currencies({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} валюта',
+        few: '${n} валюты',
+        many: '${n} валют',
+        other: '${n} валюты',
+      );
+  @override
+  String get week => 'Неделя';
+  @override
+  String get month => 'Месяц';
+  @override
+  String get year => 'Год';
+  @override
+  String get inWeek => 'за неделю';
+  @override
+  String get inYear => 'за год';
+  @override
+  String get chart => 'Капитал за период';
+  @override
+  String get accounts => 'Счета';
+  @override
+  String allAccounts({required Object n}) => 'Все ${n}';
+  @override
+  String spendingIn({required Object month}) => 'Траты ${month}';
+  @override
+  List<String> get monthsIn => [
+    'в январе',
+    'в феврале',
+    'в марте',
+    'в апреле',
+    'в мае',
+    'в июне',
+    'в июле',
+    'в августе',
+    'в сентябре',
+    'в октябре',
+    'в ноябре',
+    'в декабре',
+  ];
+  @override
+  String get noSpending => 'В этом месяце трат пока нет.';
+  @override
+  String get ring => 'Траты по категориям';
+  @override
+  String get failed => 'Не удалось прочитать обзор.';
+  @override
+  String get hideAmounts => 'Скрыть суммы';
+  @override
+  String get showAmounts => 'Показать суммы';
+  @override
+  List<String> get changeIn => [
+    'за январь',
+    'за февраль',
+    'за март',
+    'за апрель',
+    'за май',
+    'за июнь',
+    'за июль',
+    'за август',
+    'за сентябрь',
+    'за октябрь',
+    'за ноябрь',
+    'за декабрь',
+  ];
 }
 
 // Path: transactions
@@ -649,6 +733,54 @@ extension on TranslationsRu {
       'categories.form.restore' => 'Вернуть из архива',
       'categories.form.nameMissing' => 'Дайте категории название.',
       'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+      'overview.capital' => 'Капитал',
+      'overview.currencies' =>
+        ({required num n}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+              n,
+              one: '${n} валюта',
+              few: '${n} валюты',
+              many: '${n} валют',
+              other: '${n} валюты',
+            ),
+      'overview.week' => 'Неделя',
+      'overview.month' => 'Месяц',
+      'overview.year' => 'Год',
+      'overview.inWeek' => 'за неделю',
+      'overview.inYear' => 'за год',
+      'overview.chart' => 'Капитал за период',
+      'overview.accounts' => 'Счета',
+      'overview.allAccounts' => ({required Object n}) => 'Все ${n}',
+      'overview.spendingIn' => ({required Object month}) => 'Траты ${month}',
+      'overview.monthsIn.0' => 'в январе',
+      'overview.monthsIn.1' => 'в феврале',
+      'overview.monthsIn.2' => 'в марте',
+      'overview.monthsIn.3' => 'в апреле',
+      'overview.monthsIn.4' => 'в мае',
+      'overview.monthsIn.5' => 'в июне',
+      'overview.monthsIn.6' => 'в июле',
+      'overview.monthsIn.7' => 'в августе',
+      'overview.monthsIn.8' => 'в сентябре',
+      'overview.monthsIn.9' => 'в октябре',
+      'overview.monthsIn.10' => 'в ноябре',
+      'overview.monthsIn.11' => 'в декабре',
+      'overview.noSpending' => 'В этом месяце трат пока нет.',
+      'overview.ring' => 'Траты по категориям',
+      'overview.failed' => 'Не удалось прочитать обзор.',
+      'overview.hideAmounts' => 'Скрыть суммы',
+      'overview.showAmounts' => 'Показать суммы',
+      'overview.changeIn.0' => 'за январь',
+      'overview.changeIn.1' => 'за февраль',
+      'overview.changeIn.2' => 'за март',
+      'overview.changeIn.3' => 'за апрель',
+      'overview.changeIn.4' => 'за май',
+      'overview.changeIn.5' => 'за июнь',
+      'overview.changeIn.6' => 'за июль',
+      'overview.changeIn.7' => 'за август',
+      'overview.changeIn.8' => 'за сентябрь',
+      'overview.changeIn.9' => 'за октябрь',
+      'overview.changeIn.10' => 'за ноябрь',
+      'overview.changeIn.11' => 'за декабрь',
       'transactions.expense' => 'Расход',
       'transactions.income' => 'Доход',
       'transactions.transfer' => 'Перевод',

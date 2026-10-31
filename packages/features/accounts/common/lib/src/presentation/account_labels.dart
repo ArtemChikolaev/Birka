@@ -11,10 +11,8 @@ String accountSubtitle({
   required Currency currency,
   required AccountType type,
   String? lastDigits,
-}) {
-  final name = t.app.currencies[currency.code] ?? currency.code;
-  final detail = lastDigits == null || lastDigits.isEmpty
-      ? accountTypeLabel(type)
-      : '•• $lastDigits';
-  return '$name · $detail';
-}
+}) => accountLine(
+  currency: currency.code,
+  type: type.name,
+  lastDigits: lastDigits,
+);
