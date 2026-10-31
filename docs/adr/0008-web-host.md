@@ -46,6 +46,9 @@
 9. The build knows no language and no data, so the text of a page lives in its
    island, which takes the language from the browser. The HTML of such a page
    is a frame with a placeholder.
+10. The navigation is plain links between those pages, and lives in the islands
+    for its words. Hidden amounts go from page to page in `sessionStorage`,
+    which ends with the tab, as memory ends with the app on a phone.
 
 ## Options considered
 

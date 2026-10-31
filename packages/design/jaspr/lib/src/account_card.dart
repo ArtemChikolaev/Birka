@@ -1,16 +1,18 @@
-import 'package:design_jaspr/design_jaspr.dart';
+import 'package:design_jaspr/src/amount_text.dart';
+import 'package:design_jaspr/src/card_art.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-/// The big card of an account, with its art behind the name and the amount.
-class AccountHeroCard extends StatelessComponent {
+/// The card of an account, with its art behind the name and the amount.
+class AccountCard extends StatelessComponent {
   /// Creates a card. With [href] it is a link.
-  const AccountHeroCard({
+  const AccountCard({
     required this.art,
     required this.name,
     required this.subtitle,
     required this.amount,
     this.href,
+    this.compact = false,
     super.key,
   });
 
@@ -29,26 +31,38 @@ class AccountHeroCard extends StatelessComponent {
   /// Where the card leads.
   final String? href;
 
+  /// Whether the card is one of several in a row.
+  final bool compact;
+
   @override
   Component build(BuildContext context) {
     final card = CardArtSurface(
       art: art,
-      child: div(classes: 'account-hero', [
-        div(classes: 'account-hero__top', [
-          div(classes: 'account-hero__names', [
-            span(classes: 'text-label account-hero__line', [.text(name)]),
-            span(
-              classes: 'text-caption account-hero__line account-hero__subtitle',
-              [.text(subtitle)],
-            ),
+      child: div(
+        classes: compact
+            ? 'account-card account-card--compact'
+            : 'account-card',
+        [
+          div(classes: 'account-card__top', [
+            div(classes: 'account-card__names', [
+              span(classes: 'text-label account-card__line', [.text(name)]),
+              span(
+                classes:
+                    'text-caption account-card__line account-card__subtitle',
+                [.text(subtitle)],
+              ),
+            ]),
+            const div(classes: 'account-card__chip', []),
           ]),
-          const div(classes: 'account-hero__chip', []),
-        ]),
-        AmountText(amount, textClass: 'text-display'),
-      ]),
+          AmountText(
+            amount,
+            textClass: compact ? 'text-title' : 'text-display',
+          ),
+        ],
+      ),
     );
     if (href case final href?) {
-      return a(classes: 'account-hero-link', href: href, [card]);
+      return a(classes: 'account-card-link', href: href, [card]);
     }
     return card;
   }
@@ -56,7 +70,7 @@ class AccountHeroCard extends StatelessComponent {
   /// The styles of the card.
   @css
   static List<StyleRule> get styles => [
-    css('.account-hero-link').styles(
+    css('.account-card-link').styles(
       raw: {
         'border-radius': 'var(--radius-xl)',
         'color': 'inherit',
@@ -64,7 +78,7 @@ class AccountHeroCard extends StatelessComponent {
         'text-decoration': 'none',
       },
     ),
-    css('.account-hero').styles(
+    css('.account-card').styles(
       raw: {
         'box-sizing': 'border-box',
         'display': 'flex',
@@ -74,14 +88,20 @@ class AccountHeroCard extends StatelessComponent {
         'padding': 'var(--space-lg)',
       },
     ),
-    css('.account-hero__top').styles(
+    css('.account-card--compact').styles(
+      raw: {'height': '146px', 'padding': 'var(--space-md)'},
+    ),
+    css('.account-card .amount').styles(
+      raw: {'overflow': 'hidden', 'text-overflow': 'ellipsis'},
+    ),
+    css('.account-card__top').styles(
       raw: {
         'align-items': 'flex-start',
         'display': 'flex',
         'gap': 'var(--space-sm)',
       },
     ),
-    css('.account-hero__names').styles(
+    css('.account-card__names').styles(
       raw: {
         'display': 'flex',
         'flex': '1',
@@ -90,17 +110,17 @@ class AccountHeroCard extends StatelessComponent {
         'min-width': '0',
       },
     ),
-    css('.account-hero__line').styles(
+    css('.account-card__line').styles(
       raw: {
         'overflow': 'hidden',
         'text-overflow': 'ellipsis',
         'white-space': 'nowrap',
       },
     ),
-    css('.account-hero__subtitle').styles(
+    css('.account-card__subtitle').styles(
       raw: {'color': 'var(--color-text-secondary)'},
     ),
-    css('.account-hero__chip').styles(
+    css('.account-card__chip').styles(
       raw: {
         'background':
             'linear-gradient(135deg, var(--color-text-subtle), '

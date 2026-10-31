@@ -4,8 +4,10 @@ import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/dependencies.dart';
 import 'package:birka_web/app/fragment_trail.dart';
 import 'package:birka_web/app/opened_database.dart';
+import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:get_it/get_it.dart';
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
 
@@ -28,13 +30,18 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   /// How far down the list was when a form took its place.
   var _listScroll = 0.0;
 
+  var _amountsHidden = false;
   void Function()? _stopWatching;
+  void Function()? _stopWatchingTab;
 
   /// The part of the address after `#`.
   String get fragment => _fragment;
 
   /// Says where the data lives.
   String get storageNote => _persists ? t.app.storedHere : t.app.notStored;
+
+  /// The page in the navigation of the site.
+  SitePage get page;
 
   /// The name of the page, for the tab of the browser.
   String get pageName;
@@ -48,6 +55,10 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   /// The page itself, once the database is open.
   Component buildPage(BuildContext context);
 
+  /// Called when the tab of the browser comes back into view, which can be
+  /// after a night in the background.
+  void onTabShown() {}
+
   @override
   void initState() {
     super.initState();
@@ -58,13 +69,16 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
       title: '$pageName · Birka',
     );
     _fragment = addressFragment;
+    _amountsHidden = amountsHidden;
     _stopWatching = watchAddressFragment(_onFragmentChanged);
+    _stopWatchingTab = watchTabShown(onTabShown);
     unawaited(_open());
   }
 
   @override
   void dispose() {
     _stopWatching?.call();
+    _stopWatchingTab?.call();
     super.dispose();
   }
 
@@ -117,16 +131,29 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
     _placePage();
   }
 
+  void _toggleAmounts() {
+    setState(() => _amountsHidden = !_amountsHidden);
+    keepAmountsHidden(hidden: _amountsHidden);
+  }
+
+  // The build knows no language, so its HTML has no words (ADR 0008).
   @override
   Component build(BuildContext context) {
-    return switch (_stage) {
-      _Stage.opening => BirkaColumn(
-        children: [header, const BirkaPlaceholder()],
-      ),
-      _Stage.ready => buildPage(context),
-      _Stage.busy => _trouble(t.app.openElsewhere),
-      _Stage.failed => _trouble(failure),
-    };
+    return HiddenAmounts(
+      hidden: _amountsHidden,
+      onToggle: _toggleAmounts,
+      child: div([
+        switch (_stage) {
+          _Stage.opening => BirkaColumn(
+            children: [if (kIsWeb) header, const BirkaPlaceholder()],
+          ),
+          _Stage.ready => buildPage(context),
+          _Stage.busy => _trouble(t.app.openElsewhere),
+          _Stage.failed => _trouble(failure),
+        },
+        if (kIsWeb && _fragment.isEmpty) SiteNav(page: page),
+      ]),
+    );
   }
 
   Component _trouble(String message) {

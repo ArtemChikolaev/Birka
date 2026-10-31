@@ -1,5 +1,4 @@
 import 'package:accounts_common/accounts_common.dart';
-import 'package:accounts_jaspr/src/presentation/components/account_hero_card.dart';
 import 'package:accounts_jaspr/src/presentation/components/account_row.dart';
 import 'package:accounts_jaspr/src/presentation/components/card_art_of.dart';
 import 'package:design_jaspr/design_jaspr.dart';
@@ -14,15 +13,11 @@ import 'package:l10n/l10n.dart';
 class AccountsPage extends StatelessComponent {
   /// Creates the page.
   const AccountsPage({
-    required this.backHref,
     required this.addHref,
     required this.hrefOf,
     this.note,
     super.key,
   });
-
-  /// Where the button that goes back leads.
-  final String backHref;
 
   /// Where the buttons that add an account lead.
   final String addHref;
@@ -40,10 +35,12 @@ class AccountsPage extends StatelessComponent {
       builder: (context, state) => BirkaColumn(
         children: [
           GlassPageHeader(
-            backHref: backHref,
-            backLabel: t.accounts.back,
-            addHref: addHref,
-            addLabel: t.accounts.add,
+            title: t.accounts.title,
+            trailing: GlassIconButton(
+              glyph: BirkaGlyph.plus,
+              label: t.accounts.add,
+              href: addHref,
+            ),
           ),
           ...switch (state) {
             AccountsLoading() => const <Component>[],
@@ -72,7 +69,6 @@ class AccountsPage extends StatelessComponent {
 
   List<Component> _empty() {
     return [
-      h1(classes: 'text-title accounts__heading', [.text(t.accounts.title)]),
       GlassNotice(
         title: t.accounts.emptyTitle,
         text: t.accounts.emptyHint,
@@ -84,12 +80,9 @@ class AccountsPage extends StatelessComponent {
   List<Component> _content(AccountsOverview overview) {
     final first = overview.active.firstOrNull;
     return [
-      div(classes: 'accounts__title', [
-        h1(classes: 'text-title accounts__heading', [.text(t.accounts.title)]),
-        if (overview.totals.isNotEmpty) _Capital(overview: overview),
-      ]),
+      if (overview.totals.isNotEmpty) _Capital(overview: overview),
       if (first != null) ...[
-        AccountHeroCard(
+        AccountCard(
           art: cardArtOf(first.account.art),
           name: first.account.name,
           subtitle: accountSubtitle(
@@ -127,14 +120,6 @@ class AccountsPage extends StatelessComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
-    css('.accounts__title').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xxs)',
-      },
-    ),
-    css('.accounts__heading').styles(raw: {'margin': '0'}),
     css('.accounts__capital').styles(
       raw: {'color': 'var(--color-text-muted)', 'margin': '0'},
     ),
@@ -168,7 +153,9 @@ class _Capital extends StatelessComponent {
       .text('${t.accounts.capital} '),
       for (final (index, total) in overview.totals.indexed) ...[
         if (index > 0) .text(' ${t.accounts.and} '),
-        strong(classes: 'text-body-strong', [.text(formatMoney(total))]),
+        strong(classes: 'text-body-strong', [
+          .text(HiddenAmounts.mask(context, formatMoney(total))),
+        ]),
       ],
       .text(' ${t.accounts.inAccounts(n: overview.countedAccounts)}'),
     ]);

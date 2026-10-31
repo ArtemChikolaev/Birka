@@ -24,7 +24,6 @@ void main() {
       BlocProvider(
         create: (_) => AccountsCubit(repository),
         child: AccountsPage(
-          backHref: './',
           addHref: 'add',
           hrefOf: (id) => 'open/$id',
           note: note,
@@ -52,7 +51,7 @@ void main() {
     await pump(tester, FakeAccountsRepository());
 
     expect(find.text('Пока нет счетов'), findsOneComponent);
-    expect(links(), ['./', 'add', 'add']);
+    expect(links(), ['add', 'add']);
   });
 
   testComponents('shows the main account as a card and in the list', (
@@ -124,7 +123,6 @@ void main() {
     );
 
     expect(links(), [
-      './',
       'add',
       'open/Карта',
       'open/Карта',

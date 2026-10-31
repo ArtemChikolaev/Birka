@@ -1,6 +1,7 @@
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_jaspr/accounts_jaspr.dart';
 import 'package:birka_web/app/data_island.dart';
+import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -18,9 +19,11 @@ class AccountsIsland extends StatefulComponent {
 }
 
 class _AccountsIslandState extends DataIslandState<AccountsIsland> {
-  static const _home = './';
   static const _list = 'accounts/';
   static const _newAccount = 'new';
+
+  @override
+  SitePage get page => SitePage.accounts;
 
   @override
   String get pageName => t.accounts.title;
@@ -29,12 +32,7 @@ class _AccountsIslandState extends DataIslandState<AccountsIsland> {
   String get failure => t.accounts.failed;
 
   @override
-  Component get header => GlassPageHeader(
-    backHref: _home,
-    backLabel: t.accounts.back,
-    addHref: '$_list#$_newAccount',
-    addLabel: t.accounts.add,
-  );
+  Component get header => GlassPageHeader(title: t.accounts.title);
 
   @override
   Component buildPage(BuildContext context) {
@@ -42,7 +40,6 @@ class _AccountsIslandState extends DataIslandState<AccountsIsland> {
       return BlocProvider<AccountsCubit>(
         create: (_) => getIt(),
         child: AccountsPage(
-          backHref: _home,
           addHref: '$_list#$_newAccount',
           hrefOf: (id) => '$_list#$id',
           note: storageNote,

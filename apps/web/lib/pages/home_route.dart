@@ -22,19 +22,7 @@ class HomeRoute extends StatelessComponent {
             h1(classes: 'text-display home__name', [.text('Birka')]),
             p(classes: 'home__tagline', [.text(tagline)]),
             CapitalPreview(),
-            div(classes: 'home__actions', [
-              BirkaButton(label: 'Open the accounts', href: 'accounts/'),
-              BirkaButton(
-                label: 'Open the operations',
-                href: 'operations/',
-                quiet: true,
-              ),
-              BirkaButton(
-                label: 'Open the categories',
-                href: 'categories/',
-                quiet: true,
-              ),
-            ]),
+            BirkaButton(label: 'Open Birka', href: 'overview/'),
             a(
               classes: 'text-body-strong home__link',
               href: 'https://github.com/ArtemChikolaev/Birka',
@@ -65,13 +53,6 @@ class HomeRoute extends StatelessComponent {
         'gap': 'var(--space-md)',
         'max-width': '360px',
         'padding': 'var(--space-xs)',
-      },
-    ),
-    css('.home__actions').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xs)',
       },
     ),
     css('.home__name').styles(raw: {'margin': '0'}),

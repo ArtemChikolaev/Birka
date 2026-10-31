@@ -301,7 +301,10 @@ class _SheetState extends State<_Sheet> {
         if (state.sent.hasOperators)
           .text(state.sent.text(separator: decimalSeparator)),
       ]),
-      BigAmount(amountLabel(state.kind, state.sent, account.currency)),
+      BigAmount(
+        amountLabel(state.kind, state.sent, account.currency),
+        alwaysShown: true,
+      ),
     ]);
   }
 
@@ -324,6 +327,7 @@ class _SheetState extends State<_Sheet> {
         span([.text(label)]),
         AmountText(
           amountLabel(_state.kind, expression, account.currency),
+          alwaysShown: true,
           textClass: 'text-title',
         ),
       ],

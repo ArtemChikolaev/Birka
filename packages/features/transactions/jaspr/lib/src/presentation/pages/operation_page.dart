@@ -276,7 +276,9 @@ class _OperationPageState extends State<OperationPage> {
   Component _confirmation(BuildContext context, Operation operation) {
     return GlassNotice(
       title: t.transactions.deleteTitle,
-      text: '${operationAmount(operation)} · ${operationTitle(operation)}',
+      text:
+          '${HiddenAmounts.mask(context, operationAmount(operation))} · '
+          '${operationTitle(operation)}',
       actions: [
         BirkaButton(
           label: t.transactions.delete,

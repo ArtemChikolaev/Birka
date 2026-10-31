@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:accounts_common/accounts_common.dart';
-import 'package:accounts_jaspr/src/presentation/components/account_hero_card.dart';
 import 'package:accounts_jaspr/src/presentation/components/card_art_of.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
@@ -49,7 +48,7 @@ class AccountFormPage extends StatelessComponent {
       submitting: state.status == AccountFormStatus.saving,
       failure: state.status == AccountFormStatus.failed ? form.failed : null,
       children: [
-        AccountHeroCard(
+        AccountCard(
           art: cardArtOf(state.art),
           name: name.isEmpty ? form.namePlaceholder : name,
           subtitle: accountSubtitle(

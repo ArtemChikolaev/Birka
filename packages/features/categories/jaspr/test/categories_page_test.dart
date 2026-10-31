@@ -19,7 +19,6 @@ void main() {
       BlocProvider(
         create: (_) => CategoriesCubit(repository),
         child: CategoriesPage(
-          backHref: './',
           addHrefOf: (kind) => 'add/${kind.name}',
           hrefOf: (id) => 'open/$id',
           note: note,
@@ -69,7 +68,7 @@ void main() {
   ) async {
     await pump(tester, FakeCategoriesRepository());
 
-    expect(links(), ['./', 'add/expense', 'add/expense']);
+    expect(links(), ['add/expense', 'add/expense']);
   });
 
   testComponents('shows subcategories under their parent with their number', (
@@ -123,7 +122,7 @@ void main() {
       ]),
     );
 
-    expect(links(), ['./', 'add/expense', 'open/Еда', 'open/Кафе']);
+    expect(links(), ['add/expense', 'open/Еда', 'open/Кафе']);
   });
 
   testComponents('archived categories go to their own section', (tester) async {
