@@ -5,5 +5,6 @@
 /// the strings of that language through `t`.
 library;
 
+export 'src/account_line.dart';
 export 'src/format_money.dart';
 export 'src/generated/strings.g.dart';

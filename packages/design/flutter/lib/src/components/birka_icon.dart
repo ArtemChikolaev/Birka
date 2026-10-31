@@ -88,7 +88,19 @@ enum BirkaGlyph {
   trash,
 
   /// Two arrows in opposite directions.
-  transfer
+  transfer,
+
+  /// An open eye.
+  eye,
+
+  /// An eye crossed out.
+  hidden,
+
+  /// An arrow up to the right.
+  rise,
+
+  /// An arrow down to the right.
+  fall
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

@@ -1,5 +1,4 @@
 import 'package:accounts_common/accounts_common.dart';
-import 'package:accounts_flutter/src/presentation/widgets/account_hero_card.dart';
 import 'package:accounts_flutter/src/presentation/widgets/account_labels.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
@@ -111,7 +110,7 @@ class _FormState extends State<_Form> {
                   vertical: BirkaTokens.spaceXs,
                 ),
                 children: [
-                  AccountHeroCard(
+                  AccountCard(
                     art: cardArtOf(state.art),
                     name: state.name.trim().isEmpty
                         ? form.namePlaceholder

@@ -10,6 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
+import 'package:overview_common/overview_common.dart' show OverviewCubit;
+import 'package:overview_flutter/overview_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -79,7 +81,21 @@ GoRouter buildRouter(GetIt getIt) {
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
-          tab(Paths.overview, () => t.app.overview),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Paths.overview,
+                builder: (context, state) => BlocProvider(
+                  create: (_) => getIt<OverviewCubit>(),
+                  child: OverviewPage(
+                    onAddAccount: () => context.push(Paths.newAccount),
+                    onAccounts: () => context.push(Paths.accounts),
+                    onOpenAccount: (id) => context.push(Paths.account(id)),
+                  ),
+                ),
+              ),
+            ],
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(

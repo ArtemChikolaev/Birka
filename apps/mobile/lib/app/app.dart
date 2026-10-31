@@ -22,24 +22,29 @@ class BirkaApp extends StatefulWidget {
 
 class _BirkaAppState extends State<BirkaApp> {
   late final GoRouter _router = buildRouter(widget.getIt);
+  final ValueNotifier<bool> _hiddenAmounts = ValueNotifier(false);
 
   @override
   void dispose() {
     _router.dispose();
+    _hiddenAmounts.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Birka',
-      theme: BirkaTheme.dark(),
-      locale: Locale(LocaleSettings.currentLocale.languageCode),
-      supportedLocales: [
-        for (final locale in AppLocale.values) Locale(locale.languageCode),
-      ],
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      routerConfig: _router,
+    return HiddenAmounts(
+      notifier: _hiddenAmounts,
+      child: MaterialApp.router(
+        title: 'Birka',
+        theme: BirkaTheme.dark(),
+        locale: Locale(LocaleSettings.currentLocale.languageCode),
+        supportedLocales: [
+          for (final locale in AppLocale.values) Locale(locale.languageCode),
+        ],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        routerConfig: _router,
+      ),
     );
   }
 }

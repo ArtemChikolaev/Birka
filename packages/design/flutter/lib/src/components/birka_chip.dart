@@ -42,6 +42,7 @@ class BirkaChip extends StatelessWidget {
     final glyph = this.glyph;
     final foreground = selected ? colors.background : colors.textSecondary;
     return Semantics(
+      container: true,
       button: true,
       selected: selected,
       enabled: onTap != null,

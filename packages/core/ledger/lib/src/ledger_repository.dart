@@ -4,6 +4,7 @@ import 'package:ledger/src/account.dart';
 import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
 import 'package:ledger/src/ledger_exception.dart';
+import 'package:ledger/src/ledger_totals.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
 import 'package:money/money.dart';
@@ -468,6 +469,114 @@ final class LedgerRepository {
         CivilDate.parse('${row.read<String>('month')}-01'),
     ];
   }
+
+  /// What each day since [from] changed the accounts that count towards
+  /// totals, one row for each day and currency, the earliest first.
+  Stream<List<DayChange>> watchDayChanges({required CivilDate from}) {
+    return _db
+        .customSelect(
+          '''
+          SELECT t.occurred_on AS day, a.currency, a.decimal_digits,
+            SUM(e.amount_minor) AS change
+          FROM entries e
+          JOIN transactions t ON t.id = e.transaction_id
+          JOIN accounts a ON a.id = e.account_id
+          WHERE e.deleted_at IS NULL
+            AND t.deleted_at IS NULL
+            AND t.status <> ?
+            AND t.occurred_on >= ?
+            AND a.deleted_at IS NULL
+            AND a.include_in_totals
+            AND NOT a.archived
+          GROUP BY t.occurred_on, a.currency, a.decimal_digits
+          ORDER BY t.occurred_on
+          ''',
+          variables: [
+            Variable.withString(TransactionStatus.planned.name),
+            Variable.withString(from.toString()),
+          ],
+          readsFrom: {_db.entries, _db.transactions, _db.accounts},
+        )
+        .watch()
+        .map(
+          (rows) => [
+            for (final row in rows)
+              DayChange(
+                CivilDate.parse(row.read<String>('day')),
+                _sum(
+                  row.read('change'),
+                  row.read('currency'),
+                  row.read('decimal_digits'),
+                ),
+              ),
+          ],
+        );
+  }
+
+  /// What went through the categories of [kind] from [from] to [to], with both
+  /// ends included: one row for each category and currency, the biggest first.
+  /// A subcategory counts towards its parent.
+  Stream<List<CategoryTotal>> watchCategoryTotals(
+    CategoryKind kind, {
+    required CivilDate from,
+    required CivilDate to,
+  }) {
+    return _db
+        .customSelect(
+          '''
+          SELECT top.*, a.currency, a.decimal_digits,
+            SUM(al.amount_minor) AS total
+          FROM allocations al
+          JOIN transactions t ON t.id = al.transaction_id
+          JOIN entries e ON e.transaction_id = t.id AND e.deleted_at IS NULL
+          JOIN accounts a ON a.id = e.account_id
+          JOIN categories c ON c.id = al.category_id
+          JOIN categories top ON top.id = COALESCE(c.parent_id, c.id)
+          WHERE al.deleted_at IS NULL
+            AND t.deleted_at IS NULL
+            AND t.status <> ?
+            AND t.occurred_on BETWEEN ? AND ?
+            AND top.kind = ?
+          GROUP BY top.id, a.currency, a.decimal_digits
+          ORDER BY total DESC, top.sort_order
+          ''',
+          variables: [
+            Variable.withString(TransactionStatus.planned.name),
+            Variable.withString(from.toString()),
+            Variable.withString(to.toString()),
+            Variable.withString(kind.name),
+          ],
+          readsFrom: {
+            _db.allocations,
+            _db.transactions,
+            _db.entries,
+            _db.accounts,
+            _db.categories,
+          },
+        )
+        .watch()
+        .asyncMap(
+          (rows) => Future.wait(
+            rows.map(
+              (row) async => CategoryTotal(
+                _categoryOf(await _db.categories.mapFromRow(row)),
+                _sum(
+                  row.read('total'),
+                  row.read('currency'),
+                  row.read('decimal_digits'),
+                ),
+              ),
+            ),
+          ),
+        );
+  }
+
+  /// A sum from SQL as money. It can pass the limit of an amount, where it
+  /// stops, so that a list survives two absurd amounts.
+  Money _sum(int minorUnits, String code, int decimalDigits) => Money(
+    minorUnits.clamp(-Money.maxMinorUnits, Money.maxMinorUnits),
+    _currency(code, decimalDigits),
+  );
 
   /// The balance of the account `a` in SQL. Its one variable is the status
   /// that does not count.

@@ -15,7 +15,8 @@ Future<bool> confirmDelete(BuildContext context, Operation operation) async {
       title: t.transactions.deleteTitle,
       children: [
         Text(
-          '${operationAmount(operation)} · ${operationTitle(operation)}',
+          '${HiddenAmounts.mask(context, operationAmount(operation))} · '
+          '${operationTitle(operation)}',
           style: BirkaTextStyles.of(
             context,
           ).body.copyWith(color: colors.textMuted),
