@@ -23,6 +23,36 @@ addAccount: Добавить счёт
 oneAccountHint: Для перевода нужен второй счёт.
 noCategoriesHint: Добавьте категории, чтобы разбирать траты.
 addCategories: Добавить категории
+search: Поиск
+searchHint: Кафе, 250 или заметка
+clearSearch: Очистить поиск
+filterAll: Все
+filterExpenses: Расходы
+filterIncome: Доходы
+filterTransfers: Переводы
+pickMonth: Выбрать месяц
+noOperationsTitle: Пока нет операций
+noOperationsHint: Нажмите плюс внизу, чтобы записать первую.
+nothingFound: Ничего не нашлось
+failedToReadOperations: Не удалось прочитать операции.
+failedToDelete: Не удалось удалить. Попробуйте ещё раз.
+operation: Операция
+edit: Изменить
+editOperation: Изменить операцию
+repeat: Повторить
+delete: Удалить
+deleteTitle: Удалить операцию?
+cancel: Отмена
+back: Назад
+category: Категория
+from: Откуда
+date: Дата
+sources:
+  manual: Вручную
+  import: Из выписки
+  notification: Из уведомления
+  recurring: Регулярная
+  bank: Из банка
 keys:
   point: Запятая
   add: Плюс
@@ -44,3 +74,16 @@ months:
   - октября
   - ноября
   - декабря
+monthNames:
+  - Январь
+  - Февраль
+  - Март
+  - Апрель
+  - Май
+  - Июнь
+  - Июль
+  - Август
+  - Сентябрь
+  - Октябрь
+  - Ноябрь
+  - Декабрь

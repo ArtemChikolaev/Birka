@@ -23,6 +23,36 @@ addAccount: Add account
 oneAccountHint: A transfer needs a second account.
 noCategoriesHint: Add categories to sort your money.
 addCategories: Add categories
+search: Search
+searchHint: Cafe, 250 or a note
+clearSearch: Clear the search
+filterAll: All
+filterExpenses: Expenses
+filterIncome: Income
+filterTransfers: Transfers
+pickMonth: Pick a month
+noOperationsTitle: No operations yet
+noOperationsHint: Tap the plus below to record the first one.
+nothingFound: Nothing found
+failedToReadOperations: Could not read the operations.
+failedToDelete: Could not delete. Try again.
+operation: Operation
+edit: Edit
+editOperation: Edit operation
+repeat: Repeat
+delete: Delete
+deleteTitle: Delete this operation?
+cancel: Cancel
+back: Back
+category: Category
+from: From
+date: Date
+sources:
+  manual: Manually
+  import: Imported
+  notification: From a notification
+  recurring: Recurring
+  bank: From the bank
 keys:
   point: Point
   add: Plus
@@ -32,6 +62,19 @@ keys:
   backspace: Erase
 dayOfMonth: $month $day
 months:
+  - January
+  - February
+  - March
+  - April
+  - May
+  - June
+  - July
+  - August
+  - September
+  - October
+  - November
+  - December
+monthNames:
   - January
   - February
   - March

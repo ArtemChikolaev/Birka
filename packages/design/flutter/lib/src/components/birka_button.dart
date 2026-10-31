@@ -10,6 +10,7 @@ class BirkaButton extends StatelessWidget {
     required this.label,
     this.onPressed,
     this.quiet = false,
+    this.danger = false,
     super.key,
   });
 
@@ -23,6 +24,9 @@ class BirkaButton extends StatelessWidget {
   /// emerald.
   final bool quiet;
 
+  /// Whether the action cannot be taken back, in the color of a loss.
+  final bool danger;
+
   /// The height of the pill.
   static const double height = 56;
 
@@ -30,6 +34,11 @@ class BirkaButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
     final onPressed = this.onPressed;
+    final (fill, ink) = switch ((danger, quiet)) {
+      (true, _) => (colors.negative.withValues(alpha: 0.16), colors.negative),
+      (false, true) => (colors.surfaceRaised, colors.text),
+      (false, false) => (colors.accent, colors.onAccent),
+    };
     return Semantics(
       button: true,
       enabled: onPressed != null,
@@ -48,7 +57,7 @@ class BirkaButton extends StatelessWidget {
               horizontal: BirkaTokens.spaceLg,
             ),
             decoration: BoxDecoration(
-              color: quiet ? colors.surfaceRaised : colors.accent,
+              color: fill,
               borderRadius: const BorderRadius.all(
                 Radius.circular(BirkaTokens.radiusPill),
               ),
@@ -59,7 +68,7 @@ class BirkaButton extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: BirkaTextStyles.of(
                 context,
-              ).label.copyWith(color: quiet ? colors.text : colors.onAccent),
+              ).label.copyWith(color: ink),
             ),
           ),
         ),

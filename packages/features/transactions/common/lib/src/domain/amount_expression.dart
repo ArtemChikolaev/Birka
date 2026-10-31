@@ -33,6 +33,15 @@ final class AmountExpression {
   /// Creates an empty expression.
   const AmountExpression() : _numbers = const [], _operators = const [];
 
+  /// Creates an expression that holds [amount] alone, as if it was typed.
+  factory AmountExpression.of(Money amount) {
+    final digits = amount.abs().toDecimalString();
+    final number = digits.contains('.')
+        ? digits.replaceFirst(RegExp(r'\.?0+$'), '')
+        : digits;
+    return AmountExpression._([number], const []);
+  }
+
   const AmountExpression._(this._numbers, this._operators);
 
   /// The most digits a number takes before its point. An amount holds at most

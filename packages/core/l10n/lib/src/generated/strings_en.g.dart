@@ -335,6 +335,80 @@ class Translations$transactions$en {
   /// en: 'Add categories'
   String get addCategories => 'Add categories';
 
+  /// en: 'Search'
+  String get search => 'Search';
+
+  /// en: 'Cafe, 250 or a note'
+  String get searchHint => 'Cafe, 250 or a note';
+
+  /// en: 'Clear the search'
+  String get clearSearch => 'Clear the search';
+
+  /// en: 'All'
+  String get filterAll => 'All';
+
+  /// en: 'Expenses'
+  String get filterExpenses => 'Expenses';
+
+  /// en: 'Income'
+  String get filterIncome => 'Income';
+
+  /// en: 'Transfers'
+  String get filterTransfers => 'Transfers';
+
+  /// en: 'Pick a month'
+  String get pickMonth => 'Pick a month';
+
+  /// en: 'No operations yet'
+  String get noOperationsTitle => 'No operations yet';
+
+  /// en: 'Tap the plus below to record the first one.'
+  String get noOperationsHint => 'Tap the plus below to record the first one.';
+
+  /// en: 'Nothing found'
+  String get nothingFound => 'Nothing found';
+
+  /// en: 'Could not read the operations.'
+  String get failedToReadOperations => 'Could not read the operations.';
+
+  /// en: 'Could not delete. Try again.'
+  String get failedToDelete => 'Could not delete. Try again.';
+
+  /// en: 'Operation'
+  String get operation => 'Operation';
+
+  /// en: 'Edit'
+  String get edit => 'Edit';
+
+  /// en: 'Edit operation'
+  String get editOperation => 'Edit operation';
+
+  /// en: 'Repeat'
+  String get repeat => 'Repeat';
+
+  /// en: 'Delete'
+  String get delete => 'Delete';
+
+  /// en: 'Delete this operation?'
+  String get deleteTitle => 'Delete this operation?';
+
+  /// en: 'Cancel'
+  String get cancel => 'Cancel';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'Category'
+  String get category => 'Category';
+
+  /// en: 'From'
+  String get from => 'From';
+
+  /// en: 'Date'
+  String get date => 'Date';
+
+  late final Translations$transactions$sources$en sources =
+      Translations$transactions$sources$en.internal(_root);
   late final Translations$transactions$keys$en keys =
       Translations$transactions$keys$en.internal(_root);
 
@@ -343,6 +417,20 @@ class Translations$transactions$en {
       '${month} ${day}';
 
   List<String> get months => [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  List<String> get monthNames => [
     'January',
     'February',
     'March',
@@ -470,6 +558,30 @@ class Translations$categories$form$en {
 
   /// en: 'Could not save. Try again.'
   String get failed => 'Could not save. Try again.';
+}
+
+// Path: transactions.sources
+class Translations$transactions$sources$en {
+  Translations$transactions$sources$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Manually'
+  String get manual => 'Manually';
+
+  /// en: 'Imported'
+  String get import => 'Imported';
+
+  /// en: 'From a notification'
+  String get notification => 'From a notification';
+
+  /// en: 'Recurring'
+  String get recurring => 'Recurring';
+
+  /// en: 'From the bank'
+  String get bank => 'From the bank';
 }
 
 // Path: transactions.keys
@@ -650,6 +762,36 @@ extension on Translations {
       'transactions.oneAccountHint' => 'A transfer needs a second account.',
       'transactions.noCategoriesHint' => 'Add categories to sort your money.',
       'transactions.addCategories' => 'Add categories',
+      'transactions.search' => 'Search',
+      'transactions.searchHint' => 'Cafe, 250 or a note',
+      'transactions.clearSearch' => 'Clear the search',
+      'transactions.filterAll' => 'All',
+      'transactions.filterExpenses' => 'Expenses',
+      'transactions.filterIncome' => 'Income',
+      'transactions.filterTransfers' => 'Transfers',
+      'transactions.pickMonth' => 'Pick a month',
+      'transactions.noOperationsTitle' => 'No operations yet',
+      'transactions.noOperationsHint' =>
+        'Tap the plus below to record the first one.',
+      'transactions.nothingFound' => 'Nothing found',
+      'transactions.failedToReadOperations' => 'Could not read the operations.',
+      'transactions.failedToDelete' => 'Could not delete. Try again.',
+      'transactions.operation' => 'Operation',
+      'transactions.edit' => 'Edit',
+      'transactions.editOperation' => 'Edit operation',
+      'transactions.repeat' => 'Repeat',
+      'transactions.delete' => 'Delete',
+      'transactions.deleteTitle' => 'Delete this operation?',
+      'transactions.cancel' => 'Cancel',
+      'transactions.back' => 'Back',
+      'transactions.category' => 'Category',
+      'transactions.from' => 'From',
+      'transactions.date' => 'Date',
+      'transactions.sources.manual' => 'Manually',
+      'transactions.sources.import' => 'Imported',
+      'transactions.sources.notification' => 'From a notification',
+      'transactions.sources.recurring' => 'Recurring',
+      'transactions.sources.bank' => 'From the bank',
       'transactions.keys.point' => 'Point',
       'transactions.keys.add' => 'Plus',
       'transactions.keys.subtract' => 'Minus',
@@ -670,6 +812,18 @@ extension on Translations {
       'transactions.months.9' => 'October',
       'transactions.months.10' => 'November',
       'transactions.months.11' => 'December',
+      'transactions.monthNames.0' => 'January',
+      'transactions.monthNames.1' => 'February',
+      'transactions.monthNames.2' => 'March',
+      'transactions.monthNames.3' => 'April',
+      'transactions.monthNames.4' => 'May',
+      'transactions.monthNames.5' => 'June',
+      'transactions.monthNames.6' => 'July',
+      'transactions.monthNames.7' => 'August',
+      'transactions.monthNames.8' => 'September',
+      'transactions.monthNames.9' => 'October',
+      'transactions.monthNames.10' => 'November',
+      'transactions.monthNames.11' => 'December',
       _ => null,
     };
   }

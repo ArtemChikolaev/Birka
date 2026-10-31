@@ -404,31 +404,69 @@ final class LedgerRepository {
     });
   }
 
-  /// The latest [limit] transactions, of [accountId] if it is given.
+  /// The latest [limit] transactions, or all of them without a limit. They can
+  /// be narrowed to [accountId] and to the days from [from] to [to], with both
+  /// ends included.
   Stream<List<Transaction>> watchTransactions({
     String? accountId,
-    int limit = 200,
+    CivilDate? from,
+    CivilDate? to,
+    int? limit = 200,
   }) {
     final query = _db.select(_db.transactions)
       ..where((row) {
-        final live = row.deletedAt.isNull();
-        if (accountId == null) return live;
+        var matches = row.deletedAt.isNull();
+        if (from != null) {
+          matches &= row.occurredOn.isBiggerOrEqualValue(from.toString());
+        }
+        if (to != null) {
+          matches &= row.occurredOn.isSmallerOrEqualValue(to.toString());
+        }
+        if (accountId == null) return matches;
         final ofAccount = _db.selectOnly(_db.entries)
           ..addColumns([_db.entries.transactionId])
           ..where(
             _db.entries.accountId.equals(accountId) &
                 _db.entries.deletedAt.isNull(),
           );
-        return live & row.id.isInQuery(ofAccount);
+        return matches & row.id.isInQuery(ofAccount);
       })
       ..orderBy([
         (row) =>
             OrderingTerm(expression: row.occurredOn, mode: OrderingMode.desc),
         // UUIDv7 ids sort by the moment of creation.
         (row) => OrderingTerm(expression: row.id, mode: OrderingMode.desc),
-      ])
-      ..limit(limit);
+      ]);
+    if (limit != null) query.limit(limit);
     return query.watch().asyncMap(_withLegs);
+  }
+
+  /// Transaction [id], and `null` while it does not exist.
+  Stream<Transaction?> watchTransaction(String id) {
+    final query = _db.select(_db.transactions)
+      ..where((row) => row.id.equals(id) & row.deletedAt.isNull());
+    return query.watchSingleOrNull().asyncMap(
+      (row) async => row == null ? null : (await _withLegs([row])).singleOrNull,
+    );
+  }
+
+  /// The first days of the months that have transactions, the latest first.
+  Future<List<CivilDate>> months() async {
+    final rows = await _db
+        .customSelect(
+          '''
+          SELECT DISTINCT substr(occurred_on, 1, 7) AS month
+          FROM transactions
+          WHERE deleted_at IS NULL
+          ORDER BY month DESC
+          ''',
+          readsFrom: {_db.transactions},
+        )
+        .get();
+    return [
+      for (final row in rows)
+        CivilDate.parse('${row.read<String>('month')}-01'),
+    ];
   }
 
   /// The balance of the account `a` in SQL. Its one variable is the status
@@ -596,7 +634,9 @@ final class LedgerRepository {
                 _db.entries.transactionId.isIn(ids) &
                     _db.entries.deletedAt.isNull(),
               )
-              ..orderBy([OrderingTerm(expression: _db.entries.id)]))
+              // Two ids of one millisecond can come in any order, so the sign
+              // puts what leaves a transfer first.
+              ..orderBy([OrderingTerm(expression: _db.entries.amountMinor)]))
             .get();
     final entries = <String, List<Entry>>{};
     final currencies = <String, Currency>{};

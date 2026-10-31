@@ -463,6 +463,112 @@ void main() {
       expect(ofEuro.single.entries.single.accountId, euro.id);
     });
 
+    test('can be listed by days, with both ends included', () async {
+      for (final day in [
+        CivilDate(2026, 9, 30),
+        CivilDate(2026, 10, 1),
+        CivilDate(2026, 10, 31),
+        CivilDate(2026, 11, 1),
+      ]) {
+        await ledger.record(
+          TransactionDraft.adjustment(
+            accountId: card.id,
+            change: rub(1),
+            occurredOn: day,
+          ),
+        );
+      }
+
+      final october = await ledger
+          .watchTransactions(
+            from: CivilDate(2026, 10, 1),
+            to: CivilDate(2026, 10, 31),
+          )
+          .first;
+      expect(october.map((transaction) => transaction.occurredOn.day), [31, 1]);
+    });
+
+    test('come back without a limit when asked', () async {
+      for (var i = 0; i < 3; i++) {
+        await ledger.record(coffee(rub(100)));
+      }
+
+      expect(await ledger.watchTransactions(limit: 2).first, hasLength(2));
+      expect(await ledger.watchTransactions(limit: null).first, hasLength(3));
+    });
+
+    test('a transfer starts with what leaves, whatever its ids say', () async {
+      // Two ids of one millisecond can come in any order.
+      final ids = ['t', 'z', 'a'];
+      final reversed = LedgerRepository(
+        database,
+        now: () => at,
+        newId: () => ids.removeAt(0),
+      );
+      await reversed.record(
+        TransactionDraft.transfer(
+          fromAccountId: card.id,
+          sent: rub(9000),
+          toAccountId: euro.id,
+          received: eur(100),
+          occurredOn: today,
+        ),
+      );
+
+      final transfer = (await ledger.watchTransactions().first).single;
+      expect(transfer.entries.map((entry) => entry.amount), [
+        rub(-9000),
+        eur(100),
+      ]);
+    });
+
+    test('one can be followed until it is gone', () async {
+      final id = await ledger.record(coffee(rub(100)));
+      final amounts = ledger
+          .watchTransaction(id)
+          .map((transaction) => transaction?.entries.single.amount);
+      final seen = expectLater(
+        amounts,
+        emitsInOrder(<Object?>[rub(-100), rub(-200), isNull]),
+      );
+
+      await pumpEventQueue();
+      await ledger.amend(id, coffee(rub(200)));
+      await pumpEventQueue();
+      await ledger.delete(id);
+
+      await seen;
+    });
+
+    test('name their months, the latest first', () async {
+      for (final day in [
+        CivilDate(2026, 10, 2),
+        CivilDate(2025, 12, 31),
+        CivilDate(2026, 10, 30),
+      ]) {
+        await ledger.record(
+          TransactionDraft.adjustment(
+            accountId: card.id,
+            change: rub(1),
+            occurredOn: day,
+          ),
+        );
+      }
+      final gone = await ledger.record(
+        TransactionDraft.adjustment(
+          accountId: card.id,
+          change: rub(1),
+          occurredOn: CivilDate(2027, 1, 1),
+        ),
+      );
+      await ledger.delete(gone);
+
+      expect(await ledger.months(), [
+        CivilDate(2026, 10, 1),
+        CivilDate(2025, 12, 1),
+      ]);
+    });
+
     test('an amendment replaces the entries and allocations', () async {
       final id = await ledger.record(coffee(rub(25000)));
 
