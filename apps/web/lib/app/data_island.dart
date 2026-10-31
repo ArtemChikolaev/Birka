@@ -40,7 +40,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   /// Says where the data lives.
   String get storageNote => _persists ? t.app.storedHere : t.app.notStored;
 
-  /// The page in the navigation of the site.
+  /// The tab of the page in the navigation of the site.
   SitePage get page;
 
   /// The name of the page, for the tab of the browser.

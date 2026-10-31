@@ -26,6 +26,7 @@ workspace:
   - packages/features/overview/jaspr
   - packages/features/reports/common
   - packages/features/reports/flutter
+  - packages/features/reports/jaspr
   - packages/features/transactions/common
   - packages/features/transactions/flutter
   - packages/features/transactions/jaspr

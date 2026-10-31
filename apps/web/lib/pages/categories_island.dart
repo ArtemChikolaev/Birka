@@ -28,7 +28,7 @@ class _CategoriesIslandState extends DataIslandState<CategoriesIsland> {
   static String _addHrefOf(CategoryKind kind) => '$_list#new-${kind.name}';
 
   @override
-  SitePage get page => SitePage.categories;
+  SitePage get page => SitePage.more;
 
   @override
   String get pageName => t.categories.title;

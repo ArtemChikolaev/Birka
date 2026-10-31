@@ -2,7 +2,7 @@ import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
 
-/// The pages that the navigation of the site leads to, in its order.
+/// The tabs of the site, as in the app.
 enum SitePage {
   /// The first screen with data.
   overview,
@@ -10,19 +10,19 @@ enum SitePage {
   /// The list of operations.
   operations,
 
-  /// The list of accounts.
-  accounts,
+  /// What a month took or brought.
+  reports,
 
-  /// The list of categories.
-  categories,
+  /// Everything else, with the accounts and the categories.
+  more,
 }
 
 /// The navigation of the site, with a new operation in the middle.
 class SiteNav extends StatelessComponent {
-  /// Creates the navigation of [page].
+  /// Creates the navigation with the tab of [page] selected.
   const SiteNav({required this.page, super.key});
 
-  /// The page that stands open.
+  /// The tab that the open page belongs to.
   final SitePage page;
 
   @override
@@ -40,14 +40,14 @@ class SiteNav extends StatelessComponent {
           href: 'operations/',
         ),
         GlassNavDestination(
-          glyph: BirkaGlyph.wallet,
-          label: t.accounts.title,
-          href: 'accounts/',
+          glyph: BirkaGlyph.reports,
+          label: t.app.reports,
+          href: 'reports/',
         ),
         GlassNavDestination(
           glyph: BirkaGlyph.more,
-          label: t.categories.title,
-          href: 'categories/',
+          label: t.app.more,
+          href: 'more/',
         ),
       ],
       selectedIndex: page.index,

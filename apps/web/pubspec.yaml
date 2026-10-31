@@ -36,6 +36,10 @@ dependencies:
     path: ../../packages/features/overview/common
   overview_jaspr:
     path: ../../packages/features/overview/jaspr
+  reports_common:
+    path: ../../packages/features/reports/common
+  reports_jaspr:
+    path: ../../packages/features/reports/jaspr
   transactions_common:
     path: ../../packages/features/transactions/common
   transactions_jaspr:

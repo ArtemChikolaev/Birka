@@ -15,9 +15,12 @@ import 'package:birka_web/components/capital_preview.dart' as _capital_preview;
 import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
+import 'package:birka_web/pages/more_island.dart' as _more_island;
+import 'package:birka_web/pages/more_page.dart' as _more_page;
 import 'package:birka_web/pages/operations_island.dart' as _operations_island;
 import 'package:birka_web/pages/overview_island.dart' as _overview_island;
 import 'package:birka_web/pages/page_frame.dart' as _page_frame;
+import 'package:birka_web/pages/reports_island.dart' as _reports_island;
 import 'package:categories_jaspr/src/presentation/pages/categories_page.dart'
     as _categories_page;
 import 'package:categories_jaspr/src/presentation/pages/category_form_page.dart'
@@ -26,6 +29,7 @@ import 'package:design_jaspr/src/account_card.dart' as _account_card;
 import 'package:design_jaspr/src/ambient_background.dart'
     as _ambient_background;
 import 'package:design_jaspr/src/amount_text.dart' as _amount_text;
+import 'package:design_jaspr/src/birka_bars.dart' as _birka_bars;
 import 'package:design_jaspr/src/birka_button.dart' as _birka_button;
 import 'package:design_jaspr/src/birka_chip.dart' as _birka_chip;
 import 'package:design_jaspr/src/birka_chip_field.dart' as _birka_chip_field;
@@ -55,6 +59,8 @@ import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
     as _overview_page;
+import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
+    as _reports_page;
 import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart'
     as _quick_add_tile;
 import 'package:transactions_jaspr/src/presentation/pages/operation_page.dart'
@@ -89,10 +95,16 @@ ServerOptions get defaultServerOptions => ServerOptions(
         ClientTarget<_accounts_island.AccountsIsland>('accounts_island'),
     _categories_island.CategoriesIsland:
         ClientTarget<_categories_island.CategoriesIsland>('categories_island'),
+    _more_island.MoreIsland: ClientTarget<_more_island.MoreIsland>(
+      'more_island',
+    ),
     _operations_island.OperationsIsland:
         ClientTarget<_operations_island.OperationsIsland>('operations_island'),
     _overview_island.OverviewIsland:
         ClientTarget<_overview_island.OverviewIsland>('overview_island'),
+    _reports_island.ReportsIsland: ClientTarget<_reports_island.ReportsIsland>(
+      'reports_island',
+    ),
   },
   styles: () => [
     ..._account_row.AccountRow.styles,
@@ -100,12 +112,14 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._accounts_page.AccountsPage.styles,
     ..._capital_preview.CapitalPreview.styles,
     ..._home_route.HomeRoute.styles,
+    ..._more_page.MorePage.styles,
     ..._page_frame.PageFrame.styles,
     ..._categories_page.CategoriesPage.styles,
     ..._category_form_page.CategoryFormPage.styles,
     ..._account_card.AccountCard.styles,
     ..._ambient_background.AmbientBackground.styles,
     ..._amount_text.AmountText.styles,
+    ..._birka_bars.BirkaBars.styles,
     ..._birka_button.BirkaButton.styles,
     ..._birka_chip.BirkaChip.styles,
     ..._birka_chip_field.BirkaChipField.styles,
@@ -135,6 +149,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
     ..._overview_page.OverviewPage.styles,
+    ..._reports_page.ReportsPage.styles,
     ..._quick_add_tile.QuickAddTile.styles,
     ..._quick_add_tile.QuickAddTiles.styles,
     ..._operation_page.OperationPage.styles,
