@@ -119,6 +119,26 @@ void main() {
       expect(formatCompactMoney(rub(999600)), '₽1M');
     });
 
+    test('rounds a half up at each place', () {
+      expect(formatCompactMoney(rub(1250)), '₽1.3k');
+      expect(formatCompactMoney(rub(1249)), '₽1.2k');
+      expect(formatCompactMoney(rub(84500)), '₽85k');
+      expect(formatCompactMoney(rub(84499)), '₽84k');
+    });
+
+    test('the largest amount stays in billions on every platform', () {
+      expect(
+        formatCompactMoney(Money(Money.maxMinorUnits, Currency.rub)),
+        '₽90072B',
+      );
+      expect(
+        formatCompactMoney(
+          Money(Money.maxMinorUnits, Currency.custom('JPY', decimalDigits: 0)),
+        ),
+        '¥9007199B',
+      );
+    });
+
     test('shows the code of a currency without a sign', () {
       expect(
         formatCompactMoney(Money(8400000, Currency.iso('AED'))),

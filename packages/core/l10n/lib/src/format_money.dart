@@ -72,16 +72,15 @@ const _latinUnits = ['k', 'M', 'B'];
   var unit = 0;
   var scale = 1000;
   // Rounds up into the next unit before it shows as 1000 тыс.
-  while (unit < _latinUnits.length - 1 && units >= scale * 999.5) {
+  while (unit < _latinUnits.length - 1 && units >= scale * 1000 - scale ~/ 2) {
     unit++;
     scale *= 1000;
   }
-  final value = units / scale;
-  final digits = value < 9.95 ? 1 : 0;
-  final number = value
-      .toStringAsFixed(digits)
-      .replaceFirst(RegExp(r'\.0$'), '');
-  return (number.replaceFirst('.', separator), unit);
+  final tenths = (units + scale ~/ 20) ~/ (scale ~/ 10);
+  if (tenths >= 100) return ('${(units + scale ~/ 2) ~/ scale}', unit);
+  final digit = tenths % 10;
+  final whole = tenths ~/ 10;
+  return (digit == 0 ? '$whole' : '$whole$separator$digit', unit);
 }
 
 String _group(String digits, {required String separator}) {
