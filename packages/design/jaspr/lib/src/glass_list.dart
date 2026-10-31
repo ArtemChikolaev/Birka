@@ -34,6 +34,7 @@ class GlassListRow extends StatelessComponent {
     this.trailing,
     this.href,
     this.onTap,
+    this.indented = false,
     super.key,
   });
 
@@ -55,9 +56,13 @@ class GlassListRow extends StatelessComponent {
   /// Called on a click.
   final VoidCallback? onTap;
 
+  /// Whether the row stands under the row before it, such as a subcategory.
+  final bool indented;
+
   @override
   Component build(BuildContext context) {
     final subtitle = this.subtitle;
+    final indent = indented ? ' glass-row--indented' : '';
     final content = [
       ?leading,
       span(classes: 'glass-row__text', [
@@ -70,17 +75,21 @@ class GlassListRow extends StatelessComponent {
       ?trailing,
     ];
     if (href case final href?) {
-      return a(classes: 'glass-row glass-row--action', href: href, content);
+      return a(
+        classes: 'glass-row glass-row--action$indent',
+        href: href,
+        content,
+      );
     }
     if (onTap case final onTap?) {
       return button(
-        classes: 'glass-row glass-row--action',
+        classes: 'glass-row glass-row--action$indent',
         type: ButtonType.button,
         onClick: onTap,
         content,
       );
     }
-    return div(classes: 'glass-row', content);
+    return div(classes: 'glass-row$indent', content);
   }
 
   /// The styles of the row.
@@ -115,6 +124,9 @@ class GlassListRow extends StatelessComponent {
         'right': 'var(--space-md)',
         'top': '0',
       },
+    ),
+    css('.glass-row--indented').styles(
+      raw: {'padding-left': 'calc(var(--space-md) + var(--space-xl))'},
     ),
     css('.glass-row--action').styles(
       raw: {

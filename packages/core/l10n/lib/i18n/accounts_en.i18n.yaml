@@ -11,10 +11,6 @@ emptyTitle: No accounts yet
 emptyHint: Add the first one to see where your money is.
 archive: Archive
 failed: Could not read the accounts.
-retry: Try again
-storedHere: Your accounts stay in this browser and nowhere else.
-notStored: This browser cannot keep data, so the accounts go when you close the tab.
-openElsewhere: Birka is open in another tab. Close it and try again.
 types(map):
   cash: Cash
   debit: Debit card

@@ -167,6 +167,26 @@ void main() {
   });
 
   group('categories', () {
+    test('writes made atomically stand or fall together', () async {
+      final before = await database.select(database.changes).get();
+
+      await expectLater(
+        ledger.atomically(() async {
+          await ledger.addCategory(kind: CategoryKind.expense, name: 'Half');
+          throw StateError('failed half way');
+        }),
+        throwsStateError,
+      );
+
+      final names = (await ledger.watchCategories(CategoryKind.expense).first)
+          .map((category) => category.name);
+      expect(names, isNot(contains('Half')));
+      expect(
+        await database.select(database.changes).get(),
+        hasLength(before.length),
+      );
+    });
+
     test('go after the others of their kind', () async {
       await ledger.addCategory(kind: CategoryKind.expense, name: 'Taxi');
       await ledger.addCategory(kind: CategoryKind.income, name: 'Bonus');

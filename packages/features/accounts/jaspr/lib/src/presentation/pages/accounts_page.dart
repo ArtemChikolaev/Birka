@@ -1,7 +1,6 @@
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_jaspr/src/presentation/components/account_hero_card.dart';
 import 'package:accounts_jaspr/src/presentation/components/account_row.dart';
-import 'package:accounts_jaspr/src/presentation/components/accounts_header.dart';
 import 'package:accounts_jaspr/src/presentation/components/card_art_of.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
@@ -38,35 +37,46 @@ class AccountsPage extends StatelessComponent {
   Component build(BuildContext context) {
     final note = this.note;
     return BlocBuilder<AccountsCubit, AccountsState>(
-      builder: (context, state) => div(classes: 'accounts', [
-        AccountsHeader(backHref: backHref, addHref: addHref),
-        ...switch (state) {
-          AccountsLoading() => const <Component>[],
-          AccountsFailed() => [const _Failure()],
-          AccountsLoaded(:final overview) =>
-            overview.active.isEmpty && overview.archived.isEmpty
-                ? _empty()
-                : _content(overview),
-        },
-        if (note != null && state is AccountsLoaded)
-          p(classes: 'text-caption accounts__note', [.text(note)]),
-      ]),
+      builder: (context, state) => BirkaColumn(
+        children: [
+          GlassPageHeader(
+            backHref: backHref,
+            backLabel: t.accounts.back,
+            addHref: addHref,
+            addLabel: t.accounts.add,
+          ),
+          ...switch (state) {
+            AccountsLoading() => const <Component>[],
+            AccountsFailed() => [
+              GlassNotice(
+                text: t.accounts.failed,
+                actions: [
+                  BirkaButton(
+                    label: t.app.retry,
+                    onPressed: () => context.read<AccountsCubit>().retry(),
+                  ),
+                ],
+              ),
+            ],
+            AccountsLoaded(:final overview) =>
+              overview.active.isEmpty && overview.archived.isEmpty
+                  ? _empty()
+                  : _content(overview),
+          },
+          if (note != null && state is AccountsLoaded)
+            p(classes: 'text-caption accounts__note', [.text(note)]),
+        ],
+      ),
     );
   }
 
   List<Component> _empty() {
     return [
       h1(classes: 'text-title accounts__heading', [.text(t.accounts.title)]),
-      GlassSurface(
-        child: div(classes: 'accounts__panel', [
-          div(classes: 'accounts__panel-text', [
-            h2(classes: 'text-heading accounts__panel-title', [
-              .text(t.accounts.emptyTitle),
-            ]),
-            p(classes: 'accounts__panel-hint', [.text(t.accounts.emptyHint)]),
-          ]),
-          BirkaButton(label: t.accounts.add, href: addHref),
-        ]),
+      GlassNotice(
+        title: t.accounts.emptyTitle,
+        text: t.accounts.emptyHint,
+        actions: [BirkaButton(label: t.accounts.add, href: addHref)],
       ),
     ];
   }
@@ -117,13 +127,6 @@ class AccountsPage extends StatelessComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
-    css('.accounts').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-lg)',
-      },
-    ),
     css('.accounts__title').styles(
       raw: {
         'display': 'flex',
@@ -145,25 +148,6 @@ class AccountsPage extends StatelessComponent {
         'flex-direction': 'column',
         'gap': 'var(--space-xs)',
       },
-    ),
-    css('.accounts__panel').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-lg)',
-        'padding': 'var(--space-xxs)',
-      },
-    ),
-    css('.accounts__panel-text').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xs)',
-      },
-    ),
-    css('.accounts__panel-title').styles(raw: {'margin': '0'}),
-    css('.accounts__panel-hint').styles(
-      raw: {'color': 'var(--color-text-muted)', 'margin': '0'},
     ),
     css('.accounts__note').styles(
       raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
@@ -188,22 +172,5 @@ class _Capital extends StatelessComponent {
       ],
       .text(' ${t.accounts.inAccounts(n: overview.countedAccounts)}'),
     ]);
-  }
-}
-
-class _Failure extends StatelessComponent {
-  const _Failure();
-
-  @override
-  Component build(BuildContext context) {
-    return GlassSurface(
-      child: div(classes: 'accounts__panel', [
-        p(classes: 'accounts__panel-title', [.text(t.accounts.failed)]),
-        BirkaButton(
-          label: t.accounts.retry,
-          onPressed: () => context.read<AccountsCubit>().retry(),
-        ),
-      ]),
-    );
   }
 }

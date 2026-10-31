@@ -155,7 +155,7 @@ void main() {
 
     expect(find.text('Пока нет счетов'), findsNothing);
     expect(find.text('Старая'), findsOneComponent);
-    expect(find.byType(AccountsHeader), findsOneComponent);
+    expect(find.byType(GlassPageHeader), findsOneComponent);
   });
 
   testComponents('a failed read offers to try again', (tester) async {

@@ -100,21 +100,6 @@ class Translations$accounts$en {
   /// en: 'Could not read the accounts.'
   String get failed => 'Could not read the accounts.';
 
-  /// en: 'Try again'
-  String get retry => 'Try again';
-
-  /// en: 'Your accounts stay in this browser and nowhere else.'
-  String get storedHere =>
-      'Your accounts stay in this browser and nowhere else.';
-
-  /// en: 'This browser cannot keep data, so the accounts go when you close the tab.'
-  String get notStored =>
-      'This browser cannot keep data, so the accounts go when you close the tab.';
-
-  /// en: 'Birka is open in another tab. Close it and try again.'
-  String get openElsewhere =>
-      'Birka is open in another tab. Close it and try again.';
-
   Map<String, String> get types => {
     'cash': 'Cash',
     'debit': 'Debit card',
@@ -155,6 +140,20 @@ class Translations$app$en {
 
   /// en: 'Close'
   String get close => 'Close';
+
+  /// en: 'Try again'
+  String get retry => 'Try again';
+
+  /// en: 'Your data stays in this browser and nowhere else.'
+  String get storedHere => 'Your data stays in this browser and nowhere else.';
+
+  /// en: 'This browser cannot keep data, so it goes when you close the tab.'
+  String get notStored =>
+      'This browser cannot keep data, so it goes when you close the tab.';
+
+  /// en: 'Birka is open in another tab. Close it and try again.'
+  String get openElsewhere =>
+      'Birka is open in another tab. Close it and try again.';
 
   /// en: 'This screen is coming soon.'
   String get comingSoon => 'This screen is coming soon.';
@@ -221,9 +220,6 @@ class Translations$categories$en {
 
   /// en: 'Could not read the categories.'
   String get failed => 'Could not read the categories.';
-
-  /// en: 'Try again'
-  String get retry => 'Try again';
 
   /// en: '(one) {$n subcategory} (other) {$n subcategories}'
   String subcategories({required num n}) =>
@@ -393,13 +389,6 @@ extension on Translations {
       'accounts.emptyHint' => 'Add the first one to see where your money is.',
       'accounts.archive' => 'Archive',
       'accounts.failed' => 'Could not read the accounts.',
-      'accounts.retry' => 'Try again',
-      'accounts.storedHere' =>
-        'Your accounts stay in this browser and nowhere else.',
-      'accounts.notStored' =>
-        'This browser cannot keep data, so the accounts go when you close the tab.',
-      'accounts.openElsewhere' =>
-        'Birka is open in another tab. Close it and try again.',
       'accounts.types.cash' => 'Cash',
       'accounts.types.debit' => 'Debit card',
       'accounts.types.credit' => 'Credit card',
@@ -433,6 +422,12 @@ extension on Translations {
       'app.more' => 'More',
       'app.newOperation' => 'New operation',
       'app.close' => 'Close',
+      'app.retry' => 'Try again',
+      'app.storedHere' => 'Your data stays in this browser and nowhere else.',
+      'app.notStored' =>
+        'This browser cannot keep data, so it goes when you close the tab.',
+      'app.openElsewhere' =>
+        'Birka is open in another tab. Close it and try again.',
       'app.comingSoon' => 'This screen is coming soon.',
       'app.soon' => 'soon',
       'app.currencies.RUB' => 'Rubles',
@@ -457,7 +452,6 @@ extension on Translations {
       'categories.addOwn' => 'Make my own',
       'categories.archive' => 'Archive',
       'categories.failed' => 'Could not read the categories.',
-      'categories.retry' => 'Try again',
       'categories.subcategories' =>
         ({required num n}) =>
             (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(

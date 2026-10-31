@@ -27,11 +27,12 @@ final class LedgerCategoriesRepository implements CategoriesRepository {
   );
 
   @override
-  Future<void> addAll(List<CategoryDraft> drafts) async {
-    for (final draft in drafts) {
-      await add(draft);
-    }
-  }
+  Future<void> addAll(List<CategoryDraft> drafts) =>
+      _ledger.atomically(() async {
+        for (final draft in drafts) {
+          await add(draft);
+        }
+      });
 
   @override
   Future<void> update(String id, CategoryDraft draft) => _ledger.updateCategory(

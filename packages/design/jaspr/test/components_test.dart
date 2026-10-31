@@ -135,20 +135,195 @@ void main() {
     });
   });
 
-  testComponents('BirkaForm is a form around its children', (tester) async {
+  group('BirkaForm', () {
+    BirkaForm formWith({
+      VoidCallback? onClose,
+      bool submitting = false,
+      String? failure,
+      Component? leading,
+    }) => BirkaForm(
+      title: 'New',
+      closeLabel: 'Close',
+      onClose: onClose ?? () {},
+      submitLabel: 'Save',
+      onSubmit: () {},
+      submitting: submitting,
+      failure: failure,
+      leading: leading,
+      children: const [Component.text('Field')],
+    );
+
+    testComponents('holds a heading, its fields and a submit button', (
+      tester,
+    ) async {
+      tester.pumpComponent(formWith(leading: const Component.text('Badge')));
+
+      final inForm = find.descendant(
+        of: find.tag('form'),
+        matching: find.text('Field'),
+      );
+      expect(inForm, findsOneComponent);
+      expect(find.text('New'), findsOneComponent);
+      expect(find.text('Badge'), findsOneComponent);
+      final save = find.ancestor(
+        of: find.text('Save'),
+        matching: find.tag('button'),
+      );
+      expect(attributesOf(save)['type'], 'submit');
+      expect(attributesOf(save), isNot(contains('disabled')));
+    });
+
+    testComponents('the cross closes the form', (tester) async {
+      var closed = 0;
+      tester.pumpComponent(formWith(onClose: () => closed++));
+
+      await tester.click(find.byType(GlassIconButton));
+
+      expect(closed, 1);
+    });
+
+    testComponents('turns the button off while it saves', (tester) async {
+      tester.pumpComponent(formWith(submitting: true));
+
+      final save = find.ancestor(
+        of: find.text('Save'),
+        matching: find.tag('button'),
+      );
+      expect(attributesOf(save), contains('disabled'));
+    });
+
+    testComponents('says why a save failed', (tester) async {
+      tester.pumpComponent(formWith(failure: 'Could not save.'));
+
+      expect(find.text('Could not save.'), findsOneComponent);
+    });
+  });
+
+  testComponents('BirkaChoice puts a label over its options', (tester) async {
     tester.pumpComponent(
-      BirkaForm(
-        classes: 'sign',
-        onSubmit: () {},
-        children: const [Component.text('Field')],
+      const BirkaChoice(
+        label: 'Type',
+        children: [Component.text('Cash')],
       ),
     );
 
+    expect(find.text('Type'), findsOneComponent);
     expect(
-      find.descendant(of: find.tag('form'), matching: find.text('Field')),
+      find.descendant(
+        of: withClasses('birka-choice__options'),
+        matching: find.text('Cash'),
+      ),
       findsOneComponent,
     );
-    expect(withClasses('sign'), findsOneComponent);
+  });
+
+  testComponents('BirkaColumn stacks its blocks', (tester) async {
+    tester.pumpComponent(
+      const BirkaColumn(children: [Component.text('Block')]),
+    );
+
+    expect(
+      find.descendant(
+        of: withClasses('birka-column'),
+        matching: find.text('Block'),
+      ),
+      findsOneComponent,
+    );
+  });
+
+  group('GlassNotice', () {
+    testComponents('a plain notice is one line and its buttons', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const GlassNotice(
+          text: 'It broke.',
+          actions: [BirkaButton(label: 'Retry', href: 'again')],
+        ),
+      );
+
+      expect(find.text('It broke.'), findsOneComponent);
+      expect(find.text('Retry'), findsOneComponent);
+      expect(withClasses('glass-notice__message'), findsOneComponent);
+    });
+
+    testComponents('a heading makes the text quieter', (tester) async {
+      tester.pumpComponent(
+        const GlassNotice(title: 'Empty', text: 'Add one.', actions: []),
+      );
+
+      expect(find.text('Empty'), findsOneComponent);
+      expect(
+        withClasses('glass-notice__message glass-notice__message--quiet'),
+        findsOneComponent,
+      );
+    });
+  });
+
+  testComponents('GlassPageHeader leads back and to a new item', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      const GlassPageHeader(
+        backHref: './',
+        backLabel: 'Back',
+        addHref: 'new',
+        addLabel: 'Add',
+      ),
+    );
+
+    final links = find
+        .tag('a')
+        .evaluate()
+        .map(
+          (element) => (element.component as DomComponent).attributes,
+        );
+    expect(links.map((attributes) => attributes?['href']), ['./', 'new']);
+    expect(links.map((attributes) => attributes?['aria-label']), [
+      'Back',
+      'Add',
+    ]);
+  });
+
+  testComponents('GlassSegmented says what is picked and reports a click', (
+    tester,
+  ) async {
+    final picked = <int>[];
+    tester.pumpComponent(
+      GlassSegmented<int>(
+        segments: const {1: 'One', 2: 'Two'},
+        selected: 1,
+        onChanged: picked.add,
+      ),
+    );
+
+    final two = find.ancestor(
+      of: find.text('Two'),
+      matching: find.tag('button'),
+    );
+    await tester.click(two);
+
+    expect(picked, [2]);
+    expect(attributesOf(two)['aria-pressed'], 'false');
+    expect(
+      attributesOf(
+        find.ancestor(of: find.text('One'), matching: find.tag('button')),
+      )['aria-pressed'],
+      'true',
+    );
+  });
+
+  testComponents('GlyphBadge tints its tile with its color', (tester) async {
+    tester.pumpComponent(
+      const GlyphBadge(glyph: BirkaGlyph.cart, color: '#123456', size: 28),
+    );
+
+    final badge = withClasses('glyph-badge').evaluate().single.component;
+    final styles = (badge as DomComponent).styles!.properties;
+    expect(styles['color'], '#123456');
+    expect(styles['background'], contains('#123456 16%'));
+    expect(styles['width'], '28px');
+    expect(styles['height'], '28px');
   });
 
   group('BirkaChip', () {
@@ -373,6 +548,12 @@ void main() {
       await tester.click(find.tag('button'));
 
       expect(tapped, 1);
+    });
+
+    testComponents('stands further in under its parent', (tester) async {
+      tester.pumpComponent(const GlassListRow(title: 'Cafe', indented: true));
+
+      expect(withClasses('glass-row glass-row--indented'), findsOneComponent);
     });
   });
 }

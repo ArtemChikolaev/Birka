@@ -4,6 +4,5 @@
 /// from the outside, so the host owns the addresses.
 library;
 
-export 'src/presentation/components/accounts_header.dart';
 export 'src/presentation/pages/account_form_page.dart';
 export 'src/presentation/pages/accounts_page.dart';

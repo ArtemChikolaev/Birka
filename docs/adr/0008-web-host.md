@@ -37,11 +37,12 @@
    `jaspr_router` runs only when the build renders them, so it never meets
    `/Birka/`, and the browser moves between pages by plain links.
 8. Static routes have no parameters, so what depends on an id stays on its page
-   behind a fragment: `accounts/#new` and `accounts/#<id>`. The island of the
-   page follows the fragment, so a form opens at once on the database that is
-   already open, and the back button and deep links work without anything on
-   the server. Links keep the path, because `<base href>` would send a bare
-   `#new` to the first page.
+   behind a fragment: `accounts/#new`, `categories/#new-income` and
+   `accounts/#<id>`. The island of the page follows the fragment, so a form
+   opens at once on the database that is already open, and the back button and
+   deep links work without anything on the server. Links keep the path, because
+   `<base href>` would send a bare `#new` to the first page. `DataIslandState`
+   holds what these islands share.
 9. The build knows no language and no data, so the text of a page lives in its
    island, which takes the language from the browser. The HTML of such a page
    is a frame with a placeholder.
@@ -61,7 +62,7 @@
 
 ## Consequences
 
-- The first page is about 236 KB of JavaScript, 73 KB compressed, and loads
+- The first page is about 240 KB of JavaScript, 75 KB compressed, and loads
   nothing of Drift.
 - `jaspr_router` 0.8.1 does not follow `<base href>`, which is harmless while
   it runs only in the build. Moving between pages reloads them and opens the

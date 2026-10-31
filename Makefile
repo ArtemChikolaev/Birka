@@ -93,6 +93,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/accounts/flutter && flutter test
 	cd packages/features/accounts/jaspr && dart test
 	cd packages/features/categories/flutter && flutter test
+	cd packages/features/categories/jaspr && dart test
 
 test-web: ## Tests of the Jaspr host
 	cd apps/web && dart test
