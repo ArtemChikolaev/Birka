@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/data_island.dart';
+import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -22,14 +22,15 @@ class OperationsIsland extends StatefulComponent {
 }
 
 class _OperationsIslandState extends DataIslandState<OperationsIsland> {
-  static const _home = './';
   static const _list = 'operations/';
   static const _new = 'new';
   static const _edit = 'edit-';
   static const _repeat = 'repeat-';
 
   OperationsCubit? _operations;
-  void Function()? _stopWatchingTab;
+
+  @override
+  SitePage get page => SitePage.operations;
 
   @override
   String get pageName => t.app.operations;
@@ -38,29 +39,10 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland> {
   String get failure => t.transactions.failedToReadOperations;
 
   @override
-  Component get header => GlassPageHeader(
-    backHref: _home,
-    backLabel: t.transactions.back,
-    addHref: '$_list#$_new',
-    addLabel: t.app.newOperation,
-  );
+  Component get header => GlassPageHeader(title: t.app.operations);
 
   @override
-  void initState() {
-    super.initState();
-    // A tab can lie in the background past midnight.
-    if (kIsWeb) {
-      _stopWatchingTab = watchTabShown(
-        () => unawaited(_operations?.calendarChecked()),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _stopWatchingTab?.call();
-    super.dispose();
-  }
+  void onTabShown() => unawaited(_operations?.calendarChecked());
 
   // The list stays with the page, so that a form does not lose its month, its
   // filter and its search.
@@ -70,7 +52,6 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland> {
       create: (_) => _operations = getIt(),
       child: fragment.isEmpty
           ? OperationsPage(
-              backHref: _home,
               addHref: '$_list#$_new',
               hrefOf: (id) => '$_list#$id',
               note: storageNote,

@@ -32,6 +32,10 @@ dependencies:
     path: ../../packages/core/l10n
   ledger:
     path: ../../packages/core/ledger
+  overview_common:
+    path: ../../packages/features/overview/common
+  overview_jaspr:
+    path: ../../packages/features/overview/jaspr
   transactions_common:
     path: ../../packages/features/transactions/common
   transactions_jaspr:

@@ -8,6 +8,7 @@ void main() {
     final tokens = File('../tokens/lib/css/tokens.css').readAsStringSync();
     final css = [
       ...birkaBaseStyles,
+      ...AccountCard.styles,
       ...AmbientBackground.styles,
       ...AmountText.styles,
       ...BirkaButton.styles,
@@ -18,7 +19,9 @@ void main() {
       ...BirkaDateChip.styles,
       ...BirkaForm.styles,
       ...BirkaIcon.styles,
+      ...BirkaLineChart.styles,
       ...BirkaPlaceholder.styles,
+      ...BirkaRing.styles,
       ...BirkaSwitch.styles,
       ...BirkaTextField.styles,
       ...CardArtSurface.styles,
@@ -27,6 +30,7 @@ void main() {
       ...GlassKeypad.styles,
       ...GlassListGroup.styles,
       ...GlassListRow.styles,
+      ...GlassNavBar.styles,
       ...GlassNotice.styles,
       ...GlassPageHeader.styles,
       ...GlassSearchField.styles,

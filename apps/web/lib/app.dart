@@ -2,6 +2,7 @@ import 'package:birka_web/pages/accounts_island.dart';
 import 'package:birka_web/pages/categories_island.dart';
 import 'package:birka_web/pages/home_route.dart';
 import 'package:birka_web/pages/operations_island.dart';
+import 'package:birka_web/pages/overview_island.dart';
 import 'package:birka_web/pages/page_frame.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_router/jaspr_router.dart';
@@ -17,6 +18,11 @@ class App extends StatelessComponent {
     return Router(
       routes: [
         Route(path: '/', builder: (_, _) => const HomeRoute()),
+        Route(
+          path: '/overview',
+          title: 'Overview · Birka',
+          builder: (_, _) => const PageFrame(child: OverviewIsland()),
+        ),
         Route(
           path: '/accounts',
           title: 'Accounts · Birka',

@@ -29,7 +29,6 @@ void main() {
           now: () => DateTime(2026, 10, 31, 9, 30),
         ),
         child: OperationsPage(
-          backHref: './',
           addHref: 'add',
           hrefOf: (id) => 'open/$id',
           note: note,
@@ -124,14 +123,10 @@ void main() {
     expect(find.text('Прошлый месяц'), findsNothing);
   });
 
-  testComponents('leads back, to a new operation and to every row', (
-    tester,
-  ) async {
+  testComponents('leads to every row', (tester) async {
     await pump(tester);
 
     expect(links(), [
-      './',
-      'add',
       'open/coffee',
       'open/bread',
       'open/pay',
@@ -184,7 +179,7 @@ void main() {
     await pump(tester);
 
     expect(find.text('Пока нет операций'), findsOneComponent);
-    expect(links(), ['./', 'add', 'add']);
+    expect(links(), ['add']);
   });
 
   testComponents('another month can be picked', (tester) async {

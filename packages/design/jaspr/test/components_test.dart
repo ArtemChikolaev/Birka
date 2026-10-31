@@ -289,29 +289,363 @@ void main() {
     });
   });
 
-  testComponents('GlassPageHeader leads back and to a new item', (
+  testComponents('GlassPageHeader is the heading and what stands beside it', (
     tester,
   ) async {
     tester.pumpComponent(
-      const GlassPageHeader(
-        backHref: './',
-        backLabel: 'Back',
-        addHref: 'new',
-        addLabel: 'Add',
-      ),
+      const GlassPageHeader(title: 'Accounts', trailing: Component.text('Add')),
     );
 
-    final links = find
-        .tag('a')
-        .evaluate()
-        .map(
-          (element) => (element.component as DomComponent).attributes,
-        );
-    expect(links.map((attributes) => attributes?['href']), ['./', 'new']);
-    expect(links.map((attributes) => attributes?['aria-label']), [
-      'Back',
-      'Add',
-    ]);
+    expect(
+      find.descendant(of: find.tag('h1'), matching: find.text('Accounts')),
+      findsOneComponent,
+    );
+    expect(find.text('Add'), findsOneComponent);
+  });
+
+  group('GlassNavBar', () {
+    const bar = GlassNavBar(
+      destinations: [
+        GlassNavDestination(glyph: BirkaGlyph.home, label: 'Home', href: 'a/'),
+        GlassNavDestination(glyph: BirkaGlyph.list, label: 'List', href: 'b/'),
+        GlassNavDestination(glyph: BirkaGlyph.more, label: 'More', href: 'c/'),
+        GlassNavDestination(
+          glyph: BirkaGlyph.wallet,
+          label: 'Cash',
+          href: 'd/',
+        ),
+      ],
+      selectedIndex: 1,
+      actionLabel: 'Add',
+      actionHref: 'add',
+    );
+
+    List<Map<String, String>> links() => [
+      for (final element in find.tag('a').evaluate())
+        (element.component as DomComponent).attributes ?? const {},
+    ];
+
+    testComponents('puts the action between its tabs', (tester) async {
+      tester.pumpComponent(bar);
+
+      expect(links().map((attributes) => attributes['href']), [
+        'a/',
+        'b/',
+        'add',
+        'c/',
+        'd/',
+      ]);
+      expect(links()[2]['aria-label'], 'Add');
+      expect(find.text('Cash'), findsOneComponent);
+    });
+
+    testComponents('says which page stands open', (tester) async {
+      tester.pumpComponent(bar);
+
+      expect(links().map((attributes) => attributes['aria-current']), [
+        null,
+        'page',
+        null,
+        null,
+        null,
+      ]);
+      expect(
+        withClasses('glass-nav__tab glass-nav__tab--selected'),
+        findsOneComponent,
+      );
+    });
+  });
+
+  group('HiddenAmounts', () {
+    testComponents('hides the digits and keeps the sign and the currency', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        HiddenAmounts(
+          hidden: true,
+          onToggle: () {},
+          child: const AmountText('−1\u00A0250,50\u00A0₽'),
+        ),
+      );
+
+      expect(find.text('−•••\u00A0₽'), findsOneComponent);
+    });
+
+    testComponents('leaves alone what is always shown', (tester) async {
+      tester.pumpComponent(
+        HiddenAmounts(
+          hidden: true,
+          onToggle: () {},
+          child: const AmountText('−250 ₽', alwaysShown: true),
+        ),
+      );
+
+      expect(find.text('−250 ₽'), findsOneComponent);
+    });
+
+    testComponents('a compact amount does not tell its size', (tester) async {
+      tester.pumpComponent(
+        HiddenAmounts(
+          hidden: true,
+          onToggle: () {},
+          child: const AmountText(r'$78k'),
+        ),
+      );
+
+      expect(find.text(r'$•••'), findsOneComponent);
+    });
+
+    testComponents('shows amounts when they are not hidden', (tester) async {
+      tester.pumpComponent(
+        HiddenAmounts(
+          hidden: false,
+          onToggle: () {},
+          child: const AmountText('250 ₽'),
+        ),
+      );
+
+      expect(find.text('250 ₽'), findsOneComponent);
+    });
+
+    testComponents('shows amounts with nothing around them', (tester) async {
+      tester.pumpComponent(const AmountText('250 ₽'));
+
+      expect(find.text('250 ₽'), findsOneComponent);
+    });
+
+    testComponents('a button below it can toggle it', (tester) async {
+      var toggled = 0;
+      tester.pumpComponent(
+        HiddenAmounts(
+          hidden: false,
+          onToggle: () => toggled++,
+          child: Builder(
+            builder: (context) => button(
+              onClick: () => HiddenAmounts.toggle(context),
+              const [Component.text('Eye')],
+            ),
+          ),
+        ),
+      );
+
+      await tester.click(find.tag('button'));
+
+      expect(toggled, 1);
+    });
+  });
+
+  group('BirkaLineChart', () {
+    List<DomComponent> shapes(String tag) => [
+      for (final element in find.tag(tag).evaluate())
+        element.component as DomComponent,
+    ];
+
+    /// The numbers of a path.
+    List<double> numbers(String path) => [
+      for (final match in RegExp(r'-?\d+\.\d').allMatches(path))
+        double.parse(match[0]!),
+    ];
+
+    testComponents('names itself for screen readers', (tester) async {
+      tester.pumpComponent(
+        const BirkaLineChart(values: [1, 2], label: 'Capital'),
+      );
+
+      final attributes = attributesOf(find.tag('svg'));
+      expect(attributes['aria-label'], 'Capital');
+      expect(attributes['role'], 'img');
+    });
+
+    testComponents('rises to the right and ends on a dot', (tester) async {
+      tester.pumpComponent(
+        const BirkaLineChart(values: [10, 20, 30], label: 'Capital'),
+      );
+
+      final line = shapes('path').last.attributes?['d'] ?? '';
+      final path = numbers(line);
+      // The first point lies low, on the left.
+      expect(path[0], 0);
+      expect(path[1], 85);
+      // The last point lies high, short of the edge by the room of the dot.
+      expect(path[path.length - 2], 349);
+      expect(path.last, 11);
+      expect(shapes('circle').last.attributes, {
+        'cx': '349.0',
+        'cy': '11.0',
+        'r': '5',
+      });
+    });
+
+    testComponents('a line without any change runs through the middle', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const BirkaLineChart(values: [5, 5], label: 'Capital'),
+      );
+
+      final path = numbers(shapes('path').last.attributes?['d'] ?? '');
+      expect(path[1], 48);
+      expect(path.last, 48);
+    });
+
+    testComponents('thins out a long line', (tester) async {
+      tester.pumpComponent(
+        BirkaLineChart(
+          values: [for (var i = 0; i < 365; i++) i.toDouble()],
+          label: 'Capital',
+        ),
+      );
+
+      final line = shapes('path').last.attributes?['d'] ?? '';
+      expect(RegExp('C').allMatches(line).length, lessThanOrEqualTo(60));
+    });
+
+    testComponents('draws nothing with fewer than two values', (tester) async {
+      tester.pumpComponent(
+        const BirkaLineChart(values: [5], label: 'Capital'),
+      );
+
+      expect(find.tag('svg'), findsOneComponent);
+      expect(find.tag('path'), findsNothing);
+    });
+  });
+
+  group('BirkaRing', () {
+    List<Map<String, String>> circles() => [
+      for (final element in find.tag('circle').evaluate())
+        (element.component as DomComponent).attributes ?? const {},
+    ];
+
+    /// The length of the dash of a circle.
+    double dashOf(Map<String, String> attributes) =>
+        double.parse((attributes['stroke-dasharray'] ?? '').split(' ').first);
+
+    testComponents('names itself for screen readers', (tester) async {
+      tester.pumpComponent(const BirkaRing(slices: [], label: 'Spending'));
+
+      expect(attributesOf(find.tag('svg'))['aria-label'], 'Spending');
+    });
+
+    testComponents('an empty ring is only its track', (tester) async {
+      tester.pumpComponent(const BirkaRing(slices: [], label: 'Spending'));
+
+      expect(circles(), hasLength(1));
+    });
+
+    testComponents('one part closes the whole ring', (tester) async {
+      tester.pumpComponent(
+        const BirkaRing(slices: [RingSlice(5, '#4ade80')], label: 'Spending'),
+      );
+
+      final arc = circles().last;
+      expect(arc['stroke'], '#4ade80');
+      // A radius of 43.
+      expect(dashOf(arc), closeTo(270.2, 0.1));
+    });
+
+    testComponents('parts take their shares, with room between them', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const BirkaRing(
+          slices: [RingSlice(3, '#111111'), RingSlice(1, '#222222')],
+          label: 'Spending',
+        ),
+      );
+
+      final [_, big, small] = circles();
+      expect(big['stroke'], '#111111');
+      expect(dashOf(big), closeTo(199.6, 0.1));
+      expect(dashOf(small), closeTo(64.5, 0.1));
+      // The second part starts where the first one ended.
+      expect(
+        double.parse(small['stroke-dashoffset'] ?? ''),
+        closeTo(-204.2, 0.1),
+      );
+    });
+
+    testComponents('a part too small for its gap is left out', (tester) async {
+      tester.pumpComponent(
+        const BirkaRing(
+          slices: [RingSlice(1000, '#111111'), RingSlice(1, '#222222')],
+          label: 'Spending',
+        ),
+      );
+
+      expect(circles(), hasLength(2));
+    });
+
+    testComponents('holds a child in the middle', (tester) async {
+      tester.pumpComponent(
+        const BirkaRing(
+          slices: [],
+          label: 'Spending',
+          child: Component.text('78k'),
+        ),
+      );
+
+      expect(
+        find.descendant(
+          of: withClasses('birka-ring__middle'),
+          matching: find.text('78k'),
+        ),
+        findsOneComponent,
+      );
+    });
+  });
+
+  group('AccountCard', () {
+    const card = AccountCard(
+      art: CardArt.emerald,
+      name: 'Salary',
+      subtitle: 'Rubles · Debit card',
+      amount: '250 ₽',
+    );
+
+    testComponents('holds the name, the line under it and the amount', (
+      tester,
+    ) async {
+      tester.pumpComponent(card);
+
+      expect(find.text('Salary'), findsOneComponent);
+      expect(find.text('Rubles · Debit card'), findsOneComponent);
+      expect(find.text('250 ₽'), findsOneComponent);
+      expect(find.tag('a'), findsNothing);
+    });
+
+    testComponents('is a link when it has an address', (tester) async {
+      tester.pumpComponent(
+        const AccountCard(
+          art: CardArt.emerald,
+          name: 'Salary',
+          subtitle: 'Rubles',
+          amount: '250 ₽',
+          href: 'open',
+        ),
+      );
+
+      expect(attributesOf(find.tag('a'))['href'], 'open');
+    });
+
+    testComponents('a compact one takes a smaller amount', (tester) async {
+      tester.pumpComponent(
+        const AccountCard(
+          art: CardArt.emerald,
+          name: 'Salary',
+          subtitle: 'Rubles',
+          amount: '250 ₽',
+          compact: true,
+        ),
+      );
+
+      expect(
+        withClasses('account-card account-card--compact'),
+        findsOneComponent,
+      );
+      final amount =
+          find.byType(AmountText).evaluate().single.component as AmountText;
+      expect(amount.textClass, 'text-title');
+    });
   });
 
   testComponents('GlassSegmented says what is picked and reports a click', (

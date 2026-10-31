@@ -14,15 +14,11 @@ import 'package:transactions_jaspr/src/presentation/components/operation_row.dar
 class OperationsPage extends StatefulComponent {
   /// Creates the page.
   const OperationsPage({
-    required this.backHref,
     required this.addHref,
     required this.hrefOf,
     this.note,
     super.key,
   });
-
-  /// Where the button that goes back leads.
-  final String backHref;
 
   /// Where a new operation opens.
   final String addHref;
@@ -39,15 +35,6 @@ class OperationsPage extends StatefulComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
-    css('.operations__title').styles(
-      raw: {
-        'align-items': 'center',
-        'display': 'flex',
-        'gap': 'var(--space-xs)',
-        'justify-content': 'space-between',
-      },
-    ),
-    css('.operations__heading').styles(raw: {'margin': '0'}),
     css('.operations__tools').styles(
       raw: {
         'display': 'flex',
@@ -121,22 +108,14 @@ class _OperationsPageState extends State<OperationsPage> {
         return BirkaColumn(
           children: [
             GlassPageHeader(
-              backHref: component.backHref,
-              backLabel: t.transactions.back,
-              addHref: component.addHref,
-              addLabel: t.app.newOperation,
-            ),
-            div(classes: 'operations__title', [
-              h1(classes: 'text-title operations__heading', [
-                .text(t.app.operations),
-              ]),
-              BirkaChip(
+              title: t.app.operations,
+              trailing: BirkaChip(
                 glyph: BirkaGlyph.calendar,
                 label: monthLabel(state.month, today: state.today),
                 selected: _months != null,
                 onTap: () => unawaited(_toggleMonths()),
               ),
-            ]),
+            ),
             ?_monthChoice(state),
             _tools(context, state),
             ...switch (state.status) {

@@ -1,40 +1,23 @@
-import 'package:design_jaspr/src/birka_icon.dart';
-import 'package:design_jaspr/src/glass_icon_button.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-/// The two round buttons over a list: the way back and a new item.
+/// The heading of a page, with what stands beside it, such as the button that
+/// adds.
 class GlassPageHeader extends StatelessComponent {
-  /// Creates a header. Screen readers read the labels.
-  const GlassPageHeader({
-    required this.backHref,
-    required this.backLabel,
-    required this.addHref,
-    required this.addLabel,
-    super.key,
-  });
+  /// Creates a header.
+  const GlassPageHeader({required this.title, this.trailing, super.key});
 
-  /// Where the button that goes back leads.
-  final String backHref;
+  /// The heading.
+  final String title;
 
-  /// What the button that goes back does.
-  final String backLabel;
-
-  /// Where the button that adds leads.
-  final String addHref;
-
-  /// What the button that adds does.
-  final String addLabel;
+  /// What stands at the other end of the line.
+  final Component? trailing;
 
   @override
   Component build(BuildContext context) {
     return div(classes: 'glass-page-header', [
-      GlassIconButton(
-        glyph: BirkaGlyph.back,
-        label: backLabel,
-        href: backHref,
-      ),
-      GlassIconButton(glyph: BirkaGlyph.plus, label: addLabel, href: addHref),
+      h1(classes: 'text-title glass-page-header__title', [.text(title)]),
+      ?trailing,
     ]);
   }
 
@@ -42,7 +25,16 @@ class GlassPageHeader extends StatelessComponent {
   @css
   static List<StyleRule> get styles => [
     css('.glass-page-header').styles(
-      raw: {'display': 'flex', 'justify-content': 'space-between'},
+      raw: {
+        'align-items': 'center',
+        'display': 'flex',
+        'gap': 'var(--space-xs)',
+        'justify-content': 'space-between',
+        'min-height': 'var(--size-touch-target)',
+      },
+    ),
+    css('.glass-page-header__title').styles(
+      raw: {'margin': '0', 'min-width': '0'},
     ),
   ];
 }

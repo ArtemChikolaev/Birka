@@ -1,3 +1,4 @@
+import 'package:design_jaspr/src/hidden_amounts.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
@@ -19,13 +20,15 @@ enum AmountTone {
 /// A figure in the amount style with tabular digits, which line up in
 /// columns and keep their width when they change.
 ///
-/// It shows [text] as it is: the caller formats the number and its sign.
+/// It shows [text] as it is: the caller formats the number and its sign. Under
+/// [HiddenAmounts] its digits are hidden, unless it is [alwaysShown].
 class AmountText extends StatelessComponent {
   /// Creates a figure.
   const AmountText(
     this.text, {
     this.tone = AmountTone.neutral,
     this.textClass = 'text-amount',
+    this.alwaysShown = false,
     super.key,
   });
 
@@ -38,10 +41,14 @@ class AmountText extends StatelessComponent {
   /// The text style from the tokens, such as `text-display` for a total.
   final String textClass;
 
+  /// Whether the figure stays even when amounts are hidden, such as what is
+  /// being typed.
+  final bool alwaysShown;
+
   @override
   Component build(BuildContext context) {
     return span(classes: '$textClass amount amount--${tone.name}', [
-      .text(text),
+      .text(alwaysShown ? text : HiddenAmounts.mask(context, text)),
     ]);
   }
 

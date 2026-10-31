@@ -1,4 +1,5 @@
 import 'package:birka_web/app/data_island.dart';
+import 'package:birka_web/components/site_nav.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_jaspr/categories_jaspr.dart';
 import 'package:design_jaspr/design_jaspr.dart';
@@ -18,7 +19,6 @@ class CategoriesIsland extends StatefulComponent {
 }
 
 class _CategoriesIslandState extends DataIslandState<CategoriesIsland> {
-  static const _home = './';
   static const _list = 'categories/';
 
   static final Map<String, CategoryKind> _newKinds = {
@@ -28,18 +28,16 @@ class _CategoriesIslandState extends DataIslandState<CategoriesIsland> {
   static String _addHrefOf(CategoryKind kind) => '$_list#new-${kind.name}';
 
   @override
+  SitePage get page => SitePage.categories;
+
+  @override
   String get pageName => t.categories.title;
 
   @override
   String get failure => t.categories.failed;
 
   @override
-  Component get header => GlassPageHeader(
-    backHref: _home,
-    backLabel: t.categories.back,
-    addHref: _addHrefOf(CategoryKind.expense),
-    addLabel: t.categories.add,
-  );
+  Component get header => GlassPageHeader(title: t.categories.title);
 
   // The list stays with the page, so that a form does not lose its tab.
   @override
@@ -48,7 +46,6 @@ class _CategoriesIslandState extends DataIslandState<CategoriesIsland> {
       create: (_) => getIt(),
       child: fragment.isEmpty
           ? CategoriesPage(
-              backHref: _home,
               addHrefOf: _addHrefOf,
               hrefOf: (id) => '$_list#$id',
               note: storageNote,

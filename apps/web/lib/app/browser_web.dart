@@ -103,3 +103,30 @@ void Function() watchTabShown(void Function() listener) {
   web.document.addEventListener('visibilitychange', callback);
   return () => web.document.removeEventListener('visibilitychange', callback);
 }
+
+const _amountsHiddenKey = 'birka-amounts-hidden';
+
+/// Whether the amounts are hidden. It lasts as long as the tab, as it lasts as
+/// long as the app on a phone, and it carries from page to page. A browser
+/// that refuses the storage only loses that.
+bool get amountsHidden {
+  try {
+    return web.window.sessionStorage.getItem(_amountsHiddenKey) != null;
+  } on Object {
+    return false;
+  }
+}
+
+/// Remembers whether the amounts are hidden, for as long as the tab lives.
+void keepAmountsHidden({required bool hidden}) {
+  try {
+    final storage = web.window.sessionStorage;
+    if (hidden) {
+      storage.setItem(_amountsHiddenKey, '1');
+    } else {
+      storage.removeItem(_amountsHiddenKey);
+    }
+  } on Object {
+    return;
+  }
+}

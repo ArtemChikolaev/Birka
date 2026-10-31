@@ -5,13 +5,21 @@ import 'package:jaspr/jaspr.dart';
 /// long for the width of a phone.
 class BigAmount extends StatelessComponent {
   /// Creates a figure.
-  const BigAmount(this.text, {this.tone = AmountTone.neutral, super.key});
+  const BigAmount(
+    this.text, {
+    this.tone = AmountTone.neutral,
+    this.alwaysShown = false,
+    super.key,
+  });
 
   /// The formatted figure.
   final String text;
 
   /// The color of the figure.
   final AmountTone tone;
+
+  /// Whether the figure stays even when amounts are hidden.
+  final bool alwaysShown;
 
   /// The most characters that the big style fits on the narrowest phone.
   static const _longest = 11;
@@ -21,6 +29,7 @@ class BigAmount extends StatelessComponent {
     return AmountText(
       text,
       tone: tone,
+      alwaysShown: alwaysShown,
       textClass: text.length > _longest ? 'text-title' : 'text-display',
     );
   }

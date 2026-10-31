@@ -12,15 +12,11 @@ import 'package:l10n/l10n.dart';
 class CategoriesPage extends StatelessComponent {
   /// Creates the page.
   const CategoriesPage({
-    required this.backHref,
     required this.addHrefOf,
     required this.hrefOf,
     this.note,
     super.key,
   });
-
-  /// Where the button that goes back leads.
-  final String backHref;
 
   /// Where a new category of this kind opens.
   final String Function(CategoryKind kind) addHrefOf;
@@ -38,14 +34,13 @@ class CategoriesPage extends StatelessComponent {
       builder: (context, state) => BirkaColumn(
         children: [
           GlassPageHeader(
-            backHref: backHref,
-            backLabel: t.categories.back,
-            addHref: addHrefOf(state.kind),
-            addLabel: t.categories.add,
+            title: t.categories.title,
+            trailing: GlassIconButton(
+              glyph: BirkaGlyph.plus,
+              label: t.categories.add,
+              href: addHrefOf(state.kind),
+            ),
           ),
-          h1(classes: 'text-title categories__heading', [
-            .text(t.categories.title),
-          ]),
           GlassSegmented<CategoryKind>(
             segments: {
               CategoryKind.expense: t.categories.expense,
@@ -137,7 +132,6 @@ class CategoriesPage extends StatelessComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
-    css('.categories__heading').styles(raw: {'margin': '0'}),
     css('.categories__archive').styles(
       raw: {
         'color': 'var(--color-text-subtle)',
