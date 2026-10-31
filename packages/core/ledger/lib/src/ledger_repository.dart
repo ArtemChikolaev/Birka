@@ -201,6 +201,11 @@ final class LedgerRepository {
         );
   }
 
+  /// Runs [writes] as one write. Readers see all of it or none of it, and a
+  /// failure undoes it all.
+  Future<T> atomically<T>(Future<T> Function() writes) =>
+      _db.transaction(writes);
+
   /// Adds a category, after the others of its [kind]. A subcategory has a
   /// parent of the same kind, which is not a subcategory itself.
   Future<Category> addCategory({

@@ -47,6 +47,44 @@ void main() {
     expect(names, ['Zebra', 'Apple']);
   });
 
+  test('a ready set goes in whole or not at all', () async {
+    await expectLater(
+      repository.addAll(const [
+        CategoryDraft(kind: CategoryKind.expense, name: 'Apple'),
+        CategoryDraft(
+          kind: CategoryKind.expense,
+          name: 'Pear',
+          parentId: 'nobody',
+        ),
+      ]),
+      throwsA(anything),
+    );
+
+    expect(
+      await repository.watchCategories(CategoryKind.expense).first,
+      isEmpty,
+    );
+    expect(await database.select(database.changes).get(), isEmpty);
+  });
+
+  test('a ready set reaches the list in one step', () async {
+    final sizes = <int>[];
+    final subscription = repository
+        .watchCategories(CategoryKind.expense)
+        .listen((categories) => sizes.add(categories.length));
+    addTearDown(subscription.cancel);
+    await pumpEventQueue();
+
+    await repository.addAll(const [
+      CategoryDraft(kind: CategoryKind.expense, name: 'Apple'),
+      CategoryDraft(kind: CategoryKind.expense, name: 'Pear'),
+      CategoryDraft(kind: CategoryKind.expense, name: 'Plum'),
+    ]);
+    await pumpEventQueue();
+
+    expect(sizes, [0, 3]);
+  });
+
   test('a change replaces the fields', () async {
     await repository.add(food);
     final id = (await only()).id;
