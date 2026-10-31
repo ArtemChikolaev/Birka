@@ -94,7 +94,7 @@ class AccountFormPage extends StatelessComponent {
           ],
         ),
         BirkaTextField(
-          label: state.isDebt ? form.debt : form.openingBalance,
+          label: state.isDebt ? form.debt : form.balance,
           value: state.amount,
           hint: '0',
           error: state.errors.contains(AccountFormError.amountInvalid)

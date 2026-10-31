@@ -410,7 +410,7 @@ class _Translations$accounts$form$ru extends Translations$accounts$form$en {
   @override
   String get currency => 'Валюта';
   @override
-  String get openingBalance => 'Остаток сейчас';
+  String get balance => 'Остаток сейчас';
   @override
   String get debt => 'Долг по карте';
   @override
@@ -563,7 +563,7 @@ extension on TranslationsRu {
       'accounts.form.namePlaceholder' => 'Зарплатная',
       'accounts.form.type' => 'Тип',
       'accounts.form.currency' => 'Валюта',
-      'accounts.form.openingBalance' => 'Остаток сейчас',
+      'accounts.form.balance' => 'Остаток сейчас',
       'accounts.form.debt' => 'Долг по карте',
       'accounts.form.lastDigits' => 'Последние 4 цифры карты',
       'accounts.form.art' => 'Оформление',

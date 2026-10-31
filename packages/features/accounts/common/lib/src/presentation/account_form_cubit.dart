@@ -79,7 +79,7 @@ final class AccountFormState {
   /// The currency of the account.
   final Currency currency;
 
-  /// The opening balance as typed. For a credit card it is the debt.
+  /// What the account holds, as typed. For a credit card it is the debt.
   final String amount;
 
   /// The last digits as typed.
@@ -118,7 +118,7 @@ final class AccountFormState {
 
   /// The amount as money, or `null` if it is not a number. People paste
   /// amounts with spaces between the groups of digits.
-  Money? get openingBalance {
+  Money? get balance {
     final text = amount.replaceAll(_spaces, '');
     try {
       final parsed = text.isEmpty
@@ -131,7 +131,7 @@ final class AccountFormState {
   }
 
   /// What a preview shows while the amount is being typed.
-  Money get previewBalance => openingBalance ?? Money.zero(currency);
+  Money get previewBalance => balance ?? Money.zero(currency);
 
   /// A copy with the given fields changed.
   AccountFormState copyWith({
@@ -188,12 +188,24 @@ class AccountFormCubit extends Cubit<AccountFormState> {
   final AccountsRepository _repository;
   final String? _accountId;
 
+  /// What the account held when the form opened.
+  Money? _loaded;
+
   /// Sets the name.
   void nameChanged(String value) =>
       _edit(state.copyWith(name: value), AccountFormError.nameMissing);
 
-  /// Sets the kind of the account.
-  void typeChanged(AccountType value) => emit(state.copyWith(type: value));
+  /// Sets the kind of the account. What a saved account holds stays as it is,
+  /// so its amount changes sign when the field starts or stops meaning a debt.
+  void typeChanged(AccountType value) {
+    final next = state.copyWith(type: value);
+    final balance = state.balance;
+    if (state.isNew || balance == null || next.isDebt == state.isDebt) {
+      emit(next);
+    } else {
+      emit(next.copyWith(amount: _amountOf(balance, debt: next.isDebt)));
+    }
+  }
 
   /// Sets the currency, which only a new account can change.
   void currencyChanged(Currency value) {
@@ -228,7 +240,7 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     if (lastDigits.isNotEmpty && !_lastDigits.hasMatch(lastDigits)) {
       errors.add(AccountFormError.lastDigitsInvalid);
     }
-    final balance = state.openingBalance;
+    final balance = state.balance;
     if (balance == null) errors.add(AccountFormError.amountInvalid);
     if (errors.isNotEmpty) {
       emit(state.copyWith(errors: errors));
@@ -239,7 +251,9 @@ class AccountFormCubit extends Cubit<AccountFormState> {
     final draft = AccountDraft(
       name: name,
       type: state.type,
-      openingBalance: balance!,
+      currency: state.currency,
+      // An amount left alone must not undo what happened since the form opened.
+      balance: balance == _loaded ? null : balance,
       art: state.art,
       includeInTotals: state.includeInTotals,
       lastDigits: lastDigits.isEmpty ? null : lastDigits,
@@ -260,6 +274,10 @@ class AccountFormCubit extends Cubit<AccountFormState> {
 
   static final _lastDigits = RegExp(r'^\d{4}$');
 
+  /// [balance] as the field shows it, which is without a sign for a debt.
+  static String _amountOf(Money balance, {required bool debt}) =>
+      balance.isZero ? '' : (debt ? -balance : balance).toDecimalString();
+
   void _edit(AccountFormState next, AccountFormError cleared) =>
       emit(next.copyWith(errors: {...next.errors}..remove(cleared)));
 
@@ -274,23 +292,24 @@ class AccountFormCubit extends Cubit<AccountFormState> {
 
   Future<void> _load(String id) async {
     try {
-      final account = await _repository.account(id);
+      final row = await _repository.account(id);
       if (isClosed) return;
-      if (account == null) {
+      if (row == null) {
         emit(state.copyWith(status: AccountFormStatus.failed));
         return;
       }
-      final opening = account.openingBalance;
-      final debt = account.type == AccountType.credit;
+      final AccountBalance(:account, :balance) = row;
+      _loaded = balance;
       emit(
         state.copyWith(
           status: AccountFormStatus.editing,
           name: account.name,
           type: account.type,
           currency: account.currency,
-          amount: opening.isZero
-              ? ''
-              : (debt ? -opening : opening).toDecimalString(),
+          amount: _amountOf(
+            balance,
+            debt: account.type == AccountType.credit,
+          ),
           lastDigits: account.lastDigits ?? '',
           art: account.art,
           includeInTotals: account.includeInTotals,

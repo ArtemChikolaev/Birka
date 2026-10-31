@@ -47,7 +47,8 @@ void main() {
       final draft = repository.added.single;
       expect(draft.name, 'Card');
       expect(draft.type, AccountType.credit);
-      expect(draft.openingBalance, Money(-125050, Currency.eur));
+      expect(draft.currency, Currency.eur);
+      expect(draft.balance, Money(-125050, Currency.eur));
       expect(draft.lastDigits, '4568');
       expect(draft.art, AccountArt.sapphire);
       expect(draft.includeInTotals, isFalse);
@@ -56,7 +57,7 @@ void main() {
     test('starts from zero when the amount is empty', () async {
       final form = newForm()..nameChanged('Cash');
       await form.save();
-      expect(repository.added.single.openingBalance, rub(0));
+      expect(repository.added.single.balance, rub(0));
     });
 
     test('turns the amount of a credit card into a debt', () async {
@@ -65,7 +66,7 @@ void main() {
         ..typeChanged(AccountType.credit)
         ..amountChanged('1000');
       await form.save();
-      expect(repository.added.single.openingBalance, rub(-100000));
+      expect(repository.added.single.balance, rub(-100000));
     });
 
     test('rejects an amount that is not a number', () async {
@@ -111,7 +112,7 @@ void main() {
       expect(form.state.previewBalance, rub(-125050));
 
       form.amountChanged('12a');
-      expect(form.state.openingBalance, isNull);
+      expect(form.state.balance, isNull);
       expect(form.state.previewBalance, rub(0));
     });
 
@@ -186,8 +187,120 @@ void main() {
 
       final draft = repository.updated['Credit']!;
       expect(draft.name, 'Visa');
-      expect(draft.openingBalance, rub(-100000));
+      expect(draft.balance, isNull);
       expect(draft.lastDigits, isNull);
+    });
+
+    group('with operations', () {
+      setUp(() {
+        repository = FakeAccountsRepository([
+          AccountBalance(account('Card', rub(1500000)), rub(3376000)),
+          AccountBalance(credit, rub(-250000)),
+        ]);
+      });
+
+      test('shows what it holds, not what it started from', () async {
+        final form = await formOf('Card');
+
+        expect(form.state.amount, '33760.00');
+        expect(form.state.previewBalance, rub(3376000));
+      });
+
+      test('shows a debt without a sign', () async {
+        final form = await formOf('Credit');
+
+        expect(form.state.amount, '2500.00');
+        expect(form.state.previewBalance, rub(-250000));
+      });
+
+      test('leaves the balance alone when the amount is untouched', () async {
+        final form = await formOf('Card');
+        form.nameChanged('Salary');
+        await form.save();
+
+        expect(repository.updated['Card']!.balance, isNull);
+      });
+
+      test('leaves it alone when the amount comes back to the same', () async {
+        final form = await formOf('Card');
+        form.amountChanged('33 760');
+        await form.save();
+
+        expect(repository.updated['Card']!.balance, isNull);
+      });
+
+      test('hands over a new balance', () async {
+        final form = await formOf('Card');
+        form.amountChanged('40000');
+        await form.save();
+
+        expect(repository.updated['Card']!.balance, rub(4000000));
+      });
+
+      test('hands over a new debt as money below zero', () async {
+        final form = await formOf('Credit');
+        form.amountChanged('3000');
+        await form.save();
+
+        expect(repository.updated['Credit']!.balance, rub(-300000));
+      });
+
+      test('an empty field means nothing is left', () async {
+        final form = await formOf('Card');
+        form.amountChanged('');
+        await form.save();
+
+        expect(repository.updated['Card']!.balance, rub(0));
+      });
+
+      test('a new type keeps what a debt holds', () async {
+        final form = await formOf('Credit');
+        form.typeChanged(AccountType.savings);
+
+        expect(form.state.amount, '-2500.00');
+        expect(form.state.previewBalance, rub(-250000));
+
+        await form.save();
+        expect(repository.updated['Credit']!.balance, isNull);
+      });
+
+      test('a new type keeps what a card holds', () async {
+        final form = await formOf('Card');
+        form.typeChanged(AccountType.credit);
+
+        expect(form.state.amount, '-33760.00');
+        expect(form.state.previewBalance, rub(3376000));
+
+        await form.save();
+        expect(repository.updated['Card']!.balance, isNull);
+      });
+
+      test('a type of the same meaning leaves the amount as typed', () async {
+        final form = await formOf('Card');
+        form
+          ..amountChanged('40 000')
+          ..typeChanged(AccountType.savings);
+
+        expect(form.state.amount, '40 000');
+      });
+
+      test('a new type waits for an amount that is a number', () async {
+        final form = await formOf('Card');
+        form
+          ..amountChanged('abc')
+          ..typeChanged(AccountType.credit);
+
+        expect(form.state.amount, 'abc');
+      });
+    });
+
+    test('a new account keeps its digits through a new type', () {
+      final form = newForm()
+        ..amountChanged('1000')
+        ..typeChanged(AccountType.credit);
+
+      expect(form.state.amount, '1000');
+      expect(form.state.balance, rub(-100000));
     });
 
     test('drops its digits when it stops being a card', () async {
@@ -202,12 +315,12 @@ void main() {
       final form = await formOf('Credit');
       await form.toggleArchived();
       expect(form.state.status, AccountFormStatus.saved);
-      expect((await repository.account('Credit'))?.archived, isTrue);
+      expect((await repository.account('Credit'))?.account.archived, isTrue);
 
       final again = await formOf('Credit');
       expect(again.state.archived, isTrue);
       await again.toggleArchived();
-      expect((await repository.account('Credit'))?.archived, isFalse);
+      expect((await repository.account('Credit'))?.account.archived, isFalse);
     });
 
     test('reports an account that is gone', () async {

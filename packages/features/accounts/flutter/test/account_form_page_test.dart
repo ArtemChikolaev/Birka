@@ -37,6 +37,13 @@ void main() {
     matching: find.byType(BirkaTextField),
   );
 
+  String value(WidgetTester tester, String label) => tester
+      .widget<TextField>(
+        find.descendant(of: field(label), matching: find.byType(TextField)),
+      )
+      .controller!
+      .text;
+
   Future<void> type(WidgetTester tester, String label, String text) async {
     await tester.enterText(
       find.descendant(of: field(label), matching: find.byType(TextField)),
@@ -64,7 +71,7 @@ void main() {
 
     final draft = repository.added.single;
     expect(draft.name, 'Зарплатная');
-    expect(draft.openingBalance, Money(214000, Currency.eur));
+    expect(draft.balance, Money(214000, Currency.eur));
     expect(draft.lastDigits, '1207');
     expect(closed, 1);
   });
@@ -105,7 +112,7 @@ void main() {
 
     await tester.tap(find.text('СОХРАНИТЬ'));
     await tester.pumpAndSettle();
-    expect(repository.added.single.openingBalance, rub(-100000));
+    expect(repository.added.single.balance, rub(-100000));
   });
 
   testWidgets('asks for card digits only on cards', (tester) async {
@@ -150,17 +157,10 @@ void main() {
     testWidgets('fills in the fields and fixes its currency', (tester) async {
       await pump(tester, accountId: 'Карта');
 
-      String value(String label) => tester
-          .widget<TextField>(
-            find.descendant(of: field(label), matching: find.byType(TextField)),
-          )
-          .controller!
-          .text;
-
       expect(find.text('Счёт'), findsOneWidget);
-      expect(value('Название'), 'Карта');
-      expect(value('Остаток сейчас'), '1250.50');
-      expect(value('Последние 4 цифры карты'), '4568');
+      expect(value(tester, 'Название'), 'Карта');
+      expect(value(tester, 'Остаток сейчас'), '1250.50');
+      expect(value(tester, 'Последние 4 цифры карты'), '4568');
       expect(find.text('RUB'), findsOneWidget);
       expect(find.text('EUR'), findsNothing);
     });
@@ -175,6 +175,55 @@ void main() {
       expect(repository.updated['Карта']?.name, 'Основная');
       expect(repository.added, isEmpty);
       expect(closed, 1);
+    });
+
+    testWidgets('shows what it holds, not what it started from', (
+      tester,
+    ) async {
+      repository = FakeAccountsRepository([
+        row('Карта', rub(3376000), opening: rub(1500000)),
+      ]);
+      await pump(tester, accountId: 'Карта');
+
+      expect(value(tester, 'Остаток сейчас'), '33760.00');
+      expect(find.text(formatMoney(rub(3376000))), findsOneWidget);
+    });
+
+    testWidgets('a name alone leaves the balance as it is', (tester) async {
+      await pump(tester, accountId: 'Карта');
+
+      await type(tester, 'Название', 'Основная');
+      await tester.tap(find.text('СОХРАНИТЬ'));
+      await tester.pumpAndSettle();
+
+      expect(repository.updated['Карта']?.balance, isNull);
+    });
+
+    testWidgets('a new amount becomes the new balance', (tester) async {
+      await pump(tester, accountId: 'Карта');
+
+      await type(tester, 'Остаток сейчас', '2000');
+      await tester.tap(find.text('СОХРАНИТЬ'));
+      await tester.pumpAndSettle();
+
+      expect(repository.updated['Карта']?.balance, rub(200000));
+    });
+
+    testWidgets('a new type keeps what it holds, and the field follows', (
+      tester,
+    ) async {
+      await pump(tester, accountId: 'Карта');
+
+      await tester.tap(find.text('Кредитная карта'));
+      await tester.pumpAndSettle();
+
+      expect(value(tester, t.accounts.form.debt), '-1250.50');
+      expect(find.text(formatMoney(rub(125050))), findsOneWidget);
+
+      await tester.tap(find.text('СОХРАНИТЬ'));
+      await tester.pumpAndSettle();
+
+      expect(repository.updated['Карта']?.balance, isNull);
     });
 
     testWidgets('can be moved to the archive', (tester) async {

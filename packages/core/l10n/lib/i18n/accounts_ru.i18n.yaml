@@ -30,7 +30,7 @@ form:
   namePlaceholder: Зарплатная
   type: Тип
   currency: Валюта
-  openingBalance: Остаток сейчас
+  balance: Остаток сейчас
   debt: Долг по карте
   lastDigits: Последние 4 цифры карты
   art: Оформление
