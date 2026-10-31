@@ -13,6 +13,7 @@ class BirkaChip extends StatelessWidget {
     required this.onTap,
     this.glyph,
     this.dashed = false,
+    this.compact = false,
     super.key,
   });
 
@@ -31,6 +32,9 @@ class BirkaChip extends StatelessWidget {
   /// Whether the chip offers something to add, with a dashed outline and no
   /// fill.
   final bool dashed;
+
+  /// Whether the chip leaves less room around its label, for a row of many.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +57,8 @@ class BirkaChip extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: BirkaTokens.durationFastMs),
             height: BirkaTokens.sizeTouchTarget,
-            padding: const EdgeInsets.symmetric(
-              horizontal: BirkaTokens.spaceMd,
+            padding: EdgeInsets.symmetric(
+              horizontal: compact ? BirkaTokens.spaceSm : BirkaTokens.spaceMd,
             ),
             decoration: BoxDecoration(
               color: switch ((selected, dashed)) {

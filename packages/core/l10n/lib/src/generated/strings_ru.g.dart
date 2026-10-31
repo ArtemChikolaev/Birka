@@ -300,6 +300,57 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get addCategories => 'Добавить категории';
   @override
+  String get search => 'Поиск';
+  @override
+  String get searchHint => 'Кафе, 250 или заметка';
+  @override
+  String get clearSearch => 'Очистить поиск';
+  @override
+  String get filterAll => 'Все';
+  @override
+  String get filterExpenses => 'Расходы';
+  @override
+  String get filterIncome => 'Доходы';
+  @override
+  String get filterTransfers => 'Переводы';
+  @override
+  String get pickMonth => 'Выбрать месяц';
+  @override
+  String get noOperationsTitle => 'Пока нет операций';
+  @override
+  String get noOperationsHint => 'Нажмите плюс внизу, чтобы записать первую.';
+  @override
+  String get nothingFound => 'Ничего не нашлось';
+  @override
+  String get failedToReadOperations => 'Не удалось прочитать операции.';
+  @override
+  String get failedToDelete => 'Не удалось удалить. Попробуйте ещё раз.';
+  @override
+  String get operation => 'Операция';
+  @override
+  String get edit => 'Изменить';
+  @override
+  String get editOperation => 'Изменить операцию';
+  @override
+  String get repeat => 'Повторить';
+  @override
+  String get delete => 'Удалить';
+  @override
+  String get deleteTitle => 'Удалить операцию?';
+  @override
+  String get cancel => 'Отмена';
+  @override
+  String get back => 'Назад';
+  @override
+  String get category => 'Категория';
+  @override
+  String get from => 'Откуда';
+  @override
+  String get date => 'Дата';
+  @override
+  late final _Translations$transactions$sources$ru sources =
+      _Translations$transactions$sources$ru._(_root);
+  @override
   late final _Translations$transactions$keys$ru keys =
       _Translations$transactions$keys$ru._(_root);
   @override
@@ -319,6 +370,21 @@ class _Translations$transactions$ru extends Translations$transactions$en {
     'октября',
     'ноября',
     'декабря',
+  ];
+  @override
+  List<String> get monthNames => [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь',
   ];
 }
 
@@ -406,6 +472,28 @@ class _Translations$categories$form$ru extends Translations$categories$form$en {
   String get nameMissing => 'Дайте категории название.';
   @override
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+}
+
+// Path: transactions.sources
+class _Translations$transactions$sources$ru
+    extends Translations$transactions$sources$en {
+  _Translations$transactions$sources$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get manual => 'Вручную';
+  @override
+  String get import => 'Из выписки';
+  @override
+  String get notification => 'Из уведомления';
+  @override
+  String get recurring => 'Регулярная';
+  @override
+  String get bank => 'Из банка';
 }
 
 // Path: transactions.keys
@@ -588,6 +676,37 @@ extension on TranslationsRu {
       'transactions.noCategoriesHint' =>
         'Добавьте категории, чтобы разбирать траты.',
       'transactions.addCategories' => 'Добавить категории',
+      'transactions.search' => 'Поиск',
+      'transactions.searchHint' => 'Кафе, 250 или заметка',
+      'transactions.clearSearch' => 'Очистить поиск',
+      'transactions.filterAll' => 'Все',
+      'transactions.filterExpenses' => 'Расходы',
+      'transactions.filterIncome' => 'Доходы',
+      'transactions.filterTransfers' => 'Переводы',
+      'transactions.pickMonth' => 'Выбрать месяц',
+      'transactions.noOperationsTitle' => 'Пока нет операций',
+      'transactions.noOperationsHint' =>
+        'Нажмите плюс внизу, чтобы записать первую.',
+      'transactions.nothingFound' => 'Ничего не нашлось',
+      'transactions.failedToReadOperations' => 'Не удалось прочитать операции.',
+      'transactions.failedToDelete' =>
+        'Не удалось удалить. Попробуйте ещё раз.',
+      'transactions.operation' => 'Операция',
+      'transactions.edit' => 'Изменить',
+      'transactions.editOperation' => 'Изменить операцию',
+      'transactions.repeat' => 'Повторить',
+      'transactions.delete' => 'Удалить',
+      'transactions.deleteTitle' => 'Удалить операцию?',
+      'transactions.cancel' => 'Отмена',
+      'transactions.back' => 'Назад',
+      'transactions.category' => 'Категория',
+      'transactions.from' => 'Откуда',
+      'transactions.date' => 'Дата',
+      'transactions.sources.manual' => 'Вручную',
+      'transactions.sources.import' => 'Из выписки',
+      'transactions.sources.notification' => 'Из уведомления',
+      'transactions.sources.recurring' => 'Регулярная',
+      'transactions.sources.bank' => 'Из банка',
       'transactions.keys.point' => 'Запятая',
       'transactions.keys.add' => 'Плюс',
       'transactions.keys.subtract' => 'Минус',
@@ -608,6 +727,18 @@ extension on TranslationsRu {
       'transactions.months.9' => 'октября',
       'transactions.months.10' => 'ноября',
       'transactions.months.11' => 'декабря',
+      'transactions.monthNames.0' => 'Январь',
+      'transactions.monthNames.1' => 'Февраль',
+      'transactions.monthNames.2' => 'Март',
+      'transactions.monthNames.3' => 'Апрель',
+      'transactions.monthNames.4' => 'Май',
+      'transactions.monthNames.5' => 'Июнь',
+      'transactions.monthNames.6' => 'Июль',
+      'transactions.monthNames.7' => 'Август',
+      'transactions.monthNames.8' => 'Сентябрь',
+      'transactions.monthNames.9' => 'Октябрь',
+      'transactions.monthNames.10' => 'Ноябрь',
+      'transactions.monthNames.11' => 'Декабрь',
       _ => null,
     };
   }

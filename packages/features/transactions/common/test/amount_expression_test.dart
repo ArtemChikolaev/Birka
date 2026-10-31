@@ -20,6 +20,35 @@ AmountExpression typed(String keys, {int decimalDigits = 2}) {
 }
 
 void main() {
+  group('an amount', () {
+    Money rub(int minorUnits) => Money(minorUnits, Currency.rub);
+
+    test('reads as if it was typed', () {
+      expect(AmountExpression.of(rub(25000)).text(separator: ','), '250');
+      expect(AmountExpression.of(rub(25050)).text(separator: ','), '250,5');
+      expect(AmountExpression.of(rub(25005)).text(separator: ','), '250,05');
+      expect(AmountExpression.of(rub(100000)).text(separator: ','), '1000');
+    });
+
+    test('of a currency without a fraction keeps its zeros', () {
+      final yen = Money(1000, Currency.custom('JPY', decimalDigits: 0));
+      expect(AmountExpression.of(yen).text(separator: ','), '1000');
+    });
+
+    test('loses its sign and keeps its value', () {
+      final expression = AmountExpression.of(rub(-25050));
+      expect(expression.valueIn(Currency.rub), rub(25050));
+    });
+
+    test('can be typed on', () {
+      final expression = AmountExpression.of(rub(25000));
+      expect(
+        expression.backspace().digit(9, decimalDigits: 2).text(separator: ','),
+        '259',
+      );
+    });
+  });
+
   Money rub(int minorUnits) => Money(minorUnits, Currency.rub);
   Money? value(String keys) => typed(keys).valueIn(Currency.rub);
   String text(String keys, {int decimalDigits = 2}) =>

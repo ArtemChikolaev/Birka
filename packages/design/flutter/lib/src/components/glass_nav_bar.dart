@@ -36,6 +36,10 @@ class GlassNavBar extends StatelessWidget {
     super.key,
   });
 
+  /// The room that content leaves at the bottom for the bar.
+  static const double clearance =
+      BirkaTokens.sizeNavBar + BirkaTokens.spaceXl * 2;
+
   /// The tabs, half of them on each side of the action.
   final List<GlassNavDestination> destinations;
 

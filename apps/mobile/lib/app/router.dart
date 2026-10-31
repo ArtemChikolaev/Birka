@@ -21,6 +21,9 @@ abstract final class Paths {
   /// The list of operations.
   static const operations = '/operations';
 
+  /// The card of operation [id].
+  static String operation(String id) => '/operations/$id';
+
   /// The reports.
   static const reports = '/reports';
 
@@ -29,6 +32,12 @@ abstract final class Paths {
 
   /// The sheet that adds an operation, over any tab.
   static const quickAdd = '/quick-add';
+
+  /// The sheet with operation [id] to change.
+  static String editOperation(String id) => '$quickAdd?edit=$id';
+
+  /// The sheet with operation [id] to record once more.
+  static String repeatOperation(String id) => '$quickAdd?repeat=$id';
 
   /// The list of accounts.
   static const accounts = '/accounts';
@@ -71,7 +80,38 @@ GoRouter buildRouter(GetIt getIt) {
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
           tab(Paths.overview, () => t.app.overview),
-          tab(Paths.operations, () => t.app.operations),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Paths.operations,
+                builder: (context, state) => BlocProvider(
+                  create: (_) => getIt<OperationsCubit>(),
+                  child: OperationsPage(
+                    onOpen: (id) => context.push(Paths.operation(id)),
+                    onRepeat: (id) => context.push(Paths.repeatOperation(id)),
+                  ),
+                ),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    parentNavigatorKey: rootKey,
+                    builder: (context, state) {
+                      final id = state.pathParameters['id']!;
+                      return BlocProvider(
+                        create: (_) => getIt<OperationCubit>(param1: id),
+                        child: OperationPage(
+                          onClose: () => context.pop(),
+                          onEdit: () => context.push(Paths.editOperation(id)),
+                          onRepeat: () =>
+                              context.push(Paths.repeatOperation(id)),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
           tab(Paths.reports, () => t.app.reports),
           StatefulShellBranch(
             routes: [
@@ -145,7 +185,8 @@ GoRouter buildRouter(GetIt getIt) {
         pageBuilder: (context, state) => MaterialPage(
           fullscreenDialog: true,
           child: BlocProvider(
-            create: (_) => getIt<QuickAddCubit>(),
+            create: (_) =>
+                getIt<QuickAddCubit>(param1: _quickAddSource(state.uri)),
             child: Builder(
               builder: (context) => QuickAddPage(
                 onClose: () => context.pop(),
@@ -158,6 +199,13 @@ GoRouter buildRouter(GetIt getIt) {
       ),
     ],
   );
+}
+
+QuickAddSource? _quickAddSource(Uri uri) {
+  final edit = uri.queryParameters['edit'];
+  if (edit != null) return QuickAddSource.edit(edit);
+  final repeat = uri.queryParameters['repeat'];
+  return repeat == null ? null : QuickAddSource.repeat(repeat);
 }
 
 Page<void> _formPage(GetIt getIt, String? accountId) => MaterialPage(

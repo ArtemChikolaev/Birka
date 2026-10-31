@@ -8,71 +8,18 @@ import 'package:money/money.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
-final class _FakeRepository implements TransactionsRepository {
-  _FakeRepository({
-    this.accountList = const [],
-    this.expenses = const [],
-    this.income = const [],
-  });
-
-  List<Account> accountList;
-  List<Category> expenses;
-  List<Category> income;
-  final recorded = <TransactionDraft>[];
-  Exception? failure;
-  Exception? readFailure;
-
-  @override
-  Future<List<Account>> accounts() async {
-    if (readFailure case final failure?) throw failure;
-    return accountList;
-  }
-
-  @override
-  Future<List<Category>> categories(CategoryKind kind) async =>
-      kind == CategoryKind.expense ? expenses : income;
-
-  @override
-  Future<String?> lastAccountId() async => null;
-
-  @override
-  Future<void> record(TransactionDraft draft) async {
-    if (failure case final failure?) throw failure;
-    recorded.add(draft);
-  }
-}
-
-Account _account(String name, {Currency currency = Currency.rub}) => Account(
-  id: name,
-  name: name,
-  type: AccountType.debit,
-  openingBalance: Money.zero(currency),
-  includeInTotals: true,
-  archived: false,
-  sortOrder: 0,
-);
-
-Category _category(String name, {CategoryKind kind = CategoryKind.expense}) =>
-    Category(
-      id: name,
-      kind: kind,
-      name: name,
-      archived: false,
-      sortOrder: 0,
-      icon: 'cart',
-      color: '#4ade80',
-    );
+import 'fake_repository.dart';
 
 void main() {
   const space = ' ';
   final now = DateTime(2026, 10, 31, 9, 30);
 
-  late _FakeRepository repository;
+  late FakeRepository repository;
   var closed = 0;
   var addedAccounts = 0;
   var addedCategories = 0;
 
-  Future<void> pump(WidgetTester tester) async {
+  Future<void> pump(WidgetTester tester, {QuickAddSource? source}) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -80,7 +27,8 @@ void main() {
       MaterialApp(
         theme: BirkaTheme.dark(),
         home: BlocProvider(
-          create: (_) => QuickAddCubit(repository, now: () => now),
+          create: (_) =>
+              QuickAddCubit(repository, now: () => now, source: source),
           child: QuickAddPage(
             onClose: () => closed++,
             onAddAccount: () async => addedAccounts++,
@@ -108,10 +56,10 @@ void main() {
       tester.widget<BirkaButton>(find.byType(BirkaButton));
 
   setUp(() {
-    repository = _FakeRepository(
-      accountList: [_account('Карта'), _account('Наличные')],
-      expenses: [_category('Кафе'), _category('Продукты')],
-      income: [_category('Зарплата', kind: CategoryKind.income)],
+    repository = FakeRepository(
+      accountList: [testAccount('Карта'), testAccount('Наличные')],
+      expenses: [testCategory('Кафе'), testCategory('Продукты')],
+      income: [testCategory('Зарплата', kind: CategoryKind.income)],
     );
     closed = 0;
     addedAccounts = 0;
@@ -246,8 +194,8 @@ void main() {
 
     testWidgets('between currencies asks for both amounts', (tester) async {
       repository.accountList = [
-        _account('Карта'),
-        _account('Евро', currency: Currency.eur),
+        testAccount('Карта'),
+        testAccount('Евро', currency: Currency.eur),
       ];
       await pump(tester);
 
@@ -266,7 +214,7 @@ void main() {
     });
 
     testWidgets('with one account it asks for another', (tester) async {
-      repository.accountList = [_account('Карта')];
+      repository.accountList = [testAccount('Карта')];
       await pump(tester);
 
       await tapText(tester, 'ПЕРЕВОД');
@@ -280,7 +228,7 @@ void main() {
   group('the categories on the sheet', () {
     setUp(() {
       repository.expenses = [
-        for (var i = 0; i < 9; i++) _category('К$i'),
+        for (var i = 0; i < 9; i++) testCategory('К$i'),
       ];
     });
 
@@ -306,7 +254,7 @@ void main() {
     expect(find.text('Пока нет счетов'), findsOneWidget);
     expect(find.byType(GlassKeypad), findsNothing);
 
-    repository.accountList = [_account('Карта')];
+    repository.accountList = [testAccount('Карта')];
     await tapText(tester, 'ДОБАВИТЬ СЧЁТ');
 
     expect(addedAccounts, 1);
@@ -357,7 +305,7 @@ void main() {
   testWidgets('reading again on the sheet does not speak of saving', (
     tester,
   ) async {
-    repository.accountList = [_account('Карта')];
+    repository.accountList = [testAccount('Карта')];
     await pump(tester);
 
     await tapText(tester, 'ПЕРЕВОД');
@@ -369,6 +317,51 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(GlassKeypad), findsOneWidget);
+  });
+
+  testWidgets('an operation being changed says so and is saved over', (
+    tester,
+  ) async {
+    final card = testAccount('Карта');
+    final cafe = testCategory('Кафе');
+    repository.operations = [
+      Operation(
+        transaction: Transaction(
+          id: 'coffee',
+          kind: TransactionKind.expense,
+          occurredOn: CivilDate(2026, 10, 30),
+          note: 'Латте',
+          status: TransactionStatus.cleared,
+          source: TransactionSource.manual,
+          entries: [
+            Entry(accountId: card.id, amount: Money(-25000, Currency.rub)),
+          ],
+          allocations: [
+            Allocation(
+              categoryId: cafe.id,
+              amount: Money(25000, Currency.rub),
+            ),
+          ],
+        ),
+        account: card,
+        category: cafe,
+      ),
+    ];
+    await pump(tester, source: const QuickAddSource.edit('coffee'));
+
+    expect(find.text('Изменить операцию'), findsOneWidget);
+    expect(find.text('−250$space₽'), findsOneWidget);
+    expect(find.text('Латте'), findsOneWidget);
+
+    await press(tester, '0');
+    await tapText(tester, 'СОХРАНИТЬ · КАФЕ');
+
+    expect(repository.recorded, isEmpty);
+    expect(
+      repository.amended['coffee']?.entries.single.amount,
+      Money(-250000, Currency.rub),
+    );
+    expect(closed, 1);
   });
 
   testWidgets('the cross closes without saving', (tester) async {

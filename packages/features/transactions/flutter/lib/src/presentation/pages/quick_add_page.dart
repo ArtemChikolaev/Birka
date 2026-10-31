@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
+import 'package:transactions_flutter/src/presentation/widgets/choice_sheet.dart';
 import 'package:transactions_flutter/src/presentation/widgets/quick_add_tile.dart';
 
 /// The sheet that records an expense, an income or a transfer.
@@ -140,9 +141,12 @@ class _Notice extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onClose});
+  const _Header({required this.onClose, this.title});
 
   final VoidCallback onClose;
+
+  /// The heading, by default the one of a new operation.
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +155,7 @@ class _Header extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            t.app.newOperation,
+            title ?? t.app.newOperation,
             style: styles.heading.copyWith(
               color: BirkaColors.of(context).text,
             ),
@@ -210,7 +214,12 @@ class _Sheet extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _Header(onClose: onClose),
+                _Header(
+                  onClose: onClose,
+                  title: state.changesExisting
+                      ? t.transactions.editOperation
+                      : null,
+                ),
                 _gap,
                 GlassSegmented<TransactionKind>(
                   segments: {
@@ -490,7 +499,7 @@ class _Details extends StatelessWidget {
       context: context,
       useRootNavigator: true,
       backgroundColor: BirkaColors.of(context).background,
-      builder: (context) => _Picker(
+      builder: (context) => ChoiceSheet(
         title: t.transactions.account,
         children: [
           GlassListGroup(
@@ -552,7 +561,7 @@ class _NoteSheetState extends State<_NoteSheet> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.viewInsetsOf(context).bottom,
       ),
-      child: _Picker(
+      child: ChoiceSheet(
         children: [
           BirkaTextField(
             label: t.transactions.note,
@@ -564,37 +573,6 @@ class _NoteSheetState extends State<_NoteSheet> {
           ),
           const SizedBox(height: BirkaTokens.spaceMd),
           BirkaButton(label: t.transactions.done, onPressed: _done),
-        ],
-      ),
-    );
-  }
-}
-
-/// A sheet over quick add with an optional title and its choices.
-class _Picker extends StatelessWidget {
-  const _Picker({required this.children, this.title});
-
-  final String? title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final title = this.title;
-    return SafeArea(
-      child: ListView(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(BirkaTokens.spaceLg),
-        children: [
-          if (title != null) ...[
-            Text(
-              title,
-              style: BirkaTextStyles.of(
-                context,
-              ).heading.copyWith(color: BirkaColors.of(context).text),
-            ),
-            const SizedBox(height: BirkaTokens.spaceMd),
-          ],
-          ...children,
         ],
       ),
     );
@@ -647,7 +625,7 @@ class _Categories extends StatelessWidget {
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: BirkaColors.of(context).background,
-      builder: (context) => _Picker(
+      builder: (context) => ChoiceSheet(
         title: t.transactions.allCategories,
         children: [
           QuickAddTiles(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ledger/ledger.dart' show TransactionSource, TransactionStatus;
 import 'package:money/money.dart';
 import 'package:test/test.dart';
 import 'package:transactions_common/transactions_common.dart';
@@ -288,6 +289,273 @@ void main() {
       await saving;
 
       expect(repository.recorded, isEmpty);
+    });
+  });
+
+  group('changing an operation', () {
+    final moment = DateTime(2026, 10, 30, 8, 42);
+    final card = testAccount('card');
+    final cafe = testCategory('cafe');
+
+    Future<QuickAddCubit> edit(Operation operation) async {
+      repository.operations = [operation];
+      final cubit = QuickAddCubit(
+        repository,
+        now: () => now,
+        source: QuickAddSource.edit(operation.id),
+      );
+      addTearDown(cubit.close);
+      await Future<void>.delayed(Duration.zero);
+      return cubit;
+    }
+
+    test('fills the sheet', () async {
+      final form = await edit(
+        testOperation(
+          'coffee',
+          amount: rub(-25050),
+          account: repository.accountList[1],
+          category: cafe,
+          day: yesterday,
+          note: 'Lunch',
+        ),
+      );
+
+      expect(form.state.status, QuickAddStatus.editing);
+      expect(form.state.changesExisting, isTrue);
+      expect(form.state.kind, TransactionKind.expense);
+      expect(form.state.amount, rub(25050));
+      expect(form.state.account?.id, 'cash');
+      expect(form.state.category?.id, 'cafe');
+      expect(form.state.day, yesterday);
+      expect(form.state.note, 'Lunch');
+      expect(form.state.canSave, isTrue);
+    });
+
+    test('a save amends it and records nothing new', () async {
+      final form = await edit(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: card,
+          category: cafe,
+          day: yesterday,
+          at: moment,
+        ),
+      );
+
+      form.digitTyped(0);
+      await form.save();
+
+      expect(form.state.status, QuickAddStatus.saved);
+      expect(repository.recorded, isEmpty);
+      final draft = repository.amended['coffee'];
+      expect(draft?.entries.single.amount, rub(-250000));
+      expect(draft?.occurredOn, yesterday);
+      expect(draft?.occurredAt, moment);
+    });
+
+    test('keeps how far it has come and where it came from', () async {
+      final form = await edit(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: card,
+          category: cafe,
+          status: TransactionStatus.reconciled,
+          source: TransactionSource.bank,
+        ),
+      );
+
+      await form.save();
+
+      final draft = repository.amended['coffee'];
+      expect(draft?.status, TransactionStatus.reconciled);
+      expect(draft?.source, TransactionSource.bank);
+    });
+
+    test('a new day forgets the moment of the old one', () async {
+      final form = await edit(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: card,
+          category: cafe,
+          day: yesterday,
+          at: moment,
+        ),
+      );
+
+      form.dayChanged(CivilDate(2026, 10, 1));
+      await form.save();
+
+      expect(repository.amended['coffee']?.occurredAt, isNull);
+    });
+
+    test('moved to today it takes the moment of now', () async {
+      final form = await edit(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: card,
+          category: cafe,
+          day: yesterday,
+          at: moment,
+        ),
+      );
+
+      form.dayChanged(today);
+      await form.save();
+
+      expect(repository.amended['coffee']?.occurredAt, now);
+    });
+
+    test('keeps an archived account and category among the choices', () async {
+      final closed = testAccount('closed');
+      final old = testCategory('old');
+      final form = await edit(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: closed,
+          category: old,
+        ),
+      );
+
+      expect(form.state.account, closed);
+      expect(form.state.category, old);
+      expect(form.state.canSave, isTrue);
+    });
+
+    test('of a transfer fills both sides', () async {
+      final form = await edit(
+        testOperation(
+          'move',
+          amount: rub(-900000),
+          account: card,
+          toAccount: repository.accountList.last,
+          received: Money(10000, Currency.eur),
+          kind: TransactionKind.transfer,
+        ),
+      );
+
+      expect(form.state.needsTwoAmounts, isTrue);
+      expect(form.state.amount, rub(900000));
+      expect(form.state.receivedAmount, Money(10000, Currency.eur));
+      await form.save();
+      expect(repository.amended['move']?.entries.last.accountId, 'euro');
+    });
+
+    test('reading the choices again keeps what was typed', () async {
+      final form = await edit(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: card,
+          category: cafe,
+        ),
+      );
+
+      form.noteChanged('Tea');
+      await form.refresh();
+
+      expect(form.state.note, 'Tea');
+      expect(form.state.amount, rub(25000));
+    });
+
+    test('an operation that is gone leaves an empty sheet', () async {
+      final form = QuickAddCubit(
+        repository,
+        now: () => now,
+        source: const QuickAddSource.edit('missing'),
+      );
+      addTearDown(form.close);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(form.state.status, QuickAddStatus.editing);
+      expect(form.state.changesExisting, isFalse);
+      expect(form.state.sent.isEmpty, isTrue);
+    });
+
+    test('an operation it cannot read can be tried again', () async {
+      repository
+        ..operations = [
+          testOperation('coffee', amount: rub(-250), account: card),
+        ]
+        ..readFailure = Exception('disk');
+      final form = QuickAddCubit(
+        repository,
+        now: () => now,
+        source: const QuickAddSource.edit('coffee'),
+      );
+      addTearDown(form.close);
+      await Future<void>.delayed(Duration.zero);
+      expect(form.state.status, QuickAddStatus.failedToRead);
+
+      repository.readFailure = null;
+      await form.refresh();
+
+      expect(form.state.status, QuickAddStatus.editing);
+      expect(form.state.changesExisting, isTrue);
+    });
+  });
+
+  group('repeating an operation', () {
+    final cafe = testCategory('cafe');
+
+    Future<QuickAddCubit> repeat(Operation operation) async {
+      repository.operations = [operation];
+      final cubit = QuickAddCubit(
+        repository,
+        now: () => now,
+        source: QuickAddSource.repeat(operation.id),
+      );
+      addTearDown(cubit.close);
+      await Future<void>.delayed(Duration.zero);
+      return cubit;
+    }
+
+    test('fills all of it but the day, and adds a new one', () async {
+      final form = await repeat(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: repository.accountList[1],
+          category: cafe,
+          day: CivilDate(2026, 10, 1),
+          at: DateTime(2026, 10, 1, 8),
+          note: 'Coffee',
+        ),
+      );
+
+      expect(form.state.changesExisting, isFalse);
+      expect(form.state.day, today);
+
+      await form.save();
+
+      expect(repository.amended, isEmpty);
+      final draft = repository.recorded.single;
+      expect(draft.entries.single.accountId, 'cash');
+      expect(draft.entries.single.amount, rub(-25000));
+      expect(draft.allocations.single.categoryId, 'cafe');
+      expect(draft.occurredOn, today);
+      expect(draft.occurredAt, now);
+      expect(draft.note, 'Coffee');
+    });
+
+    test('leaves out what has been archived since', () async {
+      final form = await repeat(
+        testOperation(
+          'coffee',
+          amount: rub(-25000),
+          account: testAccount('closed'),
+          category: testCategory('old'),
+        ),
+      );
+
+      expect(form.state.account?.id, 'card');
+      expect(form.state.category, isNull);
+      expect(form.state.canSave, isFalse);
     });
   });
 

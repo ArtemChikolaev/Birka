@@ -113,7 +113,7 @@ final class Transaction {
   /// Where it came from.
   final TransactionSource source;
 
-  /// How it moves money.
+  /// How it moves money, with what leaves an account first.
   final List<Entry> entries;
 
   /// The categories it goes to.

@@ -5,6 +5,7 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 import 'package:transactions_common/src/domain/amount_expression.dart';
+import 'package:transactions_common/src/domain/operation.dart';
 import 'package:transactions_common/src/domain/transactions_repository.dart';
 
 /// Where quick add stands.
@@ -28,6 +29,22 @@ enum QuickAddStatus {
   failedToRead,
 }
 
+/// What quick add opens on, when it does not open empty.
+@immutable
+final class QuickAddSource {
+  /// Changes operation [operationId].
+  const QuickAddSource.edit(this.operationId) : repeats = false;
+
+  /// Records operation [operationId] once more, for today.
+  const QuickAddSource.repeat(this.operationId) : repeats = true;
+
+  /// The operation.
+  final String operationId;
+
+  /// Whether the operation stays as it is and a new one follows it.
+  final bool repeats;
+}
+
 /// The fields of quick add.
 @immutable
 final class QuickAddState {
@@ -48,6 +65,7 @@ final class QuickAddState {
     this.toAccountId,
     this.categoryId,
     this.note = '',
+    this.changesExisting = false,
   });
 
   /// How many categories stand on the sheet before the button for the rest.
@@ -97,6 +115,9 @@ final class QuickAddState {
 
   /// The note as typed.
   final String note;
+
+  /// Whether a save changes an operation instead of adding one.
+  final bool changesExisting;
 
   /// The picked account.
   Account? get account => _accountWith(accountId);
@@ -203,6 +224,7 @@ final class QuickAddState {
     String? Function()? toAccountId,
     String? Function()? categoryId,
     String? note,
+    bool? changesExisting,
   }) {
     return QuickAddState(
       status: status ?? this.status,
@@ -220,21 +242,34 @@ final class QuickAddState {
       toAccountId: toAccountId == null ? this.toAccountId : toAccountId(),
       categoryId: categoryId == null ? this.categoryId : categoryId(),
       note: note ?? this.note,
+      changesExisting: changesExisting ?? this.changesExisting,
     );
   }
 }
 
-/// Fills in and saves a new transaction.
+/// Fills in and saves a transaction: a new one, or the one [QuickAddSource]
+/// names.
 class QuickAddCubit extends Cubit<QuickAddState> {
   /// Creates quick add and loads its choices. [now] tells the time in tests.
-  QuickAddCubit(this._repository, {DateTime Function()? now})
-    : _now = now ?? DateTime.now,
-      super(_initial((now ?? DateTime.now)())) {
+  QuickAddCubit(
+    this._repository, {
+    DateTime Function()? now,
+    QuickAddSource? source,
+  }) : _now = now ?? DateTime.now,
+       _source = source,
+       super(_initial((now ?? DateTime.now)())) {
     unawaited(refresh());
   }
 
   final TransactionsRepository _repository;
   final DateTime Function() _now;
+  final QuickAddSource? _source;
+
+  /// Whether the sheet has taken what it needs from its source.
+  bool _filled = false;
+
+  /// The operation that a save changes.
+  Operation? _changing;
 
   static QuickAddState _initial(DateTime now) {
     final today = CivilDate.of(now);
@@ -247,21 +282,60 @@ class QuickAddCubit extends Cubit<QuickAddState> {
     );
   }
 
-  /// Reads the choices again, such as after a new account appeared.
+  /// Fills the sheet once from the operation it opens on.
+  Future<void> _fill() async {
+    final source = _source;
+    if (source == null || _filled) return;
+    final operation = await _repository
+        .watchOperation(source.operationId)
+        .first;
+    if (isClosed) return;
+    _filled = true;
+    if (operation == null) return;
+    final repeats = source.repeats;
+    if (!repeats) _changing = operation;
+    final received = operation.received;
+    emit(
+      state.copyWith(
+        kind: operation.kind,
+        day: repeats ? null : operation.day,
+        sent: AmountExpression.of(operation.amount),
+        received: received == null ? null : AmountExpression.of(received),
+        accountId: operation.account?.id,
+        toAccountId: () => operation.toAccount?.id,
+        categoryId: () => operation.category?.id,
+        note: operation.note,
+        changesExisting: !repeats,
+      ),
+    );
+  }
+
+  /// Reads the choices again, such as after a new account appeared. What an
+  /// operation being changed names stays among them, even when it is archived.
   Future<void> refresh() async {
     try {
-      final accounts = await _repository.accounts();
+      await _fill();
+      final changing = _changing;
+      final accounts = _withKept(await _repository.accounts(), [
+        changing?.account,
+        changing?.toAccount,
+      ], (account) => account.id);
       final expenses = await _repository.categories(CategoryKind.expense);
       final income = await _repository.categories(CategoryKind.income);
       final last = await _repository.lastAccountId();
       if (isClosed) return;
       final current = state.accountId ?? last;
+      final kept = [changing?.category];
       emit(
         state.copyWith(
           status: QuickAddStatus.editing,
           accounts: accounts,
-          expenseCategories: expenses,
-          incomeCategories: income,
+          expenseCategories: changing?.kind == TransactionKind.expense
+              ? _withKept(expenses, kept, (category) => category.id)
+              : expenses,
+          incomeCategories: changing?.kind == TransactionKind.income
+              ? _withKept(income, kept, (category) => category.id)
+              : income,
           accountId: accounts.any((account) => account.id == current)
               ? current
               : accounts.firstOrNull?.id,
@@ -270,6 +344,19 @@ class QuickAddCubit extends Cubit<QuickAddState> {
     } on Exception {
       if (!isClosed) emit(state.copyWith(status: QuickAddStatus.failedToRead));
     }
+  }
+
+  static List<T> _withKept<T extends Object>(
+    List<T> items,
+    List<T?> kept,
+    String Function(T) idOf,
+  ) {
+    final ids = items.map(idOf).toSet();
+    return [
+      ...items,
+      for (final item in kept.nonNulls)
+        if (ids.add(idOf(item))) item,
+    ];
   }
 
   /// Sets the kind. The category belongs to the old kind and goes with it.
@@ -330,7 +417,12 @@ class QuickAddCubit extends Cubit<QuickAddState> {
     final draft = _draft();
     emit(state.copyWith(status: QuickAddStatus.saving));
     try {
-      await _repository.record(draft);
+      final changing = _changing;
+      if (changing == null) {
+        await _repository.record(draft);
+      } else {
+        await _repository.amend(changing.id, draft);
+      }
       if (!isClosed) emit(state.copyWith(status: QuickAddStatus.saved));
     } on Exception {
       if (!isClosed) emit(state.copyWith(status: QuickAddStatus.failed));
@@ -340,8 +432,13 @@ class QuickAddCubit extends Cubit<QuickAddState> {
   TransactionDraft _draft() {
     final note = state.note.trim();
     final day = state.day;
-    // The moment is known only for what happens now.
-    final at = day == state.today ? _now() : null;
+    final kept = _changing?.transaction;
+    final status = kept?.status ?? TransactionStatus.cleared;
+    final source = kept?.source ?? TransactionSource.manual;
+    // The moment is known only for what happens now, and stays with its day.
+    final at = kept?.occurredOn == day
+        ? kept?.occurredAt
+        : (day == state.today ? _now() : null);
     if (state.kind == TransactionKind.transfer) {
       return TransactionDraft.transfer(
         fromAccountId: state.accountId!,
@@ -351,6 +448,8 @@ class QuickAddCubit extends Cubit<QuickAddState> {
         occurredOn: day,
         occurredAt: at,
         note: note,
+        status: status,
+        source: source,
       );
     }
     final allocations = [
@@ -363,6 +462,8 @@ class QuickAddCubit extends Cubit<QuickAddState> {
             occurredOn: day,
             occurredAt: at,
             note: note,
+            status: status,
+            source: source,
           )
         : TransactionDraft.expense(
             accountId: state.accountId!,
@@ -370,6 +471,8 @@ class QuickAddCubit extends Cubit<QuickAddState> {
             occurredOn: day,
             occurredAt: at,
             note: note,
+            status: status,
+            source: source,
           );
   }
 

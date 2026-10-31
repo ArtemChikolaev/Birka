@@ -12,7 +12,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:l10n/l10n.dart';
-import 'package:ledger/ledger.dart' show TransactionDraft;
+import 'package:ledger/ledger.dart'
+    show
+        AccountType,
+        Entry,
+        Transaction,
+        TransactionDraft,
+        TransactionSource,
+        TransactionStatus;
+import 'package:money/money.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -55,9 +63,13 @@ final class _NoCategories implements CategoriesRepository {
   Future<void> setArchived(String id, {required bool archived}) async {}
 }
 
-final class _NoTransactions implements TransactionsRepository {
+final class _Transactions implements TransactionsRepository {
+  List<Operation> operations = const [];
+
   @override
-  Future<List<Account>> accounts() async => const [];
+  Future<List<Account>> accounts() async => [
+    for (final operation in operations) ?operation.account,
+  ];
 
   @override
   Future<List<Category>> categories(CategoryKind kind) async => const [];
@@ -67,16 +79,62 @@ final class _NoTransactions implements TransactionsRepository {
 
   @override
   Future<void> record(TransactionDraft draft) async {}
+
+  @override
+  Stream<List<Operation>> watchOperations(CivilDate month) =>
+      Stream.value(operations);
+
+  @override
+  Stream<Operation?> watchOperation(String id) => Stream.value(
+    operations.where((operation) => operation.id == id).firstOrNull,
+  );
+
+  @override
+  Future<List<CivilDate>> months() async => const [];
+
+  @override
+  Future<void> amend(String id, TransactionDraft draft) async {}
+
+  @override
+  Future<void> delete(String id) async {}
+}
+
+/// A coffee of today on an account of its own.
+Operation _coffee() {
+  const card = Account(
+    id: 'card',
+    name: 'Card',
+    type: AccountType.debit,
+    openingBalance: Money.zero(Currency.rub),
+    includeInTotals: true,
+    archived: false,
+    sortOrder: 0,
+  );
+  return Operation(
+    transaction: Transaction(
+      id: 'coffee',
+      kind: TransactionKind.expense,
+      occurredOn: CivilDate.of(DateTime.now()),
+      note: 'Coffee',
+      status: TransactionStatus.cleared,
+      source: TransactionSource.manual,
+      entries: [Entry(accountId: card.id, amount: Money(-100, Currency.rub))],
+      allocations: const [],
+    ),
+    account: card,
+  );
 }
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late GetIt getIt;
+  late _Transactions transactions;
 
   setUp(() {
     getIt = GetIt.asNewInstance();
     final AccountsRepository accounts = _NoAccounts();
     final CategoriesRepository categories = _NoCategories();
+    transactions = _Transactions();
     getIt
       ..registerFactory(() => AccountsCubit(accounts))
       ..registerFactoryParam<AccountFormCubit, String?, void>(
@@ -90,7 +148,13 @@ void main() {
           kind: kind ?? CategoryKind.expense,
         ),
       )
-      ..registerFactory(() => QuickAddCubit(_NoTransactions()));
+      ..registerFactory(() => OperationsCubit(transactions))
+      ..registerFactoryParam<OperationCubit, String, void>(
+        (id, _) => OperationCubit(transactions, id),
+      )
+      ..registerFactoryParam<QuickAddCubit, QuickAddSource?, void>(
+        (source, _) => QuickAddCubit(transactions, source: source),
+      );
   });
 
   testWidgets('opens on the overview', (tester) async {
@@ -137,6 +201,49 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.app.close));
     await tester.pumpAndSettle();
     expect(find.byType(QuickAddPage), findsNothing);
+    expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('the operations tab tells when there are none', (tester) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.operations));
+    await tester.pumpAndSettle();
+
+    expect(find.text(t.transactions.noOperationsTitle), findsOneWidget);
+  });
+
+  testWidgets('a row leads to its card, and the card to the sheet', (
+    tester,
+  ) async {
+    transactions.operations = [_coffee()];
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.operations));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Coffee'));
+    await tester.pumpAndSettle();
+    expect(find.byType(OperationPage), findsOneWidget);
+    expect(find.byType(GlassNavBar), findsNothing);
+
+    await tester.tap(find.text(t.transactions.edit));
+    await tester.pumpAndSettle();
+    expect(find.text(t.transactions.editOperation), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel(t.app.close));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(t.transactions.repeat));
+    await tester.pumpAndSettle();
+    expect(find.text(t.app.newOperation), findsOneWidget);
+    expect(find.text('Coffee'), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel(t.app.close));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(t.transactions.back));
+    await tester.pumpAndSettle();
+    expect(find.byType(OperationsPage), findsOneWidget);
     expect(find.byType(GlassNavBar), findsOneWidget);
   });
 

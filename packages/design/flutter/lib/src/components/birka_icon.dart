@@ -76,7 +76,19 @@ enum BirkaGlyph {
   calendar,
 
   /// Three dots.
-  dots
+  dots,
+
+  /// A magnifying glass.
+  search,
+
+  /// Two sheets, one over the other.
+  copy,
+
+  /// A bin.
+  trash,
+
+  /// Two arrows in opposite directions.
+  transfer
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

@@ -15,14 +15,12 @@ class AppShell extends StatelessWidget {
   /// The tabs, which keep their state while another one is open.
   final StatefulNavigationShell shell;
 
-  /// The room that content leaves at the bottom for the navigation bar.
-  static const double navBarClearance =
-      BirkaTokens.sizeNavBar + BirkaTokens.spaceXl * 2;
-
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     return Scaffold(
+      // The keyboard covers the bar instead of pushing it over the content.
+      resizeToAvoidBottomInset: false,
       body: AmbientBackground(
         child: Stack(
           children: [
