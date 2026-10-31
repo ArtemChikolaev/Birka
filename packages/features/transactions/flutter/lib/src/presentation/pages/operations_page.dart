@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
-import 'package:transactions_flutter/src/presentation/widgets/choice_sheet.dart';
 import 'package:transactions_flutter/src/presentation/widgets/delete_sheet.dart';
 import 'package:transactions_flutter/src/presentation/widgets/operation_row.dart';
 

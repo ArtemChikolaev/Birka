@@ -16,13 +16,16 @@ final class RingSlice {
   final Color color;
 }
 
-/// A ring cut into [slices] by their shares.
+/// A ring cut into [slices] by their shares, with an optional [child] in the
+/// middle.
 class BirkaRing extends StatelessWidget {
   /// Creates a ring. Screen readers read [label].
   const BirkaRing({
     required this.slices,
     required this.label,
     this.size = 96,
+    this.thickness = 10,
+    this.child,
     super.key,
   });
 
@@ -35,9 +38,16 @@ class BirkaRing extends StatelessWidget {
   /// The width and the height.
   final double size;
 
+  /// The width of the ring.
+  final double thickness;
+
+  /// What stands in the middle.
+  final Widget? child;
+
   @override
   Widget build(BuildContext context) {
-    return Semantics(
+    final child = this.child;
+    final ring = Semantics(
       image: true,
       label: label,
       child: SizedBox.square(
@@ -45,34 +55,49 @@ class BirkaRing extends StatelessWidget {
         child: CustomPaint(
           painter: _RingPainter(
             slices: slices,
+            thickness: thickness,
             track: BirkaColors.of(context).surfaceRaised,
           ),
         ),
       ),
     );
+    if (child == null) return ring;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        ring,
+        SizedBox.square(
+          dimension: size - thickness * 3,
+          child: Center(child: child),
+        ),
+      ],
+    );
   }
 }
 
 class _RingPainter extends CustomPainter {
-  const _RingPainter({required this.slices, required this.track});
-
-  static const double _thickness = 10;
+  const _RingPainter({
+    required this.slices,
+    required this.thickness,
+    required this.track,
+  });
 
   /// The room between two parts, in radians.
   static const double _gap = 0.07;
 
   final List<RingSlice> slices;
+  final double thickness;
   final Color track;
 
   @override
   void paint(Canvas canvas, Size size) {
     final ring = Rect.fromCircle(
       center: size.center(Offset.zero),
-      radius: (size.shortestSide - _thickness) / 2,
+      radius: (size.shortestSide - thickness) / 2,
     );
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = _thickness;
+      ..strokeWidth = thickness;
     canvas.drawOval(ring, paint..color = track);
 
     final total = slices.fold<double>(0, (sum, slice) => sum + slice.value);
@@ -96,5 +121,7 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_RingPainter oldDelegate) =>
-      track != oldDelegate.track || slices != oldDelegate.slices;
+      track != oldDelegate.track ||
+      thickness != oldDelegate.thickness ||
+      slices != oldDelegate.slices;
 }

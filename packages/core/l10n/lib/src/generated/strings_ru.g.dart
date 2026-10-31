@@ -68,6 +68,10 @@ class TranslationsRu extends Translations
     _root,
   );
   @override
+  late final _Translations$reports$ru reports = _Translations$reports$ru._(
+    _root,
+  );
+  @override
   late final _Translations$transactions$ru transactions =
       _Translations$transactions$ru._(_root);
 }
@@ -158,8 +162,6 @@ class _Translations$app$ru extends Translations$app$en {
   @override
   String get openElsewhere =>
       'Birka открыта в другой вкладке. Закройте её и попробуйте снова.';
-  @override
-  String get comingSoon => 'Этот экран появится скоро.';
   @override
   String get soon => 'скоро';
   @override
@@ -320,6 +322,63 @@ class _Translations$overview$ru extends Translations$overview$en {
     'за октябрь',
     'за ноябрь',
     'за декабрь',
+  ];
+}
+
+// Path: reports
+class _Translations$reports$ru extends Translations$reports$en {
+  _Translations$reports$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get expenses => 'Расходы';
+  @override
+  String get income => 'Доходы';
+  @override
+  String get byMonth => 'По месяцам';
+  @override
+  String average({required Object amount}) => 'в среднем ${amount}';
+  @override
+  String get noExpenses => 'В этом месяце расходов нет.';
+  @override
+  String get noIncome => 'В этом месяце доходов нет.';
+  @override
+  String get ring => 'Доли категорий';
+  @override
+  String get failed => 'Не удалось прочитать отчёт.';
+  @override
+  List<String> get against => [
+    'к январю',
+    'к февралю',
+    'к марту',
+    'к апрелю',
+    'к маю',
+    'к июню',
+    'к июлю',
+    'к августу',
+    'к сентябрю',
+    'к октябрю',
+    'к ноябрю',
+    'к декабрю',
+  ];
+  @override
+  List<String> get monthsShort => [
+    'Янв',
+    'Фев',
+    'Мар',
+    'Апр',
+    'Май',
+    'Июн',
+    'Июл',
+    'Авг',
+    'Сен',
+    'Окт',
+    'Ноя',
+    'Дек',
   ];
 }
 
@@ -671,7 +730,6 @@ extension on TranslationsRu {
         'Этот браузер не хранит данные, поэтому они исчезнут, когда вы закроете вкладку.',
       'app.openElsewhere' =>
         'Birka открыта в другой вкладке. Закройте её и попробуйте снова.',
-      'app.comingSoon' => 'Этот экран появится скоро.',
       'app.soon' => 'скоро',
       'app.currencies.RUB' => 'Рубли',
       'app.currencies.USD' => 'Доллары',
@@ -781,6 +839,38 @@ extension on TranslationsRu {
       'overview.changeIn.9' => 'за октябрь',
       'overview.changeIn.10' => 'за ноябрь',
       'overview.changeIn.11' => 'за декабрь',
+      'reports.expenses' => 'Расходы',
+      'reports.income' => 'Доходы',
+      'reports.byMonth' => 'По месяцам',
+      'reports.average' => ({required Object amount}) => 'в среднем ${amount}',
+      'reports.noExpenses' => 'В этом месяце расходов нет.',
+      'reports.noIncome' => 'В этом месяце доходов нет.',
+      'reports.ring' => 'Доли категорий',
+      'reports.failed' => 'Не удалось прочитать отчёт.',
+      'reports.against.0' => 'к январю',
+      'reports.against.1' => 'к февралю',
+      'reports.against.2' => 'к марту',
+      'reports.against.3' => 'к апрелю',
+      'reports.against.4' => 'к маю',
+      'reports.against.5' => 'к июню',
+      'reports.against.6' => 'к июлю',
+      'reports.against.7' => 'к августу',
+      'reports.against.8' => 'к сентябрю',
+      'reports.against.9' => 'к октябрю',
+      'reports.against.10' => 'к ноябрю',
+      'reports.against.11' => 'к декабрю',
+      'reports.monthsShort.0' => 'Янв',
+      'reports.monthsShort.1' => 'Фев',
+      'reports.monthsShort.2' => 'Мар',
+      'reports.monthsShort.3' => 'Апр',
+      'reports.monthsShort.4' => 'Май',
+      'reports.monthsShort.5' => 'Июн',
+      'reports.monthsShort.6' => 'Июл',
+      'reports.monthsShort.7' => 'Авг',
+      'reports.monthsShort.8' => 'Сен',
+      'reports.monthsShort.9' => 'Окт',
+      'reports.monthsShort.10' => 'Ноя',
+      'reports.monthsShort.11' => 'Дек',
       'transactions.expense' => 'Расход',
       'transactions.income' => 'Доход',
       'transactions.transfer' => 'Перевод',

@@ -2,7 +2,6 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
-import 'package:transactions_flutter/src/presentation/widgets/choice_sheet.dart';
 
 /// Asks whether to delete [operation], and tells the answer.
 Future<bool> confirmDelete(BuildContext context, Operation operation) async {

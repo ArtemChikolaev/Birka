@@ -2,16 +2,16 @@ import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/more_page.dart';
-import 'package:birka_mobile/app/placeholder_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:l10n/l10n.dart';
 import 'package:overview_common/overview_common.dart' show OverviewCubit;
 import 'package:overview_flutter/overview_flutter.dart';
+import 'package:reports_common/reports_common.dart' show ReportsCubit;
+import 'package:reports_flutter/reports_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -65,15 +65,6 @@ abstract final class Paths {
 /// else opens over them. Pages get their cubits from [getIt].
 GoRouter buildRouter(GetIt getIt) {
   final rootKey = GlobalKey<NavigatorState>();
-  StatefulShellBranch tab(String path, String Function() title) =>
-      StatefulShellBranch(
-        routes: [
-          GoRoute(
-            path: path,
-            builder: (context, state) => PlaceholderPage(title: title()),
-          ),
-        ],
-      );
   return GoRouter(
     navigatorKey: rootKey,
     initialLocation: Paths.overview,
@@ -128,7 +119,17 @@ GoRouter buildRouter(GetIt getIt) {
               ),
             ],
           ),
-          tab(Paths.reports, () => t.app.reports),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Paths.reports,
+                builder: (context, state) => BlocProvider(
+                  create: (_) => getIt<ReportsCubit>(),
+                  child: const ReportsPage(),
+                ),
+              ),
+            ],
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(

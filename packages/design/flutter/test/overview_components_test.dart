@@ -167,7 +167,124 @@ void main() {
     }
   });
 
+  group('BirkaBars', () {
+    Widget bars(List<BirkaBar> bars) =>
+        app(SizedBox(width: 300, child: BirkaBars(bars: bars)));
+
+    double height(WidgetTester tester, int index) => tester
+        .getSize(
+          find
+              .descendant(
+                of: find.byType(BirkaBars),
+                matching: find.byType(Container),
+              )
+              .at(index),
+        )
+        .height;
+
+    testWidgets('shows a figure and a name for each bar', (tester) async {
+      await tester.pumpWidget(
+        bars(const [
+          BirkaBar(value: 78, amount: '78k', label: 'May'),
+          BirkaBar(value: 86, amount: '86k', label: 'Oct', highlighted: true),
+        ]),
+      );
+
+      expect(find.text('78k'), findsOneWidget);
+      expect(find.text('Oct'), findsOneWidget);
+    });
+
+    testWidgets('measures each bar against the tallest', (tester) async {
+      await tester.pumpWidget(
+        bars(const [
+          BirkaBar(value: 50, amount: '50', label: 'a'),
+          BirkaBar(value: 100, amount: '100', label: 'b'),
+        ]),
+      );
+
+      expect(height(tester, 1), 72);
+      expect(height(tester, 0), 36);
+    });
+
+    testWidgets('an empty month still shows its place', (tester) async {
+      await tester.pumpWidget(
+        bars(const [
+          BirkaBar(value: 0, amount: '0', label: 'a'),
+          BirkaBar(value: 0, amount: '0', label: 'b'),
+        ]),
+      );
+
+      expect(height(tester, 0), 6);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('marks the bar that matters', (tester) async {
+      await tester.pumpWidget(
+        bars(const [
+          BirkaBar(value: 1, amount: '1', label: 'a'),
+          BirkaBar(value: 1, amount: '1', label: 'b', highlighted: true),
+        ]),
+      );
+
+      Color? fill(int index) {
+        final box = tester.widget<Container>(
+          find
+              .descendant(
+                of: find.byType(BirkaBars),
+                matching: find.byType(Container),
+              )
+              .at(index),
+        );
+        return (box.decoration! as BoxDecoration).color;
+      }
+
+      expect(fill(1), BirkaColors.dark.accent);
+      expect(fill(0), BirkaColors.dark.surfaceRaised);
+    });
+
+    testWidgets('reads each bar with its name', (tester) async {
+      await tester.pumpWidget(
+        bars(const [BirkaBar(value: 1, amount: '86k', label: 'Oct')]),
+      );
+
+      expect(find.bySemanticsLabel('Oct: 86k'), findsOneWidget);
+    });
+
+    testWidgets('hides what a screen reader would read too', (tester) async {
+      final hidden = ValueNotifier(true);
+      addTearDown(hidden.dispose);
+      await tester.pumpWidget(
+        HiddenAmounts(
+          notifier: hidden,
+          child: bars(const [BirkaBar(value: 1, amount: '86k', label: 'Oct')]),
+        ),
+      );
+
+      expect(find.bySemanticsLabel('Oct: •••'), findsOneWidget);
+    });
+  });
+
   group('BirkaRing', () {
+    testWidgets('holds a child in its middle', (tester) async {
+      await tester.pumpWidget(
+        app(
+          const BirkaRing(
+            slices: [RingSlice(1, Color(0xFF00FF00))],
+            label: 'Spending',
+            size: 196,
+            thickness: 18,
+            child: Text('Total'),
+          ),
+        ),
+      );
+
+      expect(find.text('Total'), findsOneWidget);
+      expect(
+        tester.getCenter(find.text('Total')),
+        tester.getCenter(find.byType(BirkaRing)),
+      );
+    });
+
     Future<void> pump(WidgetTester tester, List<RingSlice> slices) =>
         tester.pumpWidget(app(BirkaRing(slices: slices, label: 'Spending')));
 

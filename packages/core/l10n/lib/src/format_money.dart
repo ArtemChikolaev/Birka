@@ -35,6 +35,54 @@ String formatMoney(Money amount, {AppLocale? locale}) {
   return amount.isNegative ? '$_minus$text' : text;
 }
 
+/// Formats [amount] for a small place, without its sign and in whole units:
+/// Russian gives `84 тыс. ₽` and `1,2 млн ₽`, and English `₽84k` and `₽1.2M`.
+/// Below a thousand it gives the units as they are.
+String formatCompactMoney(Money amount, {AppLocale? locale}) {
+  final russian = (locale ?? LocaleSettings.currentLocale) == AppLocale.ru;
+  final (number, unit) = _compact(amount, separator: russian ? ',' : '.');
+  final figure = switch (unit) {
+    null => number,
+    _ when russian => '$number$_noBreakSpace${_russianUnits[unit]}',
+    _ => '$number${_latinUnits[unit]}',
+  };
+  final symbol = _symbols[amount.currency.code];
+  return switch (symbol) {
+    null => '$figure$_noBreakSpace${amount.currency.code}',
+    _ when russian => '$figure$_noBreakSpace$symbol',
+    _ => '$symbol$figure',
+  };
+}
+
+/// [amount] as a bare figure for a tight place, such as over a bar of a chart:
+/// `78k` and `1.2M` in every language, with the mark of the current one.
+String formatCompactFigure(Money amount) {
+  final (number, unit) = _compact(amount, separator: decimalSeparator);
+  return unit == null ? number : '$number${_latinUnits[unit]}';
+}
+
+const _russianUnits = ['тыс.', 'млн', 'млрд'];
+const _latinUnits = ['k', 'M', 'B'];
+
+/// The whole units of [amount] in thousands, millions or billions, with one
+/// digit after the mark while the number is small, and which of them it is.
+(String, int?) _compact(Money amount, {required String separator}) {
+  final units = amount.abs().minorUnits ~/ amount.currency.minorUnitsPerMajor;
+  if (units < 1000) return ('$units', null);
+  var unit = 0;
+  var scale = 1000;
+  // Rounds up into the next unit before it shows as 1000 тыс.
+  while (unit < _latinUnits.length - 1 && units >= scale * 1000 - scale ~/ 2) {
+    unit++;
+    scale *= 1000;
+  }
+  final tenths = (units + scale ~/ 20) ~/ (scale ~/ 10);
+  if (tenths >= 100) return ('${(units + scale ~/ 2) ~/ scale}', unit);
+  final digit = tenths % 10;
+  final whole = tenths ~/ 10;
+  return (digit == 0 ? '$whole' : '$whole$separator$digit', unit);
+}
+
 String _group(String digits, {required String separator}) {
   final buffer = StringBuffer();
   for (var i = 0; i < digits.length; i++) {

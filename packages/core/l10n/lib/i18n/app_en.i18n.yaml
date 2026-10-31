@@ -8,7 +8,6 @@ retry: Try again
 storedHere: Your data stays in this browser and nowhere else.
 notStored: This browser cannot keep data, so it goes when you close the tab.
 openElsewhere: Birka is open in another tab. Close it and try again.
-comingSoon: This screen is coming soon.
 soon: soon
 currencies(map):
   RUB: Rubles

@@ -625,6 +625,147 @@ void main() {
     });
   });
 
+  group('month totals', () {
+    final from = CivilDate(2026, 9, 1);
+    final to = CivilDate(2026, 10, 31);
+
+    TransactionDraft spent(Money amount, CivilDate day) =>
+        TransactionDraft.expense(
+          accountId: amount.currency == Currency.eur ? euro.id : card.id,
+          allocations: [Allocation(categoryId: cafe.id, amount: amount)],
+          occurredOn: day,
+        );
+
+    Future<List<MonthTotal>> totals() =>
+        ledger.watchMonthTotals(CategoryKind.expense, from: from, to: to).first;
+
+    test('add up each month, the earliest first', () async {
+      await ledger.record(spent(rub(100), CivilDate(2026, 10, 1)));
+      await ledger.record(spent(rub(200), CivilDate(2026, 10, 31)));
+      await ledger.record(spent(rub(400), CivilDate(2026, 9, 30)));
+
+      final rows = await totals();
+
+      expect(rows.map((row) => row.month), [from, CivilDate(2026, 10, 1)]);
+      expect(rows.map((row) => row.total), [rub(400), rub(300)]);
+    });
+
+    test('keep currencies apart', () async {
+      await ledger.record(spent(rub(100), today));
+      await ledger.record(spent(eur(5), today));
+
+      expect((await totals()).map((row) => row.total), [eur(5), rub(100)]);
+    });
+
+    test('stop at both ends of the days', () async {
+      await ledger.record(spent(rub(1), CivilDate(2026, 8, 31)));
+      await ledger.record(spent(rub(2), CivilDate(2026, 11, 1)));
+
+      expect(await totals(), isEmpty);
+    });
+
+    test('leave out another kind, a planned and a deleted one', () async {
+      await ledger.record(
+        TransactionDraft.income(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: salary.id, amount: rub(9))],
+          occurredOn: today,
+        ),
+      );
+      await ledger.record(coffee(rub(4), status: TransactionStatus.planned));
+      final gone = await ledger.record(coffee(rub(8)));
+      await ledger.delete(gone);
+
+      expect(await totals(), isEmpty);
+    });
+
+    test('count a subcategory', () async {
+      final latte = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Latte',
+        parentId: cafe.id,
+      );
+      await ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: latte.id, amount: rub(7))],
+          occurredOn: today,
+        ),
+      );
+
+      expect((await totals()).single.total, rub(7));
+    });
+
+    test('follow a write', () async {
+      final seen = expectLater(
+        ledger
+            .watchMonthTotals(CategoryKind.expense, from: from, to: to)
+            .map((rows) => rows.length),
+        emitsInOrder([0, 1]),
+      );
+
+      await pumpEventQueue();
+      await ledger.record(coffee(rub(1)));
+
+      await seen;
+    });
+  });
+
+  group('the main currency of a report', () {
+    final yen = Currency.custom('JPY', decimalDigits: 0);
+
+    CategoryTotal row(String name, Money total) => CategoryTotal(
+      Category(
+        id: name,
+        kind: CategoryKind.expense,
+        name: name,
+        archived: false,
+        sortOrder: 0,
+      ),
+      total,
+    );
+
+    test('is none without rows', () {
+      expect(mainCurrencyOf(const [], preferred: Currency.rub), isNull);
+    });
+
+    test('is the preferred one if anything went through it', () {
+      expect(
+        mainCurrencyOf([
+          row('a', eur(9)),
+          row('b', eur(9)),
+          row('c', rub(1)),
+        ], preferred: Currency.rub),
+        Currency.rub,
+      );
+    });
+
+    test('is else the one with the most categories', () {
+      expect(
+        mainCurrencyOf([
+          row('a', Money(500000, yen)),
+          row('b', eur(9)),
+          row('c', eur(1)),
+        ], preferred: Currency.rub),
+        Currency.eur,
+      );
+    });
+
+    test('never compares amounts in different currencies', () {
+      expect(
+        mainCurrencyOf([row('a', Money(50000, yen)), row('b', eur(40000))]),
+        mainCurrencyOf([row('b', eur(1)), row('a', Money(50000, yen))]),
+      );
+    });
+
+    test('on a tie is the first code', () {
+      expect(
+        mainCurrencyOf([row('a', Money(5, Currency.usd)), row('b', eur(9))]),
+        Currency.eur,
+      );
+    });
+  });
+
   group('a balance', () {
     test('can be read once, the same as it is followed', () async {
       await ledger.record(coffee(rub(25000)));
