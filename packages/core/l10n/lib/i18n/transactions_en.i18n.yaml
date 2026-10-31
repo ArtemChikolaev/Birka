@@ -1,0 +1,46 @@
+expense: Expense
+income: Income
+transfer: Transfer
+adjustment: Correction
+today: Today
+yesterday: Yesterday
+pickDay: Pick a day
+note: Note
+addNote: Note
+done: Done
+account: Account
+to: To
+sent: Leaves
+received: Arrives
+save: Save
+more: More
+allCategories: All categories
+failed: Could not save. Try again.
+failedToRead: Could not read the accounts and categories.
+noAccountsTitle: No accounts yet
+noAccountsHint: Add an account to record where the money goes.
+addAccount: Add account
+oneAccountHint: A transfer needs a second account.
+noCategoriesHint: Add categories to sort your money.
+addCategories: Add categories
+keys:
+  point: Point
+  add: Plus
+  subtract: Minus
+  multiply: Times
+  divide: Divided by
+  backspace: Erase
+dayOfMonth: $month $day
+months:
+  - January
+  - February
+  - March
+  - April
+  - May
+  - June
+  - July
+  - August
+  - September
+  - October
+  - November
+  - December

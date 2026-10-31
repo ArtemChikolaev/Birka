@@ -48,6 +48,9 @@
 
 ## Consequences
 
+- The keypad of quick add works sums out in fractions of `BigInt` and rounds
+  once, at the end, to the minor units with halves away from zero. So `0.1 +
+  0.2` is exact and `100 ÷ 3 × 3` gives 100.
 - Tokens with 18 digits, such as ETH counted in wei, are not supported. With 8
   digits the limit is about 90 million whole units.
 - Amounts are integers in storage and in sync messages; the database never

@@ -34,6 +34,10 @@ dependencies:
     path: ../../packages/core/l10n
   ledger:
     path: ../../packages/core/ledger
+  transactions_common:
+    path: ../../packages/features/transactions/common
+  transactions_flutter:
+    path: ../../packages/features/transactions/flutter
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4

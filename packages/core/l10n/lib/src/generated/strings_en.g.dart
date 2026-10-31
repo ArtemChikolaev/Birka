@@ -52,6 +52,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$app$en app = Translations$app$en.internal(_root);
   late final Translations$categories$en categories =
       Translations$categories$en.internal(_root);
+  late final Translations$transactions$en transactions =
+      Translations$transactions$en.internal(_root);
 }
 
 // Path: accounts
@@ -250,6 +252,112 @@ class Translations$categories$en {
       Translations$categories$form$en.internal(_root);
 }
 
+// Path: transactions
+class Translations$transactions$en {
+  Translations$transactions$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Expense'
+  String get expense => 'Expense';
+
+  /// en: 'Income'
+  String get income => 'Income';
+
+  /// en: 'Transfer'
+  String get transfer => 'Transfer';
+
+  /// en: 'Correction'
+  String get adjustment => 'Correction';
+
+  /// en: 'Today'
+  String get today => 'Today';
+
+  /// en: 'Yesterday'
+  String get yesterday => 'Yesterday';
+
+  /// en: 'Pick a day'
+  String get pickDay => 'Pick a day';
+
+  /// en: 'Note'
+  String get note => 'Note';
+
+  /// en: 'Note'
+  String get addNote => 'Note';
+
+  /// en: 'Done'
+  String get done => 'Done';
+
+  /// en: 'Account'
+  String get account => 'Account';
+
+  /// en: 'To'
+  String get to => 'To';
+
+  /// en: 'Leaves'
+  String get sent => 'Leaves';
+
+  /// en: 'Arrives'
+  String get received => 'Arrives';
+
+  /// en: 'Save'
+  String get save => 'Save';
+
+  /// en: 'More'
+  String get more => 'More';
+
+  /// en: 'All categories'
+  String get allCategories => 'All categories';
+
+  /// en: 'Could not save. Try again.'
+  String get failed => 'Could not save. Try again.';
+
+  /// en: 'Could not read the accounts and categories.'
+  String get failedToRead => 'Could not read the accounts and categories.';
+
+  /// en: 'No accounts yet'
+  String get noAccountsTitle => 'No accounts yet';
+
+  /// en: 'Add an account to record where the money goes.'
+  String get noAccountsHint => 'Add an account to record where the money goes.';
+
+  /// en: 'Add account'
+  String get addAccount => 'Add account';
+
+  /// en: 'A transfer needs a second account.'
+  String get oneAccountHint => 'A transfer needs a second account.';
+
+  /// en: 'Add categories to sort your money.'
+  String get noCategoriesHint => 'Add categories to sort your money.';
+
+  /// en: 'Add categories'
+  String get addCategories => 'Add categories';
+
+  late final Translations$transactions$keys$en keys =
+      Translations$transactions$keys$en.internal(_root);
+
+  /// en: '$month $day'
+  String dayOfMonth({required Object month, required Object day}) =>
+      '${month} ${day}';
+
+  List<String> get months => [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+}
+
 // Path: accounts.form
 class Translations$accounts$form$en {
   Translations$accounts$form$en.internal(this._root);
@@ -362,6 +470,33 @@ class Translations$categories$form$en {
 
   /// en: 'Could not save. Try again.'
   String get failed => 'Could not save. Try again.';
+}
+
+// Path: transactions.keys
+class Translations$transactions$keys$en {
+  Translations$transactions$keys$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Point'
+  String get point => 'Point';
+
+  /// en: 'Plus'
+  String get add => 'Plus';
+
+  /// en: 'Minus'
+  String get subtract => 'Minus';
+
+  /// en: 'Times'
+  String get multiply => 'Times';
+
+  /// en: 'Divided by'
+  String get divide => 'Divided by';
+
+  /// en: 'Erase'
+  String get backspace => 'Erase';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -488,6 +623,53 @@ extension on Translations {
       'categories.form.restore' => 'Bring back from the archive',
       'categories.form.nameMissing' => 'Give the category a name.',
       'categories.form.failed' => 'Could not save. Try again.',
+      'transactions.expense' => 'Expense',
+      'transactions.income' => 'Income',
+      'transactions.transfer' => 'Transfer',
+      'transactions.adjustment' => 'Correction',
+      'transactions.today' => 'Today',
+      'transactions.yesterday' => 'Yesterday',
+      'transactions.pickDay' => 'Pick a day',
+      'transactions.note' => 'Note',
+      'transactions.addNote' => 'Note',
+      'transactions.done' => 'Done',
+      'transactions.account' => 'Account',
+      'transactions.to' => 'To',
+      'transactions.sent' => 'Leaves',
+      'transactions.received' => 'Arrives',
+      'transactions.save' => 'Save',
+      'transactions.more' => 'More',
+      'transactions.allCategories' => 'All categories',
+      'transactions.failed' => 'Could not save. Try again.',
+      'transactions.failedToRead' =>
+        'Could not read the accounts and categories.',
+      'transactions.noAccountsTitle' => 'No accounts yet',
+      'transactions.noAccountsHint' =>
+        'Add an account to record where the money goes.',
+      'transactions.addAccount' => 'Add account',
+      'transactions.oneAccountHint' => 'A transfer needs a second account.',
+      'transactions.noCategoriesHint' => 'Add categories to sort your money.',
+      'transactions.addCategories' => 'Add categories',
+      'transactions.keys.point' => 'Point',
+      'transactions.keys.add' => 'Plus',
+      'transactions.keys.subtract' => 'Minus',
+      'transactions.keys.multiply' => 'Times',
+      'transactions.keys.divide' => 'Divided by',
+      'transactions.keys.backspace' => 'Erase',
+      'transactions.dayOfMonth' =>
+        ({required Object month, required Object day}) => '${month} ${day}',
+      'transactions.months.0' => 'January',
+      'transactions.months.1' => 'February',
+      'transactions.months.2' => 'March',
+      'transactions.months.3' => 'April',
+      'transactions.months.4' => 'May',
+      'transactions.months.5' => 'June',
+      'transactions.months.6' => 'July',
+      'transactions.months.7' => 'August',
+      'transactions.months.8' => 'September',
+      'transactions.months.9' => 'October',
+      'transactions.months.10' => 'November',
+      'transactions.months.11' => 'December',
       _ => null,
     };
   }

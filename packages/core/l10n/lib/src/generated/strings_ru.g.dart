@@ -63,6 +63,9 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$categories$ru categories =
       _Translations$categories$ru._(_root);
+  @override
+  late final _Translations$transactions$ru transactions =
+      _Translations$transactions$ru._(_root);
 }
 
 // Path: accounts
@@ -236,6 +239,89 @@ class _Translations$categories$ru extends Translations$categories$en {
       _Translations$categories$form$ru._(_root);
 }
 
+// Path: transactions
+class _Translations$transactions$ru extends Translations$transactions$en {
+  _Translations$transactions$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get expense => 'Расход';
+  @override
+  String get income => 'Доход';
+  @override
+  String get transfer => 'Перевод';
+  @override
+  String get adjustment => 'Корректировка';
+  @override
+  String get today => 'Сегодня';
+  @override
+  String get yesterday => 'Вчера';
+  @override
+  String get pickDay => 'Выбрать день';
+  @override
+  String get note => 'Заметка';
+  @override
+  String get addNote => 'Заметка';
+  @override
+  String get done => 'Готово';
+  @override
+  String get account => 'Счёт';
+  @override
+  String get to => 'Куда';
+  @override
+  String get sent => 'Списать';
+  @override
+  String get received => 'Зачислить';
+  @override
+  String get save => 'Сохранить';
+  @override
+  String get more => 'Ещё';
+  @override
+  String get allCategories => 'Все категории';
+  @override
+  String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+  @override
+  String get failedToRead => 'Не удалось прочитать счета и категории.';
+  @override
+  String get noAccountsTitle => 'Пока нет счетов';
+  @override
+  String get noAccountsHint =>
+      'Добавьте счёт, чтобы записывать, куда уходят деньги.';
+  @override
+  String get addAccount => 'Добавить счёт';
+  @override
+  String get oneAccountHint => 'Для перевода нужен второй счёт.';
+  @override
+  String get noCategoriesHint => 'Добавьте категории, чтобы разбирать траты.';
+  @override
+  String get addCategories => 'Добавить категории';
+  @override
+  late final _Translations$transactions$keys$ru keys =
+      _Translations$transactions$keys$ru._(_root);
+  @override
+  String dayOfMonth({required Object day, required Object month}) =>
+      '${day} ${month}';
+  @override
+  List<String> get months => [
+    'января',
+    'февраля',
+    'марта',
+    'апреля',
+    'мая',
+    'июня',
+    'июля',
+    'августа',
+    'сентября',
+    'октября',
+    'ноября',
+    'декабря',
+  ];
+}
+
 // Path: accounts.form
 class _Translations$accounts$form$ru extends Translations$accounts$form$en {
   _Translations$accounts$form$ru._(TranslationsRu root)
@@ -320,6 +406,30 @@ class _Translations$categories$form$ru extends Translations$categories$form$en {
   String get nameMissing => 'Дайте категории название.';
   @override
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+}
+
+// Path: transactions.keys
+class _Translations$transactions$keys$ru
+    extends Translations$transactions$keys$en {
+  _Translations$transactions$keys$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get point => 'Запятая';
+  @override
+  String get add => 'Плюс';
+  @override
+  String get subtract => 'Минус';
+  @override
+  String get multiply => 'Умножить';
+  @override
+  String get divide => 'Разделить';
+  @override
+  String get backspace => 'Стереть';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -451,6 +561,53 @@ extension on TranslationsRu {
       'categories.form.restore' => 'Вернуть из архива',
       'categories.form.nameMissing' => 'Дайте категории название.',
       'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+      'transactions.expense' => 'Расход',
+      'transactions.income' => 'Доход',
+      'transactions.transfer' => 'Перевод',
+      'transactions.adjustment' => 'Корректировка',
+      'transactions.today' => 'Сегодня',
+      'transactions.yesterday' => 'Вчера',
+      'transactions.pickDay' => 'Выбрать день',
+      'transactions.note' => 'Заметка',
+      'transactions.addNote' => 'Заметка',
+      'transactions.done' => 'Готово',
+      'transactions.account' => 'Счёт',
+      'transactions.to' => 'Куда',
+      'transactions.sent' => 'Списать',
+      'transactions.received' => 'Зачислить',
+      'transactions.save' => 'Сохранить',
+      'transactions.more' => 'Ещё',
+      'transactions.allCategories' => 'Все категории',
+      'transactions.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+      'transactions.failedToRead' => 'Не удалось прочитать счета и категории.',
+      'transactions.noAccountsTitle' => 'Пока нет счетов',
+      'transactions.noAccountsHint' =>
+        'Добавьте счёт, чтобы записывать, куда уходят деньги.',
+      'transactions.addAccount' => 'Добавить счёт',
+      'transactions.oneAccountHint' => 'Для перевода нужен второй счёт.',
+      'transactions.noCategoriesHint' =>
+        'Добавьте категории, чтобы разбирать траты.',
+      'transactions.addCategories' => 'Добавить категории',
+      'transactions.keys.point' => 'Запятая',
+      'transactions.keys.add' => 'Плюс',
+      'transactions.keys.subtract' => 'Минус',
+      'transactions.keys.multiply' => 'Умножить',
+      'transactions.keys.divide' => 'Разделить',
+      'transactions.keys.backspace' => 'Стереть',
+      'transactions.dayOfMonth' =>
+        ({required Object day, required Object month}) => '${day} ${month}',
+      'transactions.months.0' => 'января',
+      'transactions.months.1' => 'февраля',
+      'transactions.months.2' => 'марта',
+      'transactions.months.3' => 'апреля',
+      'transactions.months.4' => 'мая',
+      'transactions.months.5' => 'июня',
+      'transactions.months.6' => 'июля',
+      'transactions.months.7' => 'августа',
+      'transactions.months.8' => 'сентября',
+      'transactions.months.9' => 'октября',
+      'transactions.months.10' => 'ноября',
+      'transactions.months.11' => 'декабря',
       _ => null,
     };
   }

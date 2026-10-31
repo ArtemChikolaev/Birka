@@ -68,6 +68,10 @@ final class BirkaColors extends ThemeExtension<BirkaColors> {
   static BirkaColors of(BuildContext context) =>
       Theme.of(context).extension<BirkaColors>() ?? dark;
 
+  /// The color of `#rrggbb` [hex], as a database keeps it.
+  static Color fromHex(String hex) =>
+      Color(0xFF000000 | int.parse(hex.substring(1), radix: 16));
+
   /// Behind everything on a screen.
   final Color background;
 

@@ -4,6 +4,7 @@ import 'package:database/database.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ledger/ledger.dart';
+import 'package:transactions_common/transactions_common.dart';
 
 /// Puts the objects of the app into [getIt]: the one place that knows every
 /// implementation (ADR 0006). The database opens on its first query.
@@ -14,4 +15,5 @@ void registerDependencies(GetIt getIt) {
     ..registerSingleton(LedgerRepository(database));
   registerAccounts(getIt);
   registerCategories(getIt);
+  registerTransactions(getIt);
 }

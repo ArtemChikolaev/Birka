@@ -68,6 +68,21 @@ enum BirkaGlyph {
 
   /// A percent sign.
   percent,
+
+  /// A key that erases.
+  backspace,
+
+  /// A calendar.
+  calendar,
+
+  /// Three dots.
+  dots
+  ;
+
+  /// The glyph called [name], or a neutral one for a name from a newer
+  /// version.
+  static BirkaGlyph named(String? name) =>
+      values.asNameMap()[name] ?? BirkaGlyph.more;
 }
 
 /// An icon in the color of [color] or of the surrounding [IconTheme].

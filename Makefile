@@ -3,7 +3,8 @@
 
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
 CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
-	packages/features/accounts/common packages/features/categories/common
+	packages/features/accounts/common packages/features/categories/common \
+	packages/features/transactions/common
 
 COMPILER ?= vm
 ifeq ($(COMPILER),vm)
@@ -94,6 +95,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/accounts/jaspr && dart test
 	cd packages/features/categories/flutter && flutter test
 	cd packages/features/categories/jaspr && dart test
+	cd packages/features/transactions/flutter && flutter test
 
 test-web: ## Tests of the Jaspr host
 	cd apps/web && dart test

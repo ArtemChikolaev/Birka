@@ -10,6 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
+import 'package:transactions_common/transactions_common.dart';
+import 'package:transactions_flutter/transactions_flutter.dart';
 
 /// The paths of the app.
 abstract final class Paths {
@@ -140,9 +142,18 @@ GoRouter buildRouter(GetIt getIt) {
       GoRoute(
         path: Paths.quickAdd,
         parentNavigatorKey: rootKey,
-        pageBuilder: (context, state) => const MaterialPage(
+        pageBuilder: (context, state) => MaterialPage(
           fullscreenDialog: true,
-          child: QuickAddPlaceholder(),
+          child: BlocProvider(
+            create: (_) => getIt<QuickAddCubit>(),
+            child: Builder(
+              builder: (context) => QuickAddPage(
+                onClose: () => context.pop(),
+                onAddAccount: () => context.push<void>(Paths.newAccount),
+                onAddCategories: () => context.push<void>(Paths.categories),
+              ),
+            ),
+          ),
         ),
       ),
     ],

@@ -1,0 +1,46 @@
+expense: Расход
+income: Доход
+transfer: Перевод
+adjustment: Корректировка
+today: Сегодня
+yesterday: Вчера
+pickDay: Выбрать день
+note: Заметка
+addNote: Заметка
+done: Готово
+account: Счёт
+to: Куда
+sent: Списать
+received: Зачислить
+save: Сохранить
+more: Ещё
+allCategories: Все категории
+failed: Не удалось сохранить. Попробуйте ещё раз.
+failedToRead: Не удалось прочитать счета и категории.
+noAccountsTitle: Пока нет счетов
+noAccountsHint: Добавьте счёт, чтобы записывать, куда уходят деньги.
+addAccount: Добавить счёт
+oneAccountHint: Для перевода нужен второй счёт.
+noCategoriesHint: Добавьте категории, чтобы разбирать траты.
+addCategories: Добавить категории
+keys:
+  point: Запятая
+  add: Плюс
+  subtract: Минус
+  multiply: Умножить
+  divide: Разделить
+  backspace: Стереть
+dayOfMonth: $day $month
+months:
+  - января
+  - февраля
+  - марта
+  - апреля
+  - мая
+  - июня
+  - июля
+  - августа
+  - сентября
+  - октября
+  - ноября
+  - декабря

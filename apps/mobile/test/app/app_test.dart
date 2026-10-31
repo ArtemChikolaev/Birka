@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:birka_mobile/app/app.dart';
-import 'package:birka_mobile/app/placeholder_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
@@ -13,6 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:l10n/l10n.dart';
+import 'package:ledger/ledger.dart' show TransactionDraft;
+import 'package:transactions_common/transactions_common.dart';
+import 'package:transactions_flutter/transactions_flutter.dart';
 
 /// The accounts in memory: the app under test needs no database.
 final class _NoAccounts implements AccountsRepository {
@@ -53,6 +55,20 @@ final class _NoCategories implements CategoriesRepository {
   Future<void> setArchived(String id, {required bool archived}) async {}
 }
 
+final class _NoTransactions implements TransactionsRepository {
+  @override
+  Future<List<Account>> accounts() async => const [];
+
+  @override
+  Future<List<Category>> categories(CategoryKind kind) async => const [];
+
+  @override
+  Future<String?> lastAccountId() async => null;
+
+  @override
+  Future<void> record(TransactionDraft draft) async {}
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late GetIt getIt;
@@ -73,7 +89,8 @@ void main() {
           categoryId: categoryId,
           kind: kind ?? CategoryKind.expense,
         ),
-      );
+      )
+      ..registerFactory(() => QuickAddCubit(_NoTransactions()));
   });
 
   testWidgets('opens on the overview', (tester) async {
@@ -114,12 +131,12 @@ void main() {
 
     await tester.tap(find.bySemanticsLabel(t.app.newOperation));
     await tester.pumpAndSettle();
-    expect(find.byType(QuickAddPlaceholder), findsOneWidget);
+    expect(find.byType(QuickAddPage), findsOneWidget);
     expect(find.byType(GlassNavBar), findsNothing);
 
     await tester.tap(find.bySemanticsLabel(t.app.close));
     await tester.pumpAndSettle();
-    expect(find.byType(QuickAddPlaceholder), findsNothing);
+    expect(find.byType(QuickAddPage), findsNothing);
     expect(find.byType(GlassNavBar), findsOneWidget);
   });
 
