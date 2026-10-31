@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:categories_common/categories_common.dart';
-import 'package:categories_jaspr/src/presentation/components/category_look.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
@@ -40,7 +39,7 @@ class CategoryFormPage extends StatelessComponent {
     final form = t.categories.form;
     return BirkaForm(
       leading: GlyphBadge(
-        glyph: glyphOf(state.icon),
+        glyph: BirkaGlyph.named(state.icon),
         color: state.color,
         size: 44,
       ),
@@ -131,7 +130,7 @@ class CategoryFormPage extends StatelessComponent {
                 },
                 [
                   GlyphBadge(
-                    glyph: glyphOf(icon),
+                    glyph: BirkaGlyph.named(icon),
                     color: icon == state.icon
                         ? state.color
                         : 'var(--color-text-muted)',

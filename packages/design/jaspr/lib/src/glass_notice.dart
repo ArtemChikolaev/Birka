@@ -8,7 +8,7 @@ class GlassNotice extends StatelessComponent {
   /// Creates a notice.
   const GlassNotice({
     required this.text,
-    required this.actions,
+    this.actions = const [],
     this.title,
     super.key,
   });
@@ -19,7 +19,7 @@ class GlassNotice extends StatelessComponent {
   /// The heading over [text], which then gets quieter.
   final String? title;
 
-  /// The buttons.
+  /// The buttons, if there is a way on.
   final List<Component> actions;
 
   @override
@@ -37,7 +37,7 @@ class GlassNotice extends StatelessComponent {
             [.text(text)],
           ),
         ]),
-        div(classes: 'glass-notice__actions', actions),
+        if (actions.isNotEmpty) div(classes: 'glass-notice__actions', actions),
       ]),
     );
   }

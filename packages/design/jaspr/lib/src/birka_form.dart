@@ -17,6 +17,7 @@ class BirkaForm extends StatelessComponent {
     required this.onSubmit,
     required this.children,
     this.leading,
+    this.ready = true,
     this.submitting = false,
     this.failure,
     super.key,
@@ -42,6 +43,10 @@ class BirkaForm extends StatelessComponent {
 
   /// What stands before the heading.
   final Component? leading;
+
+  /// Whether every field that a save needs is in place. Without them the
+  /// button stays off.
+  final bool ready;
 
   /// Whether a save is under way, which turns the button off.
   final bool submitting;
@@ -74,7 +79,7 @@ class BirkaForm extends StatelessComponent {
         div(classes: 'birka-form__actions', [
           if (failure != null)
             p(classes: 'text-caption birka-form__failure', [.text(failure)]),
-          BirkaButton(label: submitLabel, submits: !submitting),
+          BirkaButton(label: submitLabel, submits: ready && !submitting),
         ]),
       ],
     );

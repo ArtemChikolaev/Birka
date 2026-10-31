@@ -9,6 +9,7 @@ void main() {
     expect(find.text('Birka'), findsOneComponent);
     expect(find.text(HomeRoute.tagline), findsOneComponent);
     expect(find.text('Open the accounts'), findsOneComponent);
+    expect(find.text('Open the operations'), findsOneComponent);
     expect(find.text('Open the categories'), findsOneComponent);
     expect(find.text('Source on GitHub'), findsOneComponent);
     expect(find.byType(CapitalPreview), findsOneComponent);

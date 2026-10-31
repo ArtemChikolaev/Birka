@@ -174,6 +174,10 @@ enum BirkaGlyph {
 
   /// The icon as SVG markup.
   final String svg;
+
+  /// The glyph called [name], or a neutral one for a name from a newer version.
+  static BirkaGlyph named(String? name) =>
+      values.asNameMap()[name] ?? BirkaGlyph.more;
 }
 
 /// An icon in the color of the surrounding text.

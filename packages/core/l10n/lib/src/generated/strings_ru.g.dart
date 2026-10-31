@@ -461,7 +461,7 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get noOperationsTitle => 'Пока нет операций';
   @override
-  String get noOperationsHint => 'Нажмите плюс внизу, чтобы записать первую.';
+  String get noOperationsHint => 'Нажмите плюс, чтобы записать первую.';
   @override
   String get nothingFound => 'Ничего не нашлось';
   @override
@@ -907,8 +907,7 @@ extension on TranslationsRu {
       'transactions.filterTransfers' => 'Переводы',
       'transactions.pickMonth' => 'Выбрать месяц',
       'transactions.noOperationsTitle' => 'Пока нет операций',
-      'transactions.noOperationsHint' =>
-        'Нажмите плюс внизу, чтобы записать первую.',
+      'transactions.noOperationsHint' => 'Нажмите плюс, чтобы записать первую.',
       'transactions.nothingFound' => 'Ничего не нашлось',
       'transactions.failedToReadOperations' => 'Не удалось прочитать операции.',
       'transactions.failedToDelete' =>

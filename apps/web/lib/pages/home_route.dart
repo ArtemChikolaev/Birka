@@ -25,6 +25,11 @@ class HomeRoute extends StatelessComponent {
             div(classes: 'home__actions', [
               BirkaButton(label: 'Open the accounts', href: 'accounts/'),
               BirkaButton(
+                label: 'Open the operations',
+                href: 'operations/',
+                quiet: true,
+              ),
+              BirkaButton(
                 label: 'Open the categories',
                 href: 'categories/',
                 quiet: true,

@@ -73,18 +73,33 @@ void Function() watchAddressFragment(void Function() listener) {
   return () => web.window.removeEventListener('hashchange', callback);
 }
 
-/// Takes the fragment off the current address without a step in history.
-void clearAddressFragment() {
+/// Puts [fragment] on the current address, or takes the fragment off it when
+/// it is empty, without a step in history.
+void replaceAddressFragment(String fragment) {
   final location = web.window.location;
+  final hash = fragment.isEmpty ? '' : '#$fragment';
   web.window.history.replaceState(
     null,
     '',
-    '${location.pathname}${location.search}',
+    '${location.pathname}${location.search}$hash',
   );
 }
 
 /// Does what the back button of the browser does.
 void goBackInHistory() => web.window.history.back();
 
-/// Moves the page to its top, because a new view must not start half way down.
-void scrollToTop() => web.window.scrollTo(0.toJS, 0);
+/// How far down the page is.
+double get pageScroll => web.window.scrollY;
+
+/// Moves the page so that it stands [top] pixels down.
+void scrollPageTo(double top) => web.window.scrollTo(0.toJS, top);
+
+/// Calls [listener] when the tab comes back into view, until the returned
+/// function is called.
+void Function() watchTabShown(void Function() listener) {
+  final callback = ((web.Event _) {
+    if (web.document.visibilityState == 'visible') listener();
+  }).toJS;
+  web.document.addEventListener('visibilitychange', callback);
+  return () => web.document.removeEventListener('visibilitychange', callback);
+}

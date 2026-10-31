@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/dependencies.dart';
+import 'package:birka_web/app/fragment_trail.dart';
 import 'package:birka_web/app/opened_database.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:get_it/get_it.dart';
@@ -22,7 +23,11 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   _Stage _stage = _Stage.opening;
   var _persists = true;
   var _fragment = '';
-  var _cameFromList = false;
+  final _trail = FragmentTrail();
+
+  /// How far down the list was when a form took its place.
+  var _listScroll = 0.0;
+
   void Function()? _stopWatching;
 
   /// The part of the address after `#`.
@@ -85,23 +90,31 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   }
 
   void _onFragmentChanged() {
-    setState(() {
-      _cameFromList = _fragment.isEmpty;
-      _fragment = addressFragment;
-    });
-    scrollToTop();
+    if (_fragment.isEmpty) _listScroll = pageScroll;
+    final next = addressFragment;
+    _trail.moved(from: _fragment, to: next);
+    setState(() => _fragment = next);
+    _placePage();
   }
 
-  /// Back to the list: one step back if the list is there, and otherwise the
-  /// form leaves the history, so that the back button does not reopen it.
-  void closeForm() {
-    if (_cameFromList) {
+  /// A new view must not start half way down, and the list comes back to
+  /// where it was left.
+  void _placePage() {
+    final top = _fragment.isEmpty ? _listScroll : 0.0;
+    context.binding.addPostFrameCallback(() => scrollPageTo(top));
+  }
+
+  /// Back to [parent], which is the list by default: one step back if it is
+  /// there, and otherwise the form leaves the history, so that the back button
+  /// does not reopen it.
+  void closeForm([String parent = '']) {
+    if (_trail.leadsBackTo(parent)) {
       goBackInHistory();
       return;
     }
-    clearAddressFragment();
-    setState(() => _fragment = '');
-    scrollToTop();
+    replaceAddressFragment(parent);
+    setState(() => _fragment = parent);
+    _placePage();
   }
 
   @override
