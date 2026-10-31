@@ -49,7 +49,7 @@ class GlassSwipeRow extends StatefulWidget {
 class _GlassSwipeRowState extends State<GlassSwipeRow>
     with SingleTickerProviderStateMixin {
   static const double _buttonWidth = 60;
-  static const double _buttonHeight = 44;
+  static const double _buttonHeight = BirkaTokens.sizeTouchTarget;
 
   /// A flick faster than this opens or closes the row, however short it is.
   static const double _flick = 400;
