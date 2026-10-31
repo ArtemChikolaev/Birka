@@ -28,9 +28,9 @@ final class FakeAccountsRepository implements AccountsRepository {
       broken ? Stream.error(Exception('broken')) : Stream.value(rows);
 
   @override
-  Future<Account?> account(String id) async {
+  Future<AccountBalance?> account(String id) async {
     for (final row in rows) {
-      if (row.account.id == id) return row.account;
+      if (row.account.id == id) return row;
     }
     return null;
   }
@@ -56,12 +56,13 @@ AccountBalance row(
   bool includeInTotals = true,
   String? lastDigits,
   AccountArt art = AccountArt.emerald,
+  Money? opening,
 }) => AccountBalance(
   Account(
     id: name,
     name: name,
     type: type,
-    openingBalance: balance,
+    openingBalance: opening ?? balance,
     includeInTotals: includeInTotals,
     archived: archived,
     sortOrder: 0,

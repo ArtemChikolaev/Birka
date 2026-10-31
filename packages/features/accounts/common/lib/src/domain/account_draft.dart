@@ -9,9 +9,10 @@ final class AccountDraft {
   const AccountDraft({
     required this.name,
     required this.type,
-    required this.openingBalance,
+    required this.currency,
     required this.art,
     required this.includeInTotals,
+    this.balance,
     this.lastDigits,
   });
 
@@ -21,8 +22,13 @@ final class AccountDraft {
   /// The kind of the account.
   final AccountType type;
 
-  /// The balance before the first entry, in the currency of the account.
-  final Money openingBalance;
+  /// The currency, which only a new account can choose.
+  final Currency currency;
+
+  /// What the account should hold. A new account starts from it, or from zero
+  /// without it. A saved one gets a correction for the difference, and stays as
+  /// it is without it.
+  final Money? balance;
 
   /// The art of the account.
   final AccountArt art;

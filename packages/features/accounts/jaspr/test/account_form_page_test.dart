@@ -78,7 +78,7 @@ void main() {
 
     final draft = repository.added.single;
     expect(draft.name, 'Зарплатная');
-    expect(draft.openingBalance, Money(214000, Currency.eur));
+    expect(draft.balance, Money(214000, Currency.eur));
     expect(draft.lastDigits, '1207');
     expect(closed, 1);
   });
@@ -114,7 +114,7 @@ void main() {
     expect(find.text('−1${space}000$space₽'), findsOneComponent);
 
     await save(tester);
-    expect(repository.added.single.openingBalance, rub(-100000));
+    expect(repository.added.single.balance, rub(-100000));
   });
 
   testComponents('asks for card digits only on cards', (tester) async {
@@ -202,6 +202,49 @@ void main() {
       expect(repository.updated['Карта']?.name, 'Основная');
       expect(repository.added, isEmpty);
       expect(closed, 1);
+    });
+
+    testComponents('shows what it holds, not what it started from', (
+      tester,
+    ) async {
+      repository = FakeAccountsRepository([
+        row('Карта', rub(3376000), opening: rub(1500000)),
+      ]);
+      await pump(tester, accountId: 'Карта');
+
+      expect(field('Остаток сейчас').value, '33760.00');
+    });
+
+    testComponents('a name alone leaves the balance as it is', (tester) async {
+      await pump(tester, accountId: 'Карта');
+
+      await type(tester, 'Название', 'Основная');
+      await save(tester);
+
+      expect(repository.updated['Карта']?.balance, isNull);
+    });
+
+    testComponents('a new amount becomes the new balance', (tester) async {
+      await pump(tester, accountId: 'Карта');
+
+      await type(tester, 'Остаток сейчас', '2000');
+      await save(tester);
+
+      expect(repository.updated['Карта']?.balance, rub(200000));
+    });
+
+    testComponents('a new type keeps what it holds, and the field follows', (
+      tester,
+    ) async {
+      await pump(tester, accountId: 'Карта');
+
+      await tap(tester, 'Кредитная карта');
+
+      expect(field(t.accounts.form.debt).value, '-1250.50');
+
+      await save(tester);
+
+      expect(repository.updated['Карта']?.balance, isNull);
     });
 
     testComponents('can be moved to the archive', (tester) async {

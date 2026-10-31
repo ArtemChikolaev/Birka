@@ -179,27 +179,30 @@ final class LedgerRepository {
 
   /// The balance of an account: the opening balance plus every entry that is
   /// not planned. It is computed each time and stored nowhere.
-  Stream<Money> watchBalance(String accountId) {
-    return _db
-        .customSelect(
-          '''
-          SELECT a.currency, a.decimal_digits, $_balance AS balance
-          FROM accounts a WHERE a.id = ?
-          ''',
-          variables: [
-            Variable.withString(TransactionStatus.planned.name),
-            Variable.withString(accountId),
-          ],
-          readsFrom: {_db.accounts, _db.entries, _db.transactions},
-        )
-        .watchSingle()
-        .map(
-          (row) => Money(
-            row.read<int>('balance'),
-            _currency(row.read<String>('currency'), row.read('decimal_digits')),
-          ),
-        );
-  }
+  Stream<Money> watchBalance(String accountId) =>
+      _balanceQuery(accountId).watchSingle().map(_balanceOf);
+
+  /// What account [accountId] holds now, the same as [watchBalance] says.
+  /// Unlike a stream, it can be read inside [atomically].
+  Future<Money> balance(String accountId) async =>
+      _balanceOf(await _balanceQuery(accountId).getSingle());
+
+  Selectable<QueryRow> _balanceQuery(String accountId) => _db.customSelect(
+    '''
+    SELECT a.currency, a.decimal_digits, $_balance AS balance
+    FROM accounts a WHERE a.id = ?
+    ''',
+    variables: [
+      Variable.withString(TransactionStatus.planned.name),
+      Variable.withString(accountId),
+    ],
+    readsFrom: {_db.accounts, _db.entries, _db.transactions},
+  );
+
+  Money _balanceOf(QueryRow row) => Money(
+    row.read<int>('balance'),
+    _currency(row.read<String>('currency'), row.read('decimal_digits')),
+  );
 
   /// Runs [writes] as one write. Readers see all of it or none of it, and a
   /// failure undoes it all.

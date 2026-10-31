@@ -473,7 +473,7 @@ class Translations$accounts$form$en {
   String get currency => 'Currency';
 
   /// en: 'Balance now'
-  String get openingBalance => 'Balance now';
+  String get balance => 'Balance now';
 
   /// en: 'Debt on the card'
   String get debt => 'Debt on the card';
@@ -651,7 +651,7 @@ extension on Translations {
       'accounts.form.namePlaceholder' => 'Salary card',
       'accounts.form.type' => 'Type',
       'accounts.form.currency' => 'Currency',
-      'accounts.form.openingBalance' => 'Balance now',
+      'accounts.form.balance' => 'Balance now',
       'accounts.form.debt' => 'Debt on the card',
       'accounts.form.lastDigits' => 'Last 4 digits of the card',
       'accounts.form.art' => 'Look',
