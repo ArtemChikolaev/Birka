@@ -104,16 +104,6 @@ class _Translations$accounts$ru extends Translations$accounts$en {
   @override
   String get failed => 'Не удалось прочитать счета.';
   @override
-  String get retry => 'Повторить';
-  @override
-  String get storedHere => 'Счета хранятся только в этом браузере.';
-  @override
-  String get notStored =>
-      'Этот браузер не хранит данные, поэтому счета исчезнут, когда вы закроете вкладку.';
-  @override
-  String get openElsewhere =>
-      'Birka открыта в другой вкладке. Закройте её и попробуйте снова.';
-  @override
   Map<String, String> get types => {
     'cash': 'Наличные',
     'debit': 'Дебетовая карта',
@@ -151,6 +141,16 @@ class _Translations$app$ru extends Translations$app$en {
   String get newOperation => 'Новая операция';
   @override
   String get close => 'Закрыть';
+  @override
+  String get retry => 'Повторить';
+  @override
+  String get storedHere => 'Данные хранятся только в этом браузере.';
+  @override
+  String get notStored =>
+      'Этот браузер не хранит данные, поэтому они исчезнут, когда вы закроете вкладку.';
+  @override
+  String get openElsewhere =>
+      'Birka открыта в другой вкладке. Закройте её и попробуйте снова.';
   @override
   String get comingSoon => 'Этот экран появится скоро.';
   @override
@@ -204,8 +204,6 @@ class _Translations$categories$ru extends Translations$categories$en {
   String get archive => 'Архив';
   @override
   String get failed => 'Не удалось прочитать категории.';
-  @override
-  String get retry => 'Повторить';
   @override
   String subcategories({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
@@ -352,12 +350,6 @@ extension on TranslationsRu {
         'Добавьте первый, чтобы видеть, где лежат деньги.',
       'accounts.archive' => 'Архив',
       'accounts.failed' => 'Не удалось прочитать счета.',
-      'accounts.retry' => 'Повторить',
-      'accounts.storedHere' => 'Счета хранятся только в этом браузере.',
-      'accounts.notStored' =>
-        'Этот браузер не хранит данные, поэтому счета исчезнут, когда вы закроете вкладку.',
-      'accounts.openElsewhere' =>
-        'Birka открыта в другой вкладке. Закройте её и попробуйте снова.',
       'accounts.types.cash' => 'Наличные',
       'accounts.types.debit' => 'Дебетовая карта',
       'accounts.types.credit' => 'Кредитная карта',
@@ -391,6 +383,12 @@ extension on TranslationsRu {
       'app.more' => 'Ещё',
       'app.newOperation' => 'Новая операция',
       'app.close' => 'Закрыть',
+      'app.retry' => 'Повторить',
+      'app.storedHere' => 'Данные хранятся только в этом браузере.',
+      'app.notStored' =>
+        'Этот браузер не хранит данные, поэтому они исчезнут, когда вы закроете вкладку.',
+      'app.openElsewhere' =>
+        'Birka открыта в другой вкладке. Закройте её и попробуйте снова.',
       'app.comingSoon' => 'Этот экран появится скоро.',
       'app.soon' => 'скоро',
       'app.currencies.RUB' => 'Рубли',
@@ -415,7 +413,6 @@ extension on TranslationsRu {
       'categories.addOwn' => 'Создать свою',
       'categories.archive' => 'Архив',
       'categories.failed' => 'Не удалось прочитать категории.',
-      'categories.retry' => 'Повторить',
       'categories.subcategories' =>
         ({required num n}) =>
             (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(

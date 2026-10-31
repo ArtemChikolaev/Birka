@@ -3,8 +3,8 @@
 Local-first expense tracker for money across currencies, banks and countries.
 
 **Status:** early development. There is nothing to install yet, but the
-[site](https://artemchikolaev.github.io/Birka/) already keeps accounts in your
-browser. The first milestone is manual tracking with several currencies and
+[site](https://artemchikolaev.github.io/Birka/) already keeps accounts and
+categories in your browser. The first milestone is manual tracking with several currencies and
 reports.
 
 ## Why

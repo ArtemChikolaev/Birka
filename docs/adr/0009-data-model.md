@@ -77,12 +77,13 @@
 
 - The first stage starts with `packages/core/database` and
   `packages/core/ledger`.
-- Drift and the accounts add about 1.5 MB to the site, 580 KB compressed:
-  730 KB of WASM, 380 KB of worker and 400 KB of deferred JavaScript. Only the
-  pages of the app load it, so the first page stays light.
+- Drift and the pages of the app add about 1.6 MB to the site, 600 KB
+  compressed: 730 KB of WASM, 380 KB of worker and 450 KB of deferred
+  JavaScript. Only the pages of the app load it, so the first page stays
+  light.
 - A browser can evict the data of a site, so the web app needs the same file
-  backup as the phones. Until then the accounts page says that the data stays
-  in the browser, and warns when the browser keeps it only in memory.
-- Chrome on macOS, Safari on iOS and Chrome 113 on Android store accounts and
-  keep them. Firefox, where Drift prefers `opfsShared`, and a current Chrome on
+  backup as the phones. Until then the pages say that the data stays in the
+  browser, and warn when the browser keeps it only in memory.
+- Chrome on macOS, Safari on iOS and Chrome 113 on Android store data and keep
+  it. Firefox, where Drift prefers `opfsShared`, and a current Chrome on
   Android still have to be checked.

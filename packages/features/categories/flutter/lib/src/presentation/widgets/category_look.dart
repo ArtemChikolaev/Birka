@@ -12,7 +12,7 @@ BirkaGlyph glyphOf(String name) =>
 
 /// The badge of [category].
 GlyphBadge categoryBadge(Category category, {double size = 36}) => GlyphBadge(
-  glyph: glyphOf(category.icon ?? categoryIcons.first),
-  color: colorOf(category.color ?? categoryColors.first),
+  glyph: glyphOf(category.iconName),
+  color: colorOf(category.colorHex),
   size: size,
 );

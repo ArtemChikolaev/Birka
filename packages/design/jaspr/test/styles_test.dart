@@ -12,7 +12,11 @@ void main() {
       ...AmountText.styles,
       ...BirkaButton.styles,
       ...BirkaChip.styles,
+      ...BirkaChoice.styles,
+      ...BirkaColumn.styles,
+      ...BirkaForm.styles,
       ...BirkaIcon.styles,
+      ...BirkaPlaceholder.styles,
       ...BirkaSwitch.styles,
       ...BirkaTextField.styles,
       ...CardArtSurface.styles,
@@ -20,7 +24,11 @@ void main() {
       ...GlassIconButton.styles,
       ...GlassListGroup.styles,
       ...GlassListRow.styles,
+      ...GlassNotice.styles,
+      ...GlassPageHeader.styles,
+      ...GlassSegmented.styles,
       ...GlassSurface.styles,
+      ...GlyphBadge.styles,
       ...SectionLabel.styles,
     ].map((rule) => rule.toCss()).join();
 

@@ -9,7 +9,6 @@ addPresets: Добавить готовый набор
 addOwn: Создать свою
 archive: Архив
 failed: Не удалось прочитать категории.
-retry: Повторить
 subcategories(n):
   one: $n подкатегория
   few: $n подкатегории

@@ -197,7 +197,7 @@ class _Failure extends StatelessWidget {
           ),
           const SizedBox(height: BirkaTokens.spaceMd),
           BirkaButton(
-            label: t.categories.retry,
+            label: t.app.retry,
             onPressed: context.read<CategoriesCubit>().retry,
           ),
         ],

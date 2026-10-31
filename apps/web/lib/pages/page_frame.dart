@@ -1,21 +1,21 @@
-import 'package:birka_web/pages/accounts_island.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-/// The static frame of the accounts page. All that lives is in the island.
-class AccountsRoute extends StatelessComponent {
-  /// Creates the page.
-  const AccountsRoute({super.key});
+/// The static frame of a page of the app, around its island.
+class PageFrame extends StatelessComponent {
+  /// Creates a frame around [child].
+  const PageFrame({required this.child, super.key});
+
+  /// All that lives on the page.
+  final Component child;
 
   @override
   Component build(BuildContext context) {
-    return const AmbientBackground(
-      child: main_(classes: 'page', [AccountsIsland()]),
-    );
+    return AmbientBackground(child: main_(classes: 'page', [child]));
   }
 
-  /// The styles of the page.
+  /// The styles of the frame.
   @css
   static List<StyleRule> get styles => [
     css('.page').styles(

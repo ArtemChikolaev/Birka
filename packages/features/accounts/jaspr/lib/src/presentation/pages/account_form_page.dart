@@ -30,7 +30,7 @@ class AccountFormPage extends StatelessComponent {
               current.status == AccountFormStatus.failed),
       listener: (_, _) => onClose(),
       builder: (context, state) => switch (state.status) {
-        AccountFormStatus.loading => const div(classes: 'account-form', []),
+        AccountFormStatus.loading => const div([]),
         _ => _form(context, state),
       },
     );
@@ -41,19 +41,14 @@ class AccountFormPage extends StatelessComponent {
     final form = t.accounts.form;
     final name = state.name.trim();
     return BirkaForm(
-      classes: 'account-form',
+      title: state.isNew ? form.newTitle : form.editTitle,
+      closeLabel: t.app.close,
+      onClose: onClose,
+      submitLabel: form.save,
       onSubmit: () => unawaited(cubit.save()),
+      submitting: state.status == AccountFormStatus.saving,
+      failure: state.status == AccountFormStatus.failed ? form.failed : null,
       children: [
-        div(classes: 'account-form__header', [
-          h1(classes: 'text-heading account-form__title', [
-            .text(state.isNew ? form.newTitle : form.editTitle),
-          ]),
-          GlassIconButton(
-            glyph: BirkaGlyph.close,
-            label: t.app.close,
-            onPressed: onClose,
-          ),
-        ]),
         AccountHeroCard(
           art: cardArtOf(state.art),
           name: name.isEmpty ? form.namePlaceholder : name,
@@ -74,22 +69,30 @@ class AccountFormPage extends StatelessComponent {
           onChanged: cubit.nameChanged,
           sentence: true,
         ),
-        _Choice(form.type, [
-          for (final type in state.types)
-            BirkaChip(
-              label: accountTypeLabel(type),
-              selected: type == state.type,
-              onTap: () => cubit.typeChanged(type),
-            ),
-        ]),
-        _Choice(form.currency, [
-          for (final currency in state.currencies)
-            BirkaChip(
-              label: currency.code,
-              selected: currency == state.currency,
-              onTap: state.isNew ? () => cubit.currencyChanged(currency) : null,
-            ),
-        ]),
+        BirkaChoice(
+          label: form.type,
+          children: [
+            for (final type in state.types)
+              BirkaChip(
+                label: accountTypeLabel(type),
+                selected: type == state.type,
+                onTap: () => cubit.typeChanged(type),
+              ),
+          ],
+        ),
+        BirkaChoice(
+          label: form.currency,
+          children: [
+            for (final currency in state.currencies)
+              BirkaChip(
+                label: currency.code,
+                selected: currency == state.currency,
+                onTap: state.isNew
+                    ? () => cubit.currencyChanged(currency)
+                    : null,
+              ),
+          ],
+        ),
         BirkaTextField(
           label: state.isDebt ? form.debt : form.openingBalance,
           value: state.amount,
@@ -113,24 +116,27 @@ class AccountFormPage extends StatelessComponent {
             inputMode: 'numeric',
             maxLength: 4,
           ),
-        _Choice(form.art, [
-          for (final art in AccountArt.values)
-            button(
-              classes: 'account-form__art',
-              type: ButtonType.button,
-              onClick: () => cubit.artChanged(art),
-              attributes: {
-                'aria-label': art.name,
-                'aria-pressed': '${art == state.art}',
-              },
-              [
-                CardArtThumbnail(
-                  art: cardArtOf(art),
-                  highlighted: art == state.art,
-                ),
-              ],
-            ),
-        ]),
+        BirkaChoice(
+          label: form.art,
+          children: [
+            for (final art in AccountArt.values)
+              button(
+                classes: 'account-form__art',
+                type: ButtonType.button,
+                onClick: () => cubit.artChanged(art),
+                attributes: {
+                  'aria-label': art.name,
+                  'aria-pressed': '${art == state.art}',
+                },
+                [
+                  CardArtThumbnail(
+                    art: cardArtOf(art),
+                    highlighted: art == state.art,
+                  ),
+                ],
+              ),
+          ],
+        ),
         GlassListGroup(
           children: [
             GlassListRow(
@@ -149,16 +155,6 @@ class AccountFormPage extends StatelessComponent {
               ),
           ],
         ),
-        div(classes: 'account-form__actions', [
-          if (state.status == AccountFormStatus.failed)
-            p(classes: 'text-caption account-form__failed', [
-              .text(form.failed),
-            ]),
-          BirkaButton(
-            label: form.save,
-            submits: state.status != AccountFormStatus.saving,
-          ),
-        ]),
       ],
     );
   }
@@ -166,21 +162,6 @@ class AccountFormPage extends StatelessComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
-    css('.account-form').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-lg)',
-      },
-    ),
-    css('.account-form__header').styles(
-      raw: {
-        'align-items': 'center',
-        'display': 'flex',
-        'justify-content': 'space-between',
-      },
-    ),
-    css('.account-form__title').styles(raw: {'margin': '0'}),
     css('.account-form__art').styles(
       raw: {
         'background': 'none',
@@ -190,48 +171,5 @@ class AccountFormPage extends StatelessComponent {
         'padding': '0',
       },
     ),
-    css('.account-form__actions').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xs)',
-      },
-    ),
-    css('.account-form__failed').styles(
-      raw: {
-        'color': 'var(--color-negative)',
-        'margin': '0',
-        'text-align': 'center',
-      },
-    ),
-    css('.account-form__choice').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xs)',
-      },
-    ),
-    css('.account-form__choice-label').styles(
-      raw: {'color': 'var(--color-text-muted)'},
-    ),
-    css('.account-form__options').styles(
-      raw: {'display': 'flex', 'flex-wrap': 'wrap', 'gap': 'var(--space-xs)'},
-    ),
   ];
-}
-
-/// A labelled row of options.
-class _Choice extends StatelessComponent {
-  const _Choice(this.label, this.options);
-
-  final String label;
-  final List<Component> options;
-
-  @override
-  Component build(BuildContext context) {
-    return div(classes: 'account-form__choice', [
-      span(classes: 'text-caption account-form__choice-label', [.text(label)]),
-      div(classes: 'account-form__options', options),
-    ]);
-  }
 }

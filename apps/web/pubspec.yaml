@@ -15,6 +15,10 @@ dependencies:
   accounts_jaspr:
     path: ../../packages/features/accounts/jaspr
   bloc: ^9.2.1
+  categories_common:
+    path: ../../packages/features/categories/common
+  categories_jaspr:
+    path: ../../packages/features/categories/jaspr
   database:
     path: ../../packages/core/database
   design_jaspr:
