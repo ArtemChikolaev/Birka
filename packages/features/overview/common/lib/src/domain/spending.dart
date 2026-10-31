@@ -10,13 +10,10 @@ final class Spending {
 
   /// Sorts [rows], the biggest first. Categories of one currency can share a
   /// ring: that of the [preferred] currency if anything was spent in it, or
-  /// else that of the biggest row. The rest stays in [others].
+  /// else that of the most categories. The rest stays in [others].
   factory Spending.of(List<CategoryTotal> rows, {Currency? preferred}) {
     if (rows.isEmpty) return const Spending(categories: [], others: []);
-    final spentIn = {for (final row in rows) row.total.currency};
-    final main = spentIn.contains(preferred)
-        ? preferred!
-        : rows.first.total.currency;
+    final main = _mainOf(rows, preferred);
     final others = <Currency, int>{};
     final categories = <CategoryTotal>[];
     var total = 0;
@@ -57,6 +54,27 @@ final class Spending {
 
   /// The categories that stand by their names.
   Iterable<CategoryTotal> get top => categories.take(shownCategories);
+
+  /// The currency of the ring. Amounts in different currencies say nothing
+  /// about each other until there are rates, so only a count decides, and on a
+  /// tie the code does.
+  static Currency _mainOf(List<CategoryTotal> rows, Currency? preferred) {
+    final categories = <Currency, int>{};
+    for (final row in rows) {
+      categories.update(
+        row.total.currency,
+        (count) => count + 1,
+        ifAbsent: () => 1,
+      );
+    }
+    if (categories.containsKey(preferred)) return preferred!;
+    final byCount = categories.keys.toList()
+      ..sort((a, b) {
+        final order = categories[b]!.compareTo(categories[a]!);
+        return order != 0 ? order : a.code.compareTo(b.code);
+      });
+    return byCount.first;
+  }
 
   static Money _money(int minorUnits, Currency currency) => Money(
     minorUnits.clamp(0, Money.maxMinorUnits),

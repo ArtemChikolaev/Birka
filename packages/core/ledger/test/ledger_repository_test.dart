@@ -544,14 +544,18 @@ void main() {
       expect(rows.map((row) => row.total), [rub(500), rub(200)]);
     });
 
-    test('keep currencies apart', () async {
+    test('keep currencies apart, and never rank one against another', () async {
       await ledger.record(spent(cafe, rub(100)));
-      await ledger.record(spent(cafe, eur(5)));
+      await ledger.record(spent(cafe, eur(5000)));
 
-      expect(
-        (await totals()).map((row) => row.total),
-        unorderedEquals([rub(100), eur(5)]),
-      );
+      expect((await totals()).map((row) => row.total), [eur(5000), rub(100)]);
+
+      await ledger.record(spent(cafe, rub(900000)));
+
+      expect((await totals()).map((row) => row.total), [
+        eur(5000),
+        rub(900100),
+      ]);
     });
 
     test('count a subcategory towards its parent', () async {

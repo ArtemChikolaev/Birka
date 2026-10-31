@@ -40,18 +40,48 @@ void main() {
     expect(spending.others, [eur(10)]);
   });
 
-  test('takes the currency of the biggest row when nothing went in the '
-      'preferred one', () {
-    final spending = Spending.of([
-      testTotal('Food', eur(9)),
-      testTotal('Cafe', Money(5, Currency.usd)),
-    ], preferred: Currency.rub);
+  group('when nothing went in the preferred currency', () {
+    final yen = Currency.custom('JPY', decimalDigits: 0);
 
-    expect(spending.total, eur(9));
-    expect(spending.others, [Money(5, Currency.usd)]);
+    test('takes the currency of the most categories', () {
+      final spending = Spending.of([
+        testTotal('Food', Money(500000, yen)),
+        testTotal('Food', eur(9)),
+        testTotal('Cafe', eur(1)),
+      ], preferred: Currency.rub);
+
+      expect(spending.total, eur(10));
+      expect(spending.others, [Money(500000, yen)]);
+    });
+
+    test('never compares amounts in different currencies', () {
+      final spending = Spending.of([
+        testTotal('Food', Money(50000, yen)),
+        testTotal('Food', eur(40000)),
+      ], preferred: Currency.rub);
+
+      expect(spending.total, eur(40000));
+
+      final other = Spending.of([
+        testTotal('Food', eur(1)),
+        testTotal('Food', Money(50000, yen)),
+      ], preferred: Currency.rub);
+
+      expect(other.total, eur(1));
+    });
+
+    test('on a tie takes the first code', () {
+      final spending = Spending.of([
+        testTotal('Food', Money(5, Currency.usd)),
+        testTotal('Food', eur(9)),
+      ]);
+
+      expect(spending.total, eur(9));
+      expect(spending.others, [Money(5, Currency.usd)]);
+    });
   });
 
-  test('takes the biggest row without a preference', () {
+  test('needs no preference for one currency', () {
     expect(Spending.of([testTotal('Food', rub(1))]).total, rub(1));
   });
 

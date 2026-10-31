@@ -514,8 +514,8 @@ final class LedgerRepository {
   }
 
   /// What went through the categories of [kind] from [from] to [to], with both
-  /// ends included: one row for each category and currency, the biggest first.
-  /// A subcategory counts towards its parent.
+  /// ends included: one row for each category and currency, the biggest of each
+  /// currency first. A subcategory counts towards its parent.
   Stream<List<CategoryTotal>> watchCategoryTotals(
     CategoryKind kind, {
     required CivilDate from,
@@ -538,7 +538,7 @@ final class LedgerRepository {
             AND t.occurred_on BETWEEN ? AND ?
             AND top.kind = ?
           GROUP BY top.id, a.currency, a.decimal_digits
-          ORDER BY total DESC, top.sort_order
+          ORDER BY a.currency, total DESC, top.sort_order
           ''',
           variables: [
             Variable.withString(TransactionStatus.planned.name),
