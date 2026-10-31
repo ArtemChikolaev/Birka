@@ -20,6 +20,12 @@ void main() {
     );
   });
 
+  test('a glyph comes by its name, and an unknown name gets a neutral one', () {
+    expect(BirkaGlyph.named('cart'), BirkaGlyph.cart);
+    expect(BirkaGlyph.named('from-a-newer-version'), BirkaGlyph.more);
+    expect(BirkaGlyph.named(null), BirkaGlyph.more);
+  });
+
   testComponents('BirkaIcon is hidden from screen readers', (tester) async {
     tester.pumpComponent(const BirkaIcon(BirkaGlyph.back));
 

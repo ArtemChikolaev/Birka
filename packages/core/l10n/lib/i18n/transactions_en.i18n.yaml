@@ -32,7 +32,7 @@ filterIncome: Income
 filterTransfers: Transfers
 pickMonth: Pick a month
 noOperationsTitle: No operations yet
-noOperationsHint: Tap the plus below to record the first one.
+noOperationsHint: Tap the plus to record the first one.
 nothingFound: Nothing found
 failedToReadOperations: Could not read the operations.
 failedToDelete: Could not delete. Try again.

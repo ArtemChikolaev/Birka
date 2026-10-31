@@ -12,6 +12,7 @@ dependencies:
   design_tokens:
     path: ../tokens
   jaspr: ^0.22.3
+  universal_web: ^1.1.0
 
 dev_dependencies:
   jaspr_test: ^0.22.3

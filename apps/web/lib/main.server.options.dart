@@ -17,6 +17,7 @@ import 'package:birka_web/components/capital_preview.dart' as _capital_preview;
 import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
+import 'package:birka_web/pages/operations_island.dart' as _operations_island;
 import 'package:birka_web/pages/page_frame.dart' as _page_frame;
 import 'package:categories_jaspr/src/presentation/pages/categories_page.dart'
     as _categories_page;
@@ -27,8 +28,10 @@ import 'package:design_jaspr/src/ambient_background.dart'
 import 'package:design_jaspr/src/amount_text.dart' as _amount_text;
 import 'package:design_jaspr/src/birka_button.dart' as _birka_button;
 import 'package:design_jaspr/src/birka_chip.dart' as _birka_chip;
+import 'package:design_jaspr/src/birka_chip_field.dart' as _birka_chip_field;
 import 'package:design_jaspr/src/birka_choice.dart' as _birka_choice;
 import 'package:design_jaspr/src/birka_column.dart' as _birka_column;
+import 'package:design_jaspr/src/birka_date_chip.dart' as _birka_date_chip;
 import 'package:design_jaspr/src/birka_form.dart' as _birka_form;
 import 'package:design_jaspr/src/birka_head.dart' as _birka_head;
 import 'package:design_jaspr/src/birka_icon.dart' as _birka_icon;
@@ -37,13 +40,24 @@ import 'package:design_jaspr/src/birka_switch.dart' as _birka_switch;
 import 'package:design_jaspr/src/birka_text_field.dart' as _birka_text_field;
 import 'package:design_jaspr/src/card_art.dart' as _card_art;
 import 'package:design_jaspr/src/glass_icon_button.dart' as _glass_icon_button;
+import 'package:design_jaspr/src/glass_keypad.dart' as _glass_keypad;
 import 'package:design_jaspr/src/glass_list.dart' as _glass_list;
 import 'package:design_jaspr/src/glass_notice.dart' as _glass_notice;
 import 'package:design_jaspr/src/glass_page_header.dart' as _glass_page_header;
+import 'package:design_jaspr/src/glass_search_field.dart'
+    as _glass_search_field;
 import 'package:design_jaspr/src/glass_segmented.dart' as _glass_segmented;
 import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
+import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart'
+    as _quick_add_tile;
+import 'package:transactions_jaspr/src/presentation/pages/operation_page.dart'
+    as _operation_page;
+import 'package:transactions_jaspr/src/presentation/pages/operations_page.dart'
+    as _operations_page;
+import 'package:transactions_jaspr/src/presentation/pages/quick_add_page.dart'
+    as _quick_add_page;
 
 /// Default [ServerOptions] for use with your Jaspr project.
 ///
@@ -70,6 +84,8 @@ ServerOptions get defaultServerOptions => ServerOptions(
         ClientTarget<_accounts_island.AccountsIsland>('accounts_island'),
     _categories_island.CategoriesIsland:
         ClientTarget<_categories_island.CategoriesIsland>('categories_island'),
+    _operations_island.OperationsIsland:
+        ClientTarget<_operations_island.OperationsIsland>('operations_island'),
   },
   styles: () => [
     ..._account_hero_card.AccountHeroCard.styles,
@@ -85,8 +101,10 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._amount_text.AmountText.styles,
     ..._birka_button.BirkaButton.styles,
     ..._birka_chip.BirkaChip.styles,
+    ..._birka_chip_field.BirkaChipField.styles,
     ..._birka_choice.BirkaChoice.styles,
     ..._birka_column.BirkaColumn.styles,
+    ..._birka_date_chip.BirkaDateChip.styles,
     ..._birka_form.BirkaForm.styles,
     ..._birka_head.birkaBaseStyles,
     ..._birka_icon.BirkaIcon.styles,
@@ -96,13 +114,20 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._card_art.CardArtSurface.styles,
     ..._card_art.CardArtThumbnail.styles,
     ..._glass_icon_button.GlassIconButton.styles,
+    ..._glass_keypad.GlassKeypad.styles,
     ..._glass_list.GlassListGroup.styles,
     ..._glass_list.GlassListRow.styles,
     ..._glass_notice.GlassNotice.styles,
     ..._glass_page_header.GlassPageHeader.styles,
+    ..._glass_search_field.GlassSearchField.styles,
     ..._glass_segmented.GlassSegmented.styles,
     ..._glass_surface.GlassSurface.styles,
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
+    ..._quick_add_tile.QuickAddTile.styles,
+    ..._quick_add_tile.QuickAddTiles.styles,
+    ..._operation_page.OperationPage.styles,
+    ..._operations_page.OperationsPage.styles,
+    ..._quick_add_page.QuickAddPage.styles,
   ],
 );

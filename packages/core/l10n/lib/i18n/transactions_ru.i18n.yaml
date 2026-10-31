@@ -32,7 +32,7 @@ filterIncome: Доходы
 filterTransfers: Переводы
 pickMonth: Выбрать месяц
 noOperationsTitle: Пока нет операций
-noOperationsHint: Нажмите плюс внизу, чтобы записать первую.
+noOperationsHint: Нажмите плюс, чтобы записать первую.
 nothingFound: Ничего не нашлось
 failedToReadOperations: Не удалось прочитать операции.
 failedToDelete: Не удалось удалить. Попробуйте ещё раз.

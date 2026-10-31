@@ -24,10 +24,16 @@ void Function() watchAddressFragment(void Function() listener) =>
     _unavailable();
 
 /// See `browser_web.dart`.
-void clearAddressFragment() => _unavailable();
+void replaceAddressFragment(String fragment) => _unavailable();
 
 /// See `browser_web.dart`.
 void goBackInHistory() => _unavailable();
 
 /// See `browser_web.dart`.
-void scrollToTop() => _unavailable();
+double get pageScroll => _unavailable();
+
+/// See `browser_web.dart`.
+void scrollPageTo(double top) => _unavailable();
+
+/// See `browser_web.dart`.
+void Function() watchTabShown(void Function() listener) => _unavailable();

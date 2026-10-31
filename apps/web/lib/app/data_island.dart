@@ -22,7 +22,13 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   _Stage _stage = _Stage.opening;
   var _persists = true;
   var _fragment = '';
-  var _cameFromList = false;
+
+  /// The fragment before this one, once the page has moved.
+  String? _previous;
+
+  /// How far down the list was when a form took its place.
+  var _listScroll = 0.0;
+
   void Function()? _stopWatching;
 
   /// The part of the address after `#`.
@@ -85,23 +91,35 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   }
 
   void _onFragmentChanged() {
+    if (_fragment.isEmpty) _listScroll = pageScroll;
     setState(() {
-      _cameFromList = _fragment.isEmpty;
+      _previous = _fragment;
       _fragment = addressFragment;
     });
-    scrollToTop();
+    _placePage();
   }
 
-  /// Back to the list: one step back if the list is there, and otherwise the
-  /// form leaves the history, so that the back button does not reopen it.
-  void closeForm() {
-    if (_cameFromList) {
+  /// A new view must not start half way down, and the list comes back to
+  /// where it was left.
+  void _placePage() {
+    final top = _fragment.isEmpty ? _listScroll : 0.0;
+    context.binding.addPostFrameCallback(() => scrollPageTo(top));
+  }
+
+  /// Back to [parent], which is the list by default: one step back if it is
+  /// there, and otherwise the form leaves the history, so that the back button
+  /// does not reopen it.
+  void closeForm([String parent = '']) {
+    if (_previous == parent) {
       goBackInHistory();
       return;
     }
-    clearAddressFragment();
-    setState(() => _fragment = '');
-    scrollToTop();
+    replaceAddressFragment(parent);
+    setState(() {
+      _previous = null;
+      _fragment = parent;
+    });
+    _placePage();
   }
 
   @override

@@ -518,8 +518,8 @@ class Translations$transactions$en {
   /// en: 'No operations yet'
   String get noOperationsTitle => 'No operations yet';
 
-  /// en: 'Tap the plus below to record the first one.'
-  String get noOperationsHint => 'Tap the plus below to record the first one.';
+  /// en: 'Tap the plus to record the first one.'
+  String get noOperationsHint => 'Tap the plus to record the first one.';
 
   /// en: 'Nothing found'
   String get nothingFound => 'Nothing found';
@@ -1005,7 +1005,7 @@ extension on Translations {
       'transactions.pickMonth' => 'Pick a month',
       'transactions.noOperationsTitle' => 'No operations yet',
       'transactions.noOperationsHint' =>
-        'Tap the plus below to record the first one.',
+        'Tap the plus to record the first one.',
       'transactions.nothingFound' => 'Nothing found',
       'transactions.failedToReadOperations' => 'Could not read the operations.',
       'transactions.failedToDelete' => 'Could not delete. Try again.',

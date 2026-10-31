@@ -133,11 +133,21 @@ void main() {
         findsOneComponent,
       );
     });
+
+    testComponents('has the color of a loss', (tester) async {
+      tester.pumpComponent(const BirkaButton(label: 'Delete', danger: true));
+
+      expect(
+        withClasses('text-label birka-button birka-button--danger'),
+        findsOneComponent,
+      );
+    });
   });
 
   group('BirkaForm', () {
     BirkaForm formWith({
       VoidCallback? onClose,
+      bool ready = true,
       bool submitting = false,
       String? failure,
       Component? leading,
@@ -147,6 +157,7 @@ void main() {
       onClose: onClose ?? () {},
       submitLabel: 'Save',
       onSubmit: () {},
+      ready: ready,
       submitting: submitting,
       failure: failure,
       leading: leading,
@@ -184,6 +195,16 @@ void main() {
 
     testComponents('turns the button off while it saves', (tester) async {
       tester.pumpComponent(formWith(submitting: true));
+
+      final save = find.ancestor(
+        of: find.text('Save'),
+        matching: find.tag('button'),
+      );
+      expect(attributesOf(save), contains('disabled'));
+    });
+
+    testComponents('turns the button off until it is ready', (tester) async {
+      tester.pumpComponent(formWith(ready: false));
 
       final save = find.ancestor(
         of: find.text('Save'),
@@ -249,7 +270,7 @@ void main() {
 
     testComponents('a heading makes the text quieter', (tester) async {
       tester.pumpComponent(
-        const GlassNotice(title: 'Empty', text: 'Add one.', actions: []),
+        const GlassNotice(title: 'Empty', text: 'Add one.'),
       );
 
       expect(find.text('Empty'), findsOneComponent);
@@ -257,6 +278,14 @@ void main() {
         withClasses('glass-notice__message glass-notice__message--quiet'),
         findsOneComponent,
       );
+    });
+
+    testComponents('leaves out the place for buttons without any', (
+      tester,
+    ) async {
+      tester.pumpComponent(const GlassNotice(text: 'Nothing found'));
+
+      expect(withClasses('glass-notice__actions'), findsNothing);
     });
   });
 
@@ -343,12 +372,43 @@ void main() {
 
     testComponents('cannot change without an action', (tester) async {
       tester.pumpComponent(
-        const BirkaChip(label: 'RUB', selected: false, onTap: null),
+        const BirkaChip(label: 'RUB', selected: false),
       );
 
       final attributes = attributesOf(find.tag('button'));
       expect(attributes, contains('disabled'));
       expect(attributes['aria-pressed'], 'false');
+    });
+
+    testComponents('is a link when it has an address', (tester) async {
+      tester.pumpComponent(
+        const BirkaChip(label: 'Edit', selected: false, href: 'edit'),
+      );
+
+      expect(attributesOf(find.tag('a'))['href'], 'edit');
+      expect(find.tag('button'), findsNothing);
+    });
+
+    testComponents('can stand behind a glyph and take less room', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const BirkaChip(
+          label: 'October',
+          selected: true,
+          glyph: BirkaGlyph.calendar,
+          compact: true,
+        ),
+      );
+
+      expect(find.byType(BirkaIcon), findsOneComponent);
+      expect(
+        withClasses(
+          'text-body-strong birka-chip birka-chip--selected '
+          'birka-chip--compact',
+        ),
+        findsOneComponent,
+      );
     });
   });
 
@@ -367,6 +427,220 @@ void main() {
     expect(attributes['role'], 'switch');
     expect(attributes['aria-checked'], 'true');
     expect(attributes['aria-label'], 'Count it');
+  });
+
+  testComponents('BirkaChipField says what it is for while it is empty', (
+    tester,
+  ) async {
+    final typed = <String>[];
+    tester.pumpComponent(
+      BirkaChipField(label: '+ Note', value: 'Lunch', onChanged: typed.add),
+    );
+
+    final field = fieldInput();
+    expect(field.value, 'Lunch');
+    expect(field.attributes?['aria-label'], '+ Note');
+    expect(field.attributes?['placeholder'], '+ Note');
+
+    field.onInput!('Dinner');
+    expect(typed, ['Dinner']);
+  });
+
+  group('BirkaDateChip', () {
+    BirkaDateChip chip({String? label}) => BirkaDateChip(
+      fieldLabel: 'Pick a day',
+      label: label,
+      value: '2026-10-15',
+      first: '2000-01-01',
+      last: '2026-10-31',
+      onChanged: (_) {},
+    );
+
+    testComponents('opens the calendar between its dates', (tester) async {
+      tester.pumpComponent(chip());
+
+      final field =
+          find.tag('input').evaluate().single.component as DomComponent;
+      expect(field.attributes, {
+        'type': 'date',
+        'value': '2026-10-15',
+        'aria-label': 'Pick a day',
+        'max': '2026-10-31',
+        'min': '2000-01-01',
+      });
+      expect(field.events, contains('change'));
+    });
+
+    testComponents('is an icon until it has something to say', (tester) async {
+      tester.pumpComponent(chip());
+
+      expect(
+        withClasses(
+          'text-body-strong birka-chip birka-date-chip birka-date-chip--icon',
+        ),
+        findsOneComponent,
+      );
+    });
+
+    testComponents('stands as picked with a label', (tester) async {
+      tester.pumpComponent(chip(label: '15 October'));
+
+      expect(find.text('15 October'), findsOneComponent);
+      expect(
+        withClasses(
+          'text-body-strong birka-chip birka-date-chip birka-chip--selected',
+        ),
+        findsOneComponent,
+      );
+    });
+  });
+
+  group('GlassKeypad', () {
+    late List<String> pressed;
+
+    GlassKeypad keypad() => GlassKeypad(
+      point: ',',
+      pointLabel: 'Comma',
+      backspaceLabel: 'Erase',
+      operatorLabels: const {
+        KeypadOperator.add: 'Plus',
+        KeypadOperator.subtract: 'Minus',
+        KeypadOperator.multiply: 'Times',
+        KeypadOperator.divide: 'Divided by',
+      },
+      onDigit: (digit) => pressed.add('$digit'),
+      onPoint: () => pressed.add('point'),
+      onOperator: (operator) => pressed.add(operator.name),
+      onBackspace: () => pressed.add('erase'),
+      onEnter: () => pressed.add('enter'),
+    );
+
+    /// Finds the key that screen readers call [label].
+    Finder key(String label) => find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.attributes?['aria-label'] == label,
+      description: 'key "$label"',
+    );
+
+    setUp(() => pressed = []);
+
+    testComponents('reports its keys', (tester) async {
+      tester.pumpComponent(keypad());
+
+      for (final label in ['7', 'Comma', 'Divided by', 'Plus', 'Erase']) {
+        await tester.click(key(label));
+      }
+
+      expect(pressed, ['7', 'point', 'divide', 'add', 'erase']);
+    });
+
+    testComponents('shows every digit and the mark of the language', (
+      tester,
+    ) async {
+      tester.pumpComponent(keypad());
+
+      for (var digit = 0; digit < 10; digit++) {
+        expect(find.text('$digit'), findsOneComponent);
+      }
+      expect(find.text(','), findsOneComponent);
+      expect(find.text('÷'), findsOneComponent);
+      expect(find.byType(BirkaIcon), findsOneComponent);
+    });
+
+    testComponents('leaves its keys out of the way of Tab', (tester) async {
+      tester.pumpComponent(keypad());
+
+      expect(attributesOf(key('7'))['tabindex'], '-1');
+    });
+
+    test('takes the keys of a real keyboard', () {
+      final real = keypad();
+
+      for (final name in [
+        '4', '0', '.', ',', '+', '-', '*', '/', 'Backspace', 'Enter', //
+      ]) {
+        expect(real.press(name), isTrue, reason: name);
+      }
+
+      expect(pressed, [
+        '4',
+        '0',
+        'point',
+        'point',
+        'add',
+        'subtract',
+        'multiply',
+        'divide',
+        'erase',
+        'enter',
+      ]);
+    });
+
+    test('leaves other keys alone', () {
+      final real = keypad();
+
+      for (final name in ['a', ' ', 'Tab', 'Escape', 'F1', 'ArrowLeft']) {
+        expect(real.press(name), isFalse, reason: name);
+      }
+
+      expect(pressed, isEmpty);
+    });
+  });
+
+  group('GlassSearchField', () {
+    testComponents('labels the input and passes on what it gets', (
+      tester,
+    ) async {
+      final typed = <String>[];
+      tester.pumpComponent(
+        GlassSearchField(
+          label: 'Search',
+          clearLabel: 'Clear',
+          hint: 'Cafe',
+          value: 'co',
+          onChanged: typed.add,
+        ),
+      );
+
+      final field = fieldInput();
+      expect(field.value, 'co');
+      expect(field.attributes?['aria-label'], 'Search');
+      expect(field.attributes?['placeholder'], 'Cafe');
+
+      field.onInput!('cof');
+      expect(typed, ['cof']);
+    });
+
+    testComponents('the cross clears it', (tester) async {
+      final typed = <String>[];
+      tester.pumpComponent(
+        GlassSearchField(
+          label: 'Search',
+          clearLabel: 'Clear',
+          value: 'coffee',
+          onChanged: typed.add,
+        ),
+      );
+
+      expect(attributesOf(find.tag('button'))['aria-label'], 'Clear');
+      await tester.click(find.tag('button'));
+
+      expect(typed, ['']);
+    });
+
+    testComponents('an empty field has no cross', (tester) async {
+      tester.pumpComponent(
+        GlassSearchField(
+          label: 'Search',
+          clearLabel: 'Clear',
+          value: '',
+          onChanged: (_) {},
+        ),
+      );
+
+      expect(find.tag('button'), findsNothing);
+    });
   });
 
   group('BirkaTextField', () {

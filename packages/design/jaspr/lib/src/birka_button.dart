@@ -11,6 +11,7 @@ class BirkaButton extends StatelessComponent {
     this.href,
     this.submits = false,
     this.quiet = false,
+    this.danger = false,
     super.key,
   });
 
@@ -30,10 +31,16 @@ class BirkaButton extends StatelessComponent {
   /// emerald.
   final bool quiet;
 
+  /// Whether the action cannot be taken back, in the color of a loss.
+  final bool danger;
+
   @override
   Component build(BuildContext context) {
-    final classes =
-        'text-label birka-button${quiet ? ' birka-button--quiet' : ''}';
+    final classes = [
+      'text-label birka-button',
+      if (quiet) 'birka-button--quiet',
+      if (danger) 'birka-button--danger',
+    ].join(' ');
     if (href case final href?) {
       return a(classes: classes, href: href, [.text(label)]);
     }
@@ -74,6 +81,13 @@ class BirkaButton extends StatelessComponent {
       raw: {
         'background': 'var(--color-surface-raised)',
         'color': 'var(--color-text)',
+      },
+    ),
+    css('.birka-button--danger').styles(
+      raw: {
+        'background':
+            'color-mix(in srgb, var(--color-negative) 16%, transparent)',
+        'color': 'var(--color-negative)',
       },
     ),
   ];
