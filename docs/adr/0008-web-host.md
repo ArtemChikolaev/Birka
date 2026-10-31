@@ -47,8 +47,10 @@
    island, which takes the language from the browser. The HTML of such a page
    is a frame with a placeholder.
 10. The navigation is plain links between those pages, and lives in the islands
-    for its words. Hidden amounts go from page to page in `sessionStorage`,
-    which ends with the tab, as memory ends with the app on a phone.
+    for its words. It has the tabs of the app: the accounts and the categories
+    open from More, whose island reads no data and opens no database. Hidden
+    amounts go from page to page in `sessionStorage`, which ends with the tab,
+    as memory ends with the app on a phone.
 
 ## Options considered
 

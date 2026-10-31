@@ -12,15 +12,15 @@ void main() {
       (element.component as DomComponent).attributes ?? const {},
   ];
 
-  testComponents('leads to every page and to a new operation', (tester) async {
+  testComponents('leads to every tab and to a new operation', (tester) async {
     tester.pumpComponent(const SiteNav(page: SitePage.overview));
 
     expect(links().map((attributes) => attributes['href']), [
       'overview/',
       'operations/',
       'operations/#new',
-      'accounts/',
-      'categories/',
+      'reports/',
+      'more/',
     ]);
   });
 
@@ -37,11 +37,11 @@ void main() {
 
   testComponents('speaks the language of the browser', (tester) async {
     LocaleSettings.setLocaleSync(AppLocale.ru);
-    tester.pumpComponent(const SiteNav(page: SitePage.accounts));
+    tester.pumpComponent(const SiteNav(page: SitePage.more));
 
     expect(find.text('Обзор'), findsOneComponent);
     expect(find.text('Операции'), findsOneComponent);
-    expect(find.text('Счета'), findsOneComponent);
-    expect(find.text('Категории'), findsOneComponent);
+    expect(find.text('Отчёты'), findsOneComponent);
+    expect(find.text('Ещё'), findsOneComponent);
   });
 }

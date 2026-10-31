@@ -127,7 +127,6 @@ class GlassNavBar extends StatelessComponent {
         'gap': '3px',
         'justify-content': 'center',
         'min-width': '0',
-        'overflow': 'hidden',
         'text-decoration': 'none',
         'transition': 'color var(--duration-fast)',
       },

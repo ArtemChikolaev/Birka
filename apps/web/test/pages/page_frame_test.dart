@@ -1,8 +1,10 @@
 import 'package:birka_web/pages/accounts_island.dart';
 import 'package:birka_web/pages/categories_island.dart';
+import 'package:birka_web/pages/more_island.dart';
 import 'package:birka_web/pages/operations_island.dart';
 import 'package:birka_web/pages/overview_island.dart';
 import 'package:birka_web/pages/page_frame.dart';
+import 'package:birka_web/pages/reports_island.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_test/jaspr_test.dart';
@@ -12,6 +14,8 @@ void main() {
   for (final (name, island) in const <(String, Component)>[
     ('overview', OverviewIsland()),
     ('operations', OperationsIsland()),
+    ('reports', ReportsIsland()),
+    ('more', MoreIsland()),
     ('accounts', AccountsIsland()),
     ('categories', CategoriesIsland()),
   ]) {

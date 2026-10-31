@@ -510,6 +510,99 @@ void main() {
     });
   });
 
+  group('BirkaBars', () {
+    List<String?> heights() => [
+      for (final element in withClasses('birka-bars__bar').evaluate())
+        (element.component as DomComponent).styles?.properties['height'],
+    ];
+
+    testComponents('measures every bar against the tallest', (tester) async {
+      tester.pumpComponent(
+        const BirkaBars(
+          bars: [
+            BirkaBar(value: 50, amount: '50', label: 'Sep'),
+            BirkaBar(value: 100, amount: '100', label: 'Oct'),
+          ],
+        ),
+      );
+
+      expect(heights(), ['36.0px', '72.0px']);
+      expect(find.text('Sep'), findsOneComponent);
+      expect(find.text('100'), findsOneComponent);
+    });
+
+    testComponents('a bar without a value keeps its place', (tester) async {
+      tester.pumpComponent(
+        const BirkaBars(
+          bars: [
+            BirkaBar(value: 0, amount: '0', label: 'Sep'),
+            BirkaBar(value: 0, amount: '0', label: 'Oct'),
+          ],
+        ),
+      );
+
+      expect(heights(), ['6.0px', '6.0px']);
+    });
+
+    testComponents('the bar that matters stands out', (tester) async {
+      tester.pumpComponent(
+        const BirkaBars(
+          bars: [
+            BirkaBar(value: 1, amount: '1', label: 'Sep'),
+            BirkaBar(value: 2, amount: '2', label: 'Oct', highlighted: true),
+          ],
+        ),
+      );
+
+      expect(
+        find.byComponentPredicate(
+          (component) =>
+              component is DomComponent &&
+              (component.classes ?? '').contains(
+                'birka-bars__item--highlighted',
+              ),
+        ),
+        findsOneComponent,
+      );
+      expect(
+        (find.text('2').evaluate().single.parent!.component as DomComponent)
+            .classes,
+        contains('amount--positive'),
+      );
+    });
+
+    testComponents('names every bar for screen readers', (tester) async {
+      tester.pumpComponent(
+        const BirkaBars(
+          bars: [BirkaBar(value: 1, amount: '37k', label: 'Oct')],
+        ),
+      );
+
+      final item = attributesOf(withClasses('birka-bars__item'));
+      expect(item['aria-label'], 'Oct: 37k');
+      expect(item['role'], 'img');
+    });
+
+    testComponents('hides its figures along with other amounts', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        HiddenAmounts(
+          hidden: true,
+          onToggle: () {},
+          child: const BirkaBars(
+            bars: [BirkaBar(value: 1, amount: '37k', label: 'Oct')],
+          ),
+        ),
+      );
+
+      expect(find.text('37k'), findsNothing);
+      expect(find.text('•••'), findsOneComponent);
+      final item = attributesOf(withClasses('birka-bars__item'));
+      expect(item['aria-label'], 'Oct: •••');
+    });
+  });
+
   group('BirkaRing', () {
     List<Map<String, String>> circles() => [
       for (final element in find.tag('circle').evaluate())

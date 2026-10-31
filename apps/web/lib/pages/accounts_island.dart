@@ -23,7 +23,7 @@ class _AccountsIslandState extends DataIslandState<AccountsIsland> {
   static const _newAccount = 'new';
 
   @override
-  SitePage get page => SitePage.accounts;
+  SitePage get page => SitePage.more;
 
   @override
   String get pageName => t.accounts.title;

@@ -11,6 +11,7 @@ void main() {
       ...AccountCard.styles,
       ...AmbientBackground.styles,
       ...AmountText.styles,
+      ...BirkaBars.styles,
       ...BirkaButton.styles,
       ...BirkaChip.styles,
       ...BirkaChipField.styles,

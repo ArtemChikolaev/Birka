@@ -12,10 +12,13 @@ import 'package:birka_web/pages/accounts_island.dart'
     deferred as _accounts_island;
 import 'package:birka_web/pages/categories_island.dart'
     deferred as _categories_island;
+import 'package:birka_web/pages/more_island.dart' deferred as _more_island;
 import 'package:birka_web/pages/operations_island.dart'
     deferred as _operations_island;
 import 'package:birka_web/pages/overview_island.dart'
     deferred as _overview_island;
+import 'package:birka_web/pages/reports_island.dart'
+    deferred as _reports_island;
 
 /// Default [ClientOptions] for use with your Jaspr project.
 ///
@@ -47,6 +50,10 @@ ClientOptions get defaultClientOptions => ClientOptions(
       (p) => _categories_island.CategoriesIsland(),
       loader: _categories_island.loadLibrary,
     ),
+    'more_island': ClientLoader(
+      (p) => _more_island.MoreIsland(),
+      loader: _more_island.loadLibrary,
+    ),
     'operations_island': ClientLoader(
       (p) => _operations_island.OperationsIsland(),
       loader: _operations_island.loadLibrary,
@@ -54,6 +61,10 @@ ClientOptions get defaultClientOptions => ClientOptions(
     'overview_island': ClientLoader(
       (p) => _overview_island.OverviewIsland(),
       loader: _overview_island.loadLibrary,
+    ),
+    'reports_island': ClientLoader(
+      (p) => _reports_island.ReportsIsland(),
+      loader: _reports_island.loadLibrary,
     ),
   },
 );
