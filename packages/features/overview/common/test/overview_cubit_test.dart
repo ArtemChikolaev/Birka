@@ -102,16 +102,16 @@ void main() {
   test('the change follows the period', () async {
     final overview = await open();
 
-    expect(overview.state.period, OverviewPeriod.month);
+    expect(overview.state.period, ChartPeriod.month);
     expect(overview.state.change, rub(3500));
     expect(overview.state.history, hasLength(32));
     expect(overview.state.history.last, 100000);
 
-    overview.periodChanged(OverviewPeriod.week);
+    overview.periodChanged(ChartPeriod.week);
     expect(overview.state.change, rub(-500));
     expect(overview.state.history, hasLength(8));
 
-    overview.periodChanged(OverviewPeriod.year);
+    overview.periodChanged(ChartPeriod.year);
     expect(overview.state.change, rub(4500));
     expect(overview.state.history, hasLength(366));
   });
@@ -208,7 +208,7 @@ void main() {
   test('stays ready through a later change of the period', () async {
     final overview = await open();
 
-    overview.periodChanged(OverviewPeriod.year);
+    overview.periodChanged(ChartPeriod.year);
 
     expect(overview.state.status, OverviewStatus.ready);
   });

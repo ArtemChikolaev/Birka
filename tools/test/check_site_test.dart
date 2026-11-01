@@ -1,3 +1,8 @@
+// The first Chrome of a cold machine can take half a minute to start, and then
+// each page has as long to finish.
+@Timeout(Duration(minutes: 3))
+library;
+
 import 'dart:io';
 
 import 'package:birka_tools/check_site.dart';

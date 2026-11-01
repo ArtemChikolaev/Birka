@@ -8,28 +8,9 @@ void main() {
 
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
 
-  test('a period has a name', () {
-    LocaleSettings.setLocaleSync(AppLocale.ru);
-    expect(periodLabel(OverviewPeriod.week), 'Неделя');
-    expect(periodLabel(OverviewPeriod.month), 'Месяц');
-    expect(periodLabel(OverviewPeriod.year), 'Год');
-  });
-
   test('the title is the month', () {
     LocaleSettings.setLocaleSync(AppLocale.ru);
     expect(monthTitle(today), 'Октябрь');
-  });
-
-  test('a change says what it covers', () {
-    LocaleSettings.setLocaleSync(AppLocale.ru);
-    expect(changeCaption(OverviewPeriod.week, today: today), 'за неделю');
-    expect(changeCaption(OverviewPeriod.month, today: today), 'за октябрь');
-    expect(changeCaption(OverviewPeriod.year, today: today), 'за год');
-  });
-
-  test('in English too', () {
-    expect(changeCaption(OverviewPeriod.week, today: today), 'this week');
-    expect(changeCaption(OverviewPeriod.month, today: today), 'in October');
   });
 
   test('the capital counts its currencies', () {

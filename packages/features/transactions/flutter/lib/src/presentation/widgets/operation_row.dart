@@ -12,6 +12,7 @@ class OperationRow extends StatelessWidget {
     required this.onOpen,
     required this.onRepeat,
     required this.onDelete,
+    this.accountId,
     super.key,
   });
 
@@ -27,11 +28,15 @@ class OperationRow extends StatelessWidget {
   /// Called by the button that deletes it.
   final VoidCallback onDelete;
 
+  /// The account that the amount is about, on the page of that account.
+  final String? accountId;
+
   /// The most room an amount takes, which it shrinks to fit.
   static const double _amountWidth = 170;
 
   @override
   Widget build(BuildContext context) {
+    final accountId = this.accountId;
     return GlassSwipeRow(
       actions: [
         if (operation.canChange)
@@ -54,8 +59,12 @@ class OperationRow extends StatelessWidget {
         trailing: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: _amountWidth),
           child: AmountText(
-            operationAmount(operation),
-            tone: operationTone(operation),
+            accountId == null
+                ? operationAmount(operation)
+                : operationAmountOn(operation, accountId),
+            tone: accountId == null
+                ? operationTone(operation)
+                : operationToneOn(operation, accountId),
           ),
         ),
         onTap: onOpen,
@@ -71,3 +80,10 @@ AmountTone operationTone(Operation operation) => switch (operation.kind) {
   _ when operation.amount.isPositive => AmountTone.positive,
   _ => AmountTone.neutral,
 };
+
+/// The color of the amount of [operation] on the page of account [accountId]:
+/// green for money that comes to it, a transfer included.
+AmountTone operationToneOn(Operation operation, String accountId) =>
+    operation.amountOn(accountId).isPositive
+    ? AmountTone.positive
+    : AmountTone.neutral;

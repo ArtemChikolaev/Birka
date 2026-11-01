@@ -33,6 +33,12 @@ final class FakeRepository implements TransactionsRepository {
   /// The months with operations.
   List<CivilDate> monthList = const [];
 
+  /// The accounts with what they hold.
+  List<AccountBalance> balances = const [];
+
+  /// What each day changed.
+  List<DayChange> dayChanges = const [];
+
   /// The error of the next write.
   Exception? failure;
 
@@ -93,6 +99,31 @@ final class FakeRepository implements TransactionsRepository {
     // Without a future to wait for, which a widget test could not finish.
     controller.onCancel = () => unawaited(changes.cancel());
   });
+
+  @override
+  Stream<AccountBalance?> watchAccount(String id) => _follow(
+    () => balances.where((row) => row.account.id == id).firstOrNull,
+  );
+
+  @override
+  Stream<List<DayChange>> watchAccountChanges(
+    String id, {
+    required CivilDate from,
+  }) => _follow(
+    () => [
+      for (final change in dayChanges)
+        if (change.day.compareTo(from) >= 0) change,
+    ],
+  );
+
+  @override
+  Stream<List<Operation>> watchAccountOperations(String id) => _follow(
+    () => [
+      for (final operation in operations)
+        if (operation.transaction.entries.any((it) => it.accountId == id))
+          operation,
+    ],
+  );
 
   @override
   Future<List<CivilDate>> months() async => monthList;

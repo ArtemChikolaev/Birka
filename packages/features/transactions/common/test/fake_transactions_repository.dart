@@ -48,6 +48,12 @@ final class FakeTransactionsRepository implements TransactionsRepository {
   /// The months with operations.
   List<CivilDate> monthList = const [];
 
+  /// The accounts with what they hold.
+  List<AccountBalance> balances = const [];
+
+  /// What each day changed.
+  List<DayChange> dayChanges = const [];
+
   List<Operation> _operations;
   final _changes = StreamController<void>.broadcast();
 
@@ -111,6 +117,34 @@ final class FakeTransactionsRepository implements TransactionsRepository {
     );
     controller.onCancel = changes.cancel;
   });
+
+  @override
+  Stream<AccountBalance?> watchAccount(String id) => _follow(
+    () => balances.where((row) => row.account.id == id).firstOrNull,
+  );
+
+  @override
+  Stream<List<DayChange>> watchAccountChanges(
+    String id, {
+    required CivilDate from,
+  }) => _follow(
+    () => [
+      for (final change in dayChanges)
+        if (change.day.compareTo(from) >= 0) change,
+    ],
+  );
+
+  @override
+  Stream<List<Operation>> watchAccountOperations(String id) => _follow(
+    () => [
+      for (final operation in operations)
+        if (operation.transaction.entries.any((it) => it.accountId == id))
+          operation,
+    ],
+  );
+
+  /// Tells those who follow that something changed.
+  void touch() => _changes.add(null);
 
   @override
   Future<List<CivilDate>> months() async {

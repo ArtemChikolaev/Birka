@@ -28,7 +28,7 @@ final class OverviewState {
   OverviewState({
     required this.status,
     required this.today,
-    this.period = OverviewPeriod.month,
+    this.period = ChartPeriod.month,
     this.accounts = const [],
     this.changes = const [],
     this.spendingRows = const [],
@@ -43,7 +43,7 @@ final class OverviewState {
   final CivilDate today;
 
   /// How far back the chart looks.
-  final OverviewPeriod period;
+  final ChartPeriod period;
 
   /// The accounts in everyday use with their balances.
   final List<AccountBalance> accounts;
@@ -111,7 +111,7 @@ final class OverviewState {
   OverviewState copyWith({
     OverviewStatus? status,
     CivilDate? today,
-    OverviewPeriod? period,
+    ChartPeriod? period,
     List<AccountBalance>? accounts,
     List<DayChange>? changes,
     List<CategoryDayTotal>? spendingRows,
@@ -154,8 +154,7 @@ class OverviewCubit extends Cubit<OverviewState> {
   static const _sources = 5;
 
   /// Sets how far back the chart looks.
-  void periodChanged(OverviewPeriod value) =>
-      emit(state.copyWith(period: value));
+  void periodChanged(ChartPeriod value) => emit(state.copyWith(period: value));
 
   /// Reads everything again after a failure.
   Future<void> retry() async {
@@ -185,7 +184,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         (accounts) => state.copyWith(accounts: accounts),
       ),
       _listen(
-        _repository.watchDayChanges(from: OverviewPeriod.earliest(today)),
+        _repository.watchDayChanges(from: ChartPeriod.earliest(today)),
         (changes) => state.copyWith(changes: changes),
       ),
       _listen(

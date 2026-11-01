@@ -10,6 +10,20 @@ void main() {
   Money eur(int minorUnits) => Money(minorUnits, Currency.eur);
   final card = testAccount('Карта');
   final euro = testAccount('Евро', currency: Currency.eur);
+
+  test('a transfer does something different to each of its accounts', () {
+    final transfer = testOperation(
+      'move',
+      amount: rub(-9000),
+      account: card,
+      toAccount: euro,
+      received: eur(100),
+      kind: TransactionKind.transfer,
+    );
+
+    expect(transfer.amountOn(card.id), rub(-9000));
+    expect(transfer.amountOn(euro.id), eur(100));
+  });
   final cafe = testCategory('Кафе');
 
   group('an operation', () {
@@ -205,6 +219,43 @@ void main() {
       ]);
 
       expect(day.total, [rub(750), eur(-5)]);
+    });
+
+    test('come to what they did to an account', () {
+      final day = OperationDay(today, [
+        testOperation('spent', amount: rub(-250), account: card),
+        testOperation('earned', amount: rub(1000), account: card),
+        testOperation(
+          'sent',
+          amount: rub(-3000),
+          account: card,
+          toAccount: euro,
+          received: eur(30),
+          kind: TransactionKind.transfer,
+        ),
+        testOperation(
+          'arrived',
+          amount: eur(-10),
+          account: euro,
+          toAccount: card,
+          received: rub(900),
+          kind: TransactionKind.transfer,
+        ),
+        testOperation(
+          'corrected',
+          amount: rub(50),
+          account: card,
+          kind: TransactionKind.adjustment,
+        ),
+        testOperation(
+          'planned',
+          amount: rub(-700),
+          account: card,
+          status: TransactionStatus.planned,
+        ),
+      ]);
+
+      expect(day.totalOn(card.id), [rub(-1300)]);
     });
   });
 

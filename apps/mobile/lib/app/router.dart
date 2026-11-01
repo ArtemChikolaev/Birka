@@ -53,8 +53,11 @@ abstract final class Paths {
   /// The form of a new account.
   static const newAccount = '/accounts/new';
 
-  /// The form of account [id].
+  /// The page of account [id].
   static String account(String id) => '/accounts/$id';
+
+  /// The form of account [id].
+  static String editAccount(String id) => '/accounts/$id/edit';
 
   /// The list of categories.
   static const categories = '/categories';
@@ -183,8 +186,28 @@ GoRouter buildRouter(
           GoRoute(
             path: ':id',
             parentNavigatorKey: rootKey,
-            pageBuilder: (context, state) =>
-                _formPage(getIt, state.pathParameters['id']),
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return BlocProvider(
+                create: (_) => getIt<AccountCubit>(param1: id),
+                child: AccountPage(
+                  onBack: () => context.pop(),
+                  onEdit: () => context.push(Paths.editAccount(id)),
+                  onOpen: (operation) =>
+                      context.push(Paths.operation(operation)),
+                  onRepeat: (operation) =>
+                      context.push(Paths.repeatOperation(operation)),
+                ),
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'edit',
+                parentNavigatorKey: rootKey,
+                pageBuilder: (context, state) =>
+                    _formPage(getIt, state.pathParameters['id']),
+              ),
+            ],
           ),
         ],
       ),

@@ -22,6 +22,18 @@ abstract interface class TransactionsRepository {
   /// Operation [id], and `null` while it does not exist.
   Stream<Operation?> watchOperation(String id);
 
+  /// Account [id] with what it holds, and `null` while it does not exist.
+  Stream<AccountBalance?> watchAccount(String id);
+
+  /// What each day since [from] changed account [id].
+  Stream<List<DayChange>> watchAccountChanges(
+    String id, {
+    required CivilDate from,
+  });
+
+  /// The latest operations of account [id], the latest first.
+  Stream<List<Operation>> watchAccountOperations(String id);
+
   /// The first days of the months with operations, the latest first.
   Future<List<CivilDate>> months();
 

@@ -11,37 +11,37 @@ void main() {
 
   group('a period', () {
     test('of a week starts seven days back', () {
-      expect(OverviewPeriod.week.startFrom(today), CivilDate(2026, 10, 24));
+      expect(ChartPeriod.week.startFrom(today), CivilDate(2026, 10, 24));
     });
 
     test('of a month starts from the end of the month before', () {
-      expect(OverviewPeriod.month.startFrom(today), CivilDate(2026, 9, 30));
+      expect(ChartPeriod.month.startFrom(today), CivilDate(2026, 9, 30));
       expect(
-        OverviewPeriod.month.startFrom(CivilDate(2027, 1, 1)),
+        ChartPeriod.month.startFrom(CivilDate(2027, 1, 1)),
         CivilDate(2026, 12, 31),
       );
     });
 
     test('of a year starts a year back', () {
-      expect(OverviewPeriod.year.startFrom(today), CivilDate(2025, 10, 31));
+      expect(ChartPeriod.year.startFrom(today), CivilDate(2025, 10, 31));
     });
 
     test('of a year survives a leap day', () {
       expect(
-        OverviewPeriod.year.startFrom(CivilDate(2028, 2, 29)),
+        ChartPeriod.year.startFrom(CivilDate(2028, 2, 29)),
         CivilDate(2027, 3, 1),
       );
     });
 
     test('of a week crosses a month', () {
       expect(
-        OverviewPeriod.week.startFrom(CivilDate(2026, 11, 3)),
+        ChartPeriod.week.startFrom(CivilDate(2026, 11, 3)),
         CivilDate(2026, 10, 27),
       );
     });
 
     test('never asks for more than a year', () {
-      expect(OverviewPeriod.earliest(today), CivilDate(2025, 10, 31));
+      expect(ChartPeriod.earliest(today), CivilDate(2025, 10, 31));
     });
   });
 

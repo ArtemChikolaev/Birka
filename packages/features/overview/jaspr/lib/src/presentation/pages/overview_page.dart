@@ -115,7 +115,9 @@ class OverviewPage extends StatelessComponent {
           div(classes: 'overview__change', [
             _changePill(change),
             span(classes: 'text-body overview__caption', [
-              .text(changeCaption(state.period, today: state.today)),
+              .text(
+                chartPeriodCaption(state.period.name, month: state.today.month),
+              ),
             ]),
           ]),
       ]),
@@ -124,9 +126,9 @@ class OverviewPage extends StatelessComponent {
         label: t.overview.chart,
       ),
       div(classes: 'overview__periods', [
-        for (final period in OverviewPeriod.values)
+        for (final period in ChartPeriod.values)
           BirkaChip(
-            label: periodLabel(period),
+            label: chartPeriodLabel(period.name),
             selected: period == state.period,
             compact: true,
             onTap: () => cubit.periodChanged(period),

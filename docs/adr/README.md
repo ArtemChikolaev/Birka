@@ -15,3 +15,4 @@
 | [0011](0011-settings.md) | Settings of a device live outside the database | accepted 2026-11-01 |
 | [0012](0012-exchange-rates.md) | Rates of the Bank of Russia, kept on the device | accepted 2026-11-01 |
 | [0013](0013-onboarding.md) | The onboarding of a new device | accepted 2026-11-01 |
+| [0014](0014-account-page.md) | The page of an account lives with the operations | accepted 2026-11-01 |

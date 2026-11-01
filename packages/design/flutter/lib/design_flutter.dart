@@ -12,6 +12,7 @@ export 'src/components/amount_text.dart';
 export 'src/components/birka_arrow_button.dart';
 export 'src/components/birka_bars.dart';
 export 'src/components/birka_button.dart';
+export 'src/components/birka_change_pill.dart';
 export 'src/components/birka_chip.dart';
 export 'src/components/birka_icon.dart';
 export 'src/components/birka_line_chart.dart';
