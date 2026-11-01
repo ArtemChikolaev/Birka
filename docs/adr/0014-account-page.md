@@ -30,7 +30,8 @@
 5. The list shows the latest 200 operations of the account. Older ones stay in
    the operations of their month.
 6. On this page a transfer has a sign, what it did to this account, instead of
-   the quiet amount of the list of operations.
+   the quiet amount of the list of operations. The heading of a day adds up the
+   same amounts, corrections included, so it agrees with its rows and the chart.
 
 ## Options considered
 

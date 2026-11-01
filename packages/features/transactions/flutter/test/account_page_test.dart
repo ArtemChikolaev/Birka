@@ -168,8 +168,22 @@ void main() {
     useTallPhone(tester);
     await pump(tester);
 
-    expect(find.text('+₽5,000'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(OperationRow),
+        matching: find.text('+₽5,000'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Cash → Card'), findsOneWidget);
+  });
+
+  testWidgets('a day comes to what it did to the account', (tester) async {
+    useTallPhone(tester);
+    await pump(tester);
+
+    // The row of the transfer and the heading of its day.
+    expect(find.text('+₽5,000'), findsNWidgets(2));
   });
 
   testWidgets('leads back, to the form and to an operation', (tester) async {

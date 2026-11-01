@@ -38,6 +38,7 @@ class OperationDayGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
+    final accountId = this.accountId;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -56,7 +57,9 @@ class OperationDayGroup extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: AmountText(
-                    amountsLabel(day.total),
+                    amountsLabel(
+                      accountId == null ? day.total : day.totalOn(accountId),
+                    ),
                     tone: AmountTone.muted,
                     style: BirkaTextStyles.of(context).caption,
                   ),

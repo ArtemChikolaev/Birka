@@ -107,6 +107,48 @@ void main() {
       expect(operations.first.amountOn(card.id), rub(300));
       expect(operations.last.account?.name, 'Card');
     });
+
+    test('comes to the same on a day as its chart', () async {
+      final card = await account('Card');
+      final cash = await account('Cash');
+      final food = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Food',
+      );
+      await ledger.record(expense(card, food));
+      await ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: food.id, amount: rub(700))],
+          occurredOn: today,
+          status: TransactionStatus.planned,
+        ),
+      );
+      await ledger.record(
+        TransactionDraft.transfer(
+          fromAccountId: cash.id,
+          toAccountId: card.id,
+          sent: rub(300),
+          received: rub(300),
+          occurredOn: today,
+        ),
+      );
+      await ledger.record(
+        TransactionDraft.adjustment(
+          accountId: card.id,
+          change: rub(50),
+          occurredOn: today,
+        ),
+      );
+
+      final changes = await repository
+          .watchAccountChanges(card.id, from: today)
+          .first;
+      final operations = await repository.watchAccountOperations(card.id).first;
+
+      expect(changes.single.change, rub(250));
+      expect(groupByDay(operations).single.totalOn(card.id), [rub(250)]);
+    });
   });
 
   test('the frequent categories come first', () async {

@@ -68,11 +68,14 @@ final class Operation {
   Money? get received =>
       kind == TransactionKind.transfer ? transaction.entries.last.amount : null;
 
+  /// Whether it has happened, which moves a balance. A planned one has not.
+  bool get happened => transaction.status != TransactionStatus.planned;
+
   /// Whether it counts as money spent or earned. A transfer only moves money,
   /// a correction fixes a balance, and a planned operation has not happened.
   bool get counts =>
       (kind == TransactionKind.expense || kind == TransactionKind.income) &&
-      transaction.status != TransactionStatus.planned;
+      happened;
 
   /// Whether quick add can show all of it, which is one category at most and
   /// not a correction.
@@ -124,6 +127,15 @@ final class OperationDay {
   /// What the day comes to, one amount for each currency.
   List<Money> get total => sumByCurrency(
     operations.where((operation) => operation.counts).map((it) => it.amount),
+  );
+
+  /// What the day did to account [accountId], which all its operations touch.
+  /// Unlike [total] it takes in transfers and corrections, since they move the
+  /// balance too.
+  List<Money> totalOn(String accountId) => sumByCurrency(
+    operations
+        .where((operation) => operation.happened)
+        .map((it) => it.amountOn(accountId)),
   );
 }
 
