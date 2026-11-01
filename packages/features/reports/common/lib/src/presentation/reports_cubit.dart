@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 import 'package:reports_common/src/domain/report.dart';
 import 'package:reports_common/src/domain/reports_repository.dart';
 
@@ -29,9 +30,9 @@ final class ReportsState {
     required this.month,
     this.kind = CategoryKind.expense,
     this.preferred,
-    this.rows = const [],
-    this.previousRows = const [],
-    this.monthTotals = const [],
+    this.base,
+    this.rates = const RateBook.empty(),
+    this.days = const [],
   });
 
   /// Where the reports stand.
@@ -49,36 +50,71 @@ final class ReportsState {
   /// The currency of the first account that counts.
   final Currency? preferred;
 
-  /// What went through each category of [month].
-  final List<CategoryTotal> rows;
+  /// The currency picked for totals, if one was.
+  final Currency? base;
 
-  /// What went through each category of the month before, up to the same day
-  /// when [month] is still under way.
-  final List<CategoryTotal> previousRows;
+  /// The kept exchange rates.
+  final RateBook rates;
 
-  /// What went through the last months.
-  final List<MonthTotal> monthTotals;
+  /// What went through each category on each day of the last months.
+  final List<CategoryDayTotal> days;
 
-  /// The report of [month].
+  /// The currency that the report follows.
+  Currency? get _target => base ?? preferred;
+
+  /// The report of [month], with each amount at the rate of its own day
+  /// (ADR 0009).
   late final Report report = Report.of(
     month: month,
-    rows: rows,
-    previousRows: previousRows,
-    monthTotals: monthTotals,
-    preferred: preferred,
+    rows: totalsIn(_target, _daysFrom(month, lastDayOf(month)), rates),
+    previousRows: totalsIn(
+      _target,
+      _daysFrom(monthsBefore(month, 1), _endOfComparison),
+      rates,
+    ),
+    monthTotals: monthTotalsIn(_target, days, rates),
+    preferred: _target,
   );
 
-  /// A copy with the given fields changed. [preferred] takes a function, so it
-  /// can also become `null`.
+  /// Whether a rate stands behind any amount of [month].
+  bool get converted {
+    final target = _target;
+    return target != null &&
+        _daysFrom(month, lastDayOf(month)).any(
+          (row) =>
+              row.total.currency != target &&
+              rates.canConvert(row.total.currency, target),
+        );
+  }
+
+  List<CategoryDayTotal> _daysFrom(CivilDate from, CivilDate to) => [
+    for (final row in days)
+      if (row.day.compareTo(from) >= 0 && row.day.compareTo(to) <= 0) row,
+  ];
+
+  /// The last day of the month before [month] to compare with. A month still
+  /// under way takes as many days as it has had, or else it would always start
+  /// far below the whole month before it.
+  CivilDate get _endOfComparison {
+    final before = monthsBefore(month, 1);
+    final last = lastDayOf(before);
+    final underWay = month == CivilDate(today.year, today.month, 1);
+    return underWay && today.day < last.day
+        ? CivilDate(before.year, before.month, today.day)
+        : last;
+  }
+
+  /// A copy with the given fields changed. [preferred] and [base] take a
+  /// function, so they can also become `null`.
   ReportsState copyWith({
     ReportsStatus? status,
     CivilDate? today,
     CivilDate? month,
     CategoryKind? kind,
     Currency? Function()? preferred,
-    List<CategoryTotal>? rows,
-    List<CategoryTotal>? previousRows,
-    List<MonthTotal>? monthTotals,
+    Currency? Function()? base,
+    RateBook? rates,
+    List<CategoryDayTotal>? days,
   }) {
     return ReportsState(
       status: status ?? this.status,
@@ -86,9 +122,9 @@ final class ReportsState {
       month: month ?? this.month,
       kind: kind ?? this.kind,
       preferred: preferred == null ? this.preferred : preferred(),
-      rows: rows ?? this.rows,
-      previousRows: previousRows ?? this.previousRows,
-      monthTotals: monthTotals ?? this.monthTotals,
+      base: base == null ? this.base : base(),
+      rates: rates ?? this.rates,
+      days: days ?? this.days,
     );
   }
 }
@@ -168,9 +204,7 @@ class ReportsCubit extends Cubit<ReportsState> {
         today: today,
         month: month,
         kind: kind,
-        rows: const [],
-        previousRows: const [],
-        monthTotals: const [],
+        days: const [],
       ),
     );
     _follow();
@@ -178,7 +212,7 @@ class ReportsCubit extends Cubit<ReportsState> {
   }
 
   void _follow() {
-    final ReportsState(:kind, :month, :today) = state;
+    final ReportsState(:kind, :month) = state;
     _arrived.clear();
     _subscriptions = [
       _listen(
@@ -186,41 +220,22 @@ class ReportsCubit extends Cubit<ReportsState> {
         (currency) => state.copyWith(preferred: () => currency),
       ),
       _listen(
-        _repository.watchTotals(kind, from: month, to: lastDayOf(month)),
-        (rows) => state.copyWith(rows: rows),
+        _repository.watchBaseCurrency(),
+        (base) => state.copyWith(base: () => base),
       ),
       _listen(
-        _repository.watchTotals(
-          kind,
-          from: monthsBefore(month, 1),
-          to: _endOfComparison(month, today: today),
-        ),
-        (rows) => state.copyWith(previousRows: rows),
+        _repository.watchRates(),
+        (rates) => state.copyWith(rates: rates),
       ),
       _listen(
-        _repository.watchMonthTotals(
+        _repository.watchDays(
           kind,
           from: monthsBefore(month, Report.monthCount - 1),
           to: lastDayOf(month),
         ),
-        (totals) => state.copyWith(monthTotals: totals),
+        (days) => state.copyWith(days: days),
       ),
     ];
-  }
-
-  /// The last day of the month before [month] to compare with. A month still
-  /// under way takes as many days as it has had, or else it would always start
-  /// far below the whole month before it.
-  static CivilDate _endOfComparison(
-    CivilDate month, {
-    required CivilDate today,
-  }) {
-    final before = monthsBefore(month, 1);
-    final last = lastDayOf(before);
-    final underWay = month == _monthOf(today);
-    return underWay && today.day < last.day
-        ? CivilDate(before.year, before.month, today.day)
-        : last;
   }
 
   /// Follows [source]. The reports are ready once every source has spoken, so

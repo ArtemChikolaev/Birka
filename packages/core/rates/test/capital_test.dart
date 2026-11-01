@@ -83,7 +83,7 @@ void main() {
       base: Currency.eur,
     );
 
-    expect(capital.main, eur(155556));
+    expect(capital.main, eur(155600));
   });
 
   test('keeps apart what no rate can reach', () {
@@ -93,7 +93,7 @@ void main() {
       balance('Dollars', usd(1)),
     ], rates: rates);
 
-    expect(capital.main, rub(180));
+    expect(capital.main, rub(200));
     expect(capital.others, [eur(5)]);
     expect(capital.currencies, 3);
   });
@@ -149,5 +149,25 @@ void main() {
     ], rates: rates);
 
     expect(capital.main, most);
+  });
+
+  test('a total that took a rate is whole', () {
+    final capital = Capital.of([
+      balance('Card', rub(10050)),
+      balance('Dollars', usd(1234)),
+    ], rates: rates);
+
+    expect(capital.main, rub(108800));
+    expect(capital.converted, isTrue);
+  });
+
+  test('a total in one currency keeps its kopecks', () {
+    final capital = Capital.of([
+      balance('Card', rub(10050)),
+      balance('Cash', rub(5)),
+    ], rates: rates);
+
+    expect(capital.main, rub(10055));
+    expect(capital.converted, isFalse);
   });
 }

@@ -5,6 +5,7 @@ average: average $amount
 noExpenses: Nothing spent this month.
 noIncome: Nothing earned this month.
 ring: Shares of the categories
+dayRates: Bank of Russia rate on the day of each operation
 failed: Could not read the report.
 against:
   - vs January

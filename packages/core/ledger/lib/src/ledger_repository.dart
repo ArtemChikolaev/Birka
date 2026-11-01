@@ -517,9 +517,9 @@ final class LedgerRepository {
   }
 
   /// What went through the categories of [kind] from [from] to [to], with both
-  /// ends included: one row for each category and currency, the biggest of each
-  /// currency first. A subcategory counts towards its parent.
-  Stream<List<CategoryTotal>> watchCategoryTotals(
+  /// ends included: one row for each category, day and currency, the earliest
+  /// first. A subcategory counts towards its parent.
+  Stream<List<CategoryDayTotal>> watchCategoryDays(
     CategoryKind kind, {
     required CivilDate from,
     required CivilDate to,
@@ -527,7 +527,7 @@ final class LedgerRepository {
     return _db
         .customSelect(
           '''
-          SELECT top.*, a.currency, a.decimal_digits,
+          SELECT top.*, t.occurred_on AS day, a.currency, a.decimal_digits,
             SUM(al.amount_minor) AS total
           FROM allocations al
           JOIN transactions t ON t.id = al.transaction_id
@@ -540,8 +540,8 @@ final class LedgerRepository {
             AND t.status <> ?
             AND t.occurred_on BETWEEN ? AND ?
             AND top.kind = ?
-          GROUP BY top.id, a.currency, a.decimal_digits
-          ORDER BY a.currency, total DESC, top.sort_order
+          GROUP BY top.id, t.occurred_on, a.currency, a.decimal_digits
+          ORDER BY t.occurred_on, a.currency, top.sort_order
           ''',
           variables: [
             Variable.withString(TransactionStatus.planned.name),
@@ -561,8 +561,9 @@ final class LedgerRepository {
         .asyncMap(
           (rows) => Future.wait(
             rows.map(
-              (row) async => CategoryTotal(
+              (row) async => CategoryDayTotal(
                 _categoryOf(await _db.categories.mapFromRow(row)),
+                CivilDate.parse(row.read<String>('day')),
                 _sum(
                   row.read('total'),
                   row.read('currency'),
@@ -574,60 +575,36 @@ final class LedgerRepository {
         );
   }
 
-  /// What went through the categories of [kind] in each month from the one of
-  /// [from] to the one of [to], the earliest first: one row for each month and
-  /// currency, and none for a month with nothing in it.
-  Stream<List<MonthTotal>> watchMonthTotals(
-    CategoryKind kind, {
-    required CivilDate from,
-    required CivilDate to,
-  }) {
-    return _db
+  /// The days of expenses and income on accounts in a currency other than
+  /// [currency], the latest first: what a report in [currency] needs rates for.
+  Future<List<CivilDate>> daysOutside(Currency currency) async {
+    final rows = await _db
         .customSelect(
           '''
-          SELECT substr(t.occurred_on, 1, 7) AS month, a.currency,
-            a.decimal_digits, SUM(al.amount_minor) AS total
+          SELECT DISTINCT t.occurred_on AS day
           FROM allocations al
           JOIN transactions t ON t.id = al.transaction_id
           JOIN entries e ON e.transaction_id = t.id AND e.deleted_at IS NULL
           JOIN accounts a ON a.id = e.account_id
-          JOIN categories c ON c.id = al.category_id
           WHERE al.deleted_at IS NULL
             AND t.deleted_at IS NULL
             AND t.status <> ?
-            AND t.occurred_on BETWEEN ? AND ?
-            AND c.kind = ?
-          GROUP BY month, a.currency, a.decimal_digits
-          ORDER BY month, a.currency
+            AND a.currency <> ?
+          ORDER BY day DESC
           ''',
           variables: [
             Variable.withString(TransactionStatus.planned.name),
-            Variable.withString(from.toString()),
-            Variable.withString(to.toString()),
-            Variable.withString(kind.name),
+            Variable.withString(currency.code),
           ],
           readsFrom: {
             _db.allocations,
             _db.transactions,
             _db.entries,
             _db.accounts,
-            _db.categories,
           },
         )
-        .watch()
-        .map(
-          (rows) => [
-            for (final row in rows)
-              MonthTotal(
-                CivilDate.parse('${row.read<String>('month')}-01'),
-                _sum(
-                  row.read('total'),
-                  row.read('currency'),
-                  row.read('decimal_digits'),
-                ),
-              ),
-          ],
-        );
+        .get();
+    return [for (final row in rows) CivilDate.parse(row.read<String>('day'))];
   }
 
   /// A sum from SQL as money. It can pass the limit of an amount, where it

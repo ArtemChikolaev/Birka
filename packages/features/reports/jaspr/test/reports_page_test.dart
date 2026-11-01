@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -9,8 +10,9 @@ import 'package:reports_jaspr/reports_jaspr.dart';
 
 final class _FakeRepository implements ReportsRepository {
   Currency? main = Currency.rub;
+  Currency? base;
+  RateBook rates = const RateBook.empty();
   final rows = <(CategoryKind, CivilDate), List<CategoryTotal>>{};
-  final totals = <CategoryKind, List<MonthTotal>>{};
   List<CivilDate> monthList = const [];
   Exception? readFailure;
 
@@ -26,18 +28,22 @@ final class _FakeRepository implements ReportsRepository {
   Stream<Currency?> watchMainCurrency() => _read(main);
 
   @override
-  Stream<List<CategoryTotal>> watchTotals(
-    CategoryKind kind, {
-    required CivilDate from,
-    required CivilDate to,
-  }) => _read(rows[(kind, from)] ?? const []);
+  Stream<Currency?> watchBaseCurrency() => _read(base);
 
   @override
-  Stream<List<MonthTotal>> watchMonthTotals(
+  Stream<RateBook> watchRates() => _read(rates);
+
+  @override
+  Stream<List<CategoryDayTotal>> watchDays(
     CategoryKind kind, {
     required CivilDate from,
     required CivilDate to,
-  }) => _read(totals[kind] ?? const []);
+  }) => _read([
+    for (final MapEntry(key: (rowKind, month), value: totals) in rows.entries)
+      if (rowKind == kind)
+        for (final CategoryTotal(:category, :total) in totals)
+          CategoryDayTotal(category, month, total),
+  ]);
 
   @override
   Future<List<CivilDate>> months() async => monthList;
@@ -152,10 +158,6 @@ void main() {
     ];
     repository.rows[(CategoryKind.income, september)] = [
       _total('Зарплата', rub(20000000), kind: CategoryKind.income),
-    ];
-    repository.totals[CategoryKind.expense] = [
-      MonthTotal(september, rub(3483150)),
-      MonthTotal(october, rub(3715000)),
     ];
     repository.monthList = [october, september];
     setIsClientForTesting(true);
@@ -296,15 +298,39 @@ void main() {
   });
 
   testComponents('without any operations there are no bars', (tester) async {
-    repository
-      ..rows.clear()
-      ..totals.clear();
+    repository.rows.clear();
     await pump(tester);
 
     await tap(tester, 'Доходы');
 
     expect(find.text('В этом месяце доходов нет.'), findsOneComponent);
     expect(find.byType(BirkaBars), findsNothing);
+  });
+
+  testComponents('says that the amounts took the rate of their day', (
+    tester,
+  ) async {
+    repository
+      ..rates = RateBook([
+        DayRates(october, {'EUR': Decimal.fromInt(100)}),
+      ])
+      ..rows[(CategoryKind.expense, october)] = [
+        _total('Продукты', rub(100000)),
+        _total('Кафе', Money(1000, Currency.eur)),
+      ];
+    await pump(tester);
+
+    expect(find.text('2${space}000$space₽'), findsOneComponent);
+    expect(find.text('Курс ЦБ РФ на день операции'), findsOneComponent);
+  });
+
+  testComponents('a report in one currency speaks of no rate', (tester) async {
+    repository.rates = RateBook([
+      DayRates(october, {'EUR': Decimal.fromInt(100)}),
+    ]);
+    await pump(tester);
+
+    expect(find.text('Курс ЦБ РФ на день операции'), findsNothing);
   });
 
   testComponents('other currencies stand apart', (tester) async {

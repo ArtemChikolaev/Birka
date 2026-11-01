@@ -88,13 +88,19 @@ final class FakeOverviewRepository implements OverviewRepository {
   }
 
   @override
-  Stream<List<CategoryTotal>> watchSpending({
+  Stream<List<CategoryDayTotal>> watchSpending({
     required CivilDate from,
     required CivilDate to,
   }) {
     spendingFrom.add(from);
     spendingTo = to;
-    return _follow(_others, () => spending);
+    return _follow(
+      _others,
+      () => [
+        for (final CategoryTotal(:category, :total) in spending)
+          CategoryDayTotal(category, from, total),
+      ],
+    );
   }
 }
 

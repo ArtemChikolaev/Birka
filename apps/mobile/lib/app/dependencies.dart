@@ -21,13 +21,17 @@ String deviceLanguage() => PlatformDispatcher.instance.locale.languageCode;
 /// [settings] are already open, because the language comes first.
 void registerDependencies(GetIt getIt, SettingsStore settings) {
   final database = BirkaDatabase(driftDatabase(name: 'birka'));
+  final ledger = LedgerRepository(database);
   final rates = RatesRepository(database);
+  final baseCurrency = BaseCurrency(Settings.readFrom(settings).baseCurrency);
   getIt
     ..registerSingleton(database)
-    ..registerSingleton(LedgerRepository(database))
+    ..registerSingleton(ledger)
     ..registerSingleton(rates)
-    ..registerSingleton(BaseCurrency(Settings.readFrom(settings).baseCurrency))
-    ..registerSingleton(RatesUpdater(rates, CbrMirror(http.Client())));
+    ..registerSingleton(baseCurrency)
+    ..registerSingleton(
+      RatesUpdater(rates, CbrMirror(http.Client()), ledger, baseCurrency),
+    );
   registerAccounts(getIt);
   registerCategories(getIt);
   registerOverview(getIt);

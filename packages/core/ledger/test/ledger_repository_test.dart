@@ -514,7 +514,7 @@ void main() {
     });
   });
 
-  group('category totals', () {
+  group('category days', () {
     final october = CivilDate(2026, 10, 1);
     final end = CivilDate(2026, 10, 31);
 
@@ -525,11 +525,11 @@ void main() {
           occurredOn: day ?? today,
         );
 
-    Future<List<CategoryTotal>> totals() => ledger
-        .watchCategoryTotals(CategoryKind.expense, from: october, to: end)
+    Future<List<CategoryDayTotal>> days() => ledger
+        .watchCategoryDays(CategoryKind.expense, from: october, to: end)
         .first;
 
-    test('add up a category, the biggest first', () async {
+    test('add up a category within a day', () async {
       final food = await ledger.addCategory(
         kind: CategoryKind.expense,
         name: 'Food',
@@ -538,24 +538,27 @@ void main() {
       await ledger.record(spent(cafe, rub(100)));
       await ledger.record(spent(food, rub(500)));
 
-      final rows = await totals();
+      final rows = await days();
 
-      expect(rows.map((row) => row.category.name), ['Food', 'Cafe']);
-      expect(rows.map((row) => row.total), [rub(500), rub(200)]);
+      expect(rows.map((row) => row.category.name), ['Cafe', 'Food']);
+      expect(rows.map((row) => row.total), [rub(200), rub(500)]);
     });
 
-    test('keep currencies apart, and never rank one against another', () async {
+    test('keep the days apart, the earliest first', () async {
+      await ledger.record(spent(cafe, rub(2), day: end));
+      await ledger.record(spent(cafe, rub(1), day: october));
+
+      final rows = await days();
+
+      expect(rows.map((row) => row.day), [october, end]);
+      expect(rows.map((row) => row.total), [rub(1), rub(2)]);
+    });
+
+    test('keep currencies apart', () async {
       await ledger.record(spent(cafe, rub(100)));
       await ledger.record(spent(cafe, eur(5000)));
 
-      expect((await totals()).map((row) => row.total), [eur(5000), rub(100)]);
-
-      await ledger.record(spent(cafe, rub(900000)));
-
-      expect((await totals()).map((row) => row.total), [
-        eur(5000),
-        rub(900100),
-      ]);
+      expect((await days()).map((row) => row.total), [eur(5000), rub(100)]);
     });
 
     test('count a subcategory towards its parent', () async {
@@ -567,7 +570,7 @@ void main() {
       await ledger.record(spent(latte, rub(100)));
       await ledger.record(spent(cafe, rub(50)));
 
-      final row = (await totals()).single;
+      final row = (await days()).single;
 
       expect(row.category.name, 'Cafe');
       expect(row.total, rub(150));
@@ -579,7 +582,7 @@ void main() {
       await ledger.record(spent(cafe, rub(4), day: end));
       await ledger.record(spent(cafe, rub(8), day: CivilDate(2026, 11, 1)));
 
-      expect((await totals()).single.total, rub(6));
+      expect((await days()).map((row) => row.total), [rub(2), rub(4)]);
     });
 
     test('leave out another kind, a planned and a deleted one', () async {
@@ -594,27 +597,27 @@ void main() {
       final gone = await ledger.record(coffee(rub(8)));
       await ledger.delete(gone);
 
-      expect(await totals(), isEmpty);
+      expect(await days(), isEmpty);
     });
 
     test('see money through an amendment once', () async {
       final id = await ledger.record(spent(cafe, rub(100)));
       await ledger.amend(id, spent(cafe, rub(70)));
 
-      expect((await totals()).single.total, rub(70));
+      expect((await days()).single.total, rub(70));
     });
 
     test('keep an archived category', () async {
       await ledger.record(spent(cafe, rub(100)));
       await ledger.updateCategory(cafe.id, archived: true);
 
-      expect((await totals()).single.category.name, 'Cafe');
+      expect((await days()).single.category.name, 'Cafe');
     });
 
     test('follow a new name', () async {
       await ledger.record(spent(cafe, rub(100)));
       final names = ledger
-          .watchCategoryTotals(CategoryKind.expense, from: october, to: end)
+          .watchCategoryDays(CategoryKind.expense, from: october, to: end)
           .map((rows) => rows.single.category.name);
       final seen = expectLater(names, emitsInOrder(['Cafe', 'Cafes']));
 
@@ -623,83 +626,11 @@ void main() {
 
       await seen;
     });
-  });
-
-  group('month totals', () {
-    final from = CivilDate(2026, 9, 1);
-    final to = CivilDate(2026, 10, 31);
-
-    TransactionDraft spent(Money amount, CivilDate day) =>
-        TransactionDraft.expense(
-          accountId: amount.currency == Currency.eur ? euro.id : card.id,
-          allocations: [Allocation(categoryId: cafe.id, amount: amount)],
-          occurredOn: day,
-        );
-
-    Future<List<MonthTotal>> totals() =>
-        ledger.watchMonthTotals(CategoryKind.expense, from: from, to: to).first;
-
-    test('add up each month, the earliest first', () async {
-      await ledger.record(spent(rub(100), CivilDate(2026, 10, 1)));
-      await ledger.record(spent(rub(200), CivilDate(2026, 10, 31)));
-      await ledger.record(spent(rub(400), CivilDate(2026, 9, 30)));
-
-      final rows = await totals();
-
-      expect(rows.map((row) => row.month), [from, CivilDate(2026, 10, 1)]);
-      expect(rows.map((row) => row.total), [rub(400), rub(300)]);
-    });
-
-    test('keep currencies apart', () async {
-      await ledger.record(spent(rub(100), today));
-      await ledger.record(spent(eur(5), today));
-
-      expect((await totals()).map((row) => row.total), [eur(5), rub(100)]);
-    });
-
-    test('stop at both ends of the days', () async {
-      await ledger.record(spent(rub(1), CivilDate(2026, 8, 31)));
-      await ledger.record(spent(rub(2), CivilDate(2026, 11, 1)));
-
-      expect(await totals(), isEmpty);
-    });
-
-    test('leave out another kind, a planned and a deleted one', () async {
-      await ledger.record(
-        TransactionDraft.income(
-          accountId: card.id,
-          allocations: [Allocation(categoryId: salary.id, amount: rub(9))],
-          occurredOn: today,
-        ),
-      );
-      await ledger.record(coffee(rub(4), status: TransactionStatus.planned));
-      final gone = await ledger.record(coffee(rub(8)));
-      await ledger.delete(gone);
-
-      expect(await totals(), isEmpty);
-    });
-
-    test('count a subcategory', () async {
-      final latte = await ledger.addCategory(
-        kind: CategoryKind.expense,
-        name: 'Latte',
-        parentId: cafe.id,
-      );
-      await ledger.record(
-        TransactionDraft.expense(
-          accountId: card.id,
-          allocations: [Allocation(categoryId: latte.id, amount: rub(7))],
-          occurredOn: today,
-        ),
-      );
-
-      expect((await totals()).single.total, rub(7));
-    });
 
     test('follow a write', () async {
       final seen = expectLater(
         ledger
-            .watchMonthTotals(CategoryKind.expense, from: from, to: to)
+            .watchCategoryDays(CategoryKind.expense, from: october, to: end)
             .map((rows) => rows.length),
         emitsInOrder([0, 1]),
       );
@@ -708,6 +639,55 @@ void main() {
       await ledger.record(coffee(rub(1)));
 
       await seen;
+    });
+  });
+
+  group('the days outside a currency', () {
+    TransactionDraft spent(Money amount, CivilDate day) =>
+        TransactionDraft.expense(
+          accountId: amount.currency == Currency.eur ? euro.id : card.id,
+          allocations: [Allocation(categoryId: cafe.id, amount: amount)],
+          occurredOn: day,
+        );
+
+    test('are those of other accounts, once and the latest first', () async {
+      final early = CivilDate(2026, 9, 1);
+      await ledger.record(spent(eur(1), early));
+      await ledger.record(spent(eur(1), today));
+      await ledger.record(spent(eur(2), today));
+      await ledger.record(spent(rub(1), CivilDate(2026, 10, 2)));
+
+      expect(await ledger.daysOutside(Currency.rub), [today, early]);
+      expect(await ledger.daysOutside(Currency.eur), [
+        CivilDate(2026, 10, 2),
+      ]);
+    });
+
+    test('count income', () async {
+      await ledger.record(
+        TransactionDraft.income(
+          accountId: euro.id,
+          allocations: [Allocation(categoryId: salary.id, amount: eur(9))],
+          occurredOn: today,
+        ),
+      );
+
+      expect(await ledger.daysOutside(Currency.rub), [today]);
+    });
+
+    test('leave out a planned and a deleted one', () async {
+      await ledger.record(
+        TransactionDraft.expense(
+          accountId: euro.id,
+          allocations: [Allocation(categoryId: cafe.id, amount: eur(4))],
+          occurredOn: today,
+          status: TransactionStatus.planned,
+        ),
+      );
+      final gone = await ledger.record(spent(eur(8), today));
+      await ledger.delete(gone);
+
+      expect(await ledger.daysOutside(Currency.rub), isEmpty);
     });
   });
 

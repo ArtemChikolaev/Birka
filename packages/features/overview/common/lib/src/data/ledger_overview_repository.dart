@@ -28,8 +28,8 @@ final class LedgerOverviewRepository implements OverviewRepository {
       _ledger.watchDayChanges(from: from);
 
   @override
-  Stream<List<CategoryTotal>> watchSpending({
+  Stream<List<CategoryDayTotal>> watchSpending({
     required CivilDate from,
     required CivilDate to,
-  }) => _ledger.watchCategoryTotals(CategoryKind.expense, from: from, to: to);
+  }) => _ledger.watchCategoryDays(CategoryKind.expense, from: from, to: to);
 }

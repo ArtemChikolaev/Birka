@@ -20,14 +20,16 @@
    price in rubles, and any two currencies meet through the ruble.
 2. `packages/core/rates` holds the rates. A rate is a `Decimal`, the arithmetic
    is exact through `Rational`, and the result rounds once, half away from
-   zero.
-3. `exchange_rates` holds a price for each day and currency, as a decimal
-   string. Any device can fetch these again, so the table has no `SyncedRow`
-   columns and no outbox.
+   zero. A total that took a rate rounds to whole units, since it is only as
+   exact as the rate, unless it is less than one unit. What never took a rate
+   keeps its kopecks.
+3. `exchange_rates` holds a price for each day and currency that Birka offers,
+   as a decimal string. Any device can fetch these again, so the table has no
+   `SyncedRow` columns and no outbox.
 4. `RatesUpdater.refresh` runs beside the first frame and when the app comes
    back, and on the site once a page has its database. It asks for nothing when
    the latest rates are for today or later. A failure is quiet and the last
-   rates stay.
+   rates stay, and a request gives up after 15 seconds.
 5. The base currency is a setting of the device
    ([ADR 0011](0011-settings.md)). No stored amount depends on it, because every
    total is computed when it is read, and More keeps working without the
@@ -36,11 +38,29 @@
 6. The capital uses the latest rate ([ADR 0009](0009-data-model.md)), and so
    does every change on its chart, so that the line follows the money and not
    the rates.
-7. An amount without a rate stays apart, in its own currency, and never counts
+7. A report and the spending of the month take the rate of each day
+   ([ADR 0009](0009-data-model.md)), so the ledger gives them totals by day and
+   the rates add those up. A day without a rate takes the last one before it,
+   and a day before them all takes the first, so that a history on its way
+   leaves no total without a value.
+8. After the latest rates `refresh` brings the days that have expenses or income
+   outside the currency of totals, the latest first: at most 25 requests a run,
+   two seconds apart, which stays within the terms of the mirror, and it stops
+   at the first failure. The next run goes on from there. A call during a run
+   drops the days it was after and starts on the days needed now, so a base
+   currency picked in the first minute gets its days at once. A day that the
+   Bank of Russia skipped keeps the rates of the last day before it, up to 12
+   days back, so that it is never asked for again. Nothing that far back ends
+   the run.
+   The mirror answers such a day with a 404 that has no CORS header, which a
+   browser reports as a failed request, so on the site a failed request for a
+   past day counts as a skipped day. A request lost there leaves that day with
+   the rate before it, and a request that hangs still stops the run.
+9. An amount without a rate stays apart, in its own currency, and never counts
    as zero.
-8. USDT counts as a dollar until crypto has rates of its own.
-9. More links to the source on the site and names it in the app, as its terms
-   ask.
+10. USDT counts as a dollar until crypto has rates of its own.
+11. More links to the source on the site and names it in the app, as its terms
+    ask.
 
 ## Options considered
 
@@ -64,6 +84,8 @@
 - A new source only has to implement `RateSource`.
 - `make check-site` ignores failed requests to other hosts, because the mirror
   being down says nothing about the site.
-- Reports still follow one currency. They need the rate of the date of each
-  transaction ([ADR 0009](0009-data-model.md)), which `RateSource.on` is there
-  for.
+- A long history takes several launches to arrive, and until then a report
+  moves a little as the rates of its days come in. A report in one currency
+  needs no rate and never moves.
+- The bar of a month is the sum of its categories, each rounded on its own, so
+  that the two can never disagree on the same page.

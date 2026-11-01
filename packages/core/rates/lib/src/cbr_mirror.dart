@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
@@ -9,31 +10,49 @@ import 'package:rational/rational.dart';
 /// The rates of the Bank of Russia from cbr-xml-daily.ru, which a browser can
 /// read too: cbr.ru itself answers no other site (ADR 0012).
 final class CbrMirror implements RateSource {
-  /// Creates a source that reads through [_client].
-  const CbrMirror(this._client);
+  /// Creates a source that reads through [_client]. The service sometimes
+  /// takes its time, and a request gives up after [patience]. [inBrowser] says
+  /// that the client runs in a browser, where a day without rates looks like a
+  /// lost connection.
+  const CbrMirror(
+    this._client, {
+    Duration patience = const Duration(seconds: 15),
+    bool inBrowser = false,
+  }) : _patience = patience,
+       _inBrowser = inBrowser;
 
   /// Where the rates come from, which the terms of the service ask us to link.
   static const address = 'https://www.cbr-xml-daily.ru/';
 
   final http.Client _client;
+  final Duration _patience;
+  final bool _inBrowser;
 
   /// Nominals are powers of ten, so this is only a guard.
   static const _digits = 8;
 
   @override
   Future<DayRates> latest() async {
-    final response = await _client.get(Uri.parse('${address}daily_json.js'));
-    return _read(response);
+    return _read(await _get('daily_json.js'));
   }
 
   @override
   Future<DayRates?> on(CivilDate day) async {
     final path = day.toString().replaceAll('-', '/');
-    final response = await _client.get(
-      Uri.parse('${address}archive/$path/daily_json.js'),
-    );
+    final http.Response response;
+    try {
+      response = await _get('archive/$path/daily_json.js');
+    } on http.ClientException {
+      // The mirror sends its 404 with no CORS header, so a browser reports it
+      // as a failed request and hides the status.
+      if (_inBrowser) return null;
+      rethrow;
+    }
     return response.statusCode == 404 ? null : _read(response);
   }
+
+  Future<http.Response> _get(String path) =>
+      _client.get(Uri.parse('$address$path')).timeout(_patience);
 
   DayRates _read(http.Response response) {
     if (response.statusCode != 200) {

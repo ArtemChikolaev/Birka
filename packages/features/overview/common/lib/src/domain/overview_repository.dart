@@ -16,9 +16,9 @@ abstract interface class OverviewRepository {
   /// What each day since [from] changed the accounts that count.
   Stream<List<DayChange>> watchDayChanges({required CivilDate from});
 
-  /// What went through the categories of expenses from [from] to [to], the
-  /// biggest first.
-  Stream<List<CategoryTotal>> watchSpending({
+  /// What went through the categories of expenses on each day from [from] to
+  /// [to].
+  Stream<List<CategoryDayTotal>> watchSpending({
     required CivilDate from,
     required CivilDate to,
   });

@@ -110,6 +110,21 @@ final class Money implements Comparable<Money> {
   /// The amount without its sign.
   Money abs() => isNegative ? -this : this;
 
+  /// The amount in whole units of its currency, half away from zero: a figure
+  /// is only as exact as the daily rate behind it. Less than one unit stays as
+  /// it is, or else it would turn into nothing.
+  Money roundedToWhole() {
+    final unit = currency.minorUnitsPerMajor;
+    if (minorUnits.abs() < unit) return this;
+    final units = minorUnits ~/ unit;
+    final rest = minorUnits.remainder(unit).abs();
+    final whole = rest * 2 >= unit ? units + minorUnits.sign : units;
+    return Money(
+      (whole * unit).clamp(-maxMinorUnits, maxMinorUnits),
+      currency,
+    );
+  }
+
   /// Splits the amount in proportion to [ratios] without losing a minor
   /// unit.
   ///

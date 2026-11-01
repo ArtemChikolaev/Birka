@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:reports_common/reports_common.dart';
 import 'package:test/test.dart';
 
@@ -5,6 +6,7 @@ import 'fake_reports_repository.dart';
 
 void main() {
   Money rub(int minorUnits) => Money(minorUnits, Currency.rub);
+  Money usd(int minorUnits) => Money(minorUnits, Currency.usd);
   final october = CivilDate(2026, 10, 1);
   final september = CivilDate(2026, 9, 1);
 
@@ -23,18 +25,12 @@ void main() {
   setUp(() {
     now = DateTime(2026, 10, 31, 9, 30);
     repository = FakeReportsRepository(main: Currency.rub);
-    repository.totals[(CategoryKind.expense, october)] = [
-      testTotal('Food', rub(1160)),
+    repository.days[CategoryKind.expense] = [
+      testDay('Food', september, rub(1000)),
+      testDay('Food', october, rub(1160)),
     ];
-    repository.totals[(CategoryKind.expense, september)] = [
-      testTotal('Food', rub(1000)),
-    ];
-    repository.totals[(CategoryKind.income, october)] = [
-      testTotal('Salary', rub(9000)),
-    ];
-    repository.monthTotals[CategoryKind.expense] = [
-      MonthTotal(september, rub(1000)),
-      MonthTotal(october, rub(1160)),
+    repository.days[CategoryKind.income] = [
+      testDay('Salary', october, rub(9000)),
     ];
   });
 
@@ -49,14 +45,11 @@ void main() {
     expect(reports.state.report.average, rub(1080));
   });
 
-  test('reads the whole month and the one before', () async {
+  test('reads the months of the report', () async {
     await open();
 
-    expect(repository.asked, [
-      (CategoryKind.expense, october, CivilDate(2026, 10, 31)),
-      (CategoryKind.expense, september, CivilDate(2026, 9, 30)),
-    ]);
-    expect(repository.askedMonths.single, (
+    expect(repository.asked.single, (
+      CategoryKind.expense,
       CivilDate(2026, 5, 1),
       CivilDate(2026, 10, 31),
     ));
@@ -65,34 +58,176 @@ void main() {
   group('a month under way', () {
     test('compares with the same days of the month before', () async {
       now = DateTime(2026, 10, 10);
-      await open();
+      repository.days[CategoryKind.expense] = [
+        testDay('Food', CivilDate(2026, 9, 10), rub(1000)),
+        testDay('Food', CivilDate(2026, 9, 11), rub(9000)),
+        testDay('Food', october, rub(1160)),
+      ];
 
-      expect(
-        repository.asked.last,
-        (CategoryKind.expense, september, CivilDate(2026, 9, 10)),
-      );
+      final reports = await open();
+
+      expect(reports.state.report.change, 16);
     });
 
     test('stops at the end of a shorter month before', () async {
       now = DateTime(2026, 3, 30);
-      await open();
+      repository.days[CategoryKind.expense] = [
+        testDay('Food', CivilDate(2026, 2, 28), rub(1000)),
+        testDay('Food', CivilDate(2026, 3, 2), rub(1160)),
+      ];
 
-      expect(
-        repository.asked.last,
-        (CategoryKind.expense, CivilDate(2026, 2, 1), CivilDate(2026, 2, 28)),
-      );
+      final reports = await open();
+
+      expect(reports.state.report.change, 16);
     });
 
     test('a finished month compares with the whole one before', () async {
       now = DateTime(2026, 10, 10);
+      repository.days[CategoryKind.expense] = [
+        testDay('Food', CivilDate(2026, 8, 31), rub(1000)),
+        testDay('Food', CivilDate(2026, 9, 2), rub(1160)),
+      ];
       final reports = await open();
 
       await reports.monthChanged(september);
+      await settle();
 
-      expect(
-        repository.asked.last,
-        (CategoryKind.expense, CivilDate(2026, 8, 1), CivilDate(2026, 8, 31)),
-      );
+      expect(reports.state.report.change, 16);
+    });
+  });
+
+  group('rates', () {
+    final monday = CivilDate(2026, 10, 26);
+    final friday = CivilDate(2026, 10, 30);
+    final rates = RateBook([
+      DayRates(monday, {'USD': Decimal.fromInt(70)}),
+      DayRates(friday, {
+        'USD': Decimal.fromInt(90),
+        'EUR': Decimal.fromInt(100),
+      }),
+    ]);
+
+    setUp(() {
+      repository
+        ..rates = rates
+        ..days[CategoryKind.expense] = [
+          testDay('Food', monday, usd(100)),
+          testDay('Food', friday, usd(100)),
+          testDay('Cafe', friday, rub(55)),
+        ];
+    });
+
+    test('turn each amount into the currency of the report', () async {
+      final reports = await open();
+      final report = reports.state.report;
+
+      expect(report.total, rub(16055));
+      expect(report.others, isEmpty);
+      expect(reports.state.converted, isTrue);
+    });
+
+    test('the month bar and the month agree', () async {
+      final reports = await open();
+      final report = reports.state.report;
+
+      expect(report.months.last.total, report.total);
+    });
+
+    test('the currency picked for totals comes first', () async {
+      repository.base = Currency.eur;
+
+      final reports = await open();
+
+      expect(reports.state.report.total?.currency, Currency.eur);
+      expect(reports.state.report.others, isEmpty);
+    });
+
+    test('compare with the month before at the rates of its days', () async {
+      repository.days[CategoryKind.expense] = [
+        testDay('Food', september, usd(100)),
+        testDay('Food', friday, usd(100)),
+      ];
+
+      final reports = await open();
+
+      expect(reports.state.report.total, rub(9000));
+      expect(reports.state.report.change, 29);
+    });
+
+    test('an amount without a rate stays apart', () async {
+      repository.days[CategoryKind.expense] = [
+        testDay('Food', friday, rub(100)),
+        testDay('Cafe', friday, Money(500, Currency.iso('JPY'))),
+      ];
+
+      final reports = await open();
+
+      expect(reports.state.report.total, rub(100));
+      expect(reports.state.report.others, [Money(500, Currency.iso('JPY'))]);
+      expect(reports.state.converted, isFalse);
+    });
+
+    test('a report in one currency needs no rate', () async {
+      repository.days[CategoryKind.expense] = [
+        testDay('Food', friday, rub(150)),
+      ];
+
+      final reports = await open();
+
+      expect(reports.state.report.total, rub(150));
+      expect(reports.state.converted, isFalse);
+    });
+
+    test('only the month on the screen says that it took a rate', () async {
+      repository.days[CategoryKind.expense] = [
+        testDay('Food', september, usd(100)),
+        testDay('Food', friday, rub(100)),
+      ];
+
+      final reports = await open();
+      expect(reports.state.converted, isFalse);
+
+      await reports.monthChanged(september);
+      await settle();
+      expect(reports.state.converted, isTrue);
+    });
+
+    test('no rates yet leave each currency apart', () async {
+      repository.rates = const RateBook.empty();
+
+      final reports = await open();
+
+      expect(reports.state.report.total, rub(55));
+      expect(reports.state.report.others, [usd(200)]);
+      expect(reports.state.converted, isFalse);
+    });
+
+    test('the page turns as new rates come', () async {
+      repository.rates = const RateBook.empty();
+      final reports = await open();
+
+      repository
+        ..rates = rates
+        ..changed();
+      await settle();
+
+      expect(reports.state.report.total, rub(16055));
+      expect(reports.state.report.others, isEmpty);
+    });
+
+    test('a day with old rates moves to its own once they come', () async {
+      repository.rates = RateBook([
+        DayRates(friday, {'USD': Decimal.fromInt(90)}),
+      ]);
+      final reports = await open();
+      expect(reports.state.report.total, rub(18055));
+
+      repository
+        ..rates = rates
+        ..changed();
+      await settle();
+
+      expect(reports.state.report.total, rub(16055));
     });
   });
 
@@ -127,7 +262,7 @@ void main() {
 
     await reports.kindChanged(CategoryKind.expense);
 
-    expect(repository.asked, hasLength(2));
+    expect(repository.asked, hasLength(1));
   });
 
   test('another month follows that month', () async {
@@ -146,7 +281,7 @@ void main() {
 
     await reports.monthChanged(october);
 
-    expect(repository.asked, hasLength(2));
+    expect(repository.asked, hasLength(1));
   });
 
   test('clears the old month while the new one is on its way', () async {
@@ -154,7 +289,7 @@ void main() {
 
     final moving = reports.monthChanged(september);
     expect(reports.state.status, ReportsStatus.loading);
-    expect(reports.state.rows, isEmpty);
+    expect(reports.state.days, isEmpty);
 
     await moving;
   });
@@ -162,8 +297,8 @@ void main() {
   test('follows the ledger', () async {
     final reports = await open();
 
-    repository.totals[(CategoryKind.expense, october)] = [
-      testTotal('Food', rub(2000)),
+    repository.days[CategoryKind.expense] = [
+      testDay('Food', october, rub(2000)),
     ];
     repository.changed();
     await settle();

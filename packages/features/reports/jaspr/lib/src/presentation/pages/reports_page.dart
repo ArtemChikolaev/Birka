@@ -109,6 +109,13 @@ class ReportsPage extends StatefulComponent {
     css('.reports__others .amount').styles(
       raw: {'overflow-wrap': 'anywhere', 'white-space': 'normal'},
     ),
+    css('.reports__rate').styles(
+      raw: {
+        'color': 'var(--color-text-subtle)',
+        'margin': 'calc(-1 * var(--space-xs)) 0 0',
+        'text-align': 'center',
+      },
+    ),
     css('.reports__months').styles(
       raw: {
         'display': 'flex',
@@ -224,6 +231,10 @@ class _ReportsPageState extends State<ReportsPage> {
                       tone: AmountTone.muted,
                       textClass: 'text-caption',
                     ),
+                  ]),
+                if (state.converted)
+                  p(classes: 'text-caption reports__rate', [
+                    .text(t.reports.dayRates),
                   ]),
                 if (report.average != null) _byMonth(context, report),
               ],

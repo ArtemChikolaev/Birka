@@ -3,8 +3,15 @@
 library;
 
 export 'package:ledger/ledger.dart'
-    show Category, CategoryKind, CategoryTotal, CivilDate, MonthTotal;
+    show
+        Category,
+        CategoryDayTotal,
+        CategoryKind,
+        CategoryTotal,
+        CivilDate,
+        MonthTotal;
 export 'package:money/money.dart' show Currency, Money;
+export 'package:rates/rates.dart' show DayRates, RateBook;
 
 export 'src/di/register_reports.dart';
 export 'src/domain/report.dart';

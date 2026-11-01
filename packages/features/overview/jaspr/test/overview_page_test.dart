@@ -48,10 +48,13 @@ final class _FakeRepository implements OverviewRepository {
       _read(changes);
 
   @override
-  Stream<List<CategoryTotal>> watchSpending({
+  Stream<List<CategoryDayTotal>> watchSpending({
     required CivilDate from,
     required CivilDate to,
-  }) => _read(spending);
+  }) => _read([
+    for (final CategoryTotal(:category, :total) in spending)
+      CategoryDayTotal(category, from, total),
+  ]);
 }
 
 AccountBalance _account(String name, Money balance, {String? digits}) =>
