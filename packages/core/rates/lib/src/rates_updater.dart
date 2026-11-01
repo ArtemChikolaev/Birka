@@ -26,6 +26,7 @@ final class RatesUpdater {
   final DateTime Function() _now;
   final Duration _gap;
   var _running = false;
+  var _again = false;
 
   /// How many requests for old rates one run makes. What is left waits for the
   /// next launch.
@@ -37,13 +38,20 @@ final class RatesUpdater {
 
   /// Fetches the latest rates unless today already has them, and then the rates
   /// of the days that a report needs. Without a connection what is kept stays,
-  /// and the next run tries again.
+  /// and the next run tries again. A call during a run turns its history to the
+  /// days needed now, because a new base currency needs other days.
   Future<void> refresh() async {
-    if (_running) return;
+    if (_running) {
+      _again = true;
+      return;
+    }
     _running = true;
     try {
       await _fetchLatest();
-      await _fetchHistory();
+      do {
+        _again = false;
+        await _fetchHistory();
+      } while (_again);
     } on Exception {
       return;
     } finally {
@@ -72,7 +80,7 @@ final class RatesUpdater {
     for (final day in await _ledger.daysOutside(target)) {
       if (kept.contains(day) || day.compareTo(today) > 0) continue;
       for (var back = 0; back <= _daysBack; back++) {
-        if (requests == _requestsPerRun) return;
+        if (_again || requests == _requestsPerRun) return;
         requests++;
         await Future<void>.delayed(_gap);
         final rates = await _source.on(_before(day, back));

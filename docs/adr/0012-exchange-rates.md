@@ -46,9 +46,12 @@
 8. After the latest rates `refresh` brings the days that have expenses or income
    outside the currency of totals, the latest first: at most 25 requests a run,
    two seconds apart, which stays within the terms of the mirror, and it stops
-   at the first failure. The next run goes on from there. A day that the Bank of
-   Russia skipped keeps the rates of the last day before it, up to 12 days back,
-   so that it is never asked for again. Nothing that far back ends the run.
+   at the first failure. The next run goes on from there. A call during a run
+   drops the days it was after and starts on the days needed now, so a base
+   currency picked in the first minute gets its days at once. A day that the
+   Bank of Russia skipped keeps the rates of the last day before it, up to 12
+   days back, so that it is never asked for again. Nothing that far back ends
+   the run.
    The mirror answers such a day with a 404 that has no CORS header, which a
    browser reports as a failed request, so on the site a failed request for a
    past day counts as a skipped day. A request lost there leaves that day with

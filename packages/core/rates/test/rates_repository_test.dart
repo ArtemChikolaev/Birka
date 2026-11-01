@@ -1,6 +1,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:async';
+
 import 'package:database/database.dart';
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -14,6 +16,7 @@ final class _Source implements RateSource {
   Exception? failure;
   Exception? pastFailure;
   int reads = 0;
+  void Function()? whenAsked;
   final past = <CivilDate, DayRates>{};
   final asked = <CivilDate>[];
 
@@ -27,6 +30,7 @@ final class _Source implements RateSource {
   @override
   Future<DayRates?> on(CivilDate day) async {
     asked.add(day);
+    whenAsked?.call();
     if (pastFailure case final failure?) throw failure;
     return past[day];
   }
@@ -347,6 +351,40 @@ void main() {
         await Future.wait([updater.refresh(), updater.refresh()]);
 
         expect(source.reads, 1);
+        expect(source.asked, [friday]);
+      });
+
+      test('turns to a base currency picked during a run', () async {
+        final wednesday = CivilDate(2026, 10, 28);
+        source
+          ..past[friday] = dollarAt('70', friday)
+          ..past[thursday] = dollarAt('60', thursday)
+          ..whenAsked = () {
+            source.whenAsked = null;
+            baseCurrency.choose(Currency.usd);
+            unawaited(updater.refresh());
+          };
+        await spentOn(Currency.usd, [wednesday, friday]);
+        await spentOn(Currency.rub, [thursday]);
+        now = DateTime(2026, 11, 1, 12);
+
+        await updater.refresh();
+
+        expect(source.asked, [friday, thursday]);
+        expect(source.reads, 1);
+      });
+
+      test('asks for nothing twice when called during a run', () async {
+        source
+          ..past[friday] = dollarAt('70', friday)
+          ..whenAsked = () {
+            source.whenAsked = null;
+            unawaited(updater.refresh());
+          };
+        await spentOn(Currency.usd, [friday]);
+
+        await updater.refresh();
+
         expect(source.asked, [friday]);
       });
 
