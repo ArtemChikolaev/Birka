@@ -40,8 +40,13 @@
 7. The first account offers a debit card, cash and savings. A debt has its own
    sign and its own words, and the form of accounts has the rest.
 8. The art of the first step is `packages/design/brand/welcome.svg`, rendered
-   by `make icon-masters` and shipped as WebP, because `flutter_svg` draws no
-   blur. A new token, `text.hero`, sets its headline.
+   by `make icon-masters` and shipped as WebP to both kits, because `flutter_svg`
+   draws no blur. A new token, `text.hero`, sets its headline.
+9. On the site the steps stand on `overview/`, in place of the overview and
+   without the tabs: its island opens the database anyway, so nothing reloads.
+   A browser with no mark shows neither the header nor the tabs until the
+   database has answered, so that the overview never flashes by. The other
+   pages stay as they are, so a link to one of them still opens it.
 
 ## Options considered
 
@@ -54,10 +59,13 @@
 | Only a look at the accounts, without a mark | whoever skipped would see the steps on every launch |
 | The base currency only as the first account | a person who keeps rubles and counts in dollars would have to find it in More |
 | Demo data on the second step | it needs a way out that removes it and nothing else, so it comes on its own |
+| A page of its own on the site | the overview would have to open the database, leave for it and open it again, which costs a new person more than a second |
+| Steps in the fragment of the address on the site | a link to a later step would open with nothing typed, and the way back on the page does the same job |
 
 ## Consequences
 
 - A person who leaves half way starts over on the next launch, with the language
-  and the base currency already picked.
+  and the base currency already picked. On the site the back button of the
+  browser is such a way out.
 - The second and third steps have no mockup yet. They use the components of the
   design system, and a mockup can replace them later.

@@ -4,8 +4,8 @@
 # draws the gradients, the blur and the Manrope letters the same way on every
 # run. Run it after a change to either, then `make icons`. CHROME points to
 # another Chrome binary; PORT picks the port of the local server that serves
-# the SVG and the font. The art also goes to the Flutter kit as WebP, which
-# needs cwebp.
+# the SVG and the font. The art also goes to both kits as WebP, which needs
+# cwebp.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -56,4 +56,6 @@ render launch-android-12 1152 1152 launch-android-12.png
 render welcome 1170 900 welcome.png
 cwebp -quiet -q 86 -alpha_q 92 "$out/welcome.png" \
   -o "$root/packages/design/flutter/images/welcome.webp"
+cp "$root/packages/design/flutter/images/welcome.webp" \
+  "$root/packages/design/jaspr/lib/images/welcome.webp"
 echo "Rendered the masters into packages/design/brand/png."

@@ -58,6 +58,12 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   /// The page itself, once the database is open.
   Component buildPage(BuildContext context);
 
+  /// What the page has to read before it shows, once the database is open.
+  Future<void> prepare() async {}
+
+  /// Whether the page stands without the tabs of the site.
+  bool get standsAlone => false;
+
   /// Called when the tab of the browser comes back into view, which can be
   /// after a night in the background.
   void onTabShown() {}
@@ -90,6 +96,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
     try {
       final opened = await openLocalDatabase();
       registerDependencies(getIt, opened.executor);
+      await prepare();
       setState(() {
         _persists = opened.persists;
         _stage = _Stage.ready;
@@ -157,10 +164,14 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
           _Stage.busy => _trouble(t.app.openElsewhere),
           _Stage.failed => _trouble(failure),
         },
-        if (kIsWeb && _fragment.isEmpty) SiteNav(page: page),
+        if (kIsWeb && _fragment.isEmpty && !_alone) SiteNav(page: page),
       ]),
     );
   }
+
+  /// Trouble needs the tabs, which are the way to the pages that work.
+  bool get _alone =>
+      standsAlone && (_stage == _Stage.opening || _stage == _Stage.ready);
 
   Component _trouble(String message) {
     return BirkaColumn(

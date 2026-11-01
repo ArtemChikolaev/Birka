@@ -18,6 +18,56 @@ input<String> fieldInput() =>
     find.byType(input<String>).evaluate().single.component as input<String>;
 
 void main() {
+  testComponents('BirkaArrowButton is a button with an arrow', (tester) async {
+    var taps = 0;
+    tester.pumpComponent(
+      BirkaArrowButton(label: 'Start', onPressed: () => taps++),
+    );
+
+    await tester.click(find.tag('button'));
+
+    expect(taps, 1);
+    expect(find.text('Start'), findsOneComponent);
+    expect(find.byType(BirkaIcon), findsOneComponent);
+  });
+
+  testComponents('BirkaArrowButton without an action is off', (tester) async {
+    tester.pumpComponent(const BirkaArrowButton(label: 'Start'));
+
+    final element = find.byType(button).evaluate().single.component as button;
+    expect(element.disabled, isTrue);
+    expect(element.type, ButtonType.button);
+  });
+
+  testComponents('BirkaArrowButton can submit a form', (tester) async {
+    tester.pumpComponent(const BirkaArrowButton(label: 'Start', submits: true));
+
+    final element = find.byType(button).evaluate().single.component as button;
+    expect(element.disabled, isFalse);
+    expect(element.type, ButtonType.submit);
+  });
+
+  testComponents('BirkaStepBars lights the bars up to the current step', (
+    tester,
+  ) async {
+    tester.pumpComponent(const BirkaStepBars(count: 3, current: 1));
+
+    expect(
+      withClasses('birka-steps__bar birka-steps__bar--lit'),
+      findsNComponents(2),
+    );
+    expect(withClasses('birka-steps__bar'), findsOneComponent);
+    expect(attributesOf(withClasses('birka-steps'))['aria-label'], '2 / 3');
+  });
+
+  testComponents('WelcomeArt stays out of screen readers', (tester) async {
+    tester.pumpComponent(const WelcomeArt());
+
+    final art = find.byType(img).evaluate().single.component as img;
+    expect(art.alt, '');
+    expect(art.src, 'packages/design_jaspr/images/welcome.webp');
+  });
+
   testComponents('GlassSurface wraps its child in a glass panel', (
     tester,
   ) async {

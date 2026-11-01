@@ -29,6 +29,8 @@ import 'package:design_jaspr/src/account_card.dart' as _account_card;
 import 'package:design_jaspr/src/ambient_background.dart'
     as _ambient_background;
 import 'package:design_jaspr/src/amount_text.dart' as _amount_text;
+import 'package:design_jaspr/src/birka_arrow_button.dart'
+    as _birka_arrow_button;
 import 'package:design_jaspr/src/birka_bars.dart' as _birka_bars;
 import 'package:design_jaspr/src/birka_button.dart' as _birka_button;
 import 'package:design_jaspr/src/birka_chip.dart' as _birka_chip;
@@ -42,6 +44,7 @@ import 'package:design_jaspr/src/birka_icon.dart' as _birka_icon;
 import 'package:design_jaspr/src/birka_line_chart.dart' as _birka_line_chart;
 import 'package:design_jaspr/src/birka_placeholder.dart' as _birka_placeholder;
 import 'package:design_jaspr/src/birka_ring.dart' as _birka_ring;
+import 'package:design_jaspr/src/birka_step_bars.dart' as _birka_step_bars;
 import 'package:design_jaspr/src/birka_switch.dart' as _birka_switch;
 import 'package:design_jaspr/src/birka_text_field.dart' as _birka_text_field;
 import 'package:design_jaspr/src/card_art.dart' as _card_art;
@@ -57,6 +60,9 @@ import 'package:design_jaspr/src/glass_segmented.dart' as _glass_segmented;
 import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
+import 'package:design_jaspr/src/welcome_art.dart' as _welcome_art;
+import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
+    as _onboarding_page;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
     as _overview_page;
 import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
@@ -121,6 +127,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._account_card.AccountCard.styles,
     ..._ambient_background.AmbientBackground.styles,
     ..._amount_text.AmountText.styles,
+    ..._birka_arrow_button.BirkaArrowButton.styles,
     ..._birka_bars.BirkaBars.styles,
     ..._birka_button.BirkaButton.styles,
     ..._birka_chip.BirkaChip.styles,
@@ -134,6 +141,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_line_chart.BirkaLineChart.styles,
     ..._birka_placeholder.BirkaPlaceholder.styles,
     ..._birka_ring.BirkaRing.styles,
+    ..._birka_step_bars.BirkaStepBars.styles,
     ..._birka_switch.BirkaSwitch.styles,
     ..._birka_text_field.BirkaTextField.styles,
     ..._card_art.CardArtSurface.styles,
@@ -150,6 +158,8 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glass_surface.GlassSurface.styles,
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
+    ..._welcome_art.WelcomeArt.styles,
+    ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,
     ..._settings_section.SettingsSection.styles,

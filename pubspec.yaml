@@ -25,6 +25,7 @@ workspace:
   - packages/features/categories/jaspr
   - packages/features/onboarding/common
   - packages/features/onboarding/flutter
+  - packages/features/onboarding/jaspr
   - packages/features/overview/common
   - packages/features/overview/flutter
   - packages/features/overview/jaspr
