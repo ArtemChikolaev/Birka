@@ -3,6 +3,8 @@
 library;
 
 export 'package:l10n/l10n.dart' show AppLocale;
+export 'package:money/money.dart' show Currency;
+export 'package:rates/rates.dart' show BaseCurrency;
 
 export 'src/di/register_settings.dart';
 export 'src/domain/settings.dart';

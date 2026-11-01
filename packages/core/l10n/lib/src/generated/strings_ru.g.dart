@@ -261,6 +261,8 @@ class _Translations$overview$ru extends Translations$overview$en {
   @override
   String get capital => 'Капитал';
   @override
+  String rateOn({required Object day}) => 'Курс ЦБ РФ на ${day}';
+  @override
   String currencies({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
@@ -405,6 +407,12 @@ class _Translations$settings$ru extends Translations$settings$en {
   String get english => 'English';
   @override
   String get russian => 'Русский';
+  @override
+  String get baseCurrency => 'Базовая валюта';
+  @override
+  String get firstAccountCurrency => 'Первый счёт';
+  @override
+  String get ratesCredit => 'Курсы ЦБ РФ в XML и JSON, API';
   @override
   String get security => 'Безопасность';
   @override
@@ -823,6 +831,7 @@ extension on TranslationsRu {
       'categories.form.nameMissing' => 'Дайте категории название.',
       'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
       'overview.capital' => 'Капитал',
+      'overview.rateOn' => ({required Object day}) => 'Курс ЦБ РФ на ${day}',
       'overview.currencies' =>
         ({required num n}) =>
             (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
@@ -907,6 +916,9 @@ extension on TranslationsRu {
       'settings.deviceLanguage' => 'Как на устройстве',
       'settings.english' => 'English',
       'settings.russian' => 'Русский',
+      'settings.baseCurrency' => 'Базовая валюта',
+      'settings.firstAccountCurrency' => 'Первый счёт',
+      'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
       'settings.security' => 'Безопасность',
       'settings.hideAmounts' => 'Скрывать суммы',
       'settings.onLaunch' => 'При запуске',

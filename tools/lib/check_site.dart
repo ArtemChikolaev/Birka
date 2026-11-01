@@ -81,7 +81,7 @@ Future<List<SiteProblem>> checkPages(
         (event) => reports.add(_textOfException(event.exceptionDetails)),
       ),
       connection.log.onEntryAdded
-          .where((entry) => entry.level == 'error')
+          .where((entry) => entry.level == 'error' && _isOurs(entry, origin))
           .listen((entry) => reports.add('${entry.text} ${entry.url ?? ''}')),
     ];
     await connection.runtime.enable();
@@ -147,6 +147,12 @@ Future<bool> _finished(WipConnection tab, Duration patience) async {
   }
   return false;
 }
+
+/// Whether [entry] speaks of the site itself. The site reads exchange rates
+/// from another host, which may be down while the site is fine.
+bool _isOurs(LogEntry entry, Uri origin) =>
+    !(entry.url?.startsWith('http') ?? false) ||
+    entry.url!.startsWith(origin.origin);
 
 String _textOf(ConsoleAPIEvent event) =>
     event.args.map((arg) => arg.value ?? arg.description).join(' ');

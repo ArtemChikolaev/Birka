@@ -25,7 +25,11 @@ void main() {
         theme: BirkaTheme.dark(),
         home: Scaffold(
           body: BlocProvider(
-            create: (_) => SettingsCubit(store, deviceLanguage: 'en'),
+            create: (_) => SettingsCubit(
+              store,
+              deviceLanguage: 'en',
+              baseCurrency: BaseCurrency(null),
+            ),
             child: const SettingsSection(),
           ),
         ),
@@ -99,6 +103,36 @@ void main() {
 
     expect(Settings.readFrom(store).language, isNull);
     expect(LocaleSettings.currentLocale, AppLocale.en);
+  });
+
+  testWidgets('a picked base currency stays', (tester) async {
+    await pump(tester);
+
+    await tester.tap(find.text('Базовая валюта'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Евро'));
+    await tester.pumpAndSettle();
+
+    expect(Settings.readFrom(store).baseCurrency, Currency.eur);
+    expect(find.text('Евро'), findsOneWidget);
+  });
+
+  testWidgets('the first account can be followed again', (tester) async {
+    await const Settings(baseCurrency: Currency.eur).writeTo(store);
+    await pump(tester);
+
+    await tester.tap(find.text('Базовая валюта'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Первый счёт'));
+    await tester.pumpAndSettle();
+
+    expect(Settings.readFrom(store).baseCurrency, isNull);
+  });
+
+  testWidgets('names where the rates come from', (tester) async {
+    await pump(tester);
+
+    expect(find.textContaining('cbr-xml-daily.ru'), findsOneWidget);
   });
 
   testWidgets('a closed sheet changes nothing', (tester) async {

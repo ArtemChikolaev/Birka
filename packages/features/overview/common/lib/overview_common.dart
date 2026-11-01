@@ -12,6 +12,7 @@ export 'package:ledger/ledger.dart'
         CivilDate;
 
 export 'package:money/money.dart' show Money;
+export 'package:rates/rates.dart' show DayRates, RateBook;
 
 export 'src/di/register_overview.dart';
 export 'src/domain/capital.dart';

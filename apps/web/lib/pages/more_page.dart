@@ -75,20 +75,14 @@ class MorePage extends StatelessComponent {
         'width': 'var(--space-sm)',
       },
     ),
+    // On a narrow phone the mark takes its own line and the label stays whole.
     css('.more__line').styles(
       raw: {
         'align-items': 'center',
         'display': 'flex',
-        'gap': 'var(--space-xs)',
-      },
-    ),
-    css('.more__label').styles(
-      raw: {
-        'flex': '1',
-        'min-width': '0',
-        'overflow': 'hidden',
-        'text-overflow': 'ellipsis',
-        'white-space': 'nowrap',
+        'flex-wrap': 'wrap',
+        'gap': 'var(--space-xxs) var(--space-xs)',
+        'justify-content': 'space-between',
       },
     ),
     css('.more__soon').styles(raw: {'color': 'var(--color-text-subtle)'}),
@@ -122,7 +116,7 @@ class _Tile extends StatelessComponent {
           ],
         ),
         span(classes: 'more__line', [
-          span(classes: 'text-body-strong more__label', [.text(label)]),
+          span(classes: 'text-body-strong', [.text(label)]),
           if (href == null)
             span(classes: 'text-label more__soon', [.text(t.app.soon)]),
         ]),

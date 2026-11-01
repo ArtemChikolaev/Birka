@@ -26,7 +26,11 @@ void main() {
 
   void pump(ComponentTester tester) => tester.pumpComponent(
     BlocProvider(
-      create: (_) => SettingsCubit(_Store(), deviceLanguage: 'ru'),
+      create: (_) => SettingsCubit(
+        _Store(),
+        deviceLanguage: 'ru',
+        baseCurrency: BaseCurrency(null),
+      ),
       child: const MorePage(),
     ),
   );
@@ -43,7 +47,7 @@ void main() {
             (element) =>
                 (element.component as DomComponent).attributes?['href'],
           ),
-      ['accounts/', 'categories/'],
+      ['accounts/', 'categories/', 'https://www.cbr-xml-daily.ru/'],
     );
     expect(
       find.descendant(of: find.tag('a'), matching: find.text('Счета')),

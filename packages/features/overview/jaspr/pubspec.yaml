@@ -17,6 +17,7 @@ dependencies:
     path: ../common
 
 dev_dependencies:
+  decimal: ^3.2.6
   jaspr_test: ^0.22.3
   ledger:
     path: ../../../core/ledger

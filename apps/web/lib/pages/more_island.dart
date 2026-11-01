@@ -58,9 +58,11 @@ class _MoreIslandState extends State<MoreIsland> {
   Component build(BuildContext context) {
     if (!kIsWeb) return const BirkaColumn(children: [BirkaPlaceholder()]);
     return BlocProvider<SettingsCubit>(
+      // The other pages read the choice when they load.
       create: (_) => SettingsCubit(
         const BrowserSettingsStore(),
         deviceLanguage: browserLanguage,
+        baseCurrency: BaseCurrency(null),
       ),
       child: div(key: ValueKey(LocaleSettings.currentLocale), const [
         MorePage(),

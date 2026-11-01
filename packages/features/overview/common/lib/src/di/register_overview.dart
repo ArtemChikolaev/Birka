@@ -4,11 +4,12 @@ import 'package:overview_common/src/data/ledger_overview_repository.dart';
 import 'package:overview_common/src/domain/overview_repository.dart';
 import 'package:overview_common/src/presentation/overview_cubit.dart';
 
-/// Registers the feature in [getIt], which has to know the [LedgerRepository].
+/// Registers the feature in [getIt], which has to know the [LedgerRepository],
+/// the `RatesRepository` and the `BaseCurrency`.
 void registerOverview(GetIt getIt) {
   getIt
     ..registerLazySingleton<OverviewRepository>(
-      () => LedgerOverviewRepository(getIt()),
+      () => LedgerOverviewRepository(getIt(), getIt(), getIt()),
     )
     ..registerFactory(() => OverviewCubit(getIt()));
 }

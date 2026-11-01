@@ -1,0 +1,25 @@
+name: rates
+description: >-
+  The exchange rates of Birka: where they come from, where they stay and what
+  an amount comes to in another currency (ADR 0012).
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  database:
+    path: ../database
+  decimal: ^3.2.6
+  drift: ^2.31.0
+  http: ^1.6.0
+  ledger:
+    path: ../ledger
+  meta: ^1.17.0
+  money:
+    path: ../money
+  rational: ^2.2.3
+
+dev_dependencies:
+  test: ^1.26.3

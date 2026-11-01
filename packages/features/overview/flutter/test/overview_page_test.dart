@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +22,8 @@ final class _FakeRepository implements OverviewRepository {
   List<DayChange> changes;
   List<CategoryTotal> spending;
   Exception? readFailure;
+  RateBook rates = const RateBook.empty();
+  Currency? base;
 
   Stream<T> _read<T>(T value) => Stream.multi((controller) {
     if (readFailure case final failure?) {
@@ -29,6 +32,12 @@ final class _FakeRepository implements OverviewRepository {
       controller.add(value);
     }
   });
+
+  @override
+  Stream<RateBook> watchRates() => _read(rates);
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => _read(base);
 
   @override
   Stream<List<AccountBalance>> watchAccounts() => _read(accounts);
@@ -148,6 +157,16 @@ void main() {
     expect(find.text('+42${space}300$space₽'), findsOneWidget);
     expect(find.text('за октябрь'), findsOneWidget);
     expect(find.byType(BirkaLineChart), findsOneWidget);
+  });
+
+  testWidgets('adds the currencies up and says at which rate', (tester) async {
+    repository.rates = RateBook([
+      DayRates(CivilDate(2026, 10, 31), {'EUR': Decimal.fromInt(90)}),
+    ]);
+    await pump(tester);
+
+    expect(find.text('1${space}244${space}900$space₽'), findsOneWidget);
+    expect(find.text('Курс ЦБ РФ на 31 октября'), findsOneWidget);
   });
 
   testWidgets('another period changes what the change covers', (tester) async {

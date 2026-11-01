@@ -1,11 +1,19 @@
 import 'package:accounts_common/src/domain/account_draft.dart';
 import 'package:ledger/ledger.dart';
+import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 
 /// Where the feature keeps its accounts.
 abstract interface class AccountsRepository {
   /// The accounts with their balances, archived ones included, in their
   /// order.
   Stream<List<AccountBalance>> watchAccounts();
+
+  /// The kept exchange rates.
+  Stream<RateBook> watchRates();
+
+  /// The currency picked for totals, if one was.
+  Stream<Currency?> watchBaseCurrency();
 
   /// The account [id] with what it holds now, if it exists.
   Future<AccountBalance?> account(String id);

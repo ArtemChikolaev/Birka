@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:birka_mobile/app/app.dart';
 import 'package:birka_mobile/app/dependencies.dart';
 import 'package:birka_mobile/app/preferences_settings_store.dart';
@@ -5,6 +7,7 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rates/rates.dart';
 import 'package:settings_common/settings_common.dart';
 
 Future<void> main() async {
@@ -16,4 +19,8 @@ Future<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   registerDependencies(GetIt.instance, settings);
   runApp(BirkaApp(getIt: GetIt.instance));
+  // The first frame waits for no network (ADR 0012).
+  final rates = GetIt.instance<RatesUpdater>();
+  unawaited(rates.refresh());
+  AppLifecycleListener(onResume: () => unawaited(rates.refresh()));
 }

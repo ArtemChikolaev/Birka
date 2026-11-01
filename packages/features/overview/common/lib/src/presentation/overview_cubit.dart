@@ -7,6 +7,7 @@ import 'package:money/money.dart';
 import 'package:overview_common/src/domain/capital.dart';
 import 'package:overview_common/src/domain/overview_repository.dart';
 import 'package:overview_common/src/domain/spending.dart';
+import 'package:rates/rates.dart';
 
 /// Where the first screen stands.
 enum OverviewStatus {
@@ -31,6 +32,8 @@ final class OverviewState {
     this.accounts = const [],
     this.changes = const [],
     this.spendingRows = const [],
+    this.rates = const RateBook.empty(),
+    this.base,
   });
 
   /// Where the screen stands.
@@ -51,15 +54,20 @@ final class OverviewState {
   /// What went through each category this month.
   final List<CategoryTotal> spendingRows;
 
-  /// What the accounts hold, one amount for each currency. The first one is in
-  /// the currency of the first account.
-  late final List<Money> capital = capitalOf(accounts);
+  /// The kept exchange rates.
+  final RateBook rates;
+
+  /// The currency picked for totals, if one was.
+  final Currency? base;
+
+  /// What the accounts come to.
+  late final Capital capital = Capital.of(accounts, rates: rates, base: base);
 
   /// The capital in the currency that the chart follows.
-  Money? get main => capital.firstOrNull;
+  Money? get main => capital.main;
 
-  /// The capital in the other currencies.
-  Iterable<Money> get others => capital.skip(1);
+  /// The amounts that no rate can turn into [main] yet.
+  List<Money> get others => capital.others;
 
   /// The capital at the end of each day of [period], in minor units of [main].
   late final List<int> history = _history();
@@ -79,6 +87,7 @@ final class OverviewState {
     return capitalHistory(
       now: main,
       changes: changes,
+      rates: rates,
       start: period.startFrom(today),
       today: today,
     );
@@ -94,7 +103,8 @@ final class OverviewState {
     );
   }
 
-  /// A copy with the given fields changed.
+  /// A copy with the given fields changed. [base] takes a function, so it can
+  /// also become `null`.
   OverviewState copyWith({
     OverviewStatus? status,
     CivilDate? today,
@@ -102,6 +112,8 @@ final class OverviewState {
     List<AccountBalance>? accounts,
     List<DayChange>? changes,
     List<CategoryTotal>? spendingRows,
+    RateBook? rates,
+    Currency? Function()? base,
   }) {
     return OverviewState(
       status: status ?? this.status,
@@ -110,6 +122,8 @@ final class OverviewState {
       accounts: accounts ?? this.accounts,
       changes: changes ?? this.changes,
       spendingRows: spendingRows ?? this.spendingRows,
+      rates: rates ?? this.rates,
+      base: base == null ? this.base : base(),
     );
   }
 }
@@ -132,6 +146,9 @@ class OverviewCubit extends Cubit<OverviewState> {
   final DateTime Function() _now;
   List<StreamSubscription<void>> _subscriptions = const [];
   final _arrived = <Object>{};
+
+  /// How many sources the screen waits for.
+  static const _sources = 5;
 
   /// Sets how far back the chart looks.
   void periodChanged(OverviewPeriod value) =>
@@ -175,12 +192,20 @@ class OverviewCubit extends Cubit<OverviewState> {
         ),
         (rows) => state.copyWith(spendingRows: rows),
       ),
+      _listen(
+        _repository.watchRates(),
+        (rates) => state.copyWith(rates: rates),
+      ),
+      _listen(
+        _repository.watchBaseCurrency(),
+        (base) => state.copyWith(base: () => base),
+      ),
     ];
   }
 
-  /// Follows [source]. The screen is ready once all three sources have spoken,
-  /// so that it never shows a capital without its history.
-  StreamSubscription<void> _listen<T extends Object>(
+  /// Follows [source]. The screen is ready once every source has spoken, so
+  /// that it never shows a capital without its history or its rates.
+  StreamSubscription<void> _listen<T>(
     Stream<T> source,
     OverviewState Function(T) update,
   ) {
@@ -190,7 +215,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         _arrived.add(key);
         final next = update(value);
         emit(
-          _arrived.length == 3
+          _arrived.length == _sources
               ? next.copyWith(status: OverviewStatus.ready)
               : next,
         );

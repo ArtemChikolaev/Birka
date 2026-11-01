@@ -6,3 +6,4 @@ library;
 
 export 'src/currency.dart';
 export 'src/money.dart';
+export 'src/offered_currencies.dart';

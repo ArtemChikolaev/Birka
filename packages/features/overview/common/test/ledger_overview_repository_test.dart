@@ -2,11 +2,13 @@
 library;
 
 import 'package:database/database.dart';
+import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:overview_common/overview_common.dart' show OverviewRepository;
 import 'package:overview_common/src/data/ledger_overview_repository.dart';
+import 'package:rates/rates.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -19,7 +21,11 @@ void main() {
   setUp(() {
     database = BirkaDatabase(NativeDatabase.memory());
     ledger = LedgerRepository(database);
-    repository = LedgerOverviewRepository(ledger);
+    repository = LedgerOverviewRepository(
+      ledger,
+      RatesRepository(database),
+      BaseCurrency(Currency.eur),
+    );
   });
   tearDown(() => database.close());
 
@@ -79,5 +85,14 @@ void main() {
     expect(changes.single.change, rub(600));
     expect(spending.single.category.name, 'Food');
     expect(spending.single.total, rub(300));
+  });
+
+  test('reads the kept rates and the picked currency', () async {
+    await RatesRepository(database).keep(
+      DayRates(today, {'USD': Decimal.fromInt(80)}),
+    );
+
+    expect((await repository.watchRates().first).latestDay, today);
+    expect(await repository.watchBaseCurrency().first, Currency.eur);
   });
 }

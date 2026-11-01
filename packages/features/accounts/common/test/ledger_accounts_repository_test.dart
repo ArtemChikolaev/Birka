@@ -13,6 +13,7 @@ import 'package:ledger/ledger.dart'
         TransactionKind,
         TransactionSource;
 import 'package:money/money.dart';
+import 'package:rates/rates.dart' show BaseCurrency, RatesRepository;
 import 'package:test/test.dart';
 
 void main() {
@@ -35,7 +36,12 @@ void main() {
   setUp(() {
     database = BirkaDatabase(NativeDatabase.memory());
     ledger = LedgerRepository(database);
-    repository = LedgerAccountsRepository(ledger, now: () => now);
+    repository = LedgerAccountsRepository(
+      ledger,
+      RatesRepository(database),
+      BaseCurrency(null),
+      now: () => now,
+    );
   });
   tearDown(() => database.close());
 

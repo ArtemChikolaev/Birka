@@ -3,19 +3,33 @@ import 'package:accounts_common/src/domain/accounts_repository.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 
 /// Keeps the accounts in the ledger, which holds their rules.
 final class LedgerAccountsRepository implements AccountsRepository {
-  /// Creates a repository on [_ledger]. [now] tells the time in tests.
-  LedgerAccountsRepository(this._ledger, {DateTime Function()? now})
-    : _now = now ?? DateTime.now;
+  /// Creates a repository on [_ledger], [_rates] and the choice of
+  /// [_baseCurrency]. [now] tells the time in tests.
+  LedgerAccountsRepository(
+    this._ledger,
+    this._rates,
+    this._baseCurrency, {
+    DateTime Function()? now,
+  }) : _now = now ?? DateTime.now;
 
   final LedgerRepository _ledger;
+  final RatesRepository _rates;
+  final BaseCurrency _baseCurrency;
   final DateTime Function() _now;
 
   @override
   Stream<List<AccountBalance>> watchAccounts() =>
       _ledger.watchAccountBalances(includeArchived: true);
+
+  @override
+  Stream<RateBook> watchRates() => _rates.watchRates();
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => _baseCurrency.watch();
 
   @override
   Future<AccountBalance?> account(String id) async {

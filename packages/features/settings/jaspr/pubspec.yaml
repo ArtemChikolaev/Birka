@@ -13,6 +13,8 @@ dependencies:
   jaspr_bloc: ^1.0.1
   l10n:
     path: ../../../core/l10n
+  rates:
+    path: ../../../core/rates
   settings_common:
     path: ../common
 

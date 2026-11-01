@@ -27,6 +27,14 @@ String capitalLabel(int currencies) => currencies > 1
     ? '${t.overview.capital} · ${t.overview.currencies(n: currencies)}'
     : t.overview.capital;
 
+/// `Курс ЦБ РФ на 31 октября`: the day of the rates behind the capital.
+String rateNote(CivilDate day) => t.overview.rateOn(
+  day: t.transactions.dayOfMonth(
+    day: day.day,
+    month: t.transactions.months[day.month - 1],
+  ),
+);
+
 /// `Траты в октябре`.
 String spendingTitle(CivilDate today) =>
     t.overview.spendingIn(month: t.overview.monthsIn[today.month - 1]);

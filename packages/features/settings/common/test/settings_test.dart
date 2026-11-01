@@ -20,11 +20,26 @@ void main() {
     await const Settings(
       language: AppLocale.ru,
       hideAmountsOnLaunch: true,
+      baseCurrency: Currency.eur,
     ).writeTo(store);
     final settings = Settings.readFrom(store);
 
     expect(settings.language, AppLocale.ru);
     expect(settings.hideAmountsOnLaunch, isTrue);
+    expect(settings.baseCurrency, Currency.eur);
+  });
+
+  test('a currency that this version does not offer follows the account', () {
+    final store = FakeSettingsStore({'base-currency': 'XXX'});
+
+    expect(Settings.readFrom(store).baseCurrency, isNull);
+  });
+
+  test('a base currency goes by its name, and none by what it follows', () {
+    expect(baseCurrencyLabel(Currency.eur), 'Euro');
+    expect(baseCurrencyLabel(null), 'First account');
+    expect(baseCurrencyChoices.first, isNull);
+    expect(baseCurrencyChoices, hasLength(10));
   });
 
   test('the language of the device comes back as no choice', () async {

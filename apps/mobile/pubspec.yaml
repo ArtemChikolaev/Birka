@@ -30,6 +30,7 @@ dependencies:
     sdk: flutter
   get_it: ^9.3.0
   go_router: ^17.5.0
+  http: ^1.6.0
   l10n:
     path: ../../packages/core/l10n
   ledger:
@@ -38,6 +39,8 @@ dependencies:
     path: ../../packages/features/overview/common
   overview_flutter:
     path: ../../packages/features/overview/flutter
+  rates:
+    path: ../../packages/core/rates
   reports_common:
     path: ../../packages/features/reports/common
   reports_flutter:

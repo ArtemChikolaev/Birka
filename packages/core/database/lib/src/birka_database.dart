@@ -8,14 +8,22 @@ part 'birka_database.g.dart';
 
 /// The one local database of Birka (ADR 0009).
 @DriftDatabase(
-  tables: [Accounts, Categories, Transactions, Entries, Allocations, Changes],
+  tables: [
+    Accounts,
+    Categories,
+    Transactions,
+    Entries,
+    Allocations,
+    Changes,
+    ExchangeRates,
+  ],
 )
 class BirkaDatabase extends _$BirkaDatabase {
   /// Creates the database on a connection that the host opens.
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -24,6 +32,7 @@ class BirkaDatabase extends _$BirkaDatabase {
         await m.addColumn(schema.accounts, schema.accounts.lastDigits);
         await m.addColumn(schema.accounts, schema.accounts.art);
       },
+      from2To3: (m, schema) => m.createTable(schema.exchangeRates),
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
   );

@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:accounts_common/src/domain/accounts_overview.dart';
 import 'package:accounts_common/src/domain/accounts_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
+import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 
 /// What the list of accounts shows.
 @immutable
@@ -40,11 +43,17 @@ class AccountsCubit extends Cubit<AccountsState> {
   }
 
   final AccountsRepository _repository;
-  StreamSubscription<void>? _subscription;
+  List<StreamSubscription<void>> _subscriptions = const [];
+
+  /// What has arrived so far. The list waits for all of it, so that its totals
+  /// never appear without their rates.
+  List<AccountBalance>? _accounts;
+  RateBook? _rates;
+  (Currency?,)? _base;
 
   /// Reads the accounts again after a failure.
   Future<void> retry() async {
-    final cancelled = _subscription?.cancel();
+    final cancelled = _cancel();
     emit(const AccountsLoading());
     _follow();
     await cancelled;
@@ -55,15 +64,44 @@ class AccountsCubit extends Cubit<AccountsState> {
       _repository.setArchived(id, archived: archived);
 
   void _follow() {
-    _subscription = _repository.watchAccounts().listen(
-      (accounts) => emit(AccountsLoaded(AccountsOverview.of(accounts))),
-      onError: (Object _) => emit(const AccountsFailed()),
-    );
+    void failed(Object _) => emit(const AccountsFailed());
+    _accounts = null;
+    _rates = null;
+    _base = null;
+    _subscriptions = [
+      _repository.watchAccounts().listen((accounts) {
+        _accounts = accounts;
+        _show();
+      }, onError: failed),
+      _repository.watchRates().listen((rates) {
+        _rates = rates;
+        _show();
+      }, onError: failed),
+      _repository.watchBaseCurrency().listen((base) {
+        _base = (base,);
+        _show();
+      }, onError: failed),
+    ];
   }
+
+  void _show() {
+    if ((_accounts, _rates, _base) case (
+      final accounts?,
+      final rates?,
+      (final base,)?,
+    )) {
+      emit(
+        AccountsLoaded(AccountsOverview.of(accounts, rates: rates, base: base)),
+      );
+    }
+  }
+
+  Future<void> _cancel() =>
+      Future.wait(_subscriptions.map((subscription) => subscription.cancel()));
 
   @override
   Future<void> close() async {
-    await _subscription?.cancel();
+    await _cancel();
     return super.close();
   }
 }

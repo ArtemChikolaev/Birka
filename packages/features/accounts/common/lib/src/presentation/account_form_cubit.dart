@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:accounts_common/src/domain/account_draft.dart';
 import 'package:accounts_common/src/domain/accounts_repository.dart';
-import 'package:accounts_common/src/domain/offered_currencies.dart';
 import 'package:bloc/bloc.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';

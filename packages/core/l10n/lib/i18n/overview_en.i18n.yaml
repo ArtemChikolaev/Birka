@@ -1,4 +1,5 @@
 capital: Capital
+rateOn: Bank of Russia rate on $day
 currencies(n):
   one: $n currency
   other: $n currencies

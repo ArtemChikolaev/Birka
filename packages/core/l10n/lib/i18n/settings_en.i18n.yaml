@@ -3,6 +3,9 @@ language: Language
 deviceLanguage: Same as the device
 english: English
 russian: Русский
+baseCurrency: Base currency
+firstAccountCurrency: First account
+ratesCredit: Курсы ЦБ РФ в XML и JSON, API
 security: Security
 hideAmounts: Hide amounts
 onLaunch: At launch

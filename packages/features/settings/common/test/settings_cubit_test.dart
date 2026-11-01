@@ -6,11 +6,17 @@ import 'fake_settings_store.dart';
 
 void main() {
   late FakeSettingsStore store;
+  late BaseCurrency baseCurrency;
   late SettingsCubit cubit;
 
   setUp(() {
     store = FakeSettingsStore();
-    cubit = SettingsCubit(store, deviceLanguage: 'en');
+    baseCurrency = BaseCurrency(null);
+    cubit = SettingsCubit(
+      store,
+      deviceLanguage: 'en',
+      baseCurrency: baseCurrency,
+    );
   });
   tearDown(() async {
     await cubit.close();
@@ -24,7 +30,11 @@ void main() {
       hideAmountsOnLaunch: true,
     ).writeTo(store);
 
-    cubit = SettingsCubit(store, deviceLanguage: 'en');
+    cubit = SettingsCubit(
+      store,
+      deviceLanguage: 'en',
+      baseCurrency: baseCurrency,
+    );
 
     expect(cubit.state.language, AppLocale.ru);
     expect(cubit.state.hideAmountsOnLaunch, isTrue);
@@ -83,6 +93,47 @@ void main() {
     expect(cubit.state.hideAmountsOnLaunch, isTrue);
     expect(cubit.state.language, AppLocale.ru);
     expect(Settings.readFrom(store).hideAmountsOnLaunch, isTrue);
+  });
+
+  test('a new base currency stays and reaches the screens', () async {
+    final seen = <Currency?>[];
+    final subscription = baseCurrency.watch().listen(seen.add);
+
+    await cubit.baseCurrencyChanged(Currency.eur);
+    await pumpEventQueue();
+    await subscription.cancel();
+
+    expect(cubit.state.baseCurrency, Currency.eur);
+    expect(Settings.readFrom(store).baseCurrency, Currency.eur);
+    expect(seen, [null, Currency.eur]);
+  });
+
+  test('the first account can be followed again', () async {
+    await cubit.baseCurrencyChanged(Currency.eur);
+
+    await cubit.baseCurrencyChanged(null);
+
+    expect(baseCurrency.value, isNull);
+    expect(Settings.readFrom(store).baseCurrency, isNull);
+  });
+
+  test('a new base currency keeps the other settings', () async {
+    await cubit.languageChanged(AppLocale.ru);
+    await cubit.hideAmountsOnLaunchChanged(hide: true);
+
+    await cubit.baseCurrencyChanged(Currency.usd);
+
+    expect(cubit.state.language, AppLocale.ru);
+    expect(cubit.state.hideAmountsOnLaunch, isTrue);
+  });
+
+  test('a new language keeps the base currency', () async {
+    await cubit.baseCurrencyChanged(Currency.usd);
+
+    await cubit.languageChanged(AppLocale.ru);
+
+    expect(cubit.state.baseCurrency, Currency.usd);
+    expect(Settings.readFrom(store).baseCurrency, Currency.usd);
   });
 
   test('a new language keeps the amounts hidden', () async {

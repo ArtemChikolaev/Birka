@@ -1,4 +1,5 @@
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
 import 'package:jaspr_test/jaspr_test.dart';
@@ -22,7 +23,11 @@ void main() {
   Future<void> pump(ComponentTester tester) async {
     tester.pumpComponent(
       BlocProvider(
-        create: (_) => SettingsCubit(store, deviceLanguage: 'en'),
+        create: (_) => SettingsCubit(
+          store,
+          deviceLanguage: 'en',
+          baseCurrency: BaseCurrency(null),
+        ),
         child: const SettingsSection(),
       ),
     );
@@ -71,7 +76,50 @@ void main() {
     expect(find.text('Как на устройстве'), findsNComponents(2));
     expect(find.text('English'), findsOneComponent);
     expect(find.text('Русский'), findsOneComponent);
-    expect(find.byType(BirkaIcon), findsNComponents(2));
+    // The arrows of both rows, and the mark.
+    expect(find.byType(BirkaIcon), findsNComponents(3));
+  });
+
+  testComponents('only one choice stands open', (tester) async {
+    await pump(tester);
+
+    await tap(tester, 'Язык');
+    await tap(tester, 'Базовая валюта');
+
+    expect(find.text('English'), findsNothing);
+    expect(find.text('Рубли'), findsOneComponent);
+  });
+
+  testComponents('a picked base currency stays and the choice closes', (
+    tester,
+  ) async {
+    await pump(tester);
+
+    await tap(tester, 'Базовая валюта');
+    await tap(tester, 'Евро');
+
+    expect(Settings.readFrom(store).baseCurrency, Currency.eur);
+    expect(find.text('Евро'), findsOneComponent);
+    expect(find.text('Рубли'), findsNothing);
+  });
+
+  testComponents('the first account can be followed again', (tester) async {
+    await const Settings(baseCurrency: Currency.eur).writeTo(store);
+    await pump(tester);
+
+    await tap(tester, 'Базовая валюта');
+    await tap(tester, 'Первый счёт');
+
+    expect(Settings.readFrom(store).baseCurrency, isNull);
+  });
+
+  testComponents('links to where the rates come from', (tester) async {
+    await pump(tester);
+
+    final link = find.tag('a').evaluate().single.component as DomComponent;
+
+    expect(link.attributes?['href'], 'https://www.cbr-xml-daily.ru/');
+    expect(find.text('Курсы ЦБ РФ в XML и JSON, API'), findsOneComponent);
   });
 
   testComponents('the row closes them too', (tester) async {

@@ -45,8 +45,9 @@
 
 ## Consequences
 
-- A setting that belongs to the data, such as the base currency, goes into the
-  database with its own decision.
+- A setting that stored data depends on goes into the database with its own
+  decision. The base currency does not: every total is computed when it is
+  read ([ADR 0012](0012-exchange-rates.md)).
 - A backup of the database does not carry these settings.
 - A language picked in one tab reaches other open tabs when they load a page.
 - On the site, a tab that has not touched the eye follows the switch from its

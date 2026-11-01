@@ -1,4 +1,6 @@
 import 'package:accounts_common/accounts_common.dart';
+import 'package:decimal/decimal.dart';
+import 'package:ledger/ledger.dart' show CivilDate;
 import 'package:money/money.dart';
 import 'package:test/test.dart';
 
@@ -40,6 +42,32 @@ void main() {
 
     expect(overview.active.map((r) => r.account.name), ['Card']);
     expect(overview.archived.map((r) => r.account.name), ['Old']);
+  });
+
+  test('adds currencies up once a rate joins them', () {
+    final overview = AccountsOverview.of(
+      [
+        row(account('Card', rub(0)), rub(100000)),
+        row(account('Euro', eur(0)), eur(100)),
+      ],
+      rates: RateBook([
+        DayRates(CivilDate(2026, 10, 31), {'EUR': Decimal.fromInt(90)}),
+      ]),
+    );
+
+    expect(overview.totals, [rub(109000)]);
+  });
+
+  test('shows the totals in the picked currency', () {
+    final overview = AccountsOverview.of(
+      [row(account('Card', rub(0)), rub(9000))],
+      rates: RateBook([
+        DayRates(CivilDate(2026, 10, 31), {'EUR': Decimal.fromInt(90)}),
+      ]),
+      base: Currency.eur,
+    );
+
+    expect(overview.totals, [eur(100)]);
   });
 
   test('has no totals without accounts', () {
