@@ -26,7 +26,7 @@ import 'package:money/money.dart';
 import 'package:overview_common/overview_common.dart' hide Category;
 import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart'
-    show MonthTotal, ReportsCubit, ReportsRepository;
+    show ReportsCubit, ReportsRepository;
 import 'package:reports_flutter/reports_flutter.dart';
 import 'package:settings_common/settings_common.dart'
     show BaseCurrency, Settings, SettingsCubit, SettingsStore;
@@ -144,7 +144,7 @@ final class _Overview implements OverviewRepository {
       Stream.value(const []);
 
   @override
-  Stream<List<CategoryTotal>> watchSpending({
+  Stream<List<CategoryDayTotal>> watchSpending({
     required CivilDate from,
     required CivilDate to,
   }) => Stream.value(const []);
@@ -155,14 +155,13 @@ final class _NoReports implements ReportsRepository {
   Stream<Currency?> watchMainCurrency() => Stream.value(null);
 
   @override
-  Stream<List<CategoryTotal>> watchTotals(
-    CategoryKind kind, {
-    required CivilDate from,
-    required CivilDate to,
-  }) => Stream.value(const []);
+  Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
   @override
-  Stream<List<MonthTotal>> watchMonthTotals(
+  Stream<RateBook> watchRates() => Stream.value(const RateBook.empty());
+
+  @override
+  Stream<List<CategoryDayTotal>> watchDays(
     CategoryKind kind, {
     required CivilDate from,
     required CivilDate to,

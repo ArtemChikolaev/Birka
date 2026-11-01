@@ -8,6 +8,7 @@ export 'package:ledger/ledger.dart'
         AccountBalance,
         AccountType,
         Category,
+        CategoryDayTotal,
         CategoryTotal,
         CivilDate;
 

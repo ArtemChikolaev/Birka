@@ -10,11 +10,14 @@ final class FakeReportsRepository implements ReportsRepository {
   /// The currency of the first account that counts.
   Currency? main;
 
-  /// The rows of each kind and first day.
-  final totals = <(CategoryKind, CivilDate), List<CategoryTotal>>{};
+  /// The currency picked for totals.
+  Currency? base;
 
-  /// The totals of each kind.
-  final monthTotals = <CategoryKind, List<MonthTotal>>{};
+  /// The kept rates.
+  RateBook rates = const RateBook.empty();
+
+  /// The rows of each kind.
+  final days = <CategoryKind, List<CategoryDayTotal>>{};
 
   /// The months with operations.
   List<CivilDate> monthList;
@@ -24,9 +27,6 @@ final class FakeReportsRepository implements ReportsRepository {
 
   /// The kinds and days that the rows were asked for.
   final asked = <(CategoryKind, CivilDate, CivilDate)>[];
-
-  /// The days that the totals of months were asked for.
-  final askedMonths = <(CivilDate, CivilDate)>[];
 
   final _rows = StreamController<void>.broadcast();
   final _main = StreamController<void>.broadcast();
@@ -63,23 +63,19 @@ final class FakeReportsRepository implements ReportsRepository {
   Stream<Currency?> watchMainCurrency() => _follow(_main, () => main);
 
   @override
-  Stream<List<CategoryTotal>> watchTotals(
+  Stream<Currency?> watchBaseCurrency() => _follow(_main, () => base);
+
+  @override
+  Stream<RateBook> watchRates() => _follow(_main, () => rates);
+
+  @override
+  Stream<List<CategoryDayTotal>> watchDays(
     CategoryKind kind, {
     required CivilDate from,
     required CivilDate to,
   }) {
     asked.add((kind, from, to));
-    return _follow(_rows, () => totals[(kind, from)] ?? const []);
-  }
-
-  @override
-  Stream<List<MonthTotal>> watchMonthTotals(
-    CategoryKind kind, {
-    required CivilDate from,
-    required CivilDate to,
-  }) {
-    askedMonths.add((from, to));
-    return _follow(_rows, () => monthTotals[kind] ?? const []);
+    return _follow(_rows, () => days[kind] ?? const []);
   }
 
   @override
@@ -100,3 +96,9 @@ CategoryTotal testTotal(String name, Money total) => CategoryTotal(
   ),
   total,
 );
+
+/// What went through a category on [day] for tests.
+CategoryDayTotal testDay(String name, CivilDate day, Money total) {
+  final CategoryTotal(:category) = testTotal(name, total);
+  return CategoryDayTotal(category, day, total);
+}

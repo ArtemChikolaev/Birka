@@ -16,14 +16,23 @@ import 'package:transactions_common/transactions_common.dart';
 /// implementation (ADR 0006).
 void registerDependencies(GetIt getIt, QueryExecutor executor) {
   final database = BirkaDatabase(executor);
+  final ledger = LedgerRepository(database);
   final rates = RatesRepository(database);
   final settings = Settings.readFrom(const BrowserSettingsStore());
+  final baseCurrency = BaseCurrency(settings.baseCurrency);
   getIt
     ..registerSingleton(database)
-    ..registerSingleton(LedgerRepository(database))
+    ..registerSingleton(ledger)
     ..registerSingleton(rates)
-    ..registerSingleton(BaseCurrency(settings.baseCurrency))
-    ..registerSingleton(RatesUpdater(rates, CbrMirror(http.Client())));
+    ..registerSingleton(baseCurrency)
+    ..registerSingleton(
+      RatesUpdater(
+        rates,
+        CbrMirror(http.Client(), inBrowser: true),
+        ledger,
+        baseCurrency,
+      ),
+    );
   registerAccounts(getIt);
   registerCategories(getIt);
   registerOverview(getIt);

@@ -51,8 +51,8 @@ final class OverviewState {
   /// What each day of the last year changed.
   final List<DayChange> changes;
 
-  /// What went through each category this month.
-  final List<CategoryTotal> spendingRows;
+  /// What went through each category on each day of this month.
+  final List<CategoryDayTotal> spendingRows;
 
   /// The kept exchange rates.
   final RateBook rates;
@@ -75,9 +75,9 @@ final class OverviewState {
   /// How much [main] changed over [period].
   late final Money? change = _change();
 
-  /// The spending of the month.
+  /// The spending of the month, with each amount at the rate of its own day.
   late final Spending spending = Spending.of(
-    spendingRows,
+    totalsIn(main?.currency, spendingRows, rates),
     preferred: main?.currency,
   );
 
@@ -96,11 +96,14 @@ final class OverviewState {
   Money? _change() {
     final main = this.main;
     if (main == null) return null;
-    final change = history.last - history.first;
-    return Money(
-      change.clamp(-Money.maxMinorUnits, Money.maxMinorUnits),
+    final change = Money(
+      (history.last - history.first).clamp(
+        -Money.maxMinorUnits,
+        Money.maxMinorUnits,
+      ),
       main.currency,
     );
+    return capital.converted ? change.roundedToWhole() : change;
   }
 
   /// A copy with the given fields changed. [base] takes a function, so it can
@@ -111,7 +114,7 @@ final class OverviewState {
     OverviewPeriod? period,
     List<AccountBalance>? accounts,
     List<DayChange>? changes,
-    List<CategoryTotal>? spendingRows,
+    List<CategoryDayTotal>? spendingRows,
     RateBook? rates,
     Currency? Function()? base,
   }) {

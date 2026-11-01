@@ -140,4 +140,50 @@ void main() {
       expect(rub(-1050).toString(), '-10.50 RUB');
     });
   });
+
+  group('roundedToWhole', () {
+    test('goes to the nearest whole unit', () {
+      expect(rub(12349).roundedToWhole(), rub(12300));
+      expect(rub(12351).roundedToWhole(), rub(12400));
+    });
+
+    test('rounds a half away from zero', () {
+      expect(rub(150).roundedToWhole(), rub(200));
+      expect(rub(-150).roundedToWhole(), rub(-200));
+      expect(rub(149).roundedToWhole(), rub(100));
+      expect(rub(-149).roundedToWhole(), rub(-100));
+    });
+
+    test('leaves a whole amount and zero alone', () {
+      expect(rub(500).roundedToWhole(), rub(500));
+      expect(rub(0).roundedToWhole(), rub(0));
+    });
+
+    test('leaves less than one unit alone', () {
+      expect(rub(99).roundedToWhole(), rub(99));
+      expect(rub(-99).roundedToWhole(), rub(-99));
+      expect(rub(100).roundedToWhole(), rub(100));
+      expect(rub(101).roundedToWhole(), rub(100));
+    });
+
+    test('follows the digits of the currency', () {
+      final usdt = Currency.custom('USDT', decimalDigits: 6);
+      final yen = Currency.custom('JPY', decimalDigits: 0);
+
+      expect(Money(1500000, usdt).roundedToWhole(), Money(2000000, usdt));
+      expect(Money(1499999, usdt).roundedToWhole(), Money(1000000, usdt));
+      expect(Money(7, yen).roundedToWhole(), Money(7, yen));
+    });
+
+    test('stops at the limit of an amount', () {
+      expect(
+        rub(Money.maxMinorUnits).roundedToWhole(),
+        rub(Money.maxMinorUnits),
+      );
+      expect(
+        rub(-Money.maxMinorUnits).roundedToWhole(),
+        rub(-Money.maxMinorUnits),
+      );
+    });
+  });
 }

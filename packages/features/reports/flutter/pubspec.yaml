@@ -18,6 +18,7 @@ dependencies:
     path: ../common
 
 dev_dependencies:
+  decimal: ^3.2.6
   flutter_test:
     sdk: flutter
   ledger:

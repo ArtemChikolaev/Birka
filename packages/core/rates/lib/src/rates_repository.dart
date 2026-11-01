@@ -2,6 +2,7 @@ import 'package:database/database.dart';
 import 'package:decimal/decimal.dart';
 import 'package:drift/drift.dart';
 import 'package:ledger/ledger.dart' show CivilDate;
+import 'package:money/money.dart';
 import 'package:rates/src/rate_book.dart';
 import 'package:rates/src/rate_source.dart';
 
@@ -36,16 +37,29 @@ final class RatesRepository {
     return day == null ? null : CivilDate.parse(day);
   }
 
-  /// Keeps [rates], over what the same day held.
+  /// The days that have rates.
+  Future<Set<CivilDate>> keptDays() async {
+    final day = _db.exchangeRates.day;
+    final rows = await (_db.selectOnly(
+      _db.exchangeRates,
+      distinct: true,
+    )..addColumns([day])).get();
+    return {for (final row in rows) CivilDate.parse(row.read(day)!)};
+  }
+
+  /// Keeps the rates of the currencies that Birka offers, over what the same
+  /// day held. The others would only make every read longer.
   Future<void> keep(DayRates rates) {
+    final offered = {for (final currency in offeredCurrencies) currency.code};
     return _db.batch((batch) {
       batch.insertAllOnConflictUpdate(_db.exchangeRates, [
         for (final MapEntry(key: code, value: rubles) in rates.rubles.entries)
-          ExchangeRatesCompanion.insert(
-            day: rates.day.toString(),
-            currency: code,
-            rubles: rubles.toString(),
-          ),
+          if (offered.contains(code))
+            ExchangeRatesCompanion.insert(
+              day: rates.day.toString(),
+              currency: code,
+              rubles: rubles.toString(),
+            ),
       ]);
     });
   }

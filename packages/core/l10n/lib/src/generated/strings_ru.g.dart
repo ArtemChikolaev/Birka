@@ -355,6 +355,8 @@ class _Translations$reports$ru extends Translations$reports$en {
   @override
   String get ring => 'Доли категорий';
   @override
+  String get dayRates => 'Курс ЦБ РФ на день операции';
+  @override
   String get failed => 'Не удалось прочитать отчёт.';
   @override
   List<String> get against => [
@@ -886,6 +888,7 @@ extension on TranslationsRu {
       'reports.noExpenses' => 'В этом месяце расходов нет.',
       'reports.noIncome' => 'В этом месяце доходов нет.',
       'reports.ring' => 'Доли категорий',
+      'reports.dayRates' => 'Курс ЦБ РФ на день операции',
       'reports.failed' => 'Не удалось прочитать отчёт.',
       'reports.against.0' => 'к январю',
       'reports.against.1' => 'к февралю',

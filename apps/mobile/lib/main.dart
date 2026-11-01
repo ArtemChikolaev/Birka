@@ -23,4 +23,7 @@ Future<void> main() async {
   final rates = GetIt.instance<RatesUpdater>();
   unawaited(rates.refresh());
   AppLifecycleListener(onResume: () => unawaited(rates.refresh()));
+  // Another base currency needs the rates of other days.
+  final choices = GetIt.instance<BaseCurrency>().watch().skip(1);
+  unawaited(choices.forEach((_) => rates.refresh()));
 }

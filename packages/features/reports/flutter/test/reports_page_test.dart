@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +11,9 @@ import 'package:reports_flutter/reports_flutter.dart';
 
 final class _FakeRepository implements ReportsRepository {
   Currency? main = Currency.rub;
+  Currency? base;
+  RateBook rates = const RateBook.empty();
   final rows = <(CategoryKind, CivilDate), List<CategoryTotal>>{};
-  final totals = <CategoryKind, List<MonthTotal>>{};
   List<CivilDate> monthList = const [];
   Exception? readFailure;
 
@@ -27,18 +29,22 @@ final class _FakeRepository implements ReportsRepository {
   Stream<Currency?> watchMainCurrency() => _read(main);
 
   @override
-  Stream<List<CategoryTotal>> watchTotals(
-    CategoryKind kind, {
-    required CivilDate from,
-    required CivilDate to,
-  }) => _read(rows[(kind, from)] ?? const []);
+  Stream<Currency?> watchBaseCurrency() => _read(base);
 
   @override
-  Stream<List<MonthTotal>> watchMonthTotals(
+  Stream<RateBook> watchRates() => _read(rates);
+
+  @override
+  Stream<List<CategoryDayTotal>> watchDays(
     CategoryKind kind, {
     required CivilDate from,
     required CivilDate to,
-  }) => _read(totals[kind] ?? const []);
+  }) => _read([
+    for (final MapEntry(key: (rowKind, month), value: totals) in rows.entries)
+      if (rowKind == kind)
+        for (final CategoryTotal(:category, :total) in totals)
+          CategoryDayTotal(category, month, total),
+  ]);
 
   @override
   Future<List<CivilDate>> months() async => monthList;
@@ -116,10 +122,6 @@ void main() {
     ];
     repository.rows[(CategoryKind.income, september)] = [
       _total('Зарплата', rub(20000000), kind: CategoryKind.income),
-    ];
-    repository.totals[CategoryKind.expense] = [
-      MonthTotal(september, rub(3483150)),
-      MonthTotal(october, rub(3715000)),
     ];
     repository.monthList = [october, september];
     LocaleSettings.setLocaleSync(AppLocale.ru);
@@ -219,15 +221,39 @@ void main() {
   });
 
   testWidgets('without any operations there are no bars', (tester) async {
-    repository
-      ..rows.clear()
-      ..totals.clear();
+    repository.rows.clear();
     await pump(tester);
 
     await tapText(tester, 'ДОХОДЫ');
 
     expect(find.text('В этом месяце доходов нет.'), findsOneWidget);
     expect(find.byType(BirkaBars), findsNothing);
+  });
+
+  testWidgets('says that the amounts took the rate of their day', (
+    tester,
+  ) async {
+    repository
+      ..rates = RateBook([
+        DayRates(october, {'EUR': Decimal.fromInt(100)}),
+      ])
+      ..rows[(CategoryKind.expense, october)] = [
+        _total('Продукты', rub(100000)),
+        _total('Кафе', Money(1000, Currency.eur)),
+      ];
+    await pump(tester);
+
+    expect(find.text('2${space}000$space₽'), findsOneWidget);
+    expect(find.text('Курс ЦБ РФ на день операции'), findsOneWidget);
+  });
+
+  testWidgets('a report in one currency speaks of no rate', (tester) async {
+    repository.rates = RateBook([
+      DayRates(october, {'EUR': Decimal.fromInt(100)}),
+    ]);
+    await pump(tester);
+
+    expect(find.text('Курс ЦБ РФ на день операции'), findsNothing);
   });
 
   testWidgets('other currencies stand apart', (tester) async {
@@ -292,7 +318,6 @@ void main() {
       _total('Очень длинное название категории расходов', most),
       _total('Кафе', most),
     ];
-    repository.totals[CategoryKind.expense] = [MonthTotal(october, most)];
     await pump(tester);
     tester.view.physicalSize = const Size(640, 1136);
     await tester.pumpAndSettle();

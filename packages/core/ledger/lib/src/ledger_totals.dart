@@ -29,6 +29,23 @@ final class CategoryTotal {
   final Money total;
 }
 
+/// What went through a category and its subcategories on one day, in one
+/// currency. A total across days has to wait for the rate of each day.
+@immutable
+final class CategoryDayTotal {
+  /// Creates a total of [category] on [day].
+  const CategoryDayTotal(this.category, this.day, this.total);
+
+  /// The category, never a subcategory.
+  final Category category;
+
+  /// The day.
+  final CivilDate day;
+
+  /// The amount above zero.
+  final Money total;
+}
+
 /// What went through the categories of one kind in a month, in one currency.
 @immutable
 final class MonthTotal {

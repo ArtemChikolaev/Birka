@@ -69,10 +69,10 @@ void main() {
 
     final overview = await open();
 
-    // 1 000 ₽ at 90, and the 50 € that the account holds.
-    expect(overview.state.main, eur(6111));
-    // 40 ₽ and −5 ₽ at 90, and the euro that came in.
-    expect(overview.state.change, eur(138));
+    // 1 000 ₽ at 90, and the 50 € that the account holds, in whole euros.
+    expect(overview.state.main, eur(6100));
+    // 40 ₽ and −5 ₽ at 90, and the euro that came in, in whole euros.
+    expect(overview.state.change, eur(100));
   });
 
   test('reads a year of history and the month so far', () async {
@@ -125,6 +125,22 @@ void main() {
 
     expect(overview.state.main, eur(5000));
     expect(overview.state.change, eur(100));
+  });
+
+  test('turns the spending into the currency of the capital', () async {
+    repository
+      ..rates = RateBook([
+        DayRates(CivilDate(2026, 10, 31), {'EUR': Decimal.fromInt(90)}),
+      ])
+      ..spending = [
+        testTotal('Food', eur(1000)),
+        testTotal('Cafe', rub(500)),
+      ];
+
+    final overview = await open();
+
+    expect(overview.state.spending.total, rub(90500));
+    expect(overview.state.spending.others, isEmpty);
   });
 
   test('prefers the spending in the main currency', () async {

@@ -2,9 +2,11 @@
 library;
 
 import 'package:database/database.dart';
+import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart' show ReportsRepository;
 import 'package:reports_common/src/data/ledger_reports_repository.dart';
 import 'package:test/test.dart';
@@ -12,6 +14,8 @@ import 'package:test/test.dart';
 void main() {
   late BirkaDatabase database;
   late LedgerRepository ledger;
+  late RatesRepository rates;
+  late BaseCurrency baseCurrency;
   late ReportsRepository repository;
   final today = CivilDate(2026, 10, 31);
   final october = CivilDate(2026, 10, 1);
@@ -20,7 +24,9 @@ void main() {
   setUp(() {
     database = BirkaDatabase(NativeDatabase.memory());
     ledger = LedgerRepository(database);
-    repository = LedgerReportsRepository(ledger);
+    rates = RatesRepository(database);
+    baseCurrency = BaseCurrency(Currency.usd);
+    repository = LedgerReportsRepository(ledger, rates, baseCurrency);
   });
   tearDown(() => database.close());
 
@@ -47,7 +53,17 @@ void main() {
     expect(await repository.watchMainCurrency().first, Currency.eur);
   });
 
-  test('reads the totals of a month and the months', () async {
+  test('the base currency is the one picked', () async {
+    expect(await repository.watchBaseCurrency().first, Currency.usd);
+  });
+
+  test('the rates are the kept ones', () async {
+    await rates.keep(DayRates(today, {'USD': Decimal.fromInt(80)}));
+
+    expect((await repository.watchRates().first).latestDay, today);
+  });
+
+  test('reads the days of a category and the months', () async {
     final card = await ledger.addAccount(
       name: 'Card',
       type: AccountType.debit,
@@ -66,16 +82,12 @@ void main() {
     );
 
     final rows = await repository
-        .watchTotals(CategoryKind.expense, from: october, to: today)
-        .first;
-    final months = await repository
-        .watchMonthTotals(CategoryKind.expense, from: october, to: today)
+        .watchDays(CategoryKind.expense, from: october, to: today)
         .first;
 
     expect(rows.single.category.name, 'Food');
+    expect(rows.single.day, today);
     expect(rows.single.total, rub(300));
-    expect(months.single.month, october);
-    expect(months.single.total, rub(300));
     expect(await repository.months(), [october]);
   });
 }

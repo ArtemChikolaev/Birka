@@ -81,6 +81,10 @@ class _ReportsPageState extends State<ReportsPage> {
                       const SizedBox(height: BirkaTokens.spaceSm),
                       _Others(amounts: report.others),
                     ],
+                    if (state.converted) ...[
+                      const SizedBox(height: BirkaTokens.spaceSm),
+                      const _RateNote(),
+                    ],
                     if (report.average != null) ...[
                       gap,
                       _Months(report: report),
@@ -334,6 +338,22 @@ class _Others extends StatelessWidget {
         tone: AmountTone.muted,
         style: BirkaTextStyles.of(context).caption,
       ),
+    );
+  }
+}
+
+/// Says what stands behind the amounts.
+class _RateNote extends StatelessWidget {
+  const _RateNote();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      t.reports.dayRates,
+      textAlign: TextAlign.center,
+      style: BirkaTextStyles.of(
+        context,
+      ).caption.copyWith(color: BirkaColors.of(context).textSubtle),
     );
   }
 }

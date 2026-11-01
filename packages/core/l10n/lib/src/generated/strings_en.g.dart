@@ -380,6 +380,9 @@ class Translations$reports$en {
   /// en: 'Shares of the categories'
   String get ring => 'Shares of the categories';
 
+  /// en: 'Bank of Russia rate on the day of each operation'
+  String get dayRates => 'Bank of Russia rate on the day of each operation';
+
   /// en: 'Could not read the report.'
   String get failed => 'Could not read the report.';
 
@@ -992,6 +995,7 @@ extension on Translations {
       'reports.noExpenses' => 'Nothing spent this month.',
       'reports.noIncome' => 'Nothing earned this month.',
       'reports.ring' => 'Shares of the categories',
+      'reports.dayRates' => 'Bank of Russia rate on the day of each operation',
       'reports.failed' => 'Could not read the report.',
       'reports.against.0' => 'vs January',
       'reports.against.1' => 'vs February',

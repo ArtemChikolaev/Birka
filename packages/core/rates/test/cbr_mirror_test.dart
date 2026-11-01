@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
@@ -102,6 +103,51 @@ void main() {
       );
 
       expect(await mirror.on(CivilDate(2026, 11, 1)), isNull);
+    });
+  });
+
+  test('a source that hangs gives up', () async {
+    final never = MockClient((_) => Completer<http.Response>().future);
+    final source = CbrMirror(never, patience: Duration.zero);
+
+    await expectLater(source.latest(), throwsA(isA<TimeoutException>()));
+    await expectLater(
+      source.on(CivilDate(2026, 10, 31)),
+      throwsA(isA<TimeoutException>()),
+    );
+  });
+
+  group('a failed request for a day', () {
+    final failing = MockClient((_) async => throw http.ClientException('lost'));
+    final day = CivilDate(2026, 10, 25);
+
+    test('is a failure', () async {
+      await expectLater(
+        CbrMirror(failing).on(day),
+        throwsA(isA<http.ClientException>()),
+      );
+    });
+
+    test('in a browser is a day without rates', () async {
+      expect(await CbrMirror(failing, inBrowser: true).on(day), isNull);
+    });
+
+    test('in a browser stays a failure for the latest rates', () async {
+      await expectLater(
+        CbrMirror(failing, inBrowser: true).latest(),
+        throwsA(isA<http.ClientException>()),
+      );
+    });
+
+    test('that hangs stops the run in a browser too', () async {
+      final never = MockClient((_) => Completer<http.Response>().future);
+      final source = CbrMirror(
+        never,
+        patience: Duration.zero,
+        inBrowser: true,
+      );
+
+      await expectLater(source.on(day), throwsA(isA<TimeoutException>()));
     });
   });
 }

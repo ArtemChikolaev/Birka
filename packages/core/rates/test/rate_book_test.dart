@@ -1,5 +1,5 @@
 import 'package:decimal/decimal.dart';
-import 'package:ledger/ledger.dart' show CivilDate;
+import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:rates/rates.dart';
 import 'package:test/test.dart';
@@ -66,10 +66,10 @@ void main() {
       DayRates(day, {'EUR': Decimal.fromInt(90)}),
     ]);
 
-    // 1 111,11… and 444,44… come to 1 555,56, while each part rounds down.
+    // 1 111,11… and 444,44… come to 1 556 whole, while each part rounds down.
     expect(
       rates.sum([rub(10000000), rub(4000000)], Currency.eur),
-      eur(155556),
+      eur(155600),
     );
     expect(rates.sum(const [], Currency.eur), eur(0));
   });
@@ -123,5 +123,141 @@ void main() {
 
   test('an empty book has no day', () {
     expect(const RateBook.empty().latestDay, isNull);
+  });
+
+  group('a sum that took a rate', () {
+    test('is whole', () {
+      expect(book.sum([usd(1234)], Currency.rub), rub(98700));
+      expect(book.sum([usd(1234), rub(50)], Currency.rub), rub(98800));
+    });
+
+    test('rounds the exact sum and not a sum in kopecks', () {
+      final rates = RateBook([
+        DayRates(day, {'USD': Decimal.parse('83.9497')}),
+      ]);
+
+      expect(rates.convert(usd(1000), Currency.rub), rub(83950));
+      expect(rates.sum([usd(1000)], Currency.rub), rub(83900));
+    });
+
+    test('keeps its cents under one unit', () {
+      expect(book.sum([rub(3000)], Currency.usd), usd(38));
+      expect(book.sum([rub(-3000)], Currency.usd), usd(-38));
+    });
+
+    test('rounds a half away from zero', () {
+      final rates = RateBook([
+        DayRates(day, {'USD': Decimal.parse('1.5')}),
+      ]);
+
+      expect(rates.sum([usd(100)], Currency.rub), rub(200));
+      expect(rates.sum([usd(-100)], Currency.rub), rub(-200));
+    });
+
+    test('in one currency keeps its kopecks', () {
+      expect(book.sum([rub(150), rub(5)], Currency.rub), rub(155));
+    });
+  });
+
+  group('on a day', () {
+    CategoryDayTotal row(CivilDate day, Money total) => CategoryDayTotal(
+      const Category(
+        id: 'food',
+        kind: CategoryKind.expense,
+        name: 'Food',
+        archived: false,
+        sortOrder: 0,
+      ),
+      day,
+      total,
+    );
+
+    final monday = CivilDate(2026, 10, 26);
+    final wednesday = CivilDate(2026, 10, 28);
+    final friday = CivilDate(2026, 10, 30);
+    final history = RateBook([
+      DayRates(friday, {'USD': Decimal.fromInt(90)}),
+      DayRates(monday, {'USD': Decimal.fromInt(70)}),
+      DayRates(wednesday, {
+        'USD': Decimal.fromInt(80),
+        'EUR': Decimal.fromInt(100),
+      }),
+    ]);
+
+    test('takes the rate of that day', () {
+      expect(history.convert(usd(100), Currency.rub, on: monday), rub(7000));
+      expect(history.convert(usd(100), Currency.rub, on: friday), rub(9000));
+    });
+
+    test('takes the last rate before a day without one', () {
+      expect(
+        history.convert(usd(100), Currency.rub, on: CivilDate(2026, 10, 29)),
+        rub(8000),
+      );
+      expect(
+        history.convert(usd(100), Currency.rub, on: CivilDate(2026, 11, 1)),
+        rub(9000),
+      );
+    });
+
+    test('takes the first rate before them all', () {
+      expect(
+        history.convert(usd(100), Currency.rub, on: CivilDate(2025, 1, 1)),
+        rub(7000),
+      );
+    });
+
+    test('each currency looks for its own last rate', () {
+      expect(
+        history.convert(eur(100), Currency.usd, on: friday),
+        usd(111),
+      );
+      expect(
+        history.convert(eur(100), Currency.usd, on: monday),
+        usd(143),
+      );
+    });
+
+    test('without a day takes the latest rate', () {
+      expect(history.convert(usd(100), Currency.rub), rub(9000));
+      expect(history.latestDay, friday);
+    });
+
+    test('has nothing for a currency without rates', () {
+      expect(history.convert(rub(100), jpy, on: friday), isNull);
+    });
+
+    test('adds up amounts of different days and rounds once', () {
+      final exact = RateBook([
+        DayRates(monday, {'USD': Decimal.parse('0.5')}),
+      ]);
+
+      expect(
+        exact.sumOfDays([
+          row(monday, usd(1)),
+          row(monday, usd(1)),
+          row(friday, rub(3)),
+        ], Currency.rub),
+        rub(4),
+      );
+    });
+
+    test('adds up each amount at the rate of its day', () {
+      expect(
+        history.sumOfDays([
+          row(monday, usd(100)),
+          row(friday, usd(100)),
+          row(friday, rub(5)),
+        ], Currency.rub),
+        rub(16000),
+      );
+    });
+
+    test('adds up nothing without a rate', () {
+      expect(
+        history.sumOfDays([row(monday, Money(1, jpy))], Currency.rub),
+        isNull,
+      );
+    });
   });
 }
