@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// Every style in the order of the constructor.
 List<TextStyle> stylesOf(BirkaTextStyles s) => [
   s.display,
+  s.hero,
   s.title,
   s.heading,
   s.amount,
@@ -69,21 +70,22 @@ void main() {
   test('copyWith and lerp keep every style in its place', () {
     const other = BirkaTextStyles(
       display: TextStyle(fontSize: 1),
-      title: TextStyle(fontSize: 2),
-      heading: TextStyle(fontSize: 3),
-      amount: TextStyle(fontSize: 4),
-      body: TextStyle(fontSize: 5),
-      bodyStrong: TextStyle(fontSize: 6),
-      caption: TextStyle(fontSize: 7),
-      label: TextStyle(fontSize: 8),
-      tab: TextStyle(fontSize: 9),
+      hero: TextStyle(fontSize: 2),
+      title: TextStyle(fontSize: 3),
+      heading: TextStyle(fontSize: 4),
+      amount: TextStyle(fontSize: 5),
+      body: TextStyle(fontSize: 6),
+      bodyStrong: TextStyle(fontSize: 7),
+      caption: TextStyle(fontSize: 8),
+      label: TextStyle(fontSize: 9),
+      tab: TextStyle(fontSize: 10),
     );
     List<double?> sizes(BirkaTextStyles s) => [
       for (final style in stylesOf(s)) style.fontSize,
     ];
 
-    expect(sizes(other.copyWith()), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(sizes(standard.lerp(other, 1)), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(sizes(other.copyWith()), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(sizes(standard.lerp(other, 1)), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     expect(standard.lerp(null, 0.5), same(standard));
   });
 }

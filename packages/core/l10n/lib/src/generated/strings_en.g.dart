@@ -52,6 +52,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$app$en app = Translations$app$en.internal(_root);
   late final Translations$categories$en categories =
       Translations$categories$en.internal(_root);
+  late final Translations$onboarding$en onboarding =
+      Translations$onboarding$en.internal(_root);
   late final Translations$overview$en overview =
       Translations$overview$en.internal(_root);
   late final Translations$reports$en reports = Translations$reports$en.internal(
@@ -254,6 +256,31 @@ class Translations$categories$en {
   };
   late final Translations$categories$form$en form =
       Translations$categories$form$en.internal(_root);
+}
+
+// Path: onboarding
+class Translations$onboarding$en {
+  Translations$onboarding$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Skip'
+  String get skip => 'Skip';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'Could not save. Try again.'
+  String get failed => 'Could not save. Try again.';
+
+  late final Translations$onboarding$welcome$en welcome =
+      Translations$onboarding$welcome$en.internal(_root);
+  late final Translations$onboarding$account$en account =
+      Translations$onboarding$account$en.internal(_root);
+  late final Translations$onboarding$categories$en categories =
+      Translations$onboarding$categories$en.internal(_root);
 }
 
 // Path: overview
@@ -766,6 +793,76 @@ class Translations$categories$form$en {
   String get failed => 'Could not save. Try again.';
 }
 
+// Path: onboarding.welcome
+class Translations$onboarding$welcome$en {
+  Translations$onboarding$welcome$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'All your money in one place'
+  String get title => 'All your money\nin one place';
+
+  /// en: 'Accounts in any currency and no bank passwords. Your data stays on your device.'
+  String get text =>
+      'Accounts in any currency and no bank passwords. Your data stays on your device.';
+
+  /// en: 'Get started'
+  String get start => 'Get started';
+}
+
+// Path: onboarding.account
+class Translations$onboarding$account$en {
+  Translations$onboarding$account$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Your first account'
+  String get title => 'Your first account';
+
+  /// en: 'Your capital starts here. You can change the balance at any time.'
+  String get text =>
+      'Your capital starts here. You can change the balance at any time.';
+
+  /// en: 'Next'
+  String get next => 'Next';
+}
+
+// Path: onboarding.categories
+class Translations$onboarding$categories$en {
+  Translations$onboarding$categories$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Categories'
+  String get title => 'Categories';
+
+  /// en: 'Take a ready set. You can change it at any time.'
+  String get text => 'Take a ready set. You can change it at any time.';
+
+  /// en: 'Short set'
+  String get short => 'Short set';
+
+  /// en: 'Full set'
+  String get full => 'Full set';
+
+  /// en: '(one) {$n category} (other) {$n categories}'
+  String count({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} category',
+        other: '${n} categories',
+      );
+
+  /// en: 'Done'
+  String get finish => 'Done';
+}
+
 // Path: transactions.sources
 class Translations$transactions$sources$en {
   Translations$transactions$sources$en.internal(this._root);
@@ -940,6 +1037,30 @@ extension on Translations {
       'categories.form.restore' => 'Bring back from the archive',
       'categories.form.nameMissing' => 'Give the category a name.',
       'categories.form.failed' => 'Could not save. Try again.',
+      'onboarding.skip' => 'Skip',
+      'onboarding.back' => 'Back',
+      'onboarding.failed' => 'Could not save. Try again.',
+      'onboarding.welcome.title' => 'All your money\nin one place',
+      'onboarding.welcome.text' =>
+        'Accounts in any currency and no bank passwords. Your data stays on your device.',
+      'onboarding.welcome.start' => 'Get started',
+      'onboarding.account.title' => 'Your first account',
+      'onboarding.account.text' =>
+        'Your capital starts here. You can change the balance at any time.',
+      'onboarding.account.next' => 'Next',
+      'onboarding.categories.title' => 'Categories',
+      'onboarding.categories.text' =>
+        'Take a ready set. You can change it at any time.',
+      'onboarding.categories.short' => 'Short set',
+      'onboarding.categories.full' => 'Full set',
+      'onboarding.categories.count' =>
+        ({required num n}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+              n,
+              one: '${n} category',
+              other: '${n} categories',
+            ),
+      'onboarding.categories.finish' => 'Done',
       'overview.capital' => 'Capital',
       'overview.rateOn' =>
         ({required Object day}) => 'Bank of Russia rate on ${day}',

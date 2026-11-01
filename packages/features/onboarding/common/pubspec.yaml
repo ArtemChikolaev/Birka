@@ -1,0 +1,32 @@
+name: onboarding_common
+description: >-
+  The onboarding of Birka in pure Dart: the three steps of a first launch,
+  shared by both hosts.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  bloc: ^9.2.1
+  design_tokens:
+    path: ../../../design/tokens
+  device_settings:
+    path: ../../../core/device_settings
+  get_it: ^9.3.0
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  meta: ^1.17.0
+  money:
+    path: ../../../core/money
+  rates:
+    path: ../../../core/rates
+
+dev_dependencies:
+  database:
+    path: ../../../core/database
+  drift: ^2.31.0
+  test: ^1.26.3

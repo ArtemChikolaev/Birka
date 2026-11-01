@@ -1,3 +1,4 @@
+import 'package:design_flutter/src/components/birka_icon.dart';
 import 'package:design_flutter/src/components/glass_surface.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
@@ -118,6 +119,44 @@ class GlassListRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: row,
+      ),
+    );
+  }
+}
+
+/// What the end of a [GlassListRow] that opens a choice shows: the value that
+/// stands now and a chevron.
+class GlassListValue extends StatelessWidget {
+  /// Creates the end of a row.
+  const GlassListValue(this.text, {super.key});
+
+  /// The value.
+  final String text;
+
+  /// How far the value reaches, so that it leaves room for the title.
+  static const double _widest = 180;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BirkaColors.of(context);
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: _widest),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: BirkaTextStyles.of(
+                context,
+              ).body.copyWith(color: colors.textMuted),
+            ),
+          ),
+          const SizedBox(width: BirkaTokens.spaceXxs),
+          BirkaIcon(BirkaGlyph.chevron, size: 18, color: colors.textSubtle),
+        ],
       ),
     );
   }

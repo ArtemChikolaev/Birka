@@ -1,5 +1,6 @@
+import 'package:device_settings/device_settings.dart';
 import 'package:l10n/l10n.dart';
-import 'package:settings_common/settings_common.dart';
+import 'package:money/money.dart';
 import 'package:test/test.dart';
 
 import 'fake_settings_store.dart';
@@ -12,6 +13,7 @@ void main() {
 
     expect(settings.language, isNull);
     expect(settings.hideAmountsOnLaunch, isFalse);
+    expect(settings.onboarded, isFalse);
   });
 
   test('comes back the way it was kept', () async {
@@ -21,12 +23,38 @@ void main() {
       language: AppLocale.ru,
       hideAmountsOnLaunch: true,
       baseCurrency: Currency.eur,
+      onboarded: true,
     ).writeTo(store);
     final settings = Settings.readFrom(store);
 
     expect(settings.language, AppLocale.ru);
     expect(settings.hideAmountsOnLaunch, isTrue);
     expect(settings.baseCurrency, Currency.eur);
+    expect(settings.onboarded, isTrue);
+  });
+
+  test('a copy changes what it is told to, and only that', () {
+    const settings = Settings(
+      language: AppLocale.ru,
+      hideAmountsOnLaunch: true,
+      baseCurrency: Currency.eur,
+    );
+
+    final copy = settings.copyWith(onboarded: true);
+    final others = settings.copyWith(
+      language: (null,),
+      hideAmountsOnLaunch: false,
+      baseCurrency: (null,),
+    );
+
+    expect(copy.language, AppLocale.ru);
+    expect(copy.hideAmountsOnLaunch, isTrue);
+    expect(copy.baseCurrency, Currency.eur);
+    expect(copy.onboarded, isTrue);
+    expect(others.language, isNull);
+    expect(others.hideAmountsOnLaunch, isFalse);
+    expect(others.baseCurrency, isNull);
+    expect(others.onboarded, isFalse);
   });
 
   test('a currency that this version does not offer follows the account', () {

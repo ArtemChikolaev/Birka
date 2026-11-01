@@ -44,6 +44,186 @@ void main() {
     });
   });
 
+  group('BirkaArrowButton', () {
+    testWidgets('reads its label and reacts to a tap', (tester) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        app(BirkaArrowButton(label: 'Start', onPressed: () => taps++)),
+      );
+
+      await tester.tap(find.bySemanticsLabel('Start'));
+
+      expect(taps, 1);
+      expect(
+        tester.getSize(find.byType(BirkaArrowButton)).height,
+        BirkaArrowButton.height,
+      );
+    });
+
+    testWidgets('says that it is off without a callback', (tester) async {
+      await tester.pumpWidget(app(const BirkaArrowButton(label: 'Start')));
+
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Start')),
+        containsSemantics(isButton: true, isEnabled: false),
+      );
+      expect(
+        tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity,
+        0.5,
+      );
+    });
+  });
+
+  group('BirkaStepBars', () {
+    testWidgets('lights the bars up to the current step', (tester) async {
+      await tester.pumpWidget(
+        app(
+          const SizedBox(
+            width: 300,
+            child: BirkaStepBars(count: 3, current: 1),
+          ),
+        ),
+      );
+
+      final fills = [
+        for (final bar in tester.widgetList<AnimatedContainer>(
+          find.byType(AnimatedContainer),
+        ))
+          (bar.decoration! as BoxDecoration).color,
+      ];
+      expect(fills, [colors.accent, colors.accent, colors.surfaceRaised]);
+    });
+
+    testWidgets('tells a screen reader where it stands', (tester) async {
+      await tester.pumpWidget(
+        app(
+          const SizedBox(
+            width: 300,
+            child: BirkaStepBars(count: 3, current: 1),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(BirkaStepBars)),
+        containsSemantics(value: '2 / 3'),
+      );
+    });
+  });
+
+  group('WelcomeArt', () {
+    Future<Size> artOn(WidgetTester tester, Size screen) async {
+      tester.view.physicalSize = screen;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(app(const WelcomeArt()));
+      return tester.getSize(find.byType(AspectRatio));
+    }
+
+    testWidgets('stops at its full size on a big screen', (tester) async {
+      expect(await artOn(tester, const Size(800, 1200)), const Size(390, 300));
+    });
+
+    testWidgets('gives way on a short phone', (tester) async {
+      final size = await artOn(tester, const Size(320, 568));
+
+      expect(size.height, closeTo(193.1, 0.1));
+      expect(size.width / size.height, closeTo(WelcomeArt.aspectRatio, 0.01));
+    });
+
+    testWidgets('stays out of screen readers', (tester) async {
+      await tester.pumpWidget(app(const WelcomeArt()));
+
+      expect(
+        tester.widget<Image>(find.byType(Image)).excludeFromSemantics,
+        isTrue,
+      );
+    });
+  });
+
+  group('showChoiceSheet', () {
+    Future<void> open(
+      WidgetTester tester,
+      void Function((String?,)? picked) onClosed,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: BirkaTheme.dark(),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => BirkaButton(
+                label: 'Open',
+                onPressed: () async => onClosed(
+                  await showChoiceSheet<String?>(
+                    context,
+                    title: 'Pick',
+                    choices: const [null, 'One'],
+                    selected: 'One',
+                    labelOf: (choice) => choice ?? 'None',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.bySemanticsLabel('Open'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('marks what is selected', (tester) async {
+      await open(tester, (_) {});
+
+      expect(find.text('Pick'), findsOneWidget);
+      expect(find.byType(BirkaIcon), findsOneWidget);
+    });
+
+    testWidgets('gives `null` as a choice in a record', (tester) async {
+      (String?,)? picked;
+      var closed = false;
+      await open(tester, (choice) {
+        picked = choice;
+        closed = true;
+      });
+
+      await tester.tap(find.text('None'));
+      await tester.pumpAndSettle();
+
+      expect(closed, isTrue);
+      expect(picked, isNotNull);
+      expect(picked?.$1, isNull);
+    });
+
+    testWidgets('gives no record when it is closed', (tester) async {
+      (String?,)? picked = ('untouched',);
+      await open(tester, (choice) => picked = choice);
+
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+
+      expect(picked, isNull);
+    });
+  });
+
+  group('GlassListValue', () {
+    testWidgets('leaves room for the title of its row', (tester) async {
+      await tester.pumpWidget(
+        app(
+          SizedBox(
+            width: 320,
+            child: GlassListRow(
+              title: 'Base currency',
+              trailing: GlassListValue('A value that goes on ' * 3),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(tester.getSize(find.byType(GlassListValue)).width, 180);
+    });
+  });
+
   group('GlassListGroup', () {
     testWidgets('draws a line only between rows', (tester) async {
       await tester.pumpWidget(

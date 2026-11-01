@@ -23,6 +23,9 @@ import 'package:ledger/ledger.dart'
         TransactionSource,
         TransactionStatus;
 import 'package:money/money.dart';
+import 'package:onboarding_common/onboarding_common.dart'
+    show FirstAccount, OnboardingCubit, OnboardingRepository, ReadyCategory;
+import 'package:onboarding_flutter/onboarding_flutter.dart';
 import 'package:overview_common/overview_common.dart' hide Category;
 import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart'
@@ -68,6 +71,18 @@ final class _NoAccounts implements AccountsRepository {
 
   @override
   Future<void> setArchived(String id, {required bool archived}) async {}
+}
+
+/// The ledger of a new device, in memory.
+final class _NewDevice implements OnboardingRepository {
+  @override
+  Future<bool> hasAccounts() async => false;
+
+  @override
+  Future<void> save({
+    required FirstAccount? account,
+    required List<ReadyCategory> categories,
+  }) async {}
 }
 
 final class _NoCategories implements CategoriesRepository {
@@ -251,6 +266,53 @@ void main() {
 
     expect(find.byType(OverviewPage), findsOneWidget);
     expect(find.text(t.accounts.emptyTitle), findsOneWidget);
+  });
+
+  group('a new device', () {
+    setUp(() {
+      getIt.registerFactory(
+        () => OnboardingCubit(
+          _NewDevice(),
+          settings,
+          deviceLanguage: 'en',
+          baseCurrency: BaseCurrency(null),
+        ),
+      );
+    });
+
+    testWidgets('starts with the steps and ends on the overview', (
+      tester,
+    ) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt, onboarding: true));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OnboardingPage), findsOneWidget);
+      expect(find.byType(GlassNavBar), findsNothing);
+
+      await tester.tap(find.text(t.onboarding.skip));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OnboardingPage), findsNothing);
+      expect(find.byType(OverviewPage), findsOneWidget);
+      expect(find.byType(GlassNavBar), findsOneWidget);
+      expect(Settings.readFrom(settings).onboarded, isTrue);
+    });
+
+    testWidgets('a language picked on the way keeps the steps open', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(402, 874);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(BirkaApp(getIt: getIt, onboarding: true));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Русский'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OnboardingPage), findsOneWidget);
+      expect(find.text('Все деньги —\nв одном месте'), findsOneWidget);
+    });
   });
 
   testWidgets('dresses the app in the Birka theme', (tester) async {

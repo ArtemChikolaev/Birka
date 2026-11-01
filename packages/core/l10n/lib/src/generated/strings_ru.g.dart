@@ -64,6 +64,9 @@ class TranslationsRu extends Translations
   late final _Translations$categories$ru categories =
       _Translations$categories$ru._(_root);
   @override
+  late final _Translations$onboarding$ru onboarding =
+      _Translations$onboarding$ru._(_root);
+  @override
   late final _Translations$overview$ru overview = _Translations$overview$ru._(
     _root,
   );
@@ -247,6 +250,32 @@ class _Translations$categories$ru extends Translations$categories$en {
   @override
   late final _Translations$categories$form$ru form =
       _Translations$categories$form$ru._(_root);
+}
+
+// Path: onboarding
+class _Translations$onboarding$ru extends Translations$onboarding$en {
+  _Translations$onboarding$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get skip => 'Пропустить';
+  @override
+  String get back => 'Назад';
+  @override
+  String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+  @override
+  late final _Translations$onboarding$welcome$ru welcome =
+      _Translations$onboarding$welcome$ru._(_root);
+  @override
+  late final _Translations$onboarding$account$ru account =
+      _Translations$onboarding$account$ru._(_root);
+  @override
+  late final _Translations$onboarding$categories$ru categories =
+      _Translations$onboarding$categories$ru._(_root);
 }
 
 // Path: overview
@@ -658,6 +687,75 @@ class _Translations$categories$form$ru extends Translations$categories$form$en {
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
 }
 
+// Path: onboarding.welcome
+class _Translations$onboarding$welcome$ru
+    extends Translations$onboarding$welcome$en {
+  _Translations$onboarding$welcome$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Все деньги —\nв одном месте';
+  @override
+  String get text =>
+      'Счета в любой валюте и без паролей от банков. Данные остаются на вашем устройстве.';
+  @override
+  String get start => 'Начать';
+}
+
+// Path: onboarding.account
+class _Translations$onboarding$account$ru
+    extends Translations$onboarding$account$en {
+  _Translations$onboarding$account$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Первый счёт';
+  @override
+  String get text =>
+      'С него начнётся капитал. Остаток можно поправить в любой момент.';
+  @override
+  String get next => 'Дальше';
+}
+
+// Path: onboarding.categories
+class _Translations$onboarding$categories$ru
+    extends Translations$onboarding$categories$en {
+  _Translations$onboarding$categories$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Категории';
+  @override
+  String get text => 'Возьмите готовый набор. Его можно менять в любой момент.';
+  @override
+  String get short => 'Короткий набор';
+  @override
+  String get full => 'Полный набор';
+  @override
+  String count({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} категория',
+        few: '${n} категории',
+        many: '${n} категорий',
+        other: '${n} категории',
+      );
+  @override
+  String get finish => 'Готово';
+}
+
 // Path: transactions.sources
 class _Translations$transactions$sources$ru
     extends Translations$transactions$sources$en {
@@ -832,6 +930,32 @@ extension on TranslationsRu {
       'categories.form.restore' => 'Вернуть из архива',
       'categories.form.nameMissing' => 'Дайте категории название.',
       'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+      'onboarding.skip' => 'Пропустить',
+      'onboarding.back' => 'Назад',
+      'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+      'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
+      'onboarding.welcome.text' =>
+        'Счета в любой валюте и без паролей от банков. Данные остаются на вашем устройстве.',
+      'onboarding.welcome.start' => 'Начать',
+      'onboarding.account.title' => 'Первый счёт',
+      'onboarding.account.text' =>
+        'С него начнётся капитал. Остаток можно поправить в любой момент.',
+      'onboarding.account.next' => 'Дальше',
+      'onboarding.categories.title' => 'Категории',
+      'onboarding.categories.text' =>
+        'Возьмите готовый набор. Его можно менять в любой момент.',
+      'onboarding.categories.short' => 'Короткий набор',
+      'onboarding.categories.full' => 'Полный набор',
+      'onboarding.categories.count' =>
+        ({required num n}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+              n,
+              one: '${n} категория',
+              few: '${n} категории',
+              many: '${n} категорий',
+              other: '${n} категории',
+            ),
+      'onboarding.categories.finish' => 'Готово',
       'overview.capital' => 'Капитал',
       'overview.rateOn' => ({required Object day}) => 'Курс ЦБ РФ на ${day}',
       'overview.currencies' =>

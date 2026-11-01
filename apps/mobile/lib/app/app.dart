@@ -13,18 +13,25 @@ import 'package:settings_common/settings_common.dart';
 ///
 /// Features plug into the router as they land (ADR 0006).
 class BirkaApp extends StatefulWidget {
-  /// Creates the app on the objects in [getIt].
-  const BirkaApp({required this.getIt, super.key});
+  /// Creates the app on the objects in [getIt]. With [onboarding] it starts
+  /// with the steps of a new device.
+  const BirkaApp({required this.getIt, this.onboarding = false, super.key});
 
   /// Knows every implementation (ADR 0006).
   final GetIt getIt;
+
+  /// Whether the app starts with the onboarding.
+  final bool onboarding;
 
   @override
   State<BirkaApp> createState() => _BirkaAppState();
 }
 
 class _BirkaAppState extends State<BirkaApp> {
-  late GoRouter _router = buildRouter(widget.getIt);
+  late GoRouter _router = buildRouter(
+    widget.getIt,
+    initialLocation: widget.onboarding ? Paths.onboarding : Paths.overview,
+  );
   late final ValueNotifier<bool> _hiddenAmounts = ValueNotifier(
     Settings.readFrom(widget.getIt<SettingsStore>()).hideAmountsOnLaunch,
   );

@@ -37,7 +37,8 @@ Extend what exists instead of duplicating it.
     BLoCs, `di/`), `flutter/` and `jaspr/` (pages and widgets or
     components);
   - `packages/core/` holds only what several features share: money, the
-    database, the ledger rules, rates, strings, networking;
+    database, the ledger rules, rates, the settings of a device, strings,
+    networking;
   - `packages/design/` is the design system, `apps/` are the hosts, and the
     server lives in `server/` and `proto/`
     ([ADR 0001](docs/adr/0001-single-repository.md)).
@@ -75,7 +76,8 @@ Extend what exists instead of duplicating it.
   screens keep their content out of the bars with `SafeArea`.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
-  `make icons`, and never edit the generated icons by hand.
+  `make icons`, and never edit the generated icons by hand. The art of the
+  first screen comes from `welcome.svg` next to it, through `make icon-masters`.
 - Our packages depend on each other through `path:`.
 - `make check-deps` enforces these rules in CI. Fix the code, not the rule.
 

@@ -341,6 +341,15 @@ abstract final class BirkaTokens {
     tabular: true,
   );
 
+  /// `text.hero`.
+  static const TextToken textHero = TextToken(
+    families: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+    size: 36,
+    weight: 800,
+    letterSpacing: -0.9,
+    lineHeight: 1.1,
+  );
+
   /// `text.title`.
   static const TextToken textTitle = TextToken(
     families: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],

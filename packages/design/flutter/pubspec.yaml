@@ -24,6 +24,7 @@ flutter:
     - fonts/Inter-OFL.txt
     - fonts/Manrope-OFL.txt
     - icons/
+    - images/
   fonts:
     - family: Inter
       fonts:

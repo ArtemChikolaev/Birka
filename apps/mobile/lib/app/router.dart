@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
+import 'package:onboarding_flutter/onboarding_flutter.dart';
 import 'package:overview_common/overview_common.dart' show OverviewCubit;
 import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart' show ReportsCubit;
@@ -18,6 +20,9 @@ import 'package:transactions_flutter/transactions_flutter.dart';
 
 /// The paths of the app.
 abstract final class Paths {
+  /// What a new device starts with.
+  static const onboarding = '/onboarding';
+
   /// The first screen.
   static const overview = '/overview';
 
@@ -73,6 +78,14 @@ GoRouter buildRouter(
     navigatorKey: rootKey,
     initialLocation: initialLocation,
     routes: [
+      GoRoute(
+        path: Paths.onboarding,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<OnboardingCubit>(),
+          child: OnboardingPage(onFinished: () => context.go(Paths.overview)),
+        ),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [

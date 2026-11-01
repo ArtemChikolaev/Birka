@@ -11,6 +11,7 @@ final class BirkaTextStyles extends ThemeExtension<BirkaTextStyles> {
   /// Creates the text styles.
   const BirkaTextStyles({
     required this.display,
+    required this.hero,
     required this.title,
     required this.heading,
     required this.amount,
@@ -24,6 +25,7 @@ final class BirkaTextStyles extends ThemeExtension<BirkaTextStyles> {
   /// The styles of the design tokens.
   static final BirkaTextStyles standard = BirkaTextStyles(
     display: textStyleOf(BirkaTokens.textDisplay),
+    hero: textStyleOf(BirkaTokens.textHero),
     title: textStyleOf(BirkaTokens.textTitle),
     heading: textStyleOf(BirkaTokens.textHeading),
     amount: textStyleOf(BirkaTokens.textAmount),
@@ -40,6 +42,9 @@ final class BirkaTextStyles extends ThemeExtension<BirkaTextStyles> {
 
   /// Headlines and large amounts, such as a total.
   final TextStyle display;
+
+  /// The headline of a screen that stands on its own.
+  final TextStyle hero;
 
   /// Screen titles.
   final TextStyle title;
@@ -69,6 +74,7 @@ final class BirkaTextStyles extends ThemeExtension<BirkaTextStyles> {
   @override
   BirkaTextStyles copyWith({
     TextStyle? display,
+    TextStyle? hero,
     TextStyle? title,
     TextStyle? heading,
     TextStyle? amount,
@@ -80,6 +86,7 @@ final class BirkaTextStyles extends ThemeExtension<BirkaTextStyles> {
   }) {
     return BirkaTextStyles(
       display: display ?? this.display,
+      hero: hero ?? this.hero,
       title: title ?? this.title,
       heading: heading ?? this.heading,
       amount: amount ?? this.amount,
@@ -96,6 +103,7 @@ final class BirkaTextStyles extends ThemeExtension<BirkaTextStyles> {
     if (other == null) return this;
     return BirkaTextStyles(
       display: TextStyle.lerp(display, other.display, t)!,
+      hero: TextStyle.lerp(hero, other.hero, t)!,
       title: TextStyle.lerp(title, other.title, t)!,
       heading: TextStyle.lerp(heading, other.heading, t)!,
       amount: TextStyle.lerp(amount, other.amount, t)!,
