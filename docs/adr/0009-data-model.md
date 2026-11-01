@@ -59,6 +59,15 @@
    run-web` serves the site in release mode too. With `unsafeIndexedDb`, a Web
    Lock keeps the app to one tab at a time: a second tab says so and takes over
    once the first one closes.
+
+   A browser without shared workers would run that storage in a dedicated
+   worker of Drift, which dies with the page. Every page of the site is a new
+   document, and IndexedDB gets a write some time after SQLite has finished it,
+   so a saved operation could vanish: 7 of 12 on Chrome 113 when the page left
+   as the form closed. Such a browser runs the same storage in the page itself.
+   There a commit waits for `IndexedDbFileSystem.flush`, which Drift does not do
+   for a transaction and which its workers do not let a page reach. `make
+   check-site` opens the site this way too.
 9. Search uses FTS5 on every platform.
 
 ## Options considered
@@ -70,6 +79,8 @@
 | Balances stored on accounts | a cached number that can drift apart from the entries |
 | Integer ids | devices would collide when sync arrives |
 | Reports at the latest rate | old reports would change with every new rate |
+| A worker of our own for `unsafeIndexedDb` | a second protocol around `DriftServer` for a fallback that the page handles sooner |
+| Waiting a moment before a form closes | a guess: 300 ms was not enough on Chrome 113 |
 | A host with COOP and COEP, such as Cloudflare Pages | one more service; the storage above is enough for a demo, so we return to this if it stops being enough |
 | `coi-serviceworker` to fake the headers | a reload on the first visit, and it can break resources from other origins |
 
@@ -84,6 +95,13 @@
 - A browser can evict the data of a site, so the web app needs the same file
   backup as the phones. Until then the pages say that the data stays in the
   browser, and warn when the browser keeps it only in memory.
+- Without shared workers SQLite runs on the main thread of the page. On Chrome
+  113 a page shows its data sooner, in 650 ms instead of 850 ms, because no
+  worker has to load, and long tasks stay around 50-100 ms on a small database.
+  A large one was not measured.
+- `sharedIndexedDb` has the same queue in its worker, and no way to wait for it.
+  Chrome on macOS lost nothing in 30 tries of leaving as the form closed, so it
+  stays as it is.
 - Chrome on macOS, Safari on iOS and Chrome 113 on Android store data and keep
   it. Firefox, where Drift prefers `opfsShared`, and a current Chrome on
   Android still have to be checked.

@@ -47,6 +47,7 @@ dependencies:
     path: ../../packages/features/settings/common
   settings_jaspr:
     path: ../../packages/features/settings/jaspr
+  sqlite3: ^2.9.4
   transactions_common:
     path: ../../packages/features/transactions/common
   transactions_jaspr:
