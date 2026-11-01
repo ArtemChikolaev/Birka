@@ -12,6 +12,7 @@ import 'package:overview_common/overview_common.dart' show OverviewCubit;
 import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart' show ReportsCubit;
 import 'package:reports_flutter/reports_flutter.dart';
+import 'package:settings_common/settings_common.dart' show SettingsCubit;
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -63,11 +64,14 @@ abstract final class Paths {
 
 /// Builds the router: the tabs keep their state in a shell, and everything
 /// else opens over them. Pages get their cubits from [getIt].
-GoRouter buildRouter(GetIt getIt) {
+GoRouter buildRouter(
+  GetIt getIt, {
+  String initialLocation = Paths.overview,
+}) {
   final rootKey = GlobalKey<NavigatorState>();
   return GoRouter(
     navigatorKey: rootKey,
-    initialLocation: Paths.overview,
+    initialLocation: initialLocation,
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
@@ -134,7 +138,10 @@ GoRouter buildRouter(GetIt getIt) {
             routes: [
               GoRoute(
                 path: Paths.more,
-                builder: (context, state) => const MorePage(),
+                builder: (context, state) => BlocProvider(
+                  create: (_) => getIt<SettingsCubit>(),
+                  child: const MorePage(),
+                ),
               ),
             ],
           ),

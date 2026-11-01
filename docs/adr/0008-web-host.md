@@ -47,8 +47,9 @@
    `<base href>` would send a bare `#new` to the first page. `DataIslandState`
    holds what these islands share.
 9. The build knows no language and no data, so the text of a page lives in its
-   island, which takes the language from the browser. The HTML of such a page
-   is a frame with a placeholder.
+   island, which takes the language from the settings or else from the browser
+   ([ADR 0011](0011-settings.md)). The HTML of such a page is a frame with a
+   placeholder.
 10. The navigation is plain links between those pages, and lives in the islands
     for its words. It has the tabs of the app: the accounts and the categories
     open from More, whose island reads no data and opens no database. Hidden

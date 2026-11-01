@@ -72,6 +72,10 @@ class TranslationsRu extends Translations
     _root,
   );
   @override
+  late final _Translations$settings$ru settings = _Translations$settings$ru._(
+    _root,
+  );
+  @override
   late final _Translations$transactions$ru transactions =
       _Translations$transactions$ru._(_root);
 }
@@ -380,6 +384,33 @@ class _Translations$reports$ru extends Translations$reports$en {
     'Ноя',
     'Дек',
   ];
+}
+
+// Path: settings
+class _Translations$settings$ru extends Translations$settings$en {
+  _Translations$settings$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get general => 'Основное';
+  @override
+  String get language => 'Язык';
+  @override
+  String get deviceLanguage => 'Как на устройстве';
+  @override
+  String get english => 'English';
+  @override
+  String get russian => 'Русский';
+  @override
+  String get security => 'Безопасность';
+  @override
+  String get hideAmounts => 'Скрывать суммы';
+  @override
+  String get onLaunch => 'При запуске';
 }
 
 // Path: transactions
@@ -871,6 +902,14 @@ extension on TranslationsRu {
       'reports.monthsShort.9' => 'Окт',
       'reports.monthsShort.10' => 'Ноя',
       'reports.monthsShort.11' => 'Дек',
+      'settings.general' => 'Основное',
+      'settings.language' => 'Язык',
+      'settings.deviceLanguage' => 'Как на устройстве',
+      'settings.english' => 'English',
+      'settings.russian' => 'Русский',
+      'settings.security' => 'Безопасность',
+      'settings.hideAmounts' => 'Скрывать суммы',
+      'settings.onLaunch' => 'При запуске',
       'transactions.expense' => 'Расход',
       'transactions.income' => 'Доход',
       'transactions.transfer' => 'Перевод',

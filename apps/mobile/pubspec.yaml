@@ -42,6 +42,11 @@ dependencies:
     path: ../../packages/features/reports/common
   reports_flutter:
     path: ../../packages/features/reports/flutter
+  settings_common:
+    path: ../../packages/features/settings/common
+  settings_flutter:
+    path: ../../packages/features/settings/flutter
+  shared_preferences: ^2.5.5
   transactions_common:
     path: ../../packages/features/transactions/common
   transactions_flutter:

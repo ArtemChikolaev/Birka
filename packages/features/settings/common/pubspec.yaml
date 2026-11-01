@@ -1,0 +1,19 @@
+name: settings_common
+description: >-
+  The settings of Birka in pure Dart: what a person picks for this device,
+  shared by both hosts.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  bloc: ^9.2.1
+  get_it: ^9.3.0
+  l10n:
+    path: ../../../core/l10n
+  meta: ^1.17.0
+
+dev_dependencies:
+  test: ^1.26.3

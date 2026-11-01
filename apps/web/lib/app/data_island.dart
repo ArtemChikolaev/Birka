@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:birka_web/app/browser.dart';
+import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:birka_web/app/dependencies.dart';
 import 'package:birka_web/app/fragment_trail.dart';
 import 'package:birka_web/app/opened_database.dart';
@@ -10,6 +11,7 @@ import 'package:get_it/get_it.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
+import 'package:settings_common/settings_common.dart';
 
 enum _Stage { opening, ready, busy, failed }
 
@@ -63,13 +65,14 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   void initState() {
     super.initState();
     if (!kIsWeb) return;
-    LocaleSettings.setLocaleRawSync(browserLanguage);
+    final settings = Settings.readFrom(const BrowserSettingsStore())
+      ..applyLanguage(device: browserLanguage);
     describePage(
       language: LocaleSettings.currentLocale.languageCode,
       title: '$pageName · Birka',
     );
     _fragment = addressFragment;
-    _amountsHidden = amountsHidden;
+    _amountsHidden = amountsHidden ?? settings.hideAmountsOnLaunch;
     _stopWatching = watchAddressFragment(_onFragmentChanged);
     _stopWatchingTab = watchTabShown(onTabShown);
     unawaited(_open());
