@@ -14,3 +14,4 @@
 | [0010](0010-strings.md) | Strings in one pure-Dart package with slang | accepted 2026-10-30 |
 | [0011](0011-settings.md) | Settings of a device live outside the database | accepted 2026-11-01 |
 | [0012](0012-exchange-rates.md) | Rates of the Bank of Russia, kept on the device | accepted 2026-11-01 |
+| [0013](0013-onboarding.md) | The onboarding of a new device | accepted 2026-11-01 |

@@ -36,8 +36,8 @@
 3. `packages/core/<package>/` holds only what several features share:
    `money`, the one Drift `database` with its migrations, the `ledger`
    (shared entities such as accounts, transactions and categories, and the
-   rules every write keeps), `rates`, `l10n` (one file of strings per
-   feature) and, later, `sync`. Core packages are pure Dart.
+   rules every write keeps), `rates`, `device_settings`, `l10n` (one file of
+   strings per feature) and, later, `sync`. Core packages are pure Dart.
 4. `packages/design/` is the design system: tokens, chart geometry, the
    Flutter and Jaspr kits and the catalog.
 5. The hosts in `apps/` are the composition roots: `mobile` for Android and

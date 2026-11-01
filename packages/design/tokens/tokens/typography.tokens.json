@@ -20,6 +20,9 @@
       "$value": { "fontFamily": "{font.family.display}", "fontSize": { "value": 46, "unit": "px" }, "fontWeight": "{font.weight.extrabold}", "letterSpacing": { "value": -1.6, "unit": "px" }, "lineHeight": 1.02 },
       "$extensions": { "io.github.artemchikolaev.birka": { "tabular": true } }
     },
+    "hero": {
+      "$value": { "fontFamily": "{font.family.display}", "fontSize": { "value": 36, "unit": "px" }, "fontWeight": "{font.weight.extrabold}", "letterSpacing": { "value": -0.9, "unit": "px" }, "lineHeight": 1.1 }
+    },
     "title": {
       "$value": { "fontFamily": "{font.family.display}", "fontSize": { "value": 28, "unit": "px" }, "fontWeight": "{font.weight.extrabold}", "letterSpacing": { "value": -0.56, "unit": "px" }, "lineHeight": 1.1 }
     },

@@ -111,6 +111,14 @@
   font-variant-numeric: tabular-nums;
 }
 
+.text-hero {
+  font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.9px;
+  line-height: 1.1;
+}
+
 .text-title {
   font-family: Manrope, Inter, system-ui, sans-serif;
   font-size: 28px;

@@ -7,6 +7,8 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:onboarding_common/onboarding_common.dart'
+    show OnboardingRepository, onboardingNeeded;
 import 'package:rates/rates.dart';
 import 'package:settings_common/settings_common.dart';
 
@@ -18,7 +20,11 @@ Future<void> main() async {
   // Android before 15 keeps apps out of the area of the system bars.
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   registerDependencies(GetIt.instance, settings);
-  runApp(BirkaApp(getIt: GetIt.instance));
+  final onboarding = await onboardingNeeded(
+    settings,
+    GetIt.instance<OnboardingRepository>(),
+  );
+  runApp(BirkaApp(getIt: GetIt.instance, onboarding: onboarding));
   // The first frame waits for no network (ADR 0012).
   final rates = GetIt.instance<RatesUpdater>();
   unawaited(rates.refresh());

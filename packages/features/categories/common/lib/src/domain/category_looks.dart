@@ -2,18 +2,7 @@ import 'package:design_tokens/design_tokens.dart';
 import 'package:ledger/ledger.dart';
 
 /// The colors a category can take, as `#rrggbb`.
-final List<String> categoryColors = [
-  for (final color in const [
-    BirkaTokens.colorPaletteGreen,
-    BirkaTokens.colorPaletteAmber,
-    BirkaTokens.colorPaletteSky,
-    BirkaTokens.colorPaletteViolet,
-    BirkaTokens.colorPaletteRose,
-    BirkaTokens.colorPaletteOrange,
-    BirkaTokens.colorPaletteCyan,
-  ])
-    '#${(color & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}',
-];
+final List<String> categoryColors = paletteColors;
 
 /// The names of the icons a category can take.
 const List<String> categoryIcons = [
@@ -40,4 +29,10 @@ extension CategoryLook on Category {
 
   /// The color as `#rrggbb`.
   String get colorHex => color ?? categoryColors.first;
+}
+
+/// The look of a category of the ready set.
+extension CategoryPresetLook on CategoryPreset {
+  /// The color as `#rrggbb`.
+  String get color => categoryColors[colorIndex];
 }

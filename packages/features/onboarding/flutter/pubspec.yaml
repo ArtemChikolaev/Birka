@@ -1,0 +1,26 @@
+name: onboarding_flutter
+description: The onboarding of Birka in Flutter.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  l10n:
+    path: ../../../core/l10n
+  onboarding_common:
+    path: ../common
+
+dev_dependencies:
+  device_settings:
+    path: ../../../core/device_settings
+  flutter_test:
+    sdk: flutter
+  rates:
+    path: ../../../core/rates

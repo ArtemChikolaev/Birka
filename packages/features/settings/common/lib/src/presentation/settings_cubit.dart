@@ -1,9 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:l10n/l10n.dart';
 import 'package:money/money.dart';
 import 'package:rates/rates.dart';
-import 'package:settings_common/src/domain/settings.dart';
-import 'package:settings_common/src/domain/settings_store.dart';
 
 /// Changes the settings of this device. The host listens to
 /// `LocaleSettings.getLocaleStream()` to redraw in a new language.
@@ -26,11 +25,7 @@ class SettingsCubit extends Cubit<Settings> {
   /// it once it is kept, so that a redraw reads the new value.
   Future<void> languageChanged(AppLocale? language) async {
     if (language == state.language) return;
-    final next = Settings(
-      language: language,
-      hideAmountsOnLaunch: state.hideAmountsOnLaunch,
-      baseCurrency: state.baseCurrency,
-    );
+    final next = state.copyWith(language: (language,));
     emit(next);
     await next.writeTo(_store);
     next.applyLanguage(device: _deviceLanguage);
@@ -38,11 +33,7 @@ class SettingsCubit extends Cubit<Settings> {
 
   /// Sets whether the amounts are hidden from the next launch on.
   Future<void> hideAmountsOnLaunchChanged({required bool hide}) async {
-    final next = Settings(
-      language: state.language,
-      hideAmountsOnLaunch: hide,
-      baseCurrency: state.baseCurrency,
-    );
+    final next = state.copyWith(hideAmountsOnLaunch: hide);
     emit(next);
     await next.writeTo(_store);
   }
@@ -51,11 +42,7 @@ class SettingsCubit extends Cubit<Settings> {
   /// The screens follow at once.
   Future<void> baseCurrencyChanged(Currency? currency) async {
     if (currency == state.baseCurrency) return;
-    final next = Settings(
-      language: state.language,
-      hideAmountsOnLaunch: state.hideAmountsOnLaunch,
-      baseCurrency: currency,
-    );
+    final next = state.copyWith(baseCurrency: (currency,));
     emit(next);
     _baseCurrency.choose(currency);
     await next.writeTo(_store);

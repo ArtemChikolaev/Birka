@@ -4,6 +4,7 @@ library;
 
 export 'src/account.dart';
 export 'src/category.dart';
+export 'src/category_presets.dart';
 export 'src/civil_date.dart';
 export 'src/ledger_exception.dart';
 export 'src/ledger_repository.dart';

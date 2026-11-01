@@ -18,9 +18,11 @@
 
 ## Decision
 
-1. `packages/features/settings/common` defines `SettingsStore`: `read` of a
-   string, which is immediate, and `write`. `Settings` turns those strings into
-   typed values, so the keys and the defaults live in one place.
+1. `packages/core/device_settings` defines `SettingsStore`: `read` of a string,
+   which is immediate, and `write`. `Settings` turns those strings into typed
+   values, so the keys and the defaults live in one place. They started in the
+   settings feature and moved when the onboarding needed them
+   ([ADR 0013](0013-onboarding.md)).
 2. The hosts implement the store: `localStorage` on the web, and
    `shared_preferences` with its cache on phones, opened before `runApp`.
 3. Every key has a default, and what is missing or unknown falls back to it. A

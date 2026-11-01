@@ -13,9 +13,6 @@ class SettingsSection extends StatelessWidget {
   /// Creates the section.
   const SettingsSection({super.key});
 
-  /// How far the value of a row reaches, so that it leaves room for the title.
-  static const double _widestValue = 180;
-
   /// Asks for one of [choices], and calls [onPicked] with it.
   Future<void> _pick<T>(
     BuildContext context, {
@@ -25,56 +22,14 @@ class SettingsSection extends StatelessWidget {
     required String Function(T) labelOf,
     required Future<void> Function(T) onPicked,
   }) async {
-    final colors = BirkaColors.of(context);
-    // In a record, because `null` is a choice here and not a closed sheet.
-    final picked = await showModalBottomSheet<(T,)>(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      backgroundColor: colors.background,
-      builder: (context) => ChoiceSheet(
-        title: title,
-        children: [
-          GlassListGroup(
-            children: [
-              for (final choice in choices)
-                GlassListRow(
-                  title: labelOf(choice),
-                  trailing: choice == selected
-                      ? BirkaIcon(BirkaGlyph.check, color: colors.accent)
-                      : null,
-                  onTap: () => Navigator.of(context).pop((choice,)),
-                ),
-            ],
-          ),
-        ],
-      ),
+    final picked = await showChoiceSheet<T>(
+      context,
+      title: title,
+      choices: choices,
+      selected: selected,
+      labelOf: labelOf,
     );
     if (picked case (final choice,)) await onPicked(choice);
-  }
-
-  Widget _value(BuildContext context, String text) {
-    final colors = BirkaColors.of(context);
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: _widestValue),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            child: Text(
-              text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: BirkaTextStyles.of(
-                context,
-              ).body.copyWith(color: colors.textMuted),
-            ),
-          ),
-          const SizedBox(width: BirkaTokens.spaceXxs),
-          BirkaIcon(BirkaGlyph.chevron, size: 18, color: colors.textSubtle),
-        ],
-      ),
-    );
   }
 
   @override
@@ -93,8 +48,7 @@ class SettingsSection extends StatelessWidget {
               children: [
                 GlassListRow(
                   title: t.settings.baseCurrency,
-                  trailing: _value(
-                    context,
+                  trailing: GlassListValue(
                     baseCurrencyLabel(settings.baseCurrency),
                   ),
                   onTap: () => unawaited(
@@ -110,7 +64,7 @@ class SettingsSection extends StatelessWidget {
                 ),
                 GlassListRow(
                   title: t.settings.language,
-                  trailing: _value(context, languageLabel(settings.language)),
+                  trailing: GlassListValue(languageLabel(settings.language)),
                   onTap: () => unawaited(
                     _pick<AppLocale?>(
                       context,

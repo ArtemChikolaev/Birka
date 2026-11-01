@@ -35,6 +35,10 @@ dependencies:
     path: ../../packages/core/l10n
   ledger:
     path: ../../packages/core/ledger
+  onboarding_common:
+    path: ../../packages/features/onboarding/common
+  onboarding_flutter:
+    path: ../../packages/features/onboarding/flutter
   overview_common:
     path: ../../packages/features/overview/common
   overview_flutter:

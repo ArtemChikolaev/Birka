@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:categories_common/src/domain/categories_overview.dart';
 import 'package:categories_common/src/domain/categories_repository.dart';
 import 'package:categories_common/src/domain/category_draft.dart';
-import 'package:categories_common/src/domain/category_presets.dart';
+import 'package:categories_common/src/domain/category_looks.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';

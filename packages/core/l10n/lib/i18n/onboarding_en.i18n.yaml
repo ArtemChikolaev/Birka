@@ -1,0 +1,20 @@
+skip: Skip
+back: Back
+failed: Could not save. Try again.
+welcome:
+  title: "All your money\nin one place"
+  text: Accounts in any currency and no bank passwords. Your data stays on your device.
+  start: Get started
+account:
+  title: Your first account
+  text: Your capital starts here. You can change the balance at any time.
+  next: Next
+categories:
+  title: Categories
+  text: Take a ready set. You can change it at any time.
+  short: Short set
+  full: Full set
+  count(n):
+    one: $n category
+    other: $n categories
+  finish: Done

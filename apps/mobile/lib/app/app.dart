@@ -7,24 +7,38 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
+import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:settings_common/settings_common.dart';
 
 /// The root widget of the Flutter app.
 ///
 /// Features plug into the router as they land (ADR 0006).
 class BirkaApp extends StatefulWidget {
-  /// Creates the app on the objects in [getIt].
-  const BirkaApp({required this.getIt, super.key});
+  /// Creates the app on the objects in [getIt]. With [onboarding] it starts
+  /// with the steps of a new device.
+  const BirkaApp({required this.getIt, this.onboarding = false, super.key});
 
   /// Knows every implementation (ADR 0006).
   final GetIt getIt;
+
+  /// Whether the app starts with the onboarding.
+  final bool onboarding;
 
   @override
   State<BirkaApp> createState() => _BirkaAppState();
 }
 
 class _BirkaAppState extends State<BirkaApp> {
-  late GoRouter _router = buildRouter(widget.getIt);
+  /// The steps of a new device. A new language brings a new router, and what
+  /// was typed on the way has to survive it.
+  late final OnboardingCubit? _onboarding = widget.onboarding
+      ? widget.getIt<OnboardingCubit>()
+      : null;
+  late GoRouter _router = buildRouter(
+    widget.getIt,
+    initialLocation: widget.onboarding ? Paths.onboarding : Paths.overview,
+    onboarding: _onboarding,
+  );
   late final ValueNotifier<bool> _hiddenAmounts = ValueNotifier(
     Settings.readFrom(widget.getIt<SettingsStore>()).hideAmountsOnLaunch,
   );
@@ -44,6 +58,7 @@ class _BirkaAppState extends State<BirkaApp> {
       _router = buildRouter(
         widget.getIt,
         initialLocation: previous.state.uri.toString(),
+        onboarding: _onboarding,
       );
     });
     WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());
@@ -52,6 +67,7 @@ class _BirkaAppState extends State<BirkaApp> {
   @override
   void dispose() {
     unawaited(_languages.cancel());
+    unawaited(_onboarding?.close());
     _router.dispose();
     _hiddenAmounts.dispose();
     super.dispose();

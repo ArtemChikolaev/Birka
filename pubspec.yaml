@@ -9,6 +9,7 @@ workspace:
   - apps/mobile
   - apps/web
   - packages/core/database
+  - packages/core/device_settings
   - packages/core/l10n
   - packages/core/ledger
   - packages/core/money
@@ -22,6 +23,8 @@ workspace:
   - packages/features/categories/common
   - packages/features/categories/flutter
   - packages/features/categories/jaspr
+  - packages/features/onboarding/common
+  - packages/features/onboarding/flutter
   - packages/features/overview/common
   - packages/features/overview/flutter
   - packages/features/overview/jaspr

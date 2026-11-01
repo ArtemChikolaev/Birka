@@ -3,9 +3,10 @@
 
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
 CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
-	packages/core/rates \
+	packages/core/rates packages/core/device_settings \
 	packages/features/accounts/common packages/features/categories/common \
-	packages/features/overview/common packages/features/reports/common \
+	packages/features/onboarding/common packages/features/overview/common \
+	packages/features/reports/common \
 	packages/features/settings/common \
 	packages/features/transactions/common
 
@@ -66,7 +67,7 @@ gen: ## Generate the strings, the Drift code and the snapshot of the schema
 tokens: ## Regenerate the Dart and CSS design tokens
 	cd packages/design/tokens && dart run design_tokens:generate
 
-icon-masters: ## Render the icon masters from coin.svg (needs Chrome)
+icon-masters: ## Render the brand masters from the SVGs (needs Chrome, cwebp)
 	tools/dev/render_icons.sh
 
 icons: ## App icons and launch screens from the masters (macOS)
@@ -99,6 +100,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/accounts/jaspr && dart test
 	cd packages/features/categories/flutter && flutter test
 	cd packages/features/categories/jaspr && dart test
+	cd packages/features/onboarding/flutter && flutter test
 	cd packages/features/overview/flutter && flutter test
 	cd packages/features/overview/jaspr && dart test
 	cd packages/features/reports/flutter && flutter test

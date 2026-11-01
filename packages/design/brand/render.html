@@ -6,7 +6,7 @@
 <!--
   Shows one variant of coin.svg for tools/dev/render_icons.sh:
   render.html?variant=ios|dark|foreground|background|monochrome|macos|launch|
-  launch-android-12.
+  launch-android-12, and welcome.svg for render.html?variant=welcome.
   The SVG is inlined rather than loaded as an image, because an image may not
   load the Manrope font for the letter.
 -->
@@ -49,13 +49,13 @@
 </head>
 <body>
 <script>
-  document.documentElement.dataset.variant =
-    new URLSearchParams(location.search).get('variant') ?? 'ios';
-  fetch('coin.svg')
+  const variant = new URLSearchParams(location.search).get('variant') ?? 'ios';
+  document.documentElement.dataset.variant = variant;
+  fetch(variant === 'welcome' ? 'welcome.svg' : 'coin.svg')
     .then((response) => response.text())
     .then(async (svg) => {
       document.body.innerHTML = svg;
-      await document.fonts.load('800 100px Manrope');
+      await document.fonts.load('800 100px Manrope', 'B₽€$');
       await document.fonts.ready;
     });
 </script>

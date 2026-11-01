@@ -7,7 +7,8 @@ the [mockups](../../../docs/design/).
 | File | What it is |
 |---|---|
 | `coin.svg` | the source: the full icon on 1024 × 1024, with groups for the background, the coin and a one-color version |
-| `render.html` | shows one variant of `coin.svg` for rendering |
+| `welcome.svg` | the art of the first screen: the same coin with a ruble sign, two more behind it and an orbit |
+| `render.html` | shows one variant of `coin.svg`, or `welcome.svg`, for rendering |
 | `png/` | the masters that the platform icons and launch screens come from |
 
 ## Variants
@@ -21,6 +22,7 @@ the [mockups](../../../docs/design/).
 | `icon-macos.png` | macOS, Android before 8 and the favicon of the site, which show an icon as it is: a rounded tile with a shadow |
 | `launch.png` | the launch screens of iOS and of Android before 12: the coin on black |
 | `launch-android-12.png` | the launch icon of Android 12, whose glow fades out before the circle Android cuts it to |
+| `welcome.png` | the art of the first screen, on nothing; the kits take it as WebP |
 
 ## Changing the icon
 
@@ -38,3 +40,8 @@ iOS, `launch_background.xml` and the themes on Android. They are written by
 hand rather than with `flutter_native_splash`, which is a Flutter plugin:
 even as a dev dependency it would bring CocoaPods into the app and its code
 into debug builds.
+
+## Changing the art of the first screen
+
+Edit `welcome.svg` and run `make icon-masters`, which also needs `cwebp`
+(`brew install webp`) and writes `packages/design/flutter/images/welcome.webp`.

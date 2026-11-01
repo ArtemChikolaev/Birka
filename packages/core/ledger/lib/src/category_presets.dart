@@ -1,5 +1,4 @@
-import 'package:categories_common/src/domain/category_looks.dart';
-import 'package:ledger/ledger.dart';
+import 'package:ledger/src/category.dart';
 import 'package:meta/meta.dart';
 
 /// A category of the ready set. Its name comes from the strings by [key], in
@@ -12,6 +11,7 @@ final class CategoryPreset {
     required this.kind,
     required this.colorIndex,
     required this.icon,
+    this.basic = false,
   });
 
   /// The key of the name.
@@ -20,14 +20,14 @@ final class CategoryPreset {
   /// Whether it is for spending or for earning.
   final CategoryKind kind;
 
-  /// The place of its color in [categoryColors].
+  /// The place of its color in the palette of the design tokens.
   final int colorIndex;
 
   /// The name of the icon.
   final String icon;
 
-  /// The color as `#rrggbb`.
-  String get color => categoryColors[colorIndex];
+  /// Whether it belongs to the short set, which is enough to start with.
+  final bool basic;
 }
 
 /// The ready set of categories.
@@ -37,36 +37,42 @@ const List<CategoryPreset> categoryPresets = [
     kind: CategoryKind.expense,
     colorIndex: 0,
     icon: 'cart',
+    basic: true,
   ),
   CategoryPreset(
     key: 'cafe',
     kind: CategoryKind.expense,
     colorIndex: 1,
     icon: 'cup',
+    basic: true,
   ),
   CategoryPreset(
     key: 'transport',
     kind: CategoryKind.expense,
     colorIndex: 2,
     icon: 'bus',
+    basic: true,
   ),
   CategoryPreset(
     key: 'home',
     kind: CategoryKind.expense,
     colorIndex: 3,
     icon: 'home',
+    basic: true,
   ),
   CategoryPreset(
     key: 'health',
     kind: CategoryKind.expense,
     colorIndex: 4,
     icon: 'heart',
+    basic: true,
   ),
   CategoryPreset(
     key: 'leisure',
     kind: CategoryKind.expense,
     colorIndex: 5,
     icon: 'ticket',
+    basic: true,
   ),
   CategoryPreset(
     key: 'subscriptions',
@@ -103,6 +109,7 @@ const List<CategoryPreset> categoryPresets = [
     kind: CategoryKind.income,
     colorIndex: 0,
     icon: 'briefcase',
+    basic: true,
   ),
   CategoryPreset(
     key: 'freelance',

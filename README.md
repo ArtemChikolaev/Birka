@@ -63,13 +63,15 @@ apps/web                 Jaspr host: a static site with interactive islands
 packages/core/money      Money and Currency value types
 packages/core/database   the one Drift database: its schema and migrations
 packages/core/ledger     accounts, categories, transactions and their rules
+packages/core/rates      exchange rates: where they come from and what they add up to
+packages/core/device_settings  what a person picks for one device
 packages/core/l10n       strings in Russian and English, amounts for people
 packages/design/tokens   design tokens and their generator for Dart and CSS
 packages/design/flutter  theme, fonts and glass widgets for Flutter
 packages/design/jaspr    styles, web fonts and glass components for Jaspr
-packages/design/brand    the app icon: a glass coin in SVG and its PNG masters
-packages/features        one folder per feature: accounts, categories, overview, reports,
-                         transactions
+packages/design/brand    the app icon and the art of the first screen: SVG and PNG masters
+packages/features        one folder per feature: accounts, categories, onboarding, overview,
+                         reports, settings, transactions
 tools                    repository tooling: package boundary checks, dev scripts
 docs/adr                 architecture decision records
 ```
