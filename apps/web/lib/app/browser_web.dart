@@ -121,6 +121,16 @@ void replaceAddressFragment(String fragment) {
 /// Does what the back button of the browser does.
 void goBackInHistory() => web.window.history.back();
 
+/// Whether another page of the site led here, so that it stands one step back
+/// in the history. A link opened in a new tab has nothing to step back to, and
+/// a reload from a script names the page itself.
+bool get cameFromSite {
+  final referrer = web.document.referrer;
+  return web.window.history.length > 1 &&
+      referrer.startsWith(web.document.baseURI) &&
+      Uri.parse(referrer).path != web.window.location.pathname;
+}
+
 /// How far down the page is.
 double get pageScroll => web.window.scrollY;
 

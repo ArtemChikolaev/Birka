@@ -32,6 +32,14 @@
 6. On this page a transfer has a sign, what it did to this account, instead of
    the quiet amount of the list of operations. The heading of a day adds up the
    same amounts, corrections included, so it agrees with its rows and the chart.
+7. On the site the page stands at `accounts/#<id>`, and what opens from it
+   stands over it in the same island: the form at `accounts/#<id>/edit` and an
+   operation at `accounts/#<id>/<view>`, with the views of `operations/#`.
+   `AccountCubit` stays above them, so the period survives the way there and
+   back, and they close to the page instead of a list.
+8. The way back from the page returns to the page of the site that led to it, as
+   in the app, which `document.referrer` tells. Without one it goes to the list
+   of accounts.
 
 ## Options considered
 
@@ -41,6 +49,7 @@
 | The page in the accounts feature | it would depend on the transactions feature or redraw its rows |
 | Every operation of the account | a long history would be read in full to show its first screen |
 | The operations of the period of the chart | a year of them would load just to show a chart, and a week would hide what is older |
+| On the site, links to the card under `operations/#` | every operation would reload the page and lose the period, and its way back would lead to the list of operations |
 
 ## Consequences
 

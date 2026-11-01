@@ -113,7 +113,10 @@ class OverviewPage extends StatelessComponent {
           ]),
         if (change != null && !change.isZero)
           div(classes: 'overview__change', [
-            _changePill(change),
+            BirkaChangePill(
+              label: changeLabel(change),
+              rise: change.isPositive,
+            ),
             span(classes: 'text-body overview__caption', [
               .text(
                 chartPeriodCaption(state.period.name, month: state.today.month),
@@ -135,24 +138,6 @@ class OverviewPage extends StatelessComponent {
           ),
       ]),
     ]);
-  }
-
-  /// A pill with the arrow and the amount of a change.
-  Component _changePill(Money change) {
-    final rise = change.isPositive;
-    return span(
-      classes: rise
-          ? 'overview__pill overview__pill--rise'
-          : 'overview__pill overview__pill--fall',
-      [
-        BirkaIcon(rise ? BirkaGlyph.rise : BirkaGlyph.fall),
-        AmountText(
-          changeLabel(change),
-          tone: rise ? AmountTone.positive : AmountTone.negative,
-          textClass: 'text-body-strong',
-        ),
-      ],
-    );
   }
 
   Component _accounts(List<AccountBalance> accounts) {
@@ -278,33 +263,6 @@ class OverviewPage extends StatelessComponent {
         'flex-wrap': 'wrap',
         'gap': 'var(--space-xs)',
         'margin-top': 'var(--space-xxs)',
-      },
-    ),
-    css('.overview__pill').styles(
-      raw: {
-        'align-items': 'center',
-        'border-radius': 'var(--radius-pill)',
-        'display': 'inline-flex',
-        'gap': 'var(--space-xxs)',
-        'max-width': '100%',
-        'padding': 'var(--space-xxs) var(--space-sm)',
-      },
-    ),
-    css('.overview__pill .birka-icon').styles(
-      raw: {'height': '14px', 'width': '14px'},
-    ),
-    css('.overview__pill--rise').styles(
-      raw: {
-        'background':
-            'color-mix(in srgb, var(--color-positive) 16%, transparent)',
-        'color': 'var(--color-positive)',
-      },
-    ),
-    css('.overview__pill--fall').styles(
-      raw: {
-        'background':
-            'color-mix(in srgb, var(--color-negative) 16%, transparent)',
-        'color': 'var(--color-negative)',
       },
     ),
     css('.overview__caption').styles(

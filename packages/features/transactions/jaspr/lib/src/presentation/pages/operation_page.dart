@@ -6,6 +6,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
+import 'package:transactions_jaspr/src/presentation/components/back_header.dart';
 import 'package:transactions_jaspr/src/presentation/components/big_amount.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_badge.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_row.dart';
@@ -37,18 +38,6 @@ class OperationPage extends StatefulComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
-    css('.operation__header').styles(
-      raw: {
-        'align-items': 'center',
-        'color': 'var(--color-text-muted)',
-        'display': 'grid',
-        'gap': 'var(--space-xs)',
-        'grid-template-columns': '1fr auto 1fr',
-      },
-    ),
-    css('.operation__edit').styles(
-      raw: {'display': 'flex', 'justify-content': 'flex-end'},
-    ),
     css('.operation__summary').styles(
       raw: {
         'align-items': 'center',
@@ -168,22 +157,17 @@ class _OperationPageState extends State<OperationPage> {
   }
 
   Component _header(OperationState state) {
-    return div(classes: 'operation__header', [
-      GlassIconButton(
-        glyph: BirkaGlyph.back,
-        label: t.transactions.back,
-        onPressed: component.onClose,
-      ),
-      SectionLabel(t.transactions.operation),
-      div(classes: 'operation__edit', [
-        if (state.operation?.canChange ?? false)
-          BirkaChip(
-            label: t.transactions.edit,
-            selected: false,
-            href: component.editHref,
-          ),
-      ]),
-    ]);
+    return BackHeader(
+      label: t.transactions.operation,
+      onBack: component.onClose,
+      trailing: (state.operation?.canChange ?? false)
+          ? BirkaChip(
+              label: t.transactions.edit,
+              selected: false,
+              href: component.editHref,
+            )
+          : null,
+    );
   }
 
   /// The picture, the amount, the title and when it happened.

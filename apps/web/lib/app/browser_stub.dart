@@ -29,6 +29,9 @@ void replaceAddressFragment(String fragment) => _unavailable();
 /// See `browser_web.dart`.
 void goBackInHistory() => _unavailable();
 
+/// Whether another page of the site led here.
+bool get cameFromSite => _unavailable();
+
 /// See `browser_web.dart`.
 double get pageScroll => _unavailable();
 

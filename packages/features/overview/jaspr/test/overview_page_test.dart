@@ -247,9 +247,7 @@ void main() {
     await pump(tester);
 
     final pill = find.byComponentPredicate(
-      (component) =>
-          component is DomComponent &&
-          component.classes == 'overview__pill overview__pill--fall',
+      (component) => component is BirkaChangePill && !component.rise,
     );
     expect(pill, findsOneComponent);
   });

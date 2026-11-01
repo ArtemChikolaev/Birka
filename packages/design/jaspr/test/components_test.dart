@@ -60,6 +60,29 @@ void main() {
     expect(attributesOf(withClasses('birka-steps'))['aria-label'], '2 / 3');
   });
 
+  testComponents('BirkaChangePill goes up in its own color', (tester) async {
+    tester.pumpComponent(const BirkaChangePill(label: '+5', rise: true));
+
+    expect(
+      withClasses('birka-change-pill birka-change-pill--rise'),
+      findsOneComponent,
+    );
+    expect(find.text('+5'), findsOneComponent);
+    final icon = find.byType(BirkaIcon).evaluate().single.component;
+    expect((icon as BirkaIcon).glyph, BirkaGlyph.rise);
+  });
+
+  testComponents('BirkaChangePill goes down in its own color', (tester) async {
+    tester.pumpComponent(const BirkaChangePill(label: '−5', rise: false));
+
+    expect(
+      withClasses('birka-change-pill birka-change-pill--fall'),
+      findsOneComponent,
+    );
+    final icon = find.byType(BirkaIcon).evaluate().single.component;
+    expect((icon as BirkaIcon).glyph, BirkaGlyph.fall);
+  });
+
   testComponents('WelcomeArt stays out of screen readers', (tester) async {
     tester.pumpComponent(const WelcomeArt());
 

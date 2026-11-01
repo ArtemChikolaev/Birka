@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/components/site_nav.dart';
+import 'package:birka_web/pages/operation_views.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -21,13 +22,14 @@ class OperationsIsland extends StatefulComponent {
   State<OperationsIsland> createState() => _OperationsIslandState();
 }
 
-class _OperationsIslandState extends DataIslandState<OperationsIsland> {
-  static const _list = 'operations/';
+class _OperationsIslandState extends DataIslandState<OperationsIsland>
+    with OperationViews {
   static const _new = 'new';
-  static const _edit = 'edit-';
-  static const _repeat = 'repeat-';
 
   OperationsCubit? _operations;
+
+  @override
+  String get address => 'operations/';
 
   @override
   SitePage get page => SitePage.operations;
@@ -50,47 +52,15 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland> {
   Component buildPage(BuildContext context) {
     return BlocProvider<OperationsCubit>(
       create: (_) => _operations = getIt(),
-      child: fragment.isEmpty
-          ? OperationsPage(
-              addHref: '$_list#$_new',
-              hrefOf: (id) => '$_list#$id',
-              note: storageNote,
-            )
-          : _form(),
-    );
-  }
-
-  Component _form() {
-    final fragment = this.fragment;
-    if (fragment == _new) return _quickAdd(null, closeForm);
-    if (fragment.startsWith(_edit)) {
-      final id = fragment.substring(_edit.length);
-      return _quickAdd(QuickAddSource.edit(id), () => closeForm(id));
-    }
-    if (fragment.startsWith(_repeat)) {
-      final id = fragment.substring(_repeat.length);
-      return _quickAdd(QuickAddSource.repeat(id), () => closeForm(id));
-    }
-    return BlocProvider<OperationCubit>(
-      key: ValueKey(fragment),
-      create: (_) => getIt(param1: fragment),
-      child: OperationPage(
-        onClose: closeForm,
-        editHref: '$_list#$_edit$fragment',
-        repeatHref: '$_list#$_repeat$fragment',
-      ),
-    );
-  }
-
-  Component _quickAdd(QuickAddSource? source, VoidCallback onClose) {
-    return BlocProvider<QuickAddCubit>(
-      key: ValueKey(fragment),
-      create: (_) => getIt(param1: source),
-      child: QuickAddPage(
-        onClose: onClose,
-        addAccountHref: 'accounts/#new',
-        addCategoriesHref: 'categories/',
-      ),
+      child: switch (fragment) {
+        '' => OperationsPage(
+          addHref: '$address#$_new',
+          hrefOf: (id) => '$address#$id',
+          note: storageNote,
+        ),
+        _new => quickAdd(null, closeForm),
+        final view => operationView(view),
+      },
     );
   }
 }
