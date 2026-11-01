@@ -1,0 +1,22 @@
+name: settings_flutter
+description: The settings of Birka in Flutter.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  l10n:
+    path: ../../../core/l10n
+  settings_common:
+    path: ../common
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

@@ -18,43 +18,46 @@ class CapitalPreview extends StatelessComponent {
     return BlocProvider(
       create: (_) => HideAmountsCubit(),
       child: BlocBuilder<HideAmountsCubit, bool>(
-        builder: (context, hidden) => div(classes: 'capital', [
-          div(classes: 'capital__figure', [
-            const SectionLabel('Capital'),
-            AmountText(
-              hidden ? '•••• ₽' : '1 284 560 ₽',
-              textClass: 'text-title',
+        // Not only for the eye: an amount looks for this scope by its type,
+        // and dart2js brings the type only to an island that creates one.
+        builder: (context, hidden) => HiddenAmounts(
+          hidden: hidden,
+          onToggle: context.read<HideAmountsCubit>().toggle,
+          child: div(classes: 'capital', [
+            const div(classes: 'capital__figure', [
+              SectionLabel('Capital'),
+              AmountText('1 284 560 ₽', textClass: 'text-title'),
+            ]),
+            button(
+              classes: 'capital__toggle',
+              attributes: {
+                'aria-label': hidden ? 'Show amounts' : 'Hide amounts',
+                'aria-pressed': '$hidden',
+              },
+              onClick: () => context.read<HideAmountsCubit>().toggle(),
+              [
+                svg(
+                  viewBox: '0 0 24 24',
+                  width: 20.px,
+                  height: 20.px,
+                  attributes: const {
+                    'fill': 'none',
+                    'stroke': 'currentColor',
+                    'stroke-width': '1.8',
+                    'aria-hidden': 'true',
+                  },
+                  const [
+                    path(
+                      d: 'M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z',
+                      [],
+                    ),
+                    circle(cx: '12', cy: '12', r: '3', []),
+                  ],
+                ),
+              ],
             ),
           ]),
-          button(
-            classes: 'capital__toggle',
-            attributes: {
-              'aria-label': hidden ? 'Show amounts' : 'Hide amounts',
-              'aria-pressed': '$hidden',
-            },
-            onClick: () => context.read<HideAmountsCubit>().toggle(),
-            [
-              svg(
-                viewBox: '0 0 24 24',
-                width: 20.px,
-                height: 20.px,
-                attributes: const {
-                  'fill': 'none',
-                  'stroke': 'currentColor',
-                  'stroke-width': '1.8',
-                  'aria-hidden': 'true',
-                },
-                const [
-                  path(
-                    d: 'M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z',
-                    [],
-                  ),
-                  circle(cx: '12', cy: '12', r: '3', []),
-                ],
-              ),
-            ],
-          ),
-        ]),
+        ),
       ),
     );
   }

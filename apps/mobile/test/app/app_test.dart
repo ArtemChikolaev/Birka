@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:birka_mobile/app/app.dart';
+import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
@@ -27,8 +28,23 @@ import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart'
     show MonthTotal, ReportsCubit, ReportsRepository;
 import 'package:reports_flutter/reports_flutter.dart';
+import 'package:settings_common/settings_common.dart'
+    show Settings, SettingsCubit, SettingsStore;
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
+
+/// The settings in memory: the app under test needs no device.
+final class _Settings implements SettingsStore {
+  _Settings([Map<String, String>? values]) : values = values ?? {};
+
+  final Map<String, String> values;
+
+  @override
+  String? read(String key) => values[key];
+
+  @override
+  Future<void> write(String key, String value) async => values[key] = value;
+}
 
 /// The accounts in memory: the app under test needs no database.
 final class _NoAccounts implements AccountsRepository {
@@ -175,9 +191,11 @@ void main() {
   late GetIt getIt;
   late _Transactions transactions;
   late _Overview overview;
+  late _Settings settings;
 
   setUp(() {
     getIt = GetIt.asNewInstance();
+    settings = _Settings();
     final AccountsRepository accounts = _NoAccounts();
     final CategoriesRepository categories = _NoCategories();
     transactions = _Transactions();
@@ -197,6 +215,8 @@ void main() {
       )
       ..registerFactory(() => OverviewCubit(overview))
       ..registerFactory(() => ReportsCubit(_NoReports()))
+      ..registerSingleton<SettingsStore>(settings)
+      ..registerFactory(() => SettingsCubit(settings, deviceLanguage: 'en'))
       ..registerFactory(() => OperationsCubit(transactions))
       ..registerFactoryParam<OperationCubit, String, void>(
         (id, _) => OperationCubit(transactions, id),
@@ -205,6 +225,8 @@ void main() {
         (source, _) => QuickAddCubit(transactions, source: source),
       );
   });
+
+  tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
 
   testWidgets('opens on the overview', (tester) async {
     await tester.pumpWidget(BirkaApp(getIt: getIt));
@@ -300,6 +322,66 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(formatMoney(Money(-100, Currency.rub))), findsNothing);
+  });
+
+  testWidgets('amounts start hidden when the settings say so', (tester) async {
+    await const Settings(hideAmountsOnLaunch: true).writeTo(settings);
+    transactions.operations = [_coffee()];
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.operations));
+    await tester.pumpAndSettle();
+
+    expect(find.text(formatMoney(Money(-100, Currency.rub))), findsNothing);
+  });
+
+  testWidgets('the setting waits for the next launch', (tester) async {
+    transactions.operations = [_coffee()];
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.app.operations));
+    await tester.pumpAndSettle();
+
+    expect(Settings.readFrom(settings).hideAmountsOnLaunch, isTrue);
+    expect(find.text(formatMoney(Money(-100, Currency.rub))), findsWidgets);
+  });
+
+  testWidgets('a new language reaches everything and keeps the tab', (
+    tester,
+  ) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.settings.language));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.settings.russian));
+    await tester.pumpAndSettle();
+
+    expect(LocaleSettings.currentLocale, AppLocale.ru);
+    expect(Settings.readFrom(settings).language, AppLocale.ru);
+    // The bar, and the page that stands open.
+    expect(find.text('Обзор'), findsOneWidget);
+    expect(find.text('Ещё'), findsNWidgets(2));
+    expect(find.text('Язык'), findsOneWidget);
+    expect(find.text('Русский'), findsOneWidget);
+    expect(find.byType(MorePage), findsOneWidget);
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).locale,
+      const Locale('ru'),
+    );
+
+    await tester.tap(find.text('Отчёты'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Отчёты'), findsNWidgets(2));
   });
 
   testWidgets('the operations tab tells when there are none', (tester) async {

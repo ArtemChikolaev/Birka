@@ -3,8 +3,9 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
+import 'package:settings_flutter/settings_flutter.dart';
 
-/// The tab with everything that has no tab of its own.
+/// The tab with everything that has no tab of its own, and the settings.
 class MorePage extends StatelessWidget {
   /// Creates the page.
   const MorePage({super.key});
@@ -16,7 +17,12 @@ class MorePage extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.all(BirkaTokens.spaceLg),
+        padding: EdgeInsets.fromLTRB(
+          BirkaTokens.spaceLg,
+          BirkaTokens.spaceLg,
+          BirkaTokens.spaceLg,
+          GlassNavBar.clearance + MediaQuery.viewPaddingOf(context).bottom,
+        ),
         children: [
           Text(t.app.more, style: styles.title.copyWith(color: colors.text)),
           const SizedBox(height: BirkaTokens.spaceLg),
@@ -57,6 +63,8 @@ class MorePage extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: BirkaTokens.spaceLg),
+          const SettingsSection(),
         ],
       ),
     );

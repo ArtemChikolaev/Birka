@@ -106,26 +106,42 @@ void Function() watchTabShown(void Function() listener) {
 
 const _amountsHiddenKey = 'birka-amounts-hidden';
 
-/// Whether the amounts are hidden. It lasts as long as the tab, as it lasts as
-/// long as the app on a phone, and it carries from page to page. A browser
-/// that refuses the storage only loses that.
-bool get amountsHidden {
+/// Whether the amounts are hidden, or `null` before this tab has decided. It
+/// lasts as long as the tab, as it lasts as long as the app on a phone, and it
+/// carries from page to page. A browser that refuses the storage only loses
+/// that.
+bool? get amountsHidden {
   try {
-    return web.window.sessionStorage.getItem(_amountsHiddenKey) != null;
+    final kept = web.window.sessionStorage.getItem(_amountsHiddenKey);
+    return kept == null ? null : kept == '1';
   } on Object {
-    return false;
+    return null;
   }
 }
 
 /// Remembers whether the amounts are hidden, for as long as the tab lives.
 void keepAmountsHidden({required bool hidden}) {
   try {
-    final storage = web.window.sessionStorage;
-    if (hidden) {
-      storage.setItem(_amountsHiddenKey, '1');
-    } else {
-      storage.removeItem(_amountsHiddenKey);
-    }
+    web.window.sessionStorage.setItem(_amountsHiddenKey, hidden ? '1' : '0');
+  } on Object {
+    return;
+  }
+}
+
+/// What this browser keeps under [key]. A browser that refuses the storage
+/// keeps nothing, and the page goes on with the defaults.
+String? keptValue(String key) {
+  try {
+    return web.window.localStorage.getItem(key);
+  } on Object {
+    return null;
+  }
+}
+
+/// Keeps [value] under [key] in this browser, between visits.
+void keepValue(String key, String value) {
+  try {
+    web.window.localStorage.setItem(key, value);
   } on Object {
     return;
   }

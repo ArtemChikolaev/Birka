@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:birka_mobile/app/router.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
+import 'package:settings_common/settings_common.dart';
 
 /// The root widget of the Flutter app.
 ///
@@ -21,11 +24,34 @@ class BirkaApp extends StatefulWidget {
 }
 
 class _BirkaAppState extends State<BirkaApp> {
-  late final GoRouter _router = buildRouter(widget.getIt);
-  final ValueNotifier<bool> _hiddenAmounts = ValueNotifier(false);
+  late GoRouter _router = buildRouter(widget.getIt);
+  late final ValueNotifier<bool> _hiddenAmounts = ValueNotifier(
+    Settings.readFrom(widget.getIt<SettingsStore>()).hideAmountsOnLaunch,
+  );
+  late final StreamSubscription<AppLocale> _languages;
+
+  @override
+  void initState() {
+    super.initState();
+    _languages = LocaleSettings.getLocaleStream().listen(_onLanguageChanged);
+  }
+
+  /// `t` is not reactive (ADR 0010), so a new language takes new widgets. A
+  /// new router brings them, on the page that stands open.
+  void _onLanguageChanged(AppLocale _) {
+    final previous = _router;
+    setState(() {
+      _router = buildRouter(
+        widget.getIt,
+        initialLocation: previous.state.uri.toString(),
+      );
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());
+  }
 
   @override
   void dispose() {
+    unawaited(_languages.cancel());
     _router.dispose();
     _hiddenAmounts.dispose();
     super.dispose();

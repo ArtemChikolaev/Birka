@@ -1,14 +1,38 @@
 import 'package:birka_web/pages/more_page.dart';
 import 'package:jaspr/jaspr.dart';
+import 'package:jaspr_bloc/jaspr_bloc.dart';
+import 'package:jaspr_bloc/testing.dart';
 import 'package:jaspr_test/jaspr_test.dart';
 import 'package:l10n/l10n.dart';
+import 'package:settings_common/settings_common.dart';
+
+final class _Store implements SettingsStore {
+  @override
+  String? read(String key) => null;
+
+  @override
+  Future<void> write(String key, String value) async {}
+}
 
 void main() {
-  setUp(() => LocaleSettings.setLocaleSync(AppLocale.ru));
-  tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
+  setUp(() {
+    setIsClientForTesting(true);
+    LocaleSettings.setLocaleSync(AppLocale.ru);
+  });
+  tearDown(() {
+    resetIsClientForTesting();
+    LocaleSettings.setLocaleSync(AppLocale.en);
+  });
+
+  void pump(ComponentTester tester) => tester.pumpComponent(
+    BlocProvider(
+      create: (_) => SettingsCubit(_Store(), deviceLanguage: 'ru'),
+      child: const MorePage(),
+    ),
+  );
 
   testComponents('leads to the accounts and the categories', (tester) async {
-    tester.pumpComponent(const MorePage());
+    pump(tester);
 
     expect(find.text('Ещё'), findsOneComponent);
     expect(
@@ -32,10 +56,17 @@ void main() {
   });
 
   testComponents('says that the rest is yet to come', (tester) async {
-    tester.pumpComponent(const MorePage());
+    pump(tester);
 
     expect(find.text('Импорт'), findsOneComponent);
     expect(find.text('Бэкап'), findsOneComponent);
     expect(find.text('скоро'), findsNComponents(2));
+  });
+
+  testComponents('holds the settings', (tester) async {
+    pump(tester);
+
+    expect(find.text('Язык'), findsOneComponent);
+    expect(find.text('Скрывать суммы'), findsOneComponent);
   });
 }
