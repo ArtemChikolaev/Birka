@@ -57,11 +57,13 @@ Future<HttpServer> serveSite(Directory site, {required String base}) {
 }
 
 /// Opens [pages] of the site at [origin] in a new headless Chrome and returns
-/// what they reported. A page has [patience] to finish.
+/// what they reported. A page has [patience] to finish, and [beforePage] runs
+/// before anything else on each of them.
 Future<List<SiteProblem>> checkPages(
   Uri origin,
   List<String> pages, {
   Duration patience = const Duration(seconds: 30),
+  String? beforePage,
 }) async {
   final chrome = await Chrome.startWithDebugPort(const [
     'about:blank',
@@ -87,6 +89,12 @@ Future<List<SiteProblem>> checkPages(
     await connection.runtime.enable();
     await connection.log.enable();
     await connection.page.enable();
+    if (beforePage != null) {
+      await connection.page.sendCommand(
+        'Page.addScriptToEvaluateOnNewDocument',
+        params: {'source': beforePage},
+      );
+    }
 
     final problems = <SiteProblem>[];
     for (final page in pages) {
@@ -117,7 +125,15 @@ Future<List<SiteProblem>> checkSite(
   final server = await serveSite(site, base: base);
   try {
     final origin = Uri.parse('http://localhost:${server.port}$base');
-    return await checkPages(origin, pages);
+    final problems = await checkPages(origin, pages);
+    if (problems.isNotEmpty) return problems;
+    // Without shared workers the database opens in the page (ADR 0009), which
+    // this Chrome would otherwise never show.
+    return await checkPages(
+      origin,
+      pages,
+      beforePage: 'delete window.SharedWorker;',
+    );
   } finally {
     await server.close();
   }

@@ -137,6 +137,19 @@ void main() {
       expect(await check(), isEmpty);
     });
 
+    test('looks at the pages without shared workers too', () async {
+      page(
+        '',
+        script: '''
+          if (!('SharedWorker' in window)) console.error('no shared workers');
+        ''',
+      );
+
+      final problems = await check();
+
+      expect(problems.single.message, 'no shared workers');
+    });
+
     test('does not carry a report over to the next page', () async {
       page('', script: 'console.error("broken");');
       page('reports/');
