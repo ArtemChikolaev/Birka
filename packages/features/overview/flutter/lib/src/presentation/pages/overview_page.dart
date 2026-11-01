@@ -182,10 +182,15 @@ class _Capital extends StatelessWidget {
           const SizedBox(height: BirkaTokens.spaceXs),
           Row(
             children: [
-              Flexible(child: _Change(change: change)),
+              Flexible(
+                child: BirkaChangePill(
+                  label: changeLabel(change),
+                  rise: change.isPositive,
+                ),
+              ),
               const SizedBox(width: BirkaTokens.spaceXs),
               Text(
-                changeCaption(state.period, today: state.today),
+                chartPeriodCaption(state.period.name, month: state.today.month),
                 style: styles.body.copyWith(color: colors.textMuted),
               ),
             ],
@@ -196,54 +201,10 @@ class _Capital extends StatelessWidget {
   }
 }
 
-/// A pill with the arrow and the amount of a change.
-class _Change extends StatelessWidget {
-  const _Change({required this.change});
-
-  final Money change;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BirkaColors.of(context);
-    final rise = change.isPositive;
-    final color = rise ? colors.positive : colors.negative;
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: BirkaTokens.spaceSm,
-        vertical: BirkaTokens.spaceXxs,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.16),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(BirkaTokens.radiusPill),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          BirkaIcon(
-            rise ? BirkaGlyph.rise : BirkaGlyph.fall,
-            size: 14,
-            color: color,
-          ),
-          const SizedBox(width: BirkaTokens.spaceXxs),
-          Flexible(
-            child: AmountText(
-              changeLabel(change),
-              tone: rise ? AmountTone.positive : AmountTone.negative,
-              style: BirkaTextStyles.of(context).bodyStrong,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _Periods extends StatelessWidget {
   const _Periods({required this.selected});
 
-  final OverviewPeriod selected;
+  final ChartPeriod selected;
 
   @override
   Widget build(BuildContext context) {
@@ -252,9 +213,9 @@ class _Periods extends StatelessWidget {
       spacing: BirkaTokens.spaceXs,
       runSpacing: BirkaTokens.spaceXs,
       children: [
-        for (final period in OverviewPeriod.values)
+        for (final period in ChartPeriod.values)
           BirkaChip(
-            label: periodLabel(period),
+            label: chartPeriodLabel(period.name),
             selected: period == selected,
             compact: true,
             onTap: () => cubit.periodChanged(period),

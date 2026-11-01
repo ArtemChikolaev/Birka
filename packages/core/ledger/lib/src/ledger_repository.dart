@@ -474,8 +474,15 @@ final class LedgerRepository {
   }
 
   /// What each day since [from] changed the accounts that count towards
-  /// totals, one row for each day and currency, the earliest first.
-  Stream<List<DayChange>> watchDayChanges({required CivilDate from}) {
+  /// totals, or account [accountId] alone, one row for each day and currency,
+  /// the earliest first.
+  Stream<List<DayChange>> watchDayChanges({
+    required CivilDate from,
+    String? accountId,
+  }) {
+    final which = accountId == null
+        ? 'a.include_in_totals AND NOT a.archived'
+        : 'a.id = ?';
     return _db
         .customSelect(
           '''
@@ -489,14 +496,14 @@ final class LedgerRepository {
             AND t.status <> ?
             AND t.occurred_on >= ?
             AND a.deleted_at IS NULL
-            AND a.include_in_totals
-            AND NOT a.archived
+            AND $which
           GROUP BY t.occurred_on, a.currency, a.decimal_digits
           ORDER BY t.occurred_on
           ''',
           variables: [
             Variable.withString(TransactionStatus.planned.name),
             Variable.withString(from.toString()),
+            if (accountId != null) Variable.withString(accountId),
           ],
           readsFrom: {_db.entries, _db.transactions, _db.accounts},
         )

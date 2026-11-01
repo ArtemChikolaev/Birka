@@ -10,6 +10,20 @@ void main() {
   Money eur(int minorUnits) => Money(minorUnits, Currency.eur);
   final card = testAccount('Карта');
   final euro = testAccount('Евро', currency: Currency.eur);
+
+  test('a transfer does something different to each of its accounts', () {
+    final transfer = testOperation(
+      'move',
+      amount: rub(-9000),
+      account: card,
+      toAccount: euro,
+      received: eur(100),
+      kind: TransactionKind.transfer,
+    );
+
+    expect(transfer.amountOn(card.id), rub(-9000));
+    expect(transfer.amountOn(euro.id), eur(100));
+  });
   final cafe = testCategory('Кафе');
 
   group('an operation', () {

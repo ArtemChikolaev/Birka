@@ -74,6 +74,40 @@ void main() {
     });
   });
 
+  group('BirkaChangePill', () {
+    testWidgets('goes up in the color of a gain', (tester) async {
+      await tester.pumpWidget(
+        app(
+          HiddenAmounts(
+            notifier: ValueNotifier(false),
+            child: const BirkaChangePill(label: '+100', rise: true),
+          ),
+        ),
+      );
+
+      expect(find.text('+100'), findsOneWidget);
+      expect(
+        tester.widget<BirkaIcon>(find.byType(BirkaIcon)).glyph,
+        BirkaGlyph.rise,
+      );
+    });
+
+    testWidgets('goes down in the color of a loss', (tester) async {
+      await tester.pumpWidget(
+        app(
+          HiddenAmounts(
+            notifier: ValueNotifier(false),
+            child: const BirkaChangePill(label: '−100', rise: false),
+          ),
+        ),
+      );
+
+      final icon = tester.widget<BirkaIcon>(find.byType(BirkaIcon));
+      expect(icon.glyph, BirkaGlyph.fall);
+      expect(icon.color, colors.negative);
+    });
+  });
+
   group('BirkaStepBars', () {
     testWidgets('lights the bars up to the current step', (tester) async {
       await tester.pumpWidget(

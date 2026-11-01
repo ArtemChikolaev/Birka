@@ -33,6 +33,9 @@ filterTransfers: Transfers
 pickMonth: Pick a month
 noOperationsTitle: No operations yet
 noOperationsHint: Tap the plus to record the first one.
+noAccountOperations: Nothing has happened on this account yet.
+balanceChart: Balance over the period
+accountGone: This account is gone.
 nothingFound: Nothing found
 failedToReadOperations: Could not read the operations.
 failedToDelete: Could not delete. Try again.

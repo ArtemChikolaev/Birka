@@ -92,6 +92,19 @@ void main() {
   group('an operation', () {
     final card = testAccount('Card');
     final cash = testAccount('Cash');
+
+    test('a transfer has a sign on the page of an account', () {
+      final transfer = testOperation(
+        'move',
+        amount: Money(-500, Currency.usd),
+        account: card,
+        toAccount: cash,
+        kind: TransactionKind.transfer,
+      );
+
+      expect(operationAmountOn(transfer, card.id), r'−$5');
+      expect(operationAmountOn(transfer, cash.id), r'+$5');
+    });
     final cafe = testCategory('Cafe');
 
     test('of money spent shows a minus', () {

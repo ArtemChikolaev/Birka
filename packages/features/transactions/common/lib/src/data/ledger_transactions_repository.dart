@@ -52,6 +52,28 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   );
 
   @override
+  Stream<AccountBalance?> watchAccount(String id) => _ledger
+      .watchAccountBalances(includeArchived: true)
+      .map(
+        (rows) => rows.where((row) => row.account.id == id).firstOrNull,
+      );
+
+  @override
+  Stream<List<DayChange>> watchAccountChanges(
+    String id, {
+    required CivilDate from,
+  }) => _ledger.watchDayChanges(from: from, accountId: id);
+
+  @override
+  Stream<List<Operation>> watchAccountOperations(String id) => combineLatest(
+    _ledger.watchTransactions(accountId: id),
+    _watchNames(),
+    (transactions, names) => [
+      for (final transaction in transactions) names.operationOf(transaction),
+    ],
+  );
+
+  @override
   Future<List<CivilDate>> months() => _ledger.months();
 
   @override

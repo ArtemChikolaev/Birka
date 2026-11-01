@@ -531,6 +531,12 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get noOperationsTitle => 'Пока нет операций';
   @override
+  String get noAccountOperations => 'По этому счёту операций пока нет.';
+  @override
+  String get balanceChart => 'Остаток за период';
+  @override
+  String get accountGone => 'Этого счёта больше нет.';
+  @override
   String get noOperationsHint => 'Нажмите плюс, чтобы записать первую.';
   @override
   String get nothingFound => 'Ничего не нашлось';
@@ -1085,6 +1091,9 @@ extension on TranslationsRu {
       'transactions.filterTransfers' => 'Переводы',
       'transactions.pickMonth' => 'Выбрать месяц',
       'transactions.noOperationsTitle' => 'Пока нет операций',
+      'transactions.noAccountOperations' => 'По этому счёту операций пока нет.',
+      'transactions.balanceChart' => 'Остаток за период',
+      'transactions.accountGone' => 'Этого счёта больше нет.',
       'transactions.noOperationsHint' => 'Нажмите плюс, чтобы записать первую.',
       'transactions.nothingFound' => 'Ничего не нашлось',
       'transactions.failedToReadOperations' => 'Не удалось прочитать операции.',

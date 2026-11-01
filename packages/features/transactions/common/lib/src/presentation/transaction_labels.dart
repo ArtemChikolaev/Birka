@@ -98,6 +98,11 @@ String operationAmount(Operation operation) =>
     ? formatMoney(operation.amount.abs())
     : signedAmountLabel(operation.amount);
 
+/// What the operation does to account [accountId], with a sign even for a
+/// transfer, which brings money to one account and takes it from the other.
+String operationAmountOn(Operation operation, String accountId) =>
+    signedAmountLabel(operation.amountOn(accountId));
+
 /// The main line of an operation: the note, or what it is for.
 String operationTitle(Operation operation) {
   if (operation.note.isNotEmpty) return operation.note;

@@ -36,6 +36,79 @@ void main() {
         occurredOn: today,
       );
 
+  group('an account', () {
+    test('comes with what it holds', () async {
+      final card = await account('Card');
+      final food = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Food',
+      );
+      await ledger.record(expense(card, food));
+
+      final row = await repository.watchAccount(card.id).first;
+
+      expect(row?.account.name, 'Card');
+      expect(row?.balance, rub(-100));
+    });
+
+    test('that does not exist comes as nothing', () async {
+      expect(await repository.watchAccount('nothing').first, isNull);
+    });
+
+    test('that is archived still comes', () async {
+      final card = await account('Card');
+      await ledger.updateAccount(card.id, archived: true);
+
+      expect(await repository.watchAccount(card.id).first, isNotNull);
+    });
+
+    test('has the changes of its own days', () async {
+      final card = await account('Card');
+      final cash = await account('Cash');
+      final food = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Food',
+      );
+      await ledger.record(expense(card, food));
+      await ledger.record(expense(cash, food));
+      await ledger.record(expense(cash, food));
+
+      final changes = await repository
+          .watchAccountChanges(card.id, from: today)
+          .first;
+
+      expect(changes.single.change, rub(-100));
+    });
+
+    test('has its operations, a transfer from both sides', () async {
+      final card = await account('Card');
+      final cash = await account('Cash');
+      final other = await account('Other');
+      final food = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Food',
+      );
+      await ledger.record(expense(card, food));
+      await ledger.record(expense(other, food));
+      await ledger.record(
+        TransactionDraft.transfer(
+          fromAccountId: cash.id,
+          toAccountId: card.id,
+          sent: rub(300),
+          received: rub(300),
+          occurredOn: today,
+        ),
+      );
+
+      final operations = await repository.watchAccountOperations(card.id).first;
+
+      expect(operations, hasLength(2));
+      expect(operations.first.kind, TransactionKind.transfer);
+      expect(operations.first.amountOn(card.id), rub(300));
+      expect(operations.last.account?.name, 'Card');
+    });
+  });
+
   test('the frequent categories come first', () async {
     final card = await account('Card');
     final food = await ledger.addCategory(

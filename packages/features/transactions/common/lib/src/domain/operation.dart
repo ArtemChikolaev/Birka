@@ -58,6 +58,12 @@ final class Operation {
   /// What it does to the account: below zero when money leaves.
   Money get amount => transaction.entries.first.amount;
 
+  /// What it does to account [accountId], which a transfer touches from either
+  /// side.
+  Money amountOn(String accountId) => transaction.entries
+      .firstWhere((entry) => entry.accountId == accountId)
+      .amount;
+
   /// What arrives on the other account of a transfer.
   Money? get received =>
       kind == TransactionKind.transfer ? transaction.entries.last.amount : null;

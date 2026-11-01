@@ -10,6 +10,7 @@ export 'package:ledger/ledger.dart'
         Category,
         CategoryDayTotal,
         CategoryTotal,
+        ChartPeriod,
         CivilDate;
 
 export 'package:money/money.dart' show Money;

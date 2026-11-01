@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/src/presentation/widgets/delete_sheet.dart';
-import 'package:transactions_flutter/src/presentation/widgets/operation_row.dart';
+import 'package:transactions_flutter/src/presentation/widgets/operation_day_group.dart';
 
 /// The operations of a month, day by day, with a search and filters.
 ///
@@ -127,7 +127,7 @@ class _OperationsPageState extends State<OperationsPage> {
                         itemCount: state.days.length,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: BirkaTokens.spaceLg),
-                        itemBuilder: (context, index) => _Day(
+                        itemBuilder: (context, index) => OperationDayGroup(
                           day: state.days[index],
                           today: state.today,
                           onOpen: widget.onOpen,
@@ -287,69 +287,6 @@ class _Total extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Day extends StatelessWidget {
-  const _Day({
-    required this.day,
-    required this.today,
-    required this.onOpen,
-    required this.onRepeat,
-    required this.onDelete,
-  });
-
-  final OperationDay day;
-  final CivilDate today;
-  final ValueChanged<String> onOpen;
-  final ValueChanged<String> onRepeat;
-  final ValueChanged<Operation> onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BirkaColors.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: BirkaTokens.spaceXs,
-          ),
-          child: Row(
-            children: [
-              SectionLabel(
-                dayHeading(day.day, today: today),
-                color: colors.textSecondary,
-              ),
-              const SizedBox(width: BirkaTokens.spaceSm),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: AmountText(
-                    amountsLabel(day.total),
-                    tone: AmountTone.muted,
-                    style: BirkaTextStyles.of(context).caption,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: BirkaTokens.spaceXs),
-        GlassListGroup(
-          children: [
-            for (final operation in day.operations)
-              OperationRow(
-                key: ValueKey(operation.id),
-                operation: operation,
-                onOpen: () => onOpen(operation.id),
-                onRepeat: () => onRepeat(operation.id),
-                onDelete: () => onDelete(operation),
-              ),
-          ],
-        ),
-      ],
     );
   }
 }

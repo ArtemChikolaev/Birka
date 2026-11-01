@@ -501,6 +501,32 @@ void main() {
       expect(changes.single.change, most);
     });
 
+    test('narrow to one account', () async {
+      await ledger.record(on(today, rub(-100)));
+      await ledger.record(on(today, eur(50), account: euro));
+
+      final changes = await ledger
+          .watchDayChanges(from: today, accountId: euro.id)
+          .first;
+
+      expect(changes.single.change, eur(50));
+    });
+
+    test('of one account count it even out of the totals', () async {
+      await ledger.record(on(today, eur(50), account: euro));
+      await ledger.updateAccount(
+        euro.id,
+        includeInTotals: false,
+        archived: true,
+      );
+
+      expect(await ledger.watchDayChanges(from: today).first, isEmpty);
+      final changes = await ledger
+          .watchDayChanges(from: today, accountId: euro.id)
+          .first;
+      expect(changes.single.change, eur(50));
+    });
+
     test('follow a write', () async {
       final seen = expectLater(
         ledger.watchDayChanges(from: today).map((changes) => changes.length),

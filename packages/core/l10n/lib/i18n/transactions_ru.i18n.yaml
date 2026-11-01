@@ -32,6 +32,9 @@ filterIncome: Доходы
 filterTransfers: Переводы
 pickMonth: Выбрать месяц
 noOperationsTitle: Пока нет операций
+noAccountOperations: По этому счёту операций пока нет.
+balanceChart: Остаток за период
+accountGone: Этого счёта больше нет.
 noOperationsHint: Нажмите плюс, чтобы записать первую.
 nothingFound: Ничего не нашлось
 failedToReadOperations: Не удалось прочитать операции.

@@ -598,6 +598,15 @@ class Translations$transactions$en {
   /// en: 'Tap the plus to record the first one.'
   String get noOperationsHint => 'Tap the plus to record the first one.';
 
+  /// en: 'Nothing has happened on this account yet.'
+  String get noAccountOperations => 'Nothing has happened on this account yet.';
+
+  /// en: 'Balance over the period'
+  String get balanceChart => 'Balance over the period';
+
+  /// en: 'This account is gone.'
+  String get accountGone => 'This account is gone.';
+
   /// en: 'Nothing found'
   String get nothingFound => 'Nothing found';
 
@@ -1191,6 +1200,10 @@ extension on Translations {
       'transactions.noOperationsTitle' => 'No operations yet',
       'transactions.noOperationsHint' =>
         'Tap the plus to record the first one.',
+      'transactions.noAccountOperations' =>
+        'Nothing has happened on this account yet.',
+      'transactions.balanceChart' => 'Balance over the period',
+      'transactions.accountGone' => 'This account is gone.',
       'transactions.nothingFound' => 'Nothing found',
       'transactions.failedToReadOperations' => 'Could not read the operations.',
       'transactions.failedToDelete' => 'Could not delete. Try again.',
