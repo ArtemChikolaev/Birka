@@ -25,7 +25,9 @@
    with 15.
 3. The language and the base currency apply at once, because the screens follow
    them. The account and the categories wait for the end and go in one
-   transaction, so going back changes them and leaving adds nothing.
+   transaction, so going back changes them and leaving adds nothing. The cubit
+   stands above the router, because a new language brings a new router and what
+   was typed has to survive it.
 4. Skip ends the steps from anywhere. An account that the second step took
    stays, and what was typed on the second step and not taken goes.
 5. `Settings.onboarded` marks a device that has finished or skipped. A device
@@ -57,7 +59,5 @@
 
 - A person who leaves half way starts over on the next launch, with the language
   and the base currency already picked.
-- A new language builds the page anew, so what was typed on the later steps
-  before going back to change it is lost.
 - The second and third steps have no mockup yet. They use the components of the
   design system, and a mockup can replace them later.

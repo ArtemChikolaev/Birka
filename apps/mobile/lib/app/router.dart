@@ -68,24 +68,27 @@ abstract final class Paths {
 }
 
 /// Builds the router: the tabs keep their state in a shell, and everything
-/// else opens over them. Pages get their cubits from [getIt].
+/// else opens over them. Pages get their cubits from [getIt], and only a new
+/// device has [onboarding], which outlives a router (ADR 0013).
 GoRouter buildRouter(
   GetIt getIt, {
   String initialLocation = Paths.overview,
+  OnboardingCubit? onboarding,
 }) {
   final rootKey = GlobalKey<NavigatorState>();
   return GoRouter(
     navigatorKey: rootKey,
     initialLocation: initialLocation,
     routes: [
-      GoRoute(
-        path: Paths.onboarding,
-        parentNavigatorKey: rootKey,
-        builder: (context, state) => BlocProvider(
-          create: (_) => getIt<OnboardingCubit>(),
-          child: OnboardingPage(onFinished: () => context.go(Paths.overview)),
+      if (onboarding != null)
+        GoRoute(
+          path: Paths.onboarding,
+          parentNavigatorKey: rootKey,
+          builder: (context, state) => BlocProvider.value(
+            value: onboarding,
+            child: OnboardingPage(onFinished: () => context.go(Paths.overview)),
+          ),
         ),
-      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [

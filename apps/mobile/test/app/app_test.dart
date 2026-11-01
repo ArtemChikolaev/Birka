@@ -313,6 +313,29 @@ void main() {
       expect(find.byType(OnboardingPage), findsOneWidget);
       expect(find.text('Все деньги —\nв одном месте'), findsOneWidget);
     });
+
+    testWidgets('a language picked on the way keeps what was typed', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(402, 874);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(BirkaApp(getIt: getIt, onboarding: true));
+      await tester.pumpAndSettle();
+      await tester.tap(find.bySemanticsLabel('Get started'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, 'Card');
+      await tester.tap(find.bySemanticsLabel('Back'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Русский'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.bySemanticsLabel('Начать'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Первый счёт'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'Card'), findsOneWidget);
+    });
   });
 
   testWidgets('dresses the app in the Birka theme', (tester) async {
