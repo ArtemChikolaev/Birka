@@ -5,6 +5,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
+import 'package:rates/rates.dart' show CbrMirror;
 import 'package:settings_common/settings_common.dart';
 
 /// The settings of this browser, for the page with everything else.
@@ -27,6 +28,7 @@ class SettingsSection extends StatefulComponent {
         'gap': 'var(--space-xs)',
       },
     ),
+    css('.settings__group .glass-row').styles(raw: {'gap': 'var(--space-xs)'}),
     css('.settings__label').styles(raw: {'color': 'var(--color-text-muted)'}),
     css('.settings__value').styles(
       raw: {
@@ -34,25 +36,72 @@ class SettingsSection extends StatefulComponent {
         'color': 'var(--color-text-muted)',
         'display': 'flex',
         'flex': 'none',
-        'gap': 'var(--space-xs)',
+        'gap': 'var(--space-xxs)',
       },
     ),
     css('.settings__value .birka-icon').styles(
-      raw: {'color': 'var(--color-text-subtle)'},
+      raw: {
+        'color': 'var(--color-text-subtle)',
+        'height': '18px',
+        'width': '18px',
+      },
     ),
     css('.settings__check').styles(raw: {'color': 'var(--color-accent)'}),
+    css('.settings__credit').styles(
+      raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
+    ),
+    css('.settings__credit a').styles(raw: {'color': 'inherit'}),
   ];
 }
 
+/// The choice that stands open.
+enum _Choice { baseCurrency, language }
+
 class _SettingsSectionState extends State<SettingsSection> {
-  /// Whether the languages stand open under their row.
-  var _choosing = false;
+  /// The choice whose options stand open under its row.
+  _Choice? _open;
 
   Component _group(String label, List<Component> rows) {
     return section(classes: 'settings__group', [
       div(classes: 'settings__label', [SectionLabel(label)]),
       GlassListGroup(children: rows),
     ]);
+  }
+
+  /// A row with its value, and under it [choices] while it stands open.
+  List<Component> _choice<T>({
+    required _Choice choice,
+    required String title,
+    required List<T> choices,
+    required T selected,
+    required String Function(T) labelOf,
+    required Future<void> Function(T) onPicked,
+  }) {
+    return [
+      GlassListRow(
+        title: title,
+        trailing: span(classes: 'text-body settings__value', [
+          .text(labelOf(selected)),
+          const BirkaIcon(BirkaGlyph.chevron),
+        ]),
+        onTap: () => setState(() => _open = _open == choice ? null : choice),
+      ),
+      if (_open == choice)
+        for (final option in choices)
+          GlassListRow(
+            title: labelOf(option),
+            indented: true,
+            trailing: option == selected
+                ? const span(classes: 'settings__check', [
+                    BirkaIcon(BirkaGlyph.check),
+                  ])
+                : null,
+            onTap: () {
+              setState(() => _open = null);
+              unawaited(onPicked(option));
+            },
+          ),
+    ];
   }
 
   @override
@@ -63,29 +112,22 @@ class _SettingsSectionState extends State<SettingsSection> {
         return BirkaColumn(
           children: [
             _group(t.settings.general, [
-              GlassListRow(
-                title: t.settings.language,
-                trailing: span(classes: 'text-body settings__value', [
-                  .text(languageLabel(settings.language)),
-                  const BirkaIcon(BirkaGlyph.chevron),
-                ]),
-                onTap: () => setState(() => _choosing = !_choosing),
+              ..._choice<Currency?>(
+                choice: _Choice.baseCurrency,
+                title: t.settings.baseCurrency,
+                choices: baseCurrencyChoices,
+                selected: settings.baseCurrency,
+                labelOf: baseCurrencyLabel,
+                onPicked: cubit.baseCurrencyChanged,
               ),
-              if (_choosing)
-                for (final language in languageChoices)
-                  GlassListRow(
-                    title: languageLabel(language),
-                    indented: true,
-                    trailing: language == settings.language
-                        ? const span(classes: 'settings__check', [
-                            BirkaIcon(BirkaGlyph.check),
-                          ])
-                        : null,
-                    onTap: () {
-                      setState(() => _choosing = false);
-                      unawaited(cubit.languageChanged(language));
-                    },
-                  ),
+              ..._choice<AppLocale?>(
+                choice: _Choice.language,
+                title: t.settings.language,
+                choices: languageChoices,
+                selected: settings.language,
+                labelOf: languageLabel,
+                onPicked: cubit.languageChanged,
+              ),
             ]),
             _group(t.settings.security, [
               GlassListRow(
@@ -99,6 +141,9 @@ class _SettingsSectionState extends State<SettingsSection> {
                   ),
                 ),
               ),
+            ]),
+            p(classes: 'text-caption settings__credit', [
+              a(href: CbrMirror.address, [.text(t.settings.ratesCredit)]),
             ]),
           ],
         );

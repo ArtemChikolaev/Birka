@@ -94,10 +94,11 @@ class OverviewPage extends StatelessComponent {
     final cubit = context.read<OverviewCubit>();
     final change = state.change;
     final others = state.others;
+    final rateDay = state.rates.latestDay;
     return div(classes: 'overview__capital', [
       div(classes: 'overview__figures', [
         div(classes: 'overview__label', [
-          SectionLabel(capitalLabel(state.capital.length)),
+          SectionLabel(capitalLabel(state.capital.currencies)),
         ]),
         AmountText(formatMoney(state.main!), textClass: 'text-display'),
         if (others.isNotEmpty)
@@ -106,6 +107,10 @@ class OverviewPage extends StatelessComponent {
             tone: AmountTone.muted,
             textClass: 'text-body-strong',
           ),
+        if (state.capital.converted && rateDay != null)
+          span(classes: 'text-caption overview__rate', [
+            .text(rateNote(rateDay)),
+          ]),
         if (change != null && !change.isZero)
           div(classes: 'overview__change', [
             _changePill(change),
@@ -263,6 +268,7 @@ class OverviewPage extends StatelessComponent {
       raw: {'overflow-wrap': 'anywhere', 'white-space': 'normal'},
     ),
     css('.overview__label').styles(raw: {'color': 'var(--color-text-muted)'}),
+    css('.overview__rate').styles(raw: {'color': 'var(--color-text-subtle)'}),
     css('.overview__change').styles(
       raw: {
         'align-items': 'center',

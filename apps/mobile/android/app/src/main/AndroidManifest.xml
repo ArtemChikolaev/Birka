@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- For the exchange rates: nothing of the user leaves the phone. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Birka"
         android:name="${applicationName}"

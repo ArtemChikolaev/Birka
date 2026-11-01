@@ -5,11 +5,12 @@ import 'package:accounts_common/src/presentation/accounts_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ledger/ledger.dart';
 
-/// Registers the feature in [getIt], which has to know the [LedgerRepository].
+/// Registers the feature in [getIt], which has to know the [LedgerRepository],
+/// the `RatesRepository` and the `BaseCurrency`.
 void registerAccounts(GetIt getIt) {
   getIt
     ..registerLazySingleton<AccountsRepository>(
-      () => LedgerAccountsRepository(getIt()),
+      () => LedgerAccountsRepository(getIt(), getIt(), getIt()),
     )
     ..registerFactory(() => AccountsCubit(getIt()))
     ..registerFactoryParam<AccountFormCubit, String?, void>(

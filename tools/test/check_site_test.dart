@@ -125,6 +125,12 @@ void main() {
       expect(problems.single.message, contains('404'));
     });
 
+    test('leaves alone a file of another host', () async {
+      page('', body: '<img src="http://localhost:9/rates.png">');
+
+      expect(await check(), isEmpty);
+    });
+
     test('leaves warnings alone', () async {
       page('', script: 'console.warn("old"); console.log("fine");');
 

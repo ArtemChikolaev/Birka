@@ -116,22 +116,25 @@ class _Tile extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: BirkaTokens.spaceSm),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
+              // On a narrow phone the mark takes its own line.
+              SizedBox(
+                width: double.infinity,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: BirkaTokens.spaceXs,
+                  children: [
+                    Text(
                       label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: styles.bodyStrong.copyWith(color: colors.text),
                     ),
-                  ),
-                  if (onTap == null)
-                    Text(
-                      t.app.soon.toUpperCase(),
-                      style: styles.label.copyWith(color: colors.textSubtle),
-                    ),
-                ],
+                    if (onTap == null)
+                      Text(
+                        t.app.soon.toUpperCase(),
+                        style: styles.label.copyWith(color: colors.textSubtle),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),

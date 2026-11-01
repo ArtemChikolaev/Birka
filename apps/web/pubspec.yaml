@@ -25,6 +25,7 @@ dependencies:
     path: ../../packages/design/jaspr
   drift: ^2.31.0
   get_it: ^9.3.0
+  http: ^1.6.0
   jaspr: ^0.22.3
   jaspr_bloc: ^1.0.1
   jaspr_router: ^0.8.1
@@ -36,6 +37,8 @@ dependencies:
     path: ../../packages/features/overview/common
   overview_jaspr:
     path: ../../packages/features/overview/jaspr
+  rates:
+    path: ../../packages/core/rates
   reports_common:
     path: ../../packages/features/reports/common
   reports_jaspr:

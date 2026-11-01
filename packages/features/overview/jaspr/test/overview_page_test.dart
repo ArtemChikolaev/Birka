@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -22,6 +23,8 @@ final class _FakeRepository implements OverviewRepository {
   List<DayChange> changes;
   List<CategoryTotal> spending;
   Exception? readFailure;
+  RateBook rates = const RateBook.empty();
+  Currency? base;
 
   Stream<T> _read<T>(T value) => Stream.multi((controller) {
     if (readFailure case final failure?) {
@@ -30,6 +33,12 @@ final class _FakeRepository implements OverviewRepository {
       controller.add(value);
     }
   });
+
+  @override
+  Stream<RateBook> watchRates() => _read(rates);
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => _read(base);
 
   @override
   Stream<List<AccountBalance>> watchAccounts() => _read(accounts);
@@ -175,6 +184,40 @@ void main() {
     expect(find.text('+15${space}000$space₽'), findsOneComponent);
     expect(find.text('за октябрь'), findsOneComponent);
     expect(find.byType(BirkaLineChart), findsOneComponent);
+  });
+
+  testComponents('adds the currencies up and says at which rate', (
+    tester,
+  ) async {
+    repository.rates = RateBook([
+      DayRates(CivilDate(2026, 10, 31), {'USD': Decimal.fromInt(80)}),
+    ]);
+    await pump(tester);
+
+    expect(find.text('1${space}146${space}000$space₽'), findsOneComponent);
+    expect(find.text('Курс ЦБ РФ на 31 октября'), findsOneComponent);
+  });
+
+  testComponents('a capital in one currency speaks of no rate', (tester) async {
+    repository
+      ..accounts = [_account('Карта', rub(100000000))]
+      ..rates = RateBook([
+        DayRates(CivilDate(2026, 10, 31), {'USD': Decimal.fromInt(80)}),
+      ]);
+    await pump(tester);
+
+    expect(find.text('Курс ЦБ РФ на 31 октября'), findsNothing);
+  });
+
+  testComponents('follows the picked currency', (tester) async {
+    repository
+      ..rates = RateBook([
+        DayRates(CivilDate(2026, 10, 31), {'USD': Decimal.fromInt(80)}),
+      ])
+      ..base = Currency.usd;
+    await pump(tester);
+
+    expect(find.text('14${space}325$space\$'), findsOneComponent);
   });
 
   testComponents('says where the data lives', (tester) async {

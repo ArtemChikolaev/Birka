@@ -150,11 +150,12 @@ class _Capital extends StatelessWidget {
     final main = state.main!;
     final change = state.change;
     final others = state.others;
+    final rateDay = state.rates.latestDay;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionLabel(
-          capitalLabel(state.capital.length),
+          capitalLabel(state.capital.currencies),
           color: colors.textMuted,
         ),
         const SizedBox(height: BirkaTokens.spaceXxs),
@@ -168,6 +169,13 @@ class _Capital extends StatelessWidget {
             others.map(formatMoney).join(' · '),
             tone: AmountTone.muted,
             style: styles.bodyStrong,
+          ),
+        ],
+        if (state.capital.converted && rateDay != null) ...[
+          const SizedBox(height: BirkaTokens.spaceXxs),
+          Text(
+            rateNote(rateDay),
+            style: styles.caption.copyWith(color: colors.textSubtle),
           ),
         ],
         if (change != null && !change.isZero) ...[

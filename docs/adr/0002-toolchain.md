@@ -28,6 +28,7 @@
 | Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0, 2.31.0, 0.2.8, 2.9.4 |
 | Settings of a device | shared_preferences | 2.5.5 |
 | Ids | uuid | 4.6.0 |
+| Exchange rates | decimal, rational, http | 3.2.6, 2.2.3, 1.6.0 |
 | State | bloc, flutter_bloc, bloc_test, bloc_concurrency | 9.2.1, 9.1.1, 10.0.0, 0.3.0 |
 | Navigation and DI | go_router, get_it | 17.5.0, 9.3.0 |
 | Icons | flutter_svg | 2.3.0 |

@@ -18,9 +18,12 @@ dependencies:
   meta: ^1.17.0
   money:
     path: ../../../core/money
+  rates:
+    path: ../../../core/rates
 
 dev_dependencies:
   database:
     path: ../../../core/database
+  decimal: ^3.2.6
   drift: ^2.31.0
   test: ^1.26.3

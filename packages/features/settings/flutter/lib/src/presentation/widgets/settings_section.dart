@@ -16,34 +16,65 @@ class SettingsSection extends StatelessWidget {
   /// How far the value of a row reaches, so that it leaves room for the title.
   static const double _widestValue = 180;
 
-  Future<void> _pickLanguage(BuildContext context, Settings settings) async {
-    final cubit = context.read<SettingsCubit>();
+  /// Asks for one of [choices], and calls [onPicked] with it.
+  Future<void> _pick<T>(
+    BuildContext context, {
+    required String title,
+    required List<T> choices,
+    required T selected,
+    required String Function(T) labelOf,
+    required Future<void> Function(T) onPicked,
+  }) async {
     final colors = BirkaColors.of(context);
     // In a record, because `null` is a choice here and not a closed sheet.
-    final picked = await showModalBottomSheet<(AppLocale?,)>(
+    final picked = await showModalBottomSheet<(T,)>(
       context: context,
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: colors.background,
       builder: (context) => ChoiceSheet(
-        title: t.settings.language,
+        title: title,
         children: [
           GlassListGroup(
             children: [
-              for (final language in languageChoices)
+              for (final choice in choices)
                 GlassListRow(
-                  title: languageLabel(language),
-                  trailing: language == settings.language
+                  title: labelOf(choice),
+                  trailing: choice == selected
                       ? BirkaIcon(BirkaGlyph.check, color: colors.accent)
                       : null,
-                  onTap: () => Navigator.of(context).pop((language,)),
+                  onTap: () => Navigator.of(context).pop((choice,)),
                 ),
             ],
           ),
         ],
       ),
     );
-    if (picked case (final language,)) await cubit.languageChanged(language);
+    if (picked case (final choice,)) await onPicked(choice);
+  }
+
+  Widget _value(BuildContext context, String text) {
+    final colors = BirkaColors.of(context);
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: _widestValue),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: BirkaTextStyles.of(
+                context,
+              ).body.copyWith(color: colors.textMuted),
+            ),
+          ),
+          const SizedBox(width: BirkaTokens.spaceXxs),
+          BirkaIcon(BirkaGlyph.chevron, size: 18, color: colors.textSubtle),
+        ],
+      ),
+    );
   }
 
   @override
@@ -61,28 +92,35 @@ class SettingsSection extends StatelessWidget {
             GlassListGroup(
               children: [
                 GlassListRow(
-                  title: t.settings.language,
-                  trailing: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: _widestValue),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            languageLabel(settings.language),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: styles.body.copyWith(
-                              color: colors.textMuted,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: BirkaTokens.spaceXs),
-                        BirkaIcon(BirkaGlyph.chevron, color: colors.textSubtle),
-                      ],
+                  title: t.settings.baseCurrency,
+                  trailing: _value(
+                    context,
+                    baseCurrencyLabel(settings.baseCurrency),
+                  ),
+                  onTap: () => unawaited(
+                    _pick<Currency?>(
+                      context,
+                      title: t.settings.baseCurrency,
+                      choices: baseCurrencyChoices,
+                      selected: settings.baseCurrency,
+                      labelOf: baseCurrencyLabel,
+                      onPicked: cubit.baseCurrencyChanged,
                     ),
                   ),
-                  onTap: () => unawaited(_pickLanguage(context, settings)),
+                ),
+                GlassListRow(
+                  title: t.settings.language,
+                  trailing: _value(context, languageLabel(settings.language)),
+                  onTap: () => unawaited(
+                    _pick<AppLocale?>(
+                      context,
+                      title: t.settings.language,
+                      choices: languageChoices,
+                      selected: settings.language,
+                      labelOf: languageLabel,
+                      onPicked: cubit.languageChanged,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -101,6 +139,11 @@ class SettingsSection extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: BirkaTokens.spaceMd),
+            Text(
+              '${t.settings.ratesCredit}: cbr-xml-daily.ru',
+              style: styles.caption.copyWith(color: colors.textSubtle),
             ),
           ],
         );

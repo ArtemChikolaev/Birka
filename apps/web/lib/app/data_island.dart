@@ -11,6 +11,7 @@ import 'package:get_it/get_it.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
+import 'package:rates/rates.dart' show RatesUpdater;
 import 'package:settings_common/settings_common.dart';
 
 enum _Stage { opening, ready, busy, failed }
@@ -93,6 +94,8 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
         _persists = opened.persists;
         _stage = _Stage.ready;
       });
+      // The page waits for no network (ADR 0012).
+      unawaited(getIt<RatesUpdater>().refresh());
     } on OpenInAnotherTab {
       setState(() => _stage = _Stage.busy);
     } on Object catch (error, stack) {

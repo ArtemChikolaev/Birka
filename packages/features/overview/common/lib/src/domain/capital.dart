@@ -1,5 +1,6 @@
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 
 /// How far back the chart of the capital looks.
 enum OverviewPeriod {
@@ -27,34 +28,24 @@ enum OverviewPeriod {
 CivilDate _date(int year, int month, int day) =>
     CivilDate.of(DateTime.utc(year, month, day));
 
-/// What [accounts] hold, one amount for each currency in the order of the
-/// accounts. Accounts outside the totals do not count. Adding currencies up has
-/// to wait for exchange rates.
-List<Money> capitalOf(List<AccountBalance> accounts) {
-  final sums = <Currency, int>{};
-  for (final AccountBalance(:account, :balance) in accounts) {
-    if (!account.includeInTotals) continue;
-    sums[balance.currency] = (sums[balance.currency] ?? 0) + balance.minorUnits;
-  }
-  return [
-    for (final MapEntry(key: currency, value: sum) in sums.entries)
-      Money(sum.clamp(-Money.maxMinorUnits, Money.maxMinorUnits), currency),
-  ];
-}
-
-/// What the money in the currency of [now] came to at the end of each day from
-/// [start] to [today], in minor units: the capital of today, with what each day
-/// changed taken back.
+/// What the capital came to at the end of each day from [start] to [today], in
+/// minor units of [now]: the capital of today, with what each day changed taken
+/// back. Every change goes through today's rate, so the line follows the money
+/// and not the rates (ADR 0012). A change without a rate stays out, as it does
+/// from the capital.
 List<int> capitalHistory({
   required Money now,
   required List<DayChange> changes,
+  required RateBook rates,
   required CivilDate start,
   required CivilDate today,
 }) {
-  final byDay = {
-    for (final DayChange(:day, :change) in changes)
-      if (change.currency == now.currency) day: change.minorUnits,
-  };
+  final byDay = <CivilDate, int>{};
+  for (final DayChange(:day, :change) in changes) {
+    final converted = rates.convert(change, now.currency);
+    if (converted == null) continue;
+    byDay[day] = (byDay[day] ?? 0) + converted.minorUnits;
+  }
   final first = DateTime.utc(start.year, start.month, start.day);
   final last = DateTime.utc(today.year, today.month, today.day);
   final values = List.filled(last.difference(first).inDays + 1, 0);

@@ -267,6 +267,9 @@ class Translations$overview$en {
   /// en: 'Capital'
   String get capital => 'Capital';
 
+  /// en: 'Bank of Russia rate on $day'
+  String rateOn({required Object day}) => 'Bank of Russia rate on ${day}';
+
   /// en: '(one) {$n currency} (other) {$n currencies}'
   String currencies({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
@@ -432,6 +435,15 @@ class Translations$settings$en {
 
   /// en: 'Русский'
   String get russian => 'Русский';
+
+  /// en: 'Base currency'
+  String get baseCurrency => 'Base currency';
+
+  /// en: 'First account'
+  String get firstAccountCurrency => 'First account';
+
+  /// en: 'Курсы ЦБ РФ в XML и JSON, API'
+  String get ratesCredit => 'Курсы ЦБ РФ в XML и JSON, API';
 
   /// en: 'Security'
   String get security => 'Security';
@@ -926,6 +938,8 @@ extension on Translations {
       'categories.form.nameMissing' => 'Give the category a name.',
       'categories.form.failed' => 'Could not save. Try again.',
       'overview.capital' => 'Capital',
+      'overview.rateOn' =>
+        ({required Object day}) => 'Bank of Russia rate on ${day}',
       'overview.currencies' =>
         ({required num n}) =>
             (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
@@ -1008,6 +1022,9 @@ extension on Translations {
       'settings.deviceLanguage' => 'Same as the device',
       'settings.english' => 'English',
       'settings.russian' => 'Русский',
+      'settings.baseCurrency' => 'Base currency',
+      'settings.firstAccountCurrency' => 'First account',
+      'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
       'settings.security' => 'Security',
       'settings.hideAmounts' => 'Hide amounts',
       'settings.onLaunch' => 'At launch',

@@ -138,6 +138,23 @@ class Allocations extends Table with SyncedRow {
   IntColumn get amountMinor => integer()();
 }
 
+/// What one unit of a currency cost in rubles on a day (ADR 0012). Any device
+/// can fetch these again, so sync does not carry them.
+@DataClassName('ExchangeRateRow')
+class ExchangeRates extends Table {
+  /// The civil date as `YYYY-MM-DD`, which sorts as text.
+  TextColumn get day => text()();
+
+  /// The code of the currency.
+  TextColumn get currency => text()();
+
+  /// Rubles for one unit, as a decimal string.
+  TextColumn get rubles => text()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {day, currency};
+}
+
 /// The outbox: every change of a synced row, in order, for sync later.
 @DataClassName('ChangeRow')
 class Changes extends Table {

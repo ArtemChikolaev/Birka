@@ -1,28 +1,39 @@
 import 'package:l10n/l10n.dart';
 import 'package:meta/meta.dart';
+import 'package:money/money.dart';
 import 'package:settings_common/src/domain/settings_store.dart';
 
 /// What a person picked for this device.
 @immutable
 final class Settings {
   /// Creates the settings.
-  const Settings({this.language, this.hideAmountsOnLaunch = false});
+  const Settings({
+    this.language,
+    this.hideAmountsOnLaunch = false,
+    this.baseCurrency,
+  });
 
   /// Reads the settings from [store]. What is missing or unknown stays at its
   /// default.
   factory Settings.readFrom(SettingsStore store) {
     final language = store.read(_languageKey);
+    final baseCurrency = store.read(_baseCurrencyKey);
     return Settings(
       language: AppLocale.values
           .where((locale) => locale.languageCode == language)
           .firstOrNull,
       hideAmountsOnLaunch: store.read(_hideAmountsKey) == _on,
+      baseCurrency: offeredCurrencies
+          .where((currency) => currency.code == baseCurrency)
+          .firstOrNull,
     );
   }
 
   static const _languageKey = 'language';
   static const _hideAmountsKey = 'hide-amounts-on-launch';
+  static const _baseCurrencyKey = 'base-currency';
   static const _sameAsDevice = 'device';
+  static const _firstAccount = 'first-account';
   static const _on = 'on';
   static const _off = 'off';
 
@@ -33,10 +44,15 @@ final class Settings {
   /// until it closes.
   final bool hideAmountsOnLaunch;
 
+  /// The currency that totals are shown in, or `null` to follow the first
+  /// account.
+  final Currency? baseCurrency;
+
   /// Keeps the settings in [store].
   Future<void> writeTo(SettingsStore store) async {
     await store.write(_languageKey, language?.languageCode ?? _sameAsDevice);
     await store.write(_hideAmountsKey, hideAmountsOnLaunch ? _on : _off);
+    await store.write(_baseCurrencyKey, baseCurrency?.code ?? _firstAccount);
   }
 
   /// Turns the strings to [language], or to [device] when none is picked.

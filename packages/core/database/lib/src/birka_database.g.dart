@@ -3493,6 +3493,273 @@ class ChangesCompanion extends UpdateCompanion<ChangeRow> {
   }
 }
 
+class $ExchangeRatesTable extends ExchangeRates
+    with TableInfo<$ExchangeRatesTable, ExchangeRateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExchangeRatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _dayMeta = const VerificationMeta('day');
+  @override
+  late final GeneratedColumn<String> day = GeneratedColumn<String>(
+    'day',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rublesMeta = const VerificationMeta('rubles');
+  @override
+  late final GeneratedColumn<String> rubles = GeneratedColumn<String>(
+    'rubles',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [day, currency, rubles];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exchange_rates';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ExchangeRateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('day')) {
+      context.handle(
+        _dayMeta,
+        day.isAcceptableOrUnknown(data['day']!, _dayMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dayMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    if (data.containsKey('rubles')) {
+      context.handle(
+        _rublesMeta,
+        rubles.isAcceptableOrUnknown(data['rubles']!, _rublesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_rublesMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {day, currency};
+  @override
+  ExchangeRateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExchangeRateRow(
+      day: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}day'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      rubles: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rubles'],
+      )!,
+    );
+  }
+
+  @override
+  $ExchangeRatesTable createAlias(String alias) {
+    return $ExchangeRatesTable(attachedDatabase, alias);
+  }
+}
+
+class ExchangeRateRow extends DataClass implements Insertable<ExchangeRateRow> {
+  /// The civil date as `YYYY-MM-DD`, which sorts as text.
+  final String day;
+
+  /// The code of the currency.
+  final String currency;
+
+  /// Rubles for one unit, as a decimal string.
+  final String rubles;
+  const ExchangeRateRow({
+    required this.day,
+    required this.currency,
+    required this.rubles,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['day'] = Variable<String>(day);
+    map['currency'] = Variable<String>(currency);
+    map['rubles'] = Variable<String>(rubles);
+    return map;
+  }
+
+  ExchangeRatesCompanion toCompanion(bool nullToAbsent) {
+    return ExchangeRatesCompanion(
+      day: Value(day),
+      currency: Value(currency),
+      rubles: Value(rubles),
+    );
+  }
+
+  factory ExchangeRateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExchangeRateRow(
+      day: serializer.fromJson<String>(json['day']),
+      currency: serializer.fromJson<String>(json['currency']),
+      rubles: serializer.fromJson<String>(json['rubles']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'day': serializer.toJson<String>(day),
+      'currency': serializer.toJson<String>(currency),
+      'rubles': serializer.toJson<String>(rubles),
+    };
+  }
+
+  ExchangeRateRow copyWith({String? day, String? currency, String? rubles}) =>
+      ExchangeRateRow(
+        day: day ?? this.day,
+        currency: currency ?? this.currency,
+        rubles: rubles ?? this.rubles,
+      );
+  ExchangeRateRow copyWithCompanion(ExchangeRatesCompanion data) {
+    return ExchangeRateRow(
+      day: data.day.present ? data.day.value : this.day,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      rubles: data.rubles.present ? data.rubles.value : this.rubles,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExchangeRateRow(')
+          ..write('day: $day, ')
+          ..write('currency: $currency, ')
+          ..write('rubles: $rubles')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(day, currency, rubles);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExchangeRateRow &&
+          other.day == this.day &&
+          other.currency == this.currency &&
+          other.rubles == this.rubles);
+}
+
+class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRateRow> {
+  final Value<String> day;
+  final Value<String> currency;
+  final Value<String> rubles;
+  final Value<int> rowid;
+  const ExchangeRatesCompanion({
+    this.day = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.rubles = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExchangeRatesCompanion.insert({
+    required String day,
+    required String currency,
+    required String rubles,
+    this.rowid = const Value.absent(),
+  }) : day = Value(day),
+       currency = Value(currency),
+       rubles = Value(rubles);
+  static Insertable<ExchangeRateRow> custom({
+    Expression<String>? day,
+    Expression<String>? currency,
+    Expression<String>? rubles,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (day != null) 'day': day,
+      if (currency != null) 'currency': currency,
+      if (rubles != null) 'rubles': rubles,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExchangeRatesCompanion copyWith({
+    Value<String>? day,
+    Value<String>? currency,
+    Value<String>? rubles,
+    Value<int>? rowid,
+  }) {
+    return ExchangeRatesCompanion(
+      day: day ?? this.day,
+      currency: currency ?? this.currency,
+      rubles: rubles ?? this.rubles,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (day.present) {
+      map['day'] = Variable<String>(day.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (rubles.present) {
+      map['rubles'] = Variable<String>(rubles.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExchangeRatesCompanion(')
+          ..write('day: $day, ')
+          ..write('currency: $currency, ')
+          ..write('rubles: $rubles, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$BirkaDatabase extends GeneratedDatabase {
   _$BirkaDatabase(QueryExecutor e) : super(e);
   $BirkaDatabaseManager get managers => $BirkaDatabaseManager(this);
@@ -3502,6 +3769,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
   late final $EntriesTable entries = $EntriesTable(this);
   late final $AllocationsTable allocations = $AllocationsTable(this);
   late final $ChangesTable changes = $ChangesTable(this);
+  late final $ExchangeRatesTable exchangeRates = $ExchangeRatesTable(this);
   late final Index transactionsOccurredOn = Index(
     'transactions_occurred_on',
     'CREATE INDEX transactions_occurred_on ON transactions (occurred_on)',
@@ -3533,6 +3801,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     entries,
     allocations,
     changes,
+    exchangeRates,
     transactionsOccurredOn,
     entriesTransaction,
     entriesAccount,
@@ -6131,6 +6400,174 @@ typedef $$ChangesTableProcessedTableManager =
       ChangeRow,
       PrefetchHooks Function()
     >;
+typedef $$ExchangeRatesTableCreateCompanionBuilder =
+    ExchangeRatesCompanion Function({
+      required String day,
+      required String currency,
+      required String rubles,
+      Value<int> rowid,
+    });
+typedef $$ExchangeRatesTableUpdateCompanionBuilder =
+    ExchangeRatesCompanion Function({
+      Value<String> day,
+      Value<String> currency,
+      Value<String> rubles,
+      Value<int> rowid,
+    });
+
+class $$ExchangeRatesTableFilterComposer
+    extends Composer<_$BirkaDatabase, $ExchangeRatesTable> {
+  $$ExchangeRatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get day => $composableBuilder(
+    column: $table.day,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rubles => $composableBuilder(
+    column: $table.rubles,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ExchangeRatesTableOrderingComposer
+    extends Composer<_$BirkaDatabase, $ExchangeRatesTable> {
+  $$ExchangeRatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get day => $composableBuilder(
+    column: $table.day,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rubles => $composableBuilder(
+    column: $table.rubles,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ExchangeRatesTableAnnotationComposer
+    extends Composer<_$BirkaDatabase, $ExchangeRatesTable> {
+  $$ExchangeRatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get day =>
+      $composableBuilder(column: $table.day, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<String> get rubles =>
+      $composableBuilder(column: $table.rubles, builder: (column) => column);
+}
+
+class $$ExchangeRatesTableTableManager
+    extends
+        RootTableManager<
+          _$BirkaDatabase,
+          $ExchangeRatesTable,
+          ExchangeRateRow,
+          $$ExchangeRatesTableFilterComposer,
+          $$ExchangeRatesTableOrderingComposer,
+          $$ExchangeRatesTableAnnotationComposer,
+          $$ExchangeRatesTableCreateCompanionBuilder,
+          $$ExchangeRatesTableUpdateCompanionBuilder,
+          (
+            ExchangeRateRow,
+            BaseReferences<
+              _$BirkaDatabase,
+              $ExchangeRatesTable,
+              ExchangeRateRow
+            >,
+          ),
+          ExchangeRateRow,
+          PrefetchHooks Function()
+        > {
+  $$ExchangeRatesTableTableManager(
+    _$BirkaDatabase db,
+    $ExchangeRatesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ExchangeRatesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ExchangeRatesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ExchangeRatesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> day = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<String> rubles = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ExchangeRatesCompanion(
+                day: day,
+                currency: currency,
+                rubles: rubles,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String day,
+                required String currency,
+                required String rubles,
+                Value<int> rowid = const Value.absent(),
+              }) => ExchangeRatesCompanion.insert(
+                day: day,
+                currency: currency,
+                rubles: rubles,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ExchangeRatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$BirkaDatabase,
+      $ExchangeRatesTable,
+      ExchangeRateRow,
+      $$ExchangeRatesTableFilterComposer,
+      $$ExchangeRatesTableOrderingComposer,
+      $$ExchangeRatesTableAnnotationComposer,
+      $$ExchangeRatesTableCreateCompanionBuilder,
+      $$ExchangeRatesTableUpdateCompanionBuilder,
+      (
+        ExchangeRateRow,
+        BaseReferences<_$BirkaDatabase, $ExchangeRatesTable, ExchangeRateRow>,
+      ),
+      ExchangeRateRow,
+      PrefetchHooks Function()
+    >;
 
 class $BirkaDatabaseManager {
   final _$BirkaDatabase _db;
@@ -6147,4 +6584,6 @@ class $BirkaDatabaseManager {
       $$AllocationsTableTableManager(_db, _db.allocations);
   $$ChangesTableTableManager get changes =>
       $$ChangesTableTableManager(_db, _db.changes);
+  $$ExchangeRatesTableTableManager get exchangeRates =>
+      $$ExchangeRatesTableTableManager(_db, _db.exchangeRates);
 }

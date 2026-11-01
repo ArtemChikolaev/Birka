@@ -1,4 +1,5 @@
 capital: Капитал
+rateOn: Курс ЦБ РФ на $day
 currencies(n):
   one: $n валюта
   few: $n валюты

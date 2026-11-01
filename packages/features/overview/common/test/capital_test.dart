@@ -1,9 +1,8 @@
+import 'package:decimal/decimal.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:overview_common/overview_common.dart';
 import 'package:test/test.dart';
-
-import 'fake_overview_repository.dart';
 
 void main() {
   Money rub(int minorUnits) => Money(minorUnits, Currency.rub);
@@ -46,49 +45,15 @@ void main() {
     });
   });
 
-  group('the capital', () {
-    test('adds up each currency in the order of the accounts', () {
-      expect(
-        capitalOf([
-          testBalance('a', rub(100)),
-          testBalance('b', eur(5)),
-          testBalance('c', rub(200)),
-        ]),
-        [rub(300), eur(5)],
-      );
-    });
-
-    test('keeps a currency that comes to nothing', () {
-      expect(
-        capitalOf([testBalance('a', rub(100)), testBalance('b', rub(-100))]),
-        [rub(0)],
-      );
-    });
-
-    test('leaves out an account outside the totals', () {
-      expect(
-        capitalOf([
-          testBalance('a', rub(100)),
-          testBalance('b', rub(900), includeInTotals: false),
-        ]),
-        [rub(100)],
-      );
-    });
-
-    test('stops at the limit of an amount', () {
-      final most = Money(Money.maxMinorUnits, Currency.rub);
-
-      expect(
-        capitalOf([testBalance('a', most), testBalance('b', most)]),
-        [most],
-      );
-    });
-  });
-
   group('the history', () {
-    List<int> history(List<DayChange> changes, {Money? now}) => capitalHistory(
+    List<int> history(
+      List<DayChange> changes, {
+      Money? now,
+      RateBook rates = const RateBook.empty(),
+    }) => capitalHistory(
       now: now ?? rub(1000),
       changes: changes,
+      rates: rates,
       start: CivilDate(2026, 10, 28),
       today: today,
     );
@@ -114,10 +79,25 @@ void main() {
       );
     });
 
-    test('follows one currency', () {
+    test('leaves out a change that no rate can turn', () {
       expect(
         history([DayChange(CivilDate(2026, 10, 30), eur(500))]),
         [1000, 1000, 1000, 1000],
+      );
+    });
+
+    test('turns every change at the latest rate', () {
+      expect(
+        history(
+          [
+            DayChange(CivilDate(2026, 10, 30), eur(10)),
+            DayChange(CivilDate(2026, 10, 30), rub(100)),
+          ],
+          rates: RateBook([
+            DayRates(today, {'EUR': Decimal.fromInt(90)}),
+          ]),
+        ),
+        [0, 0, 1000, 1000],
       );
     });
 
@@ -126,6 +106,7 @@ void main() {
         capitalHistory(
           now: rub(100),
           changes: [DayChange(CivilDate(2026, 11, 1), rub(40))],
+          rates: const RateBook.empty(),
           start: CivilDate(2026, 10, 31),
           today: CivilDate(2026, 11, 2),
         ),
@@ -138,6 +119,7 @@ void main() {
         capitalHistory(
           now: rub(100),
           changes: const [],
+          rates: const RateBook.empty(),
           start: today,
           today: today,
         ),

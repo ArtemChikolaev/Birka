@@ -1,6 +1,6 @@
-import 'package:money/money.dart';
+import 'package:money/src/currency.dart';
 
-/// The currencies the form offers for a new account.
+/// The currencies that Birka offers, for an account or for totals.
 final List<Currency> offeredCurrencies = [
   Currency.rub,
   Currency.usd,

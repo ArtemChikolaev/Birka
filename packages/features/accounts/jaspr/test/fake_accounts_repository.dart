@@ -14,6 +14,12 @@ final class FakeAccountsRepository implements AccountsRepository {
   /// Whether reading the accounts fails.
   bool broken = false;
 
+  /// The kept rates.
+  RateBook rates = const RateBook.empty();
+
+  /// The currency picked for totals.
+  Currency? base;
+
   /// The drafts that were added.
   final added = <AccountDraft>[];
 
@@ -22,6 +28,12 @@ final class FakeAccountsRepository implements AccountsRepository {
 
   /// The ids whose state of being archived changed, with the new state.
   final archived = <String, bool>{};
+
+  @override
+  Stream<RateBook> watchRates() => Stream.value(rates);
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => Stream.value(base);
 
   @override
   Stream<List<AccountBalance>> watchAccounts() =>

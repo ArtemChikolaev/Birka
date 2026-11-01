@@ -16,6 +16,7 @@ void main() {
       'entries',
       'allocations',
       'changes',
+      'exchange_rates',
     ]);
     // Reading from a table fails if it does not exist.
     await expectLater(database.select(database.entries).get(), completes);

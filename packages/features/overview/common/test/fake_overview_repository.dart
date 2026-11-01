@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ledger/ledger.dart';
+import 'package:money/money.dart';
 import 'package:overview_common/overview_common.dart';
 
 /// Keeps what the first screen reads in memory.
@@ -20,6 +21,12 @@ final class FakeOverviewRepository implements OverviewRepository {
 
   /// What went through each category.
   List<CategoryTotal> spending;
+
+  /// The kept rates.
+  RateBook rates = const RateBook.empty();
+
+  /// The currency picked for totals.
+  Currency? base;
 
   /// The error of the next read.
   Exception? readFailure;
@@ -63,6 +70,12 @@ final class FakeOverviewRepository implements OverviewRepository {
     );
     controller.onCancel = () => unawaited(subscription.cancel());
   });
+
+  @override
+  Stream<RateBook> watchRates() => Stream.value(rates);
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => Stream.value(base);
 
   @override
   Stream<List<AccountBalance>> watchAccounts() =>

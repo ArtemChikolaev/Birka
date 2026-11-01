@@ -13,3 +13,4 @@
 | [0009](0009-data-model.md) | The data model: a ledger of entries in one Drift database | accepted 2026-10-30 |
 | [0010](0010-strings.md) | Strings in one pure-Dart package with slang | accepted 2026-10-30 |
 | [0011](0011-settings.md) | Settings of a device live outside the database | accepted 2026-11-01 |
+| [0012](0012-exchange-rates.md) | Rates of the Bank of Russia, kept on the device | accepted 2026-11-01 |

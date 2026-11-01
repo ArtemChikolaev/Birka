@@ -12,6 +12,7 @@ workspace:
   - packages/core/l10n
   - packages/core/ledger
   - packages/core/money
+  - packages/core/rates
   - packages/design/flutter
   - packages/design/jaspr
   - packages/design/tokens

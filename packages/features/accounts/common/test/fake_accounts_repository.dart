@@ -12,6 +12,12 @@ final class FakeAccountsRepository implements AccountsRepository {
   final List<AccountBalance> _accounts;
   final _changes = StreamController<List<AccountBalance>>.broadcast();
 
+  /// The kept rates.
+  RateBook rates = const RateBook.empty();
+
+  /// The currency picked for totals.
+  Currency? base;
+
   /// The drafts that were added.
   final added = <AccountDraft>[];
 
@@ -31,6 +37,12 @@ final class FakeAccountsRepository implements AccountsRepository {
       ..addAll(accounts);
     _changes.add([..._accounts]);
   }
+
+  @override
+  Stream<RateBook> watchRates() => Stream.value(rates);
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => Stream.value(base);
 
   @override
   Stream<List<AccountBalance>> watchAccounts() async* {

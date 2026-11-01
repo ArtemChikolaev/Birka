@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:overview_common/overview_common.dart';
@@ -47,6 +48,33 @@ void main() {
     expect(overview.state.today, CivilDate(2026, 10, 31));
   });
 
+  test('adds the currencies up once a rate joins them', () async {
+    repository.rates = RateBook([
+      DayRates(CivilDate(2026, 10, 31), {'EUR': Decimal.fromInt(90)}),
+    ]);
+
+    final overview = await open();
+
+    expect(overview.state.main, rub(550000));
+    expect(overview.state.others, isEmpty);
+    expect(overview.state.capital.converted, isTrue);
+  });
+
+  test('the picked currency leads the capital and its history', () async {
+    repository
+      ..rates = RateBook([
+        DayRates(CivilDate(2026, 10, 31), {'EUR': Decimal.fromInt(90)}),
+      ])
+      ..base = Currency.eur;
+
+    final overview = await open();
+
+    // 1 000 ₽ at 90, and the 50 € that the account holds.
+    expect(overview.state.main, eur(6111));
+    // 40 ₽ and −5 ₽ at 90, and the euro that came in.
+    expect(overview.state.change, eur(138));
+  });
+
   test('reads a year of history and the month so far', () async {
     await open();
 
@@ -66,8 +94,7 @@ void main() {
     await settle();
 
     expect(seen, [
-      OverviewStatus.loading,
-      OverviewStatus.loading,
+      ...List.filled(4, OverviewStatus.loading),
       OverviewStatus.ready,
     ]);
   });

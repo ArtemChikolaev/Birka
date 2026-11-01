@@ -29,7 +29,7 @@ import 'package:reports_common/reports_common.dart'
     show MonthTotal, ReportsCubit, ReportsRepository;
 import 'package:reports_flutter/reports_flutter.dart';
 import 'package:settings_common/settings_common.dart'
-    show Settings, SettingsCubit, SettingsStore;
+    show BaseCurrency, Settings, SettingsCubit, SettingsStore;
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -50,6 +50,12 @@ final class _Settings implements SettingsStore {
 final class _NoAccounts implements AccountsRepository {
   @override
   Stream<List<AccountBalance>> watchAccounts() => Stream.value(const []);
+
+  @override
+  Stream<RateBook> watchRates() => Stream.value(const RateBook.empty());
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
   @override
   Future<AccountBalance?> account(String id) async => null;
@@ -123,6 +129,12 @@ final class _Transactions implements TransactionsRepository {
 
 final class _Overview implements OverviewRepository {
   List<AccountBalance> accounts = const [];
+
+  @override
+  Stream<RateBook> watchRates() => Stream.value(const RateBook.empty());
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
   @override
   Stream<List<AccountBalance>> watchAccounts() => Stream.value(accounts);
@@ -216,7 +228,13 @@ void main() {
       ..registerFactory(() => OverviewCubit(overview))
       ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerSingleton<SettingsStore>(settings)
-      ..registerFactory(() => SettingsCubit(settings, deviceLanguage: 'en'))
+      ..registerFactory(
+        () => SettingsCubit(
+          settings,
+          deviceLanguage: 'en',
+          baseCurrency: BaseCurrency(null),
+        ),
+      )
       ..registerFactory(() => OperationsCubit(transactions))
       ..registerFactoryParam<OperationCubit, String, void>(
         (id, _) => OperationCubit(transactions, id),
@@ -342,6 +360,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byType(Switch));
     await tester.pumpAndSettle();
     await tester.tap(find.byType(Switch));
     await tester.pumpAndSettle();
