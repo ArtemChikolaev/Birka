@@ -29,10 +29,13 @@
 5. Pages use paths relative to `<base href>`, which the build sets:
    `make build-web BASE=/Birka/`. The design packages keep their CSS and
    fonts in `lib/`, and the build serves them under `packages/<name>/`.
-6. `ci.yml` builds the site on every pull request, and on `main` the `deploy`
-   job publishes it to GitHub Pages once `All checks` has passed. The
-   generated `*.options.dart` files are committed, so analysis needs no build,
-   and the web job fails when they are stale.
+6. `ci.yml` builds the site on every pull request and opens every page of it
+   in Chrome, and on `main` the `deploy` job publishes it to GitHub Pages once
+   `All checks` has passed. dart2js splits the islands into parts when it
+   builds, so a change in one island can break another, and only a browser on
+   the built site shows that. The generated `*.options.dart` files are
+   committed, so analysis needs no build, and the web job fails when they are
+   stale.
 7. Every page is a static route, listed in `apps/web/lib/app.dart`.
    `jaspr_router` runs only when the build renders them, so it never meets
    `/Birka/`, and the browser moves between pages by plain links.

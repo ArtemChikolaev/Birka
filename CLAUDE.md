@@ -137,5 +137,6 @@ Extend what exists instead of duplicating it.
 
 Run `make check`. After changes in core packages also run
 `make test-core COMPILER=dart2js` and `make test-core COMPILER=dart2wasm`.
+After changes on the site also run `make build-web` and `make check-site`.
 When a decision or a command changes, update the ADR or the README in the
 same pull request.

@@ -29,9 +29,10 @@ BASE ?= /
 # The build number of the APK: CI passes the number of its run.
 BUILD_NUMBER ?= 1
 
-.PHONY: help bootstrap format analyze check-deps check-tokens tokens gen icons \
-	icon-masters web-fonts test test-core test-database test-tools test-design \
-	test-features test-web test-mobile run-mobile run-web build-web build-apk check
+.PHONY: help bootstrap format analyze check-deps check-tokens check-site tokens \
+	gen icons icon-masters web-fonts test test-core test-database test-tools \
+	test-design test-features test-web test-mobile run-mobile run-web build-web \
+	build-apk check
 
 help: ## Show the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
@@ -126,6 +127,9 @@ build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 		! -name 'design_*' -exec rm -rf {} +
 	find apps/web/build/jaspr/packages -name '*.json' -delete
 	rm -rf apps/web/build/jaspr/.dart_tool apps/web/build/jaspr/.build.manifest
+
+check-site: ## Every page of the built site opens in Chrome without errors; BASE as in build-web
+	dart run birka_tools:check_site apps/web/build/jaspr $(BASE)
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \
