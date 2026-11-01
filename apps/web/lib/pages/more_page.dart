@@ -2,8 +2,9 @@ import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
+import 'package:settings_jaspr/settings_jaspr.dart';
 
-/// The tab with everything that has no tab of its own.
+/// The tab with everything that has no tab of its own, and the settings.
 class MorePage extends StatelessComponent {
   /// Creates the page.
   const MorePage({super.key});
@@ -27,6 +28,7 @@ class MorePage extends StatelessComponent {
           _Tile(color: 'var(--color-palette-sky)', label: t.app.import),
           _Tile(color: 'var(--color-palette-violet)', label: t.app.backup),
         ]),
+        const SettingsSection(),
       ],
     );
   }

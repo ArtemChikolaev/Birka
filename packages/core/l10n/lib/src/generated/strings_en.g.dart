@@ -57,6 +57,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$reports$en reports = Translations$reports$en.internal(
     _root,
   );
+  late final Translations$settings$en settings =
+      Translations$settings$en.internal(_root);
   late final Translations$transactions$en transactions =
       Translations$transactions$en.internal(_root);
 }
@@ -406,6 +408,39 @@ class Translations$reports$en {
     'Nov',
     'Dec',
   ];
+}
+
+// Path: settings
+class Translations$settings$en {
+  Translations$settings$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'General'
+  String get general => 'General';
+
+  /// en: 'Language'
+  String get language => 'Language';
+
+  /// en: 'Same as the device'
+  String get deviceLanguage => 'Same as the device';
+
+  /// en: 'English'
+  String get english => 'English';
+
+  /// en: 'Русский'
+  String get russian => 'Русский';
+
+  /// en: 'Security'
+  String get security => 'Security';
+
+  /// en: 'Hide amounts'
+  String get hideAmounts => 'Hide amounts';
+
+  /// en: 'At launch'
+  String get onLaunch => 'At launch';
 }
 
 // Path: transactions
@@ -968,6 +1003,14 @@ extension on Translations {
       'reports.monthsShort.9' => 'Oct',
       'reports.monthsShort.10' => 'Nov',
       'reports.monthsShort.11' => 'Dec',
+      'settings.general' => 'General',
+      'settings.language' => 'Language',
+      'settings.deviceLanguage' => 'Same as the device',
+      'settings.english' => 'English',
+      'settings.russian' => 'Русский',
+      'settings.security' => 'Security',
+      'settings.hideAmounts' => 'Hide amounts',
+      'settings.onLaunch' => 'At launch',
       'transactions.expense' => 'Expense',
       'transactions.income' => 'Income',
       'transactions.transfer' => 'Transfer',

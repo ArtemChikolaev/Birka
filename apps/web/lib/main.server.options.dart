@@ -61,6 +61,8 @@ import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
     as _overview_page;
 import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
     as _reports_page;
+import 'package:settings_jaspr/src/presentation/components/settings_section.dart'
+    as _settings_section;
 import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart'
     as _quick_add_tile;
 import 'package:transactions_jaspr/src/presentation/pages/operation_page.dart'
@@ -150,6 +152,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._section_label.SectionLabel.styles,
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,
+    ..._settings_section.SettingsSection.styles,
     ..._quick_add_tile.QuickAddTile.styles,
     ..._quick_add_tile.QuickAddTiles.styles,
     ..._operation_page.OperationPage.styles,

@@ -5,6 +5,7 @@
 CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/features/accounts/common packages/features/categories/common \
 	packages/features/overview/common packages/features/reports/common \
+	packages/features/settings/common \
 	packages/features/transactions/common
 
 COMPILER ?= vm
@@ -100,6 +101,8 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/overview/jaspr && dart test
 	cd packages/features/reports/flutter && flutter test
 	cd packages/features/reports/jaspr && dart test
+	cd packages/features/settings/flutter && flutter test
+	cd packages/features/settings/jaspr && dart test
 	cd packages/features/transactions/flutter && flutter test
 	cd packages/features/transactions/jaspr && dart test
 

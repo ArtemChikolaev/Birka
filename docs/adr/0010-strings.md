@@ -23,8 +23,8 @@
 3. English is the base language and the fallback. Every key exists in every
    language.
 4. Everything reads the strings through the global `t` of the package, with
-   no `BuildContext`. The host picks the language at startup, from the device
-   until settings can change it.
+   no `BuildContext`. The host picks the language at startup, from the
+   settings or else from the device ([ADR 0011](0011-settings.md)).
 5. `formatMoney` in the same package turns `Money` into text from its decimal
    digits, by the rules of the language.
 
@@ -40,8 +40,8 @@
 ## Consequences
 
 - A new string means a key in every language and `make gen`.
-- `t` is not reactive. When settings can change the language, the host has to
-  rebuild from the root, listening to `LocaleSettings.getLocaleStream()`.
+- `t` is not reactive, so a host rebuilds from the root when the language
+  changes, listening to `LocaleSettings.getLocaleStream()`.
 - Tests run in English unless they set a language.
 - The first page of the site keeps its few lines in English in the code. Only
   an island knows the language of a visitor

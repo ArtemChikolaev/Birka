@@ -16,7 +16,7 @@ void main() {
 
     await tester.click(find.tag('button'));
     expect(find.text('1 284 560 ₽'), findsNothing);
-    expect(find.text('•••• ₽'), findsOneComponent);
+    expect(find.text('••• ₽'), findsOneComponent);
 
     await tester.click(find.tag('button'));
     expect(find.text('1 284 560 ₽'), findsOneComponent);

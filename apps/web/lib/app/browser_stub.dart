@@ -39,7 +39,13 @@ void scrollPageTo(double top) => _unavailable();
 void Function() watchTabShown(void Function() listener) => _unavailable();
 
 /// See `browser_web.dart`.
-bool get amountsHidden => _unavailable();
+bool? get amountsHidden => _unavailable();
 
 /// See `browser_web.dart`.
 void keepAmountsHidden({required bool hidden}) => _unavailable();
+
+/// See `browser_web.dart`.
+String? keptValue(String key) => _unavailable();
+
+/// See `browser_web.dart`.
+void keepValue(String key, String value) => _unavailable();
