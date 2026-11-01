@@ -1,22 +1,36 @@
 import 'dart:async';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
+import 'package:birka_web/app/flush_after_commit.dart';
 import 'package:birka_web/app/opened_database.dart';
+import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+import 'package:sqlite3/wasm.dart';
 import 'package:web/web.dart' as web;
 
-/// Opens the database in the storage that Drift picks for this browser
-/// (ADR 0009). The paths go through `<base href>`, because a worker resolves
-/// a relative one against itself.
+const _databaseName = 'birka';
+
+/// Opens the database in the storage that Drift picks for this browser, or in
+/// the page where there are no shared workers (ADR 0009). The paths go through
+/// `<base href>`, because a worker resolves a relative one against itself.
 Future<OpenedDatabase> openLocalDatabase() async {
   final base = Uri.parse(web.document.baseURI);
+  final sqlite3Uri = base.resolve('sqlite3.wasm');
+  final sharedWorkers = globalContext.has('SharedWorker');
+  if (!sharedWorkers) {
+    if (!await _holdTheOnlyTab()) throw const OpenInAnotherTab();
+    final executor = await _openInThePage(sqlite3Uri);
+    if (executor != null) return OpenedDatabase(executor, persists: true);
+  }
   final opened = await WasmDatabase.open(
-    databaseName: 'birka',
-    sqlite3Uri: base.resolve('sqlite3.wasm'),
+    databaseName: _databaseName,
+    sqlite3Uri: sqlite3Uri,
     driftWorkerUri: base.resolve('drift_worker.dart.js'),
   );
   final storage = opened.chosenImplementation;
-  if (storage == WasmStorageImplementation.unsafeIndexedDb &&
+  if (sharedWorkers &&
+      storage == WasmStorageImplementation.unsafeIndexedDb &&
       !await _holdTheOnlyTab()) {
     await opened.resolvedExecutor.close();
     throw const OpenInAnotherTab();
@@ -25,6 +39,25 @@ Future<OpenedDatabase> openLocalDatabase() async {
     opened.resolvedExecutor,
     persists: storage != WasmStorageImplementation.inMemory,
   );
+}
+
+/// Opens the storage that a dedicated worker of Drift would use, in this page.
+/// That worker dies with the page and takes unfinished writes along, while here
+/// a write can wait for them. Without IndexedDB there is no such storage.
+Future<QueryExecutor?> _openInThePage(Uri sqlite3Uri) async {
+  final IndexedDbFileSystem files;
+  try {
+    files = await IndexedDbFileSystem.open(dbName: _databaseName);
+  } on Object {
+    return null;
+  }
+  final sqlite3 = await WasmSqlite3.loadFromUrl(sqlite3Uri)
+    ..registerVirtualFileSystem(files, makeDefault: true);
+  return WasmDatabase(
+    sqlite3: sqlite3,
+    path: '/database',
+    fileSystem: files,
+  ).interceptWith(FlushAfterCommit(files.flush));
 }
 
 /// Takes a lock for as long as the tab lives, or says that another tab has it.
