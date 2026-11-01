@@ -44,4 +44,4 @@ into debug builds.
 ## Changing the art of the first screen
 
 Edit `welcome.svg` and run `make icon-masters`, which also needs `cwebp`
-(`brew install webp`) and writes `packages/design/flutter/images/welcome.webp`.
+(`brew install webp`) and writes `welcome.webp` into both kits.

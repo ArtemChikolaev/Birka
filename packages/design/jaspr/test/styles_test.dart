@@ -11,6 +11,7 @@ void main() {
       ...AccountCard.styles,
       ...AmbientBackground.styles,
       ...AmountText.styles,
+      ...BirkaArrowButton.styles,
       ...BirkaBars.styles,
       ...BirkaButton.styles,
       ...BirkaChip.styles,
@@ -23,6 +24,7 @@ void main() {
       ...BirkaLineChart.styles,
       ...BirkaPlaceholder.styles,
       ...BirkaRing.styles,
+      ...BirkaStepBars.styles,
       ...BirkaSwitch.styles,
       ...BirkaTextField.styles,
       ...CardArtSurface.styles,
@@ -39,6 +41,7 @@ void main() {
       ...GlassSurface.styles,
       ...GlyphBadge.styles,
       ...SectionLabel.styles,
+      ...WelcomeArt.styles,
     ].map((rule) => rule.toCss()).join();
 
     final own = {
