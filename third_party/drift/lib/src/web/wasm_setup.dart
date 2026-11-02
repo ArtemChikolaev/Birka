@@ -249,6 +249,7 @@ final class _ProbeResult implements WasmProbeResult {
           enableMigrations: enableMigrations,
           protocolVersion: sharedWorker!.version,
           newSerialization: sharedWorker.version >= ProtocolVersion.v3,
+          clientLock: await holdClientLock(),
         );
 
         message.sendTo(sharedWorker.send);
@@ -264,6 +265,7 @@ final class _ProbeResult implements WasmProbeResult {
             enableMigrations: enableMigrations,
             protocolVersion: dedicatedWorker.version,
             newSerialization: dedicatedWorker.version >= ProtocolVersion.v3,
+            clientLock: await holdClientLock(),
           );
 
           message.sendTo(dedicatedWorker.send);
