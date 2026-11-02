@@ -69,7 +69,7 @@ void main() {
 
     expect(find.text('Учёт хранится здесь'), findsOneWidget);
     expect(find.text('Копии ещё не было'), findsOneWidget);
-    expect(find.text('1 248'), findsOneWidget);
+    expect(find.text('1\u00A0248'), findsOneWidget);
     expect(find.text('6'), findsOneWidget);
     expect(find.text('24'), findsOneWidget);
   });
@@ -107,7 +107,7 @@ void main() {
     expect(find.text('Восстановить из копии?'), findsOneWidget);
     expect(find.text('birka-2026-10-28.birka'), findsOneWidget);
     expect(
-      find.text('28 октября, 21:40 · 1 190 операций · 1 счёт'),
+      find.text('28\u00A0октября, 21:40 · 1\u00A0190 операций · 1 счёт'),
       findsOneWidget,
     );
     expect(repository.restored, isEmpty);
@@ -117,7 +117,7 @@ void main() {
     expect(repository.restored.single.counts.transactions, 1190);
     expect(find.text('Восстановить из копии?'), findsNothing);
     expect(
-      find.text('Записи восстановлены из копии от 28 октября'),
+      find.text('Записи восстановлены из копии от 28\u00A0октября'),
       findsOneWidget,
     );
   });

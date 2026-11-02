@@ -25,7 +25,8 @@ String copyMomentLabel(DateTime moment, {required DateTime now}) {
 }
 
 /// The day a copy was made: `28 октября`, with the year when it is not the
-/// year of [now].
+/// year of [now]. Its words stay on one line, so that a message never breaks
+/// between the day and its month.
 String copyDayLabel(DateTime moment, {required DateTime now}) {
   final local = moment.toLocal();
   return dateLabel(
@@ -33,7 +34,7 @@ String copyDayLabel(DateTime moment, {required DateTime now}) {
     month: local.month,
     day: local.day,
     thisYear: now.toLocal().year,
-  );
+  ).replaceAll(' ', '\u00A0');
 }
 
 /// The line under the name of a copy on offer:
