@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:ledger/src/account.dart';
 import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
+import 'package:ledger/src/ledger_copy.dart';
 import 'package:ledger/src/ledger_exception.dart';
 import 'package:ledger/src/ledger_totals.dart';
 import 'package:ledger/src/transaction.dart';
@@ -209,6 +210,150 @@ final class LedgerRepository {
   /// failure undoes it all.
   Future<T> atomically<T>(Future<T> Function() writes) =>
       _db.transaction(writes);
+
+  /// How many accounts, categories and transactions the ledger holds, again
+  /// after every change.
+  Stream<LedgerCounts> watchCounts() {
+    return _db
+        .customSelect(
+          '''
+          SELECT
+            (SELECT COUNT(*) FROM accounts WHERE deleted_at IS NULL)
+              AS accounts,
+            (SELECT COUNT(*) FROM categories WHERE deleted_at IS NULL)
+              AS categories,
+            (SELECT COUNT(*) FROM transactions WHERE deleted_at IS NULL)
+              AS transactions
+          ''',
+          readsFrom: {_db.accounts, _db.categories, _db.transactions},
+        )
+        .watchSingle()
+        .map(
+          (row) => LedgerCounts(
+            accounts: row.read<int>('accounts'),
+            categories: row.read<int>('categories'),
+            transactions: row.read<int>('transactions'),
+          ),
+        );
+  }
+
+  /// A copy of everything the ledger holds now, read in one go (ADR 0016).
+  Future<LedgerCopy> copy() {
+    return _db.transaction(() async {
+      final transactions = _db.selectOnly(_db.transactions)
+        ..addColumns([_db.transactions.id])
+        ..where(_db.transactions.deletedAt.isNull());
+      return LedgerCopy.of(
+        madeAt: _timestamp(),
+        accountRows:
+            await (_db.select(_db.accounts)
+                  ..where((row) => row.deletedAt.isNull())
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.sortOrder),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
+        // Parents come first, so that a restore can write them in this order.
+        categoryRows:
+            await (_db.select(_db.categories)
+                  ..where((row) => row.deletedAt.isNull())
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.parentId.isNotNull()),
+                    (row) => OrderingTerm(expression: row.kind),
+                    (row) => OrderingTerm(expression: row.sortOrder),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
+        transactionRows:
+            await (_db.select(_db.transactions)
+                  ..where((row) => row.deletedAt.isNull())
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.occurredOn),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
+        entryRows:
+            await (_db.select(_db.entries)
+                  ..where(
+                    (row) =>
+                        row.deletedAt.isNull() &
+                        row.transactionId.isInQuery(transactions),
+                  )
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.transactionId),
+                    (row) => OrderingTerm(expression: row.amountMinor),
+                  ]))
+                .get(),
+        allocationRows:
+            await (_db.select(_db.allocations)
+                  ..where(
+                    (row) =>
+                        row.deletedAt.isNull() &
+                        row.transactionId.isInQuery(transactions),
+                  )
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.transactionId),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
+      );
+    });
+  }
+
+  /// Puts [copy] in place of everything the ledger holds, in one write:
+  /// readers see the old ledger or the copy, never a mix of the two. The rows
+  /// keep their ids and stamps, and the outbox starts again with their
+  /// inserts (ADR 0016).
+  Future<void> restore(LedgerCopy copy) {
+    return _db.transaction(() async {
+      await _clear();
+      final at = _timestamp();
+      final written = <(TableInfo<Table, Object?>, Iterable<String>)>[
+        (_db.accounts, copy.accountRows.map((row) => row.id)),
+        (_db.categories, copy.categoryRows.map((row) => row.id)),
+        (_db.transactions, copy.transactionRows.map((row) => row.id)),
+        (_db.entries, copy.entryRows.map((row) => row.id)),
+        (_db.allocations, copy.allocationRows.map((row) => row.id)),
+      ];
+      await _db.batch((batch) {
+        batch
+          ..insertAll(_db.accounts, copy.accountRows)
+          ..insertAll(_db.categories, copy.categoryRows)
+          ..insertAll(_db.transactions, copy.transactionRows)
+          ..insertAll(_db.entries, copy.entryRows)
+          ..insertAll(_db.allocations, copy.allocationRows)
+          ..insertAll(_db.changes, [
+            for (final (table, ids) in written)
+              for (final id in ids)
+                ChangesCompanion.insert(
+                  entity: table.actualTableName,
+                  entityId: id,
+                  operation: 'insert',
+                  changedAt: at,
+                ),
+          ]);
+      });
+    });
+  }
+
+  /// Removes everything the ledger holds, the tombstones and the outbox
+  /// included, so that none of it stays on this device (ADR 0016). Exchange
+  /// rates stay: they are public, and any device fetches them again.
+  Future<void> wipe() => _db.transaction(_clear);
+
+  /// Leaves the ledger empty, with the rows that point to others going first.
+  Future<void> _clear() async {
+    for (final table in <TableInfo<Table, Object?>>[
+      _db.allocations,
+      _db.entries,
+      _db.transactions,
+      _db.categories,
+      _db.accounts,
+      _db.changes,
+    ]) {
+      await _db.delete(table).go();
+    }
+  }
 
   /// Adds a category, after the others of its [kind]. A subcategory has a
   /// parent of the same kind, which is not a subcategory itself.

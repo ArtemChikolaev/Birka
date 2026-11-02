@@ -50,6 +50,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$accounts$en accounts =
       Translations$accounts$en.internal(_root);
   late final Translations$app$en app = Translations$app$en.internal(_root);
+  late final Translations$backup$en backup = Translations$backup$en.internal(
+    _root,
+  );
   late final Translations$categories$en categories =
       Translations$categories$en.internal(_root);
   late final Translations$onboarding$en onboarding =
@@ -184,8 +187,152 @@ class Translations$app$en {
   /// en: 'Import'
   String get import => 'Import';
 
-  /// en: 'Backup'
-  String get backup => 'Backup';
+  /// en: 'Data'
+  String get data => 'Data';
+}
+
+// Path: backup
+class Translations$backup$en {
+  Translations$backup$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Data'
+  String get title => 'Data';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'Your records live here'
+  String get storedTitle => 'Your records live here';
+
+  /// en: 'Only on this device, with no servers. A copy in a file helps you move them or keep them safe.'
+  String get storedText =>
+      'Only on this device, with no servers. A copy in a file helps you move them or keep them safe.';
+
+  /// en: 'No copy yet'
+  String get noCopyYet => 'No copy yet';
+
+  /// en: 'Last copy: $when'
+  String lastCopy({required Object when}) => 'Last copy: ${when}';
+
+  /// en: 'today at $time'
+  String todayAt({required Object time}) => 'today at ${time}';
+
+  /// en: 'yesterday at $time'
+  String yesterdayAt({required Object time}) => 'yesterday at ${time}';
+
+  /// en: '$day at $time'
+  String dayAt({required Object day, required Object time}) =>
+      '${day} at ${time}';
+
+  /// en: 'Operations'
+  String get operations => 'Operations';
+
+  /// en: 'Accounts'
+  String get accounts => 'Accounts';
+
+  /// en: 'Categories'
+  String get categories => 'Categories';
+
+  /// en: 'Save a copy'
+  String get save => 'Save a copy';
+
+  /// en: 'Restore from a copy'
+  String get restore => 'Restore from a copy';
+
+  /// en: 'Export'
+  String get export => 'Export';
+
+  /// en: 'Operations as CSV'
+  String get exportTitle => 'Operations as CSV';
+
+  /// en: 'For Excel and Google Sheets: date, amount, currency, account, category'
+  String get exportText =>
+      'For Excel and Google Sheets: date, amount, currency, account, category';
+
+  /// en: 'Records'
+  String get records => 'Records';
+
+  /// en: 'Delete all data'
+  String get wipe => 'Delete all data';
+
+  /// en: 'Files go only where you point in the window of the system.'
+  String get filesNote =>
+      'Files go only where you point in the window of the system.';
+
+  /// en: 'Restore from a copy?'
+  String get restoreTitle => 'Restore from a copy?';
+
+  /// en: 'The records on this device will give way to the contents of the file. This cannot be undone, so save a copy of the current ones first if you need them.'
+  String get restoreText =>
+      'The records on this device will give way to the contents of the file. This cannot be undone, so save a copy of the current ones first if you need them.';
+
+  /// en: 'Replace the records'
+  String get replace => 'Replace the records';
+
+  /// en: 'Cancel'
+  String get cancel => 'Cancel';
+
+  /// en: 'Delete all data?'
+  String get wipeTitle => 'Delete all data?';
+
+  /// en: 'Accounts, operations and categories will disappear from this device. The language and other settings will stay. Without a copy, the records cannot come back.'
+  String get wipeText =>
+      'Accounts, operations and categories will disappear from this device. The language and other settings will stay. Without a copy, the records cannot come back.';
+
+  /// en: 'Save a copy first'
+  String get saveFirst => 'Save a copy first';
+
+  /// en: 'Delete everything'
+  String get wipeAll => 'Delete everything';
+
+  /// en: 'Copy saved: $name'
+  String saved({required Object name}) => 'Copy saved: ${name}';
+
+  /// en: 'Records restored from the copy of $day'
+  String restored({required Object day}) =>
+      'Records restored from the copy of ${day}';
+
+  /// en: 'File saved: $name'
+  String exported({required Object name}) => 'File saved: ${name}';
+
+  /// en: 'All data is gone from this device'
+  String get wiped => 'All data is gone from this device';
+
+  /// en: 'This is not a copy of Birka.'
+  String get notACopy => 'This is not a copy of Birka.';
+
+  /// en: 'A newer version of Birka made this copy. Update the app and try again.'
+  String get newer =>
+      'A newer version of Birka made this copy. Update the app and try again.';
+
+  /// en: 'This copy is damaged and cannot be restored.'
+  String get damaged => 'This copy is damaged and cannot be restored.';
+
+  /// en: 'That did not work. Try again.'
+  String get failed => 'That did not work. Try again.';
+
+  /// en: '(one) {$count operation} (other) {$count operations}'
+  String operationsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} operation',
+        other: '${count} operations',
+      );
+
+  /// en: '(one) {$count account} (other) {$count accounts}'
+  String accountsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} account',
+        other: '${count} accounts',
+      );
+
+  late final Translations$backup$csv$en csv =
+      Translations$backup$csv$en.internal(_root);
 }
 
 // Path: categories
@@ -751,6 +898,51 @@ class Translations$accounts$form$en {
   String get failed => 'Could not save. Try again.';
 }
 
+// Path: backup.csv
+class Translations$backup$csv$en {
+  Translations$backup$csv$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Date'
+  String get date => 'Date';
+
+  /// en: 'Type'
+  String get kind => 'Type';
+
+  /// en: 'Amount'
+  String get amount => 'Amount';
+
+  /// en: 'Currency'
+  String get currency => 'Currency';
+
+  /// en: 'Account'
+  String get account => 'Account';
+
+  /// en: 'Category'
+  String get category => 'Category';
+
+  /// en: 'Subcategory'
+  String get subcategory => 'Subcategory';
+
+  /// en: 'Note'
+  String get note => 'Note';
+
+  /// en: 'Expense'
+  String get expense => 'Expense';
+
+  /// en: 'Income'
+  String get income => 'Income';
+
+  /// en: 'Transfer'
+  String get transfer => 'Transfer';
+
+  /// en: 'Adjustment'
+  String get adjustment => 'Adjustment';
+}
+
 // Path: categories.form
 class Translations$categories$form$en {
   Translations$categories$form$en.internal(this._root);
@@ -998,7 +1190,78 @@ extension on Translations {
       'app.currencies.AED' => 'Dirhams',
       'app.currencies.THB' => 'Baht',
       'app.import' => 'Import',
-      'app.backup' => 'Backup',
+      'app.data' => 'Data',
+      'backup.title' => 'Data',
+      'backup.back' => 'Back',
+      'backup.storedTitle' => 'Your records live here',
+      'backup.storedText' =>
+        'Only on this device, with no servers. A copy in a file helps you move them or keep them safe.',
+      'backup.noCopyYet' => 'No copy yet',
+      'backup.lastCopy' => ({required Object when}) => 'Last copy: ${when}',
+      'backup.todayAt' => ({required Object time}) => 'today at ${time}',
+      'backup.yesterdayAt' =>
+        ({required Object time}) => 'yesterday at ${time}',
+      'backup.dayAt' =>
+        ({required Object day, required Object time}) => '${day} at ${time}',
+      'backup.operations' => 'Operations',
+      'backup.accounts' => 'Accounts',
+      'backup.categories' => 'Categories',
+      'backup.save' => 'Save a copy',
+      'backup.restore' => 'Restore from a copy',
+      'backup.export' => 'Export',
+      'backup.exportTitle' => 'Operations as CSV',
+      'backup.exportText' =>
+        'For Excel and Google Sheets: date, amount, currency, account, category',
+      'backup.records' => 'Records',
+      'backup.wipe' => 'Delete all data',
+      'backup.filesNote' =>
+        'Files go only where you point in the window of the system.',
+      'backup.restoreTitle' => 'Restore from a copy?',
+      'backup.restoreText' =>
+        'The records on this device will give way to the contents of the file. This cannot be undone, so save a copy of the current ones first if you need them.',
+      'backup.replace' => 'Replace the records',
+      'backup.cancel' => 'Cancel',
+      'backup.wipeTitle' => 'Delete all data?',
+      'backup.wipeText' =>
+        'Accounts, operations and categories will disappear from this device. The language and other settings will stay. Without a copy, the records cannot come back.',
+      'backup.saveFirst' => 'Save a copy first',
+      'backup.wipeAll' => 'Delete everything',
+      'backup.saved' => ({required Object name}) => 'Copy saved: ${name}',
+      'backup.restored' =>
+        ({required Object day}) => 'Records restored from the copy of ${day}',
+      'backup.exported' => ({required Object name}) => 'File saved: ${name}',
+      'backup.wiped' => 'All data is gone from this device',
+      'backup.notACopy' => 'This is not a copy of Birka.',
+      'backup.newer' =>
+        'A newer version of Birka made this copy. Update the app and try again.',
+      'backup.damaged' => 'This copy is damaged and cannot be restored.',
+      'backup.failed' => 'That did not work. Try again.',
+      'backup.operationsCount' =>
+        ({required num n, required Object count}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+              n,
+              one: '${count} operation',
+              other: '${count} operations',
+            ),
+      'backup.accountsCount' =>
+        ({required num n, required Object count}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+              n,
+              one: '${count} account',
+              other: '${count} accounts',
+            ),
+      'backup.csv.date' => 'Date',
+      'backup.csv.kind' => 'Type',
+      'backup.csv.amount' => 'Amount',
+      'backup.csv.currency' => 'Currency',
+      'backup.csv.account' => 'Account',
+      'backup.csv.category' => 'Category',
+      'backup.csv.subcategory' => 'Subcategory',
+      'backup.csv.note' => 'Note',
+      'backup.csv.expense' => 'Expense',
+      'backup.csv.income' => 'Income',
+      'backup.csv.transfer' => 'Transfer',
+      'backup.csv.adjustment' => 'Adjustment',
       'categories.title' => 'Categories',
       'categories.back' => 'Back',
       'categories.add' => 'Add category',

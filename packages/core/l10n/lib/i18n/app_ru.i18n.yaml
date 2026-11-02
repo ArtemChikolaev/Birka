@@ -20,4 +20,4 @@ currencies(map):
   AED: Дирхамы
   THB: Баты
 import: Импорт
-backup: Бэкап
+data: Данные

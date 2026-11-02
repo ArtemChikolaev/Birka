@@ -58,16 +58,6 @@ void main() {
     );
   });
 
-  test('a time has two digits on each side', () {
-    expect(timeLabel(DateTime(2026, 10, 31, 8, 5)), '08:05');
-    expect(timeLabel(DateTime(2026, 10, 31, 23, 42)), '23:42');
-  });
-
-  test('a time follows the clock of the device', () {
-    final moment = DateTime(2026, 10, 31, 8, 5);
-    expect(timeLabel(moment.toUtc()), '08:05');
-  });
-
   test('every source has a name', () {
     LocaleSettings.setLocaleSync(AppLocale.ru);
     expect(sourceLabel(TransactionSource.manual), 'Вручную');

@@ -1,0 +1,55 @@
+title: Data
+back: Back
+storedTitle: Your records live here
+storedText: Only on this device, with no servers. A copy in a file helps you move them or keep them safe.
+noCopyYet: No copy yet
+lastCopy: "Last copy: $when"
+todayAt: today at $time
+yesterdayAt: yesterday at $time
+dayAt: $day at $time
+operations: Operations
+accounts: Accounts
+categories: Categories
+save: Save a copy
+restore: Restore from a copy
+export: Export
+exportTitle: Operations as CSV
+exportText: "For Excel and Google Sheets: date, amount, currency, account, category"
+records: Records
+wipe: Delete all data
+filesNote: Files go only where you point in the window of the system.
+restoreTitle: Restore from a copy?
+restoreText: The records on this device will give way to the contents of the file. This cannot be undone, so save a copy of the current ones first if you need them.
+replace: Replace the records
+cancel: Cancel
+wipeTitle: Delete all data?
+wipeText: Accounts, operations and categories will disappear from this device. The language and other settings will stay. Without a copy, the records cannot come back.
+saveFirst: Save a copy first
+wipeAll: Delete everything
+saved: "Copy saved: $name"
+restored: Records restored from the copy of $day
+exported: "File saved: $name"
+wiped: All data is gone from this device
+notACopy: This is not a copy of Birka.
+newer: A newer version of Birka made this copy. Update the app and try again.
+damaged: This copy is damaged and cannot be restored.
+failed: That did not work. Try again.
+operationsCount(n):
+  one: $count operation
+  other: $count operations
+accountsCount(n):
+  one: $count account
+  other: $count accounts
+csv:
+  date: Date
+  kind: Type
+  amount: Amount
+  currency: Currency
+  account: Account
+  category: Category
+  subcategory: Subcategory
+  note: Note
+  expense: Expense
+  income: Income
+  transfer: Transfer
+  adjustment: Adjustment

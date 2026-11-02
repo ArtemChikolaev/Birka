@@ -1,5 +1,7 @@
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
+import 'package:backup_common/backup_common.dart' show BackupCubit;
+import 'package:backup_flutter/backup_flutter.dart';
 import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
@@ -61,6 +63,9 @@ abstract final class Paths {
 
   /// The list of categories.
   static const categories = '/categories';
+
+  /// The data of this device: its copy, its export and its wipe.
+  static const backup = '/backup';
 
   /// The form of a new category of [kind].
   static String newCategory(CategoryKind kind) =>
@@ -241,6 +246,14 @@ GoRouter buildRouter(
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: Paths.backup,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<BackupCubit>(),
+          child: BackupPage(onBack: () => context.pop()),
+        ),
       ),
       GoRoute(
         path: Paths.quickAdd,

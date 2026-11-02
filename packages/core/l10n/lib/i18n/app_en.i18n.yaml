@@ -20,4 +20,4 @@ currencies(map):
   AED: Dirhams
   THB: Baht
 import: Import
-backup: Backup
+data: Data

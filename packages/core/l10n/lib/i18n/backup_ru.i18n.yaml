@@ -1,0 +1,59 @@
+title: Данные
+back: Назад
+storedTitle: Учёт хранится здесь
+storedText: Только на этом устройстве, без серверов. Копия в файле поможет перенести его или не потерять.
+noCopyYet: Копии ещё не было
+lastCopy: "Последняя копия: $when"
+todayAt: сегодня, $time
+yesterdayAt: вчера, $time
+dayAt: $day, $time
+operations: Операции
+accounts: Счета
+categories: Категории
+save: Сохранить копию
+restore: Восстановить из копии
+export: Экспорт
+exportTitle: Операции в CSV
+exportText: "Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория"
+records: Учёт
+wipe: Удалить все данные
+filesNote: Файлы сохраняются только туда, куда вы укажете в окне системы.
+restoreTitle: Восстановить из копии?
+restoreText: Записи на этом устройстве заменятся содержимым файла. Отменить это нельзя, поэтому сначала сохраните копию нынешних, если они нужны.
+replace: Заменить записи
+cancel: Отмена
+wipeTitle: Удалить все данные?
+wipeText: Счета, операции и категории исчезнут с этого устройства. Язык и другие настройки останутся. Без копии вернуть записи не получится.
+saveFirst: Сначала сохранить копию
+wipeAll: Удалить всё
+saved: "Копия готова: $name"
+restored: Записи восстановлены из копии от $day
+exported: "Файл готов: $name"
+wiped: Все данные удалены с этого устройства
+notACopy: Это не копия Birka.
+newer: Эту копию сделала более новая версия Birka. Обновите приложение и попробуйте снова.
+damaged: Копия повреждена, её не получится восстановить.
+failed: Не получилось. Попробуйте ещё раз.
+operationsCount(n):
+  one: $count операция
+  few: $count операции
+  many: $count операций
+  other: $count операции
+accountsCount(n):
+  one: $count счёт
+  few: $count счёта
+  many: $count счетов
+  other: $count счёта
+csv:
+  date: Дата
+  kind: Тип
+  amount: Сумма
+  currency: Валюта
+  account: Счёт
+  category: Категория
+  subcategory: Подкатегория
+  note: Заметка
+  expense: Расход
+  income: Доход
+  transfer: Перевод
+  adjustment: Корректировка

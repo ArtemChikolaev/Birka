@@ -164,4 +164,11 @@ void main() {
       expect(formatCompactFigure(rub(78000)), '78k');
     });
   });
+
+  test('a count groups its digits as the language does', () {
+    expect(formatCount(1248), '1,248');
+    expect(formatCount(24), '24');
+    expect(formatCount(1248, locale: AppLocale.ru), '1 248');
+    expect(formatCount(1234567, locale: AppLocale.ru), '1 234 567');
+  });
 }

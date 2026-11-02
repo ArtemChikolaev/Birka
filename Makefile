@@ -4,7 +4,8 @@
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
 CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/core/rates packages/core/device_settings \
-	packages/features/accounts/common packages/features/categories/common \
+	packages/features/accounts/common packages/features/backup/common \
+	packages/features/categories/common \
 	packages/features/onboarding/common packages/features/overview/common \
 	packages/features/reports/common \
 	packages/features/settings/common \
@@ -101,6 +102,7 @@ test-design: ## Tests of the token generator and both kits
 test-features: ## Tests of the screens of the features
 	cd packages/features/accounts/flutter && flutter test
 	cd packages/features/accounts/jaspr && dart test
+	cd packages/features/backup/flutter && flutter test
 	cd packages/features/categories/flutter && flutter test
 	cd packages/features/categories/jaspr && dart test
 	cd packages/features/onboarding/flutter && flutter test

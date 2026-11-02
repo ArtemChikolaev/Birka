@@ -100,7 +100,19 @@ enum BirkaGlyph {
   rise,
 
   /// An arrow down to the right.
-  fall
+  fall,
+
+  /// A phone.
+  phone,
+
+  /// An arrow down to a line.
+  download,
+
+  /// An arrow up from a line.
+  upload,
+
+  /// A sheet of paper with lines.
+  file
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

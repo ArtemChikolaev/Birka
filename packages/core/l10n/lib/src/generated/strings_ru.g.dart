@@ -61,6 +61,8 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$app$ru app = _Translations$app$ru._(_root);
   @override
+  late final _Translations$backup$ru backup = _Translations$backup$ru._(_root);
+  @override
   late final _Translations$categories$ru categories =
       _Translations$categories$ru._(_root);
   @override
@@ -186,7 +188,120 @@ class _Translations$app$ru extends Translations$app$en {
   @override
   String get import => 'Импорт';
   @override
-  String get backup => 'Бэкап';
+  String get data => 'Данные';
+}
+
+// Path: backup
+class _Translations$backup$ru extends Translations$backup$en {
+  _Translations$backup$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Данные';
+  @override
+  String get back => 'Назад';
+  @override
+  String get storedTitle => 'Учёт хранится здесь';
+  @override
+  String get storedText =>
+      'Только на этом устройстве, без серверов. Копия в файле поможет перенести его или не потерять.';
+  @override
+  String get noCopyYet => 'Копии ещё не было';
+  @override
+  String lastCopy({required Object when}) => 'Последняя копия: ${when}';
+  @override
+  String todayAt({required Object time}) => 'сегодня, ${time}';
+  @override
+  String yesterdayAt({required Object time}) => 'вчера, ${time}';
+  @override
+  String dayAt({required Object day, required Object time}) =>
+      '${day}, ${time}';
+  @override
+  String get operations => 'Операции';
+  @override
+  String get accounts => 'Счета';
+  @override
+  String get categories => 'Категории';
+  @override
+  String get save => 'Сохранить копию';
+  @override
+  String get restore => 'Восстановить из копии';
+  @override
+  String get export => 'Экспорт';
+  @override
+  String get exportTitle => 'Операции в CSV';
+  @override
+  String get exportText =>
+      'Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория';
+  @override
+  String get records => 'Учёт';
+  @override
+  String get wipe => 'Удалить все данные';
+  @override
+  String get filesNote =>
+      'Файлы сохраняются только туда, куда вы укажете в окне системы.';
+  @override
+  String get restoreTitle => 'Восстановить из копии?';
+  @override
+  String get restoreText =>
+      'Записи на этом устройстве заменятся содержимым файла. Отменить это нельзя, поэтому сначала сохраните копию нынешних, если они нужны.';
+  @override
+  String get replace => 'Заменить записи';
+  @override
+  String get cancel => 'Отмена';
+  @override
+  String get wipeTitle => 'Удалить все данные?';
+  @override
+  String get wipeText =>
+      'Счета, операции и категории исчезнут с этого устройства. Язык и другие настройки останутся. Без копии вернуть записи не получится.';
+  @override
+  String get saveFirst => 'Сначала сохранить копию';
+  @override
+  String get wipeAll => 'Удалить всё';
+  @override
+  String saved({required Object name}) => 'Копия готова: ${name}';
+  @override
+  String restored({required Object day}) =>
+      'Записи восстановлены из копии от ${day}';
+  @override
+  String exported({required Object name}) => 'Файл готов: ${name}';
+  @override
+  String get wiped => 'Все данные удалены с этого устройства';
+  @override
+  String get notACopy => 'Это не копия Birka.';
+  @override
+  String get newer =>
+      'Эту копию сделала более новая версия Birka. Обновите приложение и попробуйте снова.';
+  @override
+  String get damaged => 'Копия повреждена, её не получится восстановить.';
+  @override
+  String get failed => 'Не получилось. Попробуйте ещё раз.';
+  @override
+  String operationsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} операция',
+        few: '${count} операции',
+        many: '${count} операций',
+        other: '${count} операции',
+      );
+  @override
+  String accountsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} счёт',
+        few: '${count} счёта',
+        many: '${count} счетов',
+        other: '${count} счёта',
+      );
+  @override
+  late final _Translations$backup$csv$ru csv = _Translations$backup$csv$ru._(
+    _root,
+  );
 }
 
 // Path: categories
@@ -654,6 +769,41 @@ class _Translations$accounts$form$ru extends Translations$accounts$form$en {
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
 }
 
+// Path: backup.csv
+class _Translations$backup$csv$ru extends Translations$backup$csv$en {
+  _Translations$backup$csv$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get date => 'Дата';
+  @override
+  String get kind => 'Тип';
+  @override
+  String get amount => 'Сумма';
+  @override
+  String get currency => 'Валюта';
+  @override
+  String get account => 'Счёт';
+  @override
+  String get category => 'Категория';
+  @override
+  String get subcategory => 'Подкатегория';
+  @override
+  String get note => 'Заметка';
+  @override
+  String get expense => 'Расход';
+  @override
+  String get income => 'Доход';
+  @override
+  String get transfer => 'Перевод';
+  @override
+  String get adjustment => 'Корректировка';
+}
+
 // Path: categories.form
 class _Translations$categories$form$ru extends Translations$categories$form$en {
   _Translations$categories$form$ru._(TranslationsRu root)
@@ -886,7 +1036,82 @@ extension on TranslationsRu {
       'app.currencies.AED' => 'Дирхамы',
       'app.currencies.THB' => 'Баты',
       'app.import' => 'Импорт',
-      'app.backup' => 'Бэкап',
+      'app.data' => 'Данные',
+      'backup.title' => 'Данные',
+      'backup.back' => 'Назад',
+      'backup.storedTitle' => 'Учёт хранится здесь',
+      'backup.storedText' =>
+        'Только на этом устройстве, без серверов. Копия в файле поможет перенести его или не потерять.',
+      'backup.noCopyYet' => 'Копии ещё не было',
+      'backup.lastCopy' =>
+        ({required Object when}) => 'Последняя копия: ${when}',
+      'backup.todayAt' => ({required Object time}) => 'сегодня, ${time}',
+      'backup.yesterdayAt' => ({required Object time}) => 'вчера, ${time}',
+      'backup.dayAt' =>
+        ({required Object day, required Object time}) => '${day}, ${time}',
+      'backup.operations' => 'Операции',
+      'backup.accounts' => 'Счета',
+      'backup.categories' => 'Категории',
+      'backup.save' => 'Сохранить копию',
+      'backup.restore' => 'Восстановить из копии',
+      'backup.export' => 'Экспорт',
+      'backup.exportTitle' => 'Операции в CSV',
+      'backup.exportText' =>
+        'Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория',
+      'backup.records' => 'Учёт',
+      'backup.wipe' => 'Удалить все данные',
+      'backup.filesNote' =>
+        'Файлы сохраняются только туда, куда вы укажете в окне системы.',
+      'backup.restoreTitle' => 'Восстановить из копии?',
+      'backup.restoreText' =>
+        'Записи на этом устройстве заменятся содержимым файла. Отменить это нельзя, поэтому сначала сохраните копию нынешних, если они нужны.',
+      'backup.replace' => 'Заменить записи',
+      'backup.cancel' => 'Отмена',
+      'backup.wipeTitle' => 'Удалить все данные?',
+      'backup.wipeText' =>
+        'Счета, операции и категории исчезнут с этого устройства. Язык и другие настройки останутся. Без копии вернуть записи не получится.',
+      'backup.saveFirst' => 'Сначала сохранить копию',
+      'backup.wipeAll' => 'Удалить всё',
+      'backup.saved' => ({required Object name}) => 'Копия готова: ${name}',
+      'backup.restored' =>
+        ({required Object day}) => 'Записи восстановлены из копии от ${day}',
+      'backup.exported' => ({required Object name}) => 'Файл готов: ${name}',
+      'backup.wiped' => 'Все данные удалены с этого устройства',
+      'backup.notACopy' => 'Это не копия Birka.',
+      'backup.newer' =>
+        'Эту копию сделала более новая версия Birka. Обновите приложение и попробуйте снова.',
+      'backup.damaged' => 'Копия повреждена, её не получится восстановить.',
+      'backup.failed' => 'Не получилось. Попробуйте ещё раз.',
+      'backup.operationsCount' =>
+        ({required num n, required Object count}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+              n,
+              one: '${count} операция',
+              few: '${count} операции',
+              many: '${count} операций',
+              other: '${count} операции',
+            ),
+      'backup.accountsCount' =>
+        ({required num n, required Object count}) =>
+            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+              n,
+              one: '${count} счёт',
+              few: '${count} счёта',
+              many: '${count} счетов',
+              other: '${count} счёта',
+            ),
+      'backup.csv.date' => 'Дата',
+      'backup.csv.kind' => 'Тип',
+      'backup.csv.amount' => 'Сумма',
+      'backup.csv.currency' => 'Валюта',
+      'backup.csv.account' => 'Счёт',
+      'backup.csv.category' => 'Категория',
+      'backup.csv.subcategory' => 'Подкатегория',
+      'backup.csv.note' => 'Заметка',
+      'backup.csv.expense' => 'Расход',
+      'backup.csv.income' => 'Доход',
+      'backup.csv.transfer' => 'Перевод',
+      'backup.csv.adjustment' => 'Корректировка',
       'categories.title' => 'Категории',
       'categories.back' => 'Назад',
       'categories.add' => 'Добавить категорию',
