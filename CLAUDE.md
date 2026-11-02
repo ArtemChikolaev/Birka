@@ -82,6 +82,8 @@ Extend what exists instead of duplicating it.
   `BirkaSheetPage`, a change of what is on screen in a `BirkaFadePage`.
   Motion takes its durations and curves from `BirkaMotion` and turns into
   fades when `BirkaMotion.reduced` says so.
+- A list between a header and a button that stay in place goes into
+  `ScrollEdgeFade`: it fades softly into them instead of breaking off.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
   `make icons`, and never edit the generated icons by hand. The art of the

@@ -40,21 +40,23 @@ class OnboardingPage extends StatelessWidget {
                 children: [
                   _TopBar(step: state.step),
                   Expanded(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(
-                        milliseconds: BirkaTokens.durationBaseMs,
+                    child: ScrollEdgeFade(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: BirkaTokens.durationBaseMs,
+                        ),
+                        child: switch (state.step) {
+                          OnboardingStep.welcome => const _WelcomeStep(
+                            key: ValueKey(OnboardingStep.welcome),
+                          ),
+                          OnboardingStep.account => const _AccountStep(
+                            key: ValueKey(OnboardingStep.account),
+                          ),
+                          OnboardingStep.categories => const _CategoriesStep(
+                            key: ValueKey(OnboardingStep.categories),
+                          ),
+                        },
                       ),
-                      child: switch (state.step) {
-                        OnboardingStep.welcome => const _WelcomeStep(
-                          key: ValueKey(OnboardingStep.welcome),
-                        ),
-                        OnboardingStep.account => const _AccountStep(
-                          key: ValueKey(OnboardingStep.account),
-                        ),
-                        OnboardingStep.categories => const _CategoriesStep(
-                          key: ValueKey(OnboardingStep.categories),
-                        ),
-                      },
                     ),
                   ),
                   const _Footer(),

@@ -94,6 +94,8 @@
   /* The smallest tap area. */
   --size-touch-target: 44px;
   --size-nav-bar: 64px;
+  /* How deep a list fades where it goes under a header or a button that stays in place. */
+  --size-scroll-edge: 48px;
   /* Headlines and large amounts. */
   --font-family-display: Manrope, Inter, system-ui, sans-serif;
   --font-family-text: Inter, system-ui, sans-serif;

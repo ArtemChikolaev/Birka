@@ -100,111 +100,114 @@ class _FormState extends State<_Form> {
             ),
           ),
           Expanded(
-            child: ListView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: const EdgeInsets.symmetric(
-                horizontal: BirkaTokens.spaceLg,
-                vertical: BirkaTokens.spaceXs,
-              ),
-              children: [
-                BirkaTextField(
-                  label: form.name,
-                  controller: _name,
-                  hint: form.namePlaceholder,
-                  error: state.nameMissing ? form.nameMissing : null,
-                  onChanged: cubit.nameChanged,
-                  textCapitalization: TextCapitalization.sentences,
+            child: ScrollEdgeFade(
+              child: ListView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BirkaTokens.spaceLg,
+                  vertical: BirkaTokens.spaceXs,
                 ),
-                if (state.isNew) ...[
-                  const SizedBox(height: BirkaTokens.spaceMd),
-                  _Label(form.kind),
-                  GlassSegmented<CategoryKind>(
-                    segments: {
-                      CategoryKind.expense: t.categories.expense,
-                      CategoryKind.income: t.categories.income,
-                    },
-                    selected: state.kind,
-                    onChanged: cubit.kindChanged,
+                children: [
+                  BirkaTextField(
+                    label: form.name,
+                    controller: _name,
+                    hint: form.namePlaceholder,
+                    error: state.nameMissing ? form.nameMissing : null,
+                    onChanged: cubit.nameChanged,
+                    textCapitalization: TextCapitalization.sentences,
                   ),
-                ],
-                if (state.parents.isNotEmpty) ...[
-                  const SizedBox(height: BirkaTokens.spaceMd),
-                  _Label(form.parent),
-                  Wrap(
-                    spacing: BirkaTokens.spaceXs,
-                    runSpacing: BirkaTokens.spaceXs,
-                    children: [
-                      BirkaChip(
-                        label: form.noParent,
-                        selected: state.parentId == null,
-                        onTap: () => cubit.parentChanged(null),
-                      ),
-                      for (final parent in state.parents)
+                  if (state.isNew) ...[
+                    const SizedBox(height: BirkaTokens.spaceMd),
+                    _Label(form.kind),
+                    GlassSegmented<CategoryKind>(
+                      segments: {
+                        CategoryKind.expense: t.categories.expense,
+                        CategoryKind.income: t.categories.income,
+                      },
+                      selected: state.kind,
+                      onChanged: cubit.kindChanged,
+                    ),
+                  ],
+                  if (state.parents.isNotEmpty) ...[
+                    const SizedBox(height: BirkaTokens.spaceMd),
+                    _Label(form.parent),
+                    Wrap(
+                      spacing: BirkaTokens.spaceXs,
+                      runSpacing: BirkaTokens.spaceXs,
+                      children: [
                         BirkaChip(
-                          label: parent.name,
-                          selected: parent.id == state.parentId,
-                          onTap: () => cubit.parentChanged(parent.id),
+                          label: form.noParent,
+                          selected: state.parentId == null,
+                          onTap: () => cubit.parentChanged(null),
                         ),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: BirkaTokens.spaceMd),
-                _Label(form.color),
-                Row(
-                  children: [
-                    for (final color in categoryColors)
-                      Expanded(
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: _Swatch(
-                            color: BirkaColors.fromHex(color),
-                            selected: color == state.color,
-                            label: '${form.color} ${color.substring(1)}',
-                            onTap: () => cubit.colorChanged(color),
+                        for (final parent in state.parents)
+                          BirkaChip(
+                            label: parent.name,
+                            selected: parent.id == state.parentId,
+                            onTap: () => cubit.parentChanged(parent.id),
                           ),
-                        ),
-                      ),
+                      ],
+                    ),
                   ],
-                ),
-                const SizedBox(height: BirkaTokens.spaceMd),
-                _Label(form.icon),
-                Wrap(
-                  spacing: BirkaTokens.spaceSm,
-                  runSpacing: BirkaTokens.spaceSm,
-                  children: [
-                    for (final icon in categoryIcons)
-                      Semantics(
-                        button: true,
-                        selected: icon == state.icon,
-                        label: icon,
-                        excludeSemantics: true,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => cubit.iconChanged(icon),
-                          child: GlyphBadge(
-                            glyph: BirkaGlyph.named(icon),
-                            color: icon == state.icon
-                                ? BirkaColors.fromHex(state.color)
-                                : colors.textMuted,
-                            size: BirkaTokens.sizeTouchTarget,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                if (!state.isNew) ...[
-                  const SizedBox(height: BirkaTokens.spaceLg),
-                  GlassListGroup(
+                  const SizedBox(height: BirkaTokens.spaceMd),
+                  _Label(form.color),
+                  Row(
                     children: [
-                      GlassListRow(
-                        title: state.archived ? form.restore : form.archive,
-                        onTap: cubit.toggleArchived,
-                      ),
+                      for (final color in categoryColors)
+                        Expanded(
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: _Swatch(
+                              color: BirkaColors.fromHex(color),
+                              selected: color == state.color,
+                              label: '${form.color} ${color.substring(1)}',
+                              onTap: () => cubit.colorChanged(color),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
+                  const SizedBox(height: BirkaTokens.spaceMd),
+                  _Label(form.icon),
+                  Wrap(
+                    spacing: BirkaTokens.spaceSm,
+                    runSpacing: BirkaTokens.spaceSm,
+                    children: [
+                      for (final icon in categoryIcons)
+                        Semantics(
+                          button: true,
+                          selected: icon == state.icon,
+                          label: icon,
+                          excludeSemantics: true,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => cubit.iconChanged(icon),
+                            child: GlyphBadge(
+                              glyph: BirkaGlyph.named(icon),
+                              color: icon == state.icon
+                                  ? BirkaColors.fromHex(state.color)
+                                  : colors.textMuted,
+                              size: BirkaTokens.sizeTouchTarget,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  if (!state.isNew) ...[
+                    const SizedBox(height: BirkaTokens.spaceLg),
+                    GlassListGroup(
+                      children: [
+                        GlassListRow(
+                          title: state.archived ? form.restore : form.archive,
+                          onTap: cubit.toggleArchived,
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: BirkaTokens.spaceMd),
                 ],
-                const SizedBox(height: BirkaTokens.spaceMd),
-              ],
+              ),
             ),
           ),
           Padding(

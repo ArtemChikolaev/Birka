@@ -32,6 +32,7 @@ export 'src/components/glass_swipe_row.dart';
 export 'src/components/glass_toast.dart';
 export 'src/components/glyph_badge.dart';
 export 'src/components/hidden_amounts.dart';
+export 'src/components/scroll_edge_fade.dart';
 export 'src/components/section_label.dart';
 export 'src/components/welcome_art.dart';
 export 'src/fonts.dart';
