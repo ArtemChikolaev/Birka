@@ -42,8 +42,8 @@ Extend what exists instead of duplicating it.
   - `packages/design/` is the design system, `apps/` are the hosts, and the
     server lives in `server/` and `proto/`
     ([ADR 0001](docs/adr/0001-single-repository.md));
-  - `third_party/drift` is published code with one fix, not ours: change it
-    only by applying an upstream commit, and never format it
+  - `third_party/drift` is published code with upstream fixes, not ours:
+    change it only by applying an upstream commit, and never format it
     ([ADR 0015](docs/adr/0015-drift-closed-tabs.md)).
 - Inside `common`, `presentation → domain ← data`: the domain imports
   neither the database nor the UI.

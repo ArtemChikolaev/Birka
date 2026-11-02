@@ -65,9 +65,10 @@
    document, and IndexedDB gets a write some time after SQLite has finished it,
    so a saved operation could vanish: 7 of 12 on Chrome 113 when the page left
    as the form closed. Such a browser runs the same storage in the page itself.
-   There a commit waits for `IndexedDbFileSystem.flush`, which Drift does not do
-   for a transaction and which its workers do not let a page reach. `make
-   check-site` opens the site this way too.
+   A page there shows its data sooner, without a worker to load. Drift waits
+   for IndexedDB after every write, a commit included, in the page and in its
+   workers alike ([ADR 0015](0015-drift-closed-tabs.md)). `make check-site`
+   opens the site this way too.
 9. Search uses FTS5 on every platform.
 
 ## Options considered
@@ -99,9 +100,10 @@
   113 a page shows its data sooner, in 650 ms instead of 850 ms, because no
   worker has to load, and long tasks stay around 50-100 ms on a small database.
   A large one was not measured.
-- `sharedIndexedDb` has the same queue in its worker, and no way to wait for it.
-  Chrome on macOS lost nothing in 30 tries of leaving as the form closed, so it
-  stays as it is.
+- `sharedIndexedDb` had the same queue in its worker, and a commit came back
+  before IndexedDB had it. A form got away with it, since the queue finished
+  before the form closed, and the fixes of drift in
+  [ADR 0015](0015-drift-closed-tabs.md) make the commit wait.
 - Chrome on macOS, Safari on iOS and Chrome 113 on Android store data and keep
   it. Firefox, where Drift prefers `opfsShared`, and a current Chrome on
   Android still have to be checked.

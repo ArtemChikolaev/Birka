@@ -41,6 +41,18 @@
    transaction, so the fix of drift alone does not see it go: on the live site
    the next page still waited in 4 of 4 tries. Closing the connection sends
    the worker a goodbye at once, and the server rolls the transaction back.
+6. A commit waits until IndexedDB holds it, through two more commits of drift:
+   [bbcab2c](https://github.com/simolus3/drift/commit/bbcab2c866) hands the
+   file system of the worker to its database, and
+   [27004b3](https://github.com/simolus3/drift/commit/27004b3415) waits for it
+   after a COMMIT too, which drift 2.31 skipped as part of a transaction. The
+   `writeAutomatically: false` of the first one needs sqlite3 3.x and stays
+   out, so writes start at once and the commit waits for them. Before, a commit
+   came back while IndexedDB still had the transaction ahead of it. A form got
+   away with it, since IndexedDB finished before the form closed: a tab closed
+   right as the form closed lost nothing in 8 tries on the live site. Nothing
+   promised the same for a long write, such as a restore from a copy. The page
+   without shared workers no longer needs a flush of its own.
 
 ## Options considered
 
@@ -56,7 +68,12 @@
   leaves in a transaction holds no one, and its write is undone. It fails
   without the fix.
 - Leaving within a fraction of a second after Save, before the form closes,
-  still loses that write: the tab is gone before the transaction ends.
+  still loses that write: the tab is gone before the transaction ends. Once
+  the form has closed, the write is in IndexedDB.
+- A commit lasts until IndexedDB has stored it, and so does a read that finds
+  writes still on their way. The overview of a local build showed its data
+  about 50 ms later after its title: 190 ms instead of 140 ms with a shared
+  worker, and 30 ms instead of 5-25 ms without one.
 - A tab without Web Locks, Safari before 15.4, cannot be seen leaving when it
   is closed, and it behaves as before. A page that only leaves says goodbye
   in every browser.
