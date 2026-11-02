@@ -48,7 +48,9 @@ jobs:
           ASKED: ${{ github.event.action == 'labeled' || contains(github.event.pull_request.labels.*.name, 'claude-review') }}
           FORCE_OPUS: ${{ contains(github.event.pull_request.labels.*.name, 'claude-opus') }}
         run: |
-          files="$(gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" --name-only)"
+          # The files API has no limit on the size of the diff; gh pr diff stops
+          # at 20 000 lines.
+          files="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')"
           # Docs, images, fonts and lockfiles alone get no automatic review.
           code="$(grep -vE '^docs/|\.(md|txt)$|^LICENSE|\.(png|jpe?g|gif|webp|svg|ico|ttf|otf|woff2?)$|(^|/)(pubspec\.lock|go\.sum)$' <<< "$files" || true)"
           if [ "$ASKED" = true ] || [ -n "$code" ]; then
@@ -113,7 +115,9 @@ jobs:
             1. `gh pr view <number> --json title,body,files,commits` for intent and scope,
                `gh pr diff <number>` for the change. Read the surrounding code with Read,
                Grep and Glob; read-only git (log, blame, show) is fine. Do not build,
-               test or run anything: CI does that.
+               test or run anything: CI does that. GitHub refuses a diff over 20 000
+               lines; then read the commits one by one with `git show <sha>`. Code under
+               `third_party/` is published code: review only how a commit changes it.
             2. Read only your own earlier summaries:
                gh pr view <number> --json comments --jq '.comments[] | select(.author.login | test("^(github-actions|claude)(\\[bot\\])?$")) | select(.body | startswith("### Claude review")) | .body'
                Do not repeat a finding listed there unless the code changed and the
