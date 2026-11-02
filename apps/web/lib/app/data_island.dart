@@ -30,8 +30,8 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   var _fragment = '';
   final _trail = FragmentTrail();
 
-  /// How far down the list was when a form took its place.
-  var _listScroll = 0.0;
+  /// How far down each view was when another one took its place.
+  final _scrolls = <String, double>{};
 
   var _amountsHidden = false;
   void Function()? _stopWatching;
@@ -117,17 +117,17 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   }
 
   void _onFragmentChanged() {
-    if (_fragment.isEmpty) _listScroll = pageScroll;
+    _scrolls[_fragment] = pageScroll;
     final next = addressFragment;
+    final back = _trail.leadsBackTo(next);
     _trail.moved(from: _fragment, to: next);
     setState(() => _fragment = next);
-    _placePage();
+    _placePage(top: back ? _scrolls[next] ?? 0 : 0);
   }
 
-  /// A new view must not start half way down, and the list comes back to
-  /// where it was left.
-  void _placePage() {
-    final top = _fragment.isEmpty ? _listScroll : 0.0;
+  /// A new view must not start half way down, and a step back comes back to
+  /// where the view was left.
+  void _placePage({double top = 0}) {
     context.binding.addPostFrameCallback(() => scrollPageTo(top));
   }
 
@@ -142,6 +142,17 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
     replaceAddressFragment(parent);
     setState(() => _fragment = parent);
     _placePage();
+  }
+
+  /// Back from a view that other pages of the site link to: to [parent] if it
+  /// is one step back, then to the page that led here, and otherwise to
+  /// [parent].
+  void closeView([String parent = '']) {
+    if (!_trail.leadsBackTo(parent) && cameFromSite) {
+      goBackInHistory();
+      return;
+    }
+    closeForm(parent);
   }
 
   void _toggleAmounts() {

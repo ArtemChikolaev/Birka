@@ -6,7 +6,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
-import 'package:transactions_jaspr/src/presentation/components/operation_row.dart';
+import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart';
 
 /// The operations of a month, day by day, with a search and filters.
 ///
@@ -56,26 +56,6 @@ class OperationsPage extends StatefulComponent {
     // Amounts in several currencies can take more than a line.
     css('.operations__totals .amount').styles(raw: {'white-space': 'normal'}),
     css('.operations__check').styles(raw: {'color': 'var(--color-accent)'}),
-    css('.operations__day').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xs)',
-      },
-    ),
-    css('.operations__day-heading').styles(
-      raw: {
-        'align-items': 'baseline',
-        'color': 'var(--color-text-secondary)',
-        'display': 'flex',
-        'gap': 'var(--space-sm)',
-        'justify-content': 'space-between',
-        'padding': '0 var(--space-xs)',
-      },
-    ),
-    css('.operations__day-heading .amount').styles(
-      raw: {'white-space': 'normal'},
-    ),
     css('.operations__note').styles(
       raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
     ),
@@ -133,7 +113,12 @@ class _OperationsPageState extends State<OperationsPage> {
                 ),
               ],
               OperationsStatus.ready when state.shown.isNotEmpty => [
-                for (final day in state.days) _day(day, today: state.today),
+                for (final day in state.days)
+                  OperationDayGroup(
+                    day: day,
+                    today: state.today,
+                    hrefOf: component.hrefOf,
+                  ),
               ],
               OperationsStatus.ready when state.isNarrowed => [
                 GlassNotice(text: t.transactions.nothingFound),
@@ -220,29 +205,6 @@ class _OperationsPageState extends State<OperationsPage> {
     return span([
       .text('$label '),
       AmountText(amounts, tone: tone, textClass: 'text-body-strong'),
-    ]);
-  }
-
-  Component _day(OperationDay day, {required CivilDate today}) {
-    return section(classes: 'operations__day', [
-      div(classes: 'operations__day-heading', [
-        SectionLabel(dayHeading(day.day, today: today)),
-        AmountText(
-          amountsLabel(day.total),
-          tone: AmountTone.muted,
-          textClass: 'text-caption',
-        ),
-      ]),
-      GlassListGroup(
-        children: [
-          for (final operation in day.operations)
-            OperationRow(
-              key: ValueKey(operation.id),
-              operation: operation,
-              href: component.hrefOf(operation.id),
-            ),
-        ],
-      ),
     ]);
   }
 }

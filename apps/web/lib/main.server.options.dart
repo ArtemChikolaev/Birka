@@ -33,6 +33,7 @@ import 'package:design_jaspr/src/birka_arrow_button.dart'
     as _birka_arrow_button;
 import 'package:design_jaspr/src/birka_bars.dart' as _birka_bars;
 import 'package:design_jaspr/src/birka_button.dart' as _birka_button;
+import 'package:design_jaspr/src/birka_change_pill.dart' as _birka_change_pill;
 import 'package:design_jaspr/src/birka_chip.dart' as _birka_chip;
 import 'package:design_jaspr/src/birka_chip_field.dart' as _birka_chip_field;
 import 'package:design_jaspr/src/birka_choice.dart' as _birka_choice;
@@ -69,8 +70,14 @@ import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
     as _reports_page;
 import 'package:settings_jaspr/src/presentation/components/settings_section.dart'
     as _settings_section;
+import 'package:transactions_jaspr/src/presentation/components/back_header.dart'
+    as _back_header;
+import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart'
+    as _operation_day_group;
 import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart'
     as _quick_add_tile;
+import 'package:transactions_jaspr/src/presentation/pages/account_page.dart'
+    as _account_page;
 import 'package:transactions_jaspr/src/presentation/pages/operation_page.dart'
     as _operation_page;
 import 'package:transactions_jaspr/src/presentation/pages/operations_page.dart'
@@ -130,6 +137,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_arrow_button.BirkaArrowButton.styles,
     ..._birka_bars.BirkaBars.styles,
     ..._birka_button.BirkaButton.styles,
+    ..._birka_change_pill.BirkaChangePill.styles,
     ..._birka_chip.BirkaChip.styles,
     ..._birka_chip_field.BirkaChipField.styles,
     ..._birka_choice.BirkaChoice.styles,
@@ -163,8 +171,11 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,
     ..._settings_section.SettingsSection.styles,
+    ..._back_header.BackHeader.styles,
+    ..._operation_day_group.OperationDayGroup.styles,
     ..._quick_add_tile.QuickAddTile.styles,
     ..._quick_add_tile.QuickAddTiles.styles,
+    ..._account_page.AccountPage.styles,
     ..._operation_page.OperationPage.styles,
     ..._operations_page.OperationsPage.styles,
     ..._quick_add_page.QuickAddPage.styles,
