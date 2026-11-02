@@ -35,6 +35,12 @@
    are created with `IF NOT EXISTS` already, and `onCreate` adds it to indexes.
 4. The Flutter upgrade deletes `third_party/drift` and the override, and takes
    drift 2.35 or later.
+5. A page that leaves closes its connection on `pagehide`, and one that the
+   back button brings back loads again. Over a real network a page that has
+   left stays alive for a while, frozen, with its Web Lock and its open
+   transaction, so the fix of drift alone does not see it go: on the live site
+   the next page still waited in 4 of 4 tries. Closing the connection sends
+   the worker a goodbye at once, and the server rolls the transaction back.
 
 ## Options considered
 
@@ -51,5 +57,11 @@
   without the fix.
 - Leaving within a fraction of a second after Save, before the form closes,
   still loses that write: the tab is gone before the transaction ends.
-- A tab without Web Locks, Safari before 15.4, cannot be seen leaving, and it
-  behaves as before.
+- A tab without Web Locks, Safari before 15.4, cannot be seen leaving when it
+  is closed, and it behaves as before. A page that only leaves says goodbye
+  in every browser.
+- A page that comes back from the back-forward cache reloads instead of
+  showing at once.
+- Without shared workers the database lives in the page, which this does not
+  touch: closing its storage on `pagehide` could let a frozen page write old
+  data after the next one.
