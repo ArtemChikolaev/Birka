@@ -306,12 +306,11 @@ packages:
     source: hosted
     version: "0.4.1"
   drift:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: drift
-      sha256: "970cd188fddb111b26ea6a9b07a62bf5c2432d74147b8122c67044ae3b97e99e"
-      url: "https://pub.dev"
-    source: hosted
+      path: "third_party/drift"
+      relative: true
+    source: path
     version: "2.31.0"
   drift_dev:
     dependency: transitive

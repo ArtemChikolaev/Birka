@@ -10,6 +10,9 @@ CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/features/settings/common \
 	packages/features/transactions/common
 
+# Our Dart code. third_party holds code of others as it was published.
+OUR_DART := apps packages tools
+
 COMPILER ?= vm
 ifeq ($(COMPILER),vm)
   TEST_FLAGS :=
@@ -43,11 +46,11 @@ help: ## Show the targets
 bootstrap: ## Fetch dependencies for the whole workspace
 	flutter pub get
 
-format: ## Format all Dart code
-	dart format .
+format: ## Format all Dart code but the code of others in third_party
+	dart format $(OUR_DART)
 
 analyze: ## Formatting, analysis, package boundaries, generated tokens
-	dart format --output=none --set-exit-if-changed .
+	dart format --output=none --set-exit-if-changed $(OUR_DART)
 	dart analyze --fatal-infos
 	$(MAKE) check-deps
 	$(MAKE) check-tokens
