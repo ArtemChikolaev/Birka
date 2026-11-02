@@ -35,9 +35,28 @@ Future<OpenedDatabase> openLocalDatabase() async {
     await opened.resolvedExecutor.close();
     throw const OpenInAnotherTab();
   }
+  _letGoWhenLeaving(opened.resolvedExecutor);
   return OpenedDatabase(
     opened.resolvedExecutor,
     persists: storage != WasmStorageImplementation.inMemory,
+  );
+}
+
+/// A page that leaves can stay alive for a while, frozen, with its transaction
+/// still open in the worker, where every other page waits for it. Its Web Lock
+/// lives as long, so the worker cannot see it go (ADR 0015). So a leaving page
+/// closes its connection, which rolls that transaction back at once, and a page
+/// that the back button brings back loads again.
+void _letGoWhenLeaving(QueryExecutor executor) {
+  web.window.addEventListener(
+    'pagehide',
+    ((web.Event _) => unawaited(executor.close())).toJS,
+  );
+  web.window.addEventListener(
+    'pageshow',
+    ((web.PageTransitionEvent event) {
+      if (event.persisted) web.window.location.reload();
+    }).toJS,
   );
 }
 
