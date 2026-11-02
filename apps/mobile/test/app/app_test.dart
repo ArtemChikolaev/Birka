@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
+import 'package:backup_common/backup_common.dart';
+import 'package:backup_flutter/backup_flutter.dart';
 import 'package:birka_mobile/app/app.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
@@ -179,6 +181,37 @@ final class _Overview implements OverviewRepository {
   }) => Stream.value(const []);
 }
 
+final class _EmptyLedger implements BackupRepository {
+  @override
+  Stream<LedgerCounts> watchCounts() => Stream.value(
+    const LedgerCounts(accounts: 0, categories: 0, transactions: 0),
+  );
+
+  @override
+  Future<LedgerCopy> copy() => throw UnimplementedError();
+
+  @override
+  Future<void> restore(LedgerCopy copy) => throw UnimplementedError();
+
+  @override
+  Future<void> wipe() async {}
+
+  @override
+  Future<OperationsExport> operations() => throw UnimplementedError();
+}
+
+final class _NoFiles implements BackupFiles {
+  @override
+  Future<bool> save({
+    required String name,
+    required String type,
+    required Uint8List bytes,
+  }) async => false;
+
+  @override
+  Future<ChosenFile?> open() async => null;
+}
+
 final class _NoReports implements ReportsRepository {
   @override
   Stream<Currency?> watchMainCurrency() => Stream.value(null);
@@ -255,6 +288,7 @@ void main() {
       )
       ..registerFactory(() => OverviewCubit(overview))
       ..registerFactory(() => ReportsCubit(_NoReports()))
+      ..registerFactory(() => BackupCubit(_EmptyLedger(), _NoFiles(), settings))
       ..registerSingleton<SettingsStore>(settings)
       ..registerFactory(
         () => SettingsCubit(
@@ -616,6 +650,24 @@ void main() {
     expect(find.byType(AccountsPage), findsOneWidget);
 
     await tester.tap(find.bySemanticsLabel(t.accounts.back));
+    await tester.pumpAndSettle();
+    expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('the data open from the more tab, over the bar', (tester) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.app.data));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BackupPage), findsOneWidget);
+    expect(find.byType(GlassNavBar), findsNothing);
+    expect(find.text(t.backup.noCopyYet), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel(t.backup.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
   });

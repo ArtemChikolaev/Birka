@@ -311,4 +311,86 @@ void main() {
       colors.negative.withValues(alpha: 0.16),
     );
   });
+
+  group('GlassListRow', () {
+    testWidgets('a row that cannot be taken back has a red title', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        app(GlassListRow(title: 'Delete all data', danger: true, onTap: () {})),
+      );
+
+      final title = tester.widget<Text>(find.text('Delete all data'));
+      expect(title.style!.color, BirkaColors.dark.negative);
+    });
+
+    testWidgets('a subtitle takes the lines it is given', (tester) async {
+      await tester.pumpWidget(
+        app(
+          const GlassListRow(
+            title: 'Operations as CSV',
+            subtitle: 'For Excel and Google Sheets',
+            subtitleLines: 2,
+          ),
+        ),
+      );
+
+      final subtitle = tester.widget<Text>(
+        find.text('For Excel and Google Sheets'),
+      );
+      expect(subtitle.maxLines, 2);
+    });
+  });
+
+  group('GlassToast', () {
+    testWidgets('says what came of an action and goes away', (tester) async {
+      await tester.pumpWidget(
+        app(
+          Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showGlassToast(context, 'Copy saved'),
+              child: const Text('Save'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Save'));
+      await tester.pump();
+
+      expect(find.text('Copy saved'), findsOneWidget);
+      final icon = tester.widget<BirkaIcon>(find.byType(BirkaIcon));
+      expect(icon.glyph, BirkaGlyph.check);
+
+      // Its clock starts once it has come in.
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(find.text('Copy saved'), findsNothing);
+    });
+
+    testWidgets('takes the place of the toast before it', (tester) async {
+      await tester.pumpWidget(
+        app(
+          Builder(
+            builder: (context) => TextButton(
+              onPressed: () {
+                showGlassToast(context, 'First');
+                showGlassToast(context, 'Not a copy', trouble: true);
+              },
+              child: const Text('Go'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Go'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('First'), findsNothing);
+      expect(find.text('Not a copy'), findsOneWidget);
+      final icon = tester.widget<BirkaIcon>(find.byType(BirkaIcon));
+      expect(icon.glyph, BirkaGlyph.close);
+    });
+  });
 }

@@ -7,6 +7,7 @@ export 'src/category.dart';
 export 'src/category_presets.dart';
 export 'src/chart_period.dart';
 export 'src/civil_date.dart';
+export 'src/ledger_copy.dart';
 export 'src/ledger_exception.dart';
 export 'src/ledger_repository.dart';
 export 'src/ledger_totals.dart';

@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:accounts_common/accounts_common.dart';
+import 'package:backup_common/backup_common.dart';
+import 'package:backup_flutter/backup_flutter.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:database/database.dart';
 import 'package:drift_flutter/drift_flutter.dart';
@@ -33,8 +35,10 @@ void registerDependencies(GetIt getIt, SettingsStore settings) {
     ..registerSingleton(baseCurrency)
     ..registerSingleton(
       RatesUpdater(rates, CbrMirror(http.Client()), ledger, baseCurrency),
-    );
+    )
+    ..registerSingleton<BackupFiles>(const FilePickerBackupFiles());
   registerAccounts(getIt);
+  registerBackup(getIt, settings);
   registerCategories(getIt);
   registerOnboarding(getIt, settings, deviceLanguage: deviceLanguage);
   registerOverview(getIt);

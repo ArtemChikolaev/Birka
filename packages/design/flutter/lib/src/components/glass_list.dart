@@ -44,8 +44,10 @@ class GlassListRow extends StatelessWidget {
   const GlassListRow({
     required this.title,
     this.subtitle,
+    this.subtitleLines = 1,
     this.leading,
     this.trailing,
+    this.danger = false,
     this.onTap,
     super.key,
   });
@@ -56,11 +58,18 @@ class GlassListRow extends StatelessWidget {
   /// The quieter line under [title].
   final String? subtitle;
 
+  /// How many lines [subtitle] takes before it is cut.
+  final int subtitleLines;
+
   /// What stands before the text, such as a small picture.
   final Widget? leading;
 
   /// What stands after the text, such as an amount or a switch.
   final Widget? trailing;
+
+  /// Whether the row does what cannot be taken back, with its title in the
+  /// color of a loss.
+  final bool danger;
 
   /// Called on a tap. Without it the row is not a button.
   final VoidCallback? onTap;
@@ -91,12 +100,14 @@ class GlassListRow extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: styles.bodyStrong.copyWith(color: colors.text),
+                    style: styles.bodyStrong.copyWith(
+                      color: danger ? colors.negative : colors.text,
+                    ),
                   ),
                   if (subtitle != null)
                     Text(
                       subtitle,
-                      maxLines: 1,
+                      maxLines: subtitleLines,
                       overflow: TextOverflow.ellipsis,
                       style: styles.caption.copyWith(color: colors.textMuted),
                     ),

@@ -70,8 +70,8 @@ packages/design/tokens   design tokens and their generator for Dart and CSS
 packages/design/flutter  theme, fonts and glass widgets for Flutter
 packages/design/jaspr    styles, web fonts and glass components for Jaspr
 packages/design/brand    the app icon and the art of the first screen: SVG and PNG masters
-packages/features        one folder per feature: accounts, categories, onboarding, overview,
-                         reports, settings, transactions
+packages/features        one folder per feature: accounts, backup, categories, onboarding,
+                         overview, reports, settings, transactions
 tools                    repository tooling: package boundary checks, dev scripts
 third_party/drift        drift 2.31.0 with one fix of 2.35.1, until the Flutter upgrade
 docs/adr                 architecture decision records

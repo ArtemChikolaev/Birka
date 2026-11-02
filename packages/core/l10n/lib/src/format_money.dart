@@ -35,6 +35,17 @@ String formatMoney(Money amount, {AppLocale? locale}) {
   return amount.isNegative ? '$_minus$text' : text;
 }
 
+/// Formats [count] for people in the current language, or in [locale]:
+/// Russian gives `1 248` and English `1,248`.
+String formatCount(int count, {AppLocale? locale}) {
+  final russian = (locale ?? LocaleSettings.currentLocale) == AppLocale.ru;
+  final digits = _group(
+    '${count.abs()}',
+    separator: russian ? _noBreakSpace : ',',
+  );
+  return count.isNegative ? '$_minus$digits' : digits;
+}
+
 /// Formats [amount] for a small place, without its sign and in whole units:
 /// Russian gives `84 тыс. ₽` and `1,2 млн ₽`, and English `₽84k` and `₽1.2M`.
 /// Below a thousand it gives the units as they are.

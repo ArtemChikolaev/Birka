@@ -15,13 +15,12 @@ String transactionKindLabel(TransactionKind kind) => switch (kind) {
 
 /// A day for people: `30 октября` or `October 30`, with the year when it is
 /// not the year of [today].
-String dayLabel(CivilDate day, {required CivilDate today}) {
-  final date = t.transactions.dayOfMonth(
-    day: day.day,
-    month: t.transactions.months[day.month - 1],
-  );
-  return day.year == today.year ? date : '$date ${day.year}';
-}
+String dayLabel(CivilDate day, {required CivilDate today}) => dateLabel(
+  year: day.year,
+  month: day.month,
+  day: day.day,
+  thisYear: today.year,
+);
 
 /// What [expression] comes to for [kind]: `−370 ₽`, `+370 ₽` or `370 ₽`, and a
 /// dash when it comes to nothing, such as after a division by zero.
@@ -63,14 +62,6 @@ String dayHeading(CivilDate day, {required CivilDate today}) {
   final yesterday = DateTime(today.year, today.month, today.day - 1);
   if (day == CivilDate.of(yesterday)) return t.transactions.yesterday;
   return dayLabel(day, today: today);
-}
-
-/// The time of [moment] on the clock of this device: `08:42`.
-String timeLabel(DateTime moment) {
-  final local = moment.toLocal();
-  final hour = local.hour.toString().padLeft(2, '0');
-  final minute = local.minute.toString().padLeft(2, '0');
-  return '$hour:$minute';
 }
 
 /// Where an operation came from.

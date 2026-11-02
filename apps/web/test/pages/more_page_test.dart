@@ -63,7 +63,7 @@ void main() {
     pump(tester);
 
     expect(find.text('Импорт'), findsOneComponent);
-    expect(find.text('Бэкап'), findsOneComponent);
+    expect(find.text('Данные'), findsOneComponent);
     expect(find.text('скоро'), findsNComponents(2));
   });
 

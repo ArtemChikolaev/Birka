@@ -27,6 +27,7 @@
 | Web | jaspr, jaspr_builder, jaspr_router, jaspr_bloc, jaspr_test, jaspr_lints, jaspr_cli, build_web_compilers, web | 0.22.3, 0.22.3, 0.8.1, 1.0.1, 0.22.3, 0.6.0, 0.22.3, 4.8.0, 1.1.1 |
 | Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0 with a fix ([ADR 0015](0015-drift-closed-tabs.md)), 2.31.0, 0.2.8, 2.9.4 |
 | Settings of a device | shared_preferences | 2.5.5 |
+| Files | file_picker | 13.3.2 |
 | Ids | uuid | 4.6.0 |
 | Exchange rates | decimal, rational, http | 3.2.6, 2.2.3, 1.6.0 |
 | State | bloc, flutter_bloc, bloc_test, bloc_concurrency | 9.2.1, 9.1.1, 10.0.0, 0.3.0 |

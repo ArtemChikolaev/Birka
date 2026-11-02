@@ -29,6 +29,7 @@ export 'src/components/glass_search_field.dart';
 export 'src/components/glass_segmented.dart';
 export 'src/components/glass_surface.dart';
 export 'src/components/glass_swipe_row.dart';
+export 'src/components/glass_toast.dart';
 export 'src/components/glyph_badge.dart';
 export 'src/components/hidden_amounts.dart';
 export 'src/components/section_label.dart';
