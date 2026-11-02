@@ -42,3 +42,8 @@ workspace:
 
 dev_dependencies:
   very_good_analysis: ^10.1.0
+
+# drift 2.31.0 with a fix from 2.35.1, until the Flutter upgrade (ADR 0015).
+dependency_overrides:
+  drift:
+    path: third_party/drift

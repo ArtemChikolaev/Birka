@@ -22,7 +22,9 @@
 2. The review runs automatically only when the pull request changes code.
    Docs, images, fonts and lockfiles alone get no automatic review. The
    `claude-review` label asks for a review of any pull request, and for
-   another one after changes.
+   another one after changes. The list of changed files comes from the files
+   API, because GitHub refuses a diff over 20 000 lines; Claude then reads
+   such a pull request commit by commit.
 3. The review is advisory: it is not a required check and stays outside
    `All checks`. Its comments are review threads, and the ruleset for `main`
    requires every thread to be resolved, so each finding gets an answer.

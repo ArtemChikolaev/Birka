@@ -73,6 +73,7 @@ packages/design/brand    the app icon and the art of the first screen: SVG and P
 packages/features        one folder per feature: accounts, categories, onboarding, overview,
                          reports, settings, transactions
 tools                    repository tooling: package boundary checks, dev scripts
+third_party/drift        drift 2.31.0 with one fix of 2.35.1, until the Flutter upgrade
 docs/adr                 architecture decision records
 ```
 
