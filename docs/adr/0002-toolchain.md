@@ -25,7 +25,7 @@
 |---|---|---|
 | Code generation | build_runner, analyzer | 2.15.1, 8.4.0 |
 | Web | jaspr, jaspr_builder, jaspr_router, jaspr_bloc, jaspr_test, jaspr_lints, jaspr_cli, build_web_compilers, web | 0.22.3, 0.22.3, 0.8.1, 1.0.1, 0.22.3, 0.6.0, 0.22.3, 4.8.0, 1.1.1 |
-| Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0, 2.31.0, 0.2.8, 2.9.4 |
+| Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0 with a fix ([ADR 0015](0015-drift-closed-tabs.md)), 2.31.0, 0.2.8, 2.9.4 |
 | Settings of a device | shared_preferences | 2.5.5 |
 | Ids | uuid | 4.6.0 |
 | Exchange rates | decimal, rational, http | 3.2.6, 2.2.3, 1.6.0 |
@@ -33,7 +33,7 @@
 | Navigation and DI | go_router, get_it | 17.5.0, 9.3.0 |
 | Icons | flutter_svg | 2.3.0 |
 | Strings | slang, intl | 4.19.2, 0.20.2 |
-| Testing and lints | test, mocktail, very_good_analysis | 1.26.3, 1.0.5, 10.1.0 |
+| Testing and lints | test, mocktail, very_good_analysis, stream_channel | 1.26.3, 1.0.5, 10.1.0, 2.1.4 |
 | Monitoring | sentry_flutter | 9.30.1 |
 | App icons | flutter_launcher_icons | 0.14.4 |
 | Check of the built site | browser_launcher, shelf, shelf_static, webkit_inspection_protocol | 1.1.3, 1.4.3, 1.2.0, 1.2.1 |
@@ -70,4 +70,6 @@
   Drift worker ([ADR 0009](0009-data-model.md)).
 - `drift_dev` in `packages/core/database` is what holds drift at 2.31. Without
   it pub picks drift 2.35 and sqlite3 3.
+- drift itself comes from `third_party/drift`: 2.31.0 with one fix of 2.35.1,
+  until this upgrade ([ADR 0015](0015-drift-closed-tabs.md)).
 - pub updates from Dependabot are off; GitHub Actions updates stay on.

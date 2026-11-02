@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:database/database.dart';
 import 'package:drift/native.dart';
 import 'package:test/test.dart';
@@ -59,4 +61,38 @@ void main() {
     expect(change.changedAt, at);
     expect(change.sequence, 1);
   });
+
+  // In a browser the storage can keep the tables of a first opening without
+  // the version that drift writes after them (ADR 0015).
+  test(
+    'a first opening that stopped half way is finished by the next',
+    () async {
+      final folder = Directory.systemTemp.createTempSync('birka-database');
+      addTearDown(() => folder.deleteSync(recursive: true));
+      final file = File('${folder.path}/birka.sqlite');
+      final first = BirkaDatabase(NativeDatabase(file));
+      await first.select(first.accounts).get();
+      await first.customStatement('DROP INDEX entries_account');
+      await first.customStatement('DROP TABLE exchange_rates');
+      await first.customStatement('PRAGMA user_version = 0');
+      await first.close();
+
+      final next = BirkaDatabase(NativeDatabase(file));
+      addTearDown(next.close);
+
+      await expectLater(next.select(next.accounts).get(), completion(isEmpty));
+      await expectLater(next.select(next.exchangeRates).get(), completes);
+      final indexes = await next
+          .customSelect("SELECT name FROM sqlite_master WHERE type = 'index'")
+          .get();
+      expect(
+        indexes.map((row) => row.read<String>('name')),
+        contains('entries_account'),
+      );
+      final version = await next
+          .customSelect('PRAGMA user_version')
+          .getSingle();
+      expect(version.read<int>('user_version'), next.schemaVersion);
+    },
+  );
 }

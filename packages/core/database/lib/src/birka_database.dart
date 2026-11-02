@@ -27,6 +27,22 @@ class BirkaDatabase extends _$BirkaDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
+    // Tables come with IF NOT EXISTS already, and indexes get it here, so that
+    // a first opening that stopped half way is finished by the next (ADR 0015).
+    onCreate: (m) async {
+      for (final entity in allSchemaEntities) {
+        if (entity is Index) {
+          await customStatement(
+            entity.createStatementsByDialect[SqlDialect.sqlite]!.replaceFirst(
+              'CREATE INDEX ',
+              'CREATE INDEX IF NOT EXISTS ',
+            ),
+          );
+        } else {
+          await m.create(entity);
+        }
+      }
+    },
     onUpgrade: stepByStep(
       from1To2: (m, schema) async {
         await m.addColumn(schema.accounts, schema.accounts.lastDigits);
