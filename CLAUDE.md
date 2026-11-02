@@ -77,6 +77,11 @@ Extend what exists instead of duplicating it.
   `*.options.dart` files.
 - The Flutter app draws edge to edge behind see-through system bars, so
   screens keep their content out of the bars with `SafeArea`.
+- A screen opens by its kind ([ADR 0017](docs/adr/0017-motion.md)): deeper
+  pages push the way of the platform, something new opens in a
+  `BirkaSheetPage`, a change of what is on screen in a `BirkaFadePage`.
+  Motion takes its durations and curves from `BirkaMotion` and turns into
+  fades when `BirkaMotion.reduced` says so.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
   `make icons`, and never edit the generated icons by hand. The art of the

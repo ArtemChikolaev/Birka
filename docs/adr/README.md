@@ -18,3 +18,4 @@
 | [0014](0014-account-page.md) | The page of an account lives with the operations | accepted 2026-11-01 |
 | [0015](0015-drift-closed-tabs.md) | drift 2.31 with the fix for closed tabs | accepted 2026-11-02 |
 | [0016](0016-ledger-copy.md) | A copy of the ledger in a file | accepted 2026-11-02 |
+| [0017](0017-motion.md) | How screens open and how things move | accepted 2026-11-03 |

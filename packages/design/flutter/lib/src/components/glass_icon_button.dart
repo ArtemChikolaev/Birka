@@ -10,6 +10,7 @@ class GlassIconButton extends StatelessWidget {
     required this.glyph,
     required this.label,
     required this.onPressed,
+    this.glass = true,
     super.key,
   });
 
@@ -22,8 +23,16 @@ class GlassIconButton extends StatelessWidget {
   /// Called on a tap.
   final VoidCallback onPressed;
 
+  /// Whether the icon sits on a round of glass. The cross that closes a form
+  /// goes without it.
+  final bool glass;
+
   @override
   Widget build(BuildContext context) {
+    final icon = SizedBox.square(
+      dimension: BirkaTokens.sizeTouchTarget,
+      child: Center(child: BirkaIcon(glyph)),
+    );
     return Semantics(
       container: true,
       button: true,
@@ -32,16 +41,15 @@ class GlassIconButton extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onPressed,
-        child: GlassSurface(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(BirkaTokens.radiusPill),
-          ),
-          padding: EdgeInsets.zero,
-          child: SizedBox.square(
-            dimension: BirkaTokens.sizeTouchTarget,
-            child: Center(child: BirkaIcon(glyph)),
-          ),
-        ),
+        child: glass
+            ? GlassSurface(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(BirkaTokens.radiusPill),
+                ),
+                padding: EdgeInsets.zero,
+                child: icon,
+              )
+            : icon,
       ),
     );
   }

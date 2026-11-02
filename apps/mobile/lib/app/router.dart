@@ -6,6 +6,7 @@ import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
+import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -258,8 +259,7 @@ GoRouter buildRouter(
       GoRoute(
         path: Paths.quickAdd,
         parentNavigatorKey: rootKey,
-        pageBuilder: (context, state) => MaterialPage(
-          fullscreenDialog: true,
+        pageBuilder: (context, state) => BirkaSheetPage(
           child: BlocProvider(
             create: (_) =>
                 getIt<QuickAddCubit>(param1: _quickAddSource(state.uri)),
@@ -284,22 +284,25 @@ QuickAddSource? _quickAddSource(Uri uri) {
   return repeat == null ? null : QuickAddSource.repeat(repeat);
 }
 
-Page<void> _formPage(GetIt getIt, String? accountId) => MaterialPage(
-  fullscreenDialog: true,
-  child: BlocProvider(
+/// A new account opens as a sheet, and a change of one fades in over its
+/// page, where the card stays in place (ADR 0017).
+Page<void> _formPage(GetIt getIt, String? accountId) {
+  final form = BlocProvider(
     create: (_) => getIt<AccountFormCubit>(param1: accountId),
     child: Builder(
       builder: (context) => AccountFormPage(onClose: () => context.pop()),
     ),
-  ),
-);
+  );
+  return accountId == null
+      ? BirkaSheetPage(child: form)
+      : BirkaFadePage(child: form);
+}
 
 Page<void> _categoryFormPage(
   GetIt getIt, {
   String? categoryId,
   CategoryKind? kind,
-}) => MaterialPage(
-  fullscreenDialog: true,
+}) => BirkaSheetPage(
   child: BlocProvider(
     create: (_) => getIt<CategoryFormCubit>(param1: categoryId, param2: kind),
     child: Builder(
