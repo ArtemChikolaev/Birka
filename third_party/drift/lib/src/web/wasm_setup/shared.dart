@@ -327,6 +327,7 @@ class DriftServerController {
     final sqlite3 = await WasmSqlite3.loadFromUrl(sqlite3WasmUri);
 
     VirtualFileSystem vfs;
+    IndexedDbFileSystem? indexedDb;
     void Function()? close;
 
     switch (storage) {
@@ -339,8 +340,10 @@ class DriftServerController {
         close = locks.close;
       case WasmStorageImplementation.unsafeIndexedDb:
       case WasmStorageImplementation.sharedIndexedDb:
-        final idb = vfs = await IndexedDbFileSystem.open(dbName: databaseName);
-        close = idb.close;
+        indexedDb = vfs = await IndexedDbFileSystem.open(
+          dbName: databaseName,
+        );
+        close = indexedDb.close;
       case WasmStorageImplementation.inMemory:
         vfs = InMemoryFileSystem();
     }
@@ -354,6 +357,8 @@ class DriftServerController {
         file.xWrite(response, 0);
         file.xClose();
       }
+
+      await indexedDb?.flush();
     }
 
     sqlite3.registerVirtualFileSystem(vfs, makeDefault: true);
@@ -361,6 +366,7 @@ class DriftServerController {
       sqlite3: sqlite3,
       path: '/database',
       setup: _setup,
+      fileSystem: indexedDb,
       enableMigrations: enableMigrations,
     );
 

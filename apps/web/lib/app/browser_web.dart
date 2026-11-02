@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
-import 'package:birka_web/app/flush_after_commit.dart';
 import 'package:birka_web/app/opened_database.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
@@ -60,9 +59,10 @@ void _letGoWhenLeaving(QueryExecutor executor) {
   );
 }
 
-/// Opens the storage that a dedicated worker of Drift would use, in this page.
-/// That worker dies with the page and takes unfinished writes along, while here
-/// a write can wait for them. Without IndexedDB there is no such storage.
+/// Opens the storage that a dedicated worker of Drift would use, in this page,
+/// which shows its data sooner without a worker to load (ADR 0009). Drift
+/// waits for IndexedDB after every write, so a saved change outlives the page.
+/// Without IndexedDB there is no such storage.
 Future<QueryExecutor?> _openInThePage(Uri sqlite3Uri) async {
   final IndexedDbFileSystem files;
   try {
@@ -72,11 +72,7 @@ Future<QueryExecutor?> _openInThePage(Uri sqlite3Uri) async {
   }
   final sqlite3 = await WasmSqlite3.loadFromUrl(sqlite3Uri)
     ..registerVirtualFileSystem(files, makeDefault: true);
-  return WasmDatabase(
-    sqlite3: sqlite3,
-    path: '/database',
-    fileSystem: files,
-  ).interceptWith(FlushAfterCommit(files.flush));
+  return WasmDatabase(sqlite3: sqlite3, path: '/database', fileSystem: files);
 }
 
 /// Takes a lock for as long as the tab lives, or says that another tab has it.
