@@ -88,7 +88,9 @@ Extend what exists instead of duplicating it.
   `ScrollEdgeFade`: it fades softly into them instead of breaking off.
 - An amount that can change on screen gets `value` on `AmountText`, and
   `rise` when its change is good or bad news (ADR 0017); a list of such
-  amounts keys its rows.
+  amounts keys its rows. A short list whose rows come and go goes into
+  `AnimatedColumn`, and the parts of a `BirkaRing` carry the ids of what
+  they stand for.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
   `make icons`, and never edit the generated icons by hand. The art of the

@@ -34,5 +34,8 @@ class HiddenAmounts extends InheritedNotifier<ValueNotifier<bool>> {
   /// [text] with its digits hidden if the amounts around [context] are. The
   /// sign and the currency stay, and the length of the number goes.
   static String mask(BuildContext context, String text) =>
-      of(context) ? text.replaceAll(_digits, '•••') : text;
+      of(context) ? masked(text) : text;
+
+  /// [text] with its digits hidden, whether the amounts are or not.
+  static String masked(String text) => text.replaceAll(_digits, '•••');
 }

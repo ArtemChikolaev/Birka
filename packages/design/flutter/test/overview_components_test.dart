@@ -324,6 +324,56 @@ void main() {
       expect(tester.getSize(find.byType(BirkaRing)), const Size.square(96));
     });
 
+    group('when its parts change', () {
+      const cafe = RingSlice(350, Color(0xFFF2B533), id: 'cafe');
+      const food = RingSlice(500, Color(0xFF6EA8FE), id: 'food');
+
+      Finder ring() => find.descendant(
+        of: find.byType(BirkaRing),
+        matching: find.byType(CustomPaint),
+      );
+
+      testWidgets('grows a new part from nothing in its place', (tester) async {
+        await pump(tester, const [cafe]);
+        await pump(tester, const [cafe, food]);
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 1));
+
+        await tester.pump(BirkaMotion.roll ~/ 2);
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
+
+        await tester.pumpAndSettle();
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
+      });
+
+      testWidgets('shrinks a part that goes to nothing', (tester) async {
+        await pump(tester, const [cafe, food]);
+        await pump(tester, const [cafe]);
+        await tester.pump(BirkaMotion.roll ~/ 2);
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
+
+        await tester.pumpAndSettle();
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 1));
+      });
+
+      testWidgets('changes at once when asked for less motion', (tester) async {
+        Widget reduced(List<RingSlice> slices) => app(
+          MediaQuery(
+            data: const MediaQueryData(disableAnimations: true),
+            child: BirkaRing(slices: slices, label: 'Spending'),
+          ),
+        );
+        await tester.pumpWidget(reduced(const [cafe]));
+        await tester.pumpWidget(reduced(const [cafe, food]));
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
+      });
+    });
+
     for (final (name, slices) in [
       ('nothing', const <RingSlice>[]),
       ('parts of nothing', const [RingSlice(0, Color(0xFF00FF00))]),

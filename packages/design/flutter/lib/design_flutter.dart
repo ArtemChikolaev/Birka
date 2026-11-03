@@ -9,6 +9,7 @@ export 'package:design_tokens/design_tokens.dart';
 export 'src/components/account_card.dart';
 export 'src/components/ambient_background.dart';
 export 'src/components/amount_text.dart';
+export 'src/components/animated_column.dart';
 export 'src/components/birka_arrow_button.dart';
 export 'src/components/birka_bars.dart';
 export 'src/components/birka_button.dart';
