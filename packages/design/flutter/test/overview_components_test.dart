@@ -173,6 +173,63 @@ void main() {
           ),
         );
 
+    group('when its series changes', () {
+      Widget chart(
+        List<double> values,
+        String series, {
+        bool reduced = false,
+      }) => app(
+        MediaQuery(
+          data: MediaQueryData(disableAnimations: reduced),
+          child: BirkaLineChart(
+            values: values,
+            label: 'The capital',
+            series: series,
+          ),
+        ),
+      );
+
+      Finder line() => find.descendant(
+        of: find.byType(BirkaLineChart),
+        matching: find.byType(CustomPaint),
+      );
+
+      testWidgets('draws the new line from the left and its dot last', (
+        tester,
+      ) async {
+        await tester.pumpWidget(chart([1, 2, 3], 'month'));
+        expect(line(), paintsExactlyCountTimes(#drawCircle, 2));
+
+        await tester.pumpWidget(chart([3, 1, 2], 'week'));
+        await tester.pump(BirkaMotion.fast + BirkaMotion.spring ~/ 2);
+
+        // The old line has gone, and the new one has no dot yet.
+        expect(line(), paintsExactlyCountTimes(#drawCircle, 0));
+
+        await tester.pumpAndSettle();
+
+        expect(line(), paintsExactlyCountTimes(#drawCircle, 2));
+      });
+
+      testWidgets('just changes when only its values do', (tester) async {
+        await tester.pumpWidget(chart([1, 2, 3], 'month'));
+        await tester.pumpWidget(chart([1, 2, 4], 'month'));
+
+        expect(line(), paintsExactlyCountTimes(#drawCircle, 2));
+      });
+
+      testWidgets('only cross-fades when asked for less motion', (
+        tester,
+      ) async {
+        await tester.pumpWidget(chart([1, 2, 3], 'month', reduced: true));
+        await tester.pumpWidget(chart([3, 1, 2], 'week', reduced: true));
+        await tester.pump(BirkaMotion.base ~/ 2);
+
+        // Both lines show with their dots, one fading into the other.
+        expect(line(), paintsExactlyCountTimes(#drawCircle, 4));
+      });
+    });
+
     testWidgets('reads its label', (tester) async {
       await pump(tester, [1, 2, 3]);
 

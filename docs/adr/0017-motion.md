@@ -85,6 +85,12 @@
    - An amount does not roll the first time it shows, into another currency,
      nor while amounts are hidden; under Reduce Motion it changes at once and
      only its color comes and goes.
+   - The chart of a period draws itself again when the period changes, as
+     «График» on the canvas shows: the old line fades, the new one draws
+     from the left over `duration.spring`, and its dot comes last with a
+     little bounce (`BirkaLineChart.series`). The periods sit in a
+     `ChipSwitch`, whose white pill slides to the picked one along
+     `easing.spring`, and the caption of the period cross-fades.
    - Figures that change because the owner looks elsewhere, another month, a
      filter or a kind of report, start anew instead of rolling, and lists
      key their rows, so that no row rolls into the figure of another.

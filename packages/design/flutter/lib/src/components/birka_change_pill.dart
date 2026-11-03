@@ -1,6 +1,7 @@
 import 'package:design_flutter/src/components/amount_text.dart';
 import 'package:design_flutter/src/components/birka_icon.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_motion.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
 import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/widgets.dart';
@@ -30,7 +31,8 @@ class BirkaChangePill extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
     final color = rise ? colors.positive : colors.negative;
-    return Container(
+    return AnimatedContainer(
+      duration: BirkaMotion.reduced(context) ? Duration.zero : BirkaMotion.base,
       padding: const EdgeInsets.symmetric(
         horizontal: BirkaTokens.spaceSm,
         vertical: BirkaTokens.spaceXxs,

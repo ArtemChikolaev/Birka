@@ -86,6 +86,7 @@ class _OverviewPageState extends State<OverviewPage> {
                         for (final value in state.history) value.toDouble(),
                       ],
                       label: t.overview.chart,
+                      series: state.period,
                     ),
                     const SizedBox(height: BirkaTokens.spaceSm),
                     _Periods(selected: state.period),
@@ -194,7 +195,7 @@ class _Capital extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: BirkaTokens.spaceXs),
-              Text(
+              FadingText(
                 chartPeriodCaption(state.period.name, month: state.today.month),
                 style: styles.body.copyWith(color: colors.textMuted),
               ),
@@ -213,19 +214,13 @@ class _Periods extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<OverviewCubit>();
-    return Wrap(
-      spacing: BirkaTokens.spaceXs,
-      runSpacing: BirkaTokens.spaceXs,
-      children: [
+    return ChipSwitch(
+      options: {
         for (final period in ChartPeriod.values)
-          BirkaChip(
-            label: chartPeriodLabel(period.name),
-            selected: period == selected,
-            compact: true,
-            onTap: () => cubit.periodChanged(period),
-          ),
-      ],
+          period: chartPeriodLabel(period.name),
+      },
+      selected: selected,
+      onChanged: context.read<OverviewCubit>().periodChanged,
     );
   }
 }

@@ -241,8 +241,6 @@ class _Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AccountCubit>();
-    final styles = BirkaTextStyles.of(context);
-    final colors = BirkaColors.of(context);
     final change = state.change;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -259,12 +257,14 @@ class _Summary extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: BirkaTokens.spaceXs),
-              Text(
+              FadingText(
                 chartPeriodCaption(
                   state.period.name,
                   month: state.today.month,
                 ),
-                style: styles.body.copyWith(color: colors.textMuted),
+                style: BirkaTextStyles.of(
+                  context,
+                ).body.copyWith(color: BirkaColors.of(context).textMuted),
               ),
             ],
           ),
@@ -273,20 +273,16 @@ class _Summary extends StatelessWidget {
         BirkaLineChart(
           values: [for (final value in state.history) value.toDouble()],
           label: t.transactions.balanceChart,
+          series: state.period,
         ),
         const SizedBox(height: BirkaTokens.spaceSm),
-        Wrap(
-          spacing: BirkaTokens.spaceXs,
-          runSpacing: BirkaTokens.spaceXs,
-          children: [
+        ChipSwitch(
+          options: {
             for (final period in ChartPeriod.values)
-              BirkaChip(
-                label: chartPeriodLabel(period.name),
-                selected: period == state.period,
-                compact: true,
-                onTap: () => cubit.periodChanged(period),
-              ),
-          ],
+              period: chartPeriodLabel(period.name),
+          },
+          selected: state.period,
+          onChanged: cubit.periodChanged,
         ),
       ],
     );
