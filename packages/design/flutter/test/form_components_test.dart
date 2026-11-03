@@ -489,6 +489,33 @@ void main() {
       );
     });
 
+    testWidgets('can be measured on its way to the check mark', (
+      tester,
+    ) async {
+      // Such as by a sheet that fills the rest of the screen.
+      Widget measured({required bool done}) => app(
+        IntrinsicHeight(
+          child: SizedBox(
+            width: 300,
+            child: BirkaButton(
+              label: 'Save',
+              onPressed: done ? null : () {},
+              done: done,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(measured(done: false));
+      await tester.pumpWidget(measured(done: true));
+      await tester.pump(BirkaMotion.fast);
+
+      expect(tester.takeException(), isNull);
+      expect(
+        tester.getSize(find.byType(BirkaButton)).height,
+        BirkaButton.height,
+      );
+    });
+
     testWidgets('only fades into the check when asked for less motion', (
       tester,
     ) async {
@@ -748,6 +775,29 @@ void main() {
     final decoration = tile.decoration! as BoxDecoration;
     expect(decoration.color, color.withValues(alpha: 0.16));
     expect(tester.widget<BirkaIcon>(find.byType(BirkaIcon)).color, color);
+  });
+
+  testWidgets('a badge eases into a new color', (tester) async {
+    const sky = Color(BirkaTokens.colorPaletteSky);
+    const amber = Color(BirkaTokens.colorPaletteAmber);
+    final theme = BirkaTheme.dark();
+    Widget badge(Color color) => MaterialApp(
+      theme: theme,
+      home: Center(
+        child: GlyphBadge(glyph: BirkaGlyph.cart, color: color),
+      ),
+    );
+    Color? iconColor() =>
+        tester.widget<BirkaIcon>(find.byType(BirkaIcon)).color;
+    await tester.pumpWidget(badge(sky));
+    await tester.pumpWidget(badge(amber));
+    await tester.pump(BirkaMotion.fast ~/ 2);
+
+    expect(iconColor(), isNot(anyOf(sky, amber)));
+
+    await tester.pumpAndSettle();
+
+    expect(iconColor(), amber);
   });
 
   test('every glyph has its file', () async {

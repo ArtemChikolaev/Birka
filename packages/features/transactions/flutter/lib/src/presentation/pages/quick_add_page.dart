@@ -34,12 +34,7 @@ class QuickAddPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: AmbientBackground(
         child: SafeArea(
-          child: BlocConsumer<QuickAddCubit, QuickAddState>(
-            listenWhen: (previous, current) =>
-                previous.status != current.status,
-            listener: (context, state) {
-              if (state.status == QuickAddStatus.saved) onClose();
-            },
+          child: BlocBuilder<QuickAddCubit, QuickAddState>(
             builder: (context, state) => switch (state) {
               QuickAddState(status: QuickAddStatus.loading) =>
                 const SizedBox.shrink(),
@@ -273,9 +268,13 @@ class _Sheet extends StatelessWidget {
                   ),
                   const SizedBox(height: BirkaTokens.spaceXs),
                 ],
+                // Once saved, the button turns into a check mark and closes
+                // the sheet.
                 BirkaButton(
                   label: _saveLabel,
                   onPressed: state.canSave ? cubit.save : null,
+                  done: state.status == QuickAddStatus.saved,
+                  onDone: onClose,
                 ),
               ],
             ),
