@@ -1,6 +1,7 @@
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
-import 'package:backup_common/backup_common.dart' show BackupCubit;
+import 'package:backup_common/backup_common.dart'
+    show BackupCubit, SettingsStore, demoStateIn;
 import 'package:backup_flutter/backup_flutter.dart';
 import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/more_page.dart';
@@ -92,6 +93,7 @@ GoRouter buildRouter(
   GetIt getIt, {
   String initialLocation = Paths.overview,
   OnboardingCubit? onboarding,
+  ValueChanged<bool>? onDemoChanged,
 }) {
   final rootKey = GlobalKey<NavigatorState>();
   return GoRouter(
@@ -274,7 +276,11 @@ GoRouter buildRouter(
         parentNavigatorKey: rootKey,
         builder: (context, state) => BlocProvider(
           create: (_) => getIt<BackupCubit>(),
-          child: BackupPage(onBack: () => context.pop()),
+          child: BackupPage(
+            onBack: () => context.pop(),
+            demo: demoStateIn(getIt<SettingsStore>()).isOn,
+            onDemoChanged: onDemoChanged,
+          ),
         ),
       ),
       GoRoute(

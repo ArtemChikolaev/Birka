@@ -12,7 +12,7 @@ import 'package:help_flutter/help_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:ledger/ledger.dart';
 import 'package:onboarding_common/onboarding_common.dart'
-    show registerOnboarding;
+    show OnboardingRepository, onboardingNeeded, registerOnboarding;
 import 'package:overview_common/overview_common.dart';
 import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart';
@@ -22,16 +22,37 @@ import 'package:transactions_common/transactions_common.dart';
 /// The language that the device reports.
 String deviceLanguage() => PlatformDispatcher.instance.locale.languageCode;
 
+/// Opens the ledger that [settings] point to, the one of the device or of its
+/// demo, with every object of the app on it, after closing whatever [getIt]
+/// held. A demo that has just come on fills first (ADR 0019). Says whether a
+/// new device starts with the onboarding.
+Future<bool> openLedger(GetIt getIt, SettingsStore settings) async {
+  await getIt.reset();
+  final name = databaseNameIn(settings);
+  registerDependencies(getIt, settings, databaseName: name);
+  await settleDemo(
+    settings,
+    getIt<LedgerRepository>(),
+    opened: name,
+    now: DateTime.now(),
+  );
+  return onboardingNeeded(settings, getIt<OnboardingRepository>());
+}
+
 /// Puts the objects of the app into [getIt]: the one place that knows every
-/// implementation (ADR 0006). The database opens on its first query, and
-/// [settings] are already open, because the language comes first.
-void registerDependencies(GetIt getIt, SettingsStore settings) {
-  final database = BirkaDatabase(driftDatabase(name: 'birka'));
+/// implementation (ADR 0006). The database [databaseName] opens on its first
+/// query, and [settings] are already open, because the language comes first.
+void registerDependencies(
+  GetIt getIt,
+  SettingsStore settings, {
+  required String databaseName,
+}) {
+  final database = BirkaDatabase(driftDatabase(name: databaseName));
   final ledger = LedgerRepository(database);
   final rates = RatesRepository(database);
   final baseCurrency = BaseCurrency(Settings.readFrom(settings).baseCurrency);
   getIt
-    ..registerSingleton(database)
+    ..registerSingleton(database, dispose: (database) => database.close())
     ..registerSingleton(ledger)
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)

@@ -11,29 +11,28 @@ import 'package:help_common/help_common.dart';
 import 'package:sqlite3/wasm.dart';
 import 'package:web/web.dart' as web;
 
-const _databaseName = 'birka';
-
-/// Opens the database in the storage that Drift picks for this browser, or in
-/// the page where there are no shared workers (ADR 0009). The paths go through
-/// `<base href>`, because a worker resolves a relative one against itself.
-Future<OpenedDatabase> openLocalDatabase() async {
+/// Opens the database [name], that of the ledger or of the demo (ADR 0019), in
+/// the storage that Drift picks for this browser, or in the page where there
+/// are no shared workers (ADR 0009). The paths go through `<base href>`,
+/// because a worker resolves a relative one against itself.
+Future<OpenedDatabase> openLocalDatabase(String name) async {
   final base = Uri.parse(web.document.baseURI);
   final sqlite3Uri = base.resolve('sqlite3.wasm');
   final sharedWorkers = globalContext.has('SharedWorker');
   if (!sharedWorkers) {
-    if (!await _holdTheOnlyTab()) throw const OpenInAnotherTab();
-    final executor = await _openInThePage(sqlite3Uri);
+    if (!await _holdTheOnlyTab(name)) throw const OpenInAnotherTab();
+    final executor = await _openInThePage(sqlite3Uri, name);
     if (executor != null) return OpenedDatabase(executor, persists: true);
   }
   final opened = await WasmDatabase.open(
-    databaseName: _databaseName,
+    databaseName: name,
     sqlite3Uri: sqlite3Uri,
     driftWorkerUri: base.resolve('drift_worker.dart.js'),
   );
   final storage = opened.chosenImplementation;
   if (sharedWorkers &&
       storage == WasmStorageImplementation.unsafeIndexedDb &&
-      !await _holdTheOnlyTab()) {
+      !await _holdTheOnlyTab(name)) {
     await opened.resolvedExecutor.close();
     throw const OpenInAnotherTab();
   }
@@ -66,10 +65,10 @@ void _letGoWhenLeaving(QueryExecutor executor) {
 /// which shows its data sooner without a worker to load (ADR 0009). Drift
 /// waits for IndexedDB after every write, so a saved change outlives the page.
 /// Without IndexedDB there is no such storage.
-Future<QueryExecutor?> _openInThePage(Uri sqlite3Uri) async {
+Future<QueryExecutor?> _openInThePage(Uri sqlite3Uri, String name) async {
   final IndexedDbFileSystem files;
   try {
-    files = await IndexedDbFileSystem.open(dbName: _databaseName);
+    files = await IndexedDbFileSystem.open(dbName: name);
   } on Object {
     return null;
   }
@@ -78,8 +77,9 @@ Future<QueryExecutor?> _openInThePage(Uri sqlite3Uri) async {
   return WasmDatabase(sqlite3: sqlite3, path: '/database', fileSystem: files);
 }
 
-/// Takes a lock for as long as the tab lives, or says that another tab has it.
-Future<bool> _holdTheOnlyTab() {
+/// Takes the lock of database [name] for as long as the tab lives, or says
+/// that another tab has it.
+Future<bool> _holdTheOnlyTab(String name) {
   final taken = Completer<bool>();
   JSPromise<JSAny?>? hold(web.Lock? lock) {
     taken.complete(lock != null);
@@ -90,7 +90,7 @@ Future<bool> _holdTheOnlyTab() {
   unawaited(
     web.window.navigator.locks
         .request(
-          'birka-database',
+          '$name-database',
           web.LockOptions(ifAvailable: true),
           hold.toJS,
         )
@@ -138,6 +138,11 @@ void replaceAddressFragment(String fragment) {
 
 /// Does what the back button of the browser does.
 void goBackInHistory() => web.window.history.back();
+
+/// Opens the page of the site at [path], such as `overview/`.
+void openSitePage(String path) => web.window.location.assign(
+  Uri.parse(web.document.baseURI).resolve(path).toString(),
+);
 
 /// Whether another page of the site led here, so that it stands one step back
 /// in the history. A link opened in a new tab has nothing to step back to, and

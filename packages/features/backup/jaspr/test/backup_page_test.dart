@@ -1,6 +1,7 @@
 import 'package:backup_common/backup_common.dart';
 import 'package:backup_jaspr/backup_jaspr.dart';
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
 import 'package:jaspr_test/jaspr_test.dart';
@@ -14,13 +15,23 @@ void main() {
   late FakeBackupFiles files;
   late FakeSettingsStore store;
 
-  Future<void> pump(ComponentTester tester, {String? note}) async {
+  Future<void> pump(
+    ComponentTester tester, {
+    String? note,
+    bool demo = false,
+    ValueChanged<bool>? onDemoChanged,
+  }) async {
     final cubit = BackupCubit(repository, files, store, now: () => now);
     addTearDown(cubit.close);
     tester.pumpComponent(
       BlocProvider.value(
         value: cubit,
-        child: BackupPage(note: note, clock: () => now),
+        child: BackupPage(
+          note: note,
+          demo: demo,
+          onDemoChanged: onDemoChanged,
+          clock: () => now,
+        ),
       ),
     );
     repository.counts.add(
@@ -159,5 +170,40 @@ void main() {
 
     expect(files.saved.single.name, 'birka-operations-2026-11-02.csv');
     expect(toast().text, 'Файл готов: birka-operations-2026-11-02.csv');
+  });
+
+  testComponents('offers the demo, which the host turns on', (tester) async {
+    final turns = <bool>[];
+    await pump(tester, onDemoChanged: turns.add);
+
+    expect(find.text('Демо-данные'), findsOneComponent);
+    expect(
+      find.text('Пример счетов и операций, чтобы осмотреться'),
+      findsOneComponent,
+    );
+    await tester.click(
+      find.descendant(
+        of: find.byType(BirkaSwitch),
+        matching: find.tag('button'),
+      ),
+    );
+
+    expect(turns, [true]);
+  });
+
+  testComponents('shows the demo that is on', (tester) async {
+    await pump(tester, demo: true, onDemoChanged: (_) {});
+
+    final demo =
+        find.byType(BirkaSwitch).evaluate().single.component as BirkaSwitch;
+    expect(demo.value, isTrue);
+  });
+
+  testComponents('offers no demo without a host that can turn it', (
+    tester,
+  ) async {
+    await pump(tester);
+
+    expect(find.text('Демо-данные'), findsNothing);
   });
 }

@@ -55,6 +55,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   );
   late final Translations$categories$en categories =
       Translations$categories$en.internal(_root);
+  late final Translations$demo$en demo = Translations$demo$en.internal(_root);
   late final Translations$help$en help = Translations$help$en.internal(_root);
   late final Translations$onboarding$en onboarding =
       Translations$onboarding$en.internal(_root);
@@ -263,6 +264,12 @@ class Translations$backup$en {
   /// en: 'Records'
   String get records => 'Records';
 
+  /// en: 'Demo data'
+  String get demo => 'Demo data';
+
+  /// en: 'Sample accounts and operations to look around'
+  String get demoText => 'Sample accounts and operations to look around';
+
   /// en: 'Delete all data'
   String get wipe => 'Delete all data';
 
@@ -413,6 +420,102 @@ class Translations$categories$en {
   };
   late final Translations$categories$form$en form =
       Translations$categories$form$en.internal(_root);
+}
+
+// Path: demo
+class Translations$demo$en {
+  Translations$demo$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Salary card'
+  String get card => 'Salary card';
+
+  /// en: 'Cash'
+  String get cash => 'Cash';
+
+  /// en: 'Savings'
+  String get savings => 'Savings';
+
+  /// en: 'Euro card'
+  String get euro => 'Euro card';
+
+  /// en: 'Advance'
+  String get advance => 'Advance';
+
+  /// en: 'Salary'
+  String get salary => 'Salary';
+
+  /// en: 'Side project'
+  String get project => 'Side project';
+
+  /// en: 'Interest on the balance'
+  String get interest => 'Interest on the balance';
+
+  /// en: 'Supermarket'
+  String get supermarket => 'Supermarket';
+
+  /// en: 'Market'
+  String get market => 'Market';
+
+  /// en: 'Bakery'
+  String get bakery => 'Bakery';
+
+  /// en: 'Coffee shop'
+  String get coffee => 'Coffee shop';
+
+  /// en: 'Lunch with colleagues'
+  String get lunch => 'Lunch with colleagues';
+
+  /// en: 'Metro'
+  String get metro => 'Metro';
+
+  /// en: 'Taxi'
+  String get taxi => 'Taxi';
+
+  /// en: 'Utilities'
+  String get utilities => 'Utilities';
+
+  /// en: 'Phone and internet'
+  String get phone => 'Phone and internet';
+
+  /// en: 'Music'
+  String get music => 'Music';
+
+  /// en: 'Movies and shows'
+  String get movies => 'Movies and shows';
+
+  /// en: 'Pharmacy'
+  String get pharmacy => 'Pharmacy';
+
+  /// en: 'Cinema'
+  String get cinema => 'Cinema';
+
+  /// en: 'Concert'
+  String get concert => 'Concert';
+
+  /// en: 'Clothes'
+  String get clothes => 'Clothes';
+
+  /// en: 'Gift'
+  String get gift => 'Gift';
+
+  /// en: 'Hotel'
+  String get hotel => 'Hotel';
+
+  /// en: 'Trip'
+  String get trip => 'Trip';
+
+  /// en: 'Cash withdrawal'
+  String get toCash => 'Cash withdrawal';
+
+  /// en: 'To savings'
+  String get toSavings => 'To savings';
+
+  /// en: 'Euros for the trip'
+  String get toEuro => 'Euros for the trip';
 }
 
 // Path: help
@@ -1374,6 +1477,8 @@ extension on Translations {
       'backup.exportText' =>
         'For Excel and Google Sheets: date, amount, currency, account, category',
       'backup.records' => 'Records',
+      'backup.demo' => 'Demo data',
+      'backup.demoText' => 'Sample accounts and operations to look around',
       'backup.wipe' => 'Delete all data',
       'backup.filesNote' =>
         'Files go only where you point in the window of the system.',
@@ -1472,6 +1577,35 @@ extension on Translations {
       'categories.form.restore' => 'Bring back from the archive',
       'categories.form.nameMissing' => 'Give the category a name.',
       'categories.form.failed' => 'Could not save. Try again.',
+      'demo.card' => 'Salary card',
+      'demo.cash' => 'Cash',
+      'demo.savings' => 'Savings',
+      'demo.euro' => 'Euro card',
+      'demo.advance' => 'Advance',
+      'demo.salary' => 'Salary',
+      'demo.project' => 'Side project',
+      'demo.interest' => 'Interest on the balance',
+      'demo.supermarket' => 'Supermarket',
+      'demo.market' => 'Market',
+      'demo.bakery' => 'Bakery',
+      'demo.coffee' => 'Coffee shop',
+      'demo.lunch' => 'Lunch with colleagues',
+      'demo.metro' => 'Metro',
+      'demo.taxi' => 'Taxi',
+      'demo.utilities' => 'Utilities',
+      'demo.phone' => 'Phone and internet',
+      'demo.music' => 'Music',
+      'demo.movies' => 'Movies and shows',
+      'demo.pharmacy' => 'Pharmacy',
+      'demo.cinema' => 'Cinema',
+      'demo.concert' => 'Concert',
+      'demo.clothes' => 'Clothes',
+      'demo.gift' => 'Gift',
+      'demo.hotel' => 'Hotel',
+      'demo.trip' => 'Trip',
+      'demo.toCash' => 'Cash withdrawal',
+      'demo.toSavings' => 'To savings',
+      'demo.toEuro' => 'Euros for the trip',
       'help.title' => 'Help',
       'help.back' => 'Back',
       'help.search' => 'Search the help',

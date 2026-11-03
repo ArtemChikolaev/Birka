@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:backup_common/backup_common.dart'
+    show databaseNameIn, settleDemo;
 import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:birka_web/app/dependencies.dart';
@@ -11,6 +13,7 @@ import 'package:get_it/get_it.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
+import 'package:ledger/ledger.dart' show LedgerRepository;
 import 'package:rates/rates.dart' show RatesUpdater;
 import 'package:settings_common/settings_common.dart';
 
@@ -94,8 +97,19 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
 
   Future<void> _open() async {
     try {
-      final opened = await openLocalDatabase();
+      const settings = BrowserSettingsStore();
+      final name = databaseNameIn(settings);
+      final opened = await openLocalDatabase(name);
       registerDependencies(getIt, opened.executor);
+      // A demo that has just come on fills before the page shows it. Another
+      // tab can turn it on meanwhile, so only the database that opened says
+      // whether this is the demo.
+      await settleDemo(
+        settings,
+        getIt<LedgerRepository>(),
+        opened: name,
+        now: DateTime.now(),
+      );
       await prepare();
       setState(() {
         _persists = opened.persists;

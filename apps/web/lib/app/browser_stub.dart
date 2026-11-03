@@ -8,7 +8,7 @@ import 'package:help_common/help_common.dart';
 Never _unavailable() => throw UnsupportedError('This needs a browser.');
 
 /// See `browser_web.dart`.
-Future<OpenedDatabase> openLocalDatabase() => _unavailable();
+Future<OpenedDatabase> openLocalDatabase(String name) => _unavailable();
 
 /// See `browser_web.dart`.
 void logError(Object error, StackTrace stack) => _unavailable();
@@ -32,6 +32,9 @@ void replaceAddressFragment(String fragment) => _unavailable();
 
 /// See `browser_web.dart`.
 void goBackInHistory() => _unavailable();
+
+/// See `browser_web.dart`.
+void openSitePage(String path) => _unavailable();
 
 /// Whether another page of the site led here.
 bool get cameFromSite => _unavailable();
