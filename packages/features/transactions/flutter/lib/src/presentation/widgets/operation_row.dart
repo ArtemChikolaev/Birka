@@ -67,11 +67,7 @@ class OperationRow extends StatelessWidget {
                         ? operation.amount
                         : operation.amountOn(accountId))
                     .minorUnits,
-            // A transfer only moves money, which is neither good nor bad.
-            rise:
-                accountId == null && operation.kind == TransactionKind.transfer
-                ? null
-                : AmountRise.good,
+            rise: operationRise(operation, accountId: accountId),
             tone: accountId == null
                 ? operationTone(operation)
                 : operationToneOn(operation, accountId),
@@ -82,6 +78,14 @@ class OperationRow extends StatelessWidget {
     );
   }
 }
+
+/// What a change of the amount of [operation] means: more is better, but a
+/// transfer only moves money and is neither good nor bad news, unless it is
+/// seen from account [accountId], which it brings money to or takes it from.
+AmountRise? operationRise(Operation operation, {String? accountId}) =>
+    accountId == null && operation.kind == TransactionKind.transfer
+    ? null
+    : AmountRise.good;
 
 /// The color of the amount of [operation]: green for money that comes in and
 /// quiet for a transfer, which only moves it.

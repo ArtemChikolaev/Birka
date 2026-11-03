@@ -195,8 +195,9 @@ class _Capital extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: BirkaTokens.spaceXs),
-              _FadingCaption(
+              FadingText(
                 chartPeriodCaption(state.period.name, month: state.today.month),
+                style: styles.body.copyWith(color: colors.textMuted),
               ),
             ],
           ),
@@ -220,31 +221,6 @@ class _Periods extends StatelessWidget {
       },
       selected: selected,
       onChanged: context.read<OverviewCubit>().periodChanged,
-    );
-  }
-}
-
-/// [text] that cross-fades into a new one, such as the period of a change.
-class _FadingCaption extends StatelessWidget {
-  const _FadingCaption(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final styles = BirkaTextStyles.of(context);
-    final colors = BirkaColors.of(context);
-    return AnimatedSwitcher(
-      duration: BirkaMotion.reduced(context) ? Duration.zero : BirkaMotion.base,
-      layoutBuilder: (current, previous) => Stack(
-        alignment: AlignmentDirectional.centerStart,
-        children: [...previous, ?current],
-      ),
-      child: Text(
-        text,
-        key: ValueKey(text),
-        style: styles.body.copyWith(color: colors.textMuted),
-      ),
     );
   }
 }

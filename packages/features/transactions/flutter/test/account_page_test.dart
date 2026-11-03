@@ -15,6 +15,8 @@ import 'package:ledger/ledger.dart'
         TransactionStatus;
 import 'package:money/money.dart';
 import 'package:transactions_common/transactions_common.dart' hide AccountArt;
+import 'package:transactions_flutter/src/presentation/widgets/operation_row.dart'
+    show operationRise;
 import 'package:transactions_flutter/transactions_flutter.dart';
 
 import 'fake_repository.dart';
@@ -135,6 +137,15 @@ void main() {
     expect(find.byType(BirkaLineChart), findsOneWidget);
     expect(find.text('Operations'.toUpperCase()), findsOneWidget);
     expect(find.text('Coffee'), findsOneWidget);
+  });
+
+  test('a transfer is news only on the page of an account', () {
+    expect(operationRise(expense('coffee', -25000)), AmountRise.good);
+    expect(operationRise(transferIn('move', 500000)), isNull);
+    expect(
+      operationRise(transferIn('move', 500000), accountId: card.id),
+      AmountRise.good,
+    );
   });
 
   testWidgets('keeps the place of its card while it loads', (tester) async {

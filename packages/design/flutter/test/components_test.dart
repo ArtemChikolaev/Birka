@@ -299,6 +299,38 @@ void main() {
     });
   });
 
+  group('FadingText', () {
+    Widget line(String text, {bool reduced = false}) => app(
+      MediaQuery(
+        data: MediaQueryData(disableAnimations: reduced),
+        child: FadingText(text),
+      ),
+    );
+
+    testWidgets('cross-fades into a new line', (tester) async {
+      await tester.pumpWidget(line('this week'));
+      await tester.pumpWidget(line('this month'));
+      await tester.pump(BirkaMotion.base ~/ 2);
+
+      expect(find.text('this week'), findsOneWidget);
+      expect(find.text('this month'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('this week'), findsNothing);
+      expect(find.text('this month'), findsOneWidget);
+    });
+
+    testWidgets('changes at once when asked for less motion', (tester) async {
+      await tester.pumpWidget(line('this week', reduced: true));
+      await tester.pumpWidget(line('this month', reduced: true));
+      await tester.pump();
+
+      expect(find.text('this week'), findsNothing);
+      expect(find.text('this month'), findsOneWidget);
+    });
+  });
+
   group('SectionLabel', () {
     testWidgets('shows capitals but reads the text as written', (
       tester,
