@@ -42,6 +42,29 @@ void main() {
       expect(size.width, BirkaTokens.sizeTouchTarget);
       expect(size.height, BirkaTokens.sizeTouchTarget);
     });
+
+    testWidgets('can go without its glass and stay as big', (tester) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        app(
+          GlassIconButton(
+            glyph: BirkaGlyph.close,
+            label: 'Close',
+            glass: false,
+            onPressed: () => taps++,
+          ),
+        ),
+      );
+
+      await tester.tap(find.bySemanticsLabel('Close'));
+
+      expect(taps, 1);
+      expect(find.byType(GlassSurface), findsNothing);
+      expect(
+        tester.getSize(find.byType(GlassIconButton)),
+        const Size.square(BirkaTokens.sizeTouchTarget),
+      );
+    });
   });
 
   group('BirkaArrowButton', () {

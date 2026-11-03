@@ -35,6 +35,8 @@ export 'src/components/hidden_amounts.dart';
 export 'src/components/section_label.dart';
 export 'src/components/welcome_art.dart';
 export 'src/fonts.dart';
+export 'src/navigation/birka_pages.dart';
 export 'src/theme/birka_colors.dart';
+export 'src/theme/birka_motion.dart';
 export 'src/theme/birka_text_styles.dart';
 export 'src/theme/birka_theme.dart';

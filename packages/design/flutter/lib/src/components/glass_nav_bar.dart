@@ -4,6 +4,7 @@ import 'package:design_flutter/src/components/birka_icon.dart';
 import 'package:design_flutter/src/components/glass_filter.dart';
 import 'package:design_flutter/src/components/glass_painter.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_motion.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
 import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/widgets.dart';
@@ -70,13 +71,6 @@ class GlassNavBar extends StatelessWidget {
     saturation: BirkaTokens.saturationNav,
   );
 
-  static final Curve _spring = Cubic(
-    BirkaTokens.easingSpring[0],
-    BirkaTokens.easingSpring[1],
-    BirkaTokens.easingSpring[2],
-    BirkaTokens.easingSpring[3],
-  );
-
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
@@ -113,10 +107,8 @@ class GlassNavBar extends StatelessWidget {
                     return Stack(
                       children: [
                         AnimatedPositioned(
-                          duration: const Duration(
-                            milliseconds: BirkaTokens.durationSpringMs,
-                          ),
-                          curve: _spring,
+                          duration: BirkaMotion.spring,
+                          curve: BirkaMotion.springCurve,
                           left: slot * selectedSlot,
                           top: 0,
                           bottom: 0,

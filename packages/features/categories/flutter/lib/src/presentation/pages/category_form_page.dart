@@ -93,6 +93,7 @@ class _FormState extends State<_Form> {
                 GlassIconButton(
                   glyph: BirkaGlyph.close,
                   label: t.app.close,
+                  glass: false,
                   onPressed: widget.onClose,
                 ),
               ],

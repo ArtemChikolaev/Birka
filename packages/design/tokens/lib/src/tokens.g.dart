@@ -252,6 +252,11 @@ abstract final class BirkaTokens {
   /// `easing.spring`.
   static const List<double> easingSpring = [0.34, 1.56, 0.64, 1];
 
+  /// For opacity: starts and ends gently, so that a cross-fade does not snap.
+  ///
+  /// `easing.fade`.
+  static const List<double> easingFade = [0.42, 0, 0.58, 1];
+
   /// `radius.xs` in logical pixels.
   static const double radiusXs = 8;
 

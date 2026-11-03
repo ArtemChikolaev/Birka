@@ -101,6 +101,7 @@ class _FormState extends State<_Form> {
                   GlassIconButton(
                     glyph: BirkaGlyph.close,
                     label: t.app.close,
+                    glass: false,
                     onPressed: widget.onClose,
                   ),
                 ],
@@ -128,151 +129,169 @@ class _FormState extends State<_Form> {
                     amount: formatMoney(state.previewBalance),
                   ),
                   const SizedBox(height: BirkaTokens.spaceLg),
-                  BirkaTextField(
-                    label: form.name,
-                    controller: _name,
-                    hint: form.namePlaceholder,
-                    error: state.errors.contains(AccountFormError.nameMissing)
-                        ? form.nameMissing
-                        : null,
-                    onChanged: cubit.nameChanged,
-                    textCapitalization: TextCapitalization.sentences,
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: BirkaTokens.spaceMd),
-                  _Label(form.type),
-                  Wrap(
-                    spacing: BirkaTokens.spaceXs,
-                    runSpacing: BirkaTokens.spaceXs,
-                    children: [
-                      for (final type in state.types)
-                        BirkaChip(
-                          label: accountTypeLabel(type),
-                          selected: type == state.type,
-                          onTap: () => cubit.typeChanged(type),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: BirkaTokens.spaceMd),
-                  _Label(form.currency),
-                  Wrap(
-                    spacing: BirkaTokens.spaceXs,
-                    runSpacing: BirkaTokens.spaceXs,
-                    children: [
-                      for (final currency in state.currencies)
-                        BirkaChip(
-                          label: currency.code,
-                          selected: currency == state.currency,
-                          onTap: state.isNew
-                              ? () => cubit.currencyChanged(currency)
+                  BirkaRise(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        BirkaTextField(
+                          label: form.name,
+                          controller: _name,
+                          hint: form.namePlaceholder,
+                          error:
+                              state.errors.contains(
+                                AccountFormError.nameMissing,
+                              )
+                              ? form.nameMissing
                               : null,
+                          onChanged: cubit.nameChanged,
+                          textCapitalization: TextCapitalization.sentences,
+                          textInputAction: TextInputAction.next,
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: BirkaTokens.spaceMd),
-                  BirkaTextField(
-                    label: state.isDebt ? form.debt : form.balance,
-                    controller: _amount,
-                    hint: '0',
-                    error: state.errors.contains(AccountFormError.amountInvalid)
-                        ? form.amountInvalid
-                        : null,
-                    onChanged: cubit.amountChanged,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    textStyle: styles.amount,
-                  ),
-                  if (state.hasCard) ...[
-                    const SizedBox(height: BirkaTokens.spaceMd),
-                    BirkaTextField(
-                      label: form.lastDigits,
-                      controller: _lastDigits,
-                      hint: '4568',
-                      error:
-                          state.errors.contains(
-                            AccountFormError.lastDigitsInvalid,
-                          )
-                          ? form.lastDigitsInvalid
-                          : null,
-                      onChanged: cubit.lastDigitsChanged,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(4),
+                        const SizedBox(height: BirkaTokens.spaceMd),
+                        _Label(form.type),
+                        Wrap(
+                          spacing: BirkaTokens.spaceXs,
+                          runSpacing: BirkaTokens.spaceXs,
+                          children: [
+                            for (final type in state.types)
+                              BirkaChip(
+                                label: accountTypeLabel(type),
+                                selected: type == state.type,
+                                onTap: () => cubit.typeChanged(type),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: BirkaTokens.spaceMd),
+                        _Label(form.currency),
+                        Wrap(
+                          spacing: BirkaTokens.spaceXs,
+                          runSpacing: BirkaTokens.spaceXs,
+                          children: [
+                            for (final currency in state.currencies)
+                              BirkaChip(
+                                label: currency.code,
+                                selected: currency == state.currency,
+                                onTap: state.isNew
+                                    ? () => cubit.currencyChanged(currency)
+                                    : null,
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: BirkaTokens.spaceMd),
+                        BirkaTextField(
+                          label: state.isDebt ? form.debt : form.balance,
+                          controller: _amount,
+                          hint: '0',
+                          error:
+                              state.errors.contains(
+                                AccountFormError.amountInvalid,
+                              )
+                              ? form.amountInvalid
+                              : null,
+                          onChanged: cubit.amountChanged,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          textStyle: styles.amount,
+                        ),
+                        if (state.hasCard) ...[
+                          const SizedBox(height: BirkaTokens.spaceMd),
+                          BirkaTextField(
+                            label: form.lastDigits,
+                            controller: _lastDigits,
+                            hint: '4568',
+                            error:
+                                state.errors.contains(
+                                  AccountFormError.lastDigitsInvalid,
+                                )
+                                ? form.lastDigitsInvalid
+                                : null,
+                            onChanged: cubit.lastDigitsChanged,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(4),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: BirkaTokens.spaceMd),
+                        _Label(form.art),
+                        Wrap(
+                          spacing: BirkaTokens.spaceSm,
+                          runSpacing: BirkaTokens.spaceSm,
+                          children: [
+                            for (final art in AccountArt.values)
+                              Semantics(
+                                button: true,
+                                selected: art == state.art,
+                                label: art.name,
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () => cubit.artChanged(art),
+                                  child: CardArtThumbnail(
+                                    art: cardArtOf(art),
+                                    highlighted: art == state.art,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: BirkaTokens.spaceLg),
+                        GlassListGroup(
+                          children: [
+                            GlassListRow(
+                              title: form.includeInTotals,
+                              trailing: Switch(
+                                value: state.includeInTotals,
+                                onChanged: (value) =>
+                                    cubit.includeInTotalsChanged(value: value),
+                              ),
+                            ),
+                            if (!state.isNew)
+                              GlassListRow(
+                                title: state.archived
+                                    ? form.restore
+                                    : form.archive,
+                                onTap: cubit.toggleArchived,
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: BirkaTokens.spaceMd),
                       ],
                     ),
-                  ],
-                  const SizedBox(height: BirkaTokens.spaceMd),
-                  _Label(form.art),
-                  Wrap(
-                    spacing: BirkaTokens.spaceSm,
-                    runSpacing: BirkaTokens.spaceSm,
-                    children: [
-                      for (final art in AccountArt.values)
-                        Semantics(
-                          button: true,
-                          selected: art == state.art,
-                          label: art.name,
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => cubit.artChanged(art),
-                            child: CardArtThumbnail(
-                              art: cardArtOf(art),
-                              highlighted: art == state.art,
-                            ),
-                          ),
-                        ),
-                    ],
                   ),
-                  const SizedBox(height: BirkaTokens.spaceLg),
-                  GlassListGroup(
-                    children: [
-                      GlassListRow(
-                        title: form.includeInTotals,
-                        trailing: Switch(
-                          value: state.includeInTotals,
-                          onChanged: (value) =>
-                              cubit.includeInTotalsChanged(value: value),
-                        ),
-                      ),
-                      if (!state.isNew)
-                        GlassListRow(
-                          title: state.archived ? form.restore : form.archive,
-                          onTap: cubit.toggleArchived,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: BirkaTokens.spaceMd),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceXs,
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceMd,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (state.status == AccountFormStatus.failed) ...[
-                    Text(
-                      form.failed,
-                      textAlign: TextAlign.center,
-                      style: styles.caption.copyWith(color: colors.negative),
+            BirkaRise(
+              start: 0.25,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceXs,
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceMd,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (state.status == AccountFormStatus.failed) ...[
+                      Text(
+                        form.failed,
+                        textAlign: TextAlign.center,
+                        style: styles.caption.copyWith(color: colors.negative),
+                      ),
+                      const SizedBox(height: BirkaTokens.spaceXs),
+                    ],
+                    BirkaButton(
+                      label: form.save,
+                      onPressed: state.status == AccountFormStatus.saving
+                          ? null
+                          : cubit.save,
                     ),
-                    const SizedBox(height: BirkaTokens.spaceXs),
                   ],
-                  BirkaButton(
-                    label: form.save,
-                    onPressed: state.status == AccountFormStatus.saving
-                        ? null
-                        : cubit.save,
-                  ),
-                ],
+                ),
               ),
             ),
           ],

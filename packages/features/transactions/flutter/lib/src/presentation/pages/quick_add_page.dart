@@ -163,6 +163,7 @@ class _Header extends StatelessWidget {
         GlassIconButton(
           glyph: BirkaGlyph.close,
           label: t.app.close,
+          glass: false,
           onPressed: onClose,
         ),
       ],
