@@ -92,6 +92,8 @@ class _HelpPageState extends State<HelpPage> {
                     SectionLabel(t.help.questions, color: colors.textMuted),
                     const SizedBox(height: BirkaTokens.spaceSm),
                     GlassListGroup(
+                      // A narrower search changes the list at once.
+                      key: ValueKey(state.query),
                       children: [
                         for (final (index, question) in shown)
                           _Question(
