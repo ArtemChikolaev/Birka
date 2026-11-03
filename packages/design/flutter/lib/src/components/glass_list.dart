@@ -1,3 +1,4 @@
+import 'package:design_flutter/src/components/animated_column.dart';
 import 'package:design_flutter/src/components/birka_icon.dart';
 import 'package:design_flutter/src/components/glass_surface.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
@@ -6,6 +7,10 @@ import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/widgets.dart';
 
 /// A panel of glass with rows and thin lines between them.
+///
+/// When every row has a key, as the rows of a list of things do, a row that
+/// comes opens with the line above it and a row that goes closes, so that the
+/// others move to their places instead of jumping ([AnimatedColumn]).
 class GlassListGroup extends StatelessWidget {
   /// Creates a group of [children], usually [GlassListRow]s.
   const GlassListGroup({required this.children, super.key});
@@ -22,15 +27,31 @@ class GlassListGroup extends StatelessWidget {
         child: ColoredBox(color: BirkaColors.of(context).hairline),
       ),
     );
+    if (children.any((child) => child.key == null)) {
+      return GlassSurface(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final (index, child) in children.indexed) ...[
+              if (index > 0) line,
+              child,
+            ],
+          ],
+        ),
+      );
+    }
     return GlassSurface(
       padding: EdgeInsets.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: AnimatedColumn(
         children: [
-          for (final (index, child) in children.indexed) ...[
-            if (index > 0) line,
-            child,
-          ],
+          for (final (index, child) in children.indexed)
+            Column(
+              key: ValueKey(child.key),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [if (index > 0) line, child],
+            ),
         ],
       ),
     );

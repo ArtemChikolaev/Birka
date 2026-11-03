@@ -302,6 +302,65 @@ void main() {
       );
       expect(lines, hasLength(2));
     });
+
+    // A group stands in a list that scrolls, as on a screen.
+    Widget keyed(List<String> titles) => app(
+      SingleChildScrollView(
+        child: SizedBox(
+          width: 300,
+          child: GlassListGroup(
+            children: [
+              for (final title in titles)
+                GlassListRow(key: ValueKey(title), title: title),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    testWidgets('opens a row that comes, with the line above it', (
+      tester,
+    ) async {
+      await tester.pumpWidget(keyed(['One', 'Two']));
+      final full = tester.getSize(find.byType(GlassListGroup)).height;
+      await tester.pumpWidget(keyed(['One', 'Two', 'Three']));
+      await tester.pump(BirkaMotion.slow ~/ 2);
+
+      final half = tester.getSize(find.byType(GlassListGroup)).height;
+      expect(half, greaterThan(full));
+
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.getSize(find.byType(GlassListGroup)).height,
+        greaterThan(half),
+      );
+      final lines = tester.widgetList<ColoredBox>(
+        find.byWidgetPredicate(
+          (widget) => widget is ColoredBox && widget.color == colors.hairline,
+        ),
+      );
+      expect(lines, hasLength(2));
+    });
+
+    testWidgets('closes a row that goes', (tester) async {
+      await tester.pumpWidget(keyed(['One', 'Two', 'Three']));
+      final full = tester.getSize(find.byType(GlassListGroup)).height;
+      await tester.pumpWidget(keyed(['One', 'Three']));
+      await tester.pump(BirkaMotion.slow ~/ 2);
+
+      expect(find.text('Two'), findsOneWidget);
+      final half = tester.getSize(find.byType(GlassListGroup)).height;
+      expect(half, lessThan(full));
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Two'), findsNothing);
+      expect(
+        tester.getSize(find.byType(GlassListGroup)).height,
+        lessThan(half),
+      );
+    });
   });
 
   group('GlassListRow', () {
@@ -370,6 +429,86 @@ void main() {
         find.byType(AnimatedOpacity),
       );
       expect(opacity.opacity, lessThan(1));
+    });
+
+    Widget saving({required bool done, VoidCallback? onDone}) => app(
+      SizedBox(
+        width: 300,
+        child: BirkaButton(
+          label: 'Save',
+          onPressed: done ? null : () {},
+          done: done,
+          onDone: onDone,
+        ),
+      ),
+    );
+
+    double widthOf(WidgetTester tester) => tester
+        .getSize(
+          find
+              .descendant(
+                of: find.byType(BirkaButton),
+                matching: find.byType(Container),
+              )
+              .first,
+        )
+        .width;
+
+    double checkOf(WidgetTester tester) => tester
+        .widget<Opacity>(
+          find.ancestor(
+            of: find.byType(BirkaIcon),
+            matching: find.byType(Opacity),
+          ),
+        )
+        .opacity;
+
+    testWidgets('closes into a check mark once its action is done', (
+      tester,
+    ) async {
+      var done = 0;
+      await tester.pumpWidget(saving(done: false));
+      await tester.pumpWidget(saving(done: true, onDone: () => done++));
+      await tester.pump(BirkaMotion.fast);
+
+      expect(widthOf(tester), inExclusiveRange(BirkaButton.height, 300));
+
+      await tester.pump(BirkaMotion.slow);
+
+      expect(widthOf(tester), moreOrLessEquals(BirkaButton.height));
+      expect(checkOf(tester), closeTo(1, 0.01));
+      expect(done, 0);
+
+      await tester.pumpAndSettle();
+
+      expect(done, 1);
+      // It stays a check mark, without the dim of a disabled button.
+      expect(
+        tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity,
+        1,
+      );
+    });
+
+    testWidgets('only fades into the check when asked for less motion', (
+      tester,
+    ) async {
+      var done = 0;
+      Widget reduced(Widget child) => MediaQuery(
+        data: const MediaQueryData(disableAnimations: true),
+        child: child,
+      );
+      await tester.pumpWidget(reduced(saving(done: false)));
+      await tester.pumpWidget(
+        reduced(saving(done: true, onDone: () => done++)),
+      );
+      await tester.pump(BirkaMotion.fast);
+
+      expect(widthOf(tester), 300);
+      expect(checkOf(tester), closeTo(1, 0.01));
+
+      await tester.pumpAndSettle();
+
+      expect(done, 1);
     });
   });
 
@@ -485,6 +624,65 @@ void main() {
       );
       final decoration = box.decoration as BoxDecoration;
       expect(decoration.border?.top.color, colors.accent);
+    });
+
+    // One theme for every frame, so that the app has no theme to animate to.
+    final theme = BirkaTheme.dark();
+    Widget card(
+      CardArt art, {
+      bool reduced = false,
+      bool inSight = true,
+    }) => MaterialApp(
+      theme: theme,
+      home: TickerMode(
+        enabled: inSight,
+        child: MediaQuery(
+          data: MediaQueryData(disableAnimations: reduced),
+          child: Center(
+            child: SizedBox(
+              width: 300,
+              height: 190,
+              child: CardArtSurface(art: art),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    testWidgets('a new art fades in over the old one', (tester) async {
+      await tester.pumpWidget(card(CardArt.emerald));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(card(CardArt.amber));
+      await tester.pump(BirkaMotion.slow ~/ 2);
+
+      expect(tester.hasRunningAnimations, isTrue);
+
+      await tester.pumpAndSettle();
+
+      expect(tester.hasRunningAnimations, isFalse);
+    });
+
+    testWidgets('a new art waits until the card is in sight', (tester) async {
+      await tester.pumpWidget(card(CardArt.emerald, inSight: false));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(card(CardArt.amber, inSight: false));
+      await tester.pump();
+
+      expect(tester.hasRunningAnimations, isFalse);
+
+      await tester.pumpWidget(card(CardArt.amber));
+      await tester.pump();
+
+      expect(tester.hasRunningAnimations, isTrue);
+    });
+
+    testWidgets('a new art takes its place at once when asked for less '
+        'motion', (tester) async {
+      await tester.pumpWidget(card(CardArt.emerald, reduced: true));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(card(CardArt.amber, reduced: true));
+
+      expect(tester.hasRunningAnimations, isFalse);
     });
   });
 

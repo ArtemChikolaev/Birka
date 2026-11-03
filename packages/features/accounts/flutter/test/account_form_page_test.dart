@@ -67,6 +67,19 @@ void main() {
     await type(tester, 'Остаток сейчас', '2140');
     await type(tester, 'Последние 4 цифры карты', '1207');
     await tester.tap(find.text('СОХРАНИТЬ'));
+    await tester.pump();
+    await tester.pump(BirkaMotion.fast + BirkaMotion.slow);
+
+    // The button turns into a check mark before the form closes.
+    final check = tester.widget<BirkaIcon>(
+      find.descendant(
+        of: find.byType(BirkaButton),
+        matching: find.byType(BirkaIcon),
+      ),
+    );
+    expect(check.glyph, BirkaGlyph.check);
+    expect(closed, 0);
+
     await tester.pumpAndSettle();
 
     final draft = repository.added.single;

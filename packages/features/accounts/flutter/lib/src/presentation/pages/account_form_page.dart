@@ -23,12 +23,7 @@ class AccountFormPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: AmbientBackground(
         child: SafeArea(
-          child: BlocConsumer<AccountFormCubit, AccountFormState>(
-            listenWhen: (previous, current) =>
-                previous.status != current.status,
-            listener: (context, state) {
-              if (state.status == AccountFormStatus.saved) onClose();
-            },
+          child: BlocBuilder<AccountFormCubit, AccountFormState>(
             buildWhen: (previous, current) =>
                 previous.status == AccountFormStatus.loading,
             builder: (context, state) => switch (state.status) {
@@ -150,33 +145,27 @@ class _FormState extends State<_Form> {
                           ),
                           const SizedBox(height: BirkaTokens.spaceMd),
                           _Label(form.type),
-                          Wrap(
-                            spacing: BirkaTokens.spaceXs,
-                            runSpacing: BirkaTokens.spaceXs,
-                            children: [
+                          ChipSwitch(
+                            options: {
                               for (final type in state.types)
-                                BirkaChip(
-                                  label: accountTypeLabel(type),
-                                  selected: type == state.type,
-                                  onTap: () => cubit.typeChanged(type),
-                                ),
-                            ],
+                                type: accountTypeLabel(type),
+                            },
+                            selected: state.type,
+                            onChanged: cubit.typeChanged,
+                            wrap: true,
                           ),
                           const SizedBox(height: BirkaTokens.spaceMd),
                           _Label(form.currency),
-                          Wrap(
-                            spacing: BirkaTokens.spaceXs,
-                            runSpacing: BirkaTokens.spaceXs,
-                            children: [
+                          ChipSwitch(
+                            options: {
                               for (final currency in state.currencies)
-                                BirkaChip(
-                                  label: currency.code,
-                                  selected: currency == state.currency,
-                                  onTap: state.isNew
-                                      ? () => cubit.currencyChanged(currency)
-                                      : null,
-                                ),
-                            ],
+                                currency: currency.code,
+                            },
+                            selected: state.currency,
+                            onChanged: state.isNew
+                                ? cubit.currencyChanged
+                                : null,
+                            wrap: true,
                           ),
                           const SizedBox(height: BirkaTokens.spaceMd),
                           BirkaTextField(
@@ -286,11 +275,15 @@ class _FormState extends State<_Form> {
                       ),
                       const SizedBox(height: BirkaTokens.spaceXs),
                     ],
+                    // Once saved, the button turns into a check mark and
+                    // closes the form.
                     BirkaButton(
                       label: form.save,
                       onPressed: state.status == AccountFormStatus.saving
                           ? null
                           : cubit.save,
+                      done: state.status == AccountFormStatus.saved,
+                      onDone: widget.onClose,
                     ),
                   ],
                 ),
