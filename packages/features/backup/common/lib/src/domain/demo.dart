@@ -41,13 +41,17 @@ String databaseNameIn(SettingsStore store) =>
 Future<void> turnDemo(SettingsStore store, {required bool on}) =>
     store.write(demoKey, (on ? DemoState.fresh : DemoState.off).name);
 
-/// Fills [ledger], the demo just opened, when the demo has just come on.
-/// Anything else stays as it is.
+/// Fills [ledger] when the database that [opened] is the demo and the demo
+/// has just come on. Anything else stays as it is: the store is shared, so
+/// another tab of the site can turn the demo on while the ledger of the
+/// device opens here, and that ledger must never be filled.
 Future<void> settleDemo(
   SettingsStore store,
   LedgerRepository ledger, {
+  required String opened,
   required DateTime now,
 }) async {
+  if (opened != demoDatabase) return;
   if (demoStateIn(store) != DemoState.fresh) return;
   await fillDemo(ledger, now: now);
   await store.write(demoKey, DemoState.on.name);

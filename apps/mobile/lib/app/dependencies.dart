@@ -26,18 +26,26 @@ String deviceLanguage() => PlatformDispatcher.instance.locale.languageCode;
 /// new device starts with the onboarding.
 Future<bool> openLedger(GetIt getIt, SettingsStore settings) async {
   await getIt.reset();
-  registerDependencies(getIt, settings);
-  await settleDemo(settings, getIt<LedgerRepository>(), now: DateTime.now());
+  final name = databaseNameIn(settings);
+  registerDependencies(getIt, settings, databaseName: name);
+  await settleDemo(
+    settings,
+    getIt<LedgerRepository>(),
+    opened: name,
+    now: DateTime.now(),
+  );
   return onboardingNeeded(settings, getIt<OnboardingRepository>());
 }
 
 /// Puts the objects of the app into [getIt]: the one place that knows every
-/// implementation (ADR 0006). The database opens on its first query, and
-/// [settings] are already open, because the language comes first.
-void registerDependencies(GetIt getIt, SettingsStore settings) {
-  final database = BirkaDatabase(
-    driftDatabase(name: databaseNameIn(settings)),
-  );
+/// implementation (ADR 0006). The database [databaseName] opens on its first
+/// query, and [settings] are already open, because the language comes first.
+void registerDependencies(
+  GetIt getIt,
+  SettingsStore settings, {
+  required String databaseName,
+}) {
+  final database = BirkaDatabase(driftDatabase(name: databaseName));
   final ledger = LedgerRepository(database);
   final rates = RatesRepository(database);
   final baseCurrency = BaseCurrency(Settings.readFrom(settings).baseCurrency);

@@ -98,12 +98,16 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   Future<void> _open() async {
     try {
       const settings = BrowserSettingsStore();
-      final opened = await openLocalDatabase(databaseNameIn(settings));
+      final name = databaseNameIn(settings);
+      final opened = await openLocalDatabase(name);
       registerDependencies(getIt, opened.executor);
-      // A demo that has just come on fills before the page shows it.
+      // A demo that has just come on fills before the page shows it. Another
+      // tab can turn it on meanwhile, so only the database that opened says
+      // whether this is the demo.
       await settleDemo(
         settings,
         getIt<LedgerRepository>(),
+        opened: name,
         now: DateTime.now(),
       );
       await prepare();

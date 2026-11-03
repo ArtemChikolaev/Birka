@@ -48,14 +48,30 @@ void main() {
       final store = FakeSettingsStore();
       await turnDemo(store, on: true);
 
-      await settleDemo(store, ledger, now: now);
+      await settleDemo(store, ledger, opened: demoDatabase, now: now);
       final filled = await ledger.watchCounts().first;
       await ledger.wipe();
-      await settleDemo(store, ledger, now: now);
+      await settleDemo(store, ledger, opened: demoDatabase, now: now);
 
       expect(filled.transactions, greaterThan(100));
       expect(demoStateIn(store), DemoState.on);
       expect((await ledger.watchCounts().first).transactions, 0);
+    });
+
+    test('never fills the ledger of the device', () async {
+      // Another tab turned the demo on while this one opened the ledger.
+      final store = FakeSettingsStore({'demo': 'fresh'});
+      final card = await ledger.addAccount(
+        name: 'Своя карта',
+        type: AccountType.debit,
+        openingBalance: Money(100, Currency.rub),
+      );
+
+      await settleDemo(store, ledger, opened: ledgerDatabase, now: now);
+
+      final accounts = await ledger.watchAccounts().first;
+      expect(accounts.map((it) => it.id), [card.id]);
+      expect(demoStateIn(store), DemoState.fresh);
     });
 
     test('a demo that goes off opens the ledger of the device', () async {
@@ -129,6 +145,15 @@ void main() {
 
       expect(await ledger.watchCounts().first, counts);
       expect(await balances(), first);
+    });
+
+    test('two fills at once leave one demo', () async {
+      await Future.wait([
+        fillDemo(ledger, now: now),
+        fillDemo(ledger, now: now),
+      ]);
+
+      expect(await ledger.watchAccounts().first, hasLength(4));
     });
 
     test('takes the place of whatever the ledger held', () async {

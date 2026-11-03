@@ -10,10 +10,14 @@ import 'package:money/money.dart';
 /// operations up to [now], in the language of the app (ADR 0019).
 ///
 /// The same [now] gives the same demo, which screenshots and checks rely on.
-Future<void> fillDemo(LedgerRepository ledger, {required DateTime now}) async {
-  await ledger.wipe();
-  await ledger.atomically(() => _Demo(ledger, now).fill());
-}
+///
+/// The wipe and the demo are one write, so that two tabs that fill at once
+/// leave one demo.
+Future<void> fillDemo(LedgerRepository ledger, {required DateTime now}) =>
+    ledger.atomically(() async {
+      await ledger.wipe();
+      await _Demo(ledger, now).fill();
+    });
 
 /// The rates of the exchanges of the demo, in kopecks for a dollar and a
 /// euro.
