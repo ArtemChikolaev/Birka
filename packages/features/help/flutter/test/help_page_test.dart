@@ -98,6 +98,9 @@ void main() {
     await pump(tester);
 
     await tester.enterText(find.byType(TextField), 'банка россии');
+    // The rows that the search leaves out go at once, not one by one.
+    await tester.pump();
+    expect(find.text(t.help.storageQuestion), findsNothing);
     await tester.pumpAndSettle();
     expect(find.text(t.help.ratesQuestion), findsOneWidget);
     expect(find.text(t.help.storageQuestion), findsNothing);
