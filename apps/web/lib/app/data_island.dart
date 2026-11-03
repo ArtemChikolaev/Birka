@@ -107,11 +107,6 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
       await settleDemo(
         settings,
         getIt<LedgerRepository>(),
-        now: DateTime.now(),
-        opened: name, // the name passed to openLocalDatabase
-      );
-        settings,
-        getIt<LedgerRepository>(),
         opened: name,
         now: DateTime.now(),
       );
