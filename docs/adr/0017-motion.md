@@ -121,7 +121,9 @@
    instead of in a `SnackBar` of Material, which clips what it holds and
    grows from its bottom edge, and it reads itself out to screen readers.
    A line that the action changes, such as the time of the last copy,
-   cross-fades to the new one (`FadingText`).
+   cross-fades to the new one (`FadingText`). On the site `GlassToast` moves
+   the same way and fades its glass instead of itself: glass inside a parent
+   that fades stops blurring the page under it.
 
 10. The form of a new account moves as «Новый счёт: ввод и сохранение» on
     the canvas shows.

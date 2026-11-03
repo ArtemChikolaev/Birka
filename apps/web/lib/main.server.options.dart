@@ -11,8 +11,11 @@ import 'package:accounts_jaspr/src/presentation/pages/account_form_page.dart'
     as _account_form_page;
 import 'package:accounts_jaspr/src/presentation/pages/accounts_page.dart'
     as _accounts_page;
+import 'package:backup_jaspr/src/presentation/pages/backup_page.dart'
+    as _backup_page;
 import 'package:birka_web/components/capital_preview.dart' as _capital_preview;
 import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
+import 'package:birka_web/pages/backup_island.dart' as _backup_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
 import 'package:birka_web/pages/more_island.dart' as _more_island;
@@ -59,6 +62,7 @@ import 'package:design_jaspr/src/glass_search_field.dart'
     as _glass_search_field;
 import 'package:design_jaspr/src/glass_segmented.dart' as _glass_segmented;
 import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
+import 'package:design_jaspr/src/glass_toast.dart' as _glass_toast;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
 import 'package:design_jaspr/src/welcome_art.dart' as _welcome_art;
@@ -108,6 +112,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
         ClientTarget<_capital_preview.CapitalPreview>('capital_preview'),
     _accounts_island.AccountsIsland:
         ClientTarget<_accounts_island.AccountsIsland>('accounts_island'),
+    _backup_island.BackupIsland: ClientTarget<_backup_island.BackupIsland>(
+      'backup_island',
+    ),
     _categories_island.CategoriesIsland:
         ClientTarget<_categories_island.CategoriesIsland>('categories_island'),
     _more_island.MoreIsland: ClientTarget<_more_island.MoreIsland>(
@@ -125,6 +132,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._account_row.AccountRow.styles,
     ..._account_form_page.AccountFormPage.styles,
     ..._accounts_page.AccountsPage.styles,
+    ..._backup_page.BackupPage.styles,
     ..._capital_preview.CapitalPreview.styles,
     ..._home_route.HomeRoute.styles,
     ..._more_page.MorePage.styles,
@@ -164,6 +172,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glass_search_field.GlassSearchField.styles,
     ..._glass_segmented.GlassSegmented.styles,
     ..._glass_surface.GlassSurface.styles,
+    ..._glass_toast.GlassToast.styles,
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
     ..._welcome_art.WelcomeArt.styles,

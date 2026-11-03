@@ -263,6 +263,9 @@ class Translations$backup$en {
   String get filesNote =>
       'Files go only where you point in the window of the system.';
 
+  /// en: 'Files go where the browser keeps its downloads.'
+  String get filesNoteSite => 'Files go where the browser keeps its downloads.';
+
   /// en: 'Restore from a copy?'
   String get restoreTitle => 'Restore from a copy?';
 
@@ -1216,6 +1219,8 @@ extension on Translations {
       'backup.wipe' => 'Delete all data',
       'backup.filesNote' =>
         'Files go only where you point in the window of the system.',
+      'backup.filesNoteSite' =>
+        'Files go where the browser keeps its downloads.',
       'backup.restoreTitle' => 'Restore from a copy?',
       'backup.restoreText' =>
         'The records on this device will give way to the contents of the file. This cannot be undone, so save a copy of the current ones first if you need them.',

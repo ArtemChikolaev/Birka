@@ -245,6 +245,9 @@ class _Translations$backup$ru extends Translations$backup$en {
   String get filesNote =>
       'Файлы сохраняются только туда, куда вы укажете в окне системы.';
   @override
+  String get filesNoteSite =>
+      'Файлы сохраняются туда же, куда браузер кладёт загрузки.';
+  @override
   String get restoreTitle => 'Восстановить из копии?';
   @override
   String get restoreText =>
@@ -1062,6 +1065,8 @@ extension on TranslationsRu {
       'backup.wipe' => 'Удалить все данные',
       'backup.filesNote' =>
         'Файлы сохраняются только туда, куда вы укажете в окне системы.',
+      'backup.filesNoteSite' =>
+        'Файлы сохраняются туда же, куда браузер кладёт загрузки.',
       'backup.restoreTitle' => 'Восстановить из копии?',
       'backup.restoreText' =>
         'Записи на этом устройстве заменятся содержимым файла. Отменить это нельзя, поэтому сначала сохраните копию нынешних, если они нужны.',

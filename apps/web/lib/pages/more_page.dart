@@ -26,7 +26,11 @@ class MorePage extends StatelessComponent {
             href: 'categories/',
           ),
           _Tile(color: 'var(--color-palette-sky)', label: t.app.import),
-          _Tile(color: 'var(--color-palette-violet)', label: t.app.data),
+          _Tile(
+            color: 'var(--color-palette-violet)',
+            label: t.app.data,
+            href: 'data/',
+          ),
         ]),
         const SettingsSection(),
       ],

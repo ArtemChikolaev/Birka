@@ -37,6 +37,7 @@ export 'src/glass_page_header.dart';
 export 'src/glass_search_field.dart';
 export 'src/glass_segmented.dart';
 export 'src/glass_surface.dart';
+export 'src/glass_toast.dart';
 export 'src/glyph_badge.dart';
 export 'src/hidden_amounts.dart';
 export 'src/section_label.dart';

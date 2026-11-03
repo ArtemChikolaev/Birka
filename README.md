@@ -5,7 +5,8 @@ Local-first expense tracker for money across currencies, banks and countries.
 **Status:** early development. There is nothing to install yet, but the
 [site](https://artemchikolaev.github.io/Birka/) already keeps your capital,
 accounts, categories and operations in your browser, adds your currencies up at
-the rates of the Bank of Russia and reports on your months.
+the rates of the Bank of Russia, reports on your months and saves a copy of
+everything to a file.
 The first milestone is manual tracking with several currencies and reports.
 
 ## Why

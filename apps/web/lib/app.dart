@@ -1,4 +1,5 @@
 import 'package:birka_web/pages/accounts_island.dart';
+import 'package:birka_web/pages/backup_island.dart';
 import 'package:birka_web/pages/categories_island.dart';
 import 'package:birka_web/pages/home_route.dart';
 import 'package:birka_web/pages/more_island.dart';
@@ -49,6 +50,11 @@ class App extends StatelessComponent {
           path: '/categories',
           title: 'Categories · Birka',
           builder: (_, _) => const PageFrame(child: CategoriesIsland()),
+        ),
+        Route(
+          path: '/data',
+          title: 'Data · Birka',
+          builder: (_, _) => const PageFrame(child: BackupIsland()),
         ),
       ],
     );

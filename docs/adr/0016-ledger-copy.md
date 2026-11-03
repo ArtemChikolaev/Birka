@@ -52,7 +52,17 @@
 7. The moment of the last saved copy lives in the store of the settings under
    `last-copy-at`. It is when the person confirmed the save window, since the
    app cannot know where the file went, and a wipe keeps it: the copy is still
-   out there.
+   out there. On the site it is when the download starts, because a page
+   cannot see whether the person kept the file, such as when Safari on iPhone
+   asks first.
+8. The site puts a file into the downloads of the browser and takes one
+   through its file chooser. The chooser asks for `.birka`, JSON and
+   `application/octet-stream`: a computer then shows only copies, and Safari
+   on iPhone, which knows no `.birka` and greys such files out, shows every
+   file, as the app on a phone does. A chooser that closes without a file says
+   so by its `cancel` event, which every browser has had since 2023. The focus
+   that comes back to the window is no such sign: Chrome on Android hands
+   over the chosen file seconds after it.
 
 ## Options considered
 
@@ -74,4 +84,6 @@
   the old ones.
 - A file larger than 64 MB is not a copy: a ledger of many years takes far
   less, and a video chosen by mistake is not read into memory.
-- Demo data, the site and the Help screen come in their own pull requests.
+- A browser older than the `cancel` event keeps the buttons of the data page
+  waiting after its chooser closed without a file, until the page loads again.
+- Demo data and the Help screen come in their own pull requests.

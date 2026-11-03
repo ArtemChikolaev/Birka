@@ -18,6 +18,7 @@ exportText: "For Excel and Google Sheets: date, amount, currency, account, categ
 records: Records
 wipe: Delete all data
 filesNote: Files go only where you point in the window of the system.
+filesNoteSite: Files go where the browser keeps its downloads.
 restoreTitle: Restore from a copy?
 restoreText: The records on this device will give way to the contents of the file. This cannot be undone, so save a copy of the current ones first if you need them.
 replace: Replace the records

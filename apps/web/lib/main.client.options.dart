@@ -10,6 +10,7 @@ import 'package:birka_web/components/capital_preview.dart'
     deferred as _capital_preview;
 import 'package:birka_web/pages/accounts_island.dart'
     deferred as _accounts_island;
+import 'package:birka_web/pages/backup_island.dart' deferred as _backup_island;
 import 'package:birka_web/pages/categories_island.dart'
     deferred as _categories_island;
 import 'package:birka_web/pages/more_island.dart' deferred as _more_island;
@@ -45,6 +46,10 @@ ClientOptions get defaultClientOptions => ClientOptions(
     'accounts_island': ClientLoader(
       (p) => _accounts_island.AccountsIsland(),
       loader: _accounts_island.loadLibrary,
+    ),
+    'backup_island': ClientLoader(
+      (p) => _backup_island.BackupIsland(),
+      loader: _backup_island.loadLibrary,
     ),
     'categories_island': ClientLoader(
       (p) => _categories_island.CategoriesIsland(),
