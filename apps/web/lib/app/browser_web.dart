@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
+import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/opened_database.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
@@ -203,4 +204,88 @@ void keepValue(String key, String value) {
   } on Object {
     return;
   }
+}
+
+/// Saves a file into the downloads of the browser and opens one through its
+/// file chooser (ADR 0016). A page cannot learn whether the person kept a
+/// download, so a save counts as done once the download starts.
+///
+/// The chooser says that it closed without a file through its `cancel` event,
+/// which every browser has had since 2023. An older one keeps the page waiting
+/// until it loads again. Guessing from the focus of the window instead loses
+/// a file that Chrome on Android hands over a few seconds after the window
+/// comes back.
+final class BrowserBackupFiles implements BackupFiles {
+  /// Creates the windows of the browser.
+  const BrowserBackupFiles();
+
+  @override
+  Future<bool> save({
+    required String name,
+    required String type,
+    required Uint8List bytes,
+  }) async {
+    final blob = web.Blob(
+      <web.BlobPart>[bytes.toJS].toJS,
+      web.BlobPropertyBag(type: type),
+    );
+    final address = web.URL.createObjectURL(blob);
+    final link = web.HTMLAnchorElement()
+      ..href = address
+      ..download = name;
+    web.document.body?.append(link);
+    link
+      ..click()
+      ..remove();
+    // The download keeps the file once it has started.
+    Timer(const Duration(minutes: 1), () => web.URL.revokeObjectURL(address));
+    return true;
+  }
+
+  @override
+  Future<ChosenFile?> open() {
+    final chosen = Completer<ChosenFile?>();
+    // A computer shows only copies. Safari on iPhone knows no `.birka` and
+    // would grey every copy out, and the octet-stream lets it show any file,
+    // as the app on a phone does.
+    final input = web.HTMLInputElement()
+      ..type = 'file'
+      ..accept = '.birka,application/json,application/octet-stream';
+    input.style.display = 'none';
+    void done(ChosenFile? file) {
+      if (chosen.isCompleted) return;
+      input.remove();
+      chosen.complete(file);
+    }
+
+    input
+      ..addEventListener(
+        'change',
+        ((web.Event _) {
+          final file = input.files?.item(0);
+          done(file == null ? null : _BrowserFile(file));
+        }).toJS,
+      )
+      ..addEventListener('cancel', ((web.Event _) => done(null)).toJS);
+    web.document.body?.append(input);
+    input.click();
+    return chosen.future;
+  }
+}
+
+/// A file that the person chose in the browser.
+final class _BrowserFile implements ChosenFile {
+  const _BrowserFile(this._file);
+
+  final web.File _file;
+
+  @override
+  String get name => _file.name;
+
+  @override
+  Future<int?> length() async => _file.size;
+
+  @override
+  Future<Uint8List> read() async =>
+      (await _file.arrayBuffer().toDart).toDart.asUint8List();
 }

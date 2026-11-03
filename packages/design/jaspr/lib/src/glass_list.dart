@@ -30,11 +30,13 @@ class GlassListRow extends StatelessComponent {
   const GlassListRow({
     required this.title,
     this.subtitle,
+    this.subtitleLines = 1,
     this.leading,
     this.trailing,
     this.href,
     this.onTap,
     this.indented = false,
+    this.danger = false,
     super.key,
   });
 
@@ -43,6 +45,9 @@ class GlassListRow extends StatelessComponent {
 
   /// The quieter line under [title].
   final String? subtitle;
+
+  /// How many lines [subtitle] takes before it is cut.
+  final int subtitleLines;
 
   /// What stands before the text, such as a small picture.
   final Component? leading;
@@ -59,18 +64,33 @@ class GlassListRow extends StatelessComponent {
   /// Whether the row stands under the row before it, such as a subcategory.
   final bool indented;
 
+  /// Whether the row does what cannot be taken back, with its title in the
+  /// color of a loss.
+  final bool danger;
+
   @override
   Component build(BuildContext context) {
     final subtitle = this.subtitle;
-    final indent = indented ? ' glass-row--indented' : '';
+    final indent =
+        '${indented ? ' glass-row--indented' : ''}'
+        '${danger ? ' glass-row--danger' : ''}';
     final content = [
       ?leading,
       span(classes: 'glass-row__text', [
         span(classes: 'text-body-strong glass-row__line', [.text(title)]),
         if (subtitle != null)
-          span(classes: 'text-caption glass-row__line glass-row__subtitle', [
-            .text(subtitle),
-          ]),
+          subtitleLines > 1
+              ? span(
+                  classes: 'text-caption glass-row__lines glass-row__subtitle',
+                  styles: Styles(
+                    raw: {'-webkit-line-clamp': '$subtitleLines'},
+                  ),
+                  [.text(subtitle)],
+                )
+              : span(
+                  classes: 'text-caption glass-row__line glass-row__subtitle',
+                  [.text(subtitle)],
+                ),
       ]),
       ?trailing,
     ];
@@ -158,5 +178,13 @@ class GlassListRow extends StatelessComponent {
     css('.glass-row__subtitle').styles(
       raw: {'color': 'var(--color-text-muted)'},
     ),
+    css('.glass-row__lines').styles(
+      raw: {
+        '-webkit-box-orient': 'vertical',
+        'display': '-webkit-box',
+        'overflow': 'hidden',
+      },
+    ),
+    css('.glass-row--danger').styles(raw: {'color': 'var(--color-negative)'}),
   ];
 }

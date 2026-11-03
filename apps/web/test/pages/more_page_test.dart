@@ -35,7 +35,9 @@ void main() {
     ),
   );
 
-  testComponents('leads to the accounts and the categories', (tester) async {
+  testComponents('leads to the accounts, the categories and the data', (
+    tester,
+  ) async {
     pump(tester);
 
     expect(find.text('Ещё'), findsOneComponent);
@@ -47,7 +49,7 @@ void main() {
             (element) =>
                 (element.component as DomComponent).attributes?['href'],
           ),
-      ['accounts/', 'categories/', 'https://www.cbr-xml-daily.ru/'],
+      ['accounts/', 'categories/', 'data/', 'https://www.cbr-xml-daily.ru/'],
     );
     expect(
       find.descendant(of: find.tag('a'), matching: find.text('Счета')),
@@ -57,14 +59,17 @@ void main() {
       find.descendant(of: find.tag('a'), matching: find.text('Категории')),
       findsOneComponent,
     );
+    expect(
+      find.descendant(of: find.tag('a'), matching: find.text('Данные')),
+      findsOneComponent,
+    );
   });
 
-  testComponents('says that the rest is yet to come', (tester) async {
+  testComponents('says that the import is yet to come', (tester) async {
     pump(tester);
 
     expect(find.text('Импорт'), findsOneComponent);
-    expect(find.text('Данные'), findsOneComponent);
-    expect(find.text('скоро'), findsNComponents(2));
+    expect(find.text('скоро'), findsOneComponent);
   });
 
   testComponents('holds the settings', (tester) async {

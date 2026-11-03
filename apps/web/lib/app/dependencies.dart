@@ -1,4 +1,5 @@
 import 'package:accounts_common/accounts_common.dart';
+import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:categories_common/categories_common.dart';
@@ -28,6 +29,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
     ..registerSingleton(ledger)
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)
+    ..registerSingleton<BackupFiles>(const BrowserBackupFiles())
     ..registerSingleton(
       RatesUpdater(
         rates,
@@ -37,6 +39,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
       ),
     );
   registerAccounts(getIt);
+  registerBackup(getIt, const BrowserSettingsStore());
   registerCategories(getIt);
   registerOnboarding(
     getIt,

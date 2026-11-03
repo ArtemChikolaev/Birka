@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/opened_database.dart';
 
 /// The islands stop at `kIsWeb` on the VM, so nothing here ever runs.
@@ -52,3 +55,19 @@ String? keptValue(String key) => _unavailable();
 
 /// See `browser_web.dart`.
 void keepValue(String key, String value) => _unavailable();
+
+/// See `browser_web.dart`.
+final class BrowserBackupFiles implements BackupFiles {
+  /// See `browser_web.dart`.
+  const BrowserBackupFiles();
+
+  @override
+  Future<bool> save({
+    required String name,
+    required String type,
+    required Uint8List bytes,
+  }) => _unavailable();
+
+  @override
+  Future<ChosenFile?> open() => _unavailable();
+}

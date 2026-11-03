@@ -1,4 +1,5 @@
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_test/jaspr_test.dart';
@@ -1329,5 +1330,51 @@ void main() {
 
       expect(withClasses('glass-row glass-row--indented'), findsOneComponent);
     });
+  });
+
+  testComponents('GlassToast says it, then goes and says so', (tester) async {
+    fakeAsync((time) {
+      var gone = 0;
+      tester.pumpComponent(GlassToast('Copy saved', onGone: () => gone++));
+
+      expect(find.text('Copy saved'), findsOneComponent);
+      expect(attributesOf(withClasses('glass-toast'))['role'], 'status');
+
+      time
+        ..elapse(GlassToast.stay)
+        ..flushMicrotasks();
+      expect(
+        withClasses('glass-toast glass-toast--leaving'),
+        findsOneComponent,
+      );
+      expect(gone, 0);
+
+      time.elapse(GlassToast.leave);
+      expect(gone, 1);
+    });
+  });
+
+  testComponents('GlassToast of trouble wears a cross', (tester) async {
+    tester.pumpComponent(
+      GlassToast('Not a copy', trouble: true, onGone: () {}),
+    );
+
+    expect(withClasses('glass-toast glass-toast--trouble'), findsOneComponent);
+    final icon =
+        find.byType(BirkaIcon).evaluate().single.component as BirkaIcon;
+    expect(icon.glyph, BirkaGlyph.close);
+  });
+
+  testComponents('GlassListRow that cannot be taken back is red', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      GlassListRow(title: 'Delete everything', danger: true, onTap: () {}),
+    );
+
+    expect(
+      withClasses('glass-row glass-row--action glass-row--danger'),
+      findsOneComponent,
+    );
   });
 }

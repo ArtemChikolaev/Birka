@@ -22,6 +22,7 @@ workspace:
   - packages/features/accounts/jaspr
   - packages/features/backup/common
   - packages/features/backup/flutter
+  - packages/features/backup/jaspr
   - packages/features/categories/common
   - packages/features/categories/flutter
   - packages/features/categories/jaspr
