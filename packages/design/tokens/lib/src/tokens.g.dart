@@ -239,7 +239,8 @@ abstract final class BirkaTokens {
   /// `duration.slow` in milliseconds.
   static const int durationSlowMs = 320;
 
-  /// Digits that roll to a new figure.
+  /// Digits that roll to a new figure, and the parts of a ring that move to
+  /// their new shares.
   ///
   /// `duration.roll` in milliseconds.
   static const int durationRollMs = 520;

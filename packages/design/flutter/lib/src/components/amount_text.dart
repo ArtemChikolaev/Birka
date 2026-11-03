@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:design_flutter/src/components/hidden_amounts.dart';
+import 'package:design_flutter/src/components/in_sight.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
 import 'package:design_flutter/src/theme/birka_motion.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// The color of an [AmountText].
@@ -46,6 +47,9 @@ enum AmountRise {
 /// figure shows again. A figure does not roll the first time it shows, nor
 /// into another currency, nor while amounts are hidden; when the system asks
 /// for less motion, it changes at once and only its color comes and goes.
+///
+/// When amounts get hidden, its digits blur away as the dots come, and come
+/// back sharp when they are shown again.
 class AmountText extends StatefulWidget {
   /// Creates a figure.
   const AmountText(
@@ -85,7 +89,7 @@ class AmountText extends StatefulWidget {
 typedef _Figure = ({String text, num? value});
 
 class _AmountTextState extends State<AmountText>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin, InSight {
   // What the figure shows once it settles.
   late _Figure _shown = (text: widget.text, value: widget.value);
 
@@ -95,19 +99,31 @@ class _AmountTextState extends State<AmountText>
   // What it showed before a change that waits for it to come into sight.
   _Figure? _waiting;
 
-  AnimationController? _controller;
-  ValueListenable<bool>? _inSight;
-  bool _hidden = false;
+  AnimationController? _roll;
+
+  // Whether amounts are hidden, and whether they were before the eye moved.
+  bool? _hidden;
+  bool _wasHidden = false;
+  AnimationController? _eye;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _hidden = HiddenAmounts.of(context);
-    final inSight = TickerMode.getNotifier(context);
-    if (inSight != _inSight) {
-      _inSight?.removeListener(_cameIntoSight);
-      _inSight = inSight..addListener(_cameIntoSight);
+    final hidden = HiddenAmounts.of(context);
+    final before = _hidden;
+    _hidden = hidden;
+    if (before == null || before == hidden || widget.alwaysShown) return;
+    _settle();
+    if (!inSight) {
+      _eye?.stop();
+      return;
     }
+    _wasHidden = before;
+    final eye = _eye ??= AnimationController(
+      vsync: this,
+      duration: BirkaMotion.base,
+    )..addStatusListener(_settled);
+    unawaited(eye.forward(from: 0));
   }
 
   @override
@@ -118,56 +134,55 @@ class _AmountTextState extends State<AmountText>
     final from = _waiting ?? _shown;
     _shown = next;
     _waiting = null;
+    forgetHeld();
     if (!_rolls(from)) {
       _settle();
-    } else if (_inSight?.value ?? true) {
-      _roll(from);
+    } else if (inSight) {
+      _start(from);
     } else {
       _waiting = from;
+      whenInSight(
+        () => setState(() {
+          final from = _waiting;
+          _waiting = null;
+          if (from != null && _rolls(from)) _start(from);
+        }),
+      );
     }
   }
 
   @override
   void dispose() {
-    _inSight?.removeListener(_cameIntoSight);
-    _controller?.dispose();
+    _roll?.dispose();
+    _eye?.dispose();
     super.dispose();
   }
 
   bool _rolls(_Figure from) {
     final (:text, :value) = _shown;
-    return !_hidden &&
+    return !(_hidden ?? false) &&
         from.value != null &&
         value != null &&
         from.value != value &&
         _unitOf(from.text) == _unitOf(text);
   }
 
-  void _cameIntoSight() {
-    final from = _waiting;
-    if (from == null || !_inSight!.value || !mounted) return;
-    setState(() {
-      _waiting = null;
-      if (_rolls(from)) _roll(from);
-    });
-  }
-
-  void _roll(_Figure from) {
-    final controller = _controller ??= AnimationController(vsync: this)
-      ..addStatusListener(_rolled);
+  void _start(_Figure from) {
+    final roll = _roll ??= AnimationController(vsync: this)
+      ..addStatusListener(_settled);
     _from = from;
-    controller.duration = widget.rise == null
+    roll.duration = widget.rise == null
         ? BirkaMotion.roll
         : BirkaMotion.roll + BirkaMotion.slow;
-    unawaited(controller.forward(from: 0));
+    unawaited(roll.forward(from: 0));
   }
 
-  void _rolled(AnimationStatus status) {
+  void _settled(AnimationStatus status) {
     if (status.isCompleted && mounted) setState(() => _from = null);
   }
 
   void _settle() {
-    _controller?.stop();
+    _roll?.stop();
     _from = null;
   }
 
@@ -184,21 +199,27 @@ class _AmountTextState extends State<AmountText>
       fontFeatures: const [FontFeature.tabularFigures()],
     );
     final from = _from;
-    final controller = _controller;
+    final roll = _roll;
+    final eye = _eye;
     final Widget figure;
-    if (from == null || controller == null) {
+    if (eye != null && eye.isAnimating) {
+      figure = AnimatedBuilder(
+        animation: eye,
+        builder: (context, _) => _blinking(_shown.text, style, eye.value),
+      );
+    } else if (from != null && roll != null) {
+      final base = DefaultTextStyle.of(context).style.merge(style);
+      figure = AnimatedBuilder(
+        animation: roll,
+        builder: (context, _) => _rolling(from, base, roll),
+      );
+    } else {
       final text = (_waiting ?? _shown).text;
       figure = Text(
         widget.alwaysShown ? text : HiddenAmounts.mask(context, text),
         maxLines: 1,
         softWrap: false,
         style: style,
-      );
-    } else {
-      final base = DefaultTextStyle.of(context).style.merge(style);
-      figure = AnimatedBuilder(
-        animation: controller,
-        builder: (context, _) => _rolling(from, base, controller),
       );
     }
     return FittedBox(
@@ -207,6 +228,52 @@ class _AmountTextState extends State<AmountText>
       child: figure,
     );
   }
+
+  /// The figure [moved] of the way between its digits and its dots: the
+  /// digits blur away as the dots come, and come back sharp as they go.
+  Widget _blinking(String text, TextStyle style, double moved) {
+    final hiding = !_wasHidden;
+    final hidden = hiding ? moved : 1 - moved;
+    final blur = BirkaMotion.standardCurve.transform(hidden) * _blur;
+    final digits = Opacity(
+      opacity: 1 - BirkaMotion.fadeCurve.transform(hidden),
+      child: ImageFiltered(
+        imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+        child: Text(text, maxLines: 1, softWrap: false, style: style),
+      ),
+    );
+    final dots = Opacity(
+      opacity: BirkaMotion.fadeCurve.transform(
+        hiding
+            ? const Interval(0.35, 1).transform(moved)
+            : 1 - const Interval(0, 0.65).transform(moved),
+      ),
+      child: Text(
+        HiddenAmounts.masked(text),
+        maxLines: 1,
+        softWrap: false,
+        style: style,
+      ),
+    );
+    // What stays gives the figure its size.
+    final (stays, goes) = hiding ? (dots, digits) : (digits, dots);
+    return Semantics(
+      label: hiding ? HiddenAmounts.masked(text) : text,
+      child: ExcludeSemantics(
+        // A wider figure on its way out shows past the narrower one.
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            stays,
+            PositionedDirectional(start: 0, top: 0, child: goes),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// How much the digits blur as they hide.
+  static const double _blur = 8;
 
   Widget _rolling(_Figure from, TextStyle base, AnimationController roll) {
     final (:text, :value) = _shown;
@@ -375,6 +442,7 @@ class _Swap extends StatelessWidget {
     return ClipRect(
       clipper: const _AboveAndBelow(),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           FractionalTranslation(
             translation: Offset(0, up ? 1 - rolled : rolled - 1),

@@ -206,6 +206,7 @@ class _Ring extends StatelessWidget {
           RingSlice(
             line.total.minorUnits.toDouble(),
             _colorOf(line.category, colors),
+            id: line.category.id,
           ),
       ],
       child: Column(

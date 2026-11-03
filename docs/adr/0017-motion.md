@@ -94,6 +94,13 @@
    - Figures that change because the owner looks elsewhere, another month, a
      filter or a kind of report, start anew instead of rolling, and lists
      key their rows, so that no row rolls into the figure of another.
+   - The parts of a ring move to their new shares over the same time: a new
+     part grows from nothing in its place and one that goes shrinks to
+     nothing (`RingSlice.id` keeps a part in its place). A row that comes to
+     a short list opens and one that goes closes (`AnimatedColumn`), such as
+     a new category of the month under the ring of Обзор.
+   - When amounts get hidden, their digits blur away as the dots come, and
+     come back sharp when they are shown.
 
 ## Consequences
 

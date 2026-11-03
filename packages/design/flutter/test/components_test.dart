@@ -239,6 +239,12 @@ void main() {
 
       expect(find.text('999 ₽'), findsOneWidget);
       expect(find.text('1 000 ₽'), findsOneWidget);
+      final stack = tester.widget<Stack>(
+        find
+            .ancestor(of: find.text('999 ₽'), matching: find.byType(Stack))
+            .first,
+      );
+      expect(stack.clipBehavior, Clip.none);
 
       await tester.pumpAndSettle();
 
@@ -285,6 +291,52 @@ void main() {
         );
       });
     }
+
+    for (final hide in [true, false]) {
+      testWidgets(
+        hide
+            ? 'blurs its digits away as amounts get hidden'
+            : 'brings its digits back sharp as amounts get shown',
+        (tester) async {
+          hidden.value = !hide;
+          await tester.pumpWidget(figure('49 650 ₽', 4965000));
+          hidden.value = hide;
+          await tester.pump();
+          await tester.pump(BirkaMotion.base ~/ 2);
+
+          expect(find.text('49 650 ₽'), findsOneWidget);
+          expect(find.text('••• ₽'), findsOneWidget);
+          expect(
+            find.ancestor(
+              of: find.text('49 650 ₽'),
+              matching: find.byType(ImageFiltered),
+            ),
+            findsOneWidget,
+          );
+          // The digits are wider than the dots and show past them.
+          final stack = tester.widget<Stack>(
+            find
+                .ancestor(of: find.text('••• ₽'), matching: find.byType(Stack))
+                .first,
+          );
+          expect(stack.clipBehavior, Clip.none);
+
+          await tester.pumpAndSettle();
+
+          expect(find.text('49 650 ₽'), hide ? findsNothing : findsOneWidget);
+          expect(find.text('••• ₽'), hide ? findsOneWidget : findsNothing);
+        },
+      );
+    }
+
+    testWidgets('just hides its digits out of sight', (tester) async {
+      await tester.pumpWidget(figure('49 650 ₽', 4965000, inSight: false));
+      hidden.value = true;
+      await tester.pump();
+
+      expect(find.text('••• ₽', skipOffstage: false), findsOneWidget);
+      expect(find.byType(ImageFiltered, skipOffstage: false), findsNothing);
+    });
 
     testWidgets('only flashes when the system asks for less motion', (
       tester,
