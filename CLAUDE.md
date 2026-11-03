@@ -86,6 +86,9 @@ Extend what exists instead of duplicating it.
   fades when `BirkaMotion.reduced` says so.
 - A list between a header and a button that stay in place goes into
   `ScrollEdgeFade`: it fades softly into them instead of breaking off.
+- An amount that can change on screen gets `value` on `AmountText`, and
+  `rise` when its change is good or bad news (ADR 0017); a list of such
+  amounts keys its rows.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
   `make icons`, and never edit the generated icons by hand. The art of the

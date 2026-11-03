@@ -158,6 +158,147 @@ void main() {
     });
   });
 
+  group('AmountText with a value', () {
+    late ValueNotifier<bool> hidden;
+    setUp(() => hidden = ValueNotifier(false));
+    tearDown(() => hidden.dispose());
+
+    Widget figure(
+      String text,
+      num value, {
+      AmountRise? rise = AmountRise.good,
+      bool inSight = true,
+      bool reduced = false,
+    }) => app(
+      HiddenAmounts(
+        notifier: hidden,
+        child: TickerMode(
+          enabled: inSight,
+          child: MediaQuery(
+            data: MediaQueryData(disableAnimations: reduced),
+            child: AmountText(text, value: value, rise: rise),
+          ),
+        ),
+      ),
+    );
+
+    Color? colorOf(WidgetTester tester, String text) =>
+        tester.widget<Text>(find.text(text)).style?.color;
+
+    testWidgets('rolls only the digits that change', (tester) async {
+      await tester.pumpWidget(figure('49 650 ₽', 4965000));
+      await tester.pumpWidget(figure('49 150 ₽', 4915000));
+      await tester.pump(BirkaMotion.roll ~/ 2);
+
+      expect(find.text('49 150 ₽'), findsNothing);
+      expect(find.text('49 '), findsOneWidget);
+      expect(find.text('50 ₽'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('49 150 ₽'), findsOneWidget);
+      expect(find.text('49 '), findsNothing);
+    });
+
+    for (final (rise, from, to, news) in [
+      (AmountRise.good, 4965000, 4915000, colors.negative),
+      (AmountRise.good, 4915000, 4965000, colors.positive),
+      (AmountRise.bad, 4915000, 4965000, colors.negative),
+      (AmountRise.bad, 4965000, 4915000, colors.positive),
+    ]) {
+      testWidgets('takes the color of the news when a ${rise.name} figure '
+          '${to > from ? 'grows' : 'shrinks'}, then its own', (tester) async {
+        String label(int value) => '49 ${value ~/ 10000 % 10}50 ₽';
+        await tester.pumpWidget(figure(label(from), from, rise: rise));
+        await tester.pumpWidget(figure(label(to), to, rise: rise));
+        await tester.pump(BirkaMotion.roll ~/ 2);
+
+        expect(colorOf(tester, '49 '), news);
+
+        await tester.pumpAndSettle();
+
+        expect(colorOf(tester, label(to)), isNot(news));
+      });
+    }
+
+    testWidgets('without a rise it rolls in its own color', (tester) async {
+      await tester.pumpWidget(figure('49 650 ₽', 4965000, rise: null));
+      await tester.pumpWidget(figure('49 150 ₽', 4915000, rise: null));
+      await tester.pump(BirkaMotion.roll ~/ 2);
+
+      expect(find.text('49 '), findsOneWidget);
+      expect(colorOf(tester, '49 '), isNot(colors.negative));
+    });
+
+    testWidgets('a figure of another shape rolls out as the new one rolls in', (
+      tester,
+    ) async {
+      await tester.pumpWidget(figure('999 ₽', 99900));
+      await tester.pumpWidget(figure('1 000 ₽', 100000));
+      await tester.pump(BirkaMotion.roll ~/ 2);
+
+      expect(find.text('999 ₽'), findsOneWidget);
+      expect(find.text('1 000 ₽'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('999 ₽'), findsNothing);
+      expect(find.text('1 000 ₽'), findsOneWidget);
+    });
+
+    testWidgets('waits out of sight and rolls once it shows again', (
+      tester,
+    ) async {
+      await tester.pumpWidget(figure('49 650 ₽', 4965000));
+      await tester.pumpWidget(figure('49 150 ₽', 4915000, inSight: false));
+      await tester.pump(BirkaMotion.roll * 2);
+
+      expect(find.text('49 650 ₽', skipOffstage: false), findsOneWidget);
+
+      await tester.pumpWidget(figure('49 150 ₽', 4915000));
+      await tester.pump(BirkaMotion.roll ~/ 2);
+
+      expect(find.text('49 '), findsOneWidget);
+      expect(colorOf(tester, '49 '), colors.negative);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('49 150 ₽'), findsOneWidget);
+    });
+
+    for (final (why, from, to, hide) in [
+      ('the first time it shows', null, '49 650 ₽', false),
+      ('into another currency', '100 ₽', r'$200', false),
+      ('while amounts are hidden', '100 ₽', '200 ₽', true),
+    ]) {
+      testWidgets('just changes $why', (tester) async {
+        hidden.value = hide;
+        if (from != null) await tester.pumpWidget(figure(from, 10000));
+        await tester.pumpWidget(figure(to, 20000));
+        await tester.pump(BirkaMotion.roll ~/ 2);
+
+        expect(
+          find.text(
+            HiddenAmounts.mask(tester.element(find.byType(AmountText)), to),
+          ),
+          findsOneWidget,
+        );
+      });
+    }
+
+    testWidgets('only flashes when the system asks for less motion', (
+      tester,
+    ) async {
+      await tester.pumpWidget(figure('49 650 ₽', 4965000, reduced: true));
+      await tester.pumpWidget(figure('49 150 ₽', 4915000, reduced: true));
+      await tester.pump(BirkaMotion.roll ~/ 2);
+
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('6'), findsNothing);
+      expect(colorOf(tester, '49 '), colors.negative);
+    });
+  });
+
   group('SectionLabel', () {
     testWidgets('shows capitals but reads the text as written', (
       tester,

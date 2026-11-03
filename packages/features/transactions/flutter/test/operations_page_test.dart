@@ -111,7 +111,8 @@ void main() {
     expect(find.text('СЕГОДНЯ'), findsOneWidget);
     expect(find.text('ВЧЕРА'), findsOneWidget);
     expect(find.text('3 ОКТЯБРЯ'), findsOneWidget);
-    expect(find.text('−380$space₽'), findsOneWidget);
+    // What today took and what the month took, which are the same.
+    expect(find.text('−380$space₽'), findsNWidgets(2));
     expect(find.text('Кофейня у дома'), findsOneWidget);
     expect(find.text('Кафе · Карта'), findsOneWidget);
     expect(find.text('Продукты'), findsOneWidget);

@@ -8,13 +8,23 @@ import 'package:flutter/widgets.dart';
 /// A pill with the arrow and the amount of a change.
 class BirkaChangePill extends StatelessWidget {
   /// Creates a pill that says [label].
-  const BirkaChangePill({required this.label, required this.rise, super.key});
+  const BirkaChangePill({
+    required this.label,
+    required this.rise,
+    this.value,
+    super.key,
+  });
 
   /// The formatted amount with its sign.
   final String label;
 
   /// Whether the amount went up.
   final bool rise;
+
+  /// How big the change is, such as in minor units, so that it rolls to a
+  /// new one ([AmountText.value]). Its color already tells the news, so it
+  /// does not flash.
+  final num? value;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +53,7 @@ class BirkaChangePill extends StatelessWidget {
           Flexible(
             child: AmountText(
               label,
+              value: value,
               tone: rise ? AmountTone.positive : AmountTone.negative,
               style: BirkaTextStyles.of(context).bodyStrong,
             ),

@@ -71,6 +71,8 @@
   --duration-fast: 150ms;
   --duration-base: 220ms;
   --duration-slow: 320ms;
+  /* Digits that roll to a new figure. */
+  --duration-roll: 520ms;
   /* A card that grows into its page, the longest way anything travels. */
   --duration-zoom: 420ms;
   /* The tab bar bubble and switches. */

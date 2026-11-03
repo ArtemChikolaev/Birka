@@ -47,6 +47,8 @@ class AccountRow extends StatelessWidget {
           children: [
             AmountText(
               formatMoney(row.balance),
+              value: row.balance.minorUnits,
+              rise: AmountRise.good,
               tone: row.balance.isNegative
                   ? AmountTone.negative
                   : AmountTone.neutral,

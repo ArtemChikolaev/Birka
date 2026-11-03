@@ -73,9 +73,18 @@ class _ReportsPageState extends State<ReportsPage> {
                     if (report.isEmpty)
                       _Empty(kind: state.kind)
                     else ...[
-                      Center(child: _Ring(state: state)),
+                      // Another month or kind starts the figures anew, so
+                      // that they roll only when the money moves.
+                      Center(
+                        key: ValueKey(('ring', state.month, state.kind)),
+                        child: _Ring(state: state),
+                      ),
                       gap,
-                      _Lines(report: report, kind: state.kind),
+                      _Lines(
+                        key: ValueKey(('lines', state.month, state.kind)),
+                        report: report,
+                        kind: state.kind,
+                      ),
                     ],
                     if (report.others.isNotEmpty) ...[
                       const SizedBox(height: BirkaTokens.spaceSm),
@@ -206,6 +215,8 @@ class _Ring extends StatelessWidget {
           const SizedBox(height: BirkaTokens.spaceXxs),
           AmountText(
             formatMoney(report.total!),
+            value: report.total!.minorUnits,
+            rise: _riseOf(state.kind),
             style: styles.heading.copyWith(color: colors.text),
           ),
           if (change != null) ...[
@@ -229,7 +240,7 @@ class _Ring extends StatelessWidget {
 
 /// Each category with its change, its amount and a bar against the biggest one.
 class _Lines extends StatelessWidget {
-  const _Lines({required this.report, required this.kind});
+  const _Lines({required this.report, required this.kind, super.key});
 
   final Report report;
   final CategoryKind kind;
@@ -238,14 +249,15 @@ class _Lines extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassListGroup(
       children: [
-        for (final line in report.lines) _Line(line: line, kind: kind),
+        for (final line in report.lines)
+          _Line(key: ValueKey(line.category.id), line: line, kind: kind),
       ],
     );
   }
 }
 
 class _Line extends StatelessWidget {
-  const _Line({required this.line, required this.kind});
+  const _Line({required this.line, required this.kind, super.key});
 
   final ReportLine line;
   final CategoryKind kind;
@@ -295,6 +307,8 @@ class _Line extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: AmountText(
                     formatMoney(line.total),
+                    value: line.total.minorUnits,
+                    rise: _riseOf(kind),
                     style: styles.bodyStrong.copyWith(color: colors.text),
                   ),
                 ),
@@ -455,3 +469,9 @@ class _Failure extends StatelessWidget {
     );
   }
 }
+
+/// What more money of [kind] means: more spent is bad news, more earned good.
+AmountRise _riseOf(CategoryKind kind) => switch (kind) {
+  CategoryKind.expense => AmountRise.bad,
+  CategoryKind.income => AmountRise.good,
+};

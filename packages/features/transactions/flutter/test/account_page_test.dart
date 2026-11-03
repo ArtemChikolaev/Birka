@@ -152,6 +152,29 @@ void main() {
     expect(tester.element(place), same(element));
   });
 
+  testWidgets('rolls the balance down in red after a spend', (tester) async {
+    useTallPhone(tester);
+    await pump(tester);
+
+    repository
+      ..balances = [AccountBalance(card, rub(1200000))]
+      ..operations = [
+        expense('lunch', -34500, note: 'Lunch'),
+        ...repository.operations,
+      ];
+    // The new balance comes, and the next frame starts the roll.
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(BirkaMotion.roll ~/ 2);
+
+    final rolling = tester.widget<Text>(find.text('₽12,'));
+    expect(rolling.style?.color, BirkaColors.dark.negative);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('₽12,000'), findsOneWidget);
+  });
+
   testWidgets('says what the period changed', (tester) async {
     useTallPhone(tester);
     await pump(tester);

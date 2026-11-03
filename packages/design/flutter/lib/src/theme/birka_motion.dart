@@ -19,6 +19,11 @@ abstract final class BirkaMotion {
     milliseconds: BirkaTokens.durationSlowMs,
   );
 
+  /// `duration.roll`: digits that roll to a new figure.
+  static const Duration roll = Duration(
+    milliseconds: BirkaTokens.durationRollMs,
+  );
+
   /// `duration.zoom`: a card that grows into its page.
   static const Duration zoom = Duration(
     milliseconds: BirkaTokens.durationZoomMs,

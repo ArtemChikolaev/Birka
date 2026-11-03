@@ -62,6 +62,16 @@ class OperationRow extends StatelessWidget {
             accountId == null
                 ? operationAmount(operation)
                 : operationAmountOn(operation, accountId),
+            value:
+                (accountId == null
+                        ? operation.amount
+                        : operation.amountOn(accountId))
+                    .minorUnits,
+            // A transfer only moves money, which is neither good nor bad.
+            rise:
+                accountId == null && operation.kind == TransactionKind.transfer
+                ? null
+                : AmountRise.good,
             tone: accountId == null
                 ? operationTone(operation)
                 : operationToneOn(operation, accountId),

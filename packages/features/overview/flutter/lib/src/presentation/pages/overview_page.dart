@@ -163,6 +163,8 @@ class _Capital extends StatelessWidget {
         const SizedBox(height: BirkaTokens.spaceXxs),
         AmountText(
           formatMoney(main),
+          value: main.minorUnits,
+          rise: AmountRise.good,
           style: styles.display.copyWith(color: colors.text),
         ),
         if (others.isNotEmpty) ...[
@@ -188,6 +190,7 @@ class _Capital extends StatelessWidget {
                 child: BirkaChangePill(
                   label: changeLabel(change),
                   rise: change.isPositive,
+                  value: change.minorUnits,
                 ),
               ),
               const SizedBox(width: BirkaTokens.spaceXs),
@@ -256,6 +259,7 @@ class _Accounts extends StatelessWidget {
           lastDigits: account.lastDigits,
         ),
         amount: formatMoney(balance),
+        value: balance.minorUnits,
         onTap: () => onOpenAccount(account.id),
       ),
     );
@@ -356,10 +360,13 @@ class _SpendingCard extends StatelessWidget {
                 const SizedBox(height: BirkaTokens.spaceXxs),
                 AmountText(
                   formatMoney(-total),
+                  value: total.minorUnits,
+                  rise: AmountRise.bad,
                   style: styles.heading.copyWith(color: colors.text),
                 ),
                 const SizedBox(height: BirkaTokens.spaceXs),
-                for (final row in spending.top) _CategoryLine(row: row),
+                for (final row in spending.top)
+                  _CategoryLine(key: ValueKey(row.category.id), row: row),
                 if (spending.others.isNotEmpty)
                   AmountText(
                     spending.others.map(formatMoney).join(' · '),
@@ -381,7 +388,7 @@ Color _colorOf(Category category, BirkaColors colors) {
 }
 
 class _CategoryLine extends StatelessWidget {
-  const _CategoryLine({required this.row});
+  const _CategoryLine({required this.row, super.key});
 
   final CategoryTotal row;
 
@@ -418,6 +425,8 @@ class _CategoryLine extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: AmountText(
                 formatMoney(row.total),
+                value: row.total.minorUnits,
+                rise: AmountRise.bad,
                 style: styles.caption.copyWith(color: colors.text),
               ),
             ),

@@ -149,6 +149,10 @@ class _Summary extends StatelessWidget {
             twoAmounts
                 ? '${operationAmount(operation)} → ${formatMoney(received)}'
                 : operationAmount(operation),
+            value: twoAmounts ? null : operation.amount.minorUnits,
+            rise: operation.kind == TransactionKind.transfer
+                ? null
+                : AmountRise.good,
             tone: operationTone(operation),
             style: styles.display,
           ),

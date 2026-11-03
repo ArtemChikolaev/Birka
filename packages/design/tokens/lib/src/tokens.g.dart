@@ -239,6 +239,11 @@ abstract final class BirkaTokens {
   /// `duration.slow` in milliseconds.
   static const int durationSlowMs = 320;
 
+  /// Digits that roll to a new figure.
+  ///
+  /// `duration.roll` in milliseconds.
+  static const int durationRollMs = 520;
+
   /// A card that grows into its page, the longest way anything travels.
   ///
   /// `duration.zoom` in milliseconds.
