@@ -131,24 +131,19 @@ class _AccountPageState extends State<AccountPage> {
                         BirkaTokens.spaceLg,
                         0,
                         BirkaTokens.spaceLg,
-                        BirkaTokens.spaceXxl +
+                        // Each day keeps its room under it.
+                        BirkaTokens.spaceXxl -
+                            BirkaTokens.spaceLg +
                             MediaQuery.viewPaddingOf(context).bottom,
                       ),
                       sliver: ready
-                          ? SliverList.separated(
-                              itemCount: state.days.length,
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(height: BirkaTokens.spaceLg),
-                              itemBuilder: (context, index) =>
-                                  OperationDayGroup(
-                                    key: ValueKey(state.days[index].day),
-                                    day: state.days[index],
-                                    today: state.today,
-                                    accountId: account.account.id,
-                                    onOpen: widget.onOpen,
-                                    onRepeat: widget.onRepeat,
-                                    onDelete: _delete,
-                                  ),
+                          ? SliverOperationDays(
+                              days: state.days,
+                              today: state.today,
+                              accountId: account.account.id,
+                              onOpen: widget.onOpen,
+                              onRepeat: widget.onRepeat,
+                              onDelete: _delete,
                             )
                           : const SliverToBoxAdapter(),
                     ),

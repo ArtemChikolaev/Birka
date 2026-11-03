@@ -9,8 +9,10 @@ import 'package:flutter/widgets.dart';
 /// Each child needs a key. A child that comes grows to its height over
 /// `duration.slow` and fades in, and one that goes fades and shrinks away,
 /// so that the others move to their places instead of jumping. Nothing moves
-/// the first time the column shows, nor when the system asks for less motion;
-/// a child that comes while the column is out of sight opens once it shows.
+/// the first time the column shows; when the system asks for less motion, a
+/// child that comes only fades in over `duration.base` and one that goes
+/// leaves at once. A child that comes while the column is out of sight opens
+/// once it shows.
 class AnimatedColumn extends StatefulWidget {
   /// Creates a column of [children].
   const AnimatedColumn({
@@ -29,11 +31,31 @@ class AnimatedColumn extends StatefulWidget {
   State<AnimatedColumn> createState() => _AnimatedColumnState();
 }
 
+/// The children of a long list, such as the days of a month, in a sliver that
+/// builds them as they scroll into sight. They open when they come and close
+/// when they go, as those of an [AnimatedColumn] do.
+class SliverAnimatedColumn extends StatefulWidget {
+  /// Creates a list of [children].
+  const SliverAnimatedColumn({required this.children, super.key});
+
+  /// The children, each with a key.
+  final List<Widget> children;
+
+  @override
+  State<SliverAnimatedColumn> createState() => _SliverAnimatedColumnState();
+}
+
 class _Row {
-  _Row(this.child, this.open)
-    : height = open.drive(CurveTween(curve: BirkaMotion.standardCurve)),
+  _Row(this.child, this.open, {required bool still})
+    : height = still
+          ? kAlwaysCompleteAnimation
+          : open.drive(CurveTween(curve: BirkaMotion.standardCurve)),
       opacity = open.drive(
-        CurveTween(curve: Interval(0.25, 1, curve: BirkaMotion.fadeCurve)),
+        CurveTween(
+          curve: still
+              ? BirkaMotion.fadeCurve
+              : Interval(0.25, 1, curve: BirkaMotion.fadeCurve),
+        ),
       );
 
   Widget child;
@@ -50,35 +72,40 @@ class _Row {
   Key get key => child.key!;
 }
 
-class _AnimatedColumnState extends State<AnimatedColumn>
+/// Keeps the rows of [children] as they come and go, for a column and for a
+/// sliver alike.
+abstract class _OpeningState<T extends StatefulWidget> extends State<T>
     with TickerProviderStateMixin, InSight {
+  List<Widget> get children;
+
   late List<_Row> _rows = [
-    for (final child in widget.children) _row(child, open: true),
+    for (final child in children) _row(child, open: true, still: false),
   ];
 
-  _Row _row(Widget child, {required bool open}) {
+  _Row _row(Widget child, {required bool open, required bool still}) {
     assert(child.key != null, 'Each child of an AnimatedColumn needs a key.');
     return _Row(
       child,
       AnimationController(
         vsync: this,
-        duration: BirkaMotion.slow,
+        duration: still ? BirkaMotion.base : BirkaMotion.slow,
         value: open ? 1 : 0,
       ),
+      still: still,
     );
   }
 
   @override
-  void didUpdateWidget(AnimatedColumn oldWidget) {
+  void didUpdateWidget(T oldWidget) {
     super.didUpdateWidget(oldWidget);
     final moves = !BirkaMotion.reduced(context);
     final before = {for (final row in _rows) row.key: row};
-    final keys = {for (final child in widget.children) child.key!};
+    final keys = {for (final child in children) child.key!};
     final rows = <_Row>[];
-    for (final child in widget.children) {
+    for (final child in children) {
       final row = before[child.key];
       if (row == null) {
-        rows.add(_row(child, open: !moves));
+        rows.add(_row(child, open: false, still: !moves));
         continue;
       }
       row.child = child;
@@ -103,7 +130,7 @@ class _AnimatedColumnState extends State<AnimatedColumn>
       _close(row);
     }
     _rows = rows;
-    if (moves) whenInSight(_openComing);
+    whenInSight(_openComing);
   }
 
   void _openComing() {
@@ -128,6 +155,16 @@ class _AnimatedColumnState extends State<AnimatedColumn>
     unawaited(row.open.reverse());
   }
 
+  /// The row as far as it has opened.
+  Widget _shown(_Row row) => KeyedSubtree(
+    key: row.key,
+    child: SizeTransition(
+      sizeFactor: row.height,
+      axisAlignment: -1,
+      child: FadeTransition(opacity: row.opacity, child: row.child),
+    ),
+  );
+
   @override
   void dispose() {
     for (final row in _rows) {
@@ -135,22 +172,35 @@ class _AnimatedColumnState extends State<AnimatedColumn>
     }
     super.dispose();
   }
+}
+
+class _AnimatedColumnState extends _OpeningState<AnimatedColumn> {
+  @override
+  List<Widget> get children => widget.children;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: widget.crossAxisAlignment,
-      children: [
-        for (final row in _rows)
-          KeyedSubtree(
-            key: row.key,
-            child: SizeTransition(
-              sizeFactor: row.height,
-              axisAlignment: -1,
-              child: FadeTransition(opacity: row.opacity, child: row.child),
-            ),
-          ),
-      ],
+      children: [for (final row in _rows) _shown(row)],
+    );
+  }
+}
+
+class _SliverAnimatedColumnState extends _OpeningState<SliverAnimatedColumn> {
+  @override
+  List<Widget> get children => widget.children;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList.builder(
+      itemCount: _rows.length,
+      itemBuilder: (context, index) => _shown(_rows[index]),
+      // A row keeps what it holds when rows come or go before it.
+      findChildIndexCallback: (key) {
+        final index = _rows.indexWhere((row) => row.key == key);
+        return index < 0 ? null : index;
+      },
     );
   }
 }

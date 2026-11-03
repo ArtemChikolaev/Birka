@@ -123,30 +123,23 @@ class _OperationsPageState extends State<OperationsPage> {
                   BirkaTokens.spaceLg,
                   0,
                   BirkaTokens.spaceLg,
-                  GlassNavBar.clearance +
+                  // Each day keeps its room under it.
+                  GlassNavBar.clearance -
+                      BirkaTokens.spaceLg +
                       MediaQuery.viewPaddingOf(context).bottom +
                       MediaQuery.viewInsetsOf(context).bottom,
                 ),
                 sliver: state.status == OperationsStatus.ready
-                    ? SliverList.separated(
-                        itemCount: state.days.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: BirkaTokens.spaceLg),
-                        // A new filter or search starts the days anew, so
-                        // that rows open and close only when operations come
-                        // and go.
-                        itemBuilder: (context, index) => OperationDayGroup(
-                          key: ValueKey((
-                            state.filter,
-                            state.query,
-                            state.days[index].day,
-                          )),
-                          day: state.days[index],
-                          today: state.today,
-                          onOpen: widget.onOpen,
-                          onRepeat: widget.onRepeat,
-                          onDelete: _delete,
-                        ),
+                    ? SliverOperationDays(
+                        // A new month, filter or search starts the days anew,
+                        // so that days and rows open and close only when
+                        // operations come and go.
+                        key: ValueKey((state.month, state.filter, state.query)),
+                        days: state.days,
+                        today: state.today,
+                        onOpen: widget.onOpen,
+                        onRepeat: widget.onRepeat,
+                        onDelete: _delete,
                       )
                     : const SliverToBoxAdapter(),
               ),
