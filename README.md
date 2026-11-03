@@ -2,10 +2,10 @@
 
 Local-first expense tracker for money across currencies, banks and countries.
 
-**Status:** early development. Version 0.1.0 is out: an APK for Android on the
-[Releases](https://github.com/ArtemChikolaev/Birka/releases) page, and the
-[site](https://artemchikolaev.github.io/Birka/) in any browser. Both keep your
-capital, accounts, categories and operations on the device, add your
+**Status:** early development. Version 0.1.0 is out: a test build for Android
+on the [Releases](https://github.com/ArtemChikolaev/Birka/releases) page, and
+the [site](https://artemchikolaev.github.io/Birka/) in any browser. Both keep
+your capital, accounts, categories and operations on the device, add your
 currencies up at the rates of the Bank of Russia, report on your months and
 save a copy of everything to a file. This first milestone is manual tracking
 with several currencies and reports; the import of bank statements comes next.

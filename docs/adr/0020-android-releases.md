@@ -11,6 +11,8 @@
   update another.
 - The key and its passwords are secrets: they live with the owner and in the
   secrets of the repository, never in the code.
+- Birka is in early development: its first releases are for trying it out,
+  and the owner makes the key of the releases later.
 
 ## Decision
 
@@ -24,21 +26,26 @@
    request do.
 3. `release.yml` runs on a pushed tag `vX.Y.Z`. It checks that the tag stands
    on `main`, that `apps/mobile/pubspec.yaml` has the version `X.Y.Z` and that
-   `docs/releases/X.Y.Z.md` holds its notes. Without the key it fails, because
-   an APK with a debug key could not be updated by the next release.
+   `docs/releases/X.Y.Z.md` holds its notes.
 4. The build number follows from the version, `X * 10000 + Y * 100 + Z`, so
    that each release comes after the one before: 0.1.0 is 100.
-5. Before anything is published, `apksigner` checks the APK, and a
-   certificate of a debug key stops the release. The APK `birka-vX.Y.Z.apk`
+5. With the key, `apksigner` checks the APK before anything is published, and
+   a certificate of a debug key stops the release. The APK `birka-vX.Y.Z.apk`
    then goes into a draft release with the notes, and the release is
    published after it, as the latest.
+6. Until the key is in the secrets, a release is a test build. Its APK signs
+   with the debug key of its run, the note of `docs/releases/test-build.md`
+   stands above its notes, and it is published as a pre-release, never as
+   the latest. The note says that the next release will not install over it
+   and that the records move over through a copy in «Данные».
 
 ## Options considered
 
 | Option | Why not |
 |---|---|
-| The debug key for releases | every release would ask to remove the app and its records first |
-| The key in the repository, encrypted | a password still has to live somewhere, and the key would sit in every clone |
+| The debug key for every release | every release would ask to remove the app and its records first; only the test builds do |
+| A test key of its own in the secrets | the owner would keep two keys, and the move to the key of the releases would still ask to reinstall |
+| The key in the repository | in the open anyone could sign an update of Birka; encrypted, its password still has to live somewhere, and the key would sit in every clone |
 | Play App Signing through Google Play | Birka is not in the stores yet; the release key can still go there later |
 | The run number as the build number | it restarts with a new workflow and says nothing about the version |
 
@@ -46,6 +53,8 @@
 
 - The key cannot be replaced without asking everyone to reinstall: the owner
   keeps a copy of it and of its passwords outside the repository.
+- Each test build asks to reinstall, and so does the first release with the
+  key. Releases with the key install over each other.
 - A release is a merged release pull request with its notes and version,
   then a tag pushed by the owner.
 - An iOS build waits for an account of Apple.
