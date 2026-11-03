@@ -87,8 +87,8 @@ Extend what exists instead of duplicating it.
 - A list between a header and a button that stay in place goes into
   `ScrollEdgeFade`: it fades softly into them instead of breaking off.
 - What shows one month at a time turns with a swipe (`SwipeBetween`) and
-  slides between months (`SlideSwitcher`), and the chip of its month passes
-  the month as `order`.
+  slides between months (`SlideSwitcher`, `SlideSwitcher.sliver` for a lazy
+  list), and the chip of its month passes the month as `order`.
 - An amount that can change on screen gets `value` on `AmountText`, and
   `rise` when its change is good or bad news (ADR 0017); a list of such
   amounts keys its rows. A short list whose rows come and go goes into

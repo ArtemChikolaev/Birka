@@ -141,6 +141,34 @@ void main() {
     expect(await list.months(), [october, september]);
   });
 
+  test(
+    'moves along the months to choose from, and stops at the ends',
+    () async {
+      final december = CivilDate(2025, 12, 1);
+      repository.monthList = [september, december];
+      final list = await open();
+
+      await list.nextMonth();
+      expect(list.state.month, october);
+
+      await list.previousMonth();
+      await settle();
+      expect(list.state.month, september);
+
+      await list.previousMonth();
+      await settle();
+      expect(list.state.month, december);
+
+      await list.previousMonth();
+      await settle();
+      expect(list.state.month, december);
+
+      await list.nextMonth();
+      await settle();
+      expect(list.state.month, september);
+    },
+  );
+
   test('still offers the months it knows when it cannot read them', () async {
     final list = await open();
     await list.monthChanged(september);

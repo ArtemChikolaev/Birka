@@ -102,6 +102,10 @@
      grows into its shares (`BirkaRing.intro`). A month picked from the list
      comes the same way, from its side in time. Under Reduce Motion the
      months only cross-fade.
+   - Операции turn their months the same way: the totals slide, and so do
+     the days, which stay a lazy sliver (`SlideSwitcher.sliver`). A row
+     keeps its own swipe, so the month turns by a swipe over the rest of the
+     page. The filters are a `ChipSwitch` with its sliding pill.
    - The parts of a ring move to their new shares over the same time: a new
      part grows from nothing in its place and one that goes shrinks to
      nothing (`RingSlice.id` keeps a part in its place). A row that comes to

@@ -164,6 +164,23 @@ class OperationsCubit extends Cubit<OperationsState> {
     await cancelled;
   }
 
+  /// Shows the month before the one on screen among the months to choose
+  /// from, if there is one.
+  Future<void> previousMonth() => _monthMoved(earlier: true);
+
+  /// Shows the month after the one on screen among the months to choose
+  /// from, if there is one.
+  Future<void> nextMonth() => _monthMoved(earlier: false);
+
+  Future<void> _monthMoved({required bool earlier}) async {
+    final month = neighbourMonth(
+      await months(),
+      state.month,
+      earlier: earlier,
+    );
+    if (month != null) await monthChanged(month);
+  }
+
   /// Sets which operations the list shows.
   void filterChanged(OperationsFilter value) =>
       emit(state.copyWith(filter: value));

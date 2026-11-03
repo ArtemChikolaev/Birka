@@ -46,4 +46,27 @@ void main() {
     expect(() => CivilDate.parse('2026-02-30'), throwsArgumentError);
     expect(() => CivilDate.parse('30.10.2026'), throwsFormatException);
   });
+
+  test('a month has its nearest neighbours in time among others', () {
+    final november = CivilDate(2026, 11, 1);
+    final october = CivilDate(2026, 10, 1);
+    final may = CivilDate(2026, 5, 1);
+    final months = [november, october, may];
+
+    expect(neighbourMonth(months, october, earlier: true), may);
+    expect(neighbourMonth(months, october, earlier: false), november);
+    expect(neighbourMonth(months, may, earlier: true), isNull);
+    expect(neighbourMonth(months, november, earlier: false), isNull);
+    expect(
+      neighbourMonth(months, CivilDate(2026, 1, 1), earlier: true),
+      isNull,
+    );
+    expect(
+      neighbourMonth(months, CivilDate(2026, 1, 1), earlier: false),
+      may,
+    );
+    // A month that left the list still has its neighbours.
+    expect(neighbourMonth([november, may], october, earlier: true), may);
+    expect(neighbourMonth([november, may], october, earlier: false), november);
+  });
 }

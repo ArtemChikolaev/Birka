@@ -66,3 +66,24 @@ final class CivilDate implements Comparable<CivilDate> {
     return '$y-$m-$d';
   }
 }
+
+/// The nearest of [months] before [month] in time when [earlier], else the
+/// nearest after it, such as the month to swipe to among those to choose
+/// from; `null` when there is none. [month] need not be among them, such as
+/// a month whose operations are all gone.
+CivilDate? neighbourMonth(
+  Iterable<CivilDate> months,
+  CivilDate month, {
+  required bool earlier,
+}) {
+  CivilDate? nearest;
+  for (final other in months) {
+    final order = other.compareTo(month);
+    if (earlier ? order >= 0 : order <= 0) continue;
+    final closer =
+        nearest == null ||
+        (earlier ? other.compareTo(nearest) > 0 : other.compareTo(nearest) < 0);
+    if (closer) nearest = other;
+  }
+  return nearest;
+}
