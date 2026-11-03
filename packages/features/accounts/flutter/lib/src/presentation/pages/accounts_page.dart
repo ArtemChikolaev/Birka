@@ -99,6 +99,7 @@ class AccountsPage extends StatelessWidget {
               lastDigits: first.account.lastDigits,
             ),
             amount: formatMoney(first.balance),
+            value: first.balance.minorUnits,
             onTap: () => onOpenCard(first.account.id),
           ),
         ),
@@ -107,6 +108,7 @@ class AccountsPage extends StatelessWidget {
           children: [
             for (final (index, row) in overview.active.indexed)
               AccountRow(
+                key: ValueKey(row.account.id),
                 row: row,
                 main: index == 0,
                 onTap: () => onOpen(row.account.id),
@@ -121,7 +123,11 @@ class AccountsPage extends StatelessWidget {
         GlassListGroup(
           children: [
             for (final row in overview.archived)
-              AccountRow(row: row, onTap: () => onOpen(row.account.id)),
+              AccountRow(
+                key: ValueKey(row.account.id),
+                row: row,
+                onTap: () => onOpen(row.account.id),
+              ),
           ],
         ),
       ],

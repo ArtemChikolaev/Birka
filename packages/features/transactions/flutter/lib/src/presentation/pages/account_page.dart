@@ -141,6 +141,7 @@ class _AccountPageState extends State<AccountPage> {
                                   const SizedBox(height: BirkaTokens.spaceLg),
                               itemBuilder: (context, index) =>
                                   OperationDayGroup(
+                                    key: ValueKey(state.days[index].day),
                                     day: state.days[index],
                                     today: state.today,
                                     accountId: account.account.id,
@@ -225,6 +226,7 @@ class _Card extends StatelessWidget {
           lastDigits: details.lastDigits,
         ),
         amount: formatMoney(balance),
+        value: balance.minorUnits,
       ),
     );
   }
@@ -253,6 +255,7 @@ class _Summary extends StatelessWidget {
                 child: BirkaChangePill(
                   label: signedAmountLabel(change),
                   rise: change.isPositive,
+                  value: change.minorUnits,
                 ),
               ),
               const SizedBox(width: BirkaTokens.spaceXs),

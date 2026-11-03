@@ -71,6 +71,23 @@
    элементов»): amounts roll, rows open and close, charts redraw, the month
    moves along time. They come in their own pull requests on top of
    `BirkaMotion`.
+8. An amount rolls to a new value over `duration.roll`, as «Суммы» on the
+   canvas shows: only the digits that change roll, up as it grows and down
+   as it shrinks.
+   - While it rolls, it takes the color of the news and turns back once it
+     settles: green when things got better, red when they got worse. What is
+     better depends on the amount (`AmountText.rise`): more is better for a
+     balance, an income or a change, and worse for what was spent. The pill
+     of a change only rolls, since its color already tells the news.
+   - A change that comes while the amount is out of sight, under a sheet, on
+     another tab or under another page, rolls once it shows again, so that
+     the owner sees what a new operation did.
+   - An amount does not roll the first time it shows, into another currency,
+     nor while amounts are hidden; under Reduce Motion it changes at once and
+     only its color comes and goes.
+   - Figures that change because the owner looks elsewhere, another month, a
+     filter or a kind of report, start anew instead of rolling, and lists
+     key their rows, so that no row rolls into the figure of another.
 
 ## Consequences
 

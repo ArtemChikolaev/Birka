@@ -99,7 +99,12 @@ class _OperationsPageState extends State<OperationsPage> {
                     if (state.expenses.isNotEmpty ||
                         state.income.isNotEmpty) ...[
                       const SizedBox(height: BirkaTokens.spaceSm),
-                      _Totals(state: state),
+                      // A new month, filter or search starts the totals
+                      // anew, so that they roll only when the money moves.
+                      _Totals(
+                        key: ValueKey((state.month, state.filter, state.query)),
+                        state: state,
+                      ),
                     ],
                     const SizedBox(height: BirkaTokens.spaceMd),
                     ...switch (state.status) {
@@ -128,6 +133,7 @@ class _OperationsPageState extends State<OperationsPage> {
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: BirkaTokens.spaceLg),
                         itemBuilder: (context, index) => OperationDayGroup(
+                          key: ValueKey(state.days[index].day),
                           day: state.days[index],
                           today: state.today,
                           onOpen: widget.onOpen,
@@ -234,7 +240,7 @@ class _Filters extends StatelessWidget {
 
 /// `Расходы −86 420 ₽  Доходы +210 000 ₽` for what the list shows.
 class _Totals extends StatelessWidget {
-  const _Totals({required this.state});
+  const _Totals({required this.state, super.key});
 
   final OperationsState state;
 
@@ -249,12 +255,18 @@ class _Totals extends StatelessWidget {
           _Total(
             label: t.transactions.filterExpenses,
             amounts: amountsLabel(state.expenses),
+            value: state.expenses.length == 1
+                ? state.expenses.single.minorUnits
+                : null,
             color: colors.text,
           ),
         if (state.income.isNotEmpty)
           _Total(
             label: t.transactions.filterIncome,
             amounts: amountsLabel(state.income),
+            value: state.income.length == 1
+                ? state.income.single.minorUnits
+                : null,
             color: colors.positive,
           ),
       ],
@@ -266,27 +278,37 @@ class _Total extends StatelessWidget {
   const _Total({
     required this.label,
     required this.amounts,
+    required this.value,
     required this.color,
   });
 
   final String label;
   final String amounts;
+
+  /// The amount in minor units when there is one currency, so that it rolls.
+  final num? value;
+
   final Color color;
 
   @override
   Widget build(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
-    return Text.rich(
-      TextSpan(
-        style: styles.body.copyWith(color: BirkaColors.of(context).textMuted),
-        children: [
-          TextSpan(text: '$label '),
-          TextSpan(
-            text: HiddenAmounts.mask(context, amounts),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$label ',
+          style: styles.body.copyWith(color: BirkaColors.of(context).textMuted),
+        ),
+        Flexible(
+          child: AmountText(
+            amounts,
+            value: value,
+            rise: AmountRise.good,
             style: styles.bodyStrong.copyWith(color: color),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -15,6 +15,7 @@ class AccountCard extends StatelessWidget {
     required this.name,
     required this.subtitle,
     required this.amount,
+    this.value,
     this.onTap,
     this.compact = false,
     super.key,
@@ -31,6 +32,10 @@ class AccountCard extends StatelessWidget {
 
   /// The formatted amount.
   final String amount;
+
+  /// How much the account holds, such as in minor units, so that the amount
+  /// rolls to a new balance as good or bad news ([AmountText.value]).
+  final num? value;
 
   /// Called on a tap.
   final VoidCallback? onTap;
@@ -110,6 +115,8 @@ class AccountCard extends StatelessWidget {
             const Spacer(),
             AmountText(
               amount,
+              value: value,
+              rise: AmountRise.good,
               style: TextStyle.lerp(
                 styles.title,
                 styles.display,
