@@ -21,6 +21,7 @@
   "size": {
     "$type": "dimension",
     "touchTarget": { "$description": "The smallest tap area.", "$value": { "value": 44, "unit": "px" } },
-    "navBar": { "$value": { "value": 64, "unit": "px" } }
+    "navBar": { "$value": { "value": 64, "unit": "px" } },
+    "scrollEdge": { "$description": "How deep a list fades where it goes under a header or a button that stays in place.", "$value": { "value": 48, "unit": "px" } }
   }
 }

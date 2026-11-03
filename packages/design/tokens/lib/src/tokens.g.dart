@@ -304,6 +304,12 @@ abstract final class BirkaTokens {
   /// `size.navBar` in logical pixels.
   static const double sizeNavBar = 64;
 
+  /// How deep a list fades where it goes under a header or a button that stays
+  /// in place.
+  ///
+  /// `size.scrollEdge` in logical pixels.
+  static const double sizeScrollEdge = 48;
+
   /// Headlines and large amounts.
   ///
   /// `font.family.display`.
