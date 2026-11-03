@@ -75,4 +75,79 @@ void main() {
     );
     expect(pillOf(tester).left, moreOrLessEquals(year.left));
   });
+
+  group('wrapped', () {
+    const types = {
+      'debit': 'Debit card',
+      'cash': 'Cash',
+      'credit': 'Credit card',
+      'savings': 'Savings',
+    };
+
+    Widget wrapped(String selected, {ValueChanged<String>? onChanged}) =>
+        MaterialApp(
+          theme: BirkaTheme.dark(),
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 260,
+              child: ChipSwitch(
+                options: types,
+                selected: selected,
+                onChanged: onChanged,
+                wrap: true,
+              ),
+            ),
+          ),
+        );
+
+    Rect chipOf(WidgetTester tester, String label) => tester.getRect(
+      find.ancestor(of: find.text(label), matching: find.byType(Center)),
+    );
+
+    testWidgets('goes on to another line instead of shrinking', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapped('debit', onChanged: (_) {}));
+
+      final debit = chipOf(tester, 'Debit card');
+      final credit = chipOf(tester, 'Credit card');
+      expect(credit.top, greaterThan(debit.bottom));
+      expect(credit.left, debit.left);
+      expect(tester.getSize(find.byType(ChipSwitch<String>)).width, 260);
+    });
+
+    testWidgets('slides its pill to a chip on another line', (tester) async {
+      await tester.pumpWidget(wrapped('debit', onChanged: (_) {}));
+      final debit = pillOf(tester);
+      final savings = chipOf(tester, 'Savings');
+
+      await tester.pumpWidget(wrapped('savings', onChanged: (_) {}));
+      await tester.pump(BirkaMotion.spring ~/ 4);
+
+      expect(pillOf(tester).top, inExclusiveRange(debit.top, savings.top));
+
+      await tester.pumpAndSettle();
+
+      expect(pillOf(tester), rectMoreOrLessEquals(savings));
+    });
+
+    testWidgets('cannot change without onChanged', (tester) async {
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(wrapped('debit'));
+
+      await tester.tap(find.text('Cash'));
+      await tester.pumpAndSettle();
+
+      expect(
+        pillOf(tester),
+        rectMoreOrLessEquals(chipOf(tester, 'Debit card')),
+      );
+      expect(
+        tester.getSemantics(find.text('Cash')),
+        containsSemantics(label: 'Cash', isButton: true, isEnabled: false),
+      );
+      semantics.dispose();
+    });
+  });
 }

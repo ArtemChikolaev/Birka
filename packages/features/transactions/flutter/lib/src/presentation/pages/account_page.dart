@@ -283,6 +283,7 @@ class _Summary extends StatelessWidget {
           },
           selected: state.period,
           onChanged: cubit.periodChanged,
+          compact: true,
         ),
       ],
     );

@@ -221,6 +221,7 @@ class _Periods extends StatelessWidget {
       },
       selected: selected,
       onChanged: context.read<OverviewCubit>().periodChanged,
+      compact: true,
     );
   }
 }

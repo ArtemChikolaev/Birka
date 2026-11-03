@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:design_flutter/src/components/in_sight.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_motion.dart';
 import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/widgets.dart';
 
@@ -32,7 +36,11 @@ enum CardArt {
 }
 
 /// A card with [art] behind [child].
-class CardArtSurface extends StatelessWidget {
+///
+/// A new art fades in over the old one over `duration.slow`, once the card
+/// is in sight, and takes its place at once when the system asks for less
+/// motion.
+class CardArtSurface extends StatefulWidget {
   /// Creates a card.
   const CardArtSurface({
     required this.art,
@@ -57,19 +65,65 @@ class CardArtSurface extends StatelessWidget {
   final Color? borderColor;
 
   @override
+  State<CardArtSurface> createState() => _CardArtSurfaceState();
+}
+
+class _CardArtSurfaceState extends State<CardArtSurface>
+    with SingleTickerProviderStateMixin, InSight {
+  late final AnimationController _fade = AnimationController(
+    vsync: this,
+    duration: BirkaMotion.slow,
+    value: 1,
+  );
+  late final Animation<double> _shown = _fade.drive(
+    CurveTween(curve: BirkaMotion.standardCurve),
+  );
+
+  /// The art that the new one fades in over.
+  late CardArt _under = widget.art;
+
+  @override
+  void didUpdateWidget(CardArtSurface oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.art == oldWidget.art) return;
+    if (BirkaMotion.reduced(context)) {
+      forgetHeld();
+      _under = widget.art;
+      _fade.value = 1;
+      return;
+    }
+    // A change halfway through fades from the art that shows the most.
+    if (_fade.value >= 0.5) _under = oldWidget.art;
+    _fade.value = 0;
+    whenInSight(() => unawaited(_fade.forward()));
+  }
+
+  @override
+  void dispose() {
+    _fade.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
+    final borderRadius = widget.borderRadius;
     return DecoratedBox(
       position: DecorationPosition.foreground,
       decoration: BoxDecoration(
         borderRadius: borderRadius,
-        border: Border.all(color: borderColor ?? colors.glassBorder),
+        border: Border.all(color: widget.borderColor ?? colors.glassBorder),
       ),
       child: ClipRRect(
         borderRadius: borderRadius,
         child: CustomPaint(
-          painter: _ArtPainter(art: art, base: colors.surface),
-          child: child,
+          painter: _ArtPainter(
+            under: _under,
+            art: widget.art,
+            shown: _shown,
+            base: colors.surface,
+          ),
+          child: widget.child,
         ),
       ),
     );
@@ -110,14 +164,40 @@ class CardArtThumbnail extends StatelessWidget {
 }
 
 class _ArtPainter extends CustomPainter {
-  const _ArtPainter({required this.art, required this.base});
+  _ArtPainter({
+    required this.under,
+    required this.art,
+    required this.shown,
+    required this.base,
+  }) : super(repaint: shown);
 
+  /// The art that [art] fades in over.
+  final CardArt under;
   final CardArt art;
+
+  /// How far [art] has come in, from 0 to 1.
+  final Animation<double> shown;
   final Color base;
 
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
+    final shown = this.shown.value;
+    if (shown >= 1) {
+      _paintArt(canvas, rect, art);
+      return;
+    }
+    _paintArt(canvas, rect, under);
+    if (shown <= 0) return;
+    canvas.saveLayer(
+      rect,
+      Paint()..color = Color.fromRGBO(0, 0, 0, shown),
+    );
+    _paintArt(canvas, rect, art);
+    canvas.restore();
+  }
+
+  void _paintArt(Canvas canvas, Rect rect, CardArt art) {
     final color = art.color;
     canvas
       ..drawRect(rect, Paint()..color = base)
@@ -163,5 +243,8 @@ class _ArtPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ArtPainter oldDelegate) =>
-      art != oldDelegate.art || base != oldDelegate.base;
+      under != oldDelegate.under ||
+      art != oldDelegate.art ||
+      shown != oldDelegate.shown ||
+      base != oldDelegate.base;
 }

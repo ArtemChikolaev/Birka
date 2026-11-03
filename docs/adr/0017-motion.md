@@ -119,6 +119,26 @@
    A line that the action changes, such as the time of the last copy,
    cross-fades to the new one (`FadingText`).
 
+10. The form of a new account moves as «Новый счёт: ввод и сохранение» on
+    the canvas shows.
+    - The card fades into a new art over `duration.slow` and its line into
+      a new one (`FadingText`), so that a new type or look shows on the card
+      at once. The board also gives a cash account the art of cash; the form
+      keeps the art as a choice of its own, so a new type changes the line
+      only.
+    - The types and the currencies are a `ChipSwitch` that goes on to more
+      lines (`wrap`), and its pill slides between the lines too.
+    - Once saved, the button closes into a check mark: the label fades, the
+      pill shrinks into a circle over `duration.slow`, the check comes in
+      with a little bounce, and the form closes after the check has stood
+      for half a second (`BirkaButton.done`). Under Reduce Motion the label
+      only fades into the check.
+    - The new account opens in the list once the sheet has gone. A
+      `GlassListGroup` whose rows have keys opens and closes them as
+      `AnimatedColumn` does. A change waits while a page lies over the page
+      of the list or over the page that holds the tabs (`InSight`): the sheet
+      of iOS leaves the page below it ticking, so tickers alone cannot tell.
+
 ## Consequences
 
 - A new form picks its page by its kind, and the router says so in one place.

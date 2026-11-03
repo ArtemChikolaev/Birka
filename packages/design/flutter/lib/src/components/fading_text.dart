@@ -6,13 +6,25 @@ import 'package:flutter/widgets.dart';
 /// the system asks for less motion.
 class FadingText extends StatelessWidget {
   /// Creates a line of [text].
-  const FadingText(this.text, {this.style, super.key});
+  const FadingText(
+    this.text, {
+    this.style,
+    this.maxLines,
+    this.overflow,
+    super.key,
+  });
 
   /// What the line says.
   final String text;
 
   /// How it looks.
   final TextStyle? style;
+
+  /// How many lines it takes before it is cut.
+  final int? maxLines;
+
+  /// How it is cut.
+  final TextOverflow? overflow;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +34,13 @@ class FadingText extends StatelessWidget {
         alignment: AlignmentDirectional.centerStart,
         children: [...previous, ?current],
       ),
-      child: Text(text, key: ValueKey(text), style: style),
+      child: Text(
+        text,
+        key: ValueKey(text),
+        style: style,
+        maxLines: maxLines,
+        overflow: overflow,
+      ),
     );
   }
 }
