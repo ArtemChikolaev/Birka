@@ -1,6 +1,7 @@
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget app(Widget child) => MaterialApp(
@@ -361,12 +362,107 @@ void main() {
       expect(find.text('Copy saved'), findsOneWidget);
       final icon = tester.widget<BirkaIcon>(find.byType(BirkaIcon));
       expect(icon.glyph, BirkaGlyph.check);
+      // The overlay stands outside the material of the page, so the toast
+      // brings its own text style instead of the bare fallback.
+      final line = tester.widget<RichText>(
+        find.descendant(
+          of: find.text('Copy saved'),
+          matching: find.byType(RichText),
+        ),
+      );
+      expect(line.text.style?.decoration, isNot(TextDecoration.underline));
 
       // Its clock starts once it has come in.
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
       expect(find.text('Copy saved'), findsNothing);
+    });
+
+    double riseOf(WidgetTester tester) => tester
+        .widget<Transform>(
+          find
+              .ancestor(
+                of: find.byType(GlassToast),
+                matching: find.byType(Transform),
+              )
+              .first,
+        )
+        .transform
+        .getTranslation()
+        .y;
+
+    // The toast stands on the overlay, above the page, so the system asks for
+    // less motion above the navigator, as it does in the app.
+    Widget saving({bool reduced = false}) => MaterialApp(
+      theme: BirkaTheme.dark(),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(disableAnimations: reduced),
+        child: child!,
+      ),
+      home: Scaffold(
+        body: Center(
+          child: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showGlassToast(context, 'Copy saved'),
+              child: const Text('Save'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    testWidgets('comes up from below and reads itself out', (tester) async {
+      final announced = <Object?>[];
+      tester.binding.defaultBinaryMessenger
+          .setMockDecodedMessageHandler<Object?>(
+            SystemChannels.accessibility,
+            (message) async => announced.add(message),
+          );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(
+              SystemChannels.accessibility,
+              null,
+            ),
+      );
+      await tester.pumpWidget(saving());
+
+      await tester.tap(find.text('Save'));
+      await tester.pump();
+      await tester.pump(BirkaMotion.spring ~/ 4);
+
+      expect(riseOf(tester), greaterThan(0));
+      expect(announced.toString(), contains('Copy saved'));
+
+      await tester.pumpAndSettle();
+
+      expect(riseOf(tester), moreOrLessEquals(0));
+    });
+
+    testWidgets('goes a little down as it fades away', (tester) async {
+      await tester.pumpWidget(saving());
+
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pump(BirkaMotion.base ~/ 2);
+
+      expect(riseOf(tester), inExclusiveRange(0, BirkaTokens.spaceMd + 1));
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(GlassToast), findsNothing);
+    });
+
+    testWidgets('only fades when asked for less motion', (tester) async {
+      await tester.pumpWidget(saving(reduced: true));
+
+      await tester.tap(find.text('Save'));
+      await tester.pump();
+      await tester.pump(BirkaMotion.spring ~/ 4);
+
+      expect(riseOf(tester), 0);
     });
 
     testWidgets('takes the place of the toast before it', (tester) async {

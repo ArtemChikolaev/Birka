@@ -102,6 +102,15 @@
    - When amounts get hidden, their digits blur away as the dots come, and
      come back sharp when they are shown.
 
+9. A toast after an action, as «Уведомление» on the canvas shows, comes up
+   from below with a little bounce over `duration.spring`, stays four
+   seconds and goes a little down as it fades over `duration.base`; under
+   Reduce Motion it only fades. It stands on the overlay of the navigator
+   instead of in a `SnackBar` of Material, which clips what it holds and
+   grows from its bottom edge, and it reads itself out to screen readers.
+   A line that the action changes, such as the time of the last copy,
+   cross-fades to the new one (`FadingText`).
+
 10. The form of a new account moves as «Новый счёт: ввод и сохранение» on
     the canvas shows.
     - The card fades into a new art over `duration.slow` and its line into
