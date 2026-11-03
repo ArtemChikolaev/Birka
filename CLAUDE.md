@@ -92,13 +92,15 @@ Extend what exists instead of duplicating it.
 - An amount that can change on screen gets `value` on `AmountText`, and
   `rise` when its change is good or bad news (ADR 0017); a list of such
   amounts keys its rows. A short list whose rows come and go goes into
-  `AnimatedColumn`, a `GlassListGroup` opens and closes rows that have keys,
-  and the parts of a `BirkaRing` carry the ids of what they stand for. A row
-  of options with one picked, such as the periods of a chart, is a
-  `ChipSwitch` (`wrap` when it takes more than a line), and a chart passes
-  its period as `series`, so that it draws itself again. The main button of
-  a form gets `done` once the form is saved and closes it in `onDone`, after
-  its check mark.
+  `AnimatedColumn` and a long one into `SliverAnimatedColumn`, a
+  `GlassListGroup` opens and closes rows that have keys, and such a list
+  takes the month, filter or search into its key, so that narrowing it
+  changes it at once. The parts of a `BirkaRing` carry the ids of what they
+  stand for. A row of options with one picked, such as the periods of a
+  chart, is a `ChipSwitch` (`wrap` when it takes more than a line), and a
+  chart passes its period as `series`, so that it draws itself again. The
+  main button of a form gets `done` once the form is saved and closes it in
+  `onDone`, after its check mark.
 - The app icons and launch screens come from
   `packages/design/brand/coin.svg`: change it, run `make icon-masters` and
   `make icons`, and never edit the generated icons by hand. The art of the
