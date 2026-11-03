@@ -10,6 +10,8 @@ export 'package:ledger/ledger.dart'
 export 'src/di/register_backup.dart';
 export 'src/domain/backup_files.dart';
 export 'src/domain/backup_repository.dart';
+export 'src/domain/demo.dart';
+export 'src/domain/demo_ledger.dart';
 export 'src/domain/file_names.dart';
 export 'src/domain/operations_csv.dart';
 export 'src/presentation/backup_cubit.dart';

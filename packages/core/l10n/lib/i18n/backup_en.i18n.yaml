@@ -16,6 +16,8 @@ export: Export
 exportTitle: Operations as CSV
 exportText: "For Excel and Google Sheets: date, amount, currency, account, category"
 records: Records
+demo: Demo data
+demoText: Sample accounts and operations to look around
 wipe: Delete all data
 filesNote: Files go only where you point in the window of the system.
 filesNoteSite: Files go where the browser keeps its downloads.
