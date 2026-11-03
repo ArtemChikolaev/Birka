@@ -16,13 +16,21 @@ import 'package:settings_common/settings_common.dart';
 class BirkaApp extends StatefulWidget {
   /// Creates the app on the objects in [getIt]. With [onboarding] it starts
   /// with the steps of a new device.
-  const BirkaApp({required this.getIt, this.onboarding = false, super.key});
+  const BirkaApp({
+    required this.getIt,
+    this.onboarding = false,
+    this.onDemoChanged,
+    super.key,
+  });
 
   /// Knows every implementation (ADR 0006).
   final GetIt getIt;
 
   /// Whether the app starts with the onboarding.
   final bool onboarding;
+
+  /// Turns the demo on or off, which opens the other ledger (ADR 0019).
+  final ValueChanged<bool>? onDemoChanged;
 
   @override
   State<BirkaApp> createState() => _BirkaAppState();
@@ -38,6 +46,7 @@ class _BirkaAppState extends State<BirkaApp> {
     widget.getIt,
     initialLocation: widget.onboarding ? Paths.onboarding : Paths.overview,
     onboarding: _onboarding,
+    onDemoChanged: widget.onDemoChanged,
   );
   late final ValueNotifier<bool> _hiddenAmounts = ValueNotifier(
     Settings.readFrom(widget.getIt<SettingsStore>()).hideAmountsOnLaunch,
@@ -59,6 +68,7 @@ class _BirkaAppState extends State<BirkaApp> {
         widget.getIt,
         initialLocation: previous.state.uri.toString(),
         onboarding: _onboarding,
+        onDemoChanged: widget.onDemoChanged,
       );
     });
     WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());
