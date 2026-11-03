@@ -1,0 +1,27 @@
+name: help_flutter
+description: >-
+  The screen of the help feature in Flutter, and the ways out to the mail app
+  and the browser of the system on phones.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  device_info_plus: ^13.3.0
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  help_common:
+    path: ../common
+  l10n:
+    path: ../../../core/l10n
+  package_info_plus: ^10.2.2
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

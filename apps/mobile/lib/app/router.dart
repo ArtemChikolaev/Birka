@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:help_common/help_common.dart' show HelpCubit;
+import 'package:help_flutter/help_flutter.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:onboarding_flutter/onboarding_flutter.dart';
 import 'package:overview_common/overview_common.dart' show OverviewCubit;
@@ -67,6 +69,9 @@ abstract final class Paths {
 
   /// The data of this device: its copy, its export and its wipe.
   static const backup = '/backup';
+
+  /// Help and feedback.
+  static const help = '/help';
 
   /// The form of a new category of [kind].
   static String newCategory(CategoryKind kind) =>
@@ -270,6 +275,14 @@ GoRouter buildRouter(
         builder: (context, state) => BlocProvider(
           create: (_) => getIt<BackupCubit>(),
           child: BackupPage(onBack: () => context.pop()),
+        ),
+      ),
+      GoRoute(
+        path: Paths.help,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<HelpCubit>(),
+          child: HelpPage(onBack: () => context.pop()),
         ),
       ),
       GoRoute(

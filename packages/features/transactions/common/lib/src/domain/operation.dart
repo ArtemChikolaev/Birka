@@ -1,3 +1,4 @@
+import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
@@ -87,11 +88,11 @@ final class Operation {
   /// `250` finds 250 and 250,50, and `250,5` only the second one. Case and the
   /// letter ё do not matter.
   bool matches(String query) {
-    final words = _plain(query).split(RegExp(r'\s+'));
+    final words = searchKey(query).split(RegExp(r'\s+'));
     final texts = [
-      _plain(note),
+      searchKey(note),
       for (final name in [category?.name, account?.name, toAccount?.name])
-        if (name != null) _plain(name),
+        if (name != null) searchKey(name),
     ];
     return words.every(
       (word) => texts.any((text) => text.contains(word)) || _hasAmount(word),
@@ -107,9 +108,6 @@ final class Operation {
           : amount.split('.').first == number;
     });
   }
-
-  static String _plain(String text) =>
-      text.trim().toLowerCase().replaceAll('ё', 'е');
 }
 
 /// The operations of one day.

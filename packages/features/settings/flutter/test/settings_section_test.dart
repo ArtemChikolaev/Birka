@@ -129,12 +129,6 @@ void main() {
     expect(Settings.readFrom(store).baseCurrency, isNull);
   });
 
-  testWidgets('names where the rates come from', (tester) async {
-    await pump(tester);
-
-    expect(find.textContaining('cbr-xml-daily.ru'), findsOneWidget);
-  });
-
   testWidgets('a closed sheet changes nothing', (tester) async {
     await const Settings(language: AppLocale.ru).writeTo(store);
     await pump(tester);

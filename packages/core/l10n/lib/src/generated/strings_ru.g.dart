@@ -66,6 +66,8 @@ class TranslationsRu extends Translations
   late final _Translations$categories$ru categories =
       _Translations$categories$ru._(_root);
   @override
+  late final _Translations$help$ru help = _Translations$help$ru._(_root);
+  @override
   late final _Translations$onboarding$ru onboarding =
       _Translations$onboarding$ru._(_root);
   @override
@@ -189,6 +191,10 @@ class _Translations$app$ru extends Translations$app$en {
   String get import => 'Импорт';
   @override
   String get data => 'Данные';
+  @override
+  String get support => 'Поддержка';
+  @override
+  String get help => 'Помощь и отзыв';
 }
 
 // Path: backup
@@ -368,6 +374,115 @@ class _Translations$categories$ru extends Translations$categories$en {
   @override
   late final _Translations$categories$form$ru form =
       _Translations$categories$form$ru._(_root);
+}
+
+// Path: help
+class _Translations$help$ru extends Translations$help$en {
+  _Translations$help$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Помощь';
+  @override
+  String get back => 'Назад';
+  @override
+  String get search => 'Поиск по справке';
+  @override
+  String get clearSearch => 'Очистить поиск';
+  @override
+  String get questions => 'Частые вопросы';
+  @override
+  String get nothingFound =>
+      'Ничего не нашлось. Напишите разработчику: ответ пригодится и другим, он появится в справке.';
+  @override
+  String get storageQuestion => 'Где хранятся мои данные?';
+  @override
+  String get storageAnswer =>
+      'Только на этом устройстве или в этом браузере. Birka не отправляет записи на сервер и не просит пароли от банков.';
+  @override
+  String get moveQuestion => 'Как перенести учёт на другое устройство?';
+  @override
+  String get moveAnswer =>
+      'Сохраните копию в «Ещё → Данные», перешлите файл себе и восстановите его на новом устройстве. Синхронизация появится позже.';
+  @override
+  String get ratesQuestion => 'Откуда берётся курс валют?';
+  @override
+  String get ratesAnswer =>
+      'Это курс Банка России на день операции. Курсы обновляются раз в день и хранятся на устройстве.';
+  @override
+  String get importQuestion => 'Можно ли загрузить операции из банка?';
+  @override
+  String get importAnswer =>
+      'Пока операции вносятся вручную. Загрузка выписок банков — следующая большая функция.';
+  @override
+  String get hideQuestion => 'Как скрыть суммы?';
+  @override
+  String get hideAnswer =>
+      'Нажмите на глаз на Обзоре. Чтобы суммы были скрыты с самого запуска, включите «Скрывать суммы» в «Ещё».';
+  @override
+  String get contact => 'Связаться';
+  @override
+  String get write => 'Написать разработчику';
+  @override
+  String get writeText => 'Откроется ваша почта';
+  @override
+  String get bug => 'Сообщить об ошибке';
+  @override
+  String get bugText =>
+      'В письмо добавятся версия и система, без ваших записей';
+  @override
+  String get idea => 'Предложить идею';
+  @override
+  String get ideaText => 'Расскажите, чего не хватает в Birka';
+  @override
+  String get github => 'Ошибки и идеи на GitHub';
+  @override
+  String get githubText => 'Публично: не пишите туда суммы и названия счетов';
+  @override
+  String get letterTitle => 'Письмо разработчику';
+  @override
+  String get letterText =>
+      'Откроется ваша почта с этим письмом. В нём будет только то, что видно ниже, и вы сможете его дописать.';
+  @override
+  String get to => 'Кому';
+  @override
+  String get subject => 'Тема';
+  @override
+  String get letterPrivacy =>
+      'Операции, суммы и названия счетов в письмо не попадают.';
+  @override
+  String get openMail => 'Открыть почту';
+  @override
+  String get cancel => 'Отмена';
+  @override
+  String get questionSubject => 'Birka · вопрос';
+  @override
+  String bugSubject({required Object version}) => 'Birka ${version} · ошибка';
+  @override
+  String get ideaSubject => 'Birka · идея';
+  @override
+  String get questionBody => 'Здравствуйте!\n';
+  @override
+  String get bugBody => 'Что случилось:\n\nЧто ожидали:';
+  @override
+  String get ideaBody => 'Чего не хватает:\n\nКак это помогло бы:';
+  @override
+  String get language => 'русский';
+  @override
+  String about({
+    required Object version,
+    required Object system,
+    required Object language,
+  }) => 'Birka ${version} · ${system} · ${language}';
+  @override
+  String noMail({required Object address}) =>
+      'Почта не открылась. Адрес скопирован: ${address}';
+  @override
+  String get noPage => 'Страница не открылась. Попробуйте ещё раз.';
 }
 
 // Path: onboarding
@@ -1040,6 +1155,8 @@ extension on TranslationsRu {
       'app.currencies.THB' => 'Баты',
       'app.import' => 'Импорт',
       'app.data' => 'Данные',
+      'app.support' => 'Поддержка',
+      'app.help' => 'Помощь и отзыв',
       'backup.title' => 'Данные',
       'backup.back' => 'Назад',
       'backup.storedTitle' => 'Учёт хранится здесь',
@@ -1166,6 +1283,65 @@ extension on TranslationsRu {
       'categories.form.restore' => 'Вернуть из архива',
       'categories.form.nameMissing' => 'Дайте категории название.',
       'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+      'help.title' => 'Помощь',
+      'help.back' => 'Назад',
+      'help.search' => 'Поиск по справке',
+      'help.clearSearch' => 'Очистить поиск',
+      'help.questions' => 'Частые вопросы',
+      'help.nothingFound' =>
+        'Ничего не нашлось. Напишите разработчику: ответ пригодится и другим, он появится в справке.',
+      'help.storageQuestion' => 'Где хранятся мои данные?',
+      'help.storageAnswer' =>
+        'Только на этом устройстве или в этом браузере. Birka не отправляет записи на сервер и не просит пароли от банков.',
+      'help.moveQuestion' => 'Как перенести учёт на другое устройство?',
+      'help.moveAnswer' =>
+        'Сохраните копию в «Ещё → Данные», перешлите файл себе и восстановите его на новом устройстве. Синхронизация появится позже.',
+      'help.ratesQuestion' => 'Откуда берётся курс валют?',
+      'help.ratesAnswer' =>
+        'Это курс Банка России на день операции. Курсы обновляются раз в день и хранятся на устройстве.',
+      'help.importQuestion' => 'Можно ли загрузить операции из банка?',
+      'help.importAnswer' =>
+        'Пока операции вносятся вручную. Загрузка выписок банков — следующая большая функция.',
+      'help.hideQuestion' => 'Как скрыть суммы?',
+      'help.hideAnswer' =>
+        'Нажмите на глаз на Обзоре. Чтобы суммы были скрыты с самого запуска, включите «Скрывать суммы» в «Ещё».',
+      'help.contact' => 'Связаться',
+      'help.write' => 'Написать разработчику',
+      'help.writeText' => 'Откроется ваша почта',
+      'help.bug' => 'Сообщить об ошибке',
+      'help.bugText' =>
+        'В письмо добавятся версия и система, без ваших записей',
+      'help.idea' => 'Предложить идею',
+      'help.ideaText' => 'Расскажите, чего не хватает в Birka',
+      'help.github' => 'Ошибки и идеи на GitHub',
+      'help.githubText' => 'Публично: не пишите туда суммы и названия счетов',
+      'help.letterTitle' => 'Письмо разработчику',
+      'help.letterText' =>
+        'Откроется ваша почта с этим письмом. В нём будет только то, что видно ниже, и вы сможете его дописать.',
+      'help.to' => 'Кому',
+      'help.subject' => 'Тема',
+      'help.letterPrivacy' =>
+        'Операции, суммы и названия счетов в письмо не попадают.',
+      'help.openMail' => 'Открыть почту',
+      'help.cancel' => 'Отмена',
+      'help.questionSubject' => 'Birka · вопрос',
+      'help.bugSubject' =>
+        ({required Object version}) => 'Birka ${version} · ошибка',
+      'help.ideaSubject' => 'Birka · идея',
+      'help.questionBody' => 'Здравствуйте!\n',
+      'help.bugBody' => 'Что случилось:\n\nЧто ожидали:',
+      'help.ideaBody' => 'Чего не хватает:\n\nКак это помогло бы:',
+      'help.language' => 'русский',
+      'help.about' =>
+        ({
+          required Object version,
+          required Object system,
+          required Object language,
+        }) => 'Birka ${version} · ${system} · ${language}',
+      'help.noMail' =>
+        ({required Object address}) =>
+            'Почта не открылась. Адрес скопирован: ${address}',
+      'help.noPage' => 'Страница не открылась. Попробуйте ещё раз.',
       'onboarding.skip' => 'Пропустить',
       'onboarding.back' => 'Назад',
       'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',

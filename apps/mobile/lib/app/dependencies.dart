@@ -7,6 +7,8 @@ import 'package:categories_common/categories_common.dart';
 import 'package:database/database.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:get_it/get_it.dart';
+import 'package:help_common/help_common.dart';
+import 'package:help_flutter/help_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:ledger/ledger.dart';
 import 'package:onboarding_common/onboarding_common.dart'
@@ -36,10 +38,12 @@ void registerDependencies(GetIt getIt, SettingsStore settings) {
     ..registerSingleton(
       RatesUpdater(rates, CbrMirror(http.Client()), ledger, baseCurrency),
     )
-    ..registerSingleton<BackupFiles>(const FilePickerBackupFiles());
+    ..registerSingleton<BackupFiles>(const FilePickerBackupFiles())
+    ..registerSingleton<HelpLinks>(const UrlLauncherHelpLinks());
   registerAccounts(getIt);
   registerBackup(getIt, settings);
   registerCategories(getIt);
+  registerHelp(getIt, about: readAppAbout);
   registerOnboarding(getIt, settings, deviceLanguage: deviceLanguage);
   registerOverview(getIt);
   registerReports(getIt);

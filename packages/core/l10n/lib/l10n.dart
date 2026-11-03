@@ -10,3 +10,4 @@ export 'src/chart_period_labels.dart';
 export 'src/day_labels.dart';
 export 'src/format_money.dart';
 export 'src/generated/strings.g.dart';
+export 'src/search_key.dart';

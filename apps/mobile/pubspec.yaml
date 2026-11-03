@@ -34,6 +34,10 @@ dependencies:
     sdk: flutter
   get_it: ^9.3.0
   go_router: ^17.5.0
+  help_common:
+    path: ../../packages/features/help/common
+  help_flutter:
+    path: ../../packages/features/help/flutter
   http: ^1.6.0
   l10n:
     path: ../../packages/core/l10n
