@@ -2,6 +2,7 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:design_flutter/src/components/amount_text.dart';
 import 'package:design_flutter/src/components/card_art.dart';
+import 'package:design_flutter/src/components/fading_text.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
 import 'package:design_tokens/design_tokens.dart';
@@ -97,7 +98,7 @@ class AccountCard extends StatelessWidget {
                         style: styles.label.copyWith(color: colors.text),
                       ),
                       const SizedBox(height: BirkaTokens.spaceXxs),
-                      Text(
+                      FadingText(
                         subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

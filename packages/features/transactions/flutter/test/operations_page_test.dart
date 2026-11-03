@@ -143,6 +143,18 @@ void main() {
     expect(find.text('Кофейня у дома'), findsNothing);
   });
 
+  testWidgets('a search changes the list at once instead of closing rows', (
+    tester,
+  ) async {
+    await pump(tester);
+
+    await tester.enterText(find.byType(TextField), 'кофей');
+    await tester.pump();
+    await tester.pump(BirkaMotion.fast);
+
+    expect(find.text('Продукты'), findsNothing);
+  });
+
   testWidgets('the search narrows it, and the cross brings it back', (
     tester,
   ) async {

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:design_flutter/design_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -97,6 +100,54 @@ void main() {
     await tester.pump(BirkaMotion.slow ~/ 2);
 
     expect(heightOf(tester, 'b'), inExclusiveRange(0, 40));
+
+    await tester.pumpAndSettle();
+
+    expect(heightOf(tester, 'b'), 40);
+  });
+
+  testWidgets('opens a row that came under a sheet once the sheet has gone', (
+    tester,
+  ) async {
+    final rows = ValueNotifier(['a']);
+    addTearDown(rows.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: BirkaTheme.dark(),
+        home: Align(
+          alignment: Alignment.topLeft,
+          child: ValueListenableBuilder(
+            valueListenable: rows,
+            builder: (context, rows, _) => AnimatedColumn(
+              children: [
+                for (final row in rows)
+                  SizedBox(key: ValueKey(row), height: 40, child: Text(row)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+    unawaited(
+      navigator.push(
+        CupertinoSheetRoute<void>(builder: (_) => const SizedBox.expand()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The page below shows at the top of the sheet and keeps ticking.
+    rows.value = ['a', 'b'];
+    await tester.pump();
+    await tester.pump(BirkaMotion.slow);
+
+    expect(heightOf(tester, 'b'), 0);
+
+    navigator.pop();
+    await tester.pump();
+    await tester.pump(BirkaMotion.slow);
+
+    expect(heightOf(tester, 'b'), 0);
 
     await tester.pumpAndSettle();
 

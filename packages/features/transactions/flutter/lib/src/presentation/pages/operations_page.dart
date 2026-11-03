@@ -132,8 +132,15 @@ class _OperationsPageState extends State<OperationsPage> {
                         itemCount: state.days.length,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: BirkaTokens.spaceLg),
+                        // A new filter or search starts the days anew, so
+                        // that rows open and close only when operations come
+                        // and go.
                         itemBuilder: (context, index) => OperationDayGroup(
-                          key: ValueKey(state.days[index].day),
+                          key: ValueKey((
+                            state.filter,
+                            state.query,
+                            state.days[index].day,
+                          )),
                           day: state.days[index],
                           today: state.today,
                           onOpen: widget.onOpen,
