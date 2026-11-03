@@ -38,6 +38,41 @@ double heightOf(WidgetTester tester, String row) => tester
     )
     .height;
 
+double opacityOf(WidgetTester tester, String row) => tester
+    .widget<FadeTransition>(
+      find
+          .ancestor(
+            of: find.text(row, skipOffstage: false),
+            matching: find.byType(FadeTransition, skipOffstage: false),
+          )
+          .first,
+    )
+    .opacity
+    .value;
+
+/// Counts how many times a row of [name] was made anew.
+class Probe extends StatefulWidget {
+  const Probe(this.name, this.made, {super.key});
+
+  final String name;
+  final Map<String, int> made;
+
+  @override
+  State<Probe> createState() => _ProbeState();
+}
+
+class _ProbeState extends State<Probe> {
+  @override
+  void initState() {
+    super.initState();
+    widget.made.update(widget.name, (n) => n + 1, ifAbsent: () => 1);
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      SizedBox(height: 40, child: Text(widget.name));
+}
+
 void main() {
   testWidgets('opens a row that comes', (tester) async {
     await tester.pumpWidget(column(['a']));
@@ -76,11 +111,18 @@ void main() {
     expect(heightOf(tester, 'b'), 40);
   });
 
-  testWidgets('changes at once when asked for less motion', (tester) async {
+  testWidgets('only fades a row in when asked for less motion', (
+    tester,
+  ) async {
     await tester.pumpWidget(column(['a'], reduced: true));
     await tester.pumpWidget(column(['a', 'b'], reduced: true));
 
     expect(heightOf(tester, 'b'), 40);
+    await tester.pump(BirkaMotion.base ~/ 2);
+    expect(opacityOf(tester, 'b'), inExclusiveRange(0, 1));
+
+    await tester.pumpAndSettle();
+    expect(opacityOf(tester, 'b'), 1);
 
     await tester.pumpWidget(column(['a'], reduced: true));
 
@@ -152,5 +194,53 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(heightOf(tester, 'b'), 40);
+  });
+
+  group('in a sliver', () {
+    Widget sliver(List<String> rows, Map<String, int> made) => MaterialApp(
+      theme: BirkaTheme.dark(),
+      home: CustomScrollView(
+        slivers: [
+          SliverAnimatedColumn(
+            children: [
+              for (final row in rows) Probe(row, made, key: ValueKey(row)),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    testWidgets('opens a row that comes and closes one that goes', (
+      tester,
+    ) async {
+      final made = <String, int>{};
+      await tester.pumpWidget(sliver(['b'], made));
+      await tester.pumpWidget(sliver(['a', 'b'], made));
+      await tester.pump(BirkaMotion.slow ~/ 2);
+
+      expect(heightOf(tester, 'a'), inExclusiveRange(0, 40));
+
+      await tester.pumpAndSettle();
+      expect(heightOf(tester, 'a'), 40);
+
+      await tester.pumpWidget(sliver(['b'], made));
+      await tester.pump(BirkaMotion.slow ~/ 2);
+
+      expect(heightOf(tester, 'a'), inExclusiveRange(0, 40));
+
+      await tester.pumpAndSettle();
+      expect(find.text('a'), findsNothing);
+    });
+
+    testWidgets('keeps a row as it is when another comes before it', (
+      tester,
+    ) async {
+      final made = <String, int>{};
+      await tester.pumpWidget(sliver(['b', 'c'], made));
+      await tester.pumpWidget(sliver(['a', 'b', 'c'], made));
+      await tester.pumpAndSettle();
+
+      expect(made, {'a': 1, 'b': 1, 'c': 1});
+    });
   });
 }

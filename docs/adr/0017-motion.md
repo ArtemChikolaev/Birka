@@ -122,6 +122,18 @@
       of the list or over the page that holds the tabs (`InSight`): the sheet
       of iOS leaves the page below it ticking, so tickers alone cannot tell.
 
+11. The list of operations moves as «Операции: появление и удаление» on the
+    canvas shows.
+    - A new operation opens in its day once the sheet has gone, and one that
+      is deleted closes, so that the rows below move to their places. A day
+      opens with its first operation and closes with its last
+      (`SliverAnimatedColumn`, which builds the days as they scroll into
+      sight). The totals of the month and of the day roll in the color of
+      the news (point 8).
+    - A new month, filter or search changes the list at once.
+    - Under Reduce Motion a row or a day that comes only fades in, and one
+      that goes leaves at once, as in every `AnimatedColumn`.
+
 ## Consequences
 
 - A new form picks its page by its kind, and the router says so in one place.

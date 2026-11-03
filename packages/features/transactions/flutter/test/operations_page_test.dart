@@ -260,6 +260,52 @@ void main() {
     expect(find.text('Кофейня у дома'), findsNothing);
   });
 
+  Future<void> delete(WidgetTester tester, String row) async {
+    await swipe(tester, row);
+    await tester.tap(
+      find.descendant(
+        of: find.ancestor(
+          of: find.text(row),
+          matching: find.byType(GlassSwipeRow),
+        ),
+        matching: glyph(BirkaGlyph.trash),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('УДАЛИТЬ'));
+    await tester.pump();
+    await tester.pump();
+  }
+
+  testWidgets('a deleted operation closes in its day', (tester) async {
+    await pump(tester);
+
+    await delete(tester, 'Кофейня у дома');
+    await tester.pump(BirkaMotion.fast);
+
+    expect(find.text('Кофейня у дома'), findsOneWidget);
+    expect(find.text('СЕГОДНЯ'), findsOneWidget);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Кофейня у дома'), findsNothing);
+    expect(find.text('Продукты'), findsOneWidget);
+  });
+
+  testWidgets('a day closes with its last operation', (tester) async {
+    await pump(tester);
+
+    await delete(tester, 'Зарплата');
+    await tester.pump(BirkaMotion.fast);
+
+    expect(find.text('ВЧЕРА'), findsOneWidget);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('ВЧЕРА'), findsNothing);
+    expect(find.text('3 ОКТЯБРЯ'), findsOneWidget);
+  });
+
   testWidgets('a failed delete says so', (tester) async {
     await pump(tester);
     repository.failure = Exception('disk full');
