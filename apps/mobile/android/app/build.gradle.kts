@@ -5,6 +5,11 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// The workflow of releases hands over the key of the releases (ADR 0020).
+// Without it a release build signs with the debug key, so that `flutter run
+// --release` and the APK of every pull request still build.
+val releaseKeystore: String? = System.getenv("BIRKA_KEYSTORE")
+
 android {
     namespace = "io.github.artemchikolaev.birka"
     compileSdk = flutter.compileSdkVersion
@@ -30,11 +35,21 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = System.getenv("BIRKA_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("BIRKA_KEY_ALIAS")
+                keyPassword = System.getenv("BIRKA_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig =
+                signingConfigs.getByName(if (releaseKeystore != null) "release" else "debug")
         }
     }
 }

@@ -20,3 +20,4 @@
 | [0016](0016-ledger-copy.md) | A copy of the ledger in a file | accepted 2026-11-02 |
 | [0017](0017-motion.md) | How screens open and how things move | accepted 2026-11-03 |
 | [0019](0019-demo.md) | The demo in a database of its own | accepted 2026-11-03 |
+| [0020](0020-android-releases.md) | Releases of the Android app | accepted 2026-11-04 |
