@@ -37,6 +37,13 @@ void main() {
     expect(idea.body, startsWith('Чего не хватает:\n\nКак это помогло бы:'));
   });
 
+  test('shows a letter with hyphens that do not break', () {
+    final letter = HelpLetter.of(LetterKind.question, sampleAbout);
+
+    expect(letterBodyLabel(letter), endsWith('Android 14 · ru\u2011RU'));
+    expect(letter.body, endsWith('Android 14 · ru-RU'));
+  });
+
   test('names the way to write each letter', () {
     expect(letterWayLabel(LetterKind.question), 'Написать разработчику');
     expect(letterTitle(LetterKind.question), 'Письмо разработчику');

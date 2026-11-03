@@ -128,7 +128,7 @@ void main() {
     expect(
       find.text(
         'Что случилось:\n\nЧто ожидали:\n\n'
-        '—\nBirka 0.1.0 (42) · Android 14 · ru-RU',
+        '—\nBirka 0.1.0 (42) · Android 14 · ru\u2011RU',
       ),
       findsOneWidget,
     );

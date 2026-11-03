@@ -17,6 +17,7 @@ import 'package:birka_web/components/capital_preview.dart' as _capital_preview;
 import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
 import 'package:birka_web/pages/backup_island.dart' as _backup_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
+import 'package:birka_web/pages/help_island.dart' as _help_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
 import 'package:birka_web/pages/more_island.dart' as _more_island;
 import 'package:birka_web/pages/more_page.dart' as _more_page;
@@ -52,6 +53,7 @@ import 'package:design_jaspr/src/birka_step_bars.dart' as _birka_step_bars;
 import 'package:design_jaspr/src/birka_switch.dart' as _birka_switch;
 import 'package:design_jaspr/src/birka_text_field.dart' as _birka_text_field;
 import 'package:design_jaspr/src/card_art.dart' as _card_art;
+import 'package:design_jaspr/src/dot_badge.dart' as _dot_badge;
 import 'package:design_jaspr/src/glass_icon_button.dart' as _glass_icon_button;
 import 'package:design_jaspr/src/glass_keypad.dart' as _glass_keypad;
 import 'package:design_jaspr/src/glass_list.dart' as _glass_list;
@@ -66,6 +68,7 @@ import 'package:design_jaspr/src/glass_toast.dart' as _glass_toast;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
 import 'package:design_jaspr/src/welcome_art.dart' as _welcome_art;
+import 'package:help_jaspr/src/presentation/pages/help_page.dart' as _help_page;
 import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
     as _onboarding_page;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
@@ -117,6 +120,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ),
     _categories_island.CategoriesIsland:
         ClientTarget<_categories_island.CategoriesIsland>('categories_island'),
+    _help_island.HelpIsland: ClientTarget<_help_island.HelpIsland>(
+      'help_island',
+    ),
     _more_island.MoreIsland: ClientTarget<_more_island.MoreIsland>(
       'more_island',
     ),
@@ -162,6 +168,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_text_field.BirkaTextField.styles,
     ..._card_art.CardArtSurface.styles,
     ..._card_art.CardArtThumbnail.styles,
+    ..._dot_badge.DotBadge.styles,
     ..._glass_icon_button.GlassIconButton.styles,
     ..._glass_keypad.GlassKeypad.styles,
     ..._glass_list.GlassListGroup.styles,
@@ -176,6 +183,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
     ..._welcome_art.WelcomeArt.styles,
+    ..._help_page.HelpPage.styles,
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,

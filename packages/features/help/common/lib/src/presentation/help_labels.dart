@@ -25,6 +25,12 @@ String letterTitle(LetterKind kind) => switch (kind) {
   LetterKind.idea => t.help.idea,
 };
 
+/// The text of [letter] as the screen shows it: its hyphens do not break, so
+/// that a tag such as `ru-RU` stays on one line. The letter itself keeps its
+/// plain hyphens.
+String letterBodyLabel(HelpLetter letter) =>
+    letter.body.replaceAll('-', '\u2011');
+
 /// What the screen says about [notice].
 String helpNoticeLabel(HelpNotice notice) => switch (notice) {
   MailMissing(:final address) => t.help.noMail(address: address),

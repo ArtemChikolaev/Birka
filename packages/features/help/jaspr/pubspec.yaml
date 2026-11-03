@@ -1,0 +1,20 @@
+name: help_jaspr
+description: The screen of the help feature in Jaspr.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_jaspr:
+    path: ../../../design/jaspr
+  help_common:
+    path: ../common
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+  l10n:
+    path: ../../../core/l10n
+
+dev_dependencies:
+  jaspr_test: ^0.22.3

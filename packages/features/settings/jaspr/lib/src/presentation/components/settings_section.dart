@@ -5,7 +5,6 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
-import 'package:rates/rates.dart' show CbrMirror;
 import 'package:settings_common/settings_common.dart';
 
 /// The settings of this browser, for the page with everything else.
@@ -47,10 +46,6 @@ class SettingsSection extends StatefulComponent {
       },
     ),
     css('.settings__check').styles(raw: {'color': 'var(--color-accent)'}),
-    css('.settings__credit').styles(
-      raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
-    ),
-    css('.settings__credit a').styles(raw: {'color': 'inherit'}),
   ];
 }
 
@@ -141,9 +136,6 @@ class _SettingsSectionState extends State<SettingsSection> {
                   ),
                 ),
               ),
-            ]),
-            p(classes: 'text-caption settings__credit', [
-              a(href: CbrMirror.address, [.text(t.settings.ratesCredit)]),
             ]),
           ],
         );

@@ -216,7 +216,7 @@ class _HelpPageState extends State<HelpPage> {
                   child: ColoredBox(color: colors.hairline),
                 ),
                 const SizedBox(height: BirkaTokens.spaceSm),
-                Text(letter.body, style: caption),
+                Text(letterBodyLabel(letter), style: caption),
               ],
             ),
           ),
