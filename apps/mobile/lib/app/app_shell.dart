@@ -29,32 +29,35 @@ class AppShell extends StatelessWidget {
               left: BirkaTokens.spaceXxl,
               right: BirkaTokens.spaceXxl,
               bottom: max(BirkaTokens.spaceXl, bottomInset),
-              child: GlassNavBar(
-                destinations: [
-                  GlassNavDestination(
-                    glyph: BirkaGlyph.home,
-                    label: t.app.overview,
+              // Goes down as the page of an account grows out of its card.
+              child: BirkaGiveWay(
+                child: GlassNavBar(
+                  destinations: [
+                    GlassNavDestination(
+                      glyph: BirkaGlyph.home,
+                      label: t.app.overview,
+                    ),
+                    GlassNavDestination(
+                      glyph: BirkaGlyph.list,
+                      label: t.app.operations,
+                    ),
+                    GlassNavDestination(
+                      glyph: BirkaGlyph.reports,
+                      label: t.app.reports,
+                    ),
+                    GlassNavDestination(
+                      glyph: BirkaGlyph.more,
+                      label: t.app.more,
+                    ),
+                  ],
+                  selectedIndex: shell.currentIndex,
+                  onSelected: (index) => shell.goBranch(
+                    index,
+                    initialLocation: index == shell.currentIndex,
                   ),
-                  GlassNavDestination(
-                    glyph: BirkaGlyph.list,
-                    label: t.app.operations,
-                  ),
-                  GlassNavDestination(
-                    glyph: BirkaGlyph.reports,
-                    label: t.app.reports,
-                  ),
-                  GlassNavDestination(
-                    glyph: BirkaGlyph.more,
-                    label: t.app.more,
-                  ),
-                ],
-                selectedIndex: shell.currentIndex,
-                onSelected: (index) => shell.goBranch(
-                  index,
-                  initialLocation: index == shell.currentIndex,
+                  actionLabel: t.app.newOperation,
+                  onAction: () => context.push(Paths.quickAdd),
                 ),
-                actionLabel: t.app.newOperation,
-                onAction: () => context.push(Paths.quickAdd),
               ),
             ),
           ],

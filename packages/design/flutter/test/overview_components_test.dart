@@ -134,6 +134,35 @@ void main() {
       );
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('grows from compact to full with the height it gets', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        app(
+          const SizedBox(
+            width: 300,
+            height: (AccountCard.compactHeight + AccountCard.height) / 2,
+            child: AccountCard(
+              art: CardArt.emerald,
+              name: 'Salary',
+              subtitle: 'Rubles',
+              amount: '₽100',
+              compact: true,
+            ),
+          ),
+        ),
+      );
+
+      final styles = BirkaTextStyles.of(
+        tester.element(find.byType(Text).first),
+      );
+      expect(
+        tester.widget<AmountText>(find.byType(AmountText)).style!.fontSize,
+        (styles.title.fontSize! + styles.display.fontSize!) / 2,
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('BirkaLineChart', () {

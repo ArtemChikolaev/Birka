@@ -78,24 +78,24 @@ void main() {
   late FakeRepository repository;
   late List<String> calls;
 
-  Future<void> pump(WidgetTester tester, {String id = 'card'}) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: BirkaTheme.dark(),
-        home: HiddenAmounts(
-          notifier: ValueNotifier(false),
-          child: BlocProvider(
-            create: (_) => AccountCubit(repository, id, now: () => today),
-            child: AccountPage(
-              onBack: () => calls.add('back'),
-              onEdit: () => calls.add('edit'),
-              onOpen: (id) => calls.add('open $id'),
-              onRepeat: (id) => calls.add('repeat $id'),
-            ),
-          ),
+  Widget page({String id = 'card'}) => MaterialApp(
+    theme: BirkaTheme.dark(),
+    home: HiddenAmounts(
+      notifier: ValueNotifier(false),
+      child: BlocProvider(
+        create: (_) => AccountCubit(repository, id, now: () => today),
+        child: AccountPage(
+          onBack: () => calls.add('back'),
+          onEdit: () => calls.add('edit'),
+          onOpen: (id) => calls.add('open $id'),
+          onRepeat: (id) => calls.add('repeat $id'),
         ),
       ),
-    );
+    ),
+  );
+
+  Future<void> pump(WidgetTester tester, {String id = 'card'}) async {
+    await tester.pumpWidget(page(id: id));
     await tester.pumpAndSettle();
   }
 
@@ -135,6 +135,21 @@ void main() {
     expect(find.byType(BirkaLineChart), findsOneWidget);
     expect(find.text('Operations'.toUpperCase()), findsOneWidget);
     expect(find.text('Coffee'), findsOneWidget);
+  });
+
+  testWidgets('keeps the place of its card while it loads', (tester) async {
+    useTallPhone(tester);
+    await tester.pumpWidget(page());
+
+    final place = find.byType(BirkaZoomTarget);
+    expect(find.byType(AccountCard), findsNothing);
+    expect(tester.getSize(place).height, AccountCard.height);
+    final element = tester.element(place);
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AccountCard), findsOneWidget);
+    expect(tester.element(place), same(element));
   });
 
   testWidgets('says what the period changed', (tester) async {

@@ -76,6 +76,10 @@ abstract final class Paths {
   static String category(String id) => '/categories/$id';
 }
 
+/// Says that an account opens from its card, which grows into the page of the
+/// account (ADR 0017).
+const _fromCard = 'card';
+
 /// Builds the router: the tabs keep their state in a shell, and everything
 /// else opens over them. Pages get their cubits from [getIt], and only a new
 /// device has [onboarding], which outlives a router (ADR 0013).
@@ -110,7 +114,8 @@ GoRouter buildRouter(
                   child: OverviewPage(
                     onAddAccount: () => context.push(Paths.newAccount),
                     onAccounts: () => context.push(Paths.accounts),
-                    onOpenAccount: (id) => context.push(Paths.account(id)),
+                    onOpenAccount: (id) =>
+                        context.push(Paths.account(id), extra: _fromCard),
                   ),
                 ),
               ),
@@ -181,6 +186,8 @@ GoRouter buildRouter(
             onBack: () => context.pop(),
             onAdd: () => context.push(Paths.newAccount),
             onOpen: (id) => context.push(Paths.account(id)),
+            onOpenCard: (id) =>
+                context.push(Paths.account(id), extra: _fromCard),
           ),
         ),
         routes: [
@@ -192,9 +199,9 @@ GoRouter buildRouter(
           GoRoute(
             path: ':id',
             parentNavigatorKey: rootKey,
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final id = state.pathParameters['id']!;
-              return BlocProvider(
+              final page = BlocProvider(
                 create: (_) => getIt<AccountCubit>(param1: id),
                 child: AccountPage(
                   onBack: () => context.pop(),
@@ -205,6 +212,15 @@ GoRouter buildRouter(
                       context.push(Paths.repeatOperation(operation)),
                 ),
               );
+              // A card grows into the page of its account, while a row slides
+              // the page in as any page deeper in.
+              return state.extra == _fromCard
+                  ? BirkaZoomPage<void>(
+                      key: state.pageKey,
+                      tag: id,
+                      child: page,
+                    )
+                  : MaterialPage<void>(key: state.pageKey, child: page);
             },
             routes: [
               GoRoute(

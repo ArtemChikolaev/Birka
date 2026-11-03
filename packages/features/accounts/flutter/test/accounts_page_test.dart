@@ -15,6 +15,7 @@ void main() {
   Money eur(int minorUnits) => Money(minorUnits, Currency.eur);
 
   final opened = <String>[];
+  final openedCards = <String>[];
   var added = 0;
   var left = 0;
 
@@ -34,6 +35,7 @@ void main() {
             onBack: () => left++,
             onAdd: () => added++,
             onOpen: opened.add,
+            onOpenCard: openedCards.add,
           ),
         ),
       ),
@@ -43,6 +45,7 @@ void main() {
 
   setUp(() {
     opened.clear();
+    openedCards.clear();
     added = 0;
     left = 0;
     LocaleSettings.setLocaleSync(AppLocale.ru);
@@ -143,7 +146,8 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Добавить счёт'));
     await tester.tap(find.bySemanticsLabel('Назад'));
 
-    expect(opened, ['Наличные', 'Карта']);
+    expect(opened, ['Наличные']);
+    expect(openedCards, ['Карта']);
     expect(added, 1);
     expect(left, 1);
   });

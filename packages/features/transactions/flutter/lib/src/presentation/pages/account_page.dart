@@ -93,7 +93,7 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                           gap,
                           ...switch (state.status) {
-                            AccountStatus.loading => const <Widget>[],
+                            AccountStatus.loading => const [_Card(null)],
                             AccountStatus.failed => [const _Failure()],
                             AccountStatus.gone => [
                               _Notice(t.transactions.accountGone),
@@ -101,7 +101,8 @@ class _AccountPageState extends State<AccountPage> {
                             AccountStatus.ready when account == null =>
                               const <Widget>[],
                             AccountStatus.ready => [
-                              _Summary(state: state, account: account!),
+                              _Card(account),
+                              _Summary(state),
                               gap,
                               if (state.deleteFailed) ...[
                                 Text(
@@ -199,33 +200,51 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// The card of the account, its chart and the switch of periods.
+/// The card of the account. While the page loads, its place stays empty at
+/// the size of the card: the card of the screen below lands there as the page
+/// opens.
+class _Card extends StatelessWidget {
+  const _Card(this.account);
+
+  final AccountBalance? account;
+
+  @override
+  Widget build(BuildContext context) {
+    final account = this.account;
+    if (account == null) {
+      return const BirkaZoomTarget(child: SizedBox(height: AccountCard.height));
+    }
+    final AccountBalance(account: details, :balance) = account;
+    return BirkaZoomTarget(
+      child: AccountCard(
+        art: CardArt.values.byName(details.art.name),
+        name: details.name,
+        subtitle: accountLine(
+          currency: details.currency.code,
+          type: details.type.name,
+          lastDigits: details.lastDigits,
+        ),
+        amount: formatMoney(balance),
+      ),
+    );
+  }
+}
+
+/// How the account changed, its chart and the switch of periods.
 class _Summary extends StatelessWidget {
-  const _Summary({required this.state, required this.account});
+  const _Summary(this.state);
 
   final AccountState state;
-  final AccountBalance account;
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AccountCubit>();
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
-    final AccountBalance(account: details, :balance) = account;
     final change = state.change;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AccountCard(
-          art: CardArt.values.byName(details.art.name),
-          name: details.name,
-          subtitle: accountLine(
-            currency: details.currency.code,
-            type: details.type.name,
-            lastDigits: details.lastDigits,
-          ),
-          amount: formatMoney(balance),
-        ),
         if (change != null && !change.isZero) ...[
           const SizedBox(height: BirkaTokens.spaceMd),
           Row(

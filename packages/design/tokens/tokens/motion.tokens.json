@@ -4,6 +4,7 @@
     "fast": { "$value": { "value": 150, "unit": "ms" } },
     "base": { "$value": { "value": 220, "unit": "ms" } },
     "slow": { "$value": { "value": 320, "unit": "ms" } },
+    "zoom": { "$description": "A card that grows into its page, the longest way anything travels.", "$value": { "value": 420, "unit": "ms" } },
     "spring": { "$description": "The tab bar bubble and switches.", "$value": { "value": 560, "unit": "ms" } }
   },
   "easing": {

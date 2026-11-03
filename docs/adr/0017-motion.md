@@ -25,7 +25,8 @@
    | Kind | Example | How it opens |
    |---|---|---|
    | A tab | Обзор, Операции, Отчёты, Ещё | at once, as before |
-   | Deeper | a list → an account, an operation, Данные | the push of the platform, with the swipe back from the edge on iOS and predictive back on Android |
+   | Deeper | a row of a list → an account, an operation, Данные | the push of the platform, with the swipe back from the edge on iOS and predictive back on Android |
+   | A card → its page | the card of an account on Обзор or Счета → the account | `BirkaZoomPage`: the card flies into its place on the page and grows, the page fades in and rises, the screen below fades and steps back, and the bar of the tabs goes down |
    | Something new | a new account, a category, «+» | `BirkaSheetPage`: the sheet of the system on iOS, a full screen dialog elsewhere |
    | A change of what is on screen | «Изменить» of an account | `BirkaFadePage`: it fades in over the page, the card stays where it is, `BirkaRise` lifts the fields and the button into place |
 
@@ -34,20 +35,39 @@
    so a pull of its list past the top closes it too. The cross of a form is a
    bare icon in a target of 44 points (`GlassIconButton` with `glass: false`);
    the arrow back and the dots of a page keep their glass.
-3. Durations and curves come from `BirkaMotion`, which reads the tokens:
+3. A card grows into its page only when the page opens from that card: the
+   router opens an account as a `BirkaZoomPage` when the tap came from its
+   card on Обзор or Счета, and as any deeper page when it came from a row.
+   - The card is a `BirkaZoomSource`, and its place on the page is a
+     `BirkaZoomTarget` with the same tag, the id of the account. A source
+     flies only into a zoom page that opens over its own screen, so the list
+     of accounts, which slides in with a card of the same account, leaves the
+     card of Обзор where it is.
+   - Flutter measures where a card lands in the first frame of the page, so
+     the page keeps the place of the card empty at its size while it loads.
+   - The card lays itself out by its height: the compact card of Обзор grows
+     into the full card of the page instead of jumping from one to the other.
+   - The page is a route of our own, so it has its own swipe back from the
+     edge on iOS and its own predictive back on Android. Both play the
+     opening backwards under the finger and let go with the numbers of a
+     page of iOS.
+   - It opens in `duration.zoom` (420 ms), the longest way anything travels,
+     and closes in `duration.slow`. When the system asks for less motion,
+     the card does not fly and the two screens only fade.
+4. Durations and curves come from `BirkaMotion`, which reads the tokens:
    things move along `easing.standard` and fade along `easing.fade`, a gentle
    curve added for opacity, since the standard one does most of a fade in the
    first 70 ms and makes it snap. When the system asks for less motion (Reduce
    Motion on iOS, removed animations on Android), our own moves turn into
    fades: `BirkaMotion.reduced` checks both flags. The routes of the platform
    stay as they are.
-4. Android turns on predictive back with
+5. Android turns on predictive back with
    `android:enableOnBackInvokedCallback` in the manifest, which Android 13 to
    15 need; on Android 16 the target SDK 36 turns it on anyway.
-5. The swipe back from any place of a page, which iOS 26 added, waits: Flutter
+6. The swipe back from any place of a page, which iOS 26 added, waits: Flutter
    3.38 knows only the swipe from the edge, and the packages that add it fight
    with the swipe of the rows of operations.
-6. Things inside a screen change with motion too (the row «Анимации
+7. Things inside a screen change with motion too (the row «Анимации
    элементов»): amounts roll, rows open and close, charts redraw, the month
    moves along time. They come in their own pull requests on top of
    `BirkaMotion`.
@@ -60,3 +80,5 @@
   the sheet of Flutter 3.38 pops without `PopScope`.
 - The card of an account stays still between its page and its form only
   while both put it in the same place: under the header, `spaceLg` below it.
+- A page that a card opens shows the place of the card from its first frame,
+  before its data comes, or the card has nowhere to land.

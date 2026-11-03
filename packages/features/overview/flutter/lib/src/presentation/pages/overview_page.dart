@@ -26,7 +26,9 @@ class OverviewPage extends StatefulWidget {
   /// Called by the link to all the accounts.
   final VoidCallback onAccounts;
 
-  /// Called with the id of the account to open.
+  /// Called with the id of the account whose card is tapped. The card grows
+  /// into the page of the account when it opens as a [BirkaZoomPage] with the
+  /// id as its tag.
   final ValueChanged<String> onOpenAccount;
 
   @override
@@ -239,19 +241,23 @@ class _Accounts extends StatelessWidget {
   /// The width of a card in the row, which shows the edge of the next one.
   static const double _cardWidth = 236;
 
+  /// A card that grows into the page of its account.
   Widget _card(AccountBalance row) {
     final AccountBalance(:account, :balance) = row;
-    return AccountCard(
-      compact: true,
-      art: CardArt.values.byName(account.art.name),
-      name: account.name,
-      subtitle: accountLine(
-        currency: balance.currency.code,
-        type: account.type.name,
-        lastDigits: account.lastDigits,
+    return BirkaZoomSource(
+      tag: account.id,
+      child: AccountCard(
+        compact: true,
+        art: CardArt.values.byName(account.art.name),
+        name: account.name,
+        subtitle: accountLine(
+          currency: balance.currency.code,
+          type: account.type.name,
+          lastDigits: account.lastDigits,
+        ),
+        amount: formatMoney(balance),
+        onTap: () => onOpenAccount(account.id),
       ),
-      amount: formatMoney(balance),
-      onTap: () => onOpenAccount(account.id),
     );
   }
 
