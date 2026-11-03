@@ -1,5 +1,7 @@
 import 'package:backup_common/backup_common.dart';
 import 'package:backup_jaspr/backup_jaspr.dart';
+import 'package:birka_web/app/browser.dart';
+import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
@@ -19,6 +21,8 @@ class BackupIsland extends StatefulComponent {
 }
 
 class _BackupIslandState extends DataIslandState<BackupIsland> {
+  static const _settings = BrowserSettingsStore();
+
   @override
   SitePage get page => SitePage.more;
 
@@ -35,7 +39,15 @@ class _BackupIslandState extends DataIslandState<BackupIsland> {
   Component buildPage(BuildContext context) {
     return BlocProvider<BackupCubit>(
       create: (_) => getIt(),
-      child: BackupPage(note: storageNote),
+      child: BackupPage(
+        note: storageNote,
+        demo: demoStateIn(_settings).isOn,
+        onDemoChanged: (on) async {
+          await turnDemo(_settings, on: on);
+          // The other ledger opens with the overview, as a page of its own.
+          openSitePage('overview/');
+        },
+      ),
     );
   }
 }

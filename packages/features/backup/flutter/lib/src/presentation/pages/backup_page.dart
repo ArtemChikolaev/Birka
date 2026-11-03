@@ -12,12 +12,20 @@ class BackupPage extends StatelessWidget {
   /// Creates the page.
   const BackupPage({
     required this.onBack,
+    this.demo = false,
+    this.onDemoChanged,
     this.clock = DateTime.now,
     super.key,
   });
 
   /// Called by the button that goes back.
   final VoidCallback onBack;
+
+  /// Whether the demo is on (ADR 0019).
+  final bool demo;
+
+  /// Turns the demo on or off. Without it the page offers no demo.
+  final ValueChanged<bool>? onDemoChanged;
 
   /// What the time is now, which tests can fix.
   final DateTime Function() clock;
@@ -105,6 +113,16 @@ class BackupPage extends StatelessWidget {
                     const SizedBox(height: BirkaTokens.spaceSm),
                     GlassListGroup(
                       children: [
+                        if (onDemoChanged case final onDemoChanged?)
+                          GlassListRow(
+                            title: t.backup.demo,
+                            subtitle: t.backup.demoText,
+                            subtitleLines: 2,
+                            trailing: Switch(
+                              value: demo,
+                              onChanged: idle ? onDemoChanged : null,
+                            ),
+                          ),
                         GlassListRow(
                           title: t.backup.wipe,
                           danger: true,

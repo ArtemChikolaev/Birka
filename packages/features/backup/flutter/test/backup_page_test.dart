@@ -15,7 +15,11 @@ void main() {
   late FakeSettingsStore store;
   var left = 0;
 
-  Future<BackupCubit> pump(WidgetTester tester) async {
+  Future<BackupCubit> pump(
+    WidgetTester tester, {
+    bool demo = false,
+    ValueChanged<bool>? onDemoChanged,
+  }) async {
     tester.view.physicalSize = const Size(780, 1800);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -26,7 +30,12 @@ void main() {
         theme: BirkaTheme.dark(),
         home: BlocProvider.value(
           value: cubit,
-          child: BackupPage(onBack: () => left++, clock: () => now),
+          child: BackupPage(
+            onBack: () => left++,
+            demo: demo,
+            onDemoChanged: onDemoChanged,
+            clock: () => now,
+          ),
         ),
       ),
     );
@@ -192,5 +201,36 @@ void main() {
     files.release();
     await tester.pumpAndSettle();
     expect(files.saved.map((file) => file.name), ['birka-2026-11-02.birka']);
+  });
+
+  testWidgets('offers the demo, which the host turns on', (tester) async {
+    final turns = <bool>[];
+    await pump(tester, onDemoChanged: turns.add);
+
+    await tester.ensureVisible(find.text('Демо-данные'));
+    expect(
+      find.text('Пример счетов и операций, чтобы осмотреться'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byType(Switch));
+
+    expect(turns, [true]);
+  });
+
+  testWidgets('shows the demo that is on, and turns it off', (tester) async {
+    final turns = <bool>[];
+    await pump(tester, demo: true, onDemoChanged: turns.add);
+
+    await tester.ensureVisible(find.byType(Switch));
+    expect(tester.widget<Switch>(find.byType(Switch)).value, isTrue);
+    await tester.tap(find.byType(Switch));
+
+    expect(turns, [false]);
+  });
+
+  testWidgets('offers no demo without a host that can turn it', (tester) async {
+    await pump(tester);
+
+    expect(find.text('Демо-данные'), findsNothing);
   });
 }

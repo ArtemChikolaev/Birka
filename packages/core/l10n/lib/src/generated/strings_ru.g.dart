@@ -66,6 +66,8 @@ class TranslationsRu extends Translations
   late final _Translations$categories$ru categories =
       _Translations$categories$ru._(_root);
   @override
+  late final _Translations$demo$ru demo = _Translations$demo$ru._(_root);
+  @override
   late final _Translations$onboarding$ru onboarding =
       _Translations$onboarding$ru._(_root);
   @override
@@ -240,6 +242,10 @@ class _Translations$backup$ru extends Translations$backup$en {
   @override
   String get records => 'Учёт';
   @override
+  String get demo => 'Демо-данные';
+  @override
+  String get demoText => 'Пример счетов и операций, чтобы осмотреться';
+  @override
   String get wipe => 'Удалить все данные';
   @override
   String get filesNote =>
@@ -368,6 +374,75 @@ class _Translations$categories$ru extends Translations$categories$en {
   @override
   late final _Translations$categories$form$ru form =
       _Translations$categories$form$ru._(_root);
+}
+
+// Path: demo
+class _Translations$demo$ru extends Translations$demo$en {
+  _Translations$demo$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get card => 'Зарплатная карта';
+  @override
+  String get cash => 'Наличные';
+  @override
+  String get savings => 'Накопления';
+  @override
+  String get euro => 'Карта в евро';
+  @override
+  String get advance => 'Аванс';
+  @override
+  String get salary => 'Зарплата';
+  @override
+  String get project => 'Подработка';
+  @override
+  String get interest => 'Проценты на остаток';
+  @override
+  String get supermarket => 'Супермаркет';
+  @override
+  String get market => 'Рынок';
+  @override
+  String get bakery => 'Пекарня';
+  @override
+  String get coffee => 'Кофейня';
+  @override
+  String get lunch => 'Обед с коллегами';
+  @override
+  String get metro => 'Метро';
+  @override
+  String get taxi => 'Такси';
+  @override
+  String get utilities => 'Коммуналка';
+  @override
+  String get phone => 'Связь и интернет';
+  @override
+  String get music => 'Музыка';
+  @override
+  String get movies => 'Кино и сериалы';
+  @override
+  String get pharmacy => 'Аптека';
+  @override
+  String get cinema => 'Кино';
+  @override
+  String get concert => 'Концерт';
+  @override
+  String get clothes => 'Одежда';
+  @override
+  String get gift => 'Подарок';
+  @override
+  String get hotel => 'Гостиница';
+  @override
+  String get trip => 'Поездка';
+  @override
+  String get toCash => 'Снятие наличных';
+  @override
+  String get toSavings => 'В накопления';
+  @override
+  String get toEuro => 'Евро на поездку';
 }
 
 // Path: onboarding
@@ -1062,6 +1137,8 @@ extension on TranslationsRu {
       'backup.exportText' =>
         'Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория',
       'backup.records' => 'Учёт',
+      'backup.demo' => 'Демо-данные',
+      'backup.demoText' => 'Пример счетов и операций, чтобы осмотреться',
       'backup.wipe' => 'Удалить все данные',
       'backup.filesNote' =>
         'Файлы сохраняются только туда, куда вы укажете в окне системы.',
@@ -1166,6 +1243,35 @@ extension on TranslationsRu {
       'categories.form.restore' => 'Вернуть из архива',
       'categories.form.nameMissing' => 'Дайте категории название.',
       'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+      'demo.card' => 'Зарплатная карта',
+      'demo.cash' => 'Наличные',
+      'demo.savings' => 'Накопления',
+      'demo.euro' => 'Карта в евро',
+      'demo.advance' => 'Аванс',
+      'demo.salary' => 'Зарплата',
+      'demo.project' => 'Подработка',
+      'demo.interest' => 'Проценты на остаток',
+      'demo.supermarket' => 'Супермаркет',
+      'demo.market' => 'Рынок',
+      'demo.bakery' => 'Пекарня',
+      'demo.coffee' => 'Кофейня',
+      'demo.lunch' => 'Обед с коллегами',
+      'demo.metro' => 'Метро',
+      'demo.taxi' => 'Такси',
+      'demo.utilities' => 'Коммуналка',
+      'demo.phone' => 'Связь и интернет',
+      'demo.music' => 'Музыка',
+      'demo.movies' => 'Кино и сериалы',
+      'demo.pharmacy' => 'Аптека',
+      'demo.cinema' => 'Кино',
+      'demo.concert' => 'Концерт',
+      'demo.clothes' => 'Одежда',
+      'demo.gift' => 'Подарок',
+      'demo.hotel' => 'Гостиница',
+      'demo.trip' => 'Поездка',
+      'demo.toCash' => 'Снятие наличных',
+      'demo.toSavings' => 'В накопления',
+      'demo.toEuro' => 'Евро на поездку',
       'onboarding.skip' => 'Пропустить',
       'onboarding.back' => 'Назад',
       'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',

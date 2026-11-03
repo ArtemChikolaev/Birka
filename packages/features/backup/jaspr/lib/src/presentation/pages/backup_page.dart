@@ -14,11 +14,23 @@ import 'package:l10n/l10n.dart';
 /// its buttons. It needs a [BackupCubit] above it.
 class BackupPage extends StatefulComponent {
   /// Creates the page.
-  const BackupPage({this.note, this.clock = DateTime.now, super.key});
+  const BackupPage({
+    this.note,
+    this.demo = false,
+    this.onDemoChanged,
+    this.clock = DateTime.now,
+    super.key,
+  });
 
   /// A quiet line about where the data lives, such as whether the browser
   /// keeps it.
   final String? note;
+
+  /// Whether the demo is on (ADR 0019).
+  final bool demo;
+
+  /// Turns the demo on or off. Without it the page offers no demo.
+  final ValueChanged<bool>? onDemoChanged;
 
   /// What the time is now, which tests can fix.
   final DateTime Function() clock;
@@ -232,6 +244,20 @@ class _BackupPageState extends State<BackupPage> {
               SectionLabel(t.backup.records),
               GlassListGroup(
                 children: [
+                  if (component.onDemoChanged case final onDemoChanged?)
+                    GlassListRow(
+                      title: t.backup.demo,
+                      subtitle: t.backup.demoText,
+                      subtitleLines: 2,
+                      trailing: BirkaSwitch(
+                        value: component.demo,
+                        label: t.backup.demo,
+                        // While a task runs, a tap waits for nothing.
+                        onChanged: (on) {
+                          if (idle) onDemoChanged(on);
+                        },
+                      ),
+                    ),
                   GlassListRow(
                     title: t.backup.wipe,
                     danger: true,
