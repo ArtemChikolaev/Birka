@@ -324,18 +324,23 @@ class _Stored extends StatelessWidget {
           const SizedBox(height: BirkaTokens.spaceMd),
           Row(
             children: [
-              DecoratedBox(
+              // A new copy turns the dot green and the line to its time.
+              AnimatedContainer(
+                duration: BirkaMotion.reduced(context)
+                    ? Duration.zero
+                    : BirkaMotion.base,
+                width: BirkaTokens.spaceXs,
+                height: BirkaTokens.spaceXs,
                 decoration: BoxDecoration(
                   color: lastCopyAt == null
                       ? const Color(BirkaTokens.colorPaletteAmber)
                       : colors.accent,
                   shape: BoxShape.circle,
                 ),
-                child: const SizedBox.square(dimension: BirkaTokens.spaceXs),
               ),
               const SizedBox(width: BirkaTokens.spaceSm),
               Expanded(
-                child: Text(
+                child: FadingText(
                   lastCopyAt == null
                       ? t.backup.noCopyYet
                       : t.backup.lastCopy(
