@@ -78,7 +78,9 @@ Extend what exists instead of duplicating it.
 - The Flutter app draws edge to edge behind see-through system bars, so
   screens keep their content out of the bars with `SafeArea`.
 - A screen opens by its kind ([ADR 0017](docs/adr/0017-motion.md)): deeper
-  pages push the way of the platform, something new opens in a
+  pages push the way of the platform, a page grows out of the card that
+  opens it in a `BirkaZoomPage` (the card is a `BirkaZoomSource`, its place
+  on the page a `BirkaZoomTarget`), something new opens in a
   `BirkaSheetPage`, a change of what is on screen in a `BirkaFadePage`.
   Motion takes its durations and curves from `BirkaMotion` and turns into
   fades when `BirkaMotion.reduced` says so.

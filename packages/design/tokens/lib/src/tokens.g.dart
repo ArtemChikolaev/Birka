@@ -239,6 +239,11 @@ abstract final class BirkaTokens {
   /// `duration.slow` in milliseconds.
   static const int durationSlowMs = 320;
 
+  /// A card that grows into its page, the longest way anything travels.
+  ///
+  /// `duration.zoom` in milliseconds.
+  static const int durationZoomMs = 420;
+
   /// The tab bar bubble and switches.
   ///
   /// `duration.spring` in milliseconds.

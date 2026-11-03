@@ -15,6 +15,7 @@ class AccountsPage extends StatelessWidget {
     required this.onBack,
     required this.onAdd,
     required this.onOpen,
+    required this.onOpenCard,
     super.key,
   });
 
@@ -24,8 +25,13 @@ class AccountsPage extends StatelessWidget {
   /// Called by the button that adds an account.
   final VoidCallback onAdd;
 
-  /// Called with the id of the account to open.
+  /// Called with the id of the account whose row is tapped.
   final ValueChanged<String> onOpen;
+
+  /// Called with the id of the main account when its card is tapped. The card
+  /// grows into the page of the account when it opens as a [BirkaZoomPage]
+  /// with the id as its tag.
+  final ValueChanged<String> onOpenCard;
 
   @override
   Widget build(BuildContext context) {
@@ -82,16 +88,19 @@ class AccountsPage extends StatelessWidget {
       ],
       const SizedBox(height: BirkaTokens.spaceLg),
       if (first != null) ...[
-        AccountCard(
-          art: cardArtOf(first.account.art),
-          name: first.account.name,
-          subtitle: accountSubtitle(
-            currency: first.account.currency,
-            type: first.account.type,
-            lastDigits: first.account.lastDigits,
+        BirkaZoomSource(
+          tag: first.account.id,
+          child: AccountCard(
+            art: cardArtOf(first.account.art),
+            name: first.account.name,
+            subtitle: accountSubtitle(
+              currency: first.account.currency,
+              type: first.account.type,
+              lastDigits: first.account.lastDigits,
+            ),
+            amount: formatMoney(first.balance),
+            onTap: () => onOpenCard(first.account.id),
           ),
-          amount: formatMoney(first.balance),
-          onTap: () => onOpen(first.account.id),
         ),
         const SizedBox(height: BirkaTokens.spaceMd),
         GlassListGroup(

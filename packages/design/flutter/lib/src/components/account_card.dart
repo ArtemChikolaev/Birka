@@ -1,3 +1,5 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:design_flutter/src/components/amount_text.dart';
 import 'package:design_flutter/src/components/card_art.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
@@ -44,62 +46,77 @@ class AccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = BirkaTextStyles.of(context);
-    final colors = BirkaColors.of(context);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: SizedBox(
         height: compact ? compactHeight : height,
-        child: CardArtSurface(
-          art: art,
-          child: Padding(
-            padding: EdgeInsets.all(
-              compact ? BirkaTokens.spaceMd : BirkaTokens.spaceLg,
-            ),
-            child: Column(
+        // Lays itself out by the height it gets, so that a compact card grows
+        // into a full one smoothly as it flies into its page.
+        child: LayoutBuilder(
+          builder: (context, constraints) =>
+              _face(context, _fullness(constraints.maxHeight)),
+        ),
+      ),
+    );
+  }
+
+  /// How full a card of [extent] is: 0 at the compact height, 1 at the full.
+  static double _fullness(double extent) =>
+      ((extent - compactHeight) / (height - compactHeight)).clamp(0, 1);
+
+  Widget _face(BuildContext context, double fullness) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    return CardArtSurface(
+      art: art,
+      child: Padding(
+        padding: EdgeInsets.all(
+          lerpDouble(BirkaTokens.spaceMd, BirkaTokens.spaceLg, fullness)!,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            name.toUpperCase(),
-                            semanticsLabel: name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: styles.label.copyWith(color: colors.text),
-                          ),
-                          const SizedBox(height: BirkaTokens.spaceXxs),
-                          Text(
-                            subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: styles.caption.copyWith(
-                              color: colors.textSecondary,
-                            ),
-                          ),
-                        ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name.toUpperCase(),
+                        semanticsLabel: name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: styles.label.copyWith(color: colors.text),
                       ),
-                    ),
-                    const SizedBox(width: BirkaTokens.spaceSm),
-                    const _Chip(),
-                  ],
-                ),
-                const Spacer(),
-                AmountText(
-                  amount,
-                  style: (compact ? styles.title : styles.display).copyWith(
-                    color: colors.text,
+                      const SizedBox(height: BirkaTokens.spaceXxs),
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: styles.caption.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                const SizedBox(width: BirkaTokens.spaceSm),
+                const _Chip(),
               ],
             ),
-          ),
+            const Spacer(),
+            AmountText(
+              amount,
+              style: TextStyle.lerp(
+                styles.title,
+                styles.display,
+                fullness,
+              )!.copyWith(color: colors.text),
+            ),
+          ],
         ),
       ),
     );

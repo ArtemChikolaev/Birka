@@ -52,9 +52,11 @@ final class _Settings implements SettingsStore {
 }
 
 /// The accounts in memory: the app under test needs no database.
-final class _NoAccounts implements AccountsRepository {
+final class _Accounts implements AccountsRepository {
+  List<AccountBalance> balances = const [];
+
   @override
-  Stream<List<AccountBalance>> watchAccounts() => Stream.value(const []);
+  Stream<List<AccountBalance>> watchAccounts() => Stream.value(balances);
 
   @override
   Stream<RateBook> watchRates() => Stream.value(const RateBook.empty());
@@ -259,9 +261,15 @@ Operation _coffee() {
   );
 }
 
+/// The page that shows the account.
+Page<Object?> pageOf(WidgetTester tester) =>
+    ModalRoute.of(tester.element(find.byType(AccountPage)))!.settings
+        as Page<Object?>;
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late GetIt getIt;
+  late _Accounts accounts;
   late _Transactions transactions;
   late _Overview overview;
   late _Settings settings;
@@ -269,7 +277,7 @@ void main() {
   setUp(() {
     getIt = GetIt.asNewInstance();
     settings = _Settings();
-    final AccountsRepository accounts = _NoAccounts();
+    accounts = _Accounts();
     final CategoriesRepository categories = _NoCategories();
     transactions = _Transactions();
     overview = _Overview();
@@ -441,12 +449,37 @@ void main() {
     await tester.tap(find.text('CARD'));
     await tester.pumpAndSettle();
     expect(find.byType(AccountPage), findsOneWidget);
+    expect(pageOf(tester), isA<BirkaZoomPage<void>>());
 
     await tester.tap(find.bySemanticsLabel(t.transactions.back));
     await tester.pumpAndSettle();
     await tester.tap(find.text(t.overview.allAccounts(n: 1).toUpperCase()));
     await tester.pumpAndSettle();
     expect(find.byType(AccountsPage), findsOneWidget);
+  });
+
+  testWidgets('all accounts open one from its card and from its row', (
+    tester,
+  ) async {
+    final coffee = _coffee();
+    final card = AccountBalance(coffee.account!, Money(100, Currency.rub));
+    overview.accounts = [card];
+    accounts.balances = [card];
+    transactions.account = card;
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.overview.allAccounts(n: 1).toUpperCase()));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('CARD'));
+    await tester.pumpAndSettle();
+    expect(pageOf(tester), isA<BirkaZoomPage<void>>());
+
+    await tester.tap(find.bySemanticsLabel(t.transactions.back));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Card'));
+    await tester.pumpAndSettle();
+    expect(pageOf(tester), isA<MaterialPage<void>>());
   });
 
   group('the page of an account', () {
@@ -478,6 +511,7 @@ void main() {
 
       expect(find.byType(AccountFormPage), findsNothing);
       expect(find.byType(AccountPage), findsOneWidget);
+      expect(pageOf(tester), isA<BirkaZoomPage<void>>());
     });
 
     testWidgets('leads to an operation and back', (tester) async {

@@ -19,6 +19,11 @@ abstract final class BirkaMotion {
     milliseconds: BirkaTokens.durationSlowMs,
   );
 
+  /// `duration.zoom`: a card that grows into its page.
+  static const Duration zoom = Duration(
+    milliseconds: BirkaTokens.durationZoomMs,
+  );
+
   /// `duration.spring`: something that settles with a bounce.
   static const Duration spring = Duration(
     milliseconds: BirkaTokens.durationSpringMs,
