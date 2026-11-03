@@ -86,6 +86,7 @@ class _OverviewPageState extends State<OverviewPage> {
                         for (final value in state.history) value.toDouble(),
                       ],
                       label: t.overview.chart,
+                      series: state.period,
                     ),
                     const SizedBox(height: BirkaTokens.spaceSm),
                     _Periods(selected: state.period),
@@ -194,9 +195,8 @@ class _Capital extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: BirkaTokens.spaceXs),
-              Text(
+              _FadingCaption(
                 chartPeriodCaption(state.period.name, month: state.today.month),
-                style: styles.body.copyWith(color: colors.textMuted),
               ),
             ],
           ),
@@ -213,19 +213,38 @@ class _Periods extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<OverviewCubit>();
-    return Wrap(
-      spacing: BirkaTokens.spaceXs,
-      runSpacing: BirkaTokens.spaceXs,
-      children: [
+    return ChipSwitch(
+      options: {
         for (final period in ChartPeriod.values)
-          BirkaChip(
-            label: chartPeriodLabel(period.name),
-            selected: period == selected,
-            compact: true,
-            onTap: () => cubit.periodChanged(period),
-          ),
-      ],
+          period: chartPeriodLabel(period.name),
+      },
+      selected: selected,
+      onChanged: context.read<OverviewCubit>().periodChanged,
+    );
+  }
+}
+
+/// [text] that cross-fades into a new one, such as the period of a change.
+class _FadingCaption extends StatelessWidget {
+  const _FadingCaption(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    return AnimatedSwitcher(
+      duration: BirkaMotion.reduced(context) ? Duration.zero : BirkaMotion.base,
+      layoutBuilder: (current, previous) => Stack(
+        alignment: AlignmentDirectional.centerStart,
+        children: [...previous, ?current],
+      ),
+      child: Text(
+        text,
+        key: ValueKey(text),
+        style: styles.body.copyWith(color: colors.textMuted),
+      ),
     );
   }
 }

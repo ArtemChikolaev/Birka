@@ -20,6 +20,7 @@ export 'src/components/birka_ring.dart';
 export 'src/components/birka_step_bars.dart';
 export 'src/components/birka_text_field.dart';
 export 'src/components/card_art.dart';
+export 'src/components/chip_switch.dart';
 export 'src/components/choice_sheet.dart';
 export 'src/components/glass_icon_button.dart';
 export 'src/components/glass_keypad.dart';
