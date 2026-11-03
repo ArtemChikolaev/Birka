@@ -284,6 +284,8 @@ class _RenderSliverShift extends RenderProxySliver {
     if (value == _dx) return;
     _dx = value;
     markNeedsPaint();
+    // Screen readers find the moved layer where it paints.
+    markNeedsSemanticsUpdate();
   }
 
   /// The shift on the screen.
