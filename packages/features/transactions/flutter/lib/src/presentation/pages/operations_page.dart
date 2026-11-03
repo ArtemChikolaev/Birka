@@ -64,86 +64,115 @@ class _OperationsPageState extends State<OperationsPage> {
       // Glass panels share one backdrop, which keeps a long list smooth.
       child: BackdropGroup(
         child: BlocBuilder<OperationsCubit, OperationsState>(
-          builder: (context, state) => CustomScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                  BirkaTokens.spaceLg,
-                  BirkaTokens.spaceLg,
-                  BirkaTokens.spaceLg,
-                  0,
-                ),
-                sliver: SliverList.list(
-                  children: [
-                    _Header(state: state),
-                    const SizedBox(height: BirkaTokens.spaceMd),
-                    GlassSearchField(
-                      label: t.transactions.search,
-                      clearLabel: t.transactions.clearSearch,
-                      hint: t.transactions.searchHint,
-                      controller: _search,
-                      onChanged: context.read<OperationsCubit>().queryChanged,
-                    ),
-                    const SizedBox(height: BirkaTokens.spaceSm),
-                    _Filters(state: state),
-                    if (state.deleteFailed) ...[
+          // A swipe turns to the month before or after, and the month on
+          // screen slides away for it, as it does on Отчёты.
+          builder: (context, state) => SwipeBetween(
+            onPrevious: () =>
+                unawaited(context.read<OperationsCubit>().previousMonth()),
+            onNext: () =>
+                unawaited(context.read<OperationsCubit>().nextMonth()),
+            child: CustomScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    BirkaTokens.spaceLg,
+                    BirkaTokens.spaceLg,
+                    BirkaTokens.spaceLg,
+                    0,
+                  ),
+                  sliver: SliverList.list(
+                    children: [
+                      _Header(state: state),
+                      const SizedBox(height: BirkaTokens.spaceMd),
+                      GlassSearchField(
+                        label: t.transactions.search,
+                        clearLabel: t.transactions.clearSearch,
+                        hint: t.transactions.searchHint,
+                        controller: _search,
+                        onChanged: context.read<OperationsCubit>().queryChanged,
+                      ),
                       const SizedBox(height: BirkaTokens.spaceSm),
-                      Text(
-                        t.transactions.failedToDelete,
-                        style: BirkaTextStyles.of(context).caption.copyWith(
-                          color: BirkaColors.of(context).negative,
+                      _Filters(state: state),
+                      if (state.deleteFailed) ...[
+                        const SizedBox(height: BirkaTokens.spaceSm),
+                        Text(
+                          t.transactions.failedToDelete,
+                          style: BirkaTextStyles.of(context).caption.copyWith(
+                            color: BirkaColors.of(context).negative,
+                          ),
+                        ),
+                      ],
+                      SlideSwitcher(
+                        value: state.month,
+                        follow: true,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (state.expenses.isNotEmpty ||
+                                state.income.isNotEmpty) ...[
+                              const SizedBox(height: BirkaTokens.spaceSm),
+                              // A new month, filter or search starts the
+                              // totals anew, so that they roll only when the
+                              // money moves.
+                              _Totals(
+                                key: ValueKey((
+                                  state.month,
+                                  state.filter,
+                                  state.query,
+                                )),
+                                state: state,
+                              ),
+                            ],
+                            const SizedBox(height: BirkaTokens.spaceMd),
+                            ...switch (state.status) {
+                              OperationsStatus.loading => const <Widget>[],
+                              OperationsStatus.failed => [const _Failure()],
+                              OperationsStatus.ready when state.shown.isEmpty =>
+                                [_Empty(narrowed: state.isNarrowed)],
+                              OperationsStatus.ready => const <Widget>[],
+                            },
+                          ],
                         ),
                       ),
                     ],
-                    if (state.expenses.isNotEmpty ||
-                        state.income.isNotEmpty) ...[
-                      const SizedBox(height: BirkaTokens.spaceSm),
-                      // A new month, filter or search starts the totals
-                      // anew, so that they roll only when the money moves.
-                      _Totals(
-                        key: ValueKey((state.month, state.filter, state.query)),
-                        state: state,
-                      ),
-                    ],
-                    const SizedBox(height: BirkaTokens.spaceMd),
-                    ...switch (state.status) {
-                      OperationsStatus.loading => const <Widget>[],
-                      OperationsStatus.failed => [const _Failure()],
-                      OperationsStatus.ready when state.shown.isEmpty => [
-                        _Empty(narrowed: state.isNarrowed),
-                      ],
-                      OperationsStatus.ready => const <Widget>[],
-                    },
-                  ],
+                  ),
                 ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  BirkaTokens.spaceLg,
-                  0,
-                  BirkaTokens.spaceLg,
-                  // Each day keeps its room under it.
-                  GlassNavBar.clearance -
-                      BirkaTokens.spaceLg +
-                      MediaQuery.viewPaddingOf(context).bottom +
-                      MediaQuery.viewInsetsOf(context).bottom,
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(
+                    BirkaTokens.spaceLg,
+                    0,
+                    BirkaTokens.spaceLg,
+                    // Each day keeps its room under it.
+                    GlassNavBar.clearance -
+                        BirkaTokens.spaceLg +
+                        MediaQuery.viewPaddingOf(context).bottom +
+                        MediaQuery.viewInsetsOf(context).bottom,
+                  ),
+                  sliver: SlideSwitcher.sliver(
+                    value: state.month,
+                    follow: true,
+                    sliver: state.status == OperationsStatus.ready
+                        ? SliverOperationDays(
+                            // A new month, filter or search starts the days
+                            // anew, so that days and rows open and close only
+                            // when operations come and go.
+                            key: ValueKey((
+                              state.month,
+                              state.filter,
+                              state.query,
+                            )),
+                            days: state.days,
+                            today: state.today,
+                            onOpen: widget.onOpen,
+                            onRepeat: widget.onRepeat,
+                            onDelete: _delete,
+                          )
+                        : const SliverToBoxAdapter(),
+                  ),
                 ),
-                sliver: state.status == OperationsStatus.ready
-                    ? SliverOperationDays(
-                        // A new month, filter or search starts the days anew,
-                        // so that days and rows open and close only when
-                        // operations come and go.
-                        key: ValueKey((state.month, state.filter, state.query)),
-                        days: state.days,
-                        today: state.today,
-                        onOpen: widget.onOpen,
-                        onRepeat: widget.onRepeat,
-                        onDelete: _delete,
-                      )
-                    : const SliverToBoxAdapter(),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -204,6 +233,7 @@ class _Header extends StatelessWidget {
           glyph: BirkaGlyph.calendar,
           label: monthLabel(state.month, today: state.today),
           selected: false,
+          order: state.month,
           onTap: () => _pickMonth(context),
         ),
       ],
@@ -222,17 +252,14 @@ class _Filters extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       clipBehavior: Clip.none,
-      child: Row(
-        spacing: BirkaTokens.spaceXs,
-        children: [
+      child: ChipSwitch(
+        options: {
           for (final filter in OperationsFilter.values)
-            BirkaChip(
-              label: filterLabel(filter),
-              selected: filter == state.filter,
-              compact: true,
-              onTap: () => cubit.filterChanged(filter),
-            ),
-        ],
+            filter: filterLabel(filter),
+        },
+        selected: state.filter,
+        onChanged: cubit.filterChanged,
+        compact: true,
       ),
     );
   }

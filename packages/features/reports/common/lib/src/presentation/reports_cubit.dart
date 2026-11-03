@@ -164,19 +164,19 @@ class ReportsCubit extends Cubit<ReportsState> {
 
   /// Shows the month before the one on screen among the months to choose
   /// from, if there is one.
-  Future<void> previousMonth() => _monthMoved(1);
+  Future<void> previousMonth() => _monthMoved(earlier: true);
 
   /// Shows the month after the one on screen among the months to choose
   /// from, if there is one.
-  Future<void> nextMonth() => _monthMoved(-1);
+  Future<void> nextMonth() => _monthMoved(earlier: false);
 
-  /// Moves [step] places along the months, which go from the latest.
-  Future<void> _monthMoved(int step) async {
-    final months = await this.months();
-    final index = months.indexOf(state.month);
-    final next = index + step;
-    if (index < 0 || next < 0 || next >= months.length) return;
-    await monthChanged(months[next]);
+  Future<void> _monthMoved({required bool earlier}) async {
+    final month = neighbourMonth(
+      await months(),
+      state.month,
+      earlier: earlier,
+    );
+    if (month != null) await monthChanged(month);
   }
 
   /// Shows expenses or income.

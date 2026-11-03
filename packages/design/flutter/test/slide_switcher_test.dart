@@ -76,6 +76,51 @@ void main() {
     });
   });
 
+  group('SlideSwitcher.sliver', () {
+    late List<int> tapped;
+
+    Widget list(int value) => MaterialApp(
+      theme: theme,
+      home: CustomScrollView(
+        slivers: [
+          SlideSwitcher.sliver(
+            value: value,
+            sliver: SliverList.list(
+              children: [
+                GestureDetector(
+                  onTap: () => tapped.add(value),
+                  child: SizedBox(height: 40, child: Text('month $value')),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    setUp(() => tapped = []);
+
+    testWidgets('slides the old list away and the new one in', (
+      tester,
+    ) async {
+      await tester.pumpWidget(list(11));
+      final rest = tester.getTopLeft(find.text('month 11')).dx;
+      await tester.pumpWidget(list(10));
+      await tester.pump(BirkaMotion.base ~/ 2);
+
+      expect(tester.getTopLeft(find.text('month 11')).dx, greaterThan(rest));
+      expect(tester.getTopLeft(find.text('month 10')).dx, lessThan(rest));
+
+      await tester.tap(find.text('month 10'), warnIfMissed: false);
+      expect(tapped, [10]);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('month 11'), findsNothing);
+      expect(tester.getTopLeft(find.text('month 10')).dx, rest);
+    });
+  });
+
   group('SwipeBetween', () {
     late List<String> turned;
 
