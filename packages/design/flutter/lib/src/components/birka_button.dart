@@ -166,42 +166,63 @@ class _BirkaButtonState extends State<BirkaButton>
     final grown = _still
         ? 1.0
         : part(after, BirkaMotion.slow, BirkaMotion.springCurve);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final full = constraints.hasBoundedWidth
-            ? constraints.maxWidth
-            : BirkaButton.height;
-        return Center(
-          child: Container(
-            width: lerpDouble(full, BirkaButton.height, shrunk),
-            height: BirkaButton.height,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(color: fill, borderRadius: _pill),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // The label keeps its place as the pill closes around it.
-                OverflowBox(
-                  maxWidth: full,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: BirkaTokens.spaceLg,
-                    ),
-                    child: Opacity(opacity: 1 - faded, child: label),
-                  ),
+    return CustomSingleChildLayout(
+      delegate: _Shrinking(shrunk),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(color: fill, borderRadius: _pill),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // The label keeps its width as the pill closes around it.
+            OverflowBox(
+              maxWidth: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BirkaTokens.spaceLg,
                 ),
-                Opacity(
-                  opacity: shown,
-                  child: Transform.scale(
-                    scale: lerpDouble(0.4, 1, grown),
-                    child: BirkaIcon(BirkaGlyph.check, size: 26, color: ink),
-                  ),
-                ),
-              ],
+                child: Opacity(opacity: 1 - faded, child: label),
+              ),
             ),
-          ),
-        );
-      },
+            Opacity(
+              opacity: shown,
+              child: Transform.scale(
+                scale: lerpDouble(0.4, 1, grown),
+                child: BirkaIcon(BirkaGlyph.check, size: 26, color: ink),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
+}
+
+/// Lays the pill out [shrunk] of the way from the whole width of the button
+/// to a circle in its middle.
+class _Shrinking extends SingleChildLayoutDelegate {
+  const _Shrinking(this.shrunk);
+
+  final double shrunk;
+
+  static double _whole(BoxConstraints constraints) =>
+      constraints.hasBoundedWidth ? constraints.maxWidth : BirkaButton.height;
+
+  @override
+  Size getSize(BoxConstraints constraints) =>
+      constraints.constrain(Size(_whole(constraints), BirkaButton.height));
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      BoxConstraints.tightFor(
+        width: lerpDouble(_whole(constraints), BirkaButton.height, shrunk),
+        height: BirkaButton.height,
+      );
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) =>
+      Offset((size.width - childSize.width) / 2, 0);
+
+  @override
+  bool shouldRelayout(_Shrinking oldDelegate) => shrunk != oldDelegate.shrunk;
 }

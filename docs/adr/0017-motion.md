@@ -138,6 +138,10 @@
       `AnimatedColumn` does. A change waits while a page lies over the page
       of the list or over the page that holds the tabs (`InSight`): the sheet
       of iOS leaves the page below it ticking, so tickers alone cannot tell.
+    - The form of a category and the sheet of a new operation close the same
+      way, after the check mark of their button. The parents of a category
+      are a `ChipSwitch` too, and a picked color or icon eases in
+      (`GlyphBadge`).
 
 11. The list of operations moves as «Операции: появление и удаление» on the
     canvas shows.

@@ -21,12 +21,7 @@ class CategoryFormPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: AmbientBackground(
         child: SafeArea(
-          child: BlocConsumer<CategoryFormCubit, CategoryFormState>(
-            listenWhen: (previous, current) =>
-                previous.status != current.status,
-            listener: (context, state) {
-              if (state.status == CategoryFormStatus.saved) onClose();
-            },
+          child: BlocBuilder<CategoryFormCubit, CategoryFormState>(
             buildWhen: (previous, current) =>
                 previous.status == CategoryFormStatus.loading,
             builder: (context, state) => switch (state.status) {
@@ -132,22 +127,15 @@ class _FormState extends State<_Form> {
                   if (state.parents.isNotEmpty) ...[
                     const SizedBox(height: BirkaTokens.spaceMd),
                     _Label(form.parent),
-                    Wrap(
-                      spacing: BirkaTokens.spaceXs,
-                      runSpacing: BirkaTokens.spaceXs,
-                      children: [
-                        BirkaChip(
-                          label: form.noParent,
-                          selected: state.parentId == null,
-                          onTap: () => cubit.parentChanged(null),
-                        ),
+                    ChipSwitch<String?>(
+                      options: {
+                        null: form.noParent,
                         for (final parent in state.parents)
-                          BirkaChip(
-                            label: parent.name,
-                            selected: parent.id == state.parentId,
-                            onTap: () => cubit.parentChanged(parent.id),
-                          ),
-                      ],
+                          parent.id: parent.name,
+                      },
+                      selected: state.parentId,
+                      onChanged: cubit.parentChanged,
+                      wrap: true,
                     ),
                   ],
                   const SizedBox(height: BirkaTokens.spaceMd),
@@ -229,11 +217,15 @@ class _FormState extends State<_Form> {
                   ),
                   const SizedBox(height: BirkaTokens.spaceXs),
                 ],
+                // Once saved, the button turns into a check mark and closes
+                // the form.
                 BirkaButton(
                   label: form.save,
                   onPressed: state.status == CategoryFormStatus.saving
                       ? null
                       : cubit.save,
+                  done: state.status == CategoryFormStatus.saved,
+                  onDone: widget.onClose,
                 ),
               ],
             ),
@@ -288,7 +280,10 @@ class _Swatch extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: BirkaMotion.reduced(context)
+              ? Duration.zero
+              : BirkaMotion.fast,
           padding: const EdgeInsets.all(BirkaTokens.spaceXs),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
