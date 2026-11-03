@@ -34,7 +34,7 @@
 | Navigation and DI | go_router, get_it | 17.5.0, 9.3.0 |
 | Icons | flutter_svg | 2.3.0 |
 | Strings | slang, intl | 4.19.2, 0.20.2 |
-| Testing and lints | test, mocktail, very_good_analysis, stream_channel | 1.26.3, 1.0.5, 10.1.0, 2.1.4 |
+| Testing and lints | test, mocktail, very_good_analysis, stream_channel, fake_async | 1.26.3, 1.0.5, 10.1.0, 2.1.4, 1.3.3 |
 | Monitoring | sentry_flutter | 9.30.1 |
 | App icons | flutter_launcher_icons | 0.14.4 |
 | Check of the built site | browser_launcher, shelf, shelf_static, webkit_inspection_protocol | 1.1.3, 1.4.3, 1.2.0, 1.2.1 |
