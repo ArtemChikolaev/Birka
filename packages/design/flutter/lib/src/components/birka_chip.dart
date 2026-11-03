@@ -1,5 +1,7 @@
 import 'package:design_flutter/src/components/birka_icon.dart';
+import 'package:design_flutter/src/components/slide_switcher.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_motion.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
 import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/widgets.dart';
@@ -14,6 +16,7 @@ class BirkaChip extends StatelessWidget {
     this.glyph,
     this.dashed = false,
     this.compact = false,
+    this.order,
     super.key,
   });
 
@@ -36,11 +39,26 @@ class BirkaChip extends StatelessWidget {
   /// Whether the chip leaves less room around its label, for a row of many.
   final bool compact;
 
+  /// Where the label stands among others, such as the month it names, so
+  /// that a new label slides in from its side ([SlideSwitcher]) and the chip
+  /// eases to its width. Without it a new label takes the place of the old
+  /// one at once.
+  final Comparable<Object?>? order;
+
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
     final glyph = this.glyph;
+    final order = this.order;
     final foreground = selected ? colors.background : colors.textSecondary;
+    final text = Text(
+      label,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: BirkaTextStyles.of(
+        context,
+      ).bodyStrong.copyWith(color: foreground),
+    );
     return Semantics(
       container: true,
       button: true,
@@ -81,14 +99,21 @@ class BirkaChip extends StatelessWidget {
                     const SizedBox(width: BirkaTokens.spaceXs),
                   ],
                   Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: BirkaTextStyles.of(
-                        context,
-                      ).bodyStrong.copyWith(color: foreground),
-                    ),
+                    child: order == null
+                        ? text
+                        // The box of the label clips it as it slides.
+                        : AnimatedSize(
+                            duration: BirkaMotion.reduced(context)
+                                ? Duration.zero
+                                : BirkaMotion.base,
+                            curve: BirkaMotion.standardCurve,
+                            alignment: AlignmentDirectional.centerStart,
+                            child: SlideSwitcher(
+                              value: order,
+                              distance: BirkaTokens.spaceMd,
+                              child: text,
+                            ),
+                          ),
                   ),
                 ],
               ),

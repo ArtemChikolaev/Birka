@@ -429,6 +429,50 @@ void main() {
 
         expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
       });
+
+      testWidgets('an intro grows every part from nothing, a moment later', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          app(
+            const BirkaRing(
+              slices: [cafe, food],
+              label: 'Spending',
+              intro: true,
+            ),
+          ),
+        );
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 0));
+
+        await tester.pump(BirkaMotion.base);
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 0));
+
+        await tester.pump(BirkaMotion.roll ~/ 2);
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
+
+        await tester.pumpAndSettle();
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
+      });
+
+      testWidgets('an intro shows at once when asked for less motion', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          app(
+            const MediaQuery(
+              data: MediaQueryData(disableAnimations: true),
+              child: BirkaRing(
+                slices: [cafe, food],
+                label: 'Spending',
+                intro: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(ring(), paintsExactlyCountTimes(#drawArc, 2));
+      });
     });
 
     for (final (name, slices) in [

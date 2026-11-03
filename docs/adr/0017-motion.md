@@ -94,6 +94,14 @@
    - Figures that change because the owner looks elsewhere, another month, a
      filter or a kind of report, start anew instead of rolling, and lists
      key their rows, so that no row rolls into the figure of another.
+   - The months of Отчёты turn with a swipe, as «Отчёты: смена месяца» on
+     the canvas shows (`SwipeBetween`): the month on screen follows the
+     finger a little, then slides 48 points away and fades, and the month
+     before or after comes from the other side a moment later
+     (`SlideSwitcher`). Its name slides 16 points on the chip, and its ring
+     grows into its shares (`BirkaRing.intro`). A month picked from the list
+     comes the same way, from its side in time. Under Reduce Motion the
+     months only cross-fade.
    - The parts of a ring move to their new shares over the same time: a new
      part grows from nothing in its place and one that goes shrinks to
      nothing (`RingSlice.id` keeps a part in its place). A row that comes to

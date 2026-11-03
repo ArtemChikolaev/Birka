@@ -46,61 +46,85 @@ class _ReportsPageState extends State<ReportsPage> {
           builder: (context, state) {
             final cubit = context.read<ReportsCubit>();
             final report = state.report;
-            return ListView(
-              padding: EdgeInsets.fromLTRB(
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceLg,
-                GlassNavBar.clearance +
-                    MediaQuery.viewPaddingOf(context).bottom,
-              ),
-              children: [
-                _Header(state: state),
-                const SizedBox(height: BirkaTokens.spaceMd),
-                GlassSegmented<CategoryKind>(
-                  segments: {
-                    for (final kind in CategoryKind.values)
-                      kind: kindLabel(kind),
-                  },
-                  selected: state.kind,
-                  onChanged: (kind) => unawaited(cubit.kindChanged(kind)),
+            // A swipe turns to the month before or after, and the month on
+            // screen slides away for it.
+            return SwipeBetween(
+              onPrevious: () => unawaited(cubit.previousMonth()),
+              onNext: () => unawaited(cubit.nextMonth()),
+              child: ListView(
+                padding: EdgeInsets.fromLTRB(
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceLg,
+                  GlassNavBar.clearance +
+                      MediaQuery.viewPaddingOf(context).bottom,
                 ),
-                gap,
-                ...switch (state.status) {
-                  ReportsStatus.loading => const <Widget>[],
-                  ReportsStatus.failed => [const _Failure()],
-                  ReportsStatus.ready => [
-                    if (report.isEmpty)
-                      _Empty(kind: state.kind)
-                    else ...[
-                      // Another month or kind starts the figures anew, so
-                      // that they roll only when the money moves.
-                      Center(
-                        key: ValueKey(('ring', state.month, state.kind)),
-                        child: _Ring(state: state),
-                      ),
-                      gap,
-                      _Lines(
-                        key: ValueKey(('lines', state.month, state.kind)),
-                        report: report,
-                        kind: state.kind,
-                      ),
-                    ],
-                    if (report.others.isNotEmpty) ...[
-                      const SizedBox(height: BirkaTokens.spaceSm),
-                      _Others(amounts: report.others),
-                    ],
-                    if (state.converted) ...[
-                      const SizedBox(height: BirkaTokens.spaceSm),
-                      const _RateNote(),
-                    ],
-                    if (report.average != null) ...[
-                      gap,
-                      _Months(report: report),
-                    ],
-                  ],
-                },
-              ],
+                children: [
+                  _Header(state: state),
+                  const SizedBox(height: BirkaTokens.spaceMd),
+                  GlassSegmented<CategoryKind>(
+                    segments: {
+                      for (final kind in CategoryKind.values)
+                        kind: kindLabel(kind),
+                    },
+                    selected: state.kind,
+                    onChanged: (kind) => unawaited(cubit.kindChanged(kind)),
+                  ),
+                  gap,
+                  SlideSwitcher(
+                    value: state.month,
+                    follow: true,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ...switch (state.status) {
+                          ReportsStatus.loading => const <Widget>[],
+                          ReportsStatus.failed => [const _Failure()],
+                          ReportsStatus.ready => [
+                            if (report.isEmpty)
+                              _Empty(kind: state.kind)
+                            else ...[
+                              // Another month or kind starts the figures
+                              // anew, so that they roll only when the money
+                              // moves.
+                              Center(
+                                key: ValueKey((
+                                  'ring',
+                                  state.month,
+                                  state.kind,
+                                )),
+                                child: _Ring(state: state),
+                              ),
+                              gap,
+                              _Lines(
+                                key: ValueKey((
+                                  'lines',
+                                  state.month,
+                                  state.kind,
+                                )),
+                                report: report,
+                                kind: state.kind,
+                              ),
+                            ],
+                            if (report.others.isNotEmpty) ...[
+                              const SizedBox(height: BirkaTokens.spaceSm),
+                              _Others(amounts: report.others),
+                            ],
+                            if (state.converted) ...[
+                              const SizedBox(height: BirkaTokens.spaceSm),
+                              const _RateNote(),
+                            ],
+                            if (report.average != null) ...[
+                              gap,
+                              _Months(report: report),
+                            ],
+                          ],
+                        },
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             );
           },
         ),
@@ -162,6 +186,7 @@ class _Header extends StatelessWidget {
           glyph: BirkaGlyph.calendar,
           label: reportMonthLabel(state.month, today: state.today),
           selected: false,
+          order: state.month,
           onTap: () => _pickMonth(context),
         ),
       ],
@@ -197,9 +222,11 @@ class _Ring extends StatelessWidget {
     final colors = BirkaColors.of(context);
     final report = state.report;
     final change = report.change;
+    // A ring grows into its shares whenever it comes, such as with a month.
     return BirkaRing(
       size: _size,
       thickness: _thickness,
+      intro: true,
       label: t.reports.ring,
       slices: [
         for (final line in report.lines)

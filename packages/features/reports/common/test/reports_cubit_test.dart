@@ -317,6 +317,34 @@ void main() {
     ]);
   });
 
+  test(
+    'moves along the months to choose from, and stops at the ends',
+    () async {
+      final december = CivilDate(2025, 12, 1);
+      repository.monthList = [september, december];
+      final reports = await open();
+
+      await reports.nextMonth();
+      expect(reports.state.month, october);
+
+      await reports.previousMonth();
+      await settle();
+      expect(reports.state.month, september);
+
+      await reports.previousMonth();
+      await settle();
+      expect(reports.state.month, december);
+
+      await reports.previousMonth();
+      await settle();
+      expect(reports.state.month, december);
+
+      await reports.nextMonth();
+      await settle();
+      expect(reports.state.month, september);
+    },
+  );
+
   test('still offers the months it knows when it cannot read them', () async {
     final reports = await open();
     await reports.monthChanged(september);

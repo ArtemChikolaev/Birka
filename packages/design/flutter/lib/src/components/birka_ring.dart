@@ -31,8 +31,8 @@ final class RingSlice {
 /// When the shares change, the parts grow and shrink to their new ones over
 /// `duration.roll`: a new part grows from nothing, and one that goes shrinks
 /// to nothing. A change that comes while the ring is out of sight waits for
-/// it to show again. The ring does not move the first time it shows, nor when
-/// the system asks for less motion.
+/// it to show again. The ring does not move the first time it shows, unless
+/// it is an [intro], nor when the system asks for less motion.
 class BirkaRing extends StatefulWidget {
   /// Creates a ring. Screen readers read [label].
   const BirkaRing({
@@ -40,6 +40,7 @@ class BirkaRing extends StatefulWidget {
     required this.label,
     this.size = 96,
     this.thickness = 10,
+    this.intro = false,
     this.child,
     super.key,
   });
@@ -55,6 +56,10 @@ class BirkaRing extends StatefulWidget {
 
   /// The width of the ring.
   final double thickness;
+
+  /// Whether every part grows from nothing to its share the first time the
+  /// ring shows, after `duration.base`, such as when a new month comes in.
+  final bool intro;
 
   /// What stands in the middle.
   final Widget? child;
@@ -84,6 +89,29 @@ class _BirkaRingState extends State<BirkaRing>
     value: 1,
   );
 
+  /// How the parts move, which waits a moment for an intro.
+  Curve _curve = BirkaMotion.standardCurve;
+
+  bool _shown = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_shown) return;
+    _shown = true;
+    if (!widget.intro || _to.isEmpty || BirkaMotion.reduced(context)) return;
+    const wait = BirkaMotion.base;
+    final whole = wait + BirkaMotion.roll;
+    _move.duration = whole;
+    _curve = Interval(
+      wait.inMicroseconds / whole.inMicroseconds,
+      1,
+      curve: BirkaMotion.standardCurve,
+    );
+    _move.value = 0;
+    whenInSight(() => unawaited(_move.forward(from: 0)));
+  }
+
   @override
   void didUpdateWidget(BirkaRing oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -95,6 +123,8 @@ class _BirkaRingState extends State<BirkaRing>
     final from = _at(_moved);
     _to = next;
     forgetHeld();
+    _move.duration = BirkaMotion.roll;
+    _curve = BirkaMotion.standardCurve;
     if (BirkaMotion.reduced(context)) {
       _move.value = 1;
       return;
@@ -110,7 +140,7 @@ class _BirkaRingState extends State<BirkaRing>
     super.dispose();
   }
 
-  double get _moved => BirkaMotion.standardCurve.transform(_move.value);
+  double get _moved => _curve.transform(_move.value);
 
   static List<_Part> _partsOf(List<RingSlice> slices) {
     final total = slices.fold<double>(0, (sum, slice) => sum + slice.value);

@@ -200,6 +200,37 @@ void main() {
     expect(find.text('34${space}831,50$space₽'), findsOneWidget);
   });
 
+  testWidgets('a swipe turns to the month before and back', (tester) async {
+    await pump(tester);
+
+    await tester.fling(
+      find.byType(ListView),
+      const Offset(200, 0),
+      1000,
+    );
+    await tester.pump();
+    await tester.pump(BirkaMotion.base ~/ 2);
+
+    // The month on screen slides away while the month before comes.
+    expect(find.text('Октябрь'), findsOneWidget);
+    expect(find.text('Сентябрь'), findsOneWidget);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Октябрь'), findsNothing);
+    expect(find.text('34${space}831,50$space₽'), findsOneWidget);
+
+    await tester.fling(
+      find.byType(ListView),
+      const Offset(-200, 0),
+      1000,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Октябрь'), findsOneWidget);
+    expect(find.text('Сентябрь'), findsNothing);
+  });
+
   testWidgets('a month of another year says which', (tester) async {
     repository.monthList = [CivilDate(2025, 12, 1)];
     await pump(tester);

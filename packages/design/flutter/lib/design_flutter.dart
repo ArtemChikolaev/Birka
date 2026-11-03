@@ -37,6 +37,8 @@ export 'src/components/glyph_badge.dart';
 export 'src/components/hidden_amounts.dart';
 export 'src/components/scroll_edge_fade.dart';
 export 'src/components/section_label.dart';
+export 'src/components/slide_switcher.dart';
+export 'src/components/swipe_between.dart';
 export 'src/components/welcome_art.dart';
 export 'src/fonts.dart';
 export 'src/navigation/birka_pages.dart';
