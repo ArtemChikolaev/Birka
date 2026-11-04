@@ -1,3 +1,4 @@
+import 'package:birka_web/app/site_version.dart';
 import 'package:birka_web/pages/more_page.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -54,6 +55,7 @@ void main() {
         'categories/',
         'data/',
         'help/',
+        'https://github.com/ArtemChikolaev/Birka',
         'https://www.cbr-xml-daily.ru/',
       ],
     );
@@ -82,11 +84,28 @@ void main() {
     expect(find.text('скоро'), findsOneComponent);
   });
 
-  testComponents('names where the rates come from, at its end', (
+  testComponents('ends with the version, the code and the rates', (
     tester,
   ) async {
     pump(tester);
 
+    expect(
+      find.text('Birka $siteVersion · данные хранятся в этом браузере'),
+      findsOneComponent,
+    );
+    final away = find
+        .descendant(of: find.tag('footer'), matching: find.tag('a'))
+        .evaluate()
+        .map((element) => (element.component as DomComponent).attributes);
+    expect(away.map((attributes) => attributes?['target']), [
+      '_blank',
+      '_blank',
+    ]);
+    expect(away.map((attributes) => attributes?['rel']), [
+      'noopener',
+      'noopener',
+    ]);
+    expect(find.text('Исходный код на GitHub'), findsOneComponent);
     expect(find.text('Курсы ЦБ РФ в XML и JSON, API'), findsOneComponent);
   });
 

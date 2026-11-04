@@ -197,6 +197,15 @@ class Translations$app$en {
 
   /// en: 'Help and feedback'
   String get help => 'Help and feedback';
+
+  /// en: 'your data stays on this device'
+  String get keptOnDevice => 'your data stays on this device';
+
+  /// en: 'your data stays in this browser'
+  String get keptInBrowser => 'your data stays in this browser';
+
+  /// en: 'Source code on GitHub'
+  String get sourceCode => 'Source code on GitHub';
 }
 
 // Path: backup
@@ -1455,6 +1464,9 @@ extension on Translations {
       'app.data' => 'Data',
       'app.support' => 'Support',
       'app.help' => 'Help and feedback',
+      'app.keptOnDevice' => 'your data stays on this device',
+      'app.keptInBrowser' => 'your data stays in this browser',
+      'app.sourceCode' => 'Source code on GitHub',
       'backup.title' => 'Data',
       'backup.back' => 'Back',
       'backup.storedTitle' => 'Your records live here',

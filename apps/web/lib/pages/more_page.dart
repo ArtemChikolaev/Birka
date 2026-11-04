@@ -1,4 +1,6 @@
+import 'package:birka_web/app/site_version.dart';
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:help_common/help_common.dart' show codePage;
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
@@ -48,12 +50,24 @@ class MorePage extends StatelessComponent {
             ],
           ),
         ]),
-        p(classes: 'text-caption more__credit', [
-          a(href: CbrMirror.address, [.text(t.settings.ratesCredit)]),
+        // The end of the page: the version, where the records live, the
+        // code and where the rates come from.
+        footer(classes: 'text-caption more__footer', [
+          p([.text('Birka $siteVersion · ${t.app.keptInBrowser}')]),
+          p([_away(codePage.toString(), t.app.sourceCode)]),
+          p([_away(CbrMirror.address, t.settings.ratesCredit)]),
         ]),
       ],
     );
   }
+
+  /// A link that opens in a tab of its own, which gets no hold on the site.
+  static Component _away(String href, String label) => a(
+    href: href,
+    target: Target.blank,
+    attributes: const {'rel': 'noopener'},
+    [.text(label)],
+  );
 
   /// The styles of the page.
   @css
@@ -109,10 +123,18 @@ class MorePage extends StatelessComponent {
     css('.more__end .birka-icon').styles(
       raw: {'height': '18px', 'width': '18px'},
     ),
-    css('.more__credit').styles(
-      raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
+    css('.more__footer').styles(
+      raw: {
+        'color': 'var(--color-text-subtle)',
+        'display': 'flex',
+        'flex-direction': 'column',
+        'gap': 'var(--space-xs)',
+        'margin-top': 'var(--space-sm)',
+        'text-align': 'center',
+      },
     ),
-    css('.more__credit a').styles(raw: {'color': 'inherit'}),
+    css('.more__footer p').styles(raw: {'margin': '0'}),
+    css('.more__footer a').styles(raw: {'color': 'var(--color-text-muted)'}),
   ];
 }
 

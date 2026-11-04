@@ -151,6 +151,30 @@ class GlassNavBar extends StatelessWidget {
   }
 }
 
+/// The room that a floating [GlassNavBar] takes at the bottom of the screen,
+/// told to what lies under it: a toast shown from a tab stands above the bar
+/// instead of behind it.
+class GlassNavBarSpace extends InheritedWidget {
+  /// Tells [child] that the bar reaches [height] up from the bottom of the
+  /// screen.
+  const GlassNavBarSpace({
+    required this.height,
+    required super.child,
+    super.key,
+  });
+
+  /// How far the bar reaches up from the bottom of the screen.
+  final double height;
+
+  /// The room of the bar over [context], or 0 where no bar floats.
+  static double of(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<GlassNavBarSpace>()?.height ?? 0;
+
+  @override
+  bool updateShouldNotify(GlassNavBarSpace oldWidget) =>
+      height != oldWidget.height;
+}
+
 class _Bubble extends StatelessWidget {
   const _Bubble({required this.colors});
 

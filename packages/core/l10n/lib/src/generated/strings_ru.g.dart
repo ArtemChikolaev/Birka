@@ -197,6 +197,12 @@ class _Translations$app$ru extends Translations$app$en {
   String get support => 'Поддержка';
   @override
   String get help => 'Помощь и отзыв';
+  @override
+  String get keptOnDevice => 'данные хранятся на этом устройстве';
+  @override
+  String get keptInBrowser => 'данные хранятся в этом браузере';
+  @override
+  String get sourceCode => 'Исходный код на GitHub';
 }
 
 // Path: backup
@@ -1232,6 +1238,9 @@ extension on TranslationsRu {
       'app.data' => 'Данные',
       'app.support' => 'Поддержка',
       'app.help' => 'Помощь и отзыв',
+      'app.keptOnDevice' => 'данные хранятся на этом устройстве',
+      'app.keptInBrowser' => 'данные хранятся в этом браузере',
+      'app.sourceCode' => 'Исходный код на GitHub',
       'backup.title' => 'Данные',
       'backup.back' => 'Назад',
       'backup.storedTitle' => 'Учёт хранится здесь',
