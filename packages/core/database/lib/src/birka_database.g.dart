@@ -3,6 +3,533 @@
 part of 'birka_database.dart';
 
 // ignore_for_file: type=lint
+class $ImportsTable extends Imports with TableInfo<$ImportsTable, ImportRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ImportsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _fileNameMeta = const VerificationMeta(
+    'fileName',
+  );
+  @override
+  late final GeneratedColumn<String> fileName = GeneratedColumn<String>(
+    'file_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _formatMeta = const VerificationMeta('format');
+  @override
+  late final GeneratedColumn<String> format = GeneratedColumn<String>(
+    'format',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _firstDayMeta = const VerificationMeta(
+    'firstDay',
+  );
+  @override
+  late final GeneratedColumn<String> firstDay = GeneratedColumn<String>(
+    'first_day',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastDayMeta = const VerificationMeta(
+    'lastDay',
+  );
+  @override
+  late final GeneratedColumn<String> lastDay = GeneratedColumn<String>(
+    'last_day',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    fileName,
+    format,
+    firstDay,
+    lastDay,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'imports';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ImportRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('file_name')) {
+      context.handle(
+        _fileNameMeta,
+        fileName.isAcceptableOrUnknown(data['file_name']!, _fileNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fileNameMeta);
+    }
+    if (data.containsKey('format')) {
+      context.handle(
+        _formatMeta,
+        format.isAcceptableOrUnknown(data['format']!, _formatMeta),
+      );
+    }
+    if (data.containsKey('first_day')) {
+      context.handle(
+        _firstDayMeta,
+        firstDay.isAcceptableOrUnknown(data['first_day']!, _firstDayMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_firstDayMeta);
+    }
+    if (data.containsKey('last_day')) {
+      context.handle(
+        _lastDayMeta,
+        lastDay.isAcceptableOrUnknown(data['last_day']!, _lastDayMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_lastDayMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ImportRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ImportRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      fileName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_name'],
+      )!,
+      format: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}format'],
+      ),
+      firstDay: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}first_day'],
+      )!,
+      lastDay: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_day'],
+      )!,
+    );
+  }
+
+  @override
+  $ImportsTable createAlias(String alias) {
+    return $ImportsTable(attachedDatabase, alias);
+  }
+}
+
+class ImportRow extends DataClass implements Insertable<ImportRow> {
+  /// A UUIDv7 string created on the device.
+  final String id;
+
+  /// When the row was created.
+  final DateTime createdAt;
+
+  /// When the row last changed.
+  final DateTime updatedAt;
+
+  /// The tombstone: when the row was deleted.
+  final DateTime? deletedAt;
+
+  /// The name of the file, as the person chose it.
+  final String fileName;
+
+  /// The id of the known format of the file, such as `tbank`, or `null` for
+  /// columns that a person named.
+  final String? format;
+
+  /// The day of its first operation as `YYYY-MM-DD`.
+  final String firstDay;
+
+  /// The day of its last operation as `YYYY-MM-DD`.
+  final String lastDay;
+  const ImportRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.fileName,
+    this.format,
+    required this.firstDay,
+    required this.lastDay,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['file_name'] = Variable<String>(fileName);
+    if (!nullToAbsent || format != null) {
+      map['format'] = Variable<String>(format);
+    }
+    map['first_day'] = Variable<String>(firstDay);
+    map['last_day'] = Variable<String>(lastDay);
+    return map;
+  }
+
+  ImportsCompanion toCompanion(bool nullToAbsent) {
+    return ImportsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      fileName: Value(fileName),
+      format: format == null && nullToAbsent
+          ? const Value.absent()
+          : Value(format),
+      firstDay: Value(firstDay),
+      lastDay: Value(lastDay),
+    );
+  }
+
+  factory ImportRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ImportRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      fileName: serializer.fromJson<String>(json['fileName']),
+      format: serializer.fromJson<String?>(json['format']),
+      firstDay: serializer.fromJson<String>(json['firstDay']),
+      lastDay: serializer.fromJson<String>(json['lastDay']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'fileName': serializer.toJson<String>(fileName),
+      'format': serializer.toJson<String?>(format),
+      'firstDay': serializer.toJson<String>(firstDay),
+      'lastDay': serializer.toJson<String>(lastDay),
+    };
+  }
+
+  ImportRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? fileName,
+    Value<String?> format = const Value.absent(),
+    String? firstDay,
+    String? lastDay,
+  }) => ImportRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    fileName: fileName ?? this.fileName,
+    format: format.present ? format.value : this.format,
+    firstDay: firstDay ?? this.firstDay,
+    lastDay: lastDay ?? this.lastDay,
+  );
+  ImportRow copyWithCompanion(ImportsCompanion data) {
+    return ImportRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      fileName: data.fileName.present ? data.fileName.value : this.fileName,
+      format: data.format.present ? data.format.value : this.format,
+      firstDay: data.firstDay.present ? data.firstDay.value : this.firstDay,
+      lastDay: data.lastDay.present ? data.lastDay.value : this.lastDay,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImportRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('fileName: $fileName, ')
+          ..write('format: $format, ')
+          ..write('firstDay: $firstDay, ')
+          ..write('lastDay: $lastDay')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    fileName,
+    format,
+    firstDay,
+    lastDay,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ImportRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.fileName == this.fileName &&
+          other.format == this.format &&
+          other.firstDay == this.firstDay &&
+          other.lastDay == this.lastDay);
+}
+
+class ImportsCompanion extends UpdateCompanion<ImportRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> fileName;
+  final Value<String?> format;
+  final Value<String> firstDay;
+  final Value<String> lastDay;
+  final Value<int> rowid;
+  const ImportsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.fileName = const Value.absent(),
+    this.format = const Value.absent(),
+    this.firstDay = const Value.absent(),
+    this.lastDay = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ImportsCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
+    required String fileName,
+    this.format = const Value.absent(),
+    required String firstDay,
+    required String lastDay,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       fileName = Value(fileName),
+       firstDay = Value(firstDay),
+       lastDay = Value(lastDay);
+  static Insertable<ImportRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? fileName,
+    Expression<String>? format,
+    Expression<String>? firstDay,
+    Expression<String>? lastDay,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (fileName != null) 'file_name': fileName,
+      if (format != null) 'format': format,
+      if (firstDay != null) 'first_day': firstDay,
+      if (lastDay != null) 'last_day': lastDay,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ImportsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? fileName,
+    Value<String?>? format,
+    Value<String>? firstDay,
+    Value<String>? lastDay,
+    Value<int>? rowid,
+  }) {
+    return ImportsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      fileName: fileName ?? this.fileName,
+      format: format ?? this.format,
+      firstDay: firstDay ?? this.firstDay,
+      lastDay: lastDay ?? this.lastDay,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (fileName.present) {
+      map['file_name'] = Variable<String>(fileName.value);
+    }
+    if (format.present) {
+      map['format'] = Variable<String>(format.value);
+    }
+    if (firstDay.present) {
+      map['first_day'] = Variable<String>(firstDay.value);
+    }
+    if (lastDay.present) {
+      map['last_day'] = Variable<String>(lastDay.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImportsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('fileName: $fileName, ')
+          ..write('format: $format, ')
+          ..write('firstDay: $firstDay, ')
+          ..write('lastDay: $lastDay, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $AccountsTable extends Accounts
     with TableInfo<$AccountsTable, AccountRow> {
   @override
@@ -165,6 +692,20 @@ class $AccountsTable extends Accounts
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _importIdMeta = const VerificationMeta(
+    'importId',
+  );
+  @override
+  late final GeneratedColumn<String> importId = GeneratedColumn<String>(
+    'import_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES imports (id)',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -181,6 +722,7 @@ class $AccountsTable extends Accounts
     includeInTotals,
     archived,
     sortOrder,
+    importId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -298,6 +840,12 @@ class $AccountsTable extends Accounts
         sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
     }
+    if (data.containsKey('import_id')) {
+      context.handle(
+        _importIdMeta,
+        importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
+      );
+    }
     return context;
   }
 
@@ -363,6 +911,10 @@ class $AccountsTable extends Accounts
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
       )!,
+      importId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_id'],
+      ),
     );
   }
 
@@ -417,6 +969,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
 
   /// The place of the account in lists.
   final int sortOrder;
+
+  /// The import that created the account, which takes it away again if
+  /// nothing else uses it (ADR 0021).
+  final String? importId;
   const AccountRow({
     required this.id,
     required this.createdAt,
@@ -432,6 +988,7 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     required this.includeInTotals,
     required this.archived,
     required this.sortOrder,
+    this.importId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -454,6 +1011,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     map['include_in_totals'] = Variable<bool>(includeInTotals);
     map['archived'] = Variable<bool>(archived);
     map['sort_order'] = Variable<int>(sortOrder);
+    if (!nullToAbsent || importId != null) {
+      map['import_id'] = Variable<String>(importId);
+    }
     return map;
   }
 
@@ -477,6 +1037,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       includeInTotals: Value(includeInTotals),
       archived: Value(archived),
       sortOrder: Value(sortOrder),
+      importId: importId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importId),
     );
   }
 
@@ -502,6 +1065,7 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       includeInTotals: serializer.fromJson<bool>(json['includeInTotals']),
       archived: serializer.fromJson<bool>(json['archived']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      importId: serializer.fromJson<String?>(json['importId']),
     );
   }
   @override
@@ -522,6 +1086,7 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       'includeInTotals': serializer.toJson<bool>(includeInTotals),
       'archived': serializer.toJson<bool>(archived),
       'sortOrder': serializer.toJson<int>(sortOrder),
+      'importId': serializer.toJson<String?>(importId),
     };
   }
 
@@ -540,6 +1105,7 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     bool? includeInTotals,
     bool? archived,
     int? sortOrder,
+    Value<String?> importId = const Value.absent(),
   }) => AccountRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -555,6 +1121,7 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     includeInTotals: includeInTotals ?? this.includeInTotals,
     archived: archived ?? this.archived,
     sortOrder: sortOrder ?? this.sortOrder,
+    importId: importId.present ? importId.value : this.importId,
   );
   AccountRow copyWithCompanion(AccountsCompanion data) {
     return AccountRow(
@@ -580,6 +1147,7 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           : this.includeInTotals,
       archived: data.archived.present ? data.archived.value : this.archived,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      importId: data.importId.present ? data.importId.value : this.importId,
     );
   }
 
@@ -599,7 +1167,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           ..write('art: $art, ')
           ..write('includeInTotals: $includeInTotals, ')
           ..write('archived: $archived, ')
-          ..write('sortOrder: $sortOrder')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('importId: $importId')
           ..write(')'))
         .toString();
   }
@@ -620,6 +1189,7 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     includeInTotals,
     archived,
     sortOrder,
+    importId,
   );
   @override
   bool operator ==(Object other) =>
@@ -638,7 +1208,8 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           other.art == this.art &&
           other.includeInTotals == this.includeInTotals &&
           other.archived == this.archived &&
-          other.sortOrder == this.sortOrder);
+          other.sortOrder == this.sortOrder &&
+          other.importId == this.importId);
 }
 
 class AccountsCompanion extends UpdateCompanion<AccountRow> {
@@ -656,6 +1227,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
   final Value<bool> includeInTotals;
   final Value<bool> archived;
   final Value<int> sortOrder;
+  final Value<String?> importId;
   final Value<int> rowid;
   const AccountsCompanion({
     this.id = const Value.absent(),
@@ -672,6 +1244,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     this.includeInTotals = const Value.absent(),
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.importId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AccountsCompanion.insert({
@@ -689,6 +1262,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     this.includeInTotals = const Value.absent(),
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.importId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -712,6 +1286,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Expression<bool>? includeInTotals,
     Expression<bool>? archived,
     Expression<int>? sortOrder,
+    Expression<String>? importId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -730,6 +1305,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       if (includeInTotals != null) 'include_in_totals': includeInTotals,
       if (archived != null) 'archived': archived,
       if (sortOrder != null) 'sort_order': sortOrder,
+      if (importId != null) 'import_id': importId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -749,6 +1325,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Value<bool>? includeInTotals,
     Value<bool>? archived,
     Value<int>? sortOrder,
+    Value<String?>? importId,
     Value<int>? rowid,
   }) {
     return AccountsCompanion(
@@ -766,6 +1343,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       includeInTotals: includeInTotals ?? this.includeInTotals,
       archived: archived ?? this.archived,
       sortOrder: sortOrder ?? this.sortOrder,
+      importId: importId ?? this.importId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -815,6 +1393,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
+    if (importId.present) {
+      map['import_id'] = Variable<String>(importId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -838,6 +1419,7 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
           ..write('includeInTotals: $includeInTotals, ')
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder, ')
+          ..write('importId: $importId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -969,6 +1551,20 @@ class $CategoriesTable extends Categories
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _importIdMeta = const VerificationMeta(
+    'importId',
+  );
+  @override
+  late final GeneratedColumn<String> importId = GeneratedColumn<String>(
+    'import_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES imports (id)',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -982,6 +1578,7 @@ class $CategoriesTable extends Categories
     color,
     archived,
     sortOrder,
+    importId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1068,6 +1665,12 @@ class $CategoriesTable extends Categories
         sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
     }
+    if (data.containsKey('import_id')) {
+      context.handle(
+        _importIdMeta,
+        importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
+      );
+    }
     return context;
   }
 
@@ -1121,6 +1724,10 @@ class $CategoriesTable extends Categories
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
       )!,
+      importId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_id'],
+      ),
     );
   }
 
@@ -1163,6 +1770,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
 
   /// The place of the category in lists.
   final int sortOrder;
+
+  /// The import that created the category, which takes it away again if
+  /// nothing else uses it (ADR 0021).
+  final String? importId;
   const CategoryRow({
     required this.id,
     required this.createdAt,
@@ -1175,6 +1786,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     this.color,
     required this.archived,
     required this.sortOrder,
+    this.importId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1198,6 +1810,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     }
     map['archived'] = Variable<bool>(archived);
     map['sort_order'] = Variable<int>(sortOrder);
+    if (!nullToAbsent || importId != null) {
+      map['import_id'] = Variable<String>(importId);
+    }
     return map;
   }
 
@@ -1220,6 +1835,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           : Value(color),
       archived: Value(archived),
       sortOrder: Value(sortOrder),
+      importId: importId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importId),
     );
   }
 
@@ -1240,6 +1858,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       color: serializer.fromJson<String?>(json['color']),
       archived: serializer.fromJson<bool>(json['archived']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      importId: serializer.fromJson<String?>(json['importId']),
     );
   }
   @override
@@ -1257,6 +1876,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       'color': serializer.toJson<String?>(color),
       'archived': serializer.toJson<bool>(archived),
       'sortOrder': serializer.toJson<int>(sortOrder),
+      'importId': serializer.toJson<String?>(importId),
     };
   }
 
@@ -1272,6 +1892,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     Value<String?> color = const Value.absent(),
     bool? archived,
     int? sortOrder,
+    Value<String?> importId = const Value.absent(),
   }) => CategoryRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -1284,6 +1905,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     color: color.present ? color.value : this.color,
     archived: archived ?? this.archived,
     sortOrder: sortOrder ?? this.sortOrder,
+    importId: importId.present ? importId.value : this.importId,
   );
   CategoryRow copyWithCompanion(CategoriesCompanion data) {
     return CategoryRow(
@@ -1298,6 +1920,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       color: data.color.present ? data.color.value : this.color,
       archived: data.archived.present ? data.archived.value : this.archived,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      importId: data.importId.present ? data.importId.value : this.importId,
     );
   }
 
@@ -1314,7 +1937,8 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ..write('icon: $icon, ')
           ..write('color: $color, ')
           ..write('archived: $archived, ')
-          ..write('sortOrder: $sortOrder')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('importId: $importId')
           ..write(')'))
         .toString();
   }
@@ -1332,6 +1956,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     color,
     archived,
     sortOrder,
+    importId,
   );
   @override
   bool operator ==(Object other) =>
@@ -1347,7 +1972,8 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           other.icon == this.icon &&
           other.color == this.color &&
           other.archived == this.archived &&
-          other.sortOrder == this.sortOrder);
+          other.sortOrder == this.sortOrder &&
+          other.importId == this.importId);
 }
 
 class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
@@ -1362,6 +1988,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   final Value<String?> color;
   final Value<bool> archived;
   final Value<int> sortOrder;
+  final Value<String?> importId;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.id = const Value.absent(),
@@ -1375,6 +2002,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.color = const Value.absent(),
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.importId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
@@ -1389,6 +2017,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.color = const Value.absent(),
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.importId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -1407,6 +2036,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Expression<String>? color,
     Expression<bool>? archived,
     Expression<int>? sortOrder,
+    Expression<String>? importId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1421,6 +2051,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       if (color != null) 'color': color,
       if (archived != null) 'archived': archived,
       if (sortOrder != null) 'sort_order': sortOrder,
+      if (importId != null) 'import_id': importId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1437,6 +2068,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Value<String?>? color,
     Value<bool>? archived,
     Value<int>? sortOrder,
+    Value<String?>? importId,
     Value<int>? rowid,
   }) {
     return CategoriesCompanion(
@@ -1451,6 +2083,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       color: color ?? this.color,
       archived: archived ?? this.archived,
       sortOrder: sortOrder ?? this.sortOrder,
+      importId: importId ?? this.importId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1491,6 +2124,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
+    if (importId.present) {
+      map['import_id'] = Variable<String>(importId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1511,6 +2147,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
           ..write('color: $color, ')
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder, ')
+          ..write('importId: $importId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1624,6 +2261,20 @@ class $TransactionsTable extends Transactions
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _importIdMeta = const VerificationMeta(
+    'importId',
+  );
+  @override
+  late final GeneratedColumn<String> importId = GeneratedColumn<String>(
+    'import_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES imports (id)',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1636,6 +2287,7 @@ class $TransactionsTable extends Transactions
     note,
     status,
     source,
+    importId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1720,6 +2372,12 @@ class $TransactionsTable extends Transactions
     } else if (isInserting) {
       context.missing(_sourceMeta);
     }
+    if (data.containsKey('import_id')) {
+      context.handle(
+        _importIdMeta,
+        importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
+      );
+    }
     return context;
   }
 
@@ -1769,6 +2427,10 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}source'],
       )!,
+      importId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_id'],
+      ),
     );
   }
 
@@ -1808,6 +2470,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
 
   /// One of the names of `TransactionSource` in the ledger.
   final String source;
+
+  /// The import that brought the transaction (ADR 0021).
+  final String? importId;
   const TransactionRow({
     required this.id,
     required this.createdAt,
@@ -1819,6 +2484,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     required this.note,
     required this.status,
     required this.source,
+    this.importId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1837,6 +2503,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     map['note'] = Variable<String>(note);
     map['status'] = Variable<String>(status);
     map['source'] = Variable<String>(source);
+    if (!nullToAbsent || importId != null) {
+      map['import_id'] = Variable<String>(importId);
+    }
     return map;
   }
 
@@ -1856,6 +2525,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       note: Value(note),
       status: Value(status),
       source: Value(source),
+      importId: importId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importId),
     );
   }
 
@@ -1875,6 +2547,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       note: serializer.fromJson<String>(json['note']),
       status: serializer.fromJson<String>(json['status']),
       source: serializer.fromJson<String>(json['source']),
+      importId: serializer.fromJson<String?>(json['importId']),
     );
   }
   @override
@@ -1891,6 +2564,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       'note': serializer.toJson<String>(note),
       'status': serializer.toJson<String>(status),
       'source': serializer.toJson<String>(source),
+      'importId': serializer.toJson<String?>(importId),
     };
   }
 
@@ -1905,6 +2579,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     String? note,
     String? status,
     String? source,
+    Value<String?> importId = const Value.absent(),
   }) => TransactionRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -1916,6 +2591,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     note: note ?? this.note,
     status: status ?? this.status,
     source: source ?? this.source,
+    importId: importId.present ? importId.value : this.importId,
   );
   TransactionRow copyWithCompanion(TransactionsCompanion data) {
     return TransactionRow(
@@ -1933,6 +2609,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       note: data.note.present ? data.note.value : this.note,
       status: data.status.present ? data.status.value : this.status,
       source: data.source.present ? data.source.value : this.source,
+      importId: data.importId.present ? data.importId.value : this.importId,
     );
   }
 
@@ -1948,7 +2625,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           ..write('occurredAt: $occurredAt, ')
           ..write('note: $note, ')
           ..write('status: $status, ')
-          ..write('source: $source')
+          ..write('source: $source, ')
+          ..write('importId: $importId')
           ..write(')'))
         .toString();
   }
@@ -1965,6 +2643,7 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     note,
     status,
     source,
+    importId,
   );
   @override
   bool operator ==(Object other) =>
@@ -1979,7 +2658,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           other.occurredAt == this.occurredAt &&
           other.note == this.note &&
           other.status == this.status &&
-          other.source == this.source);
+          other.source == this.source &&
+          other.importId == this.importId);
 }
 
 class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
@@ -1993,6 +2673,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
   final Value<String> note;
   final Value<String> status;
   final Value<String> source;
+  final Value<String?> importId;
   final Value<int> rowid;
   const TransactionsCompanion({
     this.id = const Value.absent(),
@@ -2005,6 +2686,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.note = const Value.absent(),
     this.status = const Value.absent(),
     this.source = const Value.absent(),
+    this.importId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TransactionsCompanion.insert({
@@ -2018,6 +2700,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.note = const Value.absent(),
     required String status,
     required String source,
+    this.importId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -2037,6 +2720,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Expression<String>? note,
     Expression<String>? status,
     Expression<String>? source,
+    Expression<String>? importId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2050,6 +2734,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       if (note != null) 'note': note,
       if (status != null) 'status': status,
       if (source != null) 'source': source,
+      if (importId != null) 'import_id': importId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2065,6 +2750,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Value<String>? note,
     Value<String>? status,
     Value<String>? source,
+    Value<String?>? importId,
     Value<int>? rowid,
   }) {
     return TransactionsCompanion(
@@ -2078,6 +2764,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       note: note ?? this.note,
       status: status ?? this.status,
       source: source ?? this.source,
+      importId: importId ?? this.importId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2115,6 +2802,9 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     if (source.present) {
       map['source'] = Variable<String>(source.value);
     }
+    if (importId.present) {
+      map['import_id'] = Variable<String>(importId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2134,6 +2824,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
           ..write('note: $note, ')
           ..write('status: $status, ')
           ..write('source: $source, ')
+          ..write('importId: $importId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2702,9 +3393,9 @@ class $AllocationsTable extends Allocations
   late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
     'category_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES categories (id)',
     ),
@@ -2785,8 +3476,6 @@ class $AllocationsTable extends Allocations
         _categoryIdMeta,
         categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_categoryIdMeta);
     }
     if (data.containsKey('amount_minor')) {
       context.handle(
@@ -2831,7 +3520,7 @@ class $AllocationsTable extends Allocations
       categoryId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}category_id'],
-      )!,
+      ),
       amountMinor: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}amount_minor'],
@@ -2861,8 +3550,9 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
   /// The transaction of the allocation.
   final String transactionId;
 
-  /// The category.
-  final String categoryId;
+  /// The category, or `null` while the transaction waits for one, as an
+  /// imported one can (ADR 0021).
+  final String? categoryId;
 
   /// The positive amount in minor units.
   final int amountMinor;
@@ -2872,7 +3562,7 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
     required this.updatedAt,
     this.deletedAt,
     required this.transactionId,
-    required this.categoryId,
+    this.categoryId,
     required this.amountMinor,
   });
   @override
@@ -2885,7 +3575,9 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
     }
     map['transaction_id'] = Variable<String>(transactionId);
-    map['category_id'] = Variable<String>(categoryId);
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<String>(categoryId);
+    }
     map['amount_minor'] = Variable<int>(amountMinor);
     return map;
   }
@@ -2899,7 +3591,9 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
           ? const Value.absent()
           : Value(deletedAt),
       transactionId: Value(transactionId),
-      categoryId: Value(categoryId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
       amountMinor: Value(amountMinor),
     );
   }
@@ -2915,7 +3609,7 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       transactionId: serializer.fromJson<String>(json['transactionId']),
-      categoryId: serializer.fromJson<String>(json['categoryId']),
+      categoryId: serializer.fromJson<String?>(json['categoryId']),
       amountMinor: serializer.fromJson<int>(json['amountMinor']),
     );
   }
@@ -2928,7 +3622,7 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'transactionId': serializer.toJson<String>(transactionId),
-      'categoryId': serializer.toJson<String>(categoryId),
+      'categoryId': serializer.toJson<String?>(categoryId),
       'amountMinor': serializer.toJson<int>(amountMinor),
     };
   }
@@ -2939,7 +3633,7 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
     DateTime? updatedAt,
     Value<DateTime?> deletedAt = const Value.absent(),
     String? transactionId,
-    String? categoryId,
+    Value<String?> categoryId = const Value.absent(),
     int? amountMinor,
   }) => AllocationRow(
     id: id ?? this.id,
@@ -2947,7 +3641,7 @@ class AllocationRow extends DataClass implements Insertable<AllocationRow> {
     updatedAt: updatedAt ?? this.updatedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     transactionId: transactionId ?? this.transactionId,
-    categoryId: categoryId ?? this.categoryId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
     amountMinor: amountMinor ?? this.amountMinor,
   );
   AllocationRow copyWithCompanion(AllocationsCompanion data) {
@@ -3011,7 +3705,7 @@ class AllocationsCompanion extends UpdateCompanion<AllocationRow> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<String> transactionId;
-  final Value<String> categoryId;
+  final Value<String?> categoryId;
   final Value<int> amountMinor;
   final Value<int> rowid;
   const AllocationsCompanion({
@@ -3030,14 +3724,13 @@ class AllocationsCompanion extends UpdateCompanion<AllocationRow> {
     required DateTime updatedAt,
     this.deletedAt = const Value.absent(),
     required String transactionId,
-    required String categoryId,
+    this.categoryId = const Value.absent(),
     required int amountMinor,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
        transactionId = Value(transactionId),
-       categoryId = Value(categoryId),
        amountMinor = Value(amountMinor);
   static Insertable<AllocationRow> custom({
     Expression<String>? id,
@@ -3067,7 +3760,7 @@ class AllocationsCompanion extends UpdateCompanion<AllocationRow> {
     Value<DateTime>? updatedAt,
     Value<DateTime?>? deletedAt,
     Value<String>? transactionId,
-    Value<String>? categoryId,
+    Value<String?>? categoryId,
     Value<int>? amountMinor,
     Value<int>? rowid,
   }) {
@@ -3763,6 +4456,7 @@ class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRateRow> {
 abstract class _$BirkaDatabase extends GeneratedDatabase {
   _$BirkaDatabase(QueryExecutor e) : super(e);
   $BirkaDatabaseManager get managers => $BirkaDatabaseManager(this);
+  late final $ImportsTable imports = $ImportsTable(this);
   late final $AccountsTable accounts = $AccountsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $TransactionsTable transactions = $TransactionsTable(this);
@@ -3773,6 +4467,10 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
   late final Index transactionsOccurredOn = Index(
     'transactions_occurred_on',
     'CREATE INDEX transactions_occurred_on ON transactions (occurred_on)',
+  );
+  late final Index transactionsImport = Index(
+    'transactions_import',
+    'CREATE INDEX transactions_import ON transactions (import_id)',
   );
   late final Index entriesTransaction = Index(
     'entries_transaction',
@@ -3795,6 +4493,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    imports,
     accounts,
     categories,
     transactions,
@@ -3803,6 +4502,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     changes,
     exchangeRates,
     transactionsOccurredOn,
+    transactionsImport,
     entriesTransaction,
     entriesAccount,
     allocationsTransaction,
@@ -3813,6 +4513,561 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
       const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
+typedef $$ImportsTableCreateCompanionBuilder =
+    ImportsCompanion Function({
+      required String id,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
+      required String fileName,
+      Value<String?> format,
+      required String firstDay,
+      required String lastDay,
+      Value<int> rowid,
+    });
+typedef $$ImportsTableUpdateCompanionBuilder =
+    ImportsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> fileName,
+      Value<String?> format,
+      Value<String> firstDay,
+      Value<String> lastDay,
+      Value<int> rowid,
+    });
+
+final class $$ImportsTableReferences
+    extends BaseReferences<_$BirkaDatabase, $ImportsTable, ImportRow> {
+  $$ImportsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$AccountsTable, List<AccountRow>>
+  _accountsRefsTable(_$BirkaDatabase db) => MultiTypedResultKey.fromTable(
+    db.accounts,
+    aliasName: $_aliasNameGenerator(db.imports.id, db.accounts.importId),
+  );
+
+  $$AccountsTableProcessedTableManager get accountsRefs {
+    final manager = $$AccountsTableTableManager(
+      $_db,
+      $_db.accounts,
+    ).filter((f) => f.importId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_accountsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CategoriesTable, List<CategoryRow>>
+  _categoriesRefsTable(_$BirkaDatabase db) => MultiTypedResultKey.fromTable(
+    db.categories,
+    aliasName: $_aliasNameGenerator(db.imports.id, db.categories.importId),
+  );
+
+  $$CategoriesTableProcessedTableManager get categoriesRefs {
+    final manager = $$CategoriesTableTableManager(
+      $_db,
+      $_db.categories,
+    ).filter((f) => f.importId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_categoriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$TransactionsTable, List<TransactionRow>>
+  _transactionsRefsTable(_$BirkaDatabase db) => MultiTypedResultKey.fromTable(
+    db.transactions,
+    aliasName: $_aliasNameGenerator(db.imports.id, db.transactions.importId),
+  );
+
+  $$TransactionsTableProcessedTableManager get transactionsRefs {
+    final manager = $$TransactionsTableTableManager(
+      $_db,
+      $_db.transactions,
+    ).filter((f) => f.importId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_transactionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$ImportsTableFilterComposer
+    extends Composer<_$BirkaDatabase, $ImportsTable> {
+  $$ImportsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fileName => $composableBuilder(
+    column: $table.fileName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get format => $composableBuilder(
+    column: $table.format,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get firstDay => $composableBuilder(
+    column: $table.firstDay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastDay => $composableBuilder(
+    column: $table.lastDay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> accountsRefs(
+    Expression<bool> Function($$AccountsTableFilterComposer f) f,
+  ) {
+    final $$AccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.accounts,
+      getReferencedColumn: (t) => t.importId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.accounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> categoriesRefs(
+    Expression<bool> Function($$CategoriesTableFilterComposer f) f,
+  ) {
+    final $$CategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.importId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> transactionsRefs(
+    Expression<bool> Function($$TransactionsTableFilterComposer f) f,
+  ) {
+    final $$TransactionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.transactions,
+      getReferencedColumn: (t) => t.importId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableFilterComposer(
+            $db: $db,
+            $table: $db.transactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ImportsTableOrderingComposer
+    extends Composer<_$BirkaDatabase, $ImportsTable> {
+  $$ImportsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fileName => $composableBuilder(
+    column: $table.fileName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get format => $composableBuilder(
+    column: $table.format,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get firstDay => $composableBuilder(
+    column: $table.firstDay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastDay => $composableBuilder(
+    column: $table.lastDay,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ImportsTableAnnotationComposer
+    extends Composer<_$BirkaDatabase, $ImportsTable> {
+  $$ImportsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get fileName =>
+      $composableBuilder(column: $table.fileName, builder: (column) => column);
+
+  GeneratedColumn<String> get format =>
+      $composableBuilder(column: $table.format, builder: (column) => column);
+
+  GeneratedColumn<String> get firstDay =>
+      $composableBuilder(column: $table.firstDay, builder: (column) => column);
+
+  GeneratedColumn<String> get lastDay =>
+      $composableBuilder(column: $table.lastDay, builder: (column) => column);
+
+  Expression<T> accountsRefs<T extends Object>(
+    Expression<T> Function($$AccountsTableAnnotationComposer a) f,
+  ) {
+    final $$AccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.accounts,
+      getReferencedColumn: (t) => t.importId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.accounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> categoriesRefs<T extends Object>(
+    Expression<T> Function($$CategoriesTableAnnotationComposer a) f,
+  ) {
+    final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.importId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> transactionsRefs<T extends Object>(
+    Expression<T> Function($$TransactionsTableAnnotationComposer a) f,
+  ) {
+    final $$TransactionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.transactions,
+      getReferencedColumn: (t) => t.importId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.transactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ImportsTableTableManager
+    extends
+        RootTableManager<
+          _$BirkaDatabase,
+          $ImportsTable,
+          ImportRow,
+          $$ImportsTableFilterComposer,
+          $$ImportsTableOrderingComposer,
+          $$ImportsTableAnnotationComposer,
+          $$ImportsTableCreateCompanionBuilder,
+          $$ImportsTableUpdateCompanionBuilder,
+          (ImportRow, $$ImportsTableReferences),
+          ImportRow,
+          PrefetchHooks Function({
+            bool accountsRefs,
+            bool categoriesRefs,
+            bool transactionsRefs,
+          })
+        > {
+  $$ImportsTableTableManager(_$BirkaDatabase db, $ImportsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ImportsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ImportsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ImportsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> fileName = const Value.absent(),
+                Value<String?> format = const Value.absent(),
+                Value<String> firstDay = const Value.absent(),
+                Value<String> lastDay = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ImportsCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                fileName: fileName,
+                format: format,
+                firstDay: firstDay,
+                lastDay: lastDay,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String fileName,
+                Value<String?> format = const Value.absent(),
+                required String firstDay,
+                required String lastDay,
+                Value<int> rowid = const Value.absent(),
+              }) => ImportsCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                fileName: fileName,
+                format: format,
+                firstDay: firstDay,
+                lastDay: lastDay,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ImportsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                accountsRefs = false,
+                categoriesRefs = false,
+                transactionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (accountsRefs) db.accounts,
+                    if (categoriesRefs) db.categories,
+                    if (transactionsRefs) db.transactions,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (accountsRefs)
+                        await $_getPrefetchedData<
+                          ImportRow,
+                          $ImportsTable,
+                          AccountRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ImportsTableReferences
+                              ._accountsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ImportsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).accountsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.importId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (categoriesRefs)
+                        await $_getPrefetchedData<
+                          ImportRow,
+                          $ImportsTable,
+                          CategoryRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ImportsTableReferences
+                              ._categoriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ImportsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).categoriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.importId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (transactionsRefs)
+                        await $_getPrefetchedData<
+                          ImportRow,
+                          $ImportsTable,
+                          TransactionRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ImportsTableReferences
+                              ._transactionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ImportsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).transactionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.importId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ImportsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$BirkaDatabase,
+      $ImportsTable,
+      ImportRow,
+      $$ImportsTableFilterComposer,
+      $$ImportsTableOrderingComposer,
+      $$ImportsTableAnnotationComposer,
+      $$ImportsTableCreateCompanionBuilder,
+      $$ImportsTableUpdateCompanionBuilder,
+      (ImportRow, $$ImportsTableReferences),
+      ImportRow,
+      PrefetchHooks Function({
+        bool accountsRefs,
+        bool categoriesRefs,
+        bool transactionsRefs,
+      })
+    >;
 typedef $$AccountsTableCreateCompanionBuilder =
     AccountsCompanion Function({
       required String id,
@@ -3829,6 +5084,7 @@ typedef $$AccountsTableCreateCompanionBuilder =
       Value<bool> includeInTotals,
       Value<bool> archived,
       Value<int> sortOrder,
+      Value<String?> importId,
       Value<int> rowid,
     });
 typedef $$AccountsTableUpdateCompanionBuilder =
@@ -3847,12 +5103,30 @@ typedef $$AccountsTableUpdateCompanionBuilder =
       Value<bool> includeInTotals,
       Value<bool> archived,
       Value<int> sortOrder,
+      Value<String?> importId,
       Value<int> rowid,
     });
 
 final class $$AccountsTableReferences
     extends BaseReferences<_$BirkaDatabase, $AccountsTable, AccountRow> {
   $$AccountsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ImportsTable _importIdTable(_$BirkaDatabase db) => db.imports
+      .createAlias($_aliasNameGenerator(db.accounts.importId, db.imports.id));
+
+  $$ImportsTableProcessedTableManager? get importId {
+    final $_column = $_itemColumn<String>('import_id');
+    if ($_column == null) return null;
+    final manager = $$ImportsTableTableManager(
+      $_db,
+      $_db.imports,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_importIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static MultiTypedResultKey<$EntriesTable, List<EntryRow>> _entriesRefsTable(
     _$BirkaDatabase db,
@@ -3952,6 +5226,29 @@ class $$AccountsTableFilterComposer
     column: $table.sortOrder,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ImportsTableFilterComposer get importId {
+    final $$ImportsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableFilterComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> entriesRefs(
     Expression<bool> Function($$EntriesTableFilterComposer f) f,
@@ -4057,6 +5354,29 @@ class $$AccountsTableOrderingComposer
     column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ImportsTableOrderingComposer get importId {
+    final $$ImportsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableOrderingComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$AccountsTableAnnotationComposer
@@ -4118,6 +5438,29 @@ class $$AccountsTableAnnotationComposer
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
 
+  $$ImportsTableAnnotationComposer get importId {
+    final $$ImportsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   Expression<T> entriesRefs<T extends Object>(
     Expression<T> Function($$EntriesTableAnnotationComposer a) f,
   ) {
@@ -4157,7 +5500,7 @@ class $$AccountsTableTableManager
           $$AccountsTableUpdateCompanionBuilder,
           (AccountRow, $$AccountsTableReferences),
           AccountRow,
-          PrefetchHooks Function({bool entriesRefs})
+          PrefetchHooks Function({bool importId, bool entriesRefs})
         > {
   $$AccountsTableTableManager(_$BirkaDatabase db, $AccountsTable table)
     : super(
@@ -4186,6 +5529,7 @@ class $$AccountsTableTableManager
                 Value<bool> includeInTotals = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> importId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AccountsCompanion(
                 id: id,
@@ -4202,6 +5546,7 @@ class $$AccountsTableTableManager
                 includeInTotals: includeInTotals,
                 archived: archived,
                 sortOrder: sortOrder,
+                importId: importId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4220,6 +5565,7 @@ class $$AccountsTableTableManager
                 Value<bool> includeInTotals = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> importId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AccountsCompanion.insert(
                 id: id,
@@ -4236,6 +5582,7 @@ class $$AccountsTableTableManager
                 includeInTotals: includeInTotals,
                 archived: archived,
                 sortOrder: sortOrder,
+                importId: importId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4246,11 +5593,42 @@ class $$AccountsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({entriesRefs = false}) {
+          prefetchHooksCallback: ({importId = false, entriesRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [if (entriesRefs) db.entries],
-              addJoins: null,
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (importId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.importId,
+                                referencedTable: $$AccountsTableReferences
+                                    ._importIdTable(db),
+                                referencedColumn: $$AccountsTableReferences
+                                    ._importIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (entriesRefs)
@@ -4288,7 +5666,7 @@ typedef $$AccountsTableProcessedTableManager =
       $$AccountsTableUpdateCompanionBuilder,
       (AccountRow, $$AccountsTableReferences),
       AccountRow,
-      PrefetchHooks Function({bool entriesRefs})
+      PrefetchHooks Function({bool importId, bool entriesRefs})
     >;
 typedef $$CategoriesTableCreateCompanionBuilder =
     CategoriesCompanion Function({
@@ -4303,6 +5681,7 @@ typedef $$CategoriesTableCreateCompanionBuilder =
       Value<String?> color,
       Value<bool> archived,
       Value<int> sortOrder,
+      Value<String?> importId,
       Value<int> rowid,
     });
 typedef $$CategoriesTableUpdateCompanionBuilder =
@@ -4318,6 +5697,7 @@ typedef $$CategoriesTableUpdateCompanionBuilder =
       Value<String?> color,
       Value<bool> archived,
       Value<int> sortOrder,
+      Value<String?> importId,
       Value<int> rowid,
     });
 
@@ -4338,6 +5718,23 @@ final class $$CategoriesTableReferences
       $_db.categories,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_parentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ImportsTable _importIdTable(_$BirkaDatabase db) => db.imports
+      .createAlias($_aliasNameGenerator(db.categories.importId, db.imports.id));
+
+  $$ImportsTableProcessedTableManager? get importId {
+    final $_column = $_itemColumn<String>('import_id');
+    if ($_column == null) return null;
+    final manager = $$ImportsTableTableManager(
+      $_db,
+      $_db.imports,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_importIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -4439,6 +5836,29 @@ class $$CategoriesTableFilterComposer
           }) => $$CategoriesTableFilterComposer(
             $db: $db,
             $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ImportsTableFilterComposer get importId {
+    final $$ImportsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableFilterComposer(
+            $db: $db,
+            $table: $db.imports,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4555,6 +5975,29 @@ class $$CategoriesTableOrderingComposer
     );
     return composer;
   }
+
+  $$ImportsTableOrderingComposer get importId {
+    final $$ImportsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableOrderingComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$CategoriesTableAnnotationComposer
@@ -4619,6 +6062,29 @@ class $$CategoriesTableAnnotationComposer
     return composer;
   }
 
+  $$ImportsTableAnnotationComposer get importId {
+    final $$ImportsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   Expression<T> allocationsRefs<T extends Object>(
     Expression<T> Function($$AllocationsTableAnnotationComposer a) f,
   ) {
@@ -4658,7 +6124,11 @@ class $$CategoriesTableTableManager
           $$CategoriesTableUpdateCompanionBuilder,
           (CategoryRow, $$CategoriesTableReferences),
           CategoryRow,
-          PrefetchHooks Function({bool parentId, bool allocationsRefs})
+          PrefetchHooks Function({
+            bool parentId,
+            bool importId,
+            bool allocationsRefs,
+          })
         > {
   $$CategoriesTableTableManager(_$BirkaDatabase db, $CategoriesTable table)
     : super(
@@ -4684,6 +6154,7 @@ class $$CategoriesTableTableManager
                 Value<String?> color = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> importId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion(
                 id: id,
@@ -4697,6 +6168,7 @@ class $$CategoriesTableTableManager
                 color: color,
                 archived: archived,
                 sortOrder: sortOrder,
+                importId: importId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4712,6 +6184,7 @@ class $$CategoriesTableTableManager
                 Value<String?> color = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> importId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 id: id,
@@ -4725,6 +6198,7 @@ class $$CategoriesTableTableManager
                 color: color,
                 archived: archived,
                 sortOrder: sortOrder,
+                importId: importId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4735,67 +6209,87 @@ class $$CategoriesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({parentId = false, allocationsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (allocationsRefs) db.allocations],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (parentId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.parentId,
-                                referencedTable: $$CategoriesTableReferences
-                                    ._parentIdTable(db),
-                                referencedColumn: $$CategoriesTableReferences
-                                    ._parentIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({parentId = false, importId = false, allocationsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (allocationsRefs) db.allocations,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (parentId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.parentId,
+                                    referencedTable: $$CategoriesTableReferences
+                                        ._parentIdTable(db),
+                                    referencedColumn:
+                                        $$CategoriesTableReferences
+                                            ._parentIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (importId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.importId,
+                                    referencedTable: $$CategoriesTableReferences
+                                        ._importIdTable(db),
+                                    referencedColumn:
+                                        $$CategoriesTableReferences
+                                            ._importIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (allocationsRefs)
+                        await $_getPrefetchedData<
+                          CategoryRow,
+                          $CategoriesTable,
+                          AllocationRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._allocationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).allocationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (allocationsRefs)
-                    await $_getPrefetchedData<
-                      CategoryRow,
-                      $CategoriesTable,
-                      AllocationRow
-                    >(
-                      currentTable: table,
-                      referencedTable: $$CategoriesTableReferences
-                          ._allocationsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$CategoriesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).allocationsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.categoryId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -4812,7 +6306,11 @@ typedef $$CategoriesTableProcessedTableManager =
       $$CategoriesTableUpdateCompanionBuilder,
       (CategoryRow, $$CategoriesTableReferences),
       CategoryRow,
-      PrefetchHooks Function({bool parentId, bool allocationsRefs})
+      PrefetchHooks Function({
+        bool parentId,
+        bool importId,
+        bool allocationsRefs,
+      })
     >;
 typedef $$TransactionsTableCreateCompanionBuilder =
     TransactionsCompanion Function({
@@ -4826,6 +6324,7 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       Value<String> note,
       required String status,
       required String source,
+      Value<String?> importId,
       Value<int> rowid,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
@@ -4840,6 +6339,7 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<String> note,
       Value<String> status,
       Value<String> source,
+      Value<String?> importId,
       Value<int> rowid,
     });
 
@@ -4847,6 +6347,25 @@ final class $$TransactionsTableReferences
     extends
         BaseReferences<_$BirkaDatabase, $TransactionsTable, TransactionRow> {
   $$TransactionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ImportsTable _importIdTable(_$BirkaDatabase db) =>
+      db.imports.createAlias(
+        $_aliasNameGenerator(db.transactions.importId, db.imports.id),
+      );
+
+  $$ImportsTableProcessedTableManager? get importId {
+    final $_column = $_itemColumn<String>('import_id');
+    if ($_column == null) return null;
+    final manager = $$ImportsTableTableManager(
+      $_db,
+      $_db.imports,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_importIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static MultiTypedResultKey<$EntriesTable, List<EntryRow>> _entriesRefsTable(
     _$BirkaDatabase db,
@@ -4950,6 +6469,29 @@ class $$TransactionsTableFilterComposer
     column: $table.source,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ImportsTableFilterComposer get importId {
+    final $$ImportsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableFilterComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> entriesRefs(
     Expression<bool> Function($$EntriesTableFilterComposer f) f,
@@ -5060,6 +6602,29 @@ class $$TransactionsTableOrderingComposer
     column: $table.source,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ImportsTableOrderingComposer get importId {
+    final $$ImportsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableOrderingComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$TransactionsTableAnnotationComposer
@@ -5104,6 +6669,29 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
+
+  $$ImportsTableAnnotationComposer get importId {
+    final $$ImportsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.importId,
+      referencedTable: $db.imports,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImportsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.imports,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<T> entriesRefs<T extends Object>(
     Expression<T> Function($$EntriesTableAnnotationComposer a) f,
@@ -5169,7 +6757,11 @@ class $$TransactionsTableTableManager
           $$TransactionsTableUpdateCompanionBuilder,
           (TransactionRow, $$TransactionsTableReferences),
           TransactionRow,
-          PrefetchHooks Function({bool entriesRefs, bool allocationsRefs})
+          PrefetchHooks Function({
+            bool importId,
+            bool entriesRefs,
+            bool allocationsRefs,
+          })
         > {
   $$TransactionsTableTableManager(_$BirkaDatabase db, $TransactionsTable table)
     : super(
@@ -5194,6 +6786,7 @@ class $$TransactionsTableTableManager
                 Value<String> note = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<String?> importId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion(
                 id: id,
@@ -5206,6 +6799,7 @@ class $$TransactionsTableTableManager
                 note: note,
                 status: status,
                 source: source,
+                importId: importId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -5220,6 +6814,7 @@ class $$TransactionsTableTableManager
                 Value<String> note = const Value.absent(),
                 required String status,
                 required String source,
+                Value<String?> importId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion.insert(
                 id: id,
@@ -5232,6 +6827,7 @@ class $$TransactionsTableTableManager
                 note: note,
                 status: status,
                 source: source,
+                importId: importId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -5243,14 +6839,51 @@ class $$TransactionsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({entriesRefs = false, allocationsRefs = false}) {
+              ({
+                importId = false,
+                entriesRefs = false,
+                allocationsRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (entriesRefs) db.entries,
                     if (allocationsRefs) db.allocations,
                   ],
-                  addJoins: null,
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (importId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.importId,
+                                    referencedTable:
+                                        $$TransactionsTableReferences
+                                            ._importIdTable(db),
+                                    referencedColumn:
+                                        $$TransactionsTableReferences
+                                            ._importIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (entriesRefs)
@@ -5315,7 +6948,11 @@ typedef $$TransactionsTableProcessedTableManager =
       $$TransactionsTableUpdateCompanionBuilder,
       (TransactionRow, $$TransactionsTableReferences),
       TransactionRow,
-      PrefetchHooks Function({bool entriesRefs, bool allocationsRefs})
+      PrefetchHooks Function({
+        bool importId,
+        bool entriesRefs,
+        bool allocationsRefs,
+      })
     >;
 typedef $$EntriesTableCreateCompanionBuilder =
     EntriesCompanion Function({
@@ -5769,7 +7406,7 @@ typedef $$AllocationsTableCreateCompanionBuilder =
       required DateTime updatedAt,
       Value<DateTime?> deletedAt,
       required String transactionId,
-      required String categoryId,
+      Value<String?> categoryId,
       required int amountMinor,
       Value<int> rowid,
     });
@@ -5780,7 +7417,7 @@ typedef $$AllocationsTableUpdateCompanionBuilder =
       Value<DateTime> updatedAt,
       Value<DateTime?> deletedAt,
       Value<String> transactionId,
-      Value<String> categoryId,
+      Value<String?> categoryId,
       Value<int> amountMinor,
       Value<int> rowid,
     });
@@ -5813,9 +7450,9 @@ final class $$AllocationsTableReferences
         $_aliasNameGenerator(db.allocations.categoryId, db.categories.id),
       );
 
-  $$CategoriesTableProcessedTableManager get categoryId {
-    final $_column = $_itemColumn<String>('category_id')!;
-
+  $$CategoriesTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<String>('category_id');
+    if ($_column == null) return null;
     final manager = $$CategoriesTableTableManager(
       $_db,
       $_db.categories,
@@ -6096,7 +7733,7 @@ class $$AllocationsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<String> transactionId = const Value.absent(),
-                Value<String> categoryId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
                 Value<int> amountMinor = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AllocationsCompanion(
@@ -6116,7 +7753,7 @@ class $$AllocationsTableTableManager
                 required DateTime updatedAt,
                 Value<DateTime?> deletedAt = const Value.absent(),
                 required String transactionId,
-                required String categoryId,
+                Value<String?> categoryId = const Value.absent(),
                 required int amountMinor,
                 Value<int> rowid = const Value.absent(),
               }) => AllocationsCompanion.insert(
@@ -6572,6 +8209,8 @@ typedef $$ExchangeRatesTableProcessedTableManager =
 class $BirkaDatabaseManager {
   final _$BirkaDatabase _db;
   $BirkaDatabaseManager(this._db);
+  $$ImportsTableTableManager get imports =>
+      $$ImportsTableTableManager(_db, _db.imports);
   $$AccountsTableTableManager get accounts =>
       $$AccountsTableTableManager(_db, _db.accounts);
   $$CategoriesTableTableManager get categories =>

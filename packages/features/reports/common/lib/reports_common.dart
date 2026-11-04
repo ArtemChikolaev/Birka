@@ -9,7 +9,8 @@ export 'package:ledger/ledger.dart'
         CategoryKind,
         CategoryTotal,
         CivilDate,
-        MonthTotal;
+        MonthTotal,
+        categoryKey;
 export 'package:money/money.dart' show Currency, Money;
 export 'package:rates/rates.dart' show DayRates, RateBook;
 

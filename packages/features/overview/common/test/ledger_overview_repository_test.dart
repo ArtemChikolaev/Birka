@@ -83,7 +83,7 @@ void main() {
         .first;
 
     expect(changes.single.change, rub(600));
-    expect(spending.single.category.name, 'Food');
+    expect(spending.single.category?.name, 'Food');
     expect(spending.single.total, rub(300));
   });
 

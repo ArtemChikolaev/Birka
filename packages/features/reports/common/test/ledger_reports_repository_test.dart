@@ -85,7 +85,7 @@ void main() {
         .watchDays(CategoryKind.expense, from: october, to: today)
         .first;
 
-    expect(rows.single.category.name, 'Food');
+    expect(rows.single.category?.name, 'Food');
     expect(rows.single.day, today);
     expect(rows.single.total, rub(300));
     expect(await repository.months(), [october]);

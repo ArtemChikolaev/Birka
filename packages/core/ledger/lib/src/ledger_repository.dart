@@ -5,6 +5,7 @@ import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
 import 'package:ledger/src/ledger_copy.dart';
 import 'package:ledger/src/ledger_exception.dart';
+import 'package:ledger/src/ledger_import.dart';
 import 'package:ledger/src/ledger_totals.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
@@ -39,6 +40,7 @@ final class LedgerRepository {
     AccountArt art = AccountArt.emerald,
     bool includeInTotals = true,
     int? sortOrder,
+    String? importId,
   }) {
     return _db.transaction(() async {
       final id = _newId();
@@ -67,6 +69,7 @@ final class LedgerRepository {
               art: Value(art.name),
               includeInTotals: Value(includeInTotals),
               sortOrder: Value(position),
+              importId: Value(importId),
             ),
           );
       await _log(_db.accounts, id, 'insert', at);
@@ -245,6 +248,14 @@ final class LedgerRepository {
         ..where(_db.transactions.deletedAt.isNull());
       return LedgerCopy.of(
         madeAt: _timestamp(),
+        importRows:
+            await (_db.select(_db.imports)
+                  ..where((row) => row.deletedAt.isNull())
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.createdAt),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
         accountRows:
             await (_db.select(_db.accounts)
                   ..where((row) => row.deletedAt.isNull())
@@ -309,6 +320,7 @@ final class LedgerRepository {
       await _clear();
       final at = _timestamp();
       final written = <(TableInfo<Table, Object?>, Iterable<String>)>[
+        (_db.imports, copy.importRows.map((row) => row.id)),
         (_db.accounts, copy.accountRows.map((row) => row.id)),
         (_db.categories, copy.categoryRows.map((row) => row.id)),
         (_db.transactions, copy.transactionRows.map((row) => row.id)),
@@ -317,6 +329,7 @@ final class LedgerRepository {
       ];
       await _db.batch((batch) {
         batch
+          ..insertAll(_db.imports, copy.importRows)
           ..insertAll(_db.accounts, copy.accountRows)
           ..insertAll(_db.categories, copy.categoryRows)
           ..insertAll(_db.transactions, copy.transactionRows)
@@ -349,6 +362,7 @@ final class LedgerRepository {
       _db.transactions,
       _db.categories,
       _db.accounts,
+      _db.imports,
       _db.changes,
     ]) {
       await _db.delete(table).go();
@@ -364,6 +378,7 @@ final class LedgerRepository {
     String? icon,
     String? color,
     int? sortOrder,
+    String? importId,
   }) {
     return _db.transaction(() async {
       if (parentId != null) await _checkParent(parentId, kind);
@@ -393,6 +408,7 @@ final class LedgerRepository {
               icon: Value(icon),
               color: Value(color),
               sortOrder: Value(position),
+              importId: Value(importId),
             ),
           );
       await _log(_db.categories, id, 'insert', at);
@@ -483,8 +499,9 @@ final class LedgerRepository {
     return query.watch().map((rows) => rows.map(_categoryOf).toList());
   }
 
-  /// Puts [draft] into the ledger and returns its id.
-  Future<String> record(TransactionDraft draft) {
+  /// Puts [draft] into the ledger and returns its id, as a part of the import
+  /// [importId] when it has one.
+  Future<String> record(TransactionDraft draft, {String? importId}) {
     return _db.transaction(() async {
       await _check(draft);
       final id = _newId();
@@ -502,6 +519,7 @@ final class LedgerRepository {
               note: Value(draft.note),
               status: draft.status.name,
               source: draft.source.name,
+              importId: Value(importId),
             ),
           );
       await _log(_db.transactions, id, 'insert', at);
@@ -551,6 +569,189 @@ final class LedgerRepository {
       await _log(_db.transactions, id, 'delete', at);
       await _buryLegs(id, at);
     });
+  }
+
+  /// Starts an import of the statement [fileName], whose operations go from
+  /// [firstDay] to [lastDay], and returns its id (ADR 0021).
+  ///
+  /// The accounts, categories and transactions that the import brings name
+  /// this id, and the whole import goes in through one [atomically], so that a
+  /// closed tab or app leaves none of it.
+  Future<String> addImport({
+    required String fileName,
+    required CivilDate firstDay,
+    required CivilDate lastDay,
+    String? format,
+  }) {
+    return _db.transaction(() async {
+      final id = _newId();
+      final at = _timestamp();
+      await _db
+          .into(_db.imports)
+          .insert(
+            ImportsCompanion.insert(
+              id: id,
+              createdAt: at,
+              updatedAt: at,
+              fileName: fileName,
+              format: Value(format),
+              firstDay: firstDay.toString(),
+              lastDay: lastDay.toString(),
+            ),
+          );
+      await _log(_db.imports, id, 'insert', at);
+      return id;
+    });
+  }
+
+  /// Takes import [id] out of the ledger in one write: its transactions become
+  /// tombstones, and so do the accounts and categories it added that nothing
+  /// else uses now. What the person recorded and other imports stay, and an
+  /// account or a category that stays no longer names the import.
+  Future<void> undoImport(String id) {
+    return _db.transaction(() async {
+      final at = _timestamp();
+      final updated =
+          await (_db.update(
+            _db.imports,
+          )..where((row) => row.id.equals(id) & row.deletedAt.isNull())).write(
+            ImportsCompanion(updatedAt: Value(at), deletedAt: Value(at)),
+          );
+      if (updated == 0) throw LedgerException('No import $id');
+      await _log(_db.imports, id, 'delete', at);
+      final transactions =
+          await (_db.update(_db.transactions)..where(
+                (row) => row.importId.equals(id) & row.deletedAt.isNull(),
+              ))
+              .writeReturning(
+                TransactionsCompanion(
+                  updatedAt: Value(at),
+                  deletedAt: Value(at),
+                ),
+              );
+      for (final transaction in transactions) {
+        await _log(_db.transactions, transaction.id, 'delete', at);
+        await _buryLegs(transaction.id, at);
+      }
+      final accounts =
+          await (_db.select(_db.accounts)..where(
+                (row) => row.importId.equals(id) & row.deletedAt.isNull(),
+              ))
+              .get();
+      for (final account in accounts) {
+        final used = await _exists(
+          _db.entries,
+          (row) => row.accountId.equals(account.id) & row.deletedAt.isNull(),
+        );
+        await (_db.update(
+          _db.accounts,
+        )..where((row) => row.id.equals(account.id))).write(
+          used
+              ? AccountsCompanion(
+                  updatedAt: Value(at),
+                  importId: const Value(null),
+                )
+              : AccountsCompanion(
+                  updatedAt: Value(at),
+                  deletedAt: Value(at),
+                ),
+        );
+        await _log(_db.accounts, account.id, used ? 'update' : 'delete', at);
+      }
+      // Subcategories go first, so that their parents can follow them.
+      final categories =
+          await (_db.select(_db.categories)
+                ..where(
+                  (row) => row.importId.equals(id) & row.deletedAt.isNull(),
+                )
+                ..orderBy([
+                  (row) => OrderingTerm(expression: row.parentId.isNull()),
+                ]))
+              .get();
+      for (final category in categories) {
+        final used =
+            await _exists(
+              _db.allocations,
+              (row) =>
+                  row.categoryId.equals(category.id) & row.deletedAt.isNull(),
+            ) ||
+            await _exists(
+              _db.categories,
+              (row) =>
+                  row.parentId.equals(category.id) & row.deletedAt.isNull(),
+            );
+        await (_db.update(
+          _db.categories,
+        )..where((row) => row.id.equals(category.id))).write(
+          used
+              ? CategoriesCompanion(
+                  updatedAt: Value(at),
+                  importId: const Value(null),
+                )
+              : CategoriesCompanion(
+                  updatedAt: Value(at),
+                  deletedAt: Value(at),
+                ),
+        );
+        await _log(
+          _db.categories,
+          category.id,
+          used ? 'update' : 'delete',
+          at,
+        );
+      }
+    });
+  }
+
+  /// The imports whose transactions the ledger still holds, the latest first.
+  Stream<List<LedgerImport>> watchImports() {
+    return _db
+        .customSelect(
+          '''
+          SELECT i.id, i.file_name, i.format, i.first_day, i.last_day,
+            i.created_at, COUNT(DISTINCT t.id) AS transactions,
+            GROUP_CONCAT(DISTINCT e.account_id) AS accounts
+          FROM imports i
+          JOIN transactions t ON t.import_id = i.id AND t.deleted_at IS NULL
+          LEFT JOIN entries e
+            ON e.transaction_id = t.id AND e.deleted_at IS NULL
+          WHERE i.deleted_at IS NULL
+          GROUP BY i.id
+          ORDER BY i.created_at DESC, i.id DESC
+          ''',
+          readsFrom: {_db.imports, _db.transactions, _db.entries},
+        )
+        .watch()
+        .map(
+          (rows) => [
+            for (final row in rows)
+              LedgerImport(
+                id: row.read<String>('id'),
+                fileName: row.read<String>('file_name'),
+                format: row.read<String?>('format'),
+                firstDay: CivilDate.parse(row.read<String>('first_day')),
+                lastDay: CivilDate.parse(row.read<String>('last_day')),
+                importedAt: row.read<DateTime>('created_at'),
+                transactions: row.read<int>('transactions'),
+                accountIds: {
+                  ...?row.read<String?>('accounts')?.split(','),
+                },
+              ),
+          ],
+        );
+  }
+
+  /// Whether [table] has a row that [where] picks.
+  Future<bool> _exists<T extends HasResultSet, R>(
+    ResultSetImplementation<T, R> table,
+    Expression<bool> Function(T row) where,
+  ) async {
+    final row =
+        await (_db.select(table)
+              ..where(where)
+              ..limit(1))
+            .getSingleOrNull();
+    return row != null;
   }
 
   /// The latest [limit] transactions, or all of them without a limit. They can
@@ -670,7 +871,8 @@ final class LedgerRepository {
 
   /// What went through the categories of [kind] from [from] to [to], with both
   /// ends included: one row for each category, day and currency, the earliest
-  /// first. A subcategory counts towards its parent.
+  /// first. A subcategory counts towards its parent, and what waits for a
+  /// category has a row without one.
   Stream<List<CategoryDayTotal>> watchCategoryDays(
     CategoryKind kind, {
     required CivilDate from,
@@ -685,13 +887,13 @@ final class LedgerRepository {
           JOIN transactions t ON t.id = al.transaction_id
           JOIN entries e ON e.transaction_id = t.id AND e.deleted_at IS NULL
           JOIN accounts a ON a.id = e.account_id
-          JOIN categories c ON c.id = al.category_id
-          JOIN categories top ON top.id = COALESCE(c.parent_id, c.id)
+          LEFT JOIN categories c ON c.id = al.category_id
+          LEFT JOIN categories top ON top.id = COALESCE(c.parent_id, c.id)
           WHERE al.deleted_at IS NULL
             AND t.deleted_at IS NULL
             AND t.status <> ?
             AND t.occurred_on BETWEEN ? AND ?
-            AND top.kind = ?
+            AND COALESCE(top.kind, t.kind) = ?
           GROUP BY top.id, t.occurred_on, a.currency, a.decimal_digits
           ORDER BY t.occurred_on, a.currency, top.sort_order
           ''',
@@ -714,7 +916,9 @@ final class LedgerRepository {
           (rows) => Future.wait(
             rows.map(
               (row) async => CategoryDayTotal(
-                _categoryOf(await _db.categories.mapFromRow(row)),
+                row.read<String?>('id') == null
+                    ? null
+                    : _categoryOf(await _db.categories.mapFromRow(row)),
                 CivilDate.parse(row.read<String>('day')),
                 _sum(
                   row.read('total'),
@@ -821,15 +1025,15 @@ final class LedgerRepository {
       }
     }
     for (final allocation in draft.allocations) {
+      final categoryId = allocation.categoryId;
+      if (categoryId == null) continue;
       final category =
           await (_db.select(_db.categories)..where(
-                (row) =>
-                    row.id.equals(allocation.categoryId) &
-                    row.deletedAt.isNull(),
+                (row) => row.id.equals(categoryId) & row.deletedAt.isNull(),
               ))
               .getSingleOrNull();
       if (category == null) {
-        throw LedgerException('No category ${allocation.categoryId}');
+        throw LedgerException('No category $categoryId');
       }
       if (category.kind != draft.kind.name) {
         throw LedgerException(
@@ -883,7 +1087,7 @@ final class LedgerRepository {
               createdAt: at,
               updatedAt: at,
               transactionId: transactionId,
-              categoryId: allocation.categoryId,
+              categoryId: Value(allocation.categoryId),
               amountMinor: allocation.amount.minorUnits,
             ),
           );
@@ -980,6 +1184,7 @@ final class LedgerRepository {
           source: TransactionSource.values.byName(row.source),
           entries: entries[row.id] ?? const [],
           allocations: allocations[row.id] ?? const [],
+          importId: row.importId,
         ),
     ];
   }

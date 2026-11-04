@@ -161,6 +161,18 @@ void main() {
     expect(bars.last, closeTo(0.53, 0.01));
   });
 
+  testWidgets('shows what waits for a category under its own name', (
+    tester,
+  ) async {
+    repository.rows[(CategoryKind.expense, october)]!.add(
+      CategoryTotal(null, rub(500000)),
+    );
+    await pump(tester);
+
+    expect(find.text('Без категории'), findsOneWidget);
+    expect(find.text('5${space}000$space₽'), findsOneWidget);
+  });
+
   testWidgets('more expenses read as bad news', (tester) async {
     await pump(tester);
 

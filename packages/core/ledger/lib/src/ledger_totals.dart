@@ -16,14 +16,19 @@ final class DayChange {
   final Money change;
 }
 
+/// What tells the total of [category] from the others in a list: the id of
+/// the category, or an empty string for what waits for one, since no category
+/// has an empty id.
+String categoryKey(Category? category) => category?.id ?? '';
+
 /// What went through a category and its subcategories, in one currency.
 @immutable
 final class CategoryTotal {
   /// Creates a total of [category].
   const CategoryTotal(this.category, this.total);
 
-  /// The category, never a subcategory.
-  final Category category;
+  /// The category, never a subcategory, or `null` for what waits for one.
+  final Category? category;
 
   /// The amount above zero.
   final Money total;
@@ -36,8 +41,8 @@ final class CategoryDayTotal {
   /// Creates a total of [category] on [day].
   const CategoryDayTotal(this.category, this.day, this.total);
 
-  /// The category, never a subcategory.
-  final Category category;
+  /// The category, never a subcategory, or `null` for what waits for one.
+  final Category? category;
 
   /// The day.
   final CivilDate day;

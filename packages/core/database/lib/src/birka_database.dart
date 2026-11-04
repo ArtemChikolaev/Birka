@@ -16,6 +16,7 @@ part 'birka_database.g.dart';
     Allocations,
     Changes,
     ExchangeRates,
+    Imports,
   ],
 )
 class BirkaDatabase extends _$BirkaDatabase {
@@ -23,7 +24,7 @@ class BirkaDatabase extends _$BirkaDatabase {
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -49,6 +50,16 @@ class BirkaDatabase extends _$BirkaDatabase {
         await m.addColumn(schema.accounts, schema.accounts.art);
       },
       from2To3: (m, schema) => m.createTable(schema.exchangeRates),
+      from3To4: (m, schema) async {
+        await m.createTable(schema.imports);
+        await m.addColumn(schema.accounts, schema.accounts.importId);
+        await m.addColumn(schema.categories, schema.categories.importId);
+        await m.addColumn(schema.transactions, schema.transactions.importId);
+        await m.createIndex(schema.transactionsImport);
+        // SQLite cannot drop NOT NULL from a column, so the table is built
+        // again with its rows.
+        await m.alterTable(TableMigration(schema.allocations));
+      },
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
   );
