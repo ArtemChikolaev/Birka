@@ -16,9 +16,12 @@
 
 1. A copy is one JSON file, `birka-2026-11-02.birka`. It holds the mark
    `"format": "birka-copy"`, the `version` of the format, the moment `madeAt`,
-   and every account, category and transaction with its entries and
+   and every import, account, category and transaction with its entries and
    allocations inside it, with their ids and stamps. `LedgerCopy` in
    `packages/core/ledger` writes and reads it, the same code on both hosts.
+   Version 2 added the imports, the import that brought an account, a
+   category or a transaction, and allocations without a category
+   ([ADR 0021](0021-statements.md)); a file of version 1 still reads.
 2. Tombstones stay out of a copy: what a person deleted does not travel in a
    file that they may send somewhere. Exchange rates stay out because any
    device fetches them again, and settings because they belong to a device
@@ -29,7 +32,7 @@
    of each kind through the drafts of the ledger. A newer version asks for an
    update of the app. A copy that passes reads like one that the app wrote.
 4. A restore and a wipe are the two writes that remove rows instead of leaving
-   tombstones. One transaction empties the five tables of the ledger and the
+   tombstones. One transaction empties the six tables of the ledger and the
    outbox, and a restore then writes the rows of the copy with their ids and
    stamps and puts an insert of each into the outbox. Before sync, a tombstone
    of a row that no other device has means nothing, and a wipe that leaves

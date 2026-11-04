@@ -38,13 +38,30 @@ void main() {
   );
 
   group('totals in a currency', () {
+    test('keep what waits for a category apart, after a total its size', () {
+      final totals = totalsIn(Currency.rub, [
+        CategoryDayTotal(null, monday, rub(200)),
+        row('Food', rub(500), monday, sortOrder: 9),
+        CategoryDayTotal(null, friday, rub(300)),
+        row('Cafe', rub(9000), friday),
+      ], rates);
+
+      expect(totals.map((it) => (it.category?.name, it.total)), [
+        ('Cafe', rub(9000)),
+        ('Food', rub(500)),
+        (null, rub(500)),
+      ]);
+      expect(categoryKey(totals.last.category), '');
+      expect(categoryKey(totals.first.category), 'Cafe');
+    });
+
     test('take the rate of each day', () {
       final totals = totalsIn(Currency.rub, [
         row('Food', usd(100), monday),
         row('Food', usd(100), friday),
       ], rates);
 
-      expect(totals.single.category.name, 'Food');
+      expect(totals.single.category?.name, 'Food');
       expect(totals.single.total, rub(16000));
     });
 
@@ -83,7 +100,7 @@ void main() {
         row('Cafe', usd(100), friday),
       ], rates);
 
-      expect(totals.single.category.name, 'Cafe');
+      expect(totals.single.category?.name, 'Cafe');
     });
 
     test('leave what never took a rate as it is', () {
@@ -125,7 +142,7 @@ void main() {
         row('Dollar', usd(1), monday),
       ], const RateBook.empty());
 
-      expect(totals.map((total) => total.category.name), [
+      expect(totals.map((total) => total.category?.name), [
         'Cafe',
         'Tea',
         'Eur',

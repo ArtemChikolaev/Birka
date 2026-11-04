@@ -65,6 +65,24 @@
    its column, else by the currency of the row, else it is the one account of
    the file. Each `SourceAccount` sums its operations and, when the file has
    balances, gives the balance before the first one and after the last.
+10. An import is a row of its own in the ledger, `imports`: the name of the
+    file, its format and the days of its first and last operation. The
+    accounts, categories and transactions that an import brings name it in
+    `importId`, and the whole import goes in through one `atomically`, so
+    that a closed tab or app leaves none of it.
+11. `undoImport` takes an import out in one write. Its transactions become
+    tombstones, and so do the accounts and the categories it added that
+    nothing else uses now, subcategories before their parents. What the
+    person recorded and other imports stay, even when they moved money on an
+    account of the import, and an account or a category that stays forgets
+    the import. `watchImports` lists the imports that still have
+    transactions, the latest first, for the list of past imports.
+12. An imported expense or income can wait for its category: its allocation
+    has the amount and no category ([ADR 0009](0009-data-model.md)). It
+    counts in the balances, the overview and the reports from the start,
+    where it stands as «Без категории» in a quiet color after the categories
+    of its size. The forms of the app still save an operation only with a
+    category.
 
 ## Options considered
 
@@ -81,9 +99,10 @@
 - Before anything is written, the hosts can show the bank the file looks
   like, its columns with an example of each, the rows left out with their
   numbers and a summary for each account.
-- Writing a statement into the ledger in one step, finding the operations
-  that are already there and undoing an import come next, and extend this
-  record.
+- Finding the operations that are already in the ledger, the plan of an
+  import from a statement and the wizard come next, and extend this record.
+- A copy of the ledger is version 2 ([ADR 0016](0016-ledger-copy.md)): an app
+  from before it says that the file comes from a newer version.
 - Two banks with the same headers look like one. They read alike, so only the
   name that the hosts show is wrong, and the person can pick another format.
 - `.xls` of Excel 97 and PDF are refused for now; the hosts suggest saving the

@@ -217,8 +217,8 @@ class OverviewPage extends StatelessComponent {
     );
   }
 
-  static String _colorOf(Category category) =>
-      category.color ?? 'var(--color-text-subtle)';
+  static String _colorOf(Category? category) =>
+      category?.color ?? 'var(--color-text-subtle)';
 
   Component _categoryLine(CategoryTotal row) {
     return div(classes: 'overview__category', [
@@ -228,7 +228,7 @@ class OverviewPage extends StatelessComponent {
         const [],
       ),
       span(classes: 'text-caption overview__category-name', [
-        .text(row.category.name),
+        .text(row.category?.name ?? t.app.noCategory),
       ]),
       AmountText(formatMoney(row.total), textClass: 'text-caption'),
     ]);

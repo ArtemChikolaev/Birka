@@ -267,8 +267,8 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   /// The color of a category, whose color is its own choice.
-  static String _colorOf(Category category) =>
-      category.color ?? 'var(--color-text-subtle)';
+  static String _colorOf(Category? category) =>
+      category?.color ?? 'var(--color-text-subtle)';
 
   /// How a change reads: a rise of expenses is bad news, and of income good
   /// news.
@@ -319,35 +319,39 @@ class _ReportsPageState extends State<ReportsPage> {
   Component _line(ReportLine line, {required CategoryKind kind}) {
     final color = _colorOf(line.category);
     final change = line.change;
-    return div(key: ValueKey(line.category.id), classes: 'reports__line', [
-      div(classes: 'reports__head', [
-        span(
-          classes: 'reports__dot',
-          styles: Styles(raw: {'background': color}),
-          const [],
-        ),
-        span(classes: 'text-body-strong reports__name', [
-          .text(line.category.name),
+    return div(
+      key: ValueKey(categoryKey(line.category)),
+      classes: 'reports__line',
+      [
+        div(classes: 'reports__head', [
+          span(
+            classes: 'reports__dot',
+            styles: Styles(raw: {'background': color}),
+            const [],
+          ),
+          span(classes: 'text-body-strong reports__name', [
+            .text(line.category?.name ?? t.app.noCategory),
+          ]),
+          if (change != null)
+            AmountText(
+              percentLabel(change),
+              tone: _toneOf(change, kind),
+              textClass: 'text-caption',
+              alwaysShown: true,
+            ),
+          AmountText(formatMoney(line.total), textClass: 'text-body-strong'),
         ]),
-        if (change != null)
-          AmountText(
-            percentLabel(change),
-            tone: _toneOf(change, kind),
-            textClass: 'text-caption',
-            alwaysShown: true,
+        div(classes: 'reports__bar', [
+          div(
+            classes: 'reports__fill',
+            styles: Styles(
+              raw: {'background': color, 'width': '${line.share * 100}%'},
+            ),
+            const [],
           ),
-        AmountText(formatMoney(line.total), textClass: 'text-body-strong'),
-      ]),
-      div(classes: 'reports__bar', [
-        div(
-          classes: 'reports__fill',
-          styles: Styles(
-            raw: {'background': color, 'width': '${line.share * 100}%'},
-          ),
-          const [],
-        ),
-      ]),
-    ]);
+        ]),
+      ],
+    );
   }
 
   /// The last months as bars.

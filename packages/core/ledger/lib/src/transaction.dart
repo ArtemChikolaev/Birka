@@ -69,8 +69,9 @@ final class Allocation {
   /// Creates an allocation.
   const Allocation({required this.categoryId, required this.amount});
 
-  /// The category.
-  final String categoryId;
+  /// The category, or `null` while the transaction waits for one, as an
+  /// imported one can (ADR 0021).
+  final String? categoryId;
 
   /// The positive amount.
   final Money amount;
@@ -90,6 +91,7 @@ final class Transaction {
     required this.entries,
     required this.allocations,
     this.occurredAt,
+    this.importId,
   });
 
   /// The id.
@@ -118,4 +120,7 @@ final class Transaction {
 
   /// The categories it goes to.
   final List<Allocation> allocations;
+
+  /// The import that brought it, if one did (ADR 0021).
+  final String? importId;
 }

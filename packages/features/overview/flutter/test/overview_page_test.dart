@@ -280,6 +280,26 @@ void main() {
     expect(find.text('5$space€'), findsOneWidget);
   });
 
+  testWidgets('what waits for a category has a name of its own', (
+    tester,
+  ) async {
+    repository.spending = [
+      _total('Продукты', rub(300000)),
+      CategoryTotal(null, rub(120000)),
+    ];
+    await pump(tester);
+
+    await tester.drag(find.byType(ListView).first, const Offset(0, -500));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Без категории'), findsOneWidget);
+    final ring = tester.widget<BirkaRing>(find.byType(BirkaRing));
+    expect(ring.slices.map((slice) => slice.id), [
+      isNot(isEmpty),
+      '',
+    ]);
+  });
+
   testWidgets('a month without spending says so', (tester) async {
     repository.spending = const [];
     await pump(tester);

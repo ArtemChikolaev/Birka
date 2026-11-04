@@ -178,6 +178,8 @@ class _Translations$app$ru extends Translations$app$en {
   @override
   String get soon => 'скоро';
   @override
+  String get noCategory => 'Без категории';
+  @override
   Map<String, String> get currencies => {
     'RUB': 'Рубли',
     'USD': 'Доллары',
@@ -1225,6 +1227,7 @@ extension on TranslationsRu {
       'app.openElsewhere' =>
         'Birka открыта в другой вкладке. Закройте её и попробуйте снова.',
       'app.soon' => 'скоро',
+      'app.noCategory' => 'Без категории',
       'app.currencies.RUB' => 'Рубли',
       'app.currencies.USD' => 'Доллары',
       'app.currencies.EUR' => 'Евро',

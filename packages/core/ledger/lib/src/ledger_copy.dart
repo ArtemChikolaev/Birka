@@ -73,14 +73,15 @@ final class LedgerCopyException implements Exception {
 
 /// Everything the ledger holds, in the form of a file (ADR 0016).
 ///
-/// It keeps every account, category and transaction with its entries and
-/// allocations, their ids and stamps, so that a restored ledger is the one
+/// It keeps every import, account, category and transaction with its entries
+/// and allocations, their ids and stamps, so that a restored ledger is the one
 /// that was copied. Tombstones stay out: what was deleted does not travel.
 final class LedgerCopy {
   /// Creates a copy of rows that the ledger has read.
   @internal
   LedgerCopy.of({
     required DateTime madeAt,
+    required this.importRows,
     required this.accountRows,
     required this.categoryRows,
     required this.transactionRows,
@@ -118,13 +119,18 @@ final class LedgerCopy {
   }
 
   /// The version of the format that this code writes. It reads every version
-  /// up to this one.
-  static const version = 1;
+  /// up to this one: version 2 added imports and operations that wait for a
+  /// category (ADR 0021).
+  static const version = 2;
 
   static const _format = 'birka-copy';
 
   /// When the copy was made.
   final DateTime madeAt;
+
+  /// The imports, for the ledger to write back.
+  @internal
+  final List<ImportRow> importRows;
 
   /// The accounts, for the ledger to write back.
   @internal
@@ -168,6 +174,16 @@ final class LedgerCopy {
       'format': _format,
       'version': version,
       'madeAt': _text(madeAt),
+      'imports': [
+        for (final row in importRows)
+          {
+            ..._stamps(row.id, row.createdAt, row.updatedAt),
+            'fileName': row.fileName,
+            'format': row.format,
+            'firstDay': row.firstDay,
+            'lastDay': row.lastDay,
+          },
+      ],
       'accounts': [
         for (final row in accountRows)
           {
@@ -182,6 +198,7 @@ final class LedgerCopy {
             'includeInTotals': row.includeInTotals,
             'archived': row.archived,
             'sortOrder': row.sortOrder,
+            'importId': row.importId,
           },
       ],
       'categories': [
@@ -195,6 +212,7 @@ final class LedgerCopy {
             'color': row.color,
             'archived': row.archived,
             'sortOrder': row.sortOrder,
+            'importId': row.importId,
           },
       ],
       'transactions': [
@@ -210,6 +228,7 @@ final class LedgerCopy {
             'note': row.note,
             'status': row.status,
             'source': row.source,
+            'importId': row.importId,
             'entries': [
               for (final entry in entries[row.id] ?? const <EntryRow>[])
                 {
@@ -245,18 +264,34 @@ final class LedgerCopy {
   static String _text(DateTime moment) => moment.toUtc().toIso8601String();
 }
 
-/// Reads the rows of version 1, and checks them as the ledger checks a write.
+/// Reads the rows of versions 1 and 2, and checks them as the ledger checks a
+/// write. Version 1 has no imports.
 LedgerCopy _read(Map<String, Object?> json) {
+  final imports = <String, ImportRow>{};
+  for (final item
+      in json['imports'] == null ? const [] : _list(json, 'imports')) {
+    final row = _import(_object(item));
+    if (imports.containsKey(row.id)) _damaged('Import ${row.id} twice');
+    imports[row.id] = row;
+  }
+  void checkImport(String? importId, String whose) {
+    if (importId != null && !imports.containsKey(importId)) {
+      _damaged('$whose comes from no import $importId');
+    }
+  }
+
   final accounts = <String, AccountRow>{};
   for (final item in _list(json, 'accounts')) {
     final row = _account(_object(item));
     if (accounts.containsKey(row.id)) _damaged('Account ${row.id} twice');
+    checkImport(row.importId, 'Account ${row.id}');
     accounts[row.id] = row;
   }
   final categories = <String, CategoryRow>{};
   for (final item in _list(json, 'categories')) {
     final row = _category(_object(item));
     if (categories.containsKey(row.id)) _damaged('Category ${row.id} twice');
+    checkImport(row.importId, 'Category ${row.id}');
     categories[row.id] = row;
   }
   for (final category in categories.values) {
@@ -271,6 +306,7 @@ LedgerCopy _read(Map<String, Object?> json) {
     if (transactions.containsKey(row.id)) {
       _damaged('Transaction ${row.id} twice');
     }
+    checkImport(row.importId, 'Transaction ${row.id}');
     transactions[row.id] = row;
     final ownEntries = [
       for (final leg in _list(object, 'entries')) _entry(_object(leg), row.id),
@@ -293,6 +329,7 @@ LedgerCopy _read(Map<String, Object?> json) {
   }
   return LedgerCopy.of(
     madeAt: _moment(json, 'madeAt'),
+    importRows: [...imports.values],
     accountRows: [...accounts.values],
     categoryRows: [
       ...categories.values.where((row) => row.parentId == null),
@@ -324,6 +361,24 @@ AccountRow _account(Map<String, Object?> json) {
     includeInTotals: _field<bool>(json, 'includeInTotals'),
     archived: _field<bool>(json, 'archived'),
     sortOrder: _int(json, 'sortOrder'),
+    importId: _field<String?>(json, 'importId'),
+  );
+}
+
+ImportRow _import(Map<String, Object?> json) {
+  final firstDay = _string(json, 'firstDay');
+  final lastDay = _string(json, 'lastDay');
+  for (final day in [firstDay, lastDay]) {
+    _obeying('$day is not a date', () => CivilDate.parse(day));
+  }
+  return ImportRow(
+    id: _id(json),
+    createdAt: _moment(json, 'createdAt'),
+    updatedAt: _moment(json, 'updatedAt'),
+    fileName: _string(json, 'fileName'),
+    format: _field<String?>(json, 'format'),
+    firstDay: firstDay,
+    lastDay: lastDay,
   );
 }
 
@@ -343,6 +398,7 @@ CategoryRow _category(Map<String, Object?> json) {
     color: color,
     archived: _field<bool>(json, 'archived'),
     sortOrder: _int(json, 'sortOrder'),
+    importId: _field<String?>(json, 'importId'),
   );
 }
 
@@ -374,6 +430,7 @@ TransactionRow _transaction(Map<String, Object?> json) {
     note: _string(json, 'note'),
     status: _name(json, 'status', TransactionStatus.values),
     source: _name(json, 'source', TransactionSource.values),
+    importId: _field<String?>(json, 'importId'),
   );
 }
 
@@ -392,7 +449,7 @@ AllocationRow _allocation(Map<String, Object?> json, String transactionId) =>
       createdAt: _moment(json, 'createdAt'),
       updatedAt: _moment(json, 'updatedAt'),
       transactionId: transactionId,
-      categoryId: _string(json, 'categoryId'),
+      categoryId: _field<String?>(json, 'categoryId'),
       amountMinor: _int(json, 'amountMinor'),
     );
 
@@ -425,19 +482,19 @@ void _checkLegs(
       if (entries.length != 1) _damaged('Transaction $id has no one entry');
       final entry = entries.single;
       final amount = amountOf(entry);
+      Money partOf(AllocationRow allocation) => _money(
+        allocation.amountMinor,
+        amount.currency.code,
+        amount.currency.decimalDigits,
+        'Transaction $id',
+      );
       final split = [
         for (final allocation in allocations)
-          if (categories[allocation.categoryId] case final category?
+          if (allocation.categoryId == null)
+            Allocation(categoryId: null, amount: partOf(allocation))
+          else if (categories[allocation.categoryId] case final category?
               when category.kind == kind.name)
-            Allocation(
-              categoryId: category.id,
-              amount: _money(
-                allocation.amountMinor,
-                amount.currency.code,
-                amount.currency.decimalDigits,
-                'Transaction $id',
-              ),
-            )
+            Allocation(categoryId: category.id, amount: partOf(allocation))
           else
             _damaged('Transaction $id goes to no ${kind.name} category'),
       ];

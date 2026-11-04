@@ -58,6 +58,10 @@ class Accounts extends Table with SyncedRow {
 
   /// The place of the account in lists.
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
+  /// The import that created the account, which takes it away again if
+  /// nothing else uses it (ADR 0021).
+  TextColumn get importId => text().nullable().references(Imports, #id)();
 }
 
 /// What money is spent on or earned from.
@@ -83,11 +87,16 @@ class Categories extends Table with SyncedRow {
 
   /// The place of the category in lists.
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
+  /// The import that created the category, which takes it away again if
+  /// nothing else uses it (ADR 0021).
+  TextColumn get importId => text().nullable().references(Imports, #id)();
 }
 
 /// What happened: an expense, an income, a transfer or an adjustment.
 @DataClassName('TransactionRow')
 @TableIndex(name: 'transactions_occurred_on', columns: {#occurredOn})
+@TableIndex(name: 'transactions_import', columns: {#importId})
 class Transactions extends Table with SyncedRow {
   /// One of the names of `TransactionKind` in the ledger.
   TextColumn get kind => text()();
@@ -106,6 +115,9 @@ class Transactions extends Table with SyncedRow {
 
   /// One of the names of `TransactionSource` in the ledger.
   TextColumn get source => text()();
+
+  /// The import that brought the transaction (ADR 0021).
+  TextColumn get importId => text().nullable().references(Imports, #id)();
 }
 
 /// How a transaction moves money on an account.
@@ -131,11 +143,30 @@ class Allocations extends Table with SyncedRow {
   /// The transaction of the allocation.
   TextColumn get transactionId => text().references(Transactions, #id)();
 
-  /// The category.
-  TextColumn get categoryId => text().references(Categories, #id)();
+  /// The category, or `null` while the transaction waits for one, as an
+  /// imported one can (ADR 0021).
+  TextColumn get categoryId => text().nullable().references(Categories, #id)();
 
   /// The positive amount in minor units.
   IntColumn get amountMinor => integer()();
+}
+
+/// A statement that came in at once, so that it can go out at once
+/// (ADR 0021).
+@DataClassName('ImportRow')
+class Imports extends Table with SyncedRow {
+  /// The name of the file, as the person chose it.
+  TextColumn get fileName => text()();
+
+  /// The id of the known format of the file, such as `tbank`, or `null` for
+  /// columns that a person named.
+  TextColumn get format => text().nullable()();
+
+  /// The day of its first operation as `YYYY-MM-DD`.
+  TextColumn get firstDay => text()();
+
+  /// The day of its last operation as `YYYY-MM-DD`.
+  TextColumn get lastDay => text()();
 }
 
 /// What one unit of a currency cost in rubles on a day (ADR 0012). Any device

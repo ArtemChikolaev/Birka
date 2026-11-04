@@ -23,7 +23,7 @@ void main() {
     ], preferred: Currency.rub);
 
     expect(spending.total, rub(700));
-    expect(spending.categories.map((row) => row.category.name), [
+    expect(spending.categories.map((row) => row.category?.name), [
       'Food',
       'Cafe',
     ]);
@@ -90,7 +90,7 @@ void main() {
       for (var i = 5; i > 0; i--) testTotal('c$i', rub(i)),
     ]);
 
-    expect(spending.top.map((row) => row.category.name), ['c5', 'c4', 'c3']);
+    expect(spending.top.map((row) => row.category?.name), ['c5', 'c4', 'c3']);
     expect(spending.categories, hasLength(5));
   });
 
