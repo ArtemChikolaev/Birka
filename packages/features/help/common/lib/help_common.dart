@@ -4,6 +4,7 @@ library;
 
 export 'src/di/register_help.dart';
 export 'src/domain/app_about.dart';
+export 'src/domain/browser_system.dart';
 export 'src/domain/contacts.dart';
 export 'src/domain/help_letter.dart';
 export 'src/domain/help_links.dart';

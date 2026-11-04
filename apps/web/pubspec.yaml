@@ -29,6 +29,10 @@ dependencies:
     path: ../../packages/design/jaspr
   drift: ^2.31.0
   get_it: ^9.3.0
+  help_common:
+    path: ../../packages/features/help/common
+  help_jaspr:
+    path: ../../packages/features/help/jaspr
   http: ^1.6.0
   jaspr: ^0.22.3
   jaspr_bloc: ^1.0.1
