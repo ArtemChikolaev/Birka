@@ -34,7 +34,6 @@ class SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
     return BlocBuilder<SettingsCubit, Settings>(
       builder: (context, settings) {
@@ -93,11 +92,6 @@ class SettingsSection extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: BirkaTokens.spaceMd),
-            Text(
-              '${t.settings.ratesCredit}: cbr-xml-daily.ru',
-              style: styles.caption.copyWith(color: colors.textSubtle),
             ),
           ],
         );

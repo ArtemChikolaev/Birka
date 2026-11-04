@@ -398,4 +398,49 @@ void main() {
       semantics.dispose();
     });
   });
+
+  group('BackHeader', () {
+    testWidgets('leads back, with what the page is about in the middle', (
+      tester,
+    ) async {
+      var left = 0;
+      await tester.pumpWidget(
+        app(
+          Scaffold(
+            body: BackHeader(
+              label: 'Help',
+              backLabel: 'Back',
+              onBack: () => left++,
+            ),
+          ),
+        ),
+      );
+
+      final label = tester.getCenter(find.text('HELP'));
+      final line = tester.getCenter(find.byType(BackHeader));
+      expect(label.dx, moreOrLessEquals(line.dx));
+      await tester.tap(find.bySemanticsLabel('Back'));
+      expect(left, 1);
+    });
+
+    testWidgets('puts what it is given at the other end', (tester) async {
+      await tester.pumpWidget(
+        app(
+          Scaffold(
+            body: BackHeader(
+              label: 'Account',
+              backLabel: 'Back',
+              onBack: () {},
+              trailing: const Text('Edit'),
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getCenter(find.text('Edit')).dx,
+        greaterThan(tester.getCenter(find.text('ACCOUNT')).dx),
+      );
+    });
+  });
 }

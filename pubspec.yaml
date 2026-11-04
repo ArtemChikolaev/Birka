@@ -26,6 +26,8 @@ workspace:
   - packages/features/categories/common
   - packages/features/categories/flutter
   - packages/features/categories/jaspr
+  - packages/features/help/common
+  - packages/features/help/flutter
   - packages/features/onboarding/common
   - packages/features/onboarding/flutter
   - packages/features/onboarding/jaspr

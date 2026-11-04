@@ -21,3 +21,5 @@ currencies(map):
   THB: Baht
 import: Import
 data: Data
+support: Support
+help: Help and feedback

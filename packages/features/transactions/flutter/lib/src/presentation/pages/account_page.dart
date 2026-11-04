@@ -87,9 +87,17 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                       sliver: SliverList.list(
                         children: [
-                          _Header(
+                          BackHeader(
+                            label: t.transactions.account,
+                            backLabel: t.transactions.back,
                             onBack: widget.onBack,
-                            onEdit: ready ? widget.onEdit : null,
+                            trailing: ready
+                                ? GlassIconButton(
+                                    glyph: BirkaGlyph.dots,
+                                    label: t.transactions.edit,
+                                    onPressed: widget.onEdit,
+                                  )
+                                : null,
                           ),
                           gap,
                           ...switch (state.status) {
@@ -154,44 +162,6 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  const _Header({required this.onBack, required this.onEdit});
-
-  final VoidCallback onBack;
-  final VoidCallback? onEdit;
-
-  @override
-  Widget build(BuildContext context) {
-    final onEdit = this.onEdit;
-    return Row(
-      children: [
-        GlassIconButton(
-          glyph: BirkaGlyph.back,
-          label: t.transactions.back,
-          onPressed: onBack,
-        ),
-        Expanded(
-          child: Center(
-            child: SectionLabel(
-              t.transactions.account,
-              color: BirkaColors.of(context).textMuted,
-            ),
-          ),
-        ),
-        // Keeps the label in the middle when the other side stays empty.
-        if (onEdit == null)
-          const SizedBox(width: BirkaTokens.sizeTouchTarget)
-        else
-          GlassIconButton(
-            glyph: BirkaGlyph.dots,
-            label: t.transactions.edit,
-            onPressed: onEdit,
-          ),
-      ],
     );
   }
 }

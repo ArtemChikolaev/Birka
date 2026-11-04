@@ -56,6 +56,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$categories$en categories =
       Translations$categories$en.internal(_root);
   late final Translations$demo$en demo = Translations$demo$en.internal(_root);
+  late final Translations$help$en help = Translations$help$en.internal(_root);
   late final Translations$onboarding$en onboarding =
       Translations$onboarding$en.internal(_root);
   late final Translations$overview$en overview =
@@ -190,6 +191,12 @@ class Translations$app$en {
 
   /// en: 'Data'
   String get data => 'Data';
+
+  /// en: 'Support'
+  String get support => 'Support';
+
+  /// en: 'Help and feedback'
+  String get help => 'Help and feedback';
 }
 
 // Path: backup
@@ -509,6 +516,155 @@ class Translations$demo$en {
 
   /// en: 'Euros for the trip'
   String get toEuro => 'Euros for the trip';
+}
+
+// Path: help
+class Translations$help$en {
+  Translations$help$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Help'
+  String get title => 'Help';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'Search the help'
+  String get search => 'Search the help';
+
+  /// en: 'Clear the search'
+  String get clearSearch => 'Clear the search';
+
+  /// en: 'Common questions'
+  String get questions => 'Common questions';
+
+  /// en: 'Nothing found. Write to the developer: the answer will help others too and will appear here.'
+  String get nothingFound =>
+      'Nothing found. Write to the developer: the answer will help others too and will appear here.';
+
+  /// en: 'Where is my data kept?'
+  String get storageQuestion => 'Where is my data kept?';
+
+  /// en: 'Only on this device or in this browser. Birka sends no records to a server and never asks for bank passwords.'
+  String get storageAnswer =>
+      'Only on this device or in this browser. Birka sends no records to a server and never asks for bank passwords.';
+
+  /// en: 'How do I move my records to another device?'
+  String get moveQuestion => 'How do I move my records to another device?';
+
+  /// en: 'Save a copy in More → Data, send the file to yourself and restore it on the new device. Sync comes later.'
+  String get moveAnswer =>
+      'Save a copy in More → Data, send the file to yourself and restore it on the new device. Sync comes later.';
+
+  /// en: 'Where do the exchange rates come from?'
+  String get ratesQuestion => 'Where do the exchange rates come from?';
+
+  /// en: 'They are the rates of the Bank of Russia on the day of the operation. They update once a day and stay on the device.'
+  String get ratesAnswer =>
+      'They are the rates of the Bank of Russia on the day of the operation. They update once a day and stay on the device.';
+
+  /// en: 'Can I load operations from my bank?'
+  String get importQuestion => 'Can I load operations from my bank?';
+
+  /// en: 'For now operations go in by hand. Loading bank statements is the next big feature.'
+  String get importAnswer =>
+      'For now operations go in by hand. Loading bank statements is the next big feature.';
+
+  /// en: 'How do I hide the amounts?'
+  String get hideQuestion => 'How do I hide the amounts?';
+
+  /// en: 'Tap the eye on Overview. To keep them hidden from the start, turn on Hide amounts in More.'
+  String get hideAnswer =>
+      'Tap the eye on Overview. To keep them hidden from the start, turn on Hide amounts in More.';
+
+  /// en: 'Contact'
+  String get contact => 'Contact';
+
+  /// en: 'Write to the developer'
+  String get write => 'Write to the developer';
+
+  /// en: 'Your mail app opens'
+  String get writeText => 'Your mail app opens';
+
+  /// en: 'Report a bug'
+  String get bug => 'Report a bug';
+
+  /// en: 'The letter gets the version and the system, none of your records'
+  String get bugText =>
+      'The letter gets the version and the system, none of your records';
+
+  /// en: 'Suggest an idea'
+  String get idea => 'Suggest an idea';
+
+  /// en: 'Tell what Birka lacks'
+  String get ideaText => 'Tell what Birka lacks';
+
+  /// en: 'Bugs and ideas on GitHub'
+  String get github => 'Bugs and ideas on GitHub';
+
+  /// en: 'Public: leave out amounts and account names'
+  String get githubText => 'Public: leave out amounts and account names';
+
+  /// en: 'A letter to the developer'
+  String get letterTitle => 'A letter to the developer';
+
+  /// en: 'Your mail app opens with this letter. It holds only what you see below, and you can add to it.'
+  String get letterText =>
+      'Your mail app opens with this letter. It holds only what you see below, and you can add to it.';
+
+  /// en: 'To'
+  String get to => 'To';
+
+  /// en: 'Subject'
+  String get subject => 'Subject';
+
+  /// en: 'Operations, amounts and account names stay out of the letter.'
+  String get letterPrivacy =>
+      'Operations, amounts and account names stay out of the letter.';
+
+  /// en: 'Open mail'
+  String get openMail => 'Open mail';
+
+  /// en: 'Cancel'
+  String get cancel => 'Cancel';
+
+  /// en: 'Birka · question'
+  String get questionSubject => 'Birka · question';
+
+  /// en: 'Birka $version · bug'
+  String bugSubject({required Object version}) => 'Birka ${version} · bug';
+
+  /// en: 'Birka · idea'
+  String get ideaSubject => 'Birka · idea';
+
+  /// en: 'Hello! '
+  String get questionBody => 'Hello!\n';
+
+  /// en: 'What happened: What you expected:'
+  String get bugBody => 'What happened:\n\nWhat you expected:';
+
+  /// en: 'What is missing: How it would help:'
+  String get ideaBody => 'What is missing:\n\nHow it would help:';
+
+  /// en: 'English'
+  String get language => 'English';
+
+  /// en: 'Birka $version · $system · $language'
+  String about({
+    required Object version,
+    required Object system,
+    required Object language,
+  }) => 'Birka ${version} · ${system} · ${language}';
+
+  /// en: 'Mail did not open. The address is copied: $address'
+  String noMail({required Object address}) =>
+      'Mail did not open. The address is copied: ${address}';
+
+  /// en: 'The page did not open. Try again.'
+  String get noPage => 'The page did not open. Try again.';
 }
 
 // Path: onboarding
@@ -1297,6 +1453,8 @@ extension on Translations {
       'app.currencies.THB' => 'Baht',
       'app.import' => 'Import',
       'app.data' => 'Data',
+      'app.support' => 'Support',
+      'app.help' => 'Help and feedback',
       'backup.title' => 'Data',
       'backup.back' => 'Back',
       'backup.storedTitle' => 'Your records live here',
@@ -1448,6 +1606,65 @@ extension on Translations {
       'demo.toCash' => 'Cash withdrawal',
       'demo.toSavings' => 'To savings',
       'demo.toEuro' => 'Euros for the trip',
+      'help.title' => 'Help',
+      'help.back' => 'Back',
+      'help.search' => 'Search the help',
+      'help.clearSearch' => 'Clear the search',
+      'help.questions' => 'Common questions',
+      'help.nothingFound' =>
+        'Nothing found. Write to the developer: the answer will help others too and will appear here.',
+      'help.storageQuestion' => 'Where is my data kept?',
+      'help.storageAnswer' =>
+        'Only on this device or in this browser. Birka sends no records to a server and never asks for bank passwords.',
+      'help.moveQuestion' => 'How do I move my records to another device?',
+      'help.moveAnswer' =>
+        'Save a copy in More → Data, send the file to yourself and restore it on the new device. Sync comes later.',
+      'help.ratesQuestion' => 'Where do the exchange rates come from?',
+      'help.ratesAnswer' =>
+        'They are the rates of the Bank of Russia on the day of the operation. They update once a day and stay on the device.',
+      'help.importQuestion' => 'Can I load operations from my bank?',
+      'help.importAnswer' =>
+        'For now operations go in by hand. Loading bank statements is the next big feature.',
+      'help.hideQuestion' => 'How do I hide the amounts?',
+      'help.hideAnswer' =>
+        'Tap the eye on Overview. To keep them hidden from the start, turn on Hide amounts in More.',
+      'help.contact' => 'Contact',
+      'help.write' => 'Write to the developer',
+      'help.writeText' => 'Your mail app opens',
+      'help.bug' => 'Report a bug',
+      'help.bugText' =>
+        'The letter gets the version and the system, none of your records',
+      'help.idea' => 'Suggest an idea',
+      'help.ideaText' => 'Tell what Birka lacks',
+      'help.github' => 'Bugs and ideas on GitHub',
+      'help.githubText' => 'Public: leave out amounts and account names',
+      'help.letterTitle' => 'A letter to the developer',
+      'help.letterText' =>
+        'Your mail app opens with this letter. It holds only what you see below, and you can add to it.',
+      'help.to' => 'To',
+      'help.subject' => 'Subject',
+      'help.letterPrivacy' =>
+        'Operations, amounts and account names stay out of the letter.',
+      'help.openMail' => 'Open mail',
+      'help.cancel' => 'Cancel',
+      'help.questionSubject' => 'Birka · question',
+      'help.bugSubject' =>
+        ({required Object version}) => 'Birka ${version} · bug',
+      'help.ideaSubject' => 'Birka · idea',
+      'help.questionBody' => 'Hello!\n',
+      'help.bugBody' => 'What happened:\n\nWhat you expected:',
+      'help.ideaBody' => 'What is missing:\n\nHow it would help:',
+      'help.language' => 'English',
+      'help.about' =>
+        ({
+          required Object version,
+          required Object system,
+          required Object language,
+        }) => 'Birka ${version} · ${system} · ${language}',
+      'help.noMail' =>
+        ({required Object address}) =>
+            'Mail did not open. The address is copied: ${address}',
+      'help.noPage' => 'The page did not open. Try again.',
       'onboarding.skip' => 'Skip',
       'onboarding.back' => 'Back',
       'onboarding.failed' => 'Could not save. Try again.',

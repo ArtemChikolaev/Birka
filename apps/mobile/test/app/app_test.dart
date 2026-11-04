@@ -14,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:help_common/help_common.dart';
+import 'package:help_flutter/help_flutter.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart'
     show
@@ -214,6 +216,17 @@ final class _NoFiles implements BackupFiles {
   Future<ChosenFile?> open() async => null;
 }
 
+final class _NoWayOut implements HelpLinks {
+  @override
+  Future<bool> mail(Uri letter) async => false;
+
+  @override
+  Future<bool> open(Uri page) async => false;
+
+  @override
+  Future<void> copy(String text) async {}
+}
+
 final class _NoReports implements ReportsRepository {
   @override
   Stream<Currency?> watchMainCurrency() => Stream.value(null);
@@ -297,6 +310,19 @@ void main() {
       ..registerFactory(() => OverviewCubit(overview))
       ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerFactory(() => BackupCubit(_EmptyLedger(), _NoFiles(), settings))
+      ..registerFactory(
+        () => HelpCubit(
+          _NoWayOut(),
+          Future.value(
+            const AppAbout(
+              version: '0.1.0',
+              build: '1',
+              system: 'Android 14',
+              locale: 'en-US',
+            ),
+          ),
+        ),
+      )
       ..registerSingleton<SettingsStore>(settings)
       ..registerFactory(
         () => SettingsCubit(
@@ -702,6 +728,31 @@ void main() {
     expect(find.text(t.backup.noCopyYet), findsOneWidget);
 
     await tester.tap(find.bySemanticsLabel(t.backup.back));
+    await tester.pumpAndSettle();
+    expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('help opens from the more tab, over the bar', (tester) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    final page = find.descendant(
+      of: find.byType(MorePage),
+      matching: find.byType(Scrollable),
+    );
+    final credit = find.textContaining('cbr-xml-daily.ru');
+    await tester.scrollUntilVisible(credit, 200, scrollable: page.first);
+    expect(credit, findsOneWidget);
+    await tester.tap(find.text(t.app.help));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HelpPage), findsOneWidget);
+    expect(find.byType(GlassNavBar), findsNothing);
+    expect(find.text(t.help.storageQuestion), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel(t.help.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
   });
