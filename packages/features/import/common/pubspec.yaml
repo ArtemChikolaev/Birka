@@ -10,7 +10,11 @@ environment:
 
 dependencies:
   archive: ^4.5.2
+  bloc: ^9.2.1
   decimal: ^3.2.6
+  get_it: ^9.3.0
+  l10n:
+    path: ../../../core/l10n
   ledger:
     path: ../../../core/ledger
   meta: ^1.17.0
@@ -19,6 +23,7 @@ dependencies:
   xml: ^6.6.1
 
 dev_dependencies:
+  bloc_test: ^10.0.0
   database:
     path: ../../../core/database
   drift: ^2.31.0

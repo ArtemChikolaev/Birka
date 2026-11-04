@@ -57,6 +57,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
       Translations$categories$en.internal(_root);
   late final Translations$demo$en demo = Translations$demo$en.internal(_root);
   late final Translations$help$en help = Translations$help$en.internal(_root);
+  late final Translations$imports$en imports = Translations$imports$en.internal(
+    _root,
+  );
   late final Translations$onboarding$en onboarding =
       Translations$onboarding$en.internal(_root);
   late final Translations$overview$en overview =
@@ -677,6 +680,27 @@ class Translations$help$en {
 
   /// en: 'The page did not open. Try again.'
   String get noPage => 'The page did not open. Try again.';
+}
+
+// Path: imports
+class Translations$imports$en {
+  Translations$imports$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Statement account'
+  String get account => 'Statement account';
+
+  Map<String, String> get formats => {
+    'alfa': 'Alfa-Bank',
+    'tbank': 'T-Bank',
+    'sber': 'Sberbank',
+    'zenmoney': 'Zenmoney',
+    'wise': 'Wise',
+    'revolut': 'Revolut',
+  };
 }
 
 // Path: onboarding
@@ -1681,6 +1705,13 @@ extension on Translations {
         ({required Object address}) =>
             'Mail did not open. The address is copied: ${address}',
       'help.noPage' => 'The page did not open. Try again.',
+      'imports.account' => 'Statement account',
+      'imports.formats.alfa' => 'Alfa-Bank',
+      'imports.formats.tbank' => 'T-Bank',
+      'imports.formats.sber' => 'Sberbank',
+      'imports.formats.zenmoney' => 'Zenmoney',
+      'imports.formats.wise' => 'Wise',
+      'imports.formats.revolut' => 'Revolut',
       'onboarding.skip' => 'Skip',
       'onboarding.back' => 'Back',
       'onboarding.failed' => 'Could not save. Try again.',

@@ -135,6 +135,21 @@
     and each fee as an expense of its own, telling its progress operation by
     operation. A year of Sberbank, 313 operations, goes in within 0.3 s on
     the VM.
+16. `ImportCubit` walks the steps of the boards: the file, its format, its
+    columns, its accounts, the copies and the result, and opens a step only
+    when the ones before it allow. Birka chooses what it can: an open account
+    of the currency with the digits of the card or the same name, else a new
+    one named by the bank and the card; a category of the same name and kind,
+    a subcategory for «Parent / Child», and new categories for Zenmoney. A
+    category of a bank that plainly means a preset, such as «Супермаркеты» or
+    «Такси» of T-Bank (`bankCategoryPresets`), goes into the category of that
+    preset, found by its name or its icon; the others wait in the inbox. In
+    two months of T-Bank this sorts 11 of its 24 categories and leaves 91 of
+    283 operations in the inbox. A choice of the person stays while it fits the
+    ledger, through another format or other roles of the columns. Each choice
+    plans the import again and a late plan is dropped, so only the plan of the
+    latest choices goes in, and the choices stay fixed while it does. Each
+    host opens the window of files through `StatementFiles`.
 
 ## Options considered
 

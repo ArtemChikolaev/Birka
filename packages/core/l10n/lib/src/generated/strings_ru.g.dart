@@ -70,6 +70,10 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$help$ru help = _Translations$help$ru._(_root);
   @override
+  late final _Translations$imports$ru imports = _Translations$imports$ru._(
+    _root,
+  );
+  @override
   late final _Translations$onboarding$ru onboarding =
       _Translations$onboarding$ru._(_root);
   @override
@@ -566,6 +570,28 @@ class _Translations$help$ru extends Translations$help$en {
       'Почта не открылась. Адрес скопирован: ${address}';
   @override
   String get noPage => 'Страница не открылась. Попробуйте ещё раз.';
+}
+
+// Path: imports
+class _Translations$imports$ru extends Translations$imports$en {
+  _Translations$imports$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get account => 'Счёт из выписки';
+  @override
+  Map<String, String> get formats => {
+    'alfa': 'Альфа-Банк',
+    'tbank': 'Т-Банк',
+    'sber': 'Сбербанк',
+    'zenmoney': 'Дзен-мани',
+    'wise': 'Wise',
+    'revolut': 'Revolut',
+  };
 }
 
 // Path: onboarding
@@ -1460,6 +1486,13 @@ extension on TranslationsRu {
         ({required Object address}) =>
             'Почта не открылась. Адрес скопирован: ${address}',
       'help.noPage' => 'Страница не открылась. Попробуйте ещё раз.',
+      'imports.account' => 'Счёт из выписки',
+      'imports.formats.alfa' => 'Альфа-Банк',
+      'imports.formats.tbank' => 'Т-Банк',
+      'imports.formats.sber' => 'Сбербанк',
+      'imports.formats.zenmoney' => 'Дзен-мани',
+      'imports.formats.wise' => 'Wise',
+      'imports.formats.revolut' => 'Revolut',
       'onboarding.skip' => 'Пропустить',
       'onboarding.back' => 'Назад',
       'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',

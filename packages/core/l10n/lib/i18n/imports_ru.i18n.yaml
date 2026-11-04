@@ -1,0 +1,8 @@
+account: Счёт из выписки
+formats(map):
+  alfa: Альфа-Банк
+  tbank: Т-Банк
+  sber: Сбербанк
+  zenmoney: Дзен-мани
+  wise: Wise
+  revolut: Revolut
