@@ -23,6 +23,7 @@ class ImportPage extends StatefulComponent {
   const ImportPage({
     required this.backHref,
     required this.operationsHref,
+    required this.inboxHref,
     this.onStepChanged,
     this.clock = DateTime.now,
     super.key,
@@ -33,6 +34,9 @@ class ImportPage extends StatefulComponent {
 
   /// The page of the operations, after the import.
   final String operationsHref;
+
+  /// The inbox, where what the import leaves waits.
+  final String inboxHref;
 
   /// Called when another step comes on screen, so that the host can show it
   /// from its top: its way on stands at its end on a phone.
@@ -201,13 +205,17 @@ class _ImportPageState extends State<ImportPage> {
                 ImportStep.columns => ColumnsStep(state: state),
                 ImportStep.account => AccountStep(state: state),
                 ImportStep.copies => CopiesStep(state: state),
-                ImportStep.done => DoneStep(state: state),
+                ImportStep.done => DoneStep(
+                  state: state,
+                  inboxHref: component.inboxHref,
+                ),
               },
             ]),
             aside(classes: 'import__aside', [
               ImportAside(
                 state: state,
                 operationsHref: component.operationsHref,
+                inboxHref: component.inboxHref,
               ),
             ]),
           ]),

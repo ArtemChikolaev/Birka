@@ -280,6 +280,9 @@ final class InboxCubit extends Cubit<InboxState> {
     emit(state._with(selected: all ? const {} : shown));
   }
 
+  /// Puts every picked operation back.
+  void pickNone() => emit(state._with(selected: const {}));
+
   /// Gives the operation [id] the category that its hint names.
   Future<void> accept(String id) async {
     final item = state.items.where((it) => it.id == id).firstOrNull;

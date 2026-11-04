@@ -48,6 +48,7 @@ class _ImportIslandState extends DataIslandState<ImportIsland> {
       child: ImportPage(
         backHref: 'more/',
         operationsHref: 'operations/',
+        inboxHref: 'inbox/',
         onStepChanged: () => scrollPageTo(0),
       ),
     );

@@ -110,6 +110,8 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/categories/jaspr && dart test
 	cd packages/features/help/flutter && flutter test
 	cd packages/features/help/jaspr && dart test
+	cd packages/features/import/jaspr && dart test
+	cd packages/features/inbox/jaspr && dart test
 	cd packages/features/onboarding/flutter && flutter test
 	cd packages/features/onboarding/jaspr && dart test
 	cd packages/features/overview/flutter && flutter test

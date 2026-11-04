@@ -14,6 +14,7 @@ void main() {
       ...BirkaArrowButton.styles,
       ...BirkaBars.styles,
       ...BirkaButton.styles,
+      ...BirkaCheckbox.styles,
       ...BirkaChip.styles,
       ...BirkaChipField.styles,
       ...BirkaChoice.styles,

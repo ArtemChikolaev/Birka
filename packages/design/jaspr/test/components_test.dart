@@ -1504,6 +1504,22 @@ void main() {
       expect(picked, [3]);
     });
 
+    testComponents('moves a nested option in', (tester) async {
+      tester.pumpComponent(
+        BirkaSelect<String>(
+          label: 'Category',
+          options: const {'food': 'Food', 'market': 'Market'},
+          selected: 'food',
+          nested: const {'market'},
+          onChanged: (_) {},
+        ),
+      );
+
+      final indent = String.fromCharCodes(const [0xA0, 0xA0, 0xA0, 0xA0]);
+      expect(find.text('${indent}Market'), findsOneComponent);
+      expect(find.text('Food'), findsNComponents(2));
+    });
+
     testComponents('of the quiet value is dimmed', (tester) async {
       tester.pumpComponent(
         BirkaSelect<String>(
@@ -1585,5 +1601,44 @@ void main() {
       ),
       findsOneComponent,
     );
+  });
+
+  testComponents('BirkaChip says how many things its option holds', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      BirkaChip(label: 'All', selected: true, count: 15, onTap: () {}),
+    );
+
+    expect(find.text('15'), findsOneComponent);
+    expect(withClasses('text-caption birka-chip__count'), findsOneComponent);
+  });
+
+  testComponents('BirkaCheckbox ticks and says so', (tester) async {
+    final changes = <bool>[];
+    tester.pumpComponent(
+      BirkaCheckbox(checked: false, label: 'Pick', onChanged: changes.add),
+    );
+
+    await tester.click(find.tag('button'));
+
+    expect(changes, [true]);
+    final attributes = attributesOf(find.tag('button'));
+    expect(attributes['role'], 'checkbox');
+    expect(attributes['aria-checked'], 'false');
+    expect(attributes['aria-label'], 'Pick');
+    expect(find.byType(BirkaIcon), findsNothing);
+  });
+
+  testComponents('BirkaCheckbox that is ticked shows a check', (tester) async {
+    tester.pumpComponent(
+      BirkaCheckbox(checked: true, label: 'Pick', onChanged: (_) {}),
+    );
+
+    expect(
+      withClasses('birka-checkbox birka-checkbox--checked'),
+      findsOneComponent,
+    );
+    expect(find.byType(BirkaIcon), findsOneComponent);
   });
 }

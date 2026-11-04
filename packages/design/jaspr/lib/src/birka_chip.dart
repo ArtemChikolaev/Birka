@@ -12,6 +12,7 @@ class BirkaChip extends StatelessComponent {
     this.href,
     this.glyph,
     this.compact = false,
+    this.count,
     super.key,
   });
 
@@ -33,6 +34,9 @@ class BirkaChip extends StatelessComponent {
   /// Whether the chip leaves less room around its label, for a row of many.
   final bool compact;
 
+  /// How many things the option holds, after its label.
+  final int? count;
+
   @override
   Component build(BuildContext context) {
     final classes = [
@@ -41,9 +45,12 @@ class BirkaChip extends StatelessComponent {
       if (compact) 'birka-chip--compact',
     ].join(' ');
     final glyph = this.glyph;
+    final count = this.count;
     final content = [
       if (glyph != null) BirkaIcon(glyph),
       span(classes: 'birka-chip__label', [.text(label)]),
+      if (count != null)
+        span(classes: 'text-caption birka-chip__count', [.text('$count')]),
     ];
     if (href case final href?) {
       return a(classes: classes, href: href, content);
@@ -88,6 +95,22 @@ class BirkaChip extends StatelessComponent {
       },
     ),
     css('.birka-chip--compact').styles(raw: {'padding': '0 var(--space-sm)'}),
+    css('.birka-chip__count').styles(
+      raw: {
+        'background': 'var(--color-surface)',
+        'border-radius': 'var(--radius-pill)',
+        'font-weight': 'var(--font-weight-bold)',
+        'min-width': '22px',
+        'padding': '1px var(--space-xs)',
+        'text-align': 'center',
+      },
+    ),
+    css('.birka-chip--selected .birka-chip__count').styles(
+      raw: {
+        'background':
+            'color-mix(in srgb, var(--color-background) 12%, transparent)',
+      },
+    ),
     css('.birka-chip .birka-icon').styles(
       raw: {'height': '20px', 'width': '20px'},
     ),

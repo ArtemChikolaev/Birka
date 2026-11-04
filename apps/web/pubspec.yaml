@@ -38,6 +38,10 @@ dependencies:
     path: ../../packages/features/import/common
   import_jaspr:
     path: ../../packages/features/import/jaspr
+  inbox_common:
+    path: ../../packages/features/inbox/common
+  inbox_jaspr:
+    path: ../../packages/features/inbox/jaspr
   jaspr: ^0.22.3
   jaspr_bloc: ^1.0.1
   jaspr_router: ^0.8.1

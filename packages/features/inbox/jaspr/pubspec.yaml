@@ -1,0 +1,32 @@
+name: inbox_jaspr
+description: The page of the inbox in Jaspr.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_jaspr:
+    path: ../../../design/jaspr
+  inbox_common:
+    path: ../common
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  money:
+    path: ../../../core/money
+
+dev_dependencies:
+  database:
+    path: ../../../core/database
+  decimal: ^3.2.6
+  device_settings:
+    path: ../../../core/device_settings
+  drift: ^2.31.0
+  jaspr_test: ^0.22.3
+  rates:
+    path: ../../../core/rates

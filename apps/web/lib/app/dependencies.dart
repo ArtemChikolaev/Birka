@@ -8,6 +8,7 @@ import 'package:drift/drift.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:import_common/import_common.dart';
+import 'package:inbox_common/inbox_common.dart';
 import 'package:ledger/ledger.dart';
 import 'package:onboarding_common/onboarding_common.dart'
     show registerOnboarding;
@@ -44,6 +45,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   registerBackup(getIt, const BrowserSettingsStore());
   registerCategories(getIt);
   registerImport(getIt);
+  registerInbox(getIt, const BrowserSettingsStore());
   registerOnboarding(
     getIt,
     const BrowserSettingsStore(),

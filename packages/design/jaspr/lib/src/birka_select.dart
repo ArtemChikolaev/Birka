@@ -18,6 +18,7 @@ class BirkaSelect<T> extends StatelessComponent {
     this.dot,
     this.quiet = false,
     this.pill = false,
+    this.nested = const {},
     super.key,
   });
 
@@ -42,6 +43,14 @@ class BirkaSelect<T> extends StatelessComponent {
   /// Whether the field is a pill as wide as its value rather than as wide as
   /// its place.
   final bool pill;
+
+  /// The options that stand under the one before them in the list, such as
+  /// subcategories.
+  final Set<T> nested;
+
+  /// What moves a nested option in, in a list of the system that trims
+  /// plain spaces.
+  static final _indent = String.fromCharCodes(const [0xA0, 0xA0, 0xA0, 0xA0]);
 
   @override
   Component build(BuildContext context) {
@@ -81,7 +90,13 @@ class BirkaSelect<T> extends StatelessComponent {
               option(
                 value: '$index',
                 selected: value == selected,
-                [.text(options[value]!)],
+                [
+                  .text(
+                    nested.contains(value)
+                        ? '$_indent${options[value]!}'
+                        : options[value]!,
+                  ),
+                ],
               ),
           ],
         ),

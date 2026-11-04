@@ -18,6 +18,7 @@ class ImportAside extends StatelessComponent {
   const ImportAside({
     required this.state,
     required this.operationsHref,
+    required this.inboxHref,
     super.key,
   });
 
@@ -26,6 +27,9 @@ class ImportAside extends StatelessComponent {
 
   /// The page of the operations.
   final String operationsHref;
+
+  /// The inbox.
+  final String inboxHref;
 
   @override
   Component build(BuildContext context) {
@@ -49,7 +53,16 @@ class ImportAside extends StatelessComponent {
         ]),
       ]),
       ImportStep.done => div(classes: 'import-side', [
-        BirkaButton(label: t.imports.toOperations, href: operationsHref),
+        // What waits in the inbox comes first, as long as something does.
+        if ((state.plan?.unsorted ?? 0) > 0 && !state.undone) ...[
+          BirkaButton(label: t.imports.sortInbox, href: inboxHref),
+          BirkaButton(
+            label: t.imports.toOperations,
+            quiet: true,
+            href: operationsHref,
+          ),
+        ] else
+          BirkaButton(label: t.imports.toOperations, href: operationsHref),
         BirkaButton(
           label: t.imports.another,
           quiet: true,

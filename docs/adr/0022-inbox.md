@@ -79,5 +79,6 @@
 - The hints learn from every choice: a «Да» adds an operation of that name
   to the memory. The import can take the same hints for the operations of
   its next file.
-- The page of the inbox on the site and the way to it from the result of an
-  import come next.
+- The site draws the inbox (`inbox_jaspr`) as the mockup does, and the
+  result of an import leads to it. A lasting way to it, from More or the
+  overview, is not drawn yet; nor is the inbox of the phone.

@@ -258,6 +258,11 @@ void main() {
 
     cubit.toggleAll();
     expect(cubit.state.selected, isEmpty);
+
+    cubit
+      ..toggle(ivan)
+      ..pickNone();
+    expect(cubit.state.selected, isEmpty);
   });
 
   test('a pair becomes one transfer of the person', () async {
