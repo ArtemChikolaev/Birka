@@ -38,6 +38,12 @@
    stands above its notes, and it is published as a pre-release, never as
    the latest. The note says that the next release will not install over it
    and that the records move over through a copy in «Данные».
+7. A release APK carries native libraries for arm64 alone. Flutter builds
+   its engine and the app for `--target-platform`, arm64 in `make build-apk`,
+   while the plugins bring libraries for more ABIs. Gradle keeps a release
+   build to the ABIs of that flag, so a phone without arm64 refuses the APK
+   instead of installing an app that cannot start, and `make build-apk`
+   stops on an APK with another ABI.
 
 ## Options considered
 
@@ -48,6 +54,7 @@
 | The key in the repository | in the open anyone could sign an update of Birka; encrypted, its password still has to live somewhere, and the key would sit in every clone |
 | Play App Signing through Google Play | Birka is not in the stores yet; the release key can still go there later |
 | The run number as the build number | it restarts with a new workflow and says nothing about the version |
+| Flutter for 32-bit ARM and x86_64 too | the APK would carry the engine and the app once more for each, for few phones |
 
 ## Consequences
 
@@ -55,6 +62,9 @@
   keeps a copy of it and of its passwords outside the repository.
 - Each test build asks to reinstall, and so does the first release with the
   key. Releases with the key install over each other.
+- Phones without arm64, the old 32-bit ones among them, cannot install
+  Birka. The APK of 0.1.0 still carries libraries of other ABIs, so there it
+  installs and does not start.
 - A release is a merged release pull request with its notes and version,
   then a tag pushed by the owner.
 - An iOS build waits for an account of Apple.
