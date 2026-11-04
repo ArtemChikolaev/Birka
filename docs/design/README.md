@@ -34,3 +34,22 @@ Each screen is a PNG at twice the size of a 390 × 844 phone screen.
 | <img src="mockups/08-onboarding.png" width="200" alt="Onboarding"> | Onboarding | the first of three steps: all money in one place, no bank passwords, the data stays on the phone; the choice of language |
 | <img src="mockups/09-app-icon.png" width="200" alt="App icon"> | App icon | three options; the chosen one is a glass coin with a milled edge and the letter B |
 | <img src="mockups/10-overview-solid.png" width="200" alt="Overview without glass"> | Overview without glass | the earlier overview with solid cards, kept for comparison |
+
+## Import of statements
+
+Drawn in November 2026 for the import of statements: a wizard of six steps on
+the site and a short way on the phone. The pages of the site are PNGs at their width of
+1440 points, and the phone is at twice the size of a 390 × 844 screen. The
+banks are the formats that Birka reads; the files, names and amounts are made
+up and add up across the pages.
+
+| Mockup | Screen | What it shows |
+|---|---|---|
+| <img src="mockups/11-import-file.png" width="300" alt="Import: the file"> | The file | a statement dropped or chosen; where to get one from a bank, Zenmoney, Wise or Revolut; past imports, each with its undo; no bank passwords, the file stays in the browser |
+| <img src="mockups/12-import-bank.png" width="300" alt="Import: the bank"> | The bank | the format told by its columns, with how many matched; the known formats and a format of one's own; what the file holds |
+| <img src="mockups/13-import-columns.png" width="300" alt="Import: the columns"> | The columns | what each column holds, with an example; how money spent is signed and what separates kopecks; the dates as read; the first rows as they enter the ledger; the categories of the bank against ours |
+| <img src="mockups/14-import-account.png" width="300" alt="Import: the account"> | The account | the account of the card, found by its digits, or a new one with its balance from the statement; the balance checked against the bank |
+| <img src="mockups/15-import-duplicates.png" width="300" alt="Import: duplicates"> | Duplicates | operations already recorded by hand, with the reasons they match; skip the copy or keep both; a top-up that looks like a transfer; two purchases of one statement kept |
+| <img src="mockups/16-import-done.png" width="300" alt="Import: the result"> | The result | what was added and skipped, the balance as in the bank, what waits in the inbox; the undo of the whole import |
+| <img src="mockups/17-inbox.png" width="300" alt="Inbox"> | Inbox | a transfer between one's own accounts to link; operations without a category with hints from past choices; several picked at once |
+| <img src="mockups/18-import-phone.png" width="200" alt="Import on the phone"> | Import on the phone | a sheet over the overview: the bank and the card told, the counts, the balance after, one button |
