@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:import_common/src/domain/import_defaults.dart';
+import 'package:import_common/src/domain/import_plan.dart';
 import 'package:import_common/src/domain/statement.dart';
 import 'package:import_common/src/domain/statement_format.dart';
 import 'package:import_common/src/domain/statement_formats.dart';
@@ -163,14 +164,10 @@ String sourceTitle(SourceAccount source) {
 }
 
 /// [amount] in [currency] of a file as money, or `null` when it has more
-/// digits than the currency. A file that names no currency is in [fallback].
+/// digits than the currency or lies past what money holds. A file that
+/// names no currency is in [fallback].
 Money? moneyOf(
   Decimal amount,
   String? currency, {
   Currency fallback = Currency.rub,
-}) {
-  final of = currency == null ? fallback : currencyNamed(currency);
-  final minor = amount.shift(of.decimalDigits);
-  if (!minor.isInteger) return null;
-  return Money(minor.toBigInt().toInt(), of);
-}
+}) => moneyIn(amount, currency == null ? fallback : currencyNamed(currency));

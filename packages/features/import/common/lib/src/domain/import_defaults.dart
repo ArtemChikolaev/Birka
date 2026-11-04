@@ -46,12 +46,14 @@ AccountChoice defaultAccount(
       if (sameName(account.name, source.key)) account,
   ];
   if (byName.length == 1) return IntoAccount(byName.single);
-  final opening = source.opening ?? Decimal.zero;
-  final minor = opening.shift(currency.decimalDigits).round();
+  // A balance past what money holds starts the account at zero.
+  final opening = (source.opening ?? Decimal.zero).round(
+    scale: currency.decimalDigits,
+  );
   return NewAccount(
     name: newName,
     type: AccountType.debit,
-    openingBalance: Money(minor.toBigInt().toInt(), currency),
+    openingBalance: moneyIn(opening, currency) ?? Money(0, currency),
     lastDigits: source.cards.length == 1 ? source.cards.single : null,
   );
 }

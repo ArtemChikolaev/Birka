@@ -150,6 +150,16 @@ void main() {
       expect(account.lastDigits, '7777');
     });
 
+    test('of a balance past what money holds starts at zero', () {
+      final choice = defaultAccount(
+        _source('RUB', opening: '100000000000000000'),
+        const [],
+        newName: 'Счёт',
+      );
+
+      expect((choice as NewAccount).openingBalance, Money(0, Currency.rub));
+    });
+
     test('of no currency is in the fallback one', () {
       final choice = defaultAccount(
         _source('', currency: null),

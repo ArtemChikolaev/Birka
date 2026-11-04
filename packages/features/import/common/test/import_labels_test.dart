@@ -141,5 +141,10 @@ void main() {
     test('with more digits than its currency is none', () {
       expect(moneyOf(Decimal.parse('0.001'), 'RUB'), isNull);
     });
+
+    test('past what money holds is none', () {
+      expect(moneyOf(Decimal.parse('100000000000000000'), 'RUB'), isNull);
+      expect(moneyOf(Decimal.parse('-100000000000000000'), 'RUB'), isNull);
+    });
   });
 }
