@@ -30,6 +30,7 @@ workspace:
   - packages/features/help/flutter
   - packages/features/help/jaspr
   - packages/features/import/common
+  - packages/features/import/jaspr
   - packages/features/onboarding/common
   - packages/features/onboarding/flutter
   - packages/features/onboarding/jaspr

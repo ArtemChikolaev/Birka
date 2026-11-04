@@ -12,6 +12,7 @@ class BirkaButton extends StatelessComponent {
     this.submits = false,
     this.quiet = false,
     this.danger = false,
+    this.compact = false,
     super.key,
   });
 
@@ -34,12 +35,17 @@ class BirkaButton extends StatelessComponent {
   /// Whether the action cannot be taken back, in the color of a loss.
   final bool danger;
 
+  /// Whether the button is as wide as its label and lower, to stand in a
+  /// row or a card next to other things.
+  final bool compact;
+
   @override
   Component build(BuildContext context) {
     final classes = [
       'text-label birka-button',
       if (quiet) 'birka-button--quiet',
       if (danger) 'birka-button--danger',
+      if (compact) 'birka-button--compact',
     ].join(' ');
     if (href case final href?) {
       return a(classes: classes, href: href, [.text(label)]);
@@ -88,6 +94,15 @@ class BirkaButton extends StatelessComponent {
         'background':
             'color-mix(in srgb, var(--color-negative) 16%, transparent)',
         'color': 'var(--color-negative)',
+      },
+    ),
+    css('.birka-button--compact').styles(
+      raw: {
+        'display': 'inline-flex',
+        'flex': 'none',
+        'height': '40px',
+        'padding': '0 var(--space-md)',
+        'width': 'auto',
       },
     ),
   ];

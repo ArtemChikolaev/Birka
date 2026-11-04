@@ -19,6 +19,7 @@ import 'package:birka_web/pages/backup_island.dart' as _backup_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
 import 'package:birka_web/pages/help_island.dart' as _help_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
+import 'package:birka_web/pages/import_island.dart' as _import_island;
 import 'package:birka_web/pages/more_island.dart' as _more_island;
 import 'package:birka_web/pages/more_page.dart' as _more_page;
 import 'package:birka_web/pages/operations_island.dart' as _operations_island;
@@ -49,26 +50,48 @@ import 'package:design_jaspr/src/birka_icon.dart' as _birka_icon;
 import 'package:design_jaspr/src/birka_line_chart.dart' as _birka_line_chart;
 import 'package:design_jaspr/src/birka_placeholder.dart' as _birka_placeholder;
 import 'package:design_jaspr/src/birka_ring.dart' as _birka_ring;
+import 'package:design_jaspr/src/birka_select.dart' as _birka_select;
 import 'package:design_jaspr/src/birka_step_bars.dart' as _birka_step_bars;
 import 'package:design_jaspr/src/birka_switch.dart' as _birka_switch;
 import 'package:design_jaspr/src/birka_text_field.dart' as _birka_text_field;
 import 'package:design_jaspr/src/card_art.dart' as _card_art;
 import 'package:design_jaspr/src/dot_badge.dart' as _dot_badge;
+import 'package:design_jaspr/src/file_drop_zone.dart' as _file_drop_zone;
 import 'package:design_jaspr/src/glass_icon_button.dart' as _glass_icon_button;
 import 'package:design_jaspr/src/glass_keypad.dart' as _glass_keypad;
 import 'package:design_jaspr/src/glass_list.dart' as _glass_list;
 import 'package:design_jaspr/src/glass_nav_bar.dart' as _glass_nav_bar;
 import 'package:design_jaspr/src/glass_notice.dart' as _glass_notice;
+import 'package:design_jaspr/src/glass_option.dart' as _glass_option;
 import 'package:design_jaspr/src/glass_page_header.dart' as _glass_page_header;
 import 'package:design_jaspr/src/glass_search_field.dart'
     as _glass_search_field;
 import 'package:design_jaspr/src/glass_segmented.dart' as _glass_segmented;
+import 'package:design_jaspr/src/glass_step_pills.dart' as _glass_step_pills;
 import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/glass_toast.dart' as _glass_toast;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
 import 'package:design_jaspr/src/welcome_art.dart' as _welcome_art;
 import 'package:help_jaspr/src/presentation/pages/help_page.dart' as _help_page;
+import 'package:import_jaspr/src/presentation/components/account_step.dart'
+    as _account_step;
+import 'package:import_jaspr/src/presentation/components/columns_step.dart'
+    as _columns_step;
+import 'package:import_jaspr/src/presentation/components/copies_step.dart'
+    as _copies_step;
+import 'package:import_jaspr/src/presentation/components/done_step.dart'
+    as _done_step;
+import 'package:import_jaspr/src/presentation/components/file_step.dart'
+    as _file_step;
+import 'package:import_jaspr/src/presentation/components/format_step.dart'
+    as _format_step;
+import 'package:import_jaspr/src/presentation/components/import_aside.dart'
+    as _import_aside;
+import 'package:import_jaspr/src/presentation/components/import_bits.dart'
+    as _import_bits;
+import 'package:import_jaspr/src/presentation/pages/import_page.dart'
+    as _import_page;
 import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
     as _onboarding_page;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
@@ -123,6 +146,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     _help_island.HelpIsland: ClientTarget<_help_island.HelpIsland>(
       'help_island',
     ),
+    _import_island.ImportIsland: ClientTarget<_import_island.ImportIsland>(
+      'import_island',
+    ),
     _more_island.MoreIsland: ClientTarget<_more_island.MoreIsland>(
       'more_island',
     ),
@@ -163,27 +189,42 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_line_chart.BirkaLineChart.styles,
     ..._birka_placeholder.BirkaPlaceholder.styles,
     ..._birka_ring.BirkaRing.styles,
+    ..._birka_select.BirkaSelect.styles,
     ..._birka_step_bars.BirkaStepBars.styles,
     ..._birka_switch.BirkaSwitch.styles,
     ..._birka_text_field.BirkaTextField.styles,
     ..._card_art.CardArtSurface.styles,
     ..._card_art.CardArtThumbnail.styles,
     ..._dot_badge.DotBadge.styles,
+    ..._file_drop_zone.FileDropZone.styles,
     ..._glass_icon_button.GlassIconButton.styles,
     ..._glass_keypad.GlassKeypad.styles,
     ..._glass_list.GlassListGroup.styles,
     ..._glass_list.GlassListRow.styles,
     ..._glass_nav_bar.GlassNavBar.styles,
     ..._glass_notice.GlassNotice.styles,
+    ..._glass_option.GlassOption.styles,
     ..._glass_page_header.GlassPageHeader.styles,
     ..._glass_search_field.GlassSearchField.styles,
     ..._glass_segmented.GlassSegmented.styles,
+    ..._glass_step_pills.GlassStepPills.styles,
     ..._glass_surface.GlassSurface.styles,
     ..._glass_toast.GlassToast.styles,
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
     ..._welcome_art.WelcomeArt.styles,
     ..._help_page.HelpPage.styles,
+    ..._account_step.AccountStep.styles,
+    ..._columns_step.ColumnsStep.styles,
+    ..._copies_step.CopiesStep.styles,
+    ..._done_step.DoneStep.styles,
+    ..._file_step.FileStep.styles,
+    ..._format_step.FormatStep.styles,
+    ..._import_aside.ImportAside.styles,
+    ..._import_bits.FileCard.styles,
+    ..._import_bits.FormatMark.styles,
+    ..._import_bits.SummaryRow.styles,
+    ..._import_page.ImportPage.styles,
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,

@@ -1377,4 +1377,213 @@ void main() {
       findsOneComponent,
     );
   });
+
+  group('GlassStepPills', () {
+    testComponents('marks the steps passed, on screen and ahead', (
+      tester,
+    ) async {
+      final opened = <int>[];
+      tester.pumpComponent(
+        GlassStepPills(
+          labels: const ['File', 'Bank', 'Columns', 'Account'],
+          current: 1,
+          reachable: 2,
+          onStep: opened.add,
+        ),
+      );
+
+      expect(
+        withClasses(
+          'text-body-strong glass-step-pills__pill '
+          'glass-step-pills__pill--passed',
+        ),
+        findsNComponents(2),
+      );
+      expect(
+        attributesOf(
+          withClasses(
+            'text-body-strong glass-step-pills__pill '
+            'glass-step-pills__pill--current',
+          ),
+        )['aria-current'],
+        'step',
+      );
+      expect(find.text('4'), findsOneComponent);
+      expect(find.byType(BirkaIcon), findsNComponents(2));
+
+      await tester.click(find.tag('button').first);
+
+      expect(opened, [0]);
+    });
+
+    testComponents('opens no step ahead of the furthest', (tester) async {
+      tester.pumpComponent(
+        GlassStepPills(
+          labels: const ['File', 'Bank'],
+          current: 0,
+          reachable: 0,
+          onStep: (_) {},
+        ),
+      );
+
+      expect(find.tag('button'), findsNothing);
+    });
+  });
+
+  group('FileDropZone', () {
+    testComponents('opens the chooser and names the kinds', (tester) async {
+      var chosen = 0;
+      tester.pumpComponent(
+        FileDropZone(
+          title: 'Drop a statement here',
+          text: 'From your bank',
+          buttonLabel: 'Choose a file',
+          kinds: const ['CSV', 'Excel'],
+          note: 'Up to 10 000 rows',
+          onChoose: () => chosen++,
+          onDrop: (_, _) {},
+        ),
+      );
+
+      await tester.click(find.tag('button'));
+
+      expect(chosen, 1);
+      expect(find.text('CSV'), findsOneComponent);
+      expect(find.text('Up to 10 000 rows'), findsOneComponent);
+    });
+
+    testComponents('holds its button while a file reads', (tester) async {
+      tester.pumpComponent(
+        FileDropZone(
+          title: 'Drop a statement here',
+          text: 'From your bank',
+          buttonLabel: 'Choose a file',
+          busy: true,
+          onChoose: () {},
+          onDrop: (_, _) {},
+        ),
+      );
+
+      final element = find.byType(button).evaluate().single.component as button;
+      expect(element.disabled, isTrue);
+    });
+  });
+
+  group('BirkaSelect', () {
+    testComponents('lists the options and picks one', (tester) async {
+      final picked = <int>[];
+      tester.pumpComponent(
+        BirkaSelect<int>(
+          label: 'Role',
+          options: const {1: 'Date', 2: 'Amount', 3: 'Skip'},
+          selected: 2,
+          dot: 'var(--color-accent)',
+          onChanged: picked.add,
+        ),
+      );
+
+      final options = [
+        for (final element in find.byType(option).evaluate())
+          element.component as option,
+      ];
+      expect([for (final it in options) it.selected], [false, true, false]);
+      expect(attributesOf(find.tag('select'))['aria-label'], 'Role');
+      expect(withClasses('birka-select__dot'), findsOneComponent);
+      expect(
+        find.descendant(
+          of: withClasses('text-body-strong birka-select__value'),
+          matching: find.text('Amount'),
+        ),
+        findsOneComponent,
+      );
+
+      (find.byType(select).evaluate().single.component as select).onChange!([
+        '2',
+      ]);
+
+      expect(picked, [3]);
+    });
+
+    testComponents('of the quiet value is dimmed', (tester) async {
+      tester.pumpComponent(
+        BirkaSelect<String>(
+          label: 'Role',
+          options: const {'skip': 'Skip'},
+          selected: 'skip',
+          quiet: true,
+          pill: true,
+          onChanged: (_) {},
+        ),
+      );
+
+      expect(
+        withClasses('birka-select birka-select--pill birka-select--quiet'),
+        findsOneComponent,
+      );
+    });
+  });
+
+  group('GlassOption', () {
+    testComponents('says whether it is chosen and chooses itself', (
+      tester,
+    ) async {
+      var taps = 0;
+      tester.pumpComponent(
+        GlassOption(
+          title: 'Salary card',
+          tag: 'CSV',
+          badge: 'the card matched',
+          subtitle: 'Rubles · Debit',
+          selected: true,
+          trailing: const span([Component.text('142 679,81 ₽')]),
+          onTap: () => taps++,
+        ),
+      );
+
+      await tester.click(find.tag('button'));
+
+      expect(taps, 1);
+      final attributes = attributesOf(find.tag('button'));
+      expect(attributes['role'], 'radio');
+      expect(attributes['aria-checked'], 'true');
+      expect(find.text('the card matched'), findsOneComponent);
+      expect(
+        withClasses('glass-option glass-option--selected'),
+        findsOneComponent,
+      );
+    });
+
+    testComponents('that fits worse is dimmed', (tester) async {
+      tester.pumpComponent(
+        GlassOption(
+          title: 'Euro card',
+          selected: false,
+          dimmed: true,
+          onTap: () {},
+        ),
+      );
+
+      expect(
+        withClasses('glass-option glass-option--dimmed'),
+        findsOneComponent,
+      );
+      expect(attributesOf(find.tag('button'))['aria-checked'], 'false');
+    });
+  });
+
+  testComponents('BirkaButton that is compact is as wide as its label', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      BirkaButton(label: 'Undo', compact: true, quiet: true, onPressed: () {}),
+    );
+
+    expect(
+      withClasses(
+        'text-label birka-button birka-button--quiet '
+        'birka-button--compact',
+      ),
+      findsOneComponent,
+    );
+  });
 }

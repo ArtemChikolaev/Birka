@@ -8,7 +8,8 @@ the [site](https://artemchikolaev.github.io/Birka/) in any browser. Both keep
 your capital, accounts, categories and operations on the device, add your
 currencies up at the rates of the Bank of Russia, report on your months and
 save a copy of everything to a file. This first milestone is manual tracking
-with several currencies and reports; the import of bank statements comes next.
+with several currencies and reports. The site also imports statements: CSV and
+Excel of banks and Zenmoney, and the PDF of Sberbank; the app comes next.
 
 ## Why
 
@@ -27,7 +28,8 @@ from many countries changed hands.
 - Accounts in any currency: cash, cards, deposits, loans.
 - Expenses, income and transfers between currencies at the actual rate.
 - Categories, budgets, recurring payments and reports in a base currency.
-- Import from bank statements (CSV, OFX) instead of bank passwords.
+- Import from bank statements (CSV, Excel, the PDF of Sberbank; later OFX)
+  instead of bank passwords.
 - Android, iOS and the web from one codebase; the data stays on the device.
 - Later: end-to-end encrypted sync through a small self-hosted server.
 

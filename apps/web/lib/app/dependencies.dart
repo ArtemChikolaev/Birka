@@ -7,6 +7,7 @@ import 'package:database/database.dart';
 import 'package:drift/drift.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:import_common/import_common.dart';
 import 'package:ledger/ledger.dart';
 import 'package:onboarding_common/onboarding_common.dart'
     show registerOnboarding;
@@ -30,6 +31,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)
     ..registerSingleton<BackupFiles>(const BrowserBackupFiles())
+    ..registerSingleton<StatementFiles>(const BrowserStatementFiles())
     ..registerSingleton(
       RatesUpdater(
         rates,
@@ -41,6 +43,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   registerAccounts(getIt);
   registerBackup(getIt, const BrowserSettingsStore());
   registerCategories(getIt);
+  registerImport(getIt);
   registerOnboarding(
     getIt,
     const BrowserSettingsStore(),

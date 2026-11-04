@@ -6,3 +6,272 @@ formats(map):
   zenmoney: Zenmoney
   wise: Wise
   revolut: Revolut
+formatsOf(map):
+  alfa: Alfa-Bank
+  tbank: T-Bank
+  sber: Sberbank
+  zenmoney: Zenmoney
+  wise: Wise
+  revolut: Revolut
+title: Import a statement
+back: Back
+stepOf: "Step $n of $count · $what"
+steps(map):
+  file: File
+  format: Bank
+  columns: Columns
+  account: Account
+  copies: Duplicates
+  done: Result
+stepWhat(map):
+  file: a file from a bank or Zenmoney
+  format: whose statement it is
+  columns: how to read the columns
+  account: where it goes
+  copies: what the ledger already has
+  done: the result
+stepsLabel: Steps of the import
+failed: That did not work. Try again.
+dropTitle: Drop a statement here
+dropText: A file from your online bank for any period. Birka tells the bank by its columns and shows how it read every row before anything is written.
+choose: Choose a file
+reading: Reading the file…
+kinds:
+  - CSV
+  - Excel, XLSX
+  - Sberbank PDF
+  - Zenmoney export
+dropNote: PDFs of Sberbank only · up to 10,000 rows in one file
+unreadableTitle: The file did not read
+unreadable(map):
+  pdf: This PDF cannot be read. Birka reads statements of Sberbank; for other banks, take CSV or Excel.
+  notATable: The file holds no table of operations. It takes CSV, Excel or a PDF of Sberbank.
+  damaged: The file is damaged. Download the statement again.
+  empty: The file is empty.
+  tooLarge: The file is too large. Take a shorter statement, up to 10,000 rows.
+  incomplete: The operations of the statement miss its totals; some did not read. Download the statement again.
+howTitle: How it works
+how:
+  - "We tell the bank by the columns of the file: Alfa-Bank, T-Bank, Sberbank, Zenmoney, Wise, Revolut or a format of your own"
+  - We show every row as it will enter the ledger
+  - We never double what you have already typed in
+  - An import comes out whole, with one button, even a month later
+privacyTitle: No bank passwords
+privacyText: The file is read here, in the browser. Birka never signs in to your bank and sends the statement nowhere.
+whereTitle: Where to get a statement
+whereBank: Online bank
+whereBankText: The section of statements or of the history of operations, as CSV or Excel for the months you need
+whereZen: Zenmoney
+whereZenText: "The export of operations in CSV from the web version: every account, category and year at once"
+whereAbroad: Wise and Revolut
+whereAbroadText: "A statement in CSV: each operation keeps its own currency"
+pastTitle: Past imports
+pastName: "$format · $period"
+pastLine: "$operations → $where · $day"
+operations(n):
+  one: $count operation
+  other: $count operations
+accounts(n):
+  one: $count account
+  other: $count accounts
+undo: Undo
+undoAsk(n):
+  one: Take out $count operation of this file?
+  other: Take out $count operations of this file?
+undoYes: Take out
+undoNo: Keep
+undone: "The import of «$name» is undone"
+looksLike: Looks like a statement of $bank
+matched(n):
+  one: $n column of $total matched. Birka reads the file by it, and you check the result on the next step.
+  other: $n columns of $total matched. Birka reads the file by them, and you check the result on the next step.
+notKnown: The bank was not told by the columns
+notKnownText: Pick it below or give the columns their roles on the next step.
+skipped: "$header — left out"
+formatsTitle: Format of the statement
+formatTexts(map):
+  alfa: The operations of one card or account
+  tbank: Cards and accounts, with the categories of the bank
+  sber: The PDF statement of a card from SberBank Online
+  zenmoney: Every account, category and transfer at once
+  wise: Each operation in its own currency, with its rate
+  revolut: Each operation in its own currency, with its fee
+own: A format of your own
+ownTag: any
+ownText: You give the columns their roles
+fileKinds(map):
+  csv: CSV
+  xlsx: Excel
+  pdf: PDF
+summaryTitle: What enters the ledger
+summaryFormat: Format
+summaryRows: Rows in the file
+summaryPeriod: Period
+summaryAccount: Account
+accountLater: picked on step 4
+summaryOperations: Operations
+summarySpent: Spent
+summaryReceived: Received
+summaryUnsorted: No category
+toInbox: "$count → the inbox"
+summaryBalance: Balance after
+summaryFromFile: In the file
+summaryCopies: Copies skipped
+summaryAdded: To add
+next(map):
+  format: "Next: the bank"
+  columns: "Next: the columns"
+  account: "Next: the account"
+  copies: "Next: duplicates"
+write(n):
+  one: Import $count operation
+  other: Import $count operations
+nothingToWrite: Nothing to add
+planning: Counting…
+writing: "Writing: $done of $total"
+writeNote: The whole import can be undone with one button
+columnsTitle: Columns of the file
+roles(map):
+  date: Date
+  amount: Amount
+  expense: Spent
+  income: Received
+  fee: Fee
+  currency: Currency
+  expenseCurrency: Currency spent
+  incomeCurrency: Currency received
+  account: Account
+  expenseAccount: Account spent from
+  incomeAccount: Account received on
+  description: Description
+  note: Note
+  category: Category of the bank
+  ownCategory: Your category
+  card: Card
+  balance: Balance
+  status: Status
+  skip: Leave out
+roleOf: "What the column «$header» holds"
+signTitle: Money spent is written
+signs(map):
+  expenseNegative: with a minus
+  expensePositive: with a plus
+  incomePlus: without a sign
+markTitle: Cents are set apart by
+marks(map):
+  comma: a comma
+  dot: a dot
+datesTitle: Dates
+dateOrders(map):
+  dayMonthYear: DD.MM.YYYY
+  monthDayYear: MM.DD.YYYY
+missing: "Mark the column of the date and the column of the amount: without them rows do not become operations."
+previewTitle: How the rows enter the ledger
+previewNote: "the first $shown of $total · headers and totals do not count"
+previewDate: Date
+previewText: Description
+previewCategory: Category
+previewAmount: Amount
+transfer: Transfer
+inbox: Decide in the inbox
+problems(n):
+  one: $count row did not read
+  other: $count rows did not read
+problemLine: "Row $line: $fault"
+andMore: and $count more
+rowFaults(map):
+  unreadableDate: the date does not read
+  noSuchDay: there is no such day
+  noAmount: no amount
+  unreadableAmount: the amount does not read
+  zeroAmount: the amount is zero
+  declined: the operation did not go through
+categoriesTitle: Categories of the bank → yours
+categoriesNote: Without a choice, operations wait in the inbox
+categoryKinds(map):
+  expense: spent
+  income: received
+noBankCategory: No category of the bank
+newCategory: "New: $name"
+fees: Fees of the bank
+categoryOf: "The category for «$name»"
+accountTitleCard: Where the operations of the card ••$card go
+accountTitleNamed: Where the operations of «$name» go
+accountTitle: Where the operations go
+accountText: "$operations. Pick an account of Birka, start a new one or leave them out."
+cardMatched: the card matched
+nameMatched: the name matched
+otherCurrency: "$currency, and the file has $fileCurrency"
+newAccount: A new account
+newAccountText: "We start «$name» with a balance of $balance"
+leaveOut: Leave out
+leaveOutText: The operations of this account stay out of the ledger
+balanceMatches: The balance meets the bank
+balanceDiffers: The balance differs from the bank
+balanceInFile: In the statement on $day
+balanceInBirka: In Birka after the import
+balanceHint: The ledger has operations that the statement lacks, or the other way round. Check the account and the duplicates.
+copiesTitle(n):
+  one: $count operation is already in the ledger
+  other: $count operations are already in the ledger
+copiesText: You seem to have typed them in. The copies from the statement are skipped, and your records stay as they are, with your names and categories.
+noCopies: No duplicates
+noCopiesText: No operation of the statement looks like one of the ledger.
+fromFile: From the statement
+inLedger: Already in the ledger
+reasons(map):
+  imported: from this very file
+  sameAmount: the same amount
+  sameDay: the same day
+  dayBefore: a day before
+  dayAfter: a day after
+  sameAccount: the same account
+  similarName: a similar name
+skipCopy: Skip the copy
+keepBoth: Keep both
+leftTitle(n):
+  one: $count operation stays out of the ledger
+  other: $count operations stay out of the ledger
+planFaults(map):
+  otherCurrency: the account has another currency
+  tooPrecise: more digits than the currency has
+  unevenTransfer: a transfer in one currency with two amounts
+doneTitle(n):
+  one: Added $count operation
+  other: Added $count operations
+doneWhere: "$format, $period → $accounts"
+doneIncome: Received
+doneSpent: New spending
+doneSkipped: Copies skipped
+doneBalance: Balance of the account
+asInBank: as in the bank
+unsortedTitle(n):
+  one: $count operation without a category
+  other: $count operations without a category
+unsortedText: They count in the reports already, only without a category. Pick one in the operation itself.
+undoTitle: Changed your mind?
+undoText(n):
+  one: The undo takes out $count operation of this file. Your records and other imports stay. You can undo it later too, under «Past imports».
+  other: The undo takes out $count operations of this file. Your records and other imports stay. You can undo it later too, under «Past imports».
+undoImport: Undo the import
+undoneTitle: The import is undone
+undoneText: The operations of this file are out of the ledger. Your records stay as they were.
+toOperations: To the operations
+another: Import another statement
+monthsWhole:
+  - January
+  - February
+  - March
+  - April
+  - May
+  - June
+  - July
+  - August
+  - September
+  - October
+  - November
+  - December
+periodMonth: $month $year
+periodInMonth: $month $from–$to, $year
+periodInYear: $from – $to, $year
+periodFar: $from – $to
