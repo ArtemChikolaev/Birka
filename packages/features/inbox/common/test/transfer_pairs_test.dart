@@ -98,6 +98,32 @@ void main() {
     );
   });
 
+  test('between currencies keeps within a tenth of the rate', () {
+    final out = _operation(
+      'wise',
+      TransactionKind.expense,
+      'wise',
+      Money(231000, _usd),
+      CivilDate(2026, 9, 30),
+    );
+    // 2 310 $ at 81,20 ₽ are 187 572 ₽, and a tenth of it 18 757,20 ₽.
+    List<TransferPair> pairs(int kopecks) => transferPairs([
+      out,
+      _operation(
+        'card',
+        TransactionKind.income,
+        'card',
+        Money(kopecks, Currency.rub),
+        CivilDate(2026, 9, 30),
+      ),
+    ], rates: _rates);
+
+    expect(pairs(16881500), hasLength(1));
+    expect(pairs(16881400), isEmpty);
+    expect(pairs(20632900), hasLength(1));
+    expect(pairs(20633000), isEmpty);
+  });
+
   test('never pairs other amounts, days apart, one account or a category', () {
     final out = _operation(
       'out',

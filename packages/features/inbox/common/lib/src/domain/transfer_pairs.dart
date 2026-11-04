@@ -2,6 +2,7 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 import 'package:rates/rates.dart';
+import 'package:rational/rational.dart';
 
 /// An expense on one account and an income on another that look like one
 /// transfer of the person between them (ADR 0022): what left one reached
@@ -36,17 +37,18 @@ final class TransferPair {
 
 /// The transfers that [transactions] hide (ADR 0022): an income without a
 /// category on one account and an expense on another within [days] days of
-/// it, of the same amount in one currency, or within [tolerance] of the rate
-/// of [rates] on the day the money left between two currencies. Each
-/// transaction is in one pair at most, the closest first, and the pairs of
-/// [dismissed] stay out.
+/// it, of the same amount in one currency, or within [percent] percent of
+/// the rate of [rates] on the day the money left between two currencies.
+/// Each transaction is in one pair at most, the closest first, and the pairs
+/// of [dismissed] stay out.
 List<TransferPair> transferPairs(
   List<Transaction> transactions, {
   required RateBook rates,
   Set<String> dismissed = const {},
   int days = 3,
-  double tolerance = 0.1,
+  int percent = 10,
 }) {
+  final tolerance = Rational(BigInt.from(percent), BigInt.from(100));
   bool single(Transaction transaction) => transaction.entries.length == 1;
   final incomes = [
     for (final transaction in transactions)
@@ -60,7 +62,7 @@ List<TransferPair> transferPairs(
       if (transaction.kind == TransactionKind.expense && single(transaction))
         transaction,
   ];
-  final candidates = <({TransferPair pair, int apart, double off})>[];
+  final candidates = <({TransferPair pair, int apart, Rational off})>[];
   for (final into in incomes) {
     for (final out in expenses) {
       final pair = TransferPair(out: out, into: into);
@@ -89,19 +91,24 @@ List<TransferPair> transferPairs(
   return pairs;
 }
 
-/// How far what arrived is from what left, as a share: zero for the same
-/// amount in one currency, `null` when it cannot be one transfer.
-double? _offBy(TransferPair pair, RateBook rates) {
+/// How far what arrived is from what left, as an exact share: zero for the
+/// same amount in one currency, `null` when it cannot be one transfer.
+Rational? _offBy(TransferPair pair, RateBook rates) {
   final sent = pair.sent;
   final received = pair.received;
-  if (sent.currency == received.currency) return sent == received ? 0 : null;
+  if (sent.currency == received.currency) {
+    return sent == received ? Rational.zero : null;
+  }
   final expected = rates.convert(
     sent,
     received.currency,
     on: pair.out.occurredOn,
   );
   if (expected == null || !expected.isPositive) return null;
-  return (received.minorUnits / expected.minorUnits - 1).abs();
+  return Rational(
+    BigInt.from(received.minorUnits - expected.minorUnits).abs(),
+    BigInt.from(expected.minorUnits),
+  );
 }
 
 int _daysBetween(CivilDate a, CivilDate b) => DateTime.utc(

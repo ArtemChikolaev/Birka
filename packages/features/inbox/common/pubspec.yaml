@@ -23,6 +23,7 @@ dependencies:
     path: ../../../core/money
   rates:
     path: ../../../core/rates
+  rational: ^2.2.3
 
 dev_dependencies:
   database:

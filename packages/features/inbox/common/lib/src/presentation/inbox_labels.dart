@@ -4,6 +4,7 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:rates/rates.dart';
+import 'package:rational/rational.dart';
 
 /// Why [hint] suggests its category, for people: «так вы отметили его 3 раза
 /// в сентябре», «та же сумма каждый месяц с июня», «как «Барбершоп» в
@@ -75,8 +76,12 @@ String? rateLabel(TransferPair pair, RateBook rates) {
       ? (received, sent)
       : (sent, received);
   final unit = Money(_pow10(base.currency.decimalDigits), base.currency);
+  // Exactly, and half away from zero, as RateBook.convert rounds.
   final rate = Money(
-    (quote.minorUnits * unit.minorUnits / base.minorUnits).round(),
+    Rational(
+      BigInt.from(quote.minorUnits) * BigInt.from(unit.minorUnits),
+      BigInt.from(base.minorUnits),
+    ).round().toInt(),
     quote.currency,
   );
   final bank = rates.convert(unit, quote.currency, on: pair.out.occurredOn);
