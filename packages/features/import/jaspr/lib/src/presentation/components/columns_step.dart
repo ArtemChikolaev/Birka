@@ -487,7 +487,9 @@ class ColumnsStep extends StatelessComponent {
         'align-items': 'center',
         'display': 'grid',
         'gap': 'var(--space-sm)',
-        'grid-template-columns': 'minmax(0, 1fr) auto minmax(0, auto)',
+        // The name of the bank stays whole first; our side gives way.
+        'grid-template-columns':
+            'minmax(0, max-content) auto minmax(140px, 1fr)',
         'min-width': '0',
         'padding':
             'var(--space-xs) var(--space-xs) var(--space-xs) '
