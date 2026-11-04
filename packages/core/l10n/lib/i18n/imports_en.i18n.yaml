@@ -1,0 +1,8 @@
+account: Statement account
+formats(map):
+  alfa: Alfa-Bank
+  tbank: T-Bank
+  sber: Sberbank
+  zenmoney: Zenmoney
+  wise: Wise
+  revolut: Revolut
