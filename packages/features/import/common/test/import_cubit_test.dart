@@ -156,6 +156,28 @@ void main() {
       expect(cubit.state.fileName, _fileName);
     });
 
+    test('of no currency is in the base currency of the device', () async {
+      await cubit.close();
+      cubit = ImportCubit(
+        repository,
+        const FileStatementReader(),
+        files,
+        currency: Currency.eur,
+      );
+      await cubit.start();
+
+      await cubit.read(
+        'own.csv',
+        utf8.encode('Дата;Сумма;Описание\n01.10.2026;-100,00;Кофе'),
+      );
+
+      final state = await planned();
+      expect(state.layout!.format, isNull);
+      expect(state.currency, Currency.eur);
+      final account = state.choices!.accounts.values.single as NewAccount;
+      expect(account.openingBalance.currency, Currency.eur);
+    });
+
     test(
       'of a card that Birka does not know goes into a new account',
       () async {

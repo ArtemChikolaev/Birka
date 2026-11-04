@@ -20,6 +20,8 @@ dependencies:
   meta: ^1.17.0
   money:
     path: ../../../core/money
+  rates:
+    path: ../../../core/rates
   xml: ^6.6.1
 
 dev_dependencies:

@@ -59,6 +59,7 @@ final class ImportState {
     this.history = const [],
     this.seen = ImportStep.file,
     this.balances = const {},
+    this.currency = Currency.rub,
   });
 
   /// The step on screen.
@@ -111,6 +112,9 @@ final class ImportState {
 
   /// What each account of the ledger holds today, by its id.
   final Map<String, Money> balances;
+
+  /// The currency of a file that names none: the base currency of the device.
+  final Currency currency;
 
   /// The name of the file.
   String? get fileName => table?.fileName;
@@ -186,6 +190,7 @@ final class ImportState {
     history: history ?? this.history,
     seen: seen ?? this.seen,
     balances: balances ?? this.balances,
+    currency: currency,
   );
 
   static const _same = Object();
@@ -199,15 +204,17 @@ final class ImportState {
 /// name, a category of the same name. The plan follows every choice.
 final class ImportCubit extends Cubit<ImportState> {
   /// Creates the import on [_repository], reading files with [_reader] and
-  /// letting the person choose them through [_files]. [today] says what day
-  /// it is, which tests can fix.
+  /// letting the person choose them through [_files]. A file that names no
+  /// currency is in [currency], the base currency of the device. [today] says
+  /// what day it is, which tests can fix.
   ImportCubit(
     this._repository,
     this._reader,
     this._files, {
+    Currency currency = Currency.rub,
     CivilDate Function()? today,
   }) : _today = today ?? _now,
-       super(const ImportState());
+       super(ImportState(currency: currency));
 
   final ImportRepository _repository;
   final StatementReader _reader;
@@ -448,6 +455,7 @@ final class ImportCubit extends Cubit<ImportState> {
     accounts: state.accounts,
     categories: state.categories,
     balances: state.balances,
+    currency: state.currency,
   );
 
   void _show(
@@ -504,6 +512,7 @@ final class ImportCubit extends Cubit<ImportState> {
             source,
             state.accounts,
             newName: names[source.key]!,
+            fallback: state.currency,
           ),
         },
     };
