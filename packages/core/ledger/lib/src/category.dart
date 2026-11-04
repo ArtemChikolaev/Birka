@@ -48,3 +48,23 @@ final class Category {
   /// The place of the category in lists.
   final int sortOrder;
 }
+
+/// The open categories of [kind] among [categories], in their order, each
+/// parent followed by its subcategories, which say that they are `nested`.
+List<({Category category, bool nested})> categoryTree(
+  Iterable<Category> categories,
+  CategoryKind kind,
+) {
+  final open = [
+    for (final category in categories)
+      if (category.kind == kind && !category.archived) category,
+  ];
+  return [
+    for (final parent in open)
+      if (parent.parentId == null) ...[
+        (category: parent, nested: false),
+        for (final child in open)
+          if (child.parentId == parent.id) (category: child, nested: true),
+      ],
+  ];
+}

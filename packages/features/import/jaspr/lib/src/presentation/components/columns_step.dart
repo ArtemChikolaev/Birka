@@ -285,7 +285,7 @@ class ColumnsStep extends StatelessComponent {
       _ when newName != null => NewCategory(newName),
       _ => null,
     };
-    final ours = _ordered(kind);
+    final ours = categoryTree(state.categories, kind);
     final selected = switch (choice) {
       IntoCategory(:final categoryId) => 'id:$categoryId',
       NewCategory() => fresh,
@@ -303,13 +303,15 @@ class ColumnsStep extends StatelessComponent {
         pill: true,
         options: {
           inbox: t.imports.inbox,
-          for (final (category, nested) in ours)
-            'id:${category.id}': nested
-                ? '$_indent${category.name}'
-                : category.name,
+          for (final (:category, nested: _) in ours)
+            'id:${category.id}': category.name,
           if (created != null) fresh: t.imports.newCategory(name: created.name),
         },
         selected: selected,
+        nested: {
+          for (final (:category, :nested) in ours)
+            if (nested) 'id:${category.id}',
+        },
         dot: switch (choice) {
           Unsorted() => 'var(--color-text-subtle)',
           NewCategory() => 'var(--color-accent)',
@@ -327,27 +329,6 @@ class ColumnsStep extends StatelessComponent {
         },
       ),
     ]);
-  }
-
-  /// What moves a subcategory in from its parent in the list of the system,
-  /// which trims plain spaces.
-  static final _indent = String.fromCharCodes(const [0xA0, 0xA0, 0xA0, 0xA0]);
-
-  /// The open categories of [kind], each parent followed by its
-  /// subcategories.
-  List<(Category, bool)> _ordered(CategoryKind kind) {
-    final open = [
-      for (final category in state.categories)
-        if (category.kind == kind && !category.archived) category,
-    ];
-    return [
-      for (final parent in open)
-        if (parent.parentId == null) ...[
-          (parent, false),
-          for (final child in open)
-            if (child.parentId == parent.id) (child, true),
-        ],
-    ];
   }
 
   /// The styles of the step.

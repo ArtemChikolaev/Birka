@@ -20,6 +20,7 @@ import 'package:birka_web/pages/categories_island.dart' as _categories_island;
 import 'package:birka_web/pages/help_island.dart' as _help_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
 import 'package:birka_web/pages/import_island.dart' as _import_island;
+import 'package:birka_web/pages/inbox_island.dart' as _inbox_island;
 import 'package:birka_web/pages/more_island.dart' as _more_island;
 import 'package:birka_web/pages/more_page.dart' as _more_page;
 import 'package:birka_web/pages/operations_island.dart' as _operations_island;
@@ -39,6 +40,7 @@ import 'package:design_jaspr/src/birka_arrow_button.dart'
 import 'package:design_jaspr/src/birka_bars.dart' as _birka_bars;
 import 'package:design_jaspr/src/birka_button.dart' as _birka_button;
 import 'package:design_jaspr/src/birka_change_pill.dart' as _birka_change_pill;
+import 'package:design_jaspr/src/birka_checkbox.dart' as _birka_checkbox;
 import 'package:design_jaspr/src/birka_chip.dart' as _birka_chip;
 import 'package:design_jaspr/src/birka_chip_field.dart' as _birka_chip_field;
 import 'package:design_jaspr/src/birka_choice.dart' as _birka_choice;
@@ -92,6 +94,12 @@ import 'package:import_jaspr/src/presentation/components/import_bits.dart'
     as _import_bits;
 import 'package:import_jaspr/src/presentation/pages/import_page.dart'
     as _import_page;
+import 'package:inbox_jaspr/src/presentation/components/inbox_row.dart'
+    as _inbox_row;
+import 'package:inbox_jaspr/src/presentation/components/pair_card.dart'
+    as _pair_card;
+import 'package:inbox_jaspr/src/presentation/pages/inbox_page.dart'
+    as _inbox_page;
 import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
     as _onboarding_page;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
@@ -149,6 +157,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     _import_island.ImportIsland: ClientTarget<_import_island.ImportIsland>(
       'import_island',
     ),
+    _inbox_island.InboxIsland: ClientTarget<_inbox_island.InboxIsland>(
+      'inbox_island',
+    ),
     _more_island.MoreIsland: ClientTarget<_more_island.MoreIsland>(
       'more_island',
     ),
@@ -178,6 +189,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_bars.BirkaBars.styles,
     ..._birka_button.BirkaButton.styles,
     ..._birka_change_pill.BirkaChangePill.styles,
+    ..._birka_checkbox.BirkaCheckbox.styles,
     ..._birka_chip.BirkaChip.styles,
     ..._birka_chip_field.BirkaChipField.styles,
     ..._birka_choice.BirkaChoice.styles,
@@ -225,6 +237,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._import_bits.FormatMark.styles,
     ..._import_bits.SummaryRow.styles,
     ..._import_page.ImportPage.styles,
+    ..._inbox_row.InboxRow.styles,
+    ..._pair_card.PairCard.styles,
+    ..._inbox_page.InboxPage.styles,
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,

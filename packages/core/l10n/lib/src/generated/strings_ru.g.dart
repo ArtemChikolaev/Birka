@@ -1075,14 +1075,15 @@ class _Translations$imports$ru extends Translations$imports$en {
   String unsortedTitle({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
-        one: '${count} операция без категории',
-        few: '${count} операции без категории',
-        many: '${count} операций без категории',
-        other: '${count} операции без категории',
+        one: '${count} ждёт вашего решения во «Входящих»',
+        few: '${count} ждут вашего решения во «Входящих»',
+        many: '${count} ждут вашего решения во «Входящих»',
+        other: '${count} ждут вашего решения во «Входящих»',
       );
   @override
-  String get unsortedText =>
-      'В отчётах они уже есть, просто без категории. Её можно выбрать в самой операции.';
+  String get unsortedText => 'В отчётах они уже есть, просто без категории.';
+  @override
+  String get sortInbox => 'Разобрать «Входящие»';
   @override
   String get undoTitle => 'Передумали?';
   @override
@@ -2544,13 +2545,14 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
-                  one: '${count} операция без категории',
-                  few: '${count} операции без категории',
-                  many: '${count} операций без категории',
-                  other: '${count} операции без категории',
+                  one: '${count} ждёт вашего решения во «Входящих»',
+                  few: '${count} ждут вашего решения во «Входящих»',
+                  many: '${count} ждут вашего решения во «Входящих»',
+                  other: '${count} ждут вашего решения во «Входящих»',
                 ),
           'imports.unsortedText' =>
-            'В отчётах они уже есть, просто без категории. Её можно выбрать в самой операции.',
+            'В отчётах они уже есть, просто без категории.',
+          'imports.sortInbox' => 'Разобрать «Входящие»',
           'imports.undoTitle' => 'Передумали?',
           'imports.undoText' =>
             ({
@@ -2700,10 +2702,10 @@ extension on TranslationsRu {
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
-          'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
           _ => null,
         } ??
         switch (path) {
+          'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
           'onboarding.welcome.text' =>
             'Счета в любой валюте и без паролей от банков. Данные остаются на вашем устройстве.',
           'onboarding.welcome.start' => 'Начать',

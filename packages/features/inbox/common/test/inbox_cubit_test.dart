@@ -251,12 +251,20 @@ void main() {
   });
 
   test('picks all on screen, or none', () async {
-    await ready();
+    final shown = [for (final item in (await ready()).shownItems) item.id];
 
-    cubit.toggleAll();
+    cubit.toggleAll(shown);
     expect(cubit.state.selected, hasLength(4));
 
-    cubit.toggleAll();
+    cubit.toggleAll(shown);
+    expect(cubit.state.selected, isEmpty);
+
+    cubit.toggleAll([ivan, market]);
+    expect(cubit.state.selected, {ivan, market});
+
+    cubit
+      ..toggle(ivan)
+      ..pickNone();
     expect(cubit.state.selected, isEmpty);
   });
 

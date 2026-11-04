@@ -49,6 +49,7 @@ void main() {
         child: ImportPage(
           backHref: 'more/',
           operationsHref: 'operations/',
+          inboxHref: 'inbox/',
           onStepChanged: onStepChanged,
           clock: () => now,
         ),

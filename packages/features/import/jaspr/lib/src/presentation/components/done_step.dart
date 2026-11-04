@@ -13,10 +13,13 @@ import 'package:ledger/ledger.dart';
 /// the bank, what waits for a category, and the undo of the whole import.
 class DoneStep extends StatelessComponent {
   /// Creates the step of [state].
-  const DoneStep({required this.state, super.key});
+  const DoneStep({required this.state, required this.inboxHref, super.key});
 
   /// The import.
   final ImportState state;
+
+  /// The inbox, where what the import leaves waits.
+  final String inboxHref;
 
   @override
   Component build(BuildContext context) {
@@ -108,7 +111,7 @@ class DoneStep extends StatelessComponent {
         for (final source in statement.accounts) ?_balance(plan, source),
       ]),
       if (plan.unsorted > 0)
-        div(classes: 'glass import-note', [
+        a(classes: 'glass import-note import-note--link', href: inboxHref, [
           const GlyphBadge(
             glyph: BirkaGlyph.list,
             color: 'var(--color-palette-amber)',
@@ -125,6 +128,9 @@ class DoneStep extends StatelessComponent {
             span(classes: 'text-caption import-note__line', [
               .text(t.imports.unsortedText),
             ]),
+          ]),
+          const span(classes: 'import-note__chevron', [
+            BirkaIcon(BirkaGlyph.chevron),
           ]),
         ]),
       div(classes: 'glass import-note import-note--undo', [
@@ -312,6 +318,15 @@ class DoneStep extends StatelessComponent {
       },
     ),
     css('.import-note__title').styles(raw: {'color': 'var(--color-text)'}),
+    css('.import-note--link').styles(
+      raw: {'color': 'inherit', 'text-decoration': 'none'},
+    ),
+    css('.import-note__chevron').styles(
+      raw: {'color': 'var(--color-text-subtle)', 'display': 'flex'},
+    ),
+    css('.import-note__chevron .birka-icon').styles(
+      raw: {'height': '18px', 'width': '18px'},
+    ),
     css('.import-note__line').styles(
       raw: {'color': 'var(--color-text-secondary)'},
     ),

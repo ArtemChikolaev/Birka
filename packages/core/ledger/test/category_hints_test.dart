@@ -301,4 +301,39 @@ void main() {
     expect(nameKey('ZHKU MOSKVA'), 'zhku moskva');
     expect(nameWords('Перевод Ивану К. по СБП'), {'ivanu'});
   });
+
+  test('the tree of categories puts each parent before its own', () {
+    Category category(
+      String id, {
+      String? parentId,
+      CategoryKind kind = CategoryKind.expense,
+      bool archived = false,
+    }) => Category(
+      id: id,
+      kind: kind,
+      name: id,
+      archived: archived,
+      sortOrder: 0,
+      parentId: parentId,
+    );
+
+    final tree = categoryTree([
+      category('food'),
+      category('home'),
+      category('rent', parentId: 'home'),
+      category('market', parentId: 'food'),
+      category('old', archived: true),
+      category('salary', kind: CategoryKind.income),
+    ], CategoryKind.expense);
+
+    expect(
+      [for (final it in tree) '${it.nested ? '  ' : ''}${it.category.id}'],
+      [
+        'food',
+        '  market',
+        'home',
+        '  rent',
+      ],
+    );
+  });
 }

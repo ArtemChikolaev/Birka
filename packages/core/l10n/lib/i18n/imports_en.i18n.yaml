@@ -246,9 +246,10 @@ doneSkipped: Copies skipped
 doneBalance: Balance of the account
 asInBank: as in the bank
 unsortedTitle(n):
-  one: $count operation without a category
-  other: $count operations without a category
-unsortedText: They count in the reports already, only without a category. Pick one in the operation itself.
+  one: $count waits for you in the inbox
+  other: $count wait for you in the inbox
+unsortedText: They count in the reports already, only without a category.
+sortInbox: Sort the inbox
 undoTitle: Changed your mind?
 undoText(n):
   one: The undo takes out $count operation of this file. Your records and other imports stay. You can undo it later too, under «Past imports».

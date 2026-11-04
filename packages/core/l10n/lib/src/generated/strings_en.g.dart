@@ -1278,17 +1278,20 @@ class Translations$imports$en {
   /// en: 'as in the bank'
   String get asInBank => 'as in the bank';
 
-  /// en: '(one) {$count operation without a category} (other) {$count operations without a category}'
+  /// en: '(one) {$count waits for you in the inbox} (other) {$count wait for you in the inbox}'
   String unsortedTitle({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
         n,
-        one: '${count} operation without a category',
-        other: '${count} operations without a category',
+        one: '${count} waits for you in the inbox',
+        other: '${count} wait for you in the inbox',
       );
 
-  /// en: 'They count in the reports already, only without a category. Pick one in the operation itself.'
+  /// en: 'They count in the reports already, only without a category.'
   String get unsortedText =>
-      'They count in the reports already, only without a category. Pick one in the operation itself.';
+      'They count in the reports already, only without a category.';
+
+  /// en: 'Sort the inbox'
+  String get sortInbox => 'Sort the inbox';
 
   /// en: 'Changed your mind?'
   String get undoTitle => 'Changed your mind?';
@@ -2884,11 +2887,12 @@ extension on Translations {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('en'))(
                   n,
-                  one: '${count} operation without a category',
-                  other: '${count} operations without a category',
+                  one: '${count} waits for you in the inbox',
+                  other: '${count} wait for you in the inbox',
                 ),
           'imports.unsortedText' =>
-            'They count in the reports already, only without a category. Pick one in the operation itself.',
+            'They count in the reports already, only without a category.',
+          'imports.sortInbox' => 'Sort the inbox',
           'imports.undoTitle' => 'Changed your mind?',
           'imports.undoText' =>
             ({
@@ -3026,10 +3030,10 @@ extension on Translations {
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
           'onboarding.failed' => 'Could not save. Try again.',
-          'onboarding.welcome.title' => 'All your money\nin one place',
           _ => null,
         } ??
         switch (path) {
+          'onboarding.welcome.title' => 'All your money\nin one place',
           'onboarding.welcome.text' =>
             'Accounts in any currency and no bank passwords. Your data stays on your device.',
           'onboarding.welcome.start' => 'Get started',
