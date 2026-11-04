@@ -60,6 +60,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$imports$en imports = Translations$imports$en.internal(
     _root,
   );
+  late final Translations$inbox$en inbox = Translations$inbox$en.internal(
+    _root,
+  );
   late final Translations$onboarding$en onboarding =
       Translations$onboarding$en.internal(_root);
   late final Translations$overview$en overview =
@@ -1355,6 +1358,169 @@ class Translations$imports$en {
   /// en: '$from – $to'
   String periodFar({required Object from, required Object to}) =>
       '${from} – ${to}';
+}
+
+// Path: inbox
+class Translations$inbox$en {
+  Translations$inbox$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Inbox'
+  String get title => 'Inbox';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: '(one) {$count waits for you} (other) {$count wait for you}'
+  String waiting({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} waits for you',
+        other: '${count} wait for you',
+      );
+
+  /// en: 'after the import of $bank'
+  String afterImport({required Object bank}) => 'after the import of ${bank}';
+
+  /// en: 'after the import of «$name»'
+  String afterFile({required Object name}) => 'after the import of «${name}»';
+
+  Map<String, String> get filters => {
+    'all': 'All',
+    'uncategorized': 'No category',
+    'transfers': 'Transfers',
+  };
+
+  /// en: 'What to show'
+  String get filtersLabel => 'What to show';
+
+  /// en: 'All sorted'
+  String get emptyTitle => 'All sorted';
+
+  /// en: 'Operations without a category and transfers between your accounts come here from statements.'
+  String get emptyText =>
+      'Operations without a category and transfers between your accounts come here from statements.';
+
+  /// en: 'Looks like a transfer between your accounts'
+  String get pairTitle => 'Looks like a transfer between your accounts';
+
+  /// en: 'Neither spending nor income: your capital stays the same'
+  String get pairText =>
+      'Neither spending nor income: your capital stays the same';
+
+  /// en: 'Rate $rate for $unit'
+  String rate({required Object rate, required Object unit}) =>
+      'Rate ${rate} for ${unit}';
+
+  /// en: 'the Bank of Russia that day $rate'
+  String bankRate({required Object rate}) =>
+      'the Bank of Russia that day ${rate}';
+
+  /// en: 'Make it a transfer'
+  String get makeTransfer => 'Make it a transfer';
+
+  /// en: 'It is income'
+  String get notTransfer => 'It is income';
+
+  /// en: 'from the statement'
+  String get fromStatement => 'from the statement';
+
+  /// en: 'No category'
+  String get uncategorized => 'No category';
+
+  /// en: '$title · $count'
+  String section({required Object title, required Object count}) =>
+      '${title} · ${count}';
+
+  /// en: 'Category'
+  String get category => 'Category';
+
+  /// en: 'Another'
+  String get other => 'Another';
+
+  /// en: 'Yes'
+  String get yes => 'Yes';
+
+  /// en: 'The category for «$name»'
+  String categoryFor({required Object name}) => 'The category for «${name}»';
+
+  /// en: '(one) {as you marked it $count time $when} (other) {as you marked it $count times $when}'
+  String sameName({
+    required num n,
+    required Object count,
+    required Object when,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one: 'as you marked it ${count} time ${when}',
+    other: 'as you marked it ${count} times ${when}',
+  );
+
+  /// en: 'the same amount every month $since'
+  String everyMonth({required Object since}) =>
+      'the same amount every month ${since}';
+
+  /// en: 'like «$name» in this statement'
+  String sameImport({required Object name}) =>
+      'like «${name}» in this statement';
+
+  /// en: 'like «$name» $when'
+  String similarName({required Object name, required Object when}) =>
+      'like «${name}» ${when}';
+
+  /// en: 'since $month'
+  String since({required Object month}) => 'since ${month}';
+
+  /// en: '(one) {and $count more operation} (other) {and $count more operations}'
+  String more({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'and ${count} more operation',
+        other: 'and ${count} more operations',
+      );
+
+  /// en: '(one) {$count operation picked} (other) {$count operations picked}'
+  String picked({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} operation picked',
+        other: '${count} operations picked',
+      );
+
+  /// en: 'The category for the picked'
+  String get pickedCategory => 'The category for the picked';
+
+  /// en: 'Pick all'
+  String get pickAll => 'Pick all';
+
+  /// en: 'Pick none'
+  String get pickNone => 'Pick none';
+
+  /// en: 'Pick «$name»'
+  String pick({required Object name}) => 'Pick «${name}»';
+
+  /// en: 'Where the hints come from'
+  String get sourceTitle => 'Where the hints come from';
+
+  /// en: 'From your past choices: how you named these places before and which categories you gave them. Counted here, on the device.'
+  String get sourceText =>
+      'From your past choices: how you named these places before and which categories you gave them. Counted here, on the device.';
+
+  /// en: 'Each «Yes» teaches Birka: such operations come with the same hint later.'
+  String get learns =>
+      'Each «Yes» teaches Birka: such operations come with the same hint later.';
+
+  /// en: 'While an operation is here, it already counts in the ledger and the reports, only without a category.'
+  String get stillCounted =>
+      'While an operation is here, it already counts in the ledger and the reports, only without a category.';
+
+  /// en: 'That did not work. Try again.'
+  String get failed => 'That did not work. Try again.';
+
+  /// en: 'Made a transfer'
+  String get madeTransfer => 'Made a transfer';
 }
 
 // Path: onboarding
@@ -2771,10 +2937,99 @@ extension on Translations {
             }) => '${from} – ${to}, ${year}',
           'imports.periodFar' =>
             ({required Object from, required Object to}) => '${from} – ${to}',
+          'inbox.title' => 'Inbox',
+          'inbox.back' => 'Back',
+          'inbox.waiting' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} waits for you',
+                  other: '${count} wait for you',
+                ),
+          'inbox.afterImport' =>
+            ({required Object bank}) => 'after the import of ${bank}',
+          'inbox.afterFile' =>
+            ({required Object name}) => 'after the import of «${name}»',
+          'inbox.filters.all' => 'All',
+          'inbox.filters.uncategorized' => 'No category',
+          'inbox.filters.transfers' => 'Transfers',
+          'inbox.filtersLabel' => 'What to show',
+          'inbox.emptyTitle' => 'All sorted',
+          'inbox.emptyText' =>
+            'Operations without a category and transfers between your accounts come here from statements.',
+          'inbox.pairTitle' => 'Looks like a transfer between your accounts',
+          'inbox.pairText' =>
+            'Neither spending nor income: your capital stays the same',
+          'inbox.rate' =>
+            ({required Object rate, required Object unit}) =>
+                'Rate ${rate} for ${unit}',
+          'inbox.bankRate' =>
+            ({required Object rate}) => 'the Bank of Russia that day ${rate}',
+          'inbox.makeTransfer' => 'Make it a transfer',
+          'inbox.notTransfer' => 'It is income',
+          'inbox.fromStatement' => 'from the statement',
+          'inbox.uncategorized' => 'No category',
+          'inbox.section' =>
+            ({required Object title, required Object count}) =>
+                '${title} · ${count}',
+          'inbox.category' => 'Category',
+          'inbox.other' => 'Another',
+          'inbox.yes' => 'Yes',
+          'inbox.categoryFor' =>
+            ({required Object name}) => 'The category for «${name}»',
+          'inbox.sameName' =>
+            ({required num n, required Object count, required Object when}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'as you marked it ${count} time ${when}',
+                  other: 'as you marked it ${count} times ${when}',
+                ),
+          'inbox.everyMonth' =>
+            ({required Object since}) => 'the same amount every month ${since}',
+          'inbox.sameImport' =>
+            ({required Object name}) => 'like «${name}» in this statement',
+          'inbox.similarName' =>
+            ({required Object name, required Object when}) =>
+                'like «${name}» ${when}',
+          'inbox.since' => ({required Object month}) => 'since ${month}',
+          'inbox.more' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'and ${count} more operation',
+                  other: 'and ${count} more operations',
+                ),
+          'inbox.picked' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} operation picked',
+                  other: '${count} operations picked',
+                ),
+          'inbox.pickedCategory' => 'The category for the picked',
+          'inbox.pickAll' => 'Pick all',
+          'inbox.pickNone' => 'Pick none',
+          'inbox.pick' => ({required Object name}) => 'Pick «${name}»',
+          'inbox.sourceTitle' => 'Where the hints come from',
+          'inbox.sourceText' =>
+            'From your past choices: how you named these places before and which categories you gave them. Counted here, on the device.',
+          'inbox.learns' =>
+            'Each «Yes» teaches Birka: such operations come with the same hint later.',
+          'inbox.stillCounted' =>
+            'While an operation is here, it already counts in the ledger and the reports, only without a category.',
+          'inbox.failed' => 'That did not work. Try again.',
+          'inbox.madeTransfer' => 'Made a transfer',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
           'onboarding.failed' => 'Could not save. Try again.',
           'onboarding.welcome.title' => 'All your money\nin one place',
+          _ => null,
+        } ??
+        switch (path) {
           'onboarding.welcome.text' =>
             'Accounts in any currency and no bank passwords. Your data stays on your device.',
           'onboarding.welcome.start' => 'Get started',
@@ -2835,9 +3090,6 @@ extension on Translations {
           'overview.hideAmounts' => 'Hide the amounts',
           'overview.showAmounts' => 'Show the amounts',
           'overview.changeIn.0' => 'in January',
-          _ => null,
-        } ??
-        switch (path) {
           'overview.changeIn.1' => 'in February',
           'overview.changeIn.2' => 'in March',
           'overview.changeIn.3' => 'in April',

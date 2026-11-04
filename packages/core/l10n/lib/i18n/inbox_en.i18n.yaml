@@ -1,0 +1,50 @@
+title: Inbox
+back: Back
+waiting(n):
+  one: $count waits for you
+  other: $count wait for you
+afterImport: after the import of $bank
+afterFile: after the import of «$name»
+filters(map):
+  all: All
+  uncategorized: No category
+  transfers: Transfers
+filtersLabel: What to show
+emptyTitle: All sorted
+emptyText: Operations without a category and transfers between your accounts come here from statements.
+pairTitle: Looks like a transfer between your accounts
+pairText: "Neither spending nor income: your capital stays the same"
+rate: Rate $rate for $unit
+bankRate: the Bank of Russia that day $rate
+makeTransfer: Make it a transfer
+notTransfer: It is income
+fromStatement: from the statement
+uncategorized: No category
+section: "$title · $count"
+category: Category
+other: Another
+yes: Yes
+categoryFor: "The category for «$name»"
+sameName(n):
+  one: as you marked it $count time $when
+  other: as you marked it $count times $when
+everyMonth: the same amount every month $since
+sameImport: like «$name» in this statement
+similarName: like «$name» $when
+since: since $month
+more(n):
+  one: and $count more operation
+  other: and $count more operations
+picked(n):
+  one: $count operation picked
+  other: $count operations picked
+pickedCategory: The category for the picked
+pickAll: Pick all
+pickNone: Pick none
+pick: "Pick «$name»"
+sourceTitle: Where the hints come from
+sourceText: "From your past choices: how you named these places before and which categories you gave them. Counted here, on the device."
+learns: "Each «Yes» teaches Birka: such operations come with the same hint later."
+stillCounted: While an operation is here, it already counts in the ledger and the reports, only without a category.
+failed: That did not work. Try again.
+madeTransfer: Made a transfer

@@ -1,0 +1,32 @@
+name: inbox_common
+description: >-
+  The inbox of Birka in pure Dart: the operations without a category with
+  hints from past choices, and the transfers between one's own accounts that
+  imports split, shared by both hosts.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  bloc: ^9.2.1
+  device_settings:
+    path: ../../../core/device_settings
+  get_it: ^9.3.0
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  meta: ^1.17.0
+  money:
+    path: ../../../core/money
+  rates:
+    path: ../../../core/rates
+
+dev_dependencies:
+  database:
+    path: ../../../core/database
+  decimal: ^3.2.6
+  drift: ^2.31.0
+  test: ^1.26.3

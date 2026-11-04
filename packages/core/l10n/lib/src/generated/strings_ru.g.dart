@@ -74,6 +74,8 @@ class TranslationsRu extends Translations
     _root,
   );
   @override
+  late final _Translations$inbox$ru inbox = _Translations$inbox$ru._(_root);
+  @override
   late final _Translations$onboarding$ru onboarding =
       _Translations$onboarding$ru._(_root);
   @override
@@ -1143,6 +1145,138 @@ class _Translations$imports$ru extends Translations$imports$en {
   @override
   String periodFar({required Object from, required Object to}) =>
       '${from} – ${to}';
+}
+
+// Path: inbox
+class _Translations$inbox$ru extends Translations$inbox$en {
+  _Translations$inbox$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Входящие';
+  @override
+  String get back => 'Назад';
+  @override
+  String waiting({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} ждёт решения',
+        few: '${count} ждут решения',
+        many: '${count} ждут решения',
+        other: '${count} ждут решения',
+      );
+  @override
+  String afterImport({required Object bank}) => 'после импорта ${bank}';
+  @override
+  String afterFile({required Object name}) => 'после импорта «${name}»';
+  @override
+  Map<String, String> get filters => {
+    'all': 'Все',
+    'uncategorized': 'Без категории',
+    'transfers': 'Переводы',
+  };
+  @override
+  String get filtersLabel => 'Что показать';
+  @override
+  String get emptyTitle => 'Всё разобрано';
+  @override
+  String get emptyText =>
+      'Здесь появятся операции без категории и переводы между вашими счетами, когда придут из выписки.';
+  @override
+  String get pairTitle => 'Похоже на перевод между вашими счетами';
+  @override
+  String get pairText => 'Не трата и не доход: капитал от него не изменится';
+  @override
+  String rate({required Object rate, required Object unit}) =>
+      'Курс обмена ${rate} за ${unit}';
+  @override
+  String bankRate({required Object rate}) => 'ЦБ в тот день ${rate}';
+  @override
+  String get makeTransfer => 'Сделать переводом';
+  @override
+  String get notTransfer => 'Это доход';
+  @override
+  String get fromStatement => 'из выписки';
+  @override
+  String get uncategorized => 'Без категории';
+  @override
+  String section({required Object title, required Object count}) =>
+      '${title} · ${count}';
+  @override
+  String get category => 'Категория';
+  @override
+  String get other => 'Другая';
+  @override
+  String get yes => 'Да';
+  @override
+  String categoryFor({required Object name}) => 'Категория для «${name}»';
+  @override
+  String sameName({
+    required num n,
+    required Object count,
+    required Object when,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one: 'так вы отметили его ${count} раз ${when}',
+    few: 'так вы отметили его ${count} раза ${when}',
+    many: 'так вы отметили его ${count} раз ${when}',
+    other: 'так вы отметили его ${count} раза ${when}',
+  );
+  @override
+  String everyMonth({required Object since}) =>
+      'та же сумма каждый месяц ${since}';
+  @override
+  String sameImport({required Object name}) => 'как «${name}» в этой выписке';
+  @override
+  String similarName({required Object name, required Object when}) =>
+      'как «${name}» ${when}';
+  @override
+  String since({required Object month}) => 'с ${month}';
+  @override
+  String more({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'и ещё ${count} операция',
+        few: 'и ещё ${count} операции',
+        many: 'и ещё ${count} операций',
+        other: 'и ещё ${count} операции',
+      );
+  @override
+  String picked({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Выбрана ${count} операция',
+        few: 'Выбраны ${count} операции',
+        many: 'Выбрано ${count} операций',
+        other: 'Выбрано ${count} операции',
+      );
+  @override
+  String get pickedCategory => 'Категория для выбранных';
+  @override
+  String get pickAll => 'Выбрать все';
+  @override
+  String get pickNone => 'Снять выбор';
+  @override
+  String pick({required Object name}) => 'Выбрать «${name}»';
+  @override
+  String get sourceTitle => 'Откуда подсказки';
+  @override
+  String get sourceText =>
+      'Из ваших прошлых решений: как вы уже называли эти места и какие категории им давали. Считается здесь, на устройстве.';
+  @override
+  String get learns =>
+      'Каждое «Да» учит Birka: такие операции дальше придут с той же подсказкой.';
+  @override
+  String get stillCounted =>
+      'Пока операция здесь, она уже есть в учёте и в отчётах, просто без категории.';
+  @override
+  String get failed => 'Не получилось. Попробуйте ещё раз.';
+  @override
+  String get madeTransfer => 'Сделали перевод';
 }
 
 // Path: onboarding
@@ -2469,10 +2603,107 @@ extension on TranslationsRu {
             }) => '${from} – ${to} ${year}',
           'imports.periodFar' =>
             ({required Object from, required Object to}) => '${from} – ${to}',
+          'inbox.title' => 'Входящие',
+          'inbox.back' => 'Назад',
+          'inbox.waiting' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} ждёт решения',
+                  few: '${count} ждут решения',
+                  many: '${count} ждут решения',
+                  other: '${count} ждут решения',
+                ),
+          'inbox.afterImport' =>
+            ({required Object bank}) => 'после импорта ${bank}',
+          'inbox.afterFile' =>
+            ({required Object name}) => 'после импорта «${name}»',
+          'inbox.filters.all' => 'Все',
+          'inbox.filters.uncategorized' => 'Без категории',
+          'inbox.filters.transfers' => 'Переводы',
+          'inbox.filtersLabel' => 'Что показать',
+          'inbox.emptyTitle' => 'Всё разобрано',
+          'inbox.emptyText' =>
+            'Здесь появятся операции без категории и переводы между вашими счетами, когда придут из выписки.',
+          'inbox.pairTitle' => 'Похоже на перевод между вашими счетами',
+          'inbox.pairText' =>
+            'Не трата и не доход: капитал от него не изменится',
+          'inbox.rate' =>
+            ({required Object rate, required Object unit}) =>
+                'Курс обмена ${rate} за ${unit}',
+          'inbox.bankRate' =>
+            ({required Object rate}) => 'ЦБ в тот день ${rate}',
+          'inbox.makeTransfer' => 'Сделать переводом',
+          'inbox.notTransfer' => 'Это доход',
+          'inbox.fromStatement' => 'из выписки',
+          'inbox.uncategorized' => 'Без категории',
+          'inbox.section' =>
+            ({required Object title, required Object count}) =>
+                '${title} · ${count}',
+          'inbox.category' => 'Категория',
+          'inbox.other' => 'Другая',
+          'inbox.yes' => 'Да',
+          'inbox.categoryFor' =>
+            ({required Object name}) => 'Категория для «${name}»',
+          'inbox.sameName' =>
+            ({required num n, required Object count, required Object when}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'так вы отметили его ${count} раз ${when}',
+                  few: 'так вы отметили его ${count} раза ${when}',
+                  many: 'так вы отметили его ${count} раз ${when}',
+                  other: 'так вы отметили его ${count} раза ${when}',
+                ),
+          'inbox.everyMonth' =>
+            ({required Object since}) => 'та же сумма каждый месяц ${since}',
+          'inbox.sameImport' =>
+            ({required Object name}) => 'как «${name}» в этой выписке',
+          'inbox.similarName' =>
+            ({required Object name, required Object when}) =>
+                'как «${name}» ${when}',
+          'inbox.since' => ({required Object month}) => 'с ${month}',
+          'inbox.more' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'и ещё ${count} операция',
+                  few: 'и ещё ${count} операции',
+                  many: 'и ещё ${count} операций',
+                  other: 'и ещё ${count} операции',
+                ),
+          'inbox.picked' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Выбрана ${count} операция',
+                  few: 'Выбраны ${count} операции',
+                  many: 'Выбрано ${count} операций',
+                  other: 'Выбрано ${count} операции',
+                ),
+          'inbox.pickedCategory' => 'Категория для выбранных',
+          'inbox.pickAll' => 'Выбрать все',
+          'inbox.pickNone' => 'Снять выбор',
+          'inbox.pick' => ({required Object name}) => 'Выбрать «${name}»',
+          'inbox.sourceTitle' => 'Откуда подсказки',
+          'inbox.sourceText' =>
+            'Из ваших прошлых решений: как вы уже называли эти места и какие категории им давали. Считается здесь, на устройстве.',
+          'inbox.learns' =>
+            'Каждое «Да» учит Birka: такие операции дальше придут с той же подсказкой.',
+          'inbox.stillCounted' =>
+            'Пока операция здесь, она уже есть в учёте и в отчётах, просто без категории.',
+          'inbox.failed' => 'Не получилось. Попробуйте ещё раз.',
+          'inbox.madeTransfer' => 'Сделали перевод',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
           'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
+          _ => null,
+        } ??
+        switch (path) {
           'onboarding.welcome.text' =>
             'Счета в любой валюте и без паролей от банков. Данные остаются на вашем устройстве.',
           'onboarding.welcome.start' => 'Начать',
@@ -2537,9 +2768,6 @@ extension on TranslationsRu {
           'overview.hideAmounts' => 'Скрыть суммы',
           'overview.showAmounts' => 'Показать суммы',
           'overview.changeIn.0' => 'за январь',
-          _ => null,
-        } ??
-        switch (path) {
           'overview.changeIn.1' => 'за февраль',
           'overview.changeIn.2' => 'за март',
           'overview.changeIn.3' => 'за апрель',

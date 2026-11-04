@@ -29,6 +29,7 @@ workspace:
   - packages/features/help/common
   - packages/features/help/flutter
   - packages/features/help/jaspr
+  - packages/features/inbox/common
   - packages/features/import/common
   - packages/features/import/jaspr
   - packages/features/onboarding/common

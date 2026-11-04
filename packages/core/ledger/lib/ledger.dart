@@ -4,6 +4,7 @@ library;
 
 export 'src/account.dart';
 export 'src/category.dart';
+export 'src/category_hints.dart';
 export 'src/category_presets.dart';
 export 'src/chart_period.dart';
 export 'src/civil_date.dart';
