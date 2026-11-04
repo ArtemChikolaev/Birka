@@ -1,0 +1,20 @@
+name: import_common
+description: >-
+  The import feature of Birka in pure Dart: statements from banks and other
+  apps read on the device, their formats and their rows, shared by both hosts.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  archive: ^4.5.2
+  decimal: ^3.2.6
+  ledger:
+    path: ../../../core/ledger
+  meta: ^1.17.0
+  xml: ^6.6.1
+
+dev_dependencies:
+  test: ^1.26.3

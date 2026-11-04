@@ -28,6 +28,7 @@
 | Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0 with a fix ([ADR 0015](0015-drift-closed-tabs.md)), 2.31.0, 0.2.8, 2.9.4 |
 | Settings of a device | shared_preferences | 2.5.5 |
 | Files | file_picker | 13.3.2 |
+| Statements | archive, xml | 4.5.2, 6.6.1 |
 | Help | url_launcher, package_info_plus, device_info_plus | 6.3.2, 10.2.2, 13.3.0 |
 | Ids | uuid | 4.6.0 |
 | Exchange rates | decimal, rational, http | 3.2.6, 2.2.3, 1.6.0 |
