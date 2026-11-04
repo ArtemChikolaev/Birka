@@ -147,5 +147,10 @@ check-site: ## Every page of the built site opens in Chrome without errors; BASE
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \
 		--target-platform android-arm64 --build-number=$(BUILD_NUMBER)
+	# Libraries of another ABI would let a phone without arm64 install an app
+	# that cannot start (ADR 0020).
+	abis="$$(unzip -Z1 apps/mobile/build/app/outputs/flutter-apk/app-release.apk \
+		'lib/*' | cut -d/ -f2 | sort -u | xargs)"; \
+		echo "ABIs of the APK: $$abis"; test "$$abis" = arm64-v8a
 
 check: analyze test ## What CI checks on every pull request (VM only)

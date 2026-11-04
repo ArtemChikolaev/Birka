@@ -10,6 +10,19 @@ plugins {
 // --release` and the APK of every pull request still build.
 val releaseKeystore: String? = System.getenv("BIRKA_KEYSTORE")
 
+// Flutter builds its engine and the app only for `--target-platform`, arm64 in
+// `make build-apk`, while the plugins bring libraries for more ABIs. An APK
+// with those would install on a phone that cannot start it (ADR 0020).
+val targetAbis: List<String>? =
+    (findProperty("target-platform") as String?)?.split(",")?.map {
+        when (it) {
+            "android-arm" -> "armeabi-v7a"
+            "android-arm64" -> "arm64-v8a"
+            "android-x64" -> "x86_64"
+            else -> throw GradleException("Unknown platform of Flutter: $it")
+        }
+    }
+
 android {
     namespace = "io.github.artemchikolaev.birka"
     compileSdk = flutter.compileSdkVersion
@@ -50,6 +63,11 @@ android {
         release {
             signingConfig =
                 signingConfigs.getByName(if (releaseKeystore != null) "release" else "debug")
+            // The plugin of Flutter has put its default ABIs here already.
+            if (targetAbis != null) {
+                ndk.abiFilters.clear()
+                ndk.abiFilters += targetAbis
+            }
         }
     }
 }
