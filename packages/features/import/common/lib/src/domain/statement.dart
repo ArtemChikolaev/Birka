@@ -313,9 +313,13 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
       if (columns.containsKey(ColumnRole.amount)) {
         final amount = moneyOf(row, ColumnRole.amount);
         if (amount != null && amount != Decimal.zero) {
-          final spent = options.sign == AmountSign.expenseNegative
-              ? amount < Decimal.zero
-              : amount > Decimal.zero;
+          final spent = switch (options.sign) {
+            AmountSign.expenseNegative => amount < Decimal.zero,
+            AmountSign.expensePositive => amount > Decimal.zero,
+            AmountSign.incomePlus =>
+              amount < Decimal.zero ||
+                  !hasPlus(cellOf(row, ColumnRole.amount)!),
+          };
           final leg = StatementLeg(
             account: _keyOf(account, currency),
             amount: amount.abs(),

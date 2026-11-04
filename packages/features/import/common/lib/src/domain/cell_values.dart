@@ -10,6 +10,10 @@ enum AmountSign {
 
   /// Above zero.
   expensePositive,
+
+  /// Without a sign, while money received carries a plus, as Sberbank writes
+  /// it.
+  incomePlus,
 }
 
 /// What stands between the whole part of an amount and its fraction.
@@ -223,6 +227,33 @@ DecimalMark? guessDecimalMark(Iterable<Cell> cells) {
   if (comma == dot) return null;
   return comma > dot ? DecimalMark.comma : DecimalMark.dot;
 }
+
+/// [AmountSign.incomePlus] when the amounts of [cells] carry no minus and
+/// some of them a plus, or `null` when they say nothing of it.
+AmountSign? guessAmountSign(Iterable<Cell> cells) {
+  var plus = false;
+  var bare = false;
+  for (final cell in cells) {
+    if (cell.kind != CellKind.text || cell.isBlank) continue;
+    final text = cell.text.trim();
+    if (text.startsWith('-') ||
+        text.startsWith('(') ||
+        text.endsWith('-') ||
+        text.contains(_minuses)) {
+      return null;
+    }
+    if (text.startsWith('+')) {
+      plus = true;
+    } else {
+      bare = true;
+    }
+  }
+  return plus && bare ? AmountSign.incomePlus : null;
+}
+
+/// Whether the text of [cell] marks its amount with a plus.
+bool hasPlus(Cell cell) =>
+    cell.kind == CellKind.text && cell.text.trim().startsWith('+');
 
 /// The order that [cells] show, by a part that cannot be a month, or `null`
 /// when nothing tells, as with `03.10.2026` alone.

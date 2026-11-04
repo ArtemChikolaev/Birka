@@ -23,9 +23,10 @@
    operations into a `Statement`; the hosts pick the file and draw the steps.
    Files are read on the device and never leave it.
 2. `FileStatementReader` tells a file by its first bytes, not by its name: a
-   ZIP archive is an Excel workbook, anything else is read as CSV. PDF, a
-   workbook of Excel 97 (`.xls`), HTML and pictures are refused with a reason
-   that the hosts can name. A file has at most 10 000 rows and 20 MB.
+   ZIP archive is an Excel workbook, a PDF goes to the reader of PDF, and
+   anything else is read as CSV. A workbook of Excel 97 (`.xls`), HTML and
+   pictures are refused with a reason that the hosts can name. A file has at
+   most 10 000 rows and 20 MB.
 3. In CSV, a byte order mark tells UTF-8 or UTF-16, zero bytes tell UTF-16
    without a mark, valid UTF-8 stays UTF-8, and anything else is
    Windows-1251. The separator is whichever of `;`, `,`, tab and `|` splits
@@ -34,11 +35,25 @@
 4. A workbook opens with `archive`, and `xml` reads its parts as a stream of
    events. The first sheet counts. Numbers stay exact decimals, and a number
    in the format of a date becomes a date, as Excel shows it.
+
+   A PDF holds text where it stands on a page, not a table, so a PDF reads
+   only when Birka knows its bank: for now Sberbank, which gives its clients
+   no other file. A small reader of our own takes what such files are made
+   of: the cross-reference as a table or a stream, objects in object streams,
+   streams in Flate, composite fonts with their ToUnicode maps, and text
+   placed by the matrices of text and graphics. It groups the text into lines
+   by their height. The reading of Sberbank turns the two lines of each
+   operation into a row of the columns of the statement, keeps a fee that an
+   amount holds apart, and refuses a statement whose operations miss its
+   totals (`UnreadableReason.incomplete`). A scan, an encrypted file and the
+   PDF of another bank are refused.
 5. A cell keeps what the file stores: text, a number or a date. Amounts stay
    `Decimal` until the account and its currency are known
    ([ADR 0003](0003-money-representation.md)). Text reads with one decimal
    mark at a time, and the other separator counts only between groups of
    three digits, so a wrong mark reads nothing rather than something wrong.
+   Money spent is below zero, above zero, or without a sign while money
+   received carries a plus, as the format says or the values show.
    Dates read day first or month first; a date that starts with four digits
    always starts with the year.
 6. The known formats are data (`statementFormats`): Alfa-Bank, T-Bank,
@@ -83,7 +98,8 @@
 | The `excel` or `spreadsheet_decoder` package | a new dependency for what `archive` and `xml`, already in the lock file, do here in a few hundred lines; both build the whole workbook as objects |
 | Reading amounts by both marks at once | `1,234` would silently mean either 1234 or 1.234 |
 | Telling the format by the name of the file | banks rename their exports, and people do too |
-| PDF statements | the text of a PDF holds no table; a later decision can add them |
+| A package for PDF: `pdfrx`, `syncfusion_flutter_pdf` or pdf.js on the site | native code or Flutter, so no pure-Dart core for both hosts, or a license of its own; the statements need only text, from a few kinds of file |
+| Reading any PDF as a table by the positions of its text | each bank lays its statement out differently, and a wrong guess puts wrong amounts into the ledger |
 
 ## Consequences
 
@@ -95,5 +111,6 @@
   record.
 - Two banks with the same headers look like one. They read alike, so only the
   name that the hosts show is wrong, and the person can pick another format.
-- `.xls` of Excel 97 and PDF are refused for now; the hosts suggest saving the
-  file as `.xlsx` or CSV.
+- `.xls` of Excel 97 and the PDF of other banks are refused for now; the
+  hosts suggest saving the file as `.xlsx` or CSV, which most banks give.
+  Another bank's PDF needs a reading of its own on the same reader.

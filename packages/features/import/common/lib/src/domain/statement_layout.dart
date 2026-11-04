@@ -177,7 +177,7 @@ StatementLayout layoutAs(StatementTable table, StatementFormat format) {
     final row = table.rows[index];
     final named = row.cells.where((cell) => !cell.isBlank).length;
     if (named < 2) continue;
-    final roles = _rolesOf(row, format);
+    final roles = _knownRoles(row, format);
     final known = row.cells
         .where((cell) => format.columns.containsKey(normalizeHeader(cell.text)))
         .length;
@@ -192,12 +192,11 @@ StatementLayout layoutAs(StatementTable table, StatementFormat format) {
   return best;
 }
 
-/// The roles of [headers] as [format] knows them. A header that the format
-/// does not know tells its role by its words, as in a file of no known
-/// format, unless the format gave that role to another column.
-List<ColumnRole> _rolesOf(TableRow headers, StatementFormat format) {
+/// The roles of [headers] that [format] knows; a match needs its date and
+/// money among them.
+List<ColumnRole> _knownRoles(TableRow headers, StatementFormat format) {
   final taken = <ColumnRole>{};
-  final roles = [
+  return [
     for (final cell in headers.cells)
       switch (format.columns[normalizeHeader(cell.text)]) {
         final role? when StatementLayout._shared.contains(role) => role,
@@ -205,6 +204,17 @@ List<ColumnRole> _rolesOf(TableRow headers, StatementFormat format) {
         _ => ColumnRole.skip,
       },
   ];
+}
+
+/// The roles of [headers] read as [format]: those it knows, and for a header
+/// that it does not know the role its words tell, as in a file of no known
+/// format, unless the format gave that role to another column.
+List<ColumnRole> _rolesOf(TableRow headers, StatementFormat format) {
+  final roles = _knownRoles(headers, format);
+  final taken = {
+    for (final role in roles)
+      if (!StatementLayout._shared.contains(role)) role,
+  };
   for (final (index, cell) in headers.cells.indexed) {
     final header = normalizeHeader(cell.text);
     if (format.columns.containsKey(header)) continue;
@@ -273,7 +283,10 @@ StatementLayout _layoutOf(
   final words = header >= 0 ? table.rows[header].cells : const <Cell>[];
   final cyrillic = words.any((cell) => _cyrillic.hasMatch(cell.text));
   final options = ReadingOptions(
-    sign: format?.sign ?? AmountSign.expenseNegative,
+    sign:
+        format?.sign ??
+        guessAmountSign(cellsOf((role) => role == ColumnRole.amount)) ??
+        AmountSign.expenseNegative,
     decimalMark:
         guessDecimalMark(cellsOf(_holdsMoney)) ??
         format?.decimalMark ??

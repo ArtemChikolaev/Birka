@@ -10,6 +10,7 @@ import 'package:import_common/src/domain/statement_table.dart';
 const List<StatementFormat> statementFormats = [
   alfa,
   tbank,
+  sber,
   zenmoney,
   wise,
   revolut,
@@ -78,6 +79,30 @@ const tbank = StatementFormat(
     'сумма операции с округлением': ColumnRole.skip,
     'бонусы (включая кэшбэк)': ColumnRole.skip,
     'учет в аналитике': ColumnRole.skip,
+  },
+);
+
+/// Sberbank: the PDF of a statement of an account from its online bank, the
+/// only file it gives, read into a table by its own reader. Money spent has
+/// no sign and money received a plus; a fee that an amount holds stands
+/// apart. Checked against a real statement of November 2026.
+const sber = StatementFormat(
+  id: 'sber',
+  file: TableFile.pdf,
+  sign: AmountSign.incomePlus,
+  decimalMark: DecimalMark.comma,
+  dateOrder: DateOrder.dayMonthYear,
+  columns: {
+    'дата операции (мск)': ColumnRole.date,
+    'дата обработки': ColumnRole.skip,
+    'код авторизации': ColumnRole.skip,
+    'категория': ColumnRole.category,
+    'описание операции': ColumnRole.description,
+    'сумма в валюте счета': ColumnRole.amount,
+    'сумма в валюте операции': ColumnRole.skip,
+    'комиссия': ColumnRole.fee,
+    'валюта счета': ColumnRole.currency,
+    'карта': ColumnRole.card,
   },
 );
 
