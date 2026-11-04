@@ -23,3 +23,6 @@ import: Импорт
 data: Данные
 support: Поддержка
 help: Помощь и отзыв
+keptOnDevice: данные хранятся на этом устройстве
+keptInBrowser: данные хранятся в этом браузере
+sourceCode: Исходный код на GitHub

@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:help_common/help_common.dart' show HelpCubit;
+import 'package:help_common/help_common.dart' show HelpCubit, HelpLinks;
 import 'package:help_flutter/help_flutter.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:onboarding_flutter/onboarding_flutter.dart';
@@ -177,7 +177,7 @@ GoRouter buildRouter(
                 path: Paths.more,
                 builder: (context, state) => BlocProvider(
                   create: (_) => getIt<SettingsCubit>(),
-                  child: const MorePage(),
+                  child: MorePage(links: getIt<HelpLinks>()),
                 ),
               ),
             ],

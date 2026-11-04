@@ -17,18 +17,26 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
+    final barBottom = max(
+      BirkaTokens.spaceXl,
+      MediaQuery.viewPaddingOf(context).bottom,
+    );
     return Scaffold(
       // The keyboard covers the bar instead of pushing it over the content.
       resizeToAvoidBottomInset: false,
       body: AmbientBackground(
         child: Stack(
           children: [
-            Positioned.fill(child: shell),
+            Positioned.fill(
+              child: GlassNavBarSpace(
+                height: barBottom + BirkaTokens.sizeNavBar,
+                child: shell,
+              ),
+            ),
             Positioned(
               left: BirkaTokens.spaceXxl,
               right: BirkaTokens.spaceXxl,
-              bottom: max(BirkaTokens.spaceXl, bottomInset),
+              bottom: barBottom,
               // Goes down as the page of an account grows out of its card.
               child: BirkaGiveWay(
                 child: GlassNavBar(

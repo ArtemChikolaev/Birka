@@ -5,6 +5,7 @@ import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:backup_common/backup_common.dart';
 import 'package:backup_flutter/backup_flutter.dart';
 import 'package:birka_mobile/app/app.dart';
+import 'package:birka_mobile/app/app_version.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
@@ -227,6 +228,24 @@ final class _NoWayOut implements HelpLinks {
   Future<void> copy(String text) async {}
 }
 
+/// Ways out that keep the pages they were asked to open.
+final class _Links implements HelpLinks {
+  final pages = <Uri>[];
+  bool opens = true;
+
+  @override
+  Future<bool> mail(Uri letter) async => false;
+
+  @override
+  Future<bool> open(Uri page) async {
+    pages.add(page);
+    return opens;
+  }
+
+  @override
+  Future<void> copy(String text) async {}
+}
+
 final class _NoReports implements ReportsRepository {
   @override
   Stream<Currency?> watchMainCurrency() => Stream.value(null);
@@ -286,10 +305,12 @@ void main() {
   late _Transactions transactions;
   late _Overview overview;
   late _Settings settings;
+  late _Links links;
 
   setUp(() {
     getIt = GetIt.asNewInstance();
     settings = _Settings();
+    links = _Links();
     accounts = _Accounts();
     final CategoriesRepository categories = _NoCategories();
     transactions = _Transactions();
@@ -324,6 +345,7 @@ void main() {
         ),
       )
       ..registerSingleton<SettingsStore>(settings)
+      ..registerSingleton<HelpLinks>(links)
       ..registerFactory(
         () => SettingsCubit(
           settings,
@@ -755,6 +777,50 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.help.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  Future<Finder> scrollToTheEndOfMore(WidgetTester tester) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    final code = find.text(t.app.sourceCode);
+    await tester.scrollUntilVisible(
+      code,
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(MorePage),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    return code;
+  }
+
+  testWidgets('the more tab ends with the version, the code and the rates', (
+    tester,
+  ) async {
+    final code = await scrollToTheEndOfMore(tester);
+
+    expect(
+      find.text('Birka $appVersion · ${t.app.keptOnDevice}'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('cbr-xml-daily.ru'), findsOneWidget);
+    await tester.tap(code);
+    await tester.pumpAndSettle();
+    expect(links.pages, [codePage]);
+    expect(find.text(t.help.noPage), findsNothing);
+  });
+
+  testWidgets('says so when the code does not open', (tester) async {
+    links.opens = false;
+    final code = await scrollToTheEndOfMore(tester);
+
+    await tester.tap(code);
+    await tester.pumpAndSettle();
+    expect(find.text(t.help.noPage), findsOneWidget);
   });
 
   testWidgets('categories open from the more tab with the kind on screen', (

@@ -1,14 +1,19 @@
+import 'package:birka_mobile/app/app_version.dart';
 import 'package:birka_mobile/app/router.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:help_common/help_common.dart';
 import 'package:l10n/l10n.dart';
 import 'package:settings_flutter/settings_flutter.dart';
 
 /// The tab with everything that has no tab of its own, and the settings.
 class MorePage extends StatelessWidget {
-  /// Creates the page.
-  const MorePage({super.key});
+  /// Creates the page; [links] open the code of Birka.
+  const MorePage({required this.links, super.key});
+
+  /// The ways out of the app.
+  final HelpLinks links;
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +87,65 @@ class MorePage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: BirkaTokens.spaceMd),
-          Text(
-            '${t.settings.ratesCredit}: cbr-xml-daily.ru',
-            style: styles.caption.copyWith(color: colors.textSubtle),
-          ),
+          const SizedBox(height: BirkaTokens.spaceLg),
+          _Footer(links: links),
         ],
       ),
+    );
+  }
+}
+
+/// The end of the page: the version, where the records live, the code and
+/// where the rates come from.
+class _Footer extends StatelessWidget {
+  const _Footer({required this.links});
+
+  final HelpLinks links;
+
+  Future<void> _openCode(BuildContext context) async {
+    if (await links.open(codePage)) return;
+    if (context.mounted) showGlassToast(context, t.help.noPage, trouble: true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    final caption = styles.caption.copyWith(color: colors.textSubtle);
+    return Column(
+      children: [
+        Text(
+          'Birka $appVersion · ${t.app.keptOnDevice}',
+          style: caption,
+          textAlign: TextAlign.center,
+        ),
+        Semantics(
+          link: true,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _openCode(context),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BirkaTokens.spaceMd,
+                vertical: BirkaTokens.spaceXs,
+              ),
+              child: Text(
+                t.app.sourceCode,
+                style: caption.copyWith(
+                  color: colors.textMuted,
+                  decoration: TextDecoration.underline,
+                  decorationColor: colors.textMuted,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Text(
+          '${t.settings.ratesCredit}: cbr-xml-daily.ru',
+          style: caption,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

@@ -6,3 +6,6 @@ const supportAddress = 'birka.help@yandex.com';
 final Uri issuesPage = Uri.parse(
   'https://github.com/ArtemChikolaev/Birka/issues',
 );
+
+/// Where the code of Birka is open to read.
+final Uri codePage = Uri.parse('https://github.com/ArtemChikolaev/Birka');

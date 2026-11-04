@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:design_flutter/src/components/birka_icon.dart';
+import 'package:design_flutter/src/components/glass_nav_bar.dart';
 import 'package:design_flutter/src/components/glass_surface.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
 import 'package:design_flutter/src/theme/birka_motion.dart';
@@ -53,17 +54,20 @@ OverlayEntry? _shown;
 
 /// Shows [text] in a [GlassToast] over the bottom of the screen for a few
 /// seconds, in place of the toast before it, and reads it out to screen
-/// readers. It comes up from below with a little bounce over
+/// readers. Shown from a tab, it stands above the bar of the tabs
+/// ([GlassNavBarSpace]). It comes up from below with a little bounce over
 /// `duration.spring` and goes a little down as it fades over
 /// `duration.base`; when the system asks for less motion, it only fades.
 /// It needs an [Overlay], such as that of a navigator.
 void showGlassToast(BuildContext context, String text, {bool trouble = false}) {
   _shown?.remove();
+  final bar = GlassNavBarSpace.of(context);
   late final OverlayEntry entry;
   entry = OverlayEntry(
     builder: (context) => _Toast(
       text: text,
       trouble: trouble,
+      bar: bar,
       onGone: () {
         if (!identical(_shown, entry)) return;
         _shown = null;
@@ -86,11 +90,15 @@ class _Toast extends StatefulWidget {
   const _Toast({
     required this.text,
     required this.trouble,
+    required this.bar,
     required this.onGone,
   });
 
   final String text;
   final bool trouble;
+
+  /// How far the bar of the tabs reaches up, or 0 without one.
+  final double bar;
   final VoidCallback onGone;
 
   @override
@@ -141,9 +149,11 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
     return Positioned(
       left: BirkaTokens.spaceLg + media.padding.left,
       right: BirkaTokens.spaceLg + media.padding.right,
-      bottom:
-          BirkaTokens.spaceLg +
-          max(media.viewPadding.bottom, media.viewInsets.bottom),
+      bottom: max(
+        BirkaTokens.spaceLg +
+            max(media.viewPadding.bottom, media.viewInsets.bottom),
+        widget.bar + BirkaTokens.spaceSm,
+      ),
       // The overlay stands outside the material of the pages, so the toast
       // gives its text the style that a page would.
       child: DefaultTextStyle(
