@@ -139,7 +139,8 @@
     columns, its accounts, the copies and the result, and opens a step only
     when the ones before it allow. Birka chooses what it can: an open account
     of the currency with the digits of the card or the same name, else a new
-    one named by the bank and the card; a category of the same name and kind,
+    one named by the bank and the card, and a file that names no currency is
+    in the base currency of the device; a category of the same name and kind,
     a subcategory for «Parent / Child», and new categories for Zenmoney. A
     category of a bank that plainly means a preset, such as «Супермаркеты» or
     «Такси» of T-Bank (`bankCategoryPresets`), goes into the category of that
