@@ -35,6 +35,10 @@
    | Transfer | two on different accounts, with opposite signs | none |
    | Adjustment | one | none |
 
+   An allocation of an imported expense or income can wait for its category:
+   it has the amount and no category until the person picks one
+   ([ADR 0021](0021-statements.md)).
+
 2. A transfer between currencies keeps both amounts as they happened: the
    rate follows from them and is never recomputed. A fee is a separate expense.
 3. A balance is the opening balance plus the entries that are not planned. It

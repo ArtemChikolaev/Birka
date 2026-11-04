@@ -200,6 +200,20 @@ void main() {
     expect(ring.slices.single.color, 'var(--color-text-subtle)');
   });
 
+  testComponents('shows what waits for a category under its own name', (
+    tester,
+  ) async {
+    repository.rows[(CategoryKind.expense, october)]!.add(
+      CategoryTotal(null, rub(500000)),
+    );
+    await pump(tester);
+
+    expect(find.text('Без категории'), findsOneComponent);
+    final ring =
+        find.byType(BirkaRing).evaluate().single.component as BirkaRing;
+    expect(ring.slices.last.color, 'var(--color-text-subtle)');
+  });
+
   testComponents('shows each category with its change and its bar', (
     tester,
   ) async {

@@ -22,3 +22,4 @@
 | [0018](0018-help.md) | Help and feedback without a server | accepted 2026-11-03 |
 | [0019](0019-demo.md) | The demo in a database of its own | accepted 2026-11-03 |
 | [0020](0020-android-releases.md) | Releases of the Android app | accepted 2026-11-04 |
+| [0021](0021-statements.md) | Statements read on the device | accepted 2026-11-04 |

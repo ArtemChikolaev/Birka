@@ -12,6 +12,7 @@ void main() {
 
   test('creates every table of the schema', () async {
     expect(database.allTables.map((table) => table.actualTableName), [
+      'imports',
       'accounts',
       'categories',
       'transactions',

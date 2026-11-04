@@ -195,8 +195,8 @@ class _Header extends StatelessWidget {
 }
 
 /// The color of a category, whose color is its own choice.
-Color _colorOf(Category category, BirkaColors colors) {
-  final color = category.color;
+Color _colorOf(Category? category, BirkaColors colors) {
+  final color = category?.color;
   return color == null ? colors.textSubtle : BirkaColors.fromHex(color);
 }
 
@@ -233,7 +233,7 @@ class _Ring extends StatelessWidget {
           RingSlice(
             line.total.minorUnits.toDouble(),
             _colorOf(line.category, colors),
-            id: line.category.id,
+            id: categoryKey(line.category),
           ),
       ],
       child: Column(
@@ -278,7 +278,11 @@ class _Lines extends StatelessWidget {
     return GlassListGroup(
       children: [
         for (final line in report.lines)
-          _Line(key: ValueKey(line.category.id), line: line, kind: kind),
+          _Line(
+            key: ValueKey(categoryKey(line.category)),
+            line: line,
+            kind: kind,
+          ),
       ],
     );
   }
@@ -314,7 +318,7 @@ class _Line extends StatelessWidget {
               const SizedBox(width: BirkaTokens.spaceXs),
               Expanded(
                 child: Text(
-                  line.category.name,
+                  line.category?.name ?? t.app.noCategory,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: styles.bodyStrong.copyWith(color: colors.text),

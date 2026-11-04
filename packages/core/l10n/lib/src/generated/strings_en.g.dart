@@ -174,6 +174,9 @@ class Translations$app$en {
   /// en: 'soon'
   String get soon => 'soon';
 
+  /// en: 'No category'
+  String get noCategory => 'No category';
+
   Map<String, String> get currencies => {
     'RUB': 'Rubles',
     'USD': 'Dollars',
@@ -1451,6 +1454,7 @@ extension on Translations {
       'app.openElsewhere' =>
         'Birka is open in another tab. Close it and try again.',
       'app.soon' => 'soon',
+      'app.noCategory' => 'No category',
       'app.currencies.RUB' => 'Rubles',
       'app.currencies.USD' => 'Dollars',
       'app.currencies.EUR' => 'Euro',

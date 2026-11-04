@@ -9,7 +9,8 @@ List<Category> rankCategories(
   final uses = <String, int>{};
   for (final transaction in recent) {
     for (final allocation in transaction.allocations) {
-      uses.update(allocation.categoryId, (n) => n + 1, ifAbsent: () => 1);
+      final id = allocation.categoryId;
+      if (id != null) uses.update(id, (n) => n + 1, ifAbsent: () => 1);
     }
   }
   final places = {
