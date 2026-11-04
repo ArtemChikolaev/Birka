@@ -47,6 +47,10 @@ enum ColumnRole {
   /// The category that the bank or the app gave the operation.
   category,
 
+  /// The category that the person gave the operation in the bank or the
+  /// app, which wins over [category] when it is there.
+  ownCategory,
+
   /// The number of the card, of which the last four digits count.
   card,
 

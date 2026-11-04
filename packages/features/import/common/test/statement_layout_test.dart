@@ -210,7 +210,7 @@ void main() {
     });
   });
 
-  test('reads a table as the format a person chose', () {
+  test('reads a table as the format a person chose, the rest by words', () {
     final table = tableOf([
       ['Дата операции', 'Описание', 'Сумма', 'Статус'],
       ['03.10.2026', 'ZERNO', '-420,00', 'OK'],
@@ -222,10 +222,10 @@ void main() {
     expect(layout.roles, [
       ColumnRole.date,
       ColumnRole.description,
-      ColumnRole.skip,
+      ColumnRole.amount,
       ColumnRole.status,
     ]);
-    expect(layout.missing, {ColumnRole.amount});
+    expect(layout.missing, isEmpty);
   });
 
   test('moves a role that one column holds', () {

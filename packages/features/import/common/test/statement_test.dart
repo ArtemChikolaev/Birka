@@ -243,7 +243,187 @@ void main() {
     expect(cash.received, _d('1000'));
   });
 
-  test('leaves out what T-Bank did not carry out', () {
+  test('reads the export of T-Bank with its accounts and transfers', () {
+    const headers = [
+      'Имя счёта',
+      'Номер карты',
+      'Дата операции',
+      'Сумма операции',
+      'Валюта операции',
+      'Сумма в валюте счёта',
+      'Валюта счёта',
+      'Статус',
+      'Категория по-умолчанию',
+      'Ваша категория',
+      'MCC',
+      'Описание',
+      'Сообщение',
+      'Округление',
+      'Сумма операции с округлением',
+      'Бонусы (включая кэшбэк)',
+      'Учёт в аналитике',
+    ];
+    List<String> row(
+      String account,
+      String card,
+      String date,
+      String amount,
+      String inAccount,
+      String status,
+      String category,
+      String own,
+      String text, {
+      String currency = 'RUB',
+      String message = '',
+    }) => [
+      account,
+      card,
+      date,
+      amount,
+      currency,
+      inAccount,
+      'RUB',
+      status,
+      category,
+      own,
+      '',
+      text,
+      message,
+      '0,00',
+      inAccount,
+      '0,00',
+      'Да',
+    ];
+    final statement = _read(
+      tableOf([
+        headers,
+        row(
+          'Карта',
+          '*1234',
+          '03.11.2026 19:56:45',
+          '-1495,00',
+          '-1495,00',
+          'Ок',
+          'Переводы',
+          '',
+          'Иван П.',
+        ),
+        row(
+          'Карта',
+          '*1234',
+          '03.11.2026 14:18:36',
+          '2000,00',
+          '2000,00',
+          'Ок',
+          'Переводы',
+          '',
+          'Между своими счетами',
+        ),
+        row(
+          'Копилка',
+          '*5678',
+          '03.11.2026 14:18:31',
+          '-2000,00',
+          '-2000,00',
+          'Ок',
+          'Переводы',
+          '',
+          'Между своими счетами',
+        ),
+        row(
+          'Копилка',
+          '*5678',
+          '03.11.2026 14:18:21',
+          '-2000,00',
+          '-2000,00',
+          'Ошибка',
+          'Переводы',
+          '',
+          'Между своими счетами',
+        ),
+        row(
+          'Карта',
+          '*1234',
+          '02.11.2026 20:38:40',
+          '-10,00',
+          '-1050,00',
+          'Ок',
+          'Фастфуд',
+          'Обеды',
+          'Burger Berlin',
+          currency: 'EUR',
+        ),
+        row(
+          'Карта',
+          '*1234',
+          '02.11.2026 17:31:14',
+          '3000,00',
+          '3000,00',
+          'Ок',
+          'Переводы',
+          '',
+          'Между своими счетами',
+          message: 'на обед',
+        ),
+      ]),
+    );
+    expect(statement.layout.format, tbank);
+    expect(statement.layout.known, headers.length);
+    expect(statement.problems.map((it) => (it.line, it.fault)), [
+      (5, RowFault.declined),
+    ]);
+    final [alone, burger, transfer, ivan] = statement.rows;
+    expect(alone.into!.amount, _d('3000'));
+    expect(alone.out, isNull);
+    expect(alone.note, 'на обед');
+    expect(burger.out!.amount, _d('1050'));
+    expect(burger.out!.currency, 'RUB');
+    expect(burger.category, 'Обеды');
+    expect(burger.card, '1234');
+    expect(transfer.isTransfer, isTrue);
+    expect(transfer.out!.account, 'Копилка');
+    expect(transfer.out!.card, '5678');
+    expect(transfer.into!.account, 'Карта');
+    expect(transfer.into!.card, '1234');
+    expect(transfer.out!.amount, _d('2000'));
+    expect(
+      transfer.date.time,
+      const Duration(hours: 14, minutes: 18, seconds: 31),
+    );
+    expect(transfer.line, 3);
+    expect(ivan.out!.amount, _d('1495'));
+    final [card, piggy] = statement.accounts;
+    expect((card.key, card.operations), ('Карта', 4));
+    expect(card.cards, {'1234'});
+    expect(card.spent, _d('2545'));
+    expect(card.received, _d('5000'));
+    expect((piggy.key, piggy.operations), ('Копилка', 1));
+    expect(piggy.cards, {'5678'});
+    expect(piggy.spent, _d('2000'));
+  });
+
+  test('joins only what one transfer can be', () {
+    final statement = _read(
+      tableOf([
+        ['Account', 'Date', 'Amount', 'Description'],
+        ['Card', '03.11.2026 10:00:00', '-500', 'Between accounts'],
+        ['Savings', '03.11.2026 10:05:00', '500', 'Between accounts'],
+        ['Card', '03.11.2026 12:00:00', '-700', 'Shop'],
+        ['Savings', '03.11.2026 12:00:30', '700', 'Salary'],
+        ['Card', '03.11.2026 13:00:00', '-800', 'Same account'],
+        ['Card', '03.11.2026 13:00:10', '800', 'Same account'],
+        ['Card', '04.11.2026', '-900', 'To savings'],
+        ['Savings', '04.11.2026', '900', 'To savings'],
+      ]),
+    );
+    expect(statement.rows, hasLength(7));
+    final transfer = statement.rows.singleWhere((row) => row.isTransfer);
+    expect(transfer.out!.account, 'Card');
+    expect(transfer.into!.account, 'Savings');
+    expect(transfer.out!.amount, _d('900'));
+  });
+
+  test('leaves out what an older export of T-Bank did not carry out', () {
     final statement = _read(
       tableOf([
         [

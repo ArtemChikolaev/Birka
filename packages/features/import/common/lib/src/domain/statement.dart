@@ -14,6 +14,8 @@ final class StatementLeg {
     required this.account,
     required this.amount,
     this.currency,
+    this.balance,
+    this.card,
   });
 
   /// The key of the account in the file: see [SourceAccount.key].
@@ -24,6 +26,12 @@ final class StatementLeg {
 
   /// The code of the currency, when the file gives it.
   final String? currency;
+
+  /// The balance of the account after it, when the file gives one.
+  final Decimal? balance;
+
+  /// The last four digits of the card it went through.
+  final String? card;
 }
 
 /// An operation read from a statement, before it becomes a transaction.
@@ -39,8 +47,6 @@ final class StatementRow {
     this.description = '',
     this.note = '',
     this.category,
-    this.card,
-    this.balance,
   }) : assert(out != null || into != null, 'An operation moves money');
 
   /// The number of its row in the file.
@@ -67,11 +73,9 @@ final class StatementRow {
   /// The category of the bank or the app.
   final String? category;
 
-  /// The last four digits of the card.
-  final String? card;
-
-  /// The balance of the account after it.
-  final Decimal? balance;
+  /// The last four digits of the card that money left through, or reached
+  /// through when nothing left.
+  String? get card => out?.card ?? into?.card;
 
   /// Whether money moved between two accounts of the file.
   bool get isTransfer => out != null && into != null;
@@ -85,6 +89,14 @@ final class StatementRow {
       (into?.amount ?? Decimal.zero) -
       (out?.amount ?? Decimal.zero) -
       (fee ?? Decimal.zero);
+
+  /// What [leg] of it changed on the account of the leg: a fee leaves with
+  /// the money that left, or with money that arrived when nothing left.
+  Decimal changeOf(StatementLeg leg) => identical(leg, out)
+      ? -(leg.amount + (fee ?? Decimal.zero))
+      : out == null
+      ? leg.amount - (fee ?? Decimal.zero)
+      : leg.amount;
 }
 
 /// Why a row of a statement did not become an operation.
@@ -297,6 +309,7 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
     Decimal? fee;
     Decimal? balance;
     try {
+      balance = moneyOf(row, ColumnRole.balance);
       if (columns.containsKey(ColumnRole.amount)) {
         final amount = moneyOf(row, ColumnRole.amount);
         if (amount != null && amount != Decimal.zero) {
@@ -334,7 +347,6 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
       }
       final taken = moneyOf(row, ColumnRole.fee)?.abs();
       if (taken != null && taken > Decimal.zero) fee = taken;
-      balance = moneyOf(row, ColumnRole.balance);
     } on _Unreadable catch (error) {
       problems.add(RowProblem(row.line, RowFault.unreadableAmount, error.text));
       continue;
@@ -356,7 +368,17 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
     }
     final digits =
         cellOf(row, ColumnRole.card)?.text.replaceAll(_nonDigits, '') ?? '';
-    final category = textOf(row, ColumnRole.category);
+    final card = digits.length >= 4
+        ? digits.substring(digits.length - 4)
+        : null;
+    // A balance and a card belong to the one account of a row; a row of two
+    // accounts cannot say whose they are.
+    if ((out == null) != (into == null)) {
+      if (out != null) out = _onAccount(out, balance: balance, card: card);
+      if (into != null) into = _onAccount(into, balance: balance, card: card);
+    }
+    final own = textOf(row, ColumnRole.ownCategory);
+    final category = own.isNotEmpty ? own : textOf(row, ColumnRole.category);
     read.add(
       StatementRow(
         line: row.line,
@@ -367,17 +389,84 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
         description: description,
         note: textOf(row, ColumnRole.note),
         category: category.isEmpty ? null : category,
-        card: digits.length >= 4 ? digits.substring(digits.length - 4) : null,
-        balance: balance,
       ),
     );
   }
   _sortByTime(read);
+  final rows = _pairTransfers(read);
   return Statement(
     layout: layout,
-    rows: List.unmodifiable(read),
+    rows: List.unmodifiable(rows),
     problems: List.unmodifiable(problems),
-    accounts: _accountsOf(read),
+    accounts: _accountsOf(rows),
+  );
+}
+
+StatementLeg _onAccount(StatementLeg leg, {Decimal? balance, String? card}) =>
+    StatementLeg(
+      account: leg.account,
+      amount: leg.amount,
+      currency: leg.currency,
+      balance: balance,
+      card: card,
+    );
+
+/// [rows] with each transfer between two accounts of the file joined into one
+/// operation. A bank that exports several accounts lists such a transfer on
+/// each of them: the money that left one account and the same money that
+/// reached the other, in one currency and with one description, on one day
+/// and at most two minutes apart when the file gives times.
+List<StatementRow> _pairTransfers(List<StatementRow> rows) {
+  final joined = <StatementRow>[];
+  final taken = <int>{};
+  for (var index = 0; index < rows.length; index++) {
+    if (taken.contains(index)) continue;
+    final row = rows[index];
+    StatementRow? transfer;
+    for (var other = index + 1; other < rows.length; other++) {
+      final next = rows[other];
+      if (next.date.day != row.date.day) break;
+      if (taken.contains(other)) continue;
+      transfer = _transferOf(row, next);
+      if (transfer != null) {
+        taken.add(other);
+        break;
+      }
+    }
+    joined.add(transfer ?? row);
+  }
+  return joined;
+}
+
+/// The transfer that the two rows [a] and [b] make together, or `null`.
+StatementRow? _transferOf(StatementRow a, StatementRow b) {
+  if (a.isTransfer || b.isTransfer || a.fee != null || b.fee != null) {
+    return null;
+  }
+  final (from, to) = a.out != null ? (a, b) : (b, a);
+  final sent = from.out;
+  final received = to.into;
+  if (sent == null || received == null) return null;
+  if (sent.account == received.account ||
+      sent.currency != received.currency ||
+      sent.amount != received.amount ||
+      a.description.trim().toLowerCase() !=
+          b.description.trim().toLowerCase()) {
+    return null;
+  }
+  final (atA, atB) = (a.date.time, b.date.time);
+  if ((atA == null) != (atB == null)) return null;
+  if (atA != null && (atA - atB!).abs() > const Duration(minutes: 2)) {
+    return null;
+  }
+  return StatementRow(
+    line: from.line < to.line ? from.line : to.line,
+    date: from.date,
+    out: sent,
+    into: received,
+    description: from.description,
+    note: {from.note, to.note}.where((note) => note.isNotEmpty).join(' · '),
+    category: from.category ?? to.category,
   );
 }
 
@@ -411,12 +500,11 @@ List<SourceAccount> _accountsOf(List<StatementRow> rows) {
   final tallies = <String, _Tally>{};
   for (final row in rows) {
     for (final leg in [row.out, row.into].nonNulls) {
-      tallies
-          .putIfAbsent(leg.account, () => _Tally(leg.currency))
-          .add(row, leg);
-    }
-    if (!row.isTransfer && row.balance != null) {
-      tallies[row.account]!.balanced(row);
+      final tally = tallies.putIfAbsent(leg.account, () => _Tally(leg.currency))
+        ..add(row, leg);
+      if (leg.balance case final balance?) {
+        tally.balanced(balance, row.changeOf(leg));
+      }
     }
   }
   final accounts = [
@@ -467,11 +555,11 @@ final class _Tally {
       received += leg.amount;
       if (row.out == null) spent += row.fee ?? Decimal.zero;
     }
-    if (row.card != null) cards.add(row.card!);
+    if (leg.card case final card?) cards.add(card);
   }
 
-  void balanced(StatementRow row) {
-    opening ??= row.balance! - row.change;
-    closing = row.balance;
+  void balanced(Decimal balance, Decimal change) {
+    opening ??= balance - change;
+    closing = balance;
   }
 }

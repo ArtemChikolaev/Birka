@@ -192,9 +192,12 @@ StatementLayout layoutAs(StatementTable table, StatementFormat format) {
   return best;
 }
 
+/// The roles of [headers] as [format] knows them. A header that the format
+/// does not know tells its role by its words, as in a file of no known
+/// format, unless the format gave that role to another column.
 List<ColumnRole> _rolesOf(TableRow headers, StatementFormat format) {
   final taken = <ColumnRole>{};
-  return [
+  final roles = [
     for (final cell in headers.cells)
       switch (format.columns[normalizeHeader(cell.text)]) {
         final role? when StatementLayout._shared.contains(role) => role,
@@ -202,6 +205,16 @@ List<ColumnRole> _rolesOf(TableRow headers, StatementFormat format) {
         _ => ColumnRole.skip,
       },
   ];
+  for (final (index, cell) in headers.cells.indexed) {
+    final header = normalizeHeader(cell.text);
+    if (format.columns.containsKey(header)) continue;
+    final role = _roleByWords(header);
+    if (role == null) continue;
+    if (StatementLayout._shared.contains(role) || taken.add(role)) {
+      roles[index] = role;
+    }
+  }
+  return roles;
 }
 
 /// The layout of [table] guessed without a known format: the headers are the
