@@ -176,6 +176,19 @@ void main() {
     expect(guessDateOrder(cells(['03.10.2026', '2026-10-31'])), isNull);
   });
 
+  test('guesses a plus for money received when nothing has a minus', () {
+    List<Cell> cells(List<String> texts) => [
+      for (final text in texts) Cell.text(text),
+    ];
+    expect(
+      guessAmountSign(cells(['99,00', '+100,00', '25 000,00'])),
+      AmountSign.incomePlus,
+    );
+    expect(guessAmountSign(cells(['-99,00', '+100,00'])), isNull);
+    expect(guessAmountSign(cells(['99,00', '100,00'])), isNull);
+    expect(guessAmountSign(cells(['+99,00'])), isNull);
+  });
+
   test('turns the names of currencies into codes', () {
     expect(currencyCode('RUR'), 'RUB');
     expect(currencyCode(' ₽ '), 'RUB');

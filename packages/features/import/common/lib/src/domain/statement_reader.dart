@@ -4,7 +4,8 @@ import 'package:import_common/src/domain/statement_table.dart';
 
 /// Why a file did not become a table.
 enum UnreadableReason {
-  /// A PDF, which Birka does not read yet.
+  /// A PDF that Birka cannot read: of a bank whose PDF it does not know, a
+  /// scan or an encrypted file. It reads the statements of Sberbank.
   pdf,
 
   /// Neither a table of text nor a workbook.
@@ -19,6 +20,10 @@ enum UnreadableReason {
   /// More rows than [StatementReader.maxRows], or more bytes than
   /// [StatementReader.maxBytes].
   tooLarge,
+
+  /// A statement whose operations do not add up to the totals it gives: some
+  /// of them did not read.
+  incomplete,
 }
 
 /// A file that did not become a table.

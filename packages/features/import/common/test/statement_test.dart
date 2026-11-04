@@ -551,6 +551,24 @@ void main() {
     expect(statement.problems.single.text, 'Refused');
   });
 
+  test('reads a plus as money received when nothing has a minus', () {
+    final statement = _read(
+      tableOf([
+        ['Дата', 'Сумма', 'Описание'],
+        ['13.08.2026', '99,00', 'Комиссия'],
+        ['13.08.2026', '+100,00', 'Перевод'],
+        ['14.08.2026', '25 000,00', 'Перевод'],
+      ]),
+    );
+    expect(statement.layout.options.sign, AmountSign.incomePlus);
+    expect(
+      [
+        for (final row in statement.rows) row.change,
+      ],
+      [_d('-99'), _d('100'), _d('-25000')],
+    );
+  });
+
   test('reads columns of money in and out', () {
     final statement = _read(
       tableOf([

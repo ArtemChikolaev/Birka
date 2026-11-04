@@ -54,7 +54,8 @@ final class TableRow {
   /// Creates a row.
   const TableRow(this.line, this.cells);
 
-  /// The number of the row in the file, from 1.
+  /// The number of the row in the file, from 1. In a table read from a PDF it
+  /// is the number of the operation in the statement, and 0 for the headers.
   final int line;
 
   /// The cells, from the first column.
@@ -75,6 +76,9 @@ enum TableFile {
 
   /// An Excel workbook.
   xlsx,
+
+  /// A PDF statement of a bank whose table Birka knows how to read.
+  pdf,
 }
 
 /// A table read from a statement file, before anything knows what its

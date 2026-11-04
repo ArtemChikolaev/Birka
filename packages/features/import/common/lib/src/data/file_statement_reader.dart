@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:import_common/src/data/csv_table.dart';
+import 'package:import_common/src/data/pdf/pdf_table.dart';
 import 'package:import_common/src/data/xlsx_table.dart';
 import 'package:import_common/src/domain/statement_reader.dart';
 import 'package:import_common/src/domain/statement_table.dart';
 
-/// Reads statements in CSV and in Excel workbooks, on the device.
+/// Reads statements in CSV, in Excel workbooks and in the PDF of the banks
+/// whose PDF it knows, on the device.
 ///
 /// What a file is comes from its first bytes rather than its name: a bank can
 /// call a CSV `.xls`.
@@ -19,9 +21,7 @@ final class FileStatementReader implements StatementReader {
     if (bytes.length > StatementReader.maxBytes) {
       throw const UnreadableFile(UnreadableReason.tooLarge);
     }
-    if (_startsWith(bytes, '%PDF'.codeUnits)) {
-      throw const UnreadableFile(UnreadableReason.pdf);
-    }
+    if (_startsWith(bytes, '%PDF'.codeUnits)) return readPdf(fileName, bytes);
     if (_startsWith(bytes, const [0x50, 0x4b, 0x03, 0x04])) {
       return readXlsx(fileName, bytes);
     }
