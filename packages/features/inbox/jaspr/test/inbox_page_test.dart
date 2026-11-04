@@ -271,6 +271,20 @@ void main() {
     );
   });
 
+  testComponents('picks all only of those on screen', (tester) async {
+    for (var day = 1; day <= 30; day++) {
+      await spend(card, _rub(100 + day), CivilDate(2026, 11, 1), 'Касса $day');
+    }
+    await pump(tester);
+
+    expect(find.text('и ещё 2 операции'), findsOneComponent);
+
+    await clickText(tester, 'Выбрать все');
+
+    expect(find.text('Выбрано 30 операций'), findsOneComponent);
+    expect(cubit.state.selected, hasLength(30));
+  });
+
   testComponents('says when everything is sorted', (tester) async {
     await cubit.close();
     await database.close();

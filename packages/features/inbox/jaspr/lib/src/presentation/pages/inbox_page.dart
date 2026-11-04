@@ -299,8 +299,8 @@ class _InboxPageState extends State<InboxPage> {
       ];
     }
     final picked = state.picked;
-    final all =
-        items.isNotEmpty && items.every((it) => state.selected.contains(it.id));
+    final visible = [for (final item in items.take(_shown)) item.id];
+    final all = visible.isNotEmpty && visible.every(state.selected.contains);
     return [
       for (final pair in pairs)
         PairCard(
@@ -321,7 +321,7 @@ class _InboxPageState extends State<InboxPage> {
             button(
               classes: 'text-body-strong inbox__link',
               type: ButtonType.button,
-              onClick: cubit.toggleAll,
+              onClick: () => cubit.toggleAll(visible),
               [.text(all ? t.inbox.pickNone : t.inbox.pickAll)],
             ),
           ]),

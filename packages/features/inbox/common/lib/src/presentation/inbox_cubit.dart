@@ -273,11 +273,19 @@ final class InboxCubit extends Cubit<InboxState> {
     emit(state._with(selected: selected));
   }
 
-  /// Picks every operation on screen, or none when all of them are picked.
-  void toggleAll() {
-    final shown = {for (final item in state.shownItems) item.id};
-    final all = shown.isNotEmpty && shown.every(state.selected.contains);
-    emit(state._with(selected: all ? const {} : shown));
+  /// Picks every operation of [shown], those on screen, or puts them back
+  /// when all of them are picked. An operation past the screen is never
+  /// picked unseen.
+  void toggleAll(Iterable<String> shown) {
+    final ids = {...shown};
+    final all = ids.isNotEmpty && ids.every(state.selected.contains);
+    emit(
+      state._with(
+        selected: all
+            ? state.selected.difference(ids)
+            : {...state.selected, ...ids},
+      ),
+    );
   }
 
   /// Puts every picked operation back.
