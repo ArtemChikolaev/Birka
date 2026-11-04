@@ -89,8 +89,9 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: make build-apk BUILD_NUMBER=${{ github.run_number }}
-      # For trying a change on a phone. Every run signs with its own debug key
-      # until releases get a keystore, so remove the old app before installing.
+      # For trying a change on a phone. Every run signs with its own debug key,
+      # unlike a release with the key (ADR 0020), so remove the old app before
+      # installing.
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: birka-android

@@ -21,3 +21,4 @@
 | [0017](0017-motion.md) | How screens open and how things move | accepted 2026-11-03 |
 | [0018](0018-help.md) | Help and feedback without a server | accepted 2026-11-03 |
 | [0019](0019-demo.md) | The demo in a database of its own | accepted 2026-11-03 |
+| [0020](0020-android-releases.md) | Releases of the Android app | accepted 2026-11-04 |

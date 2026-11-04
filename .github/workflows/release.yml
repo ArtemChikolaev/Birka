@@ -1,0 +1,94 @@
+name: Release
+
+# A tag vX.Y.Z on main makes a release of the Android app (ADR 0020): an APK
+# signed with the key of the releases, on a release with the notes of
+# docs/releases/X.Y.Z.md. Until the owner adds the key, the release is a test
+# build: a pre-release signed with the debug key of its run.
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+
+jobs:
+  android:
+    name: Android release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: The tag stands on main and names the version of the app
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          grep -q "^version: ${version}+" apps/mobile/pubspec.yaml
+          test -f "docs/releases/${version}.md"
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version-file: .fvmrc
+          cache: true
+      - run: flutter pub get
+      - name: Build the APK
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          BIRKA_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          BIRKA_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          BIRKA_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          # Without the key Gradle signs with the debug key of this run: a test
+          # build, which the next release cannot update.
+          if [ -n "$KEYSTORE" ]; then
+            export BIRKA_KEYSTORE="$RUNNER_TEMP/release.jks"
+            printf '%s' "$KEYSTORE" | base64 --decode > "$BIRKA_KEYSTORE"
+            echo 'TEST_BUILD=false' >> "$GITHUB_ENV"
+          else
+            echo 'TEST_BUILD=true' >> "$GITHUB_ENV"
+          fi
+          # 0.1.0 is build 100, 1.2.3 is build 10203: each release comes after
+          # the one before.
+          IFS=. read -r major minor patch <<< "${GITHUB_REF_NAME#v}"
+          make build-apk BUILD_NUMBER=$((major * 10000 + minor * 100 + patch))
+          cp apps/mobile/build/app/outputs/flutter-apk/app-release.apk \
+            "birka-${GITHUB_REF_NAME}.apk"
+      - name: A release with the key carries no debug key
+        run: |
+          tools="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          "$tools/apksigner" verify --print-certs "birka-${GITHUB_REF_NAME}.apk" \
+            | tee certificates.txt
+          if [ "$TEST_BUILD" = false ] && grep -q 'CN=Android Debug' certificates.txt; then
+            echo '::error::The APK is signed with a debug key'
+            exit 1
+          fi
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          notes="docs/releases/${version}.md"
+          if [ "$TEST_BUILD" = true ]; then
+            # A test build says so above its notes.
+            { cat docs/releases/test-build.md; echo; cat "$notes"; } > notes.md
+            notes=notes.md
+          fi
+          # A published release is immutable (ADR 0004), so the APK goes into
+          # a draft first.
+          gh release create "$GITHUB_REF_NAME" --draft --prerelease="$TEST_BUILD" \
+            --verify-tag --title "Birka $version" --notes-file "$notes"
+          gh release upload "$GITHUB_REF_NAME" "birka-${GITHUB_REF_NAME}.apk"
+          # A pre-release never becomes the latest release.
+          if [ "$TEST_BUILD" = true ]; then
+            gh release edit "$GITHUB_REF_NAME" --draft=false
+          else
+            gh release edit "$GITHUB_REF_NAME" --draft=false --latest
+          fi
