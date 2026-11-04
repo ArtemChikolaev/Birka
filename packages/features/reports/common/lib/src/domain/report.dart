@@ -13,8 +13,8 @@ final class ReportLine {
     this.change,
   });
 
-  /// The category.
-  final Category category;
+  /// The category, or `null` for what waits for one.
+  final Category? category;
 
   /// What went through it this month.
   final Money total;
@@ -78,7 +78,7 @@ final class Report {
     final before = {
       for (final row in previousRows)
         if (row.total.currency == currency)
-          row.category.id: row.total.minorUnits,
+          categoryKey(row.category): row.total.minorUnits,
     };
     final biggest = kept.firstOrNull?.total.minorUnits ?? 0;
     final months = _monthsUpTo(month, monthTotals, currency);
@@ -98,7 +98,10 @@ final class Report {
             category: category,
             total: total,
             share: total.minorUnits / biggest,
-            change: _change(total.minorUnits, before[category.id] ?? 0),
+            change: _change(
+              total.minorUnits,
+              before[categoryKey(category)] ?? 0,
+            ),
           ),
       ],
       others: _others(rows, currency),

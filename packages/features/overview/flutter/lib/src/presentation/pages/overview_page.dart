@@ -344,7 +344,7 @@ class _SpendingCard extends StatelessWidget {
                 RingSlice(
                   amount.minorUnits.toDouble(),
                   _colorOf(category, colors),
-                  id: category.id,
+                  id: categoryKey(category),
                 ),
             ],
           ),
@@ -365,7 +365,10 @@ class _SpendingCard extends StatelessWidget {
                 AnimatedColumn(
                   children: [
                     for (final row in spending.top)
-                      _CategoryLine(key: ValueKey(row.category.id), row: row),
+                      _CategoryLine(
+                        key: ValueKey(categoryKey(row.category)),
+                        row: row,
+                      ),
                   ],
                 ),
                 if (spending.others.isNotEmpty)
@@ -383,8 +386,8 @@ class _SpendingCard extends StatelessWidget {
   }
 }
 
-Color _colorOf(Category category, BirkaColors colors) {
-  final color = category.color;
+Color _colorOf(Category? category, BirkaColors colors) {
+  final color = category?.color;
   return color == null ? colors.textSubtle : BirkaColors.fromHex(color);
 }
 
@@ -414,7 +417,7 @@ class _CategoryLine extends StatelessWidget {
           const SizedBox(width: BirkaTokens.spaceXs),
           Expanded(
             child: Text(
-              row.category.name,
+              row.category?.name ?? t.app.noCategory,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: styles.caption.copyWith(color: colors.textSecondary),

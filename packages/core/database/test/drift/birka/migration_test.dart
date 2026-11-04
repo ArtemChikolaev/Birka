@@ -9,6 +9,8 @@ import 'package:test/test.dart';
 import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
+import 'generated/schema_v3.dart' as v3;
+import 'generated/schema_v4.dart' as v4;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -63,4 +65,97 @@ void main() {
       },
     );
   });
+
+  test(
+    'a transaction keeps its category and comes from no import in v4',
+    () async {
+      const at = '2026-11-04T12:00:00.000Z';
+      await verifier.testWithDataIntegrity(
+        oldVersion: 3,
+        newVersion: 4,
+        createOld: v3.DatabaseAtV3.new,
+        createNew: v4.DatabaseAtV4.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch
+            ..insert(
+              old.accounts,
+              v3.AccountsCompanion.insert(
+                id: 'card',
+                createdAt: at,
+                updatedAt: at,
+                name: 'Card',
+                type: 'debit',
+                currency: 'RUB',
+                decimalDigits: 2,
+              ),
+            )
+            ..insert(
+              old.categories,
+              v3.CategoriesCompanion.insert(
+                id: 'cafe',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'expense',
+                name: 'Cafe',
+              ),
+            )
+            ..insert(
+              old.transactions,
+              v3.TransactionsCompanion.insert(
+                id: 'coffee',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'expense',
+                occurredOn: '2026-10-03',
+                status: 'cleared',
+                source: 'manual',
+              ),
+            )
+            ..insert(
+              old.entries,
+              v3.EntriesCompanion.insert(
+                id: 'coffee-entry',
+                createdAt: at,
+                updatedAt: at,
+                transactionId: 'coffee',
+                accountId: 'card',
+                amountMinor: -42000,
+              ),
+            )
+            ..insert(
+              old.allocations,
+              v3.AllocationsCompanion.insert(
+                id: 'coffee-cafe',
+                createdAt: at,
+                updatedAt: at,
+                transactionId: 'coffee',
+                categoryId: 'cafe',
+                amountMinor: 42000,
+              ),
+            );
+        },
+        validateItems: (migrated) async {
+          final allocation = await migrated
+              .select(migrated.allocations)
+              .getSingle();
+          expect(allocation.categoryId, 'cafe');
+          expect(allocation.amountMinor, 42000);
+          final transaction = await migrated
+              .select(migrated.transactions)
+              .getSingle();
+          expect(transaction.importId, isNull);
+          expect(
+            (await migrated.select(migrated.accounts).getSingle()).importId,
+            isNull,
+          );
+          expect(
+            (await migrated.select(migrated.categories).getSingle()).importId,
+            isNull,
+          );
+          expect(await migrated.select(migrated.imports).get(), isEmpty);
+        },
+      );
+    },
+  );
 }

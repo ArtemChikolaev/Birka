@@ -339,6 +339,21 @@ void main() {
     expect(find.text('50$space€'), findsOneComponent);
   });
 
+  testComponents('what waits for a category has a name of its own', (
+    tester,
+  ) async {
+    repository.spending = [
+      _total('Продукты', rub(3000000)),
+      CategoryTotal(null, rub(1200000)),
+    ];
+    await pump(tester);
+
+    expect(find.text('Без категории'), findsOneComponent);
+    final ring =
+        find.byType(BirkaRing).evaluate().single.component as BirkaRing;
+    expect(ring.slices.last.color, 'var(--color-text-subtle)');
+  });
+
   testComponents('a month without spending says so', (tester) async {
     repository.spending = const [];
     await pump(tester);

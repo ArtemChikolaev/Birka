@@ -566,7 +566,7 @@ void main() {
 
       final rows = await days();
 
-      expect(rows.map((row) => row.category.name), ['Cafe', 'Food']);
+      expect(rows.map((row) => row.category?.name), ['Cafe', 'Food']);
       expect(rows.map((row) => row.total), [rub(200), rub(500)]);
     });
 
@@ -598,7 +598,7 @@ void main() {
 
       final row = (await days()).single;
 
-      expect(row.category.name, 'Cafe');
+      expect(row.category?.name, 'Cafe');
       expect(row.total, rub(150));
     });
 
@@ -637,14 +637,14 @@ void main() {
       await ledger.record(spent(cafe, rub(100)));
       await ledger.updateCategory(cafe.id, archived: true);
 
-      expect((await days()).single.category.name, 'Cafe');
+      expect((await days()).single.category?.name, 'Cafe');
     });
 
     test('follow a new name', () async {
       await ledger.record(spent(cafe, rub(100)));
       final names = ledger
           .watchCategoryDays(CategoryKind.expense, from: october, to: end)
-          .map((rows) => rows.single.category.name);
+          .map((rows) => rows.single.category?.name);
       final seen = expectLater(names, emitsInOrder(['Cafe', 'Cafes']));
 
       await pumpEventQueue();

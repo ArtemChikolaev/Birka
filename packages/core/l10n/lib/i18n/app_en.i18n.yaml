@@ -9,6 +9,7 @@ storedHere: Your data stays in this browser and nowhere else.
 notStored: This browser cannot keep data, so it goes when you close the tab.
 openElsewhere: Birka is open in another tab. Close it and try again.
 soon: soon
+noCategory: No category
 currencies(map):
   RUB: Rubles
   USD: Dollars

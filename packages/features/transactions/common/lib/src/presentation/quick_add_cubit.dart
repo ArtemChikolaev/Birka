@@ -452,8 +452,10 @@ class QuickAddCubit extends Cubit<QuickAddState> {
         source: source,
       );
     }
+    // The form saves an expense or an income only once it has a category.
+    final categoryId = state.categoryId!;
     final allocations = [
-      Allocation(categoryId: state.categoryId!, amount: state.amount!),
+      Allocation(categoryId: categoryId, amount: state.amount!),
     ];
     return state.kind == TransactionKind.income
         ? TransactionDraft.income(

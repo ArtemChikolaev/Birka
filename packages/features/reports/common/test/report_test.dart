@@ -39,7 +39,7 @@ void main() {
     ]);
 
     expect(it.lines.map((line) => line.share), [1, 0.25]);
-    expect(it.lines.map((line) => line.category.name), ['Food', 'Cafe']);
+    expect(it.lines.map((line) => line.category?.name), ['Food', 'Cafe']);
   });
 
   test('compares each category with the month before', () {
@@ -57,9 +57,21 @@ void main() {
     );
 
     final changes = {
-      for (final line in it.lines) line.category.name: line.change,
+      for (final line in it.lines) line.category?.name: line.change,
     };
     expect(changes, {'Food': -4, 'Cafe': 35, 'Home': 0});
+  });
+
+  test('compares what waits for a category with the month before', () {
+    final it = report(
+      [testTotal('Food', rub(960)), CategoryTotal(null, rub(1200))],
+      previous: [testTotal('Food', rub(1000)), CategoryTotal(null, rub(1000))],
+    );
+
+    expect(it.total, rub(2160));
+    final line = it.lines.singleWhere((line) => line.category == null);
+    expect(line.total, rub(1200));
+    expect(line.change, 20);
   });
 
   test('a new category has nothing to compare with', () {

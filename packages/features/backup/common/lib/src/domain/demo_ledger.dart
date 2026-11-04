@@ -38,6 +38,11 @@ final class _Demo {
   final _balances = <String, int>{};
 
   final _categories = <String, String>{};
+
+  /// The id of the preset category [key]: every operation of the demo has
+  /// one.
+  String _categoryOf(String key) => _categories[key]!;
+
   late final String _card;
   late final String _cash;
   late final String _savings;
@@ -246,7 +251,7 @@ final class _Demo {
         accountId: from,
         allocations: [
           Allocation(
-            categoryId: _categories[category]!,
+            categoryId: _categoryOf(category),
             amount: Money(minor, currency),
           ),
         ],
@@ -270,7 +275,7 @@ final class _Demo {
         accountId: account,
         allocations: [
           Allocation(
-            categoryId: _categories[category]!,
+            categoryId: _categoryOf(category),
             amount: Money(minor, currency),
           ),
         ],

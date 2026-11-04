@@ -5,17 +5,18 @@ import 'package:rates/src/rate_book.dart';
 /// What went through each category of [rows], in [target] wherever a rate can
 /// take it there and in its own currency where none can yet. Each day goes
 /// through its own rate, and a total that took a rate is whole: it is only as
-/// exact as the rate. The biggest of each currency come first, and what a rate
-/// turned into nothing stays out, since a total is above zero.
+/// exact as the rate. The biggest of each currency come first, what waits for
+/// a category comes after the categories of its size, and what a rate turned
+/// into nothing stays out, since a total is above zero.
 List<CategoryTotal> totalsIn(
   Currency? target,
   List<CategoryDayTotal> rows,
   RateBook rates,
 ) {
-  final groups = <(String, Currency), List<CategoryDayTotal>>{};
+  final groups = <(String?, Currency), List<CategoryDayTotal>>{};
   for (final row in rows) {
     final currency = _shownIn(row.total.currency, target, rates);
-    (groups[(row.category.id, currency)] ??= []).add(row);
+    (groups[(row.category?.id, currency)] ??= []).add(row);
   }
   return [
     for (final MapEntry(key: (_, currency), value: parts) in groups.entries)
@@ -61,7 +62,12 @@ int _byCurrencyAndSize(CategoryTotal a, CategoryTotal b) {
   final currency = a.total.currency.code.compareTo(b.total.currency.code);
   if (currency != 0) return currency;
   final size = b.total.minorUnits.compareTo(a.total.minorUnits);
-  return size != 0
-      ? size
-      : a.category.sortOrder.compareTo(b.category.sortOrder);
+  return size != 0 ? size : _byOrder(a.category, b.category);
 }
+
+int _byOrder(Category? a, Category? b) => switch ((a, b)) {
+  (null, null) => 0,
+  (null, _) => 1,
+  (_, null) => -1,
+  (final a?, final b?) => a.sortOrder.compareTo(b.sortOrder),
+};

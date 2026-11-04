@@ -11,7 +11,8 @@ export 'package:ledger/ledger.dart'
         CategoryDayTotal,
         CategoryTotal,
         ChartPeriod,
-        CivilDate;
+        CivilDate,
+        categoryKey;
 
 export 'package:money/money.dart' show Money;
 export 'package:rates/rates.dart' show DayRates, RateBook;
