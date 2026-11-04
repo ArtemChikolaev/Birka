@@ -45,11 +45,14 @@
    Zenmoney, Wise and Revolut, each with the headers it knows, its decimal
    mark, its order of dates and the statuses of operations that went
    through. They follow what is known of these exports and get checked
-   against real files before people rely on them. Such files stay in
+   against real files before people rely on them. T-Bank is checked against
+   the CSV of its web cabinet of November 2026, which lists the accounts and
+   cards picked there together; the others are not yet. Real files stay in
    `private/`; the tests use made-up ones.
 7. A table matches a format when one of its first 30 rows has a date and
    money among the headers the format knows, and the format knows at least
-   60% of the named headers of that row. The highest share wins. Without a
+   60% of the named headers of that row. The highest share wins, and a header
+   that the format does not know tells its role by its words. Without a
    match, the row above the first operation is the row of headers, and the
    words of the headers or the values under them give the roles. The decimal
    mark and the order of dates come from the values when they tell, else from
@@ -63,8 +66,14 @@
    money that reached one. A row of Zenmoney with both is a transfer. A fee
    on top of an amount stays apart from it. The account of a leg is named by
    its column, else by the currency of the row, else it is the one account of
-   the file. Each `SourceAccount` sums its operations and, when the file has
-   balances, gives the balance before the first one and after the last.
+   the file, and a balance and a card belong to the leg of their account. A
+   bank that exports several accounts lists a transfer between them on each:
+   the money that left one and the same money that reached the other, in one
+   currency and with one description, on one day and at most two minutes
+   apart, become one operation. A category that the person gave in the bank
+   wins over the category of the bank. Each `SourceAccount` sums its
+   operations and, when the file has balances, gives the balance before the
+   first one and after the last.
 
 ## Options considered
 

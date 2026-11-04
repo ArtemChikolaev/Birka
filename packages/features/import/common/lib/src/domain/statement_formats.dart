@@ -42,31 +42,42 @@ const alfa = StatementFormat(
   },
 );
 
-/// T-Bank: a CSV of one card with the categories of the bank. The amount of
-/// the payment is in the currency of the card, the amount of the operation in
-/// the currency of the shop.
+/// T-Bank: a CSV of the accounts and cards picked on the page of operations
+/// in the web cabinet, with the categories of the bank and of the person,
+/// checked against a real export of November 2026. The amount in the currency
+/// of the account counts; the amount of the operation is in the currency of
+/// the shop. Only operations with the status «Ок» went through. The headers of
+/// older exports stay as other spellings.
 const tbank = StatementFormat(
   id: 'tbank',
   file: TableFile.csv,
   decimalMark: DecimalMark.comma,
   dateOrder: DateOrder.dayMonthYear,
-  accepted: {'ok'},
+  accepted: {'ок', 'ok'},
   columns: {
+    'имя счета': ColumnRole.account,
+    'номер карты': ColumnRole.card,
     'дата операции': ColumnRole.date,
     'дата платежа': ColumnRole.skip,
-    'номер карты': ColumnRole.card,
-    'статус': ColumnRole.status,
     'сумма операции': ColumnRole.skip,
     'валюта операции': ColumnRole.skip,
+    'сумма в валюте счета': ColumnRole.amount,
+    'валюта счета': ColumnRole.currency,
     'сумма платежа': ColumnRole.amount,
     'валюта платежа': ColumnRole.currency,
-    'кэшбэк': ColumnRole.skip,
+    'статус': ColumnRole.status,
+    'категория по-умолчанию': ColumnRole.category,
     'категория': ColumnRole.category,
+    'ваша категория': ColumnRole.ownCategory,
     'mcc': ColumnRole.skip,
     'описание': ColumnRole.description,
-    'бонусы (включая кэшбэк)': ColumnRole.skip,
+    'сообщение': ColumnRole.note,
+    'кэшбэк': ColumnRole.skip,
+    'округление': ColumnRole.skip,
     'округление на инвесткопилку': ColumnRole.skip,
     'сумма операции с округлением': ColumnRole.skip,
+    'бонусы (включая кэшбэк)': ColumnRole.skip,
+    'учет в аналитике': ColumnRole.skip,
   },
 );
 
