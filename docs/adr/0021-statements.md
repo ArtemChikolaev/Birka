@@ -109,6 +109,32 @@
     where it stands as «Без категории» in a quiet color after the categories
     of its size. The forms of the app still save an operation only with a
     category.
+13. A person chooses where each account of the file goes (an account of the
+    ledger, a new account with the balance before the statement, or nowhere)
+    and where each category of the bank goes for each kind of operation: a
+    category of the ledger, a new one, inside another new one as the
+    categories of Zenmoney are, or the inbox, where a category that nobody
+    chose goes too. Fees have a choice of their own. `planImport` turns the
+    rows into operations in the minor units of their accounts and names the
+    rows that cannot go in: a currency other than that of the account, more
+    digits than the currency has, a transfer in one currency with two
+    amounts. A transfer between two accounts of the file that go into one
+    account of the ledger stays out.
+14. An operation looks like a transaction of the ledger when that one moves
+    the same amount on the same account within a day of it. A name that
+    shares a word makes it likelier, and a transaction that an import brought
+    with the same day, amount and text is the operation itself imported
+    again. Each transaction stands for one operation at most, so two equal
+    operations of one file both go in. Copies stay out unless the person
+    keeps them. The plan also gives the balance of each account on the day of
+    the last operation after the import, to hold against the bank;
+    `prepareImport` reads what the plan needs of the ledger.
+15. `ImportRepository.write` puts a plan in through one `atomically`: the
+    import, its new accounts and categories with parents before their
+    subcategories, and its operations with what the bank wrote as their note
+    and each fee as an expense of its own, telling its progress operation by
+    operation. A year of Sberbank, 313 operations, goes in within 0.3 s on
+    the VM.
 
 ## Options considered
 
@@ -126,8 +152,8 @@
 - Before anything is written, the hosts can show the bank the file looks
   like, its columns with an example of each, the rows left out with their
   numbers and a summary for each account.
-- Finding the operations that are already in the ledger, the plan of an
-  import from a statement and the wizard come next, and extend this record.
+- The wizard on the site, the inbox and the sheet of the phone come next.
+  They draw these steps and keep the choices of a format for its next file.
 - A copy of the ledger is version 2 ([ADR 0016](0016-ledger-copy.md)): an app
   from before it says that the file comes from a newer version.
 - Two banks with the same headers look like one. They read alike, so only the

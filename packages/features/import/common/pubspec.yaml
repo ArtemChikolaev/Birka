@@ -14,7 +14,12 @@ dependencies:
   ledger:
     path: ../../../core/ledger
   meta: ^1.17.0
+  money:
+    path: ../../../core/money
   xml: ^6.6.1
 
 dev_dependencies:
+  database:
+    path: ../../../core/database
+  drift: ^2.31.0
   test: ^1.26.3
