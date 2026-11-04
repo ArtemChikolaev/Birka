@@ -1,0 +1,58 @@
+title: Входящие
+back: Назад
+waiting(n):
+  one: $count ждёт решения
+  few: $count ждут решения
+  many: $count ждут решения
+  other: $count ждут решения
+afterImport: после импорта $bank
+afterFile: после импорта «$name»
+filters(map):
+  all: Все
+  uncategorized: Без категории
+  transfers: Переводы
+filtersLabel: Что показать
+emptyTitle: Всё разобрано
+emptyText: Здесь появятся операции без категории и переводы между вашими счетами, когда придут из выписки.
+pairTitle: Похоже на перевод между вашими счетами
+pairText: "Не трата и не доход: капитал от него не изменится"
+rate: Курс обмена $rate за $unit
+bankRate: ЦБ в тот день $rate
+makeTransfer: Сделать переводом
+notTransfer: Это доход
+fromStatement: из выписки
+uncategorized: Без категории
+section: "$title · $count"
+category: Категория
+other: Другая
+yes: Да
+categoryFor: "Категория для «$name»"
+sameName(n):
+  one: так вы отметили его $count раз $when
+  few: так вы отметили его $count раза $when
+  many: так вы отметили его $count раз $when
+  other: так вы отметили его $count раза $when
+everyMonth: та же сумма каждый месяц $since
+sameImport: как «$name» в этой выписке
+similarName: как «$name» $when
+since: с $month
+more(n):
+  one: и ещё $count операция
+  few: и ещё $count операции
+  many: и ещё $count операций
+  other: и ещё $count операции
+picked(n):
+  one: Выбрана $count операция
+  few: Выбраны $count операции
+  many: Выбрано $count операций
+  other: Выбрано $count операции
+pickedCategory: Категория для выбранных
+pickAll: Выбрать все
+pickNone: Снять выбор
+pick: "Выбрать «$name»"
+sourceTitle: Откуда подсказки
+sourceText: "Из ваших прошлых решений: как вы уже называли эти места и какие категории им давали. Считается здесь, на устройстве."
+learns: "Каждое «Да» учит Birka: такие операции дальше придут с той же подсказкой."
+stillCounted: Пока операция здесь, она уже есть в учёте и в отчётах, просто без категории.
+failed: Не получилось. Попробуйте ещё раз.
+madeTransfer: Сделали перевод
