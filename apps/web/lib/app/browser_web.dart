@@ -4,8 +4,10 @@ import 'dart:js_interop_unsafe';
 
 import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/opened_database.dart';
+import 'package:birka_web/app/site_version.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+import 'package:help_common/help_common.dart';
 import 'package:sqlite3/wasm.dart';
 import 'package:web/web.dart' as web;
 
@@ -294,3 +296,43 @@ final class _BrowserFile implements ChosenFile {
   Future<Uint8List> read() async =>
       (await _file.arrayBuffer().toDart).toDart.asUint8List();
 }
+
+/// The ways out of the site for help: the mail app that the browser hands a
+/// `mailto:` address to, a new tab and the clipboard (ADR 0018). A page cannot
+/// learn whether a mail app took the letter, so it counts as handed over.
+final class BrowserHelpLinks implements HelpLinks {
+  /// Creates the ways out.
+  const BrowserHelpLinks();
+
+  @override
+  Future<bool> mail(Uri letter) async {
+    web.window.location.assign(letter.toString());
+    return true;
+  }
+
+  @override
+  Future<bool> open(Uri page) async {
+    final opened = web.window.open(page.toString(), '_blank');
+    // The page in the new tab gets no hold on this one.
+    opened?.opener = null;
+    return opened != null;
+  }
+
+  @override
+  Future<void> copy(String text) async {
+    try {
+      await web.window.navigator.clipboard.writeText(text).toDart;
+    } on Object {
+      return;
+    }
+  }
+}
+
+/// What a letter from the site says about it: the version of the site, the
+/// browser with its system, and the language of the browser.
+AppAbout get browserAbout => AppAbout(
+  version: siteVersion,
+  build: 'web',
+  system: browserSystem(web.window.navigator.userAgent),
+  locale: web.window.navigator.language,
+);

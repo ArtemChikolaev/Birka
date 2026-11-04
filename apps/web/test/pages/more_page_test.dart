@@ -35,7 +35,7 @@ void main() {
     ),
   );
 
-  testComponents('leads to the accounts, the categories and the data', (
+  testComponents('leads to the accounts, the categories, the data and help', (
     tester,
   ) async {
     pump(tester);
@@ -49,7 +49,13 @@ void main() {
             (element) =>
                 (element.component as DomComponent).attributes?['href'],
           ),
-      ['accounts/', 'categories/', 'data/', 'https://www.cbr-xml-daily.ru/'],
+      [
+        'accounts/',
+        'categories/',
+        'data/',
+        'help/',
+        'https://www.cbr-xml-daily.ru/',
+      ],
     );
     expect(
       find.descendant(of: find.tag('a'), matching: find.text('Счета')),
@@ -63,6 +69,10 @@ void main() {
       find.descendant(of: find.tag('a'), matching: find.text('Данные')),
       findsOneComponent,
     );
+    expect(
+      find.descendant(of: find.tag('a'), matching: find.text('Помощь и отзыв')),
+      findsOneComponent,
+    );
   });
 
   testComponents('says that the import is yet to come', (tester) async {
@@ -70,6 +80,14 @@ void main() {
 
     expect(find.text('Импорт'), findsOneComponent);
     expect(find.text('скоро'), findsOneComponent);
+  });
+
+  testComponents('names where the rates come from, at its end', (
+    tester,
+  ) async {
+    pump(tester);
+
+    expect(find.text('Курсы ЦБ РФ в XML и JSON, API'), findsOneComponent);
   });
 
   testComponents('holds the settings', (tester) async {

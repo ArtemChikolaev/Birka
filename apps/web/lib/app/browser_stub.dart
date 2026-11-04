@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/opened_database.dart';
+import 'package:help_common/help_common.dart';
 
 /// The islands stop at `kIsWeb` on the VM, so nothing here ever runs.
 Never _unavailable() => throw UnsupportedError('This needs a browser.');
@@ -74,3 +75,21 @@ final class BrowserBackupFiles implements BackupFiles {
   @override
   Future<ChosenFile?> open() => _unavailable();
 }
+
+/// See `browser_web.dart`.
+final class BrowserHelpLinks implements HelpLinks {
+  /// See `browser_web.dart`.
+  const BrowserHelpLinks();
+
+  @override
+  Future<bool> mail(Uri letter) => _unavailable();
+
+  @override
+  Future<bool> open(Uri page) => _unavailable();
+
+  @override
+  Future<void> copy(String text) => _unavailable();
+}
+
+/// See `browser_web.dart`.
+AppAbout get browserAbout => _unavailable();

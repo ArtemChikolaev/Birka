@@ -21,3 +21,5 @@ currencies(map):
   THB: Баты
 import: Импорт
 data: Данные
+support: Поддержка
+help: Помощь и отзыв

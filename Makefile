@@ -6,6 +6,7 @@ CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/core/rates packages/core/device_settings \
 	packages/features/accounts/common packages/features/backup/common \
 	packages/features/categories/common \
+	packages/features/help/common \
 	packages/features/onboarding/common packages/features/overview/common \
 	packages/features/reports/common \
 	packages/features/settings/common \
@@ -106,6 +107,8 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/backup/jaspr && dart test
 	cd packages/features/categories/flutter && flutter test
 	cd packages/features/categories/jaspr && dart test
+	cd packages/features/help/flutter && flutter test
+	cd packages/features/help/jaspr && dart test
 	cd packages/features/onboarding/flutter && flutter test
 	cd packages/features/onboarding/jaspr && dart test
 	cd packages/features/overview/flutter && flutter test

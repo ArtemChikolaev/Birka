@@ -66,6 +66,27 @@ class MorePage extends StatelessWidget {
           ),
           const SizedBox(height: BirkaTokens.spaceLg),
           const SettingsSection(),
+          const SizedBox(height: BirkaTokens.spaceLg),
+          SectionLabel(t.app.support, color: colors.textMuted),
+          const SizedBox(height: BirkaTokens.spaceXs),
+          GlassListGroup(
+            children: [
+              GlassListRow(
+                title: t.app.help,
+                trailing: BirkaIcon(
+                  BirkaGlyph.chevron,
+                  size: 18,
+                  color: colors.textSubtle,
+                ),
+                onTap: () => context.push(Paths.help),
+              ),
+            ],
+          ),
+          const SizedBox(height: BirkaTokens.spaceMd),
+          Text(
+            '${t.settings.ratesCredit}: cbr-xml-daily.ru',
+            style: styles.caption.copyWith(color: colors.textSubtle),
+          ),
         ],
       ),
     );
@@ -81,8 +102,6 @@ class _Tile extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;
 
-  static const double _mark = 36;
-
   @override
   Widget build(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
@@ -97,25 +116,7 @@ class _Tile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: _mark,
-                height: _mark,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.18),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(BirkaTokens.radiusSm),
-                  ),
-                ),
-                child: Container(
-                  width: BirkaTokens.spaceSm,
-                  height: BirkaTokens.spaceSm,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
+              DotBadge(color: color),
               const SizedBox(height: BirkaTokens.spaceSm),
               // On a narrow phone the mark takes its own line.
               SizedBox(

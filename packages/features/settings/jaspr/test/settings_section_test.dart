@@ -1,5 +1,4 @@
 import 'package:design_jaspr/design_jaspr.dart';
-import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
 import 'package:jaspr_test/jaspr_test.dart';
@@ -111,15 +110,6 @@ void main() {
     await tap(tester, 'Первый счёт');
 
     expect(Settings.readFrom(store).baseCurrency, isNull);
-  });
-
-  testComponents('links to where the rates come from', (tester) async {
-    await pump(tester);
-
-    final link = find.tag('a').evaluate().single.component as DomComponent;
-
-    expect(link.attributes?['href'], 'https://www.cbr-xml-daily.ru/');
-    expect(find.text('Курсы ЦБ РФ в XML и JSON, API'), findsOneComponent);
   });
 
   testComponents('the row closes them too', (tester) async {

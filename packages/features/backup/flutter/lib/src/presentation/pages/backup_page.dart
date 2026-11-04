@@ -72,7 +72,11 @@ class BackupPage extends StatelessWidget {
                     BirkaTokens.spaceXxl,
                   ),
                   children: [
-                    _Header(onBack: onBack),
+                    BackHeader(
+                      label: t.backup.title,
+                      backLabel: t.backup.back,
+                      onBack: onBack,
+                    ),
                     const SizedBox(height: BirkaTokens.spaceLg),
                     _Stored(state: state, now: clock()),
                     const SizedBox(height: BirkaTokens.spaceMd),
@@ -264,35 +268,6 @@ class BackupPage extends StatelessWidget {
 }
 
 enum _WipeAnswer { saveFirst, wipe }
-
-class _Header extends StatelessWidget {
-  const _Header({required this.onBack});
-
-  final VoidCallback onBack;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        GlassIconButton(
-          glyph: BirkaGlyph.back,
-          label: t.backup.back,
-          onPressed: onBack,
-        ),
-        Expanded(
-          child: Center(
-            child: SectionLabel(
-              t.backup.title,
-              color: BirkaColors.of(context).textMuted,
-            ),
-          ),
-        ),
-        // Keeps the label in the middle.
-        const SizedBox(width: BirkaTokens.sizeTouchTarget),
-      ],
-    );
-  }
-}
 
 /// Where the ledger lives, when it was last copied and how much it holds.
 class _Stored extends StatelessWidget {

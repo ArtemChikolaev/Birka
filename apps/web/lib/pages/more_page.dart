@@ -2,6 +2,7 @@ import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
+import 'package:rates/rates.dart' show CbrMirror;
 import 'package:settings_jaspr/settings_jaspr.dart';
 
 /// The tab with everything that has no tab of its own, and the settings.
@@ -33,6 +34,23 @@ class MorePage extends StatelessComponent {
           ),
         ]),
         const SettingsSection(),
+        section(classes: 'more__group', [
+          div(classes: 'more__label', [SectionLabel(t.app.support)]),
+          GlassListGroup(
+            children: [
+              GlassListRow(
+                title: t.app.help,
+                href: 'help/',
+                trailing: const span(classes: 'more__end', [
+                  BirkaIcon(BirkaGlyph.chevron),
+                ]),
+              ),
+            ],
+          ),
+        ]),
+        p(classes: 'text-caption more__credit', [
+          a(href: CbrMirror.address, [.text(t.settings.ratesCredit)]),
+        ]),
       ],
     );
   }
@@ -62,23 +80,6 @@ class MorePage extends StatelessComponent {
         'gap': 'var(--space-sm)',
       },
     ),
-    css('.more__mark').styles(
-      raw: {
-        'align-items': 'center',
-        'border-radius': 'var(--radius-sm)',
-        'display': 'flex',
-        'height': '36px',
-        'justify-content': 'center',
-        'width': '36px',
-      },
-    ),
-    css('.more__dot').styles(
-      raw: {
-        'border-radius': '50%',
-        'height': 'var(--space-sm)',
-        'width': 'var(--space-sm)',
-      },
-    ),
     // On a narrow phone the mark takes its own line and the label stays whole.
     css('.more__line').styles(
       raw: {
@@ -90,6 +91,28 @@ class MorePage extends StatelessComponent {
       },
     ),
     css('.more__soon').styles(raw: {'color': 'var(--color-text-subtle)'}),
+    css('.more__group').styles(
+      raw: {
+        'display': 'flex',
+        'flex-direction': 'column',
+        'gap': 'var(--space-xs)',
+      },
+    ),
+    css('.more__label').styles(raw: {'color': 'var(--color-text-muted)'}),
+    css('.more__end').styles(
+      raw: {
+        'color': 'var(--color-text-subtle)',
+        'display': 'flex',
+        'flex': 'none',
+      },
+    ),
+    css('.more__end .birka-icon').styles(
+      raw: {'height': '18px', 'width': '18px'},
+    ),
+    css('.more__credit').styles(
+      raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
+    ),
+    css('.more__credit a').styles(raw: {'color': 'inherit'}),
   ];
 }
 
@@ -106,19 +129,7 @@ class _Tile extends StatelessComponent {
   Component build(BuildContext context) {
     final tile = GlassSurface(
       child: div(classes: 'more__tile', [
-        span(
-          classes: 'more__mark',
-          styles: Styles(
-            raw: {'background': 'color-mix(in srgb, $color 18%, transparent)'},
-          ),
-          [
-            span(
-              classes: 'more__dot',
-              styles: Styles(raw: {'background': color}),
-              const [],
-            ),
-          ],
-        ),
+        DotBadge(color: color),
         span(classes: 'more__line', [
           span(classes: 'text-body-strong', [.text(label)]),
           if (href == null)
