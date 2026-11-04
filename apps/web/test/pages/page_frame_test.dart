@@ -1,5 +1,6 @@
 import 'package:birka_web/pages/accounts_island.dart';
 import 'package:birka_web/pages/categories_island.dart';
+import 'package:birka_web/pages/import_island.dart';
 import 'package:birka_web/pages/more_island.dart';
 import 'package:birka_web/pages/operations_island.dart';
 import 'package:birka_web/pages/overview_island.dart';
@@ -18,6 +19,7 @@ void main() {
     ('more', MoreIsland()),
     ('accounts', AccountsIsland()),
     ('categories', CategoriesIsland()),
+    ('import', ImportIsland()),
   ]) {
     testComponents('the build leaves a frame without words for $name', (
       tester,
@@ -30,4 +32,16 @@ void main() {
       expect(find.tag('nav'), findsNothing);
     });
   }
+
+  testComponents('a wide frame leaves room for a side', (tester) async {
+    tester.pumpComponent(const PageFrame(wide: true, child: ImportIsland()));
+
+    expect(
+      find.byComponentPredicate(
+        (component) =>
+            component is DomComponent && component.classes == 'page page--wide',
+      ),
+      findsOneComponent,
+    );
+  });
 }

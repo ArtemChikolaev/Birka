@@ -352,7 +352,7 @@ ImportPlan planImport(
     }
     final fee = row.fee == null
         ? null
-        : _money(row.fee!, currencyOf((out ?? into)!.account)!);
+        : moneyIn(row.fee!, currencyOf((out ?? into)!.account)!);
     final PlannedOperation planned;
     if (out != null && into != null) {
       planned = PlannedOperation(
@@ -360,8 +360,8 @@ ImportPlan planImport(
         kind: TransactionKind.transfer,
         from: out.account,
         to: into.account,
-        amount: _money(out.amount, currencyOf(out.account)!)!,
-        received: _money(into.amount, currencyOf(into.account)!),
+        amount: moneyIn(out.amount, currencyOf(out.account)!)!,
+        received: moneyIn(into.amount, currencyOf(into.account)!),
         fee: fee,
       );
     } else {
@@ -374,7 +374,7 @@ ImportPlan planImport(
         kind: kind,
         from: out?.account,
         to: into?.account,
-        amount: _money(leg.amount, currencyOf(leg.account)!)!,
+        amount: moneyIn(leg.amount, currencyOf(leg.account)!)!,
         fee: fee,
         category: (
           kind: kind == TransactionKind.expense
@@ -429,12 +429,12 @@ PlanProblem? _fitting(
     if (leg.currency != null && leg.currency != currency.code) {
       return PlanProblem(row.line, PlanFault.otherCurrency, leg.currency!);
     }
-    if (_money(leg.amount, currency) == null) {
+    if (moneyIn(leg.amount, currency) == null) {
       return PlanProblem(row.line, PlanFault.tooPrecise, '${leg.amount}');
     }
   }
   if (row.fee case final fee?) {
-    if (_money(fee, currencyOf(legs.first.account)!) == null) {
+    if (moneyIn(fee, currencyOf(legs.first.account)!) == null) {
       return PlanProblem(row.line, PlanFault.tooPrecise, '$fee');
     }
   }
@@ -450,9 +450,9 @@ PlanProblem? _fitting(
   return null;
 }
 
-/// [amount] in minor units of [currency], or `null` when it has more digits
-/// after the point than the currency.
-Money? _money(Decimal amount, Currency currency) {
+/// [amount] in the minor units of [currency], or `null` when it has more
+/// digits than the currency or lies past what money holds (ADR 0003).
+Money? moneyIn(Decimal amount, Currency currency) {
   final minor = amount.shift(currency.decimalDigits);
   if (!minor.isInteger) return null;
   final units = minor.toBigInt();

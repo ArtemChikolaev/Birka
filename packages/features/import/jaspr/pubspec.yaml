@@ -1,0 +1,28 @@
+name: import_jaspr
+description: The steps of the import of statements in Jaspr.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  decimal: ^3.2.6
+  design_jaspr:
+    path: ../../../design/jaspr
+  import_common:
+    path: ../common
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  money:
+    path: ../../../core/money
+
+dev_dependencies:
+  database:
+    path: ../../../core/database
+  drift: ^2.31.0
+  jaspr_test: ^0.22.3

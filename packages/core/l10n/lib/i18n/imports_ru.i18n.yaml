@@ -6,3 +6,294 @@ formats(map):
   zenmoney: Дзен-мани
   wise: Wise
   revolut: Revolut
+formatsOf(map):
+  alfa: Альфа-Банка
+  tbank: Т-Банка
+  sber: Сбербанка
+  zenmoney: Дзен-мани
+  wise: Wise
+  revolut: Revolut
+title: Импорт выписки
+back: Назад
+stepOf: "Шаг $n из $count · $what"
+steps(map):
+  file: Файл
+  format: Банк
+  columns: Колонки
+  account: Счёт
+  copies: Дубликаты
+  done: Итог
+stepWhat(map):
+  file: файл из банка или Дзен-мани
+  format: чья это выписка
+  columns: как прочитать колонки
+  account: куда записать
+  copies: что уже есть в учёте
+  done: итог
+stepsLabel: Шаги импорта
+failed: Не получилось. Попробуйте ещё раз.
+dropTitle: Перетащите выписку сюда
+dropText: Файл из интернет-банка за любой период. Birka узнает банк по колонкам и покажет, как прочитала каждую строку, прежде чем что-то записать.
+choose: Выбрать файл
+reading: Читаем файл…
+kinds:
+  - CSV
+  - Excel, XLSX
+  - PDF Сбербанка
+  - Выгрузка Дзен-мани
+dropNote: PDF читаем у Сбербанка · до 10 000 строк в одном файле
+unreadableTitle: Файл не прочитался
+unreadable(map):
+  pdf: Этот PDF не прочитать. Birka читает выписки Сбербанка, а у других банков возьмите CSV или Excel.
+  notATable: В файле нет таблицы операций. Нужен CSV, Excel или PDF Сбербанка.
+  damaged: Файл повреждён. Скачайте выписку заново.
+  empty: В файле пусто.
+  tooLarge: Файл слишком большой. Возьмите выписку покороче, до 10 000 строк.
+  incomplete: Операции выписки не сходятся с её итогами, часть не прочиталась. Скачайте выписку заново.
+howTitle: Как это устроено
+how:
+  - "Узнаём банк по колонкам файла: Альфа-Банк, Т-Банк, Сбербанк, Дзен-мани, Wise, Revolut или ваш формат"
+  - Показываем каждую строку так, как она попадёт в учёт
+  - Не задваиваем то, что вы уже записали вручную
+  - Импорт отменяется целиком, одной кнопкой, хоть через месяц
+privacyTitle: Без паролей от банка
+privacyText: Файл читается здесь, в браузере. Birka не входит в ваш банк и никуда не отправляет выписку.
+whereTitle: Где взять выписку
+whereBank: Интернет-банк
+whereBankText: Раздел выписки или истории операций, формат CSV или Excel за нужные месяцы
+whereZen: Дзен-мани
+whereZenText: "Экспорт операций в CSV из веб-версии: все счета, категории и годы истории разом"
+whereAbroad: Wise и Revolut
+whereAbroadText: "Statement в CSV: у каждой операции останется своя валюта"
+pastTitle: Прошлые импорты
+pastName: "$format · $period"
+pastLine: "$operations → $where · $day"
+operations(n):
+  one: $count операция
+  few: $count операции
+  many: $count операций
+  other: $count операции
+accounts(n):
+  one: $count счёт
+  few: $count счёта
+  many: $count счетов
+  other: $count счёта
+undo: Отменить
+undoAsk(n):
+  one: Убрать $count операцию этого файла?
+  few: Убрать $count операции этого файла?
+  many: Убрать $count операций этого файла?
+  other: Убрать $count операции этого файла?
+undoYes: Убрать
+undoNo: Оставить
+undone: "Импорт «$name» отменён"
+looksLike: Похоже на выписку $bank
+matched(n):
+  one: Совпала $n колонка из $total. По ней Birka разберёт файл, а вы проверите результат на следующем шаге.
+  few: Совпали $n колонки из $total. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.
+  many: Совпали $n колонок из $total. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.
+  other: Совпали $n колонки из $total. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.
+notKnown: Банк по колонкам не узнали
+notKnownText: Выберите его ниже или назначьте колонки сами на следующем шаге.
+skipped: "$header — не берём"
+formatsTitle: Формат выписки
+formatTexts(map):
+  alfa: Операции одной карты или счёта
+  tbank: Карты и счета, с категориями банка
+  sber: PDF-выписка карты из СберБанк Онлайн
+  zenmoney: Все счета, категории и переводы разом
+  wise: У каждой операции своя валюта и курс
+  revolut: У каждой операции своя валюта и комиссия
+own: Свой формат
+ownTag: любой
+ownText: Колонки назначите сами
+fileKinds(map):
+  csv: CSV
+  xlsx: Excel
+  pdf: PDF
+summaryTitle: Что попадёт в учёт
+summaryFormat: Формат
+summaryRows: Строк в файле
+summaryPeriod: Период
+summaryAccount: Счёт
+accountLater: выберем на 4-м шаге
+summaryOperations: Операций
+summarySpent: Расходы
+summaryReceived: Поступления
+summaryUnsorted: Без категории
+toInbox: "$count → во «Входящие»"
+summaryBalance: Остаток после
+summaryFromFile: Из файла
+summaryCopies: Пропустим копий
+summaryAdded: Добавим
+next(map):
+  format: "Дальше: банк"
+  columns: "Дальше: колонки"
+  account: "Дальше: счёт"
+  copies: "Дальше: дубликаты"
+write(n):
+  one: Импортировать $count операцию
+  few: Импортировать $count операции
+  many: Импортировать $count операций
+  other: Импортировать $count операции
+nothingToWrite: Нечего добавить
+planning: Считаем…
+writing: "Записываем: $done из $total"
+writeNote: Весь импорт можно будет отменить одной кнопкой
+columnsTitle: Колонки файла
+roles(map):
+  date: Дата
+  amount: Сумма
+  expense: Расход
+  income: Поступление
+  fee: Комиссия
+  currency: Валюта
+  expenseCurrency: Валюта расхода
+  incomeCurrency: Валюта поступления
+  account: Счёт
+  expenseAccount: Счёт расхода
+  incomeAccount: Счёт поступления
+  description: Описание
+  note: Заметка
+  category: Категория банка
+  ownCategory: Ваша категория
+  card: Карта
+  balance: Остаток
+  status: Статус
+  skip: Не брать
+roleOf: "Что в колонке «$header»"
+signTitle: Расход в файле записан
+signs(map):
+  expenseNegative: с минусом
+  expensePositive: с плюсом
+  incomePlus: без знака
+markTitle: Копейки отделены
+marks(map):
+  comma: запятой
+  dot: точкой
+datesTitle: Даты
+dateOrders(map):
+  dayMonthYear: ДД.ММ.ГГГГ
+  monthDayYear: ММ.ДД.ГГГГ
+missing: "Отметьте колонку даты и колонку суммы: без них строки не станут операциями."
+previewTitle: Так строки попадут в учёт
+previewNote: "первые $shown из $total · заголовок и итог не считаем"
+previewDate: Дата
+previewText: Описание
+previewCategory: Категория
+previewAmount: Сумма
+transfer: Перевод
+inbox: Решу во «Входящих»
+problems(n):
+  one: $count строка не прочиталась
+  few: $count строки не прочитались
+  many: $count строк не прочитались
+  other: $count строки не прочитались
+problemLine: "Строка $line: $fault"
+andMore: и ещё $count
+rowFaults(map):
+  unreadableDate: дата не читается
+  noSuchDay: такого дня нет
+  noAmount: нет суммы
+  unreadableAmount: сумма не читается
+  zeroAmount: сумма ноль
+  declined: операция не прошла
+categoriesTitle: Категории банка → ваши
+categoriesNote: Без выбора операции подождут во «Входящих»
+categoryKinds(map):
+  expense: расход
+  income: поступление
+noBankCategory: Без категории банка
+newCategory: "Новая: $name"
+fees: Комиссии банка
+categoryOf: "Категория для «$name»"
+accountTitleCard: Куда записать операции карты ••$card
+accountTitleNamed: Куда записать операции «$name»
+accountTitle: Куда записать операции
+accountText: "$operations. Выберите счёт в Birka, заведите новый или не берите их."
+cardMatched: совпал номер карты
+nameMatched: совпало название
+otherCurrency: "$currency, а в файле $fileCurrency"
+newAccount: Новый счёт
+newAccountText: "Заведём «$name» с остатком $balance"
+leaveOut: Не брать
+leaveOutText: Операции этого счёта не попадут в учёт
+balanceMatches: Остаток сойдётся с банком
+balanceDiffers: Остаток разойдётся с банком
+balanceInFile: В выписке на $day
+balanceInBirka: В Birka после импорта
+balanceHint: В учёте есть операции, которых нет в выписке, или их не хватает. Проверьте счёт и дубликаты.
+copiesTitle(n):
+  one: $count операция уже есть в учёте
+  few: $count операции уже есть в учёте
+  many: $count операций уже есть в учёте
+  other: $count операции уже есть в учёте
+copiesText: Похоже, вы записали их вручную. Копии из выписки пропустим, а ваши записи, с вашими названиями и категориями, останутся как есть.
+noCopies: Повторов нет
+noCopiesText: Ни одна операция выписки не похожа на то, что уже есть в учёте.
+fromFile: Из выписки
+inLedger: Уже в учёте
+reasons(map):
+  imported: из этого же файла
+  sameAmount: та же сумма
+  sameDay: тот же день
+  dayBefore: на день раньше
+  dayAfter: на день позже
+  sameAccount: тот же счёт
+  similarName: похожее название
+skipCopy: Пропустить копию
+keepBoth: Оставить обе
+leftTitle(n):
+  one: $count операция не попадёт в учёт
+  few: $count операции не попадут в учёт
+  many: $count операций не попадут в учёт
+  other: $count операции не попадут в учёт
+planFaults(map):
+  otherCurrency: у счёта другая валюта
+  tooPrecise: больше знаков, чем у валюты
+  unevenTransfer: перевод в одной валюте с двумя суммами
+doneTitle(n):
+  one: Добавили $count операцию
+  few: Добавили $count операции
+  many: Добавили $count операций
+  other: Добавили $count операции
+doneWhere: "$format, $period → $accounts"
+doneIncome: Поступления
+doneSpent: Новые траты
+doneSkipped: Пропустили копий
+doneBalance: Остаток счёта
+asInBank: как в банке
+unsortedTitle(n):
+  one: $count операция без категории
+  few: $count операции без категории
+  many: $count операций без категории
+  other: $count операции без категории
+unsortedText: В отчётах они уже есть, просто без категории. Её можно выбрать в самой операции.
+undoTitle: Передумали?
+undoText(n):
+  one: Отмена уберёт $count операцию этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
+  few: Отмена уберёт $count операции этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
+  many: Отмена уберёт $count операций этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
+  other: Отмена уберёт $count операции этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
+undoImport: Отменить импорт
+undoneTitle: Импорт отменён
+undoneText: Операции этого файла убраны из учёта. Ваши записи остались как были.
+toOperations: К операциям
+another: Загрузить ещё выписку
+monthsWhole:
+  - январь
+  - февраль
+  - март
+  - апрель
+  - май
+  - июнь
+  - июль
+  - август
+  - сентябрь
+  - октябрь
+  - ноябрь
+  - декабрь
+periodMonth: $month $year
+periodInMonth: $from–$to $month $year
+periodInYear: $from – $to $year
+periodFar: $from – $to

@@ -36,7 +36,8 @@ void main() {
     ),
   );
 
-  testComponents('leads to the accounts, the categories, the data and help', (
+  testComponents('leads to the accounts, the categories, the import, the data '
+      'and help', (
     tester,
   ) async {
     pump(tester);
@@ -53,6 +54,7 @@ void main() {
       [
         'accounts/',
         'categories/',
+        'import/',
         'data/',
         'help/',
         'https://github.com/ArtemChikolaev/Birka',
@@ -77,11 +79,14 @@ void main() {
     );
   });
 
-  testComponents('says that the import is yet to come', (tester) async {
+  testComponents('has nothing left to come', (tester) async {
     pump(tester);
 
-    expect(find.text('Импорт'), findsOneComponent);
-    expect(find.text('скоро'), findsOneComponent);
+    expect(
+      find.descendant(of: find.tag('a'), matching: find.text('Импорт')),
+      findsOneComponent,
+    );
+    expect(find.text('скоро'), findsNothing);
   });
 
   testComponents('ends with the version, the code and the rates', (

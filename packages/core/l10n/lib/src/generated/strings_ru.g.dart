@@ -592,6 +592,557 @@ class _Translations$imports$ru extends Translations$imports$en {
     'wise': 'Wise',
     'revolut': 'Revolut',
   };
+  @override
+  Map<String, String> get formatsOf => {
+    'alfa': 'Альфа-Банка',
+    'tbank': 'Т-Банка',
+    'sber': 'Сбербанка',
+    'zenmoney': 'Дзен-мани',
+    'wise': 'Wise',
+    'revolut': 'Revolut',
+  };
+  @override
+  String get title => 'Импорт выписки';
+  @override
+  String get back => 'Назад';
+  @override
+  String stepOf({
+    required Object n,
+    required Object count,
+    required Object what,
+  }) => 'Шаг ${n} из ${count} · ${what}';
+  @override
+  Map<String, String> get steps => {
+    'file': 'Файл',
+    'format': 'Банк',
+    'columns': 'Колонки',
+    'account': 'Счёт',
+    'copies': 'Дубликаты',
+    'done': 'Итог',
+  };
+  @override
+  Map<String, String> get stepWhat => {
+    'file': 'файл из банка или Дзен-мани',
+    'format': 'чья это выписка',
+    'columns': 'как прочитать колонки',
+    'account': 'куда записать',
+    'copies': 'что уже есть в учёте',
+    'done': 'итог',
+  };
+  @override
+  String get stepsLabel => 'Шаги импорта';
+  @override
+  String get failed => 'Не получилось. Попробуйте ещё раз.';
+  @override
+  String get dropTitle => 'Перетащите выписку сюда';
+  @override
+  String get dropText =>
+      'Файл из интернет-банка за любой период. Birka узнает банк по колонкам и покажет, как прочитала каждую строку, прежде чем что-то записать.';
+  @override
+  String get choose => 'Выбрать файл';
+  @override
+  String get reading => 'Читаем файл…';
+  @override
+  List<String> get kinds => [
+    'CSV',
+    'Excel, XLSX',
+    'PDF Сбербанка',
+    'Выгрузка Дзен-мани',
+  ];
+  @override
+  String get dropNote =>
+      'PDF читаем у Сбербанка · до 10 000 строк в одном файле';
+  @override
+  String get unreadableTitle => 'Файл не прочитался';
+  @override
+  Map<String, String> get unreadable => {
+    'pdf':
+        'Этот PDF не прочитать. Birka читает выписки Сбербанка, а у других банков возьмите CSV или Excel.',
+    'notATable':
+        'В файле нет таблицы операций. Нужен CSV, Excel или PDF Сбербанка.',
+    'damaged': 'Файл повреждён. Скачайте выписку заново.',
+    'empty': 'В файле пусто.',
+    'tooLarge':
+        'Файл слишком большой. Возьмите выписку покороче, до 10 000 строк.',
+    'incomplete':
+        'Операции выписки не сходятся с её итогами, часть не прочиталась. Скачайте выписку заново.',
+  };
+  @override
+  String get howTitle => 'Как это устроено';
+  @override
+  List<String> get how => [
+    'Узнаём банк по колонкам файла: Альфа-Банк, Т-Банк, Сбербанк, Дзен-мани, Wise, Revolut или ваш формат',
+    'Показываем каждую строку так, как она попадёт в учёт',
+    'Не задваиваем то, что вы уже записали вручную',
+    'Импорт отменяется целиком, одной кнопкой, хоть через месяц',
+  ];
+  @override
+  String get privacyTitle => 'Без паролей от банка';
+  @override
+  String get privacyText =>
+      'Файл читается здесь, в браузере. Birka не входит в ваш банк и никуда не отправляет выписку.';
+  @override
+  String get whereTitle => 'Где взять выписку';
+  @override
+  String get whereBank => 'Интернет-банк';
+  @override
+  String get whereBankText =>
+      'Раздел выписки или истории операций, формат CSV или Excel за нужные месяцы';
+  @override
+  String get whereZen => 'Дзен-мани';
+  @override
+  String get whereZenText =>
+      'Экспорт операций в CSV из веб-версии: все счета, категории и годы истории разом';
+  @override
+  String get whereAbroad => 'Wise и Revolut';
+  @override
+  String get whereAbroadText =>
+      'Statement в CSV: у каждой операции останется своя валюта';
+  @override
+  String get pastTitle => 'Прошлые импорты';
+  @override
+  String pastName({required Object format, required Object period}) =>
+      '${format} · ${period}';
+  @override
+  String pastLine({
+    required Object operations,
+    required Object where,
+    required Object day,
+  }) => '${operations} → ${where} · ${day}';
+  @override
+  String operations({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} операция',
+        few: '${count} операции',
+        many: '${count} операций',
+        other: '${count} операции',
+      );
+  @override
+  String accounts({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} счёт',
+        few: '${count} счёта',
+        many: '${count} счетов',
+        other: '${count} счёта',
+      );
+  @override
+  String get undo => 'Отменить';
+  @override
+  String undoAsk({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Убрать ${count} операцию этого файла?',
+        few: 'Убрать ${count} операции этого файла?',
+        many: 'Убрать ${count} операций этого файла?',
+        other: 'Убрать ${count} операции этого файла?',
+      );
+  @override
+  String get undoYes => 'Убрать';
+  @override
+  String get undoNo => 'Оставить';
+  @override
+  String undone({required Object name}) => 'Импорт «${name}» отменён';
+  @override
+  String looksLike({required Object bank}) => 'Похоже на выписку ${bank}';
+  @override
+  String matched({
+    required num n,
+    required Object total,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one:
+        'Совпала ${n} колонка из ${total}. По ней Birka разберёт файл, а вы проверите результат на следующем шаге.',
+    few:
+        'Совпали ${n} колонки из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
+    many:
+        'Совпали ${n} колонок из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
+    other:
+        'Совпали ${n} колонки из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
+  );
+  @override
+  String get notKnown => 'Банк по колонкам не узнали';
+  @override
+  String get notKnownText =>
+      'Выберите его ниже или назначьте колонки сами на следующем шаге.';
+  @override
+  String skipped({required Object header}) => '${header} — не берём';
+  @override
+  String get formatsTitle => 'Формат выписки';
+  @override
+  Map<String, String> get formatTexts => {
+    'alfa': 'Операции одной карты или счёта',
+    'tbank': 'Карты и счета, с категориями банка',
+    'sber': 'PDF-выписка карты из СберБанк Онлайн',
+    'zenmoney': 'Все счета, категории и переводы разом',
+    'wise': 'У каждой операции своя валюта и курс',
+    'revolut': 'У каждой операции своя валюта и комиссия',
+  };
+  @override
+  String get own => 'Свой формат';
+  @override
+  String get ownTag => 'любой';
+  @override
+  String get ownText => 'Колонки назначите сами';
+  @override
+  Map<String, String> get fileKinds => {
+    'csv': 'CSV',
+    'xlsx': 'Excel',
+    'pdf': 'PDF',
+  };
+  @override
+  String get summaryTitle => 'Что попадёт в учёт';
+  @override
+  String get summaryFormat => 'Формат';
+  @override
+  String get summaryRows => 'Строк в файле';
+  @override
+  String get summaryPeriod => 'Период';
+  @override
+  String get summaryAccount => 'Счёт';
+  @override
+  String get accountLater => 'выберем на 4-м шаге';
+  @override
+  String get summaryOperations => 'Операций';
+  @override
+  String get summarySpent => 'Расходы';
+  @override
+  String get summaryReceived => 'Поступления';
+  @override
+  String get summaryUnsorted => 'Без категории';
+  @override
+  String toInbox({required Object count}) => '${count} → во «Входящие»';
+  @override
+  String get summaryBalance => 'Остаток после';
+  @override
+  String get summaryFromFile => 'Из файла';
+  @override
+  String get summaryCopies => 'Пропустим копий';
+  @override
+  String get summaryAdded => 'Добавим';
+  @override
+  Map<String, String> get next => {
+    'format': 'Дальше: банк',
+    'columns': 'Дальше: колонки',
+    'account': 'Дальше: счёт',
+    'copies': 'Дальше: дубликаты',
+  };
+  @override
+  String write({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Импортировать ${count} операцию',
+        few: 'Импортировать ${count} операции',
+        many: 'Импортировать ${count} операций',
+        other: 'Импортировать ${count} операции',
+      );
+  @override
+  String get nothingToWrite => 'Нечего добавить';
+  @override
+  String get planning => 'Считаем…';
+  @override
+  String writing({required Object done, required Object total}) =>
+      'Записываем: ${done} из ${total}';
+  @override
+  String get writeNote => 'Весь импорт можно будет отменить одной кнопкой';
+  @override
+  String get columnsTitle => 'Колонки файла';
+  @override
+  Map<String, String> get roles => {
+    'date': 'Дата',
+    'amount': 'Сумма',
+    'expense': 'Расход',
+    'income': 'Поступление',
+    'fee': 'Комиссия',
+    'currency': 'Валюта',
+    'expenseCurrency': 'Валюта расхода',
+    'incomeCurrency': 'Валюта поступления',
+    'account': 'Счёт',
+    'expenseAccount': 'Счёт расхода',
+    'incomeAccount': 'Счёт поступления',
+    'description': 'Описание',
+    'note': 'Заметка',
+    'category': 'Категория банка',
+    'ownCategory': 'Ваша категория',
+    'card': 'Карта',
+    'balance': 'Остаток',
+    'status': 'Статус',
+    'skip': 'Не брать',
+  };
+  @override
+  String roleOf({required Object header}) => 'Что в колонке «${header}»';
+  @override
+  String get signTitle => 'Расход в файле записан';
+  @override
+  Map<String, String> get signs => {
+    'expenseNegative': 'с минусом',
+    'expensePositive': 'с плюсом',
+    'incomePlus': 'без знака',
+  };
+  @override
+  String get markTitle => 'Копейки отделены';
+  @override
+  Map<String, String> get marks => {
+    'comma': 'запятой',
+    'dot': 'точкой',
+  };
+  @override
+  String get datesTitle => 'Даты';
+  @override
+  Map<String, String> get dateOrders => {
+    'dayMonthYear': 'ДД.ММ.ГГГГ',
+    'monthDayYear': 'ММ.ДД.ГГГГ',
+  };
+  @override
+  String get missing =>
+      'Отметьте колонку даты и колонку суммы: без них строки не станут операциями.';
+  @override
+  String get previewTitle => 'Так строки попадут в учёт';
+  @override
+  String previewNote({required Object shown, required Object total}) =>
+      'первые ${shown} из ${total} · заголовок и итог не считаем';
+  @override
+  String get previewDate => 'Дата';
+  @override
+  String get previewText => 'Описание';
+  @override
+  String get previewCategory => 'Категория';
+  @override
+  String get previewAmount => 'Сумма';
+  @override
+  String get transfer => 'Перевод';
+  @override
+  String get inbox => 'Решу во «Входящих»';
+  @override
+  String problems({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} строка не прочиталась',
+        few: '${count} строки не прочитались',
+        many: '${count} строк не прочитались',
+        other: '${count} строки не прочитались',
+      );
+  @override
+  String problemLine({required Object line, required Object fault}) =>
+      'Строка ${line}: ${fault}';
+  @override
+  String andMore({required Object count}) => 'и ещё ${count}';
+  @override
+  Map<String, String> get rowFaults => {
+    'unreadableDate': 'дата не читается',
+    'noSuchDay': 'такого дня нет',
+    'noAmount': 'нет суммы',
+    'unreadableAmount': 'сумма не читается',
+    'zeroAmount': 'сумма ноль',
+    'declined': 'операция не прошла',
+  };
+  @override
+  String get categoriesTitle => 'Категории банка → ваши';
+  @override
+  String get categoriesNote => 'Без выбора операции подождут во «Входящих»';
+  @override
+  Map<String, String> get categoryKinds => {
+    'expense': 'расход',
+    'income': 'поступление',
+  };
+  @override
+  String get noBankCategory => 'Без категории банка';
+  @override
+  String newCategory({required Object name}) => 'Новая: ${name}';
+  @override
+  String get fees => 'Комиссии банка';
+  @override
+  String categoryOf({required Object name}) => 'Категория для «${name}»';
+  @override
+  String accountTitleCard({required Object card}) =>
+      'Куда записать операции карты ••${card}';
+  @override
+  String accountTitleNamed({required Object name}) =>
+      'Куда записать операции «${name}»';
+  @override
+  String get accountTitle => 'Куда записать операции';
+  @override
+  String accountText({required Object operations}) =>
+      '${operations}. Выберите счёт в Birka, заведите новый или не берите их.';
+  @override
+  String get cardMatched => 'совпал номер карты';
+  @override
+  String get nameMatched => 'совпало название';
+  @override
+  String otherCurrency({
+    required Object currency,
+    required Object fileCurrency,
+  }) => '${currency}, а в файле ${fileCurrency}';
+  @override
+  String get newAccount => 'Новый счёт';
+  @override
+  String newAccountText({required Object name, required Object balance}) =>
+      'Заведём «${name}» с остатком ${balance}';
+  @override
+  String get leaveOut => 'Не брать';
+  @override
+  String get leaveOutText => 'Операции этого счёта не попадут в учёт';
+  @override
+  String get balanceMatches => 'Остаток сойдётся с банком';
+  @override
+  String get balanceDiffers => 'Остаток разойдётся с банком';
+  @override
+  String balanceInFile({required Object day}) => 'В выписке на ${day}';
+  @override
+  String get balanceInBirka => 'В Birka после импорта';
+  @override
+  String get balanceHint =>
+      'В учёте есть операции, которых нет в выписке, или их не хватает. Проверьте счёт и дубликаты.';
+  @override
+  String copiesTitle({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} операция уже есть в учёте',
+        few: '${count} операции уже есть в учёте',
+        many: '${count} операций уже есть в учёте',
+        other: '${count} операции уже есть в учёте',
+      );
+  @override
+  String get copiesText =>
+      'Похоже, вы записали их вручную. Копии из выписки пропустим, а ваши записи, с вашими названиями и категориями, останутся как есть.';
+  @override
+  String get noCopies => 'Повторов нет';
+  @override
+  String get noCopiesText =>
+      'Ни одна операция выписки не похожа на то, что уже есть в учёте.';
+  @override
+  String get fromFile => 'Из выписки';
+  @override
+  String get inLedger => 'Уже в учёте';
+  @override
+  Map<String, String> get reasons => {
+    'imported': 'из этого же файла',
+    'sameAmount': 'та же сумма',
+    'sameDay': 'тот же день',
+    'dayBefore': 'на день раньше',
+    'dayAfter': 'на день позже',
+    'sameAccount': 'тот же счёт',
+    'similarName': 'похожее название',
+  };
+  @override
+  String get skipCopy => 'Пропустить копию';
+  @override
+  String get keepBoth => 'Оставить обе';
+  @override
+  String leftTitle({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} операция не попадёт в учёт',
+        few: '${count} операции не попадут в учёт',
+        many: '${count} операций не попадут в учёт',
+        other: '${count} операции не попадут в учёт',
+      );
+  @override
+  Map<String, String> get planFaults => {
+    'otherCurrency': 'у счёта другая валюта',
+    'tooPrecise': 'больше знаков, чем у валюты',
+    'unevenTransfer': 'перевод в одной валюте с двумя суммами',
+  };
+  @override
+  String doneTitle({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Добавили ${count} операцию',
+        few: 'Добавили ${count} операции',
+        many: 'Добавили ${count} операций',
+        other: 'Добавили ${count} операции',
+      );
+  @override
+  String doneWhere({
+    required Object format,
+    required Object period,
+    required Object accounts,
+  }) => '${format}, ${period} → ${accounts}';
+  @override
+  String get doneIncome => 'Поступления';
+  @override
+  String get doneSpent => 'Новые траты';
+  @override
+  String get doneSkipped => 'Пропустили копий';
+  @override
+  String get doneBalance => 'Остаток счёта';
+  @override
+  String get asInBank => 'как в банке';
+  @override
+  String unsortedTitle({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} операция без категории',
+        few: '${count} операции без категории',
+        many: '${count} операций без категории',
+        other: '${count} операции без категории',
+      );
+  @override
+  String get unsortedText =>
+      'В отчётах они уже есть, просто без категории. Её можно выбрать в самой операции.';
+  @override
+  String get undoTitle => 'Передумали?';
+  @override
+  String undoText({
+    required num n,
+    required Object count,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one:
+        'Отмена уберёт ${count} операцию этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
+    few:
+        'Отмена уберёт ${count} операции этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
+    many:
+        'Отмена уберёт ${count} операций этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
+    other:
+        'Отмена уберёт ${count} операции этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
+  );
+  @override
+  String get undoImport => 'Отменить импорт';
+  @override
+  String get undoneTitle => 'Импорт отменён';
+  @override
+  String get undoneText =>
+      'Операции этого файла убраны из учёта. Ваши записи остались как были.';
+  @override
+  String get toOperations => 'К операциям';
+  @override
+  String get another => 'Загрузить ещё выписку';
+  @override
+  List<String> get monthsWhole => [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+  ];
+  @override
+  String periodMonth({required Object month, required Object year}) =>
+      '${month} ${year}';
+  @override
+  String periodInMonth({
+    required Object from,
+    required Object to,
+    required Object month,
+    required Object year,
+  }) => '${from}–${to} ${month} ${year}';
+  @override
+  String periodInYear({
+    required Object from,
+    required Object to,
+    required Object year,
+  }) => '${from} – ${to} ${year}';
+  @override
+  String periodFar({required Object from, required Object to}) =>
+      '${from} – ${to}';
 }
 
 // Path: onboarding
@@ -1193,518 +1744,955 @@ class _Translations$transactions$keys$ru
 extension on TranslationsRu {
   dynamic _flatMapFunction(String path) {
     return switch (path) {
-      'accounts.title' => 'Счета',
-      'accounts.back' => 'Назад',
-      'accounts.add' => 'Добавить счёт',
-      'accounts.capital' => 'Капитал',
-      'accounts.and' => 'и',
-      'accounts.inAccounts' =>
-        ({required num n}) =>
-            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+          'accounts.title' => 'Счета',
+          'accounts.back' => 'Назад',
+          'accounts.add' => 'Добавить счёт',
+          'accounts.capital' => 'Капитал',
+          'accounts.and' => 'и',
+          'accounts.inAccounts' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'в ${n} счёте',
+                  few: 'в ${n} счетах',
+                  many: 'в ${n} счетах',
+                  other: 'в ${n} счетах',
+                ),
+          'accounts.main' => 'основной',
+          'accounts.emptyTitle' => 'Пока нет счетов',
+          'accounts.emptyHint' =>
+            'Добавьте первый, чтобы видеть, где лежат деньги.',
+          'accounts.archive' => 'Архив',
+          'accounts.failed' => 'Не удалось прочитать счета.',
+          'accounts.types.cash' => 'Наличные',
+          'accounts.types.debit' => 'Дебетовая карта',
+          'accounts.types.credit' => 'Кредитная карта',
+          'accounts.types.savings' => 'Накопительный',
+          'accounts.types.deposit' => 'Вклад',
+          'accounts.types.loan' => 'Кредит',
+          'accounts.types.debt' => 'Долг',
+          'accounts.types.investment' => 'Инвестиции',
+          'accounts.types.crypto' => 'Криптокошелёк',
+          'accounts.form.newTitle' => 'Новый счёт',
+          'accounts.form.editTitle' => 'Счёт',
+          'accounts.form.name' => 'Название',
+          'accounts.form.namePlaceholder' => 'Зарплатная',
+          'accounts.form.type' => 'Тип',
+          'accounts.form.currency' => 'Валюта',
+          'accounts.form.balance' => 'Остаток сейчас',
+          'accounts.form.debt' => 'Долг по карте',
+          'accounts.form.lastDigits' => 'Последние 4 цифры карты',
+          'accounts.form.art' => 'Оформление',
+          'accounts.form.includeInTotals' => 'Учитывать в капитале',
+          'accounts.form.save' => 'Сохранить',
+          'accounts.form.archive' => 'Убрать в архив',
+          'accounts.form.restore' => 'Вернуть из архива',
+          'accounts.form.nameMissing' => 'Дайте счёту название.',
+          'accounts.form.amountInvalid' => 'Введите сумму, например 1250,50.',
+          'accounts.form.lastDigitsInvalid' => 'Введите четыре цифры.',
+          'accounts.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+          'app.overview' => 'Обзор',
+          'app.operations' => 'Операции',
+          'app.reports' => 'Отчёты',
+          'app.more' => 'Ещё',
+          'app.newOperation' => 'Новая операция',
+          'app.close' => 'Закрыть',
+          'app.retry' => 'Повторить',
+          'app.storedHere' => 'Данные хранятся только в этом браузере.',
+          'app.notStored' =>
+            'Этот браузер не хранит данные, поэтому они исчезнут, когда вы закроете вкладку.',
+          'app.openElsewhere' =>
+            'Birka открыта в другой вкладке. Закройте её и попробуйте снова.',
+          'app.soon' => 'скоро',
+          'app.noCategory' => 'Без категории',
+          'app.currencies.RUB' => 'Рубли',
+          'app.currencies.USD' => 'Доллары',
+          'app.currencies.EUR' => 'Евро',
+          'app.currencies.USDT' => 'USDT',
+          'app.currencies.GEL' => 'Лари',
+          'app.currencies.TRY' => 'Лиры',
+          'app.currencies.KZT' => 'Тенге',
+          'app.currencies.AED' => 'Дирхамы',
+          'app.currencies.THB' => 'Баты',
+          'app.import' => 'Импорт',
+          'app.data' => 'Данные',
+          'app.support' => 'Поддержка',
+          'app.help' => 'Помощь и отзыв',
+          'app.keptOnDevice' => 'данные хранятся на этом устройстве',
+          'app.keptInBrowser' => 'данные хранятся в этом браузере',
+          'app.sourceCode' => 'Исходный код на GitHub',
+          'backup.title' => 'Данные',
+          'backup.back' => 'Назад',
+          'backup.storedTitle' => 'Учёт хранится здесь',
+          'backup.storedText' =>
+            'Только на этом устройстве, без серверов. Копия в файле поможет перенести его или не потерять.',
+          'backup.noCopyYet' => 'Копии ещё не было',
+          'backup.lastCopy' =>
+            ({required Object when}) => 'Последняя копия: ${when}',
+          'backup.todayAt' => ({required Object time}) => 'сегодня, ${time}',
+          'backup.yesterdayAt' => ({required Object time}) => 'вчера, ${time}',
+          'backup.dayAt' =>
+            ({required Object day, required Object time}) => '${day}, ${time}',
+          'backup.operations' => 'Операции',
+          'backup.accounts' => 'Счета',
+          'backup.categories' => 'Категории',
+          'backup.save' => 'Сохранить копию',
+          'backup.restore' => 'Восстановить из копии',
+          'backup.export' => 'Экспорт',
+          'backup.exportTitle' => 'Операции в CSV',
+          'backup.exportText' =>
+            'Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория',
+          'backup.records' => 'Учёт',
+          'backup.demo' => 'Демо-данные',
+          'backup.demoText' => 'Пример счетов и операций, чтобы осмотреться',
+          'backup.wipe' => 'Удалить все данные',
+          'backup.filesNote' =>
+            'Файлы сохраняются только туда, куда вы укажете в окне системы.',
+          'backup.filesNoteSite' =>
+            'Файлы сохраняются туда же, куда браузер кладёт загрузки.',
+          'backup.restoreTitle' => 'Восстановить из копии?',
+          'backup.restoreText' =>
+            'Записи на этом устройстве заменятся содержимым файла. Отменить это нельзя, поэтому сначала сохраните копию нынешних, если они нужны.',
+          'backup.replace' => 'Заменить записи',
+          'backup.cancel' => 'Отмена',
+          'backup.wipeTitle' => 'Удалить все данные?',
+          'backup.wipeText' =>
+            'Счета, операции и категории исчезнут с этого устройства. Язык и другие настройки останутся. Без копии вернуть записи не получится.',
+          'backup.saveFirst' => 'Сначала сохранить копию',
+          'backup.wipeAll' => 'Удалить всё',
+          'backup.saved' => ({required Object name}) => 'Копия готова: ${name}',
+          'backup.restored' =>
+            ({required Object day}) =>
+                'Записи восстановлены из копии от ${day}',
+          'backup.exported' =>
+            ({required Object name}) => 'Файл готов: ${name}',
+          'backup.wiped' => 'Все данные удалены с этого устройства',
+          'backup.notACopy' => 'Это не копия Birka.',
+          'backup.newer' =>
+            'Эту копию сделала более новая версия Birka. Обновите приложение и попробуйте снова.',
+          'backup.damaged' => 'Копия повреждена, её не получится восстановить.',
+          'backup.failed' => 'Не получилось. Попробуйте ещё раз.',
+          'backup.operationsCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} операция',
+                  few: '${count} операции',
+                  many: '${count} операций',
+                  other: '${count} операции',
+                ),
+          'backup.accountsCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} счёт',
+                  few: '${count} счёта',
+                  many: '${count} счетов',
+                  other: '${count} счёта',
+                ),
+          'backup.csv.date' => 'Дата',
+          'backup.csv.kind' => 'Тип',
+          'backup.csv.amount' => 'Сумма',
+          'backup.csv.currency' => 'Валюта',
+          'backup.csv.account' => 'Счёт',
+          'backup.csv.category' => 'Категория',
+          'backup.csv.subcategory' => 'Подкатегория',
+          'backup.csv.note' => 'Заметка',
+          'backup.csv.expense' => 'Расход',
+          'backup.csv.income' => 'Доход',
+          'backup.csv.transfer' => 'Перевод',
+          'backup.csv.adjustment' => 'Корректировка',
+          'categories.title' => 'Категории',
+          'categories.back' => 'Назад',
+          'categories.add' => 'Добавить категорию',
+          'categories.expense' => 'Расходы',
+          'categories.income' => 'Доходы',
+          'categories.emptyTitle' => 'Пока нет категорий',
+          'categories.emptyHint' => 'Возьмите готовый набор или создайте свои.',
+          'categories.addPresets' => 'Добавить готовый набор',
+          'categories.addOwn' => 'Создать свою',
+          'categories.archive' => 'Архив',
+          'categories.failed' => 'Не удалось прочитать категории.',
+          'categories.subcategories' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} подкатегория',
+                  few: '${n} подкатегории',
+                  many: '${n} подкатегорий',
+                  other: '${n} подкатегории',
+                ),
+          'categories.presets.groceries' => 'Продукты',
+          'categories.presets.cafe' => 'Кафе',
+          'categories.presets.transport' => 'Транспорт',
+          'categories.presets.home' => 'Дом',
+          'categories.presets.health' => 'Здоровье',
+          'categories.presets.leisure' => 'Досуг',
+          'categories.presets.subscriptions' => 'Подписки',
+          'categories.presets.clothes' => 'Одежда',
+          'categories.presets.travel' => 'Поездки',
+          'categories.presets.education' => 'Обучение',
+          'categories.presets.gifts' => 'Подарки',
+          'categories.presets.salary' => 'Зарплата',
+          'categories.presets.freelance' => 'Подработка',
+          'categories.presets.interest' => 'Проценты',
+          'categories.presets.giftsReceived' => 'Подарки',
+          'categories.form.newTitle' => 'Новая категория',
+          'categories.form.editTitle' => 'Категория',
+          'categories.form.name' => 'Название',
+          'categories.form.namePlaceholder' => 'Продукты',
+          'categories.form.kind' => 'Тип',
+          'categories.form.parent' => 'Внутри',
+          'categories.form.noParent' => 'Отдельно',
+          'categories.form.color' => 'Цвет',
+          'categories.form.icon' => 'Значок',
+          'categories.form.save' => 'Сохранить',
+          'categories.form.archive' => 'Убрать в архив',
+          'categories.form.restore' => 'Вернуть из архива',
+          'categories.form.nameMissing' => 'Дайте категории название.',
+          'categories.form.failed' =>
+            'Не удалось сохранить. Попробуйте ещё раз.',
+          'demo.card' => 'Зарплатная карта',
+          'demo.cash' => 'Наличные',
+          'demo.savings' => 'Накопления',
+          'demo.euro' => 'Карта в евро',
+          'demo.advance' => 'Аванс',
+          'demo.salary' => 'Зарплата',
+          'demo.project' => 'Подработка',
+          'demo.interest' => 'Проценты на остаток',
+          'demo.supermarket' => 'Супермаркет',
+          'demo.market' => 'Рынок',
+          'demo.bakery' => 'Пекарня',
+          'demo.coffee' => 'Кофейня',
+          'demo.lunch' => 'Обед с коллегами',
+          'demo.metro' => 'Метро',
+          'demo.taxi' => 'Такси',
+          'demo.utilities' => 'Коммуналка',
+          'demo.phone' => 'Связь и интернет',
+          'demo.music' => 'Музыка',
+          'demo.movies' => 'Кино и сериалы',
+          'demo.pharmacy' => 'Аптека',
+          'demo.cinema' => 'Кино',
+          'demo.concert' => 'Концерт',
+          'demo.clothes' => 'Одежда',
+          'demo.gift' => 'Подарок',
+          'demo.hotel' => 'Гостиница',
+          'demo.trip' => 'Поездка',
+          'demo.toCash' => 'Снятие наличных',
+          'demo.toSavings' => 'В накопления',
+          'demo.toEuro' => 'Евро на поездку',
+          'help.title' => 'Помощь',
+          'help.back' => 'Назад',
+          'help.search' => 'Поиск по справке',
+          'help.clearSearch' => 'Очистить поиск',
+          'help.questions' => 'Частые вопросы',
+          'help.nothingFound' =>
+            'Ничего не нашлось. Напишите разработчику: ответ пригодится и другим, он появится в справке.',
+          'help.storageQuestion' => 'Где хранятся мои данные?',
+          'help.storageAnswer' =>
+            'Только на этом устройстве или в этом браузере. Birka не отправляет записи на сервер и не просит пароли от банков.',
+          'help.moveQuestion' => 'Как перенести учёт на другое устройство?',
+          'help.moveAnswer' =>
+            'Сохраните копию в «Ещё → Данные», перешлите файл себе и восстановите его на новом устройстве. Синхронизация появится позже.',
+          'help.ratesQuestion' => 'Откуда берётся курс валют?',
+          'help.ratesAnswer' =>
+            'Это курс Банка России на день операции. Курсы обновляются раз в день и хранятся на устройстве.',
+          'help.importQuestion' => 'Можно ли загрузить операции из банка?',
+          'help.importAnswer' =>
+            'Пока операции вносятся вручную. Загрузка выписок банков — следующая большая функция.',
+          'help.hideQuestion' => 'Как скрыть суммы?',
+          'help.hideAnswer' =>
+            'Нажмите на глаз на Обзоре. Чтобы суммы были скрыты с самого запуска, включите «Скрывать суммы» в «Ещё».',
+          'help.contact' => 'Связаться',
+          'help.write' => 'Написать разработчику',
+          'help.writeText' => 'Откроется ваша почта',
+          'help.bug' => 'Сообщить об ошибке',
+          'help.bugText' =>
+            'В письмо добавятся версия и система, без ваших записей',
+          'help.idea' => 'Предложить идею',
+          'help.ideaText' => 'Расскажите, чего не хватает в Birka',
+          'help.github' => 'Ошибки и идеи на GitHub',
+          'help.githubText' =>
+            'Публично: не пишите туда суммы и названия счетов',
+          'help.letterTitle' => 'Письмо разработчику',
+          'help.letterText' =>
+            'Откроется ваша почта с этим письмом. В нём будет только то, что видно ниже, и вы сможете его дописать.',
+          'help.to' => 'Кому',
+          'help.subject' => 'Тема',
+          'help.letterPrivacy' =>
+            'Операции, суммы и названия счетов в письмо не попадают.',
+          'help.openMail' => 'Открыть почту',
+          'help.cancel' => 'Отмена',
+          'help.questionSubject' => 'Birka · вопрос',
+          'help.bugSubject' =>
+            ({required Object version}) => 'Birka ${version} · ошибка',
+          'help.ideaSubject' => 'Birka · идея',
+          'help.questionBody' => 'Здравствуйте!\n',
+          'help.bugBody' => 'Что случилось:\n\nЧто ожидали:',
+          'help.ideaBody' => 'Чего не хватает:\n\nКак это помогло бы:',
+          'help.language' => 'русский',
+          'help.about' =>
+            ({
+              required Object version,
+              required Object system,
+              required Object language,
+            }) => 'Birka ${version} · ${system} · ${language}',
+          'help.noMail' =>
+            ({required Object address}) =>
+                'Почта не открылась. Адрес скопирован: ${address}',
+          'help.noPage' => 'Страница не открылась. Попробуйте ещё раз.',
+          'imports.account' => 'Счёт из выписки',
+          'imports.formats.alfa' => 'Альфа-Банк',
+          'imports.formats.tbank' => 'Т-Банк',
+          'imports.formats.sber' => 'Сбербанк',
+          'imports.formats.zenmoney' => 'Дзен-мани',
+          'imports.formats.wise' => 'Wise',
+          'imports.formats.revolut' => 'Revolut',
+          'imports.formatsOf.alfa' => 'Альфа-Банка',
+          'imports.formatsOf.tbank' => 'Т-Банка',
+          'imports.formatsOf.sber' => 'Сбербанка',
+          'imports.formatsOf.zenmoney' => 'Дзен-мани',
+          'imports.formatsOf.wise' => 'Wise',
+          'imports.formatsOf.revolut' => 'Revolut',
+          'imports.title' => 'Импорт выписки',
+          'imports.back' => 'Назад',
+          'imports.stepOf' =>
+            ({
+              required Object n,
+              required Object count,
+              required Object what,
+            }) => 'Шаг ${n} из ${count} · ${what}',
+          'imports.steps.file' => 'Файл',
+          'imports.steps.format' => 'Банк',
+          'imports.steps.columns' => 'Колонки',
+          'imports.steps.account' => 'Счёт',
+          'imports.steps.copies' => 'Дубликаты',
+          'imports.steps.done' => 'Итог',
+          'imports.stepWhat.file' => 'файл из банка или Дзен-мани',
+          'imports.stepWhat.format' => 'чья это выписка',
+          'imports.stepWhat.columns' => 'как прочитать колонки',
+          'imports.stepWhat.account' => 'куда записать',
+          'imports.stepWhat.copies' => 'что уже есть в учёте',
+          'imports.stepWhat.done' => 'итог',
+          'imports.stepsLabel' => 'Шаги импорта',
+          'imports.failed' => 'Не получилось. Попробуйте ещё раз.',
+          'imports.dropTitle' => 'Перетащите выписку сюда',
+          'imports.dropText' =>
+            'Файл из интернет-банка за любой период. Birka узнает банк по колонкам и покажет, как прочитала каждую строку, прежде чем что-то записать.',
+          'imports.choose' => 'Выбрать файл',
+          'imports.reading' => 'Читаем файл…',
+          'imports.kinds.0' => 'CSV',
+          'imports.kinds.1' => 'Excel, XLSX',
+          'imports.kinds.2' => 'PDF Сбербанка',
+          'imports.kinds.3' => 'Выгрузка Дзен-мани',
+          'imports.dropNote' =>
+            'PDF читаем у Сбербанка · до 10 000 строк в одном файле',
+          'imports.unreadableTitle' => 'Файл не прочитался',
+          'imports.unreadable.pdf' =>
+            'Этот PDF не прочитать. Birka читает выписки Сбербанка, а у других банков возьмите CSV или Excel.',
+          'imports.unreadable.notATable' =>
+            'В файле нет таблицы операций. Нужен CSV, Excel или PDF Сбербанка.',
+          'imports.unreadable.damaged' =>
+            'Файл повреждён. Скачайте выписку заново.',
+          'imports.unreadable.empty' => 'В файле пусто.',
+          'imports.unreadable.tooLarge' =>
+            'Файл слишком большой. Возьмите выписку покороче, до 10 000 строк.',
+          'imports.unreadable.incomplete' =>
+            'Операции выписки не сходятся с её итогами, часть не прочиталась. Скачайте выписку заново.',
+          'imports.howTitle' => 'Как это устроено',
+          'imports.how.0' =>
+            'Узнаём банк по колонкам файла: Альфа-Банк, Т-Банк, Сбербанк, Дзен-мани, Wise, Revolut или ваш формат',
+          'imports.how.1' =>
+            'Показываем каждую строку так, как она попадёт в учёт',
+          'imports.how.2' => 'Не задваиваем то, что вы уже записали вручную',
+          'imports.how.3' =>
+            'Импорт отменяется целиком, одной кнопкой, хоть через месяц',
+          'imports.privacyTitle' => 'Без паролей от банка',
+          'imports.privacyText' =>
+            'Файл читается здесь, в браузере. Birka не входит в ваш банк и никуда не отправляет выписку.',
+          'imports.whereTitle' => 'Где взять выписку',
+          'imports.whereBank' => 'Интернет-банк',
+          'imports.whereBankText' =>
+            'Раздел выписки или истории операций, формат CSV или Excel за нужные месяцы',
+          'imports.whereZen' => 'Дзен-мани',
+          'imports.whereZenText' =>
+            'Экспорт операций в CSV из веб-версии: все счета, категории и годы истории разом',
+          'imports.whereAbroad' => 'Wise и Revolut',
+          'imports.whereAbroadText' =>
+            'Statement в CSV: у каждой операции останется своя валюта',
+          'imports.pastTitle' => 'Прошлые импорты',
+          'imports.pastName' =>
+            ({required Object format, required Object period}) =>
+                '${format} · ${period}',
+          'imports.pastLine' =>
+            ({
+              required Object operations,
+              required Object where,
+              required Object day,
+            }) => '${operations} → ${where} · ${day}',
+          'imports.operations' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} операция',
+                  few: '${count} операции',
+                  many: '${count} операций',
+                  other: '${count} операции',
+                ),
+          'imports.accounts' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} счёт',
+                  few: '${count} счёта',
+                  many: '${count} счетов',
+                  other: '${count} счёта',
+                ),
+          'imports.undo' => 'Отменить',
+          'imports.undoAsk' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Убрать ${count} операцию этого файла?',
+                  few: 'Убрать ${count} операции этого файла?',
+                  many: 'Убрать ${count} операций этого файла?',
+                  other: 'Убрать ${count} операции этого файла?',
+                ),
+          'imports.undoYes' => 'Убрать',
+          'imports.undoNo' => 'Оставить',
+          'imports.undone' =>
+            ({required Object name}) => 'Импорт «${name}» отменён',
+          'imports.looksLike' =>
+            ({required Object bank}) => 'Похоже на выписку ${bank}',
+          'imports.matched' =>
+            ({
+              required num n,
+              required Object total,
+            }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
               n,
-              one: 'в ${n} счёте',
-              few: 'в ${n} счетах',
-              many: 'в ${n} счетах',
-              other: 'в ${n} счетах',
+              one:
+                  'Совпала ${n} колонка из ${total}. По ней Birka разберёт файл, а вы проверите результат на следующем шаге.',
+              few:
+                  'Совпали ${n} колонки из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
+              many:
+                  'Совпали ${n} колонок из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
+              other:
+                  'Совпали ${n} колонки из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
             ),
-      'accounts.main' => 'основной',
-      'accounts.emptyTitle' => 'Пока нет счетов',
-      'accounts.emptyHint' =>
-        'Добавьте первый, чтобы видеть, где лежат деньги.',
-      'accounts.archive' => 'Архив',
-      'accounts.failed' => 'Не удалось прочитать счета.',
-      'accounts.types.cash' => 'Наличные',
-      'accounts.types.debit' => 'Дебетовая карта',
-      'accounts.types.credit' => 'Кредитная карта',
-      'accounts.types.savings' => 'Накопительный',
-      'accounts.types.deposit' => 'Вклад',
-      'accounts.types.loan' => 'Кредит',
-      'accounts.types.debt' => 'Долг',
-      'accounts.types.investment' => 'Инвестиции',
-      'accounts.types.crypto' => 'Криптокошелёк',
-      'accounts.form.newTitle' => 'Новый счёт',
-      'accounts.form.editTitle' => 'Счёт',
-      'accounts.form.name' => 'Название',
-      'accounts.form.namePlaceholder' => 'Зарплатная',
-      'accounts.form.type' => 'Тип',
-      'accounts.form.currency' => 'Валюта',
-      'accounts.form.balance' => 'Остаток сейчас',
-      'accounts.form.debt' => 'Долг по карте',
-      'accounts.form.lastDigits' => 'Последние 4 цифры карты',
-      'accounts.form.art' => 'Оформление',
-      'accounts.form.includeInTotals' => 'Учитывать в капитале',
-      'accounts.form.save' => 'Сохранить',
-      'accounts.form.archive' => 'Убрать в архив',
-      'accounts.form.restore' => 'Вернуть из архива',
-      'accounts.form.nameMissing' => 'Дайте счёту название.',
-      'accounts.form.amountInvalid' => 'Введите сумму, например 1250,50.',
-      'accounts.form.lastDigitsInvalid' => 'Введите четыре цифры.',
-      'accounts.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
-      'app.overview' => 'Обзор',
-      'app.operations' => 'Операции',
-      'app.reports' => 'Отчёты',
-      'app.more' => 'Ещё',
-      'app.newOperation' => 'Новая операция',
-      'app.close' => 'Закрыть',
-      'app.retry' => 'Повторить',
-      'app.storedHere' => 'Данные хранятся только в этом браузере.',
-      'app.notStored' =>
-        'Этот браузер не хранит данные, поэтому они исчезнут, когда вы закроете вкладку.',
-      'app.openElsewhere' =>
-        'Birka открыта в другой вкладке. Закройте её и попробуйте снова.',
-      'app.soon' => 'скоро',
-      'app.noCategory' => 'Без категории',
-      'app.currencies.RUB' => 'Рубли',
-      'app.currencies.USD' => 'Доллары',
-      'app.currencies.EUR' => 'Евро',
-      'app.currencies.USDT' => 'USDT',
-      'app.currencies.GEL' => 'Лари',
-      'app.currencies.TRY' => 'Лиры',
-      'app.currencies.KZT' => 'Тенге',
-      'app.currencies.AED' => 'Дирхамы',
-      'app.currencies.THB' => 'Баты',
-      'app.import' => 'Импорт',
-      'app.data' => 'Данные',
-      'app.support' => 'Поддержка',
-      'app.help' => 'Помощь и отзыв',
-      'app.keptOnDevice' => 'данные хранятся на этом устройстве',
-      'app.keptInBrowser' => 'данные хранятся в этом браузере',
-      'app.sourceCode' => 'Исходный код на GitHub',
-      'backup.title' => 'Данные',
-      'backup.back' => 'Назад',
-      'backup.storedTitle' => 'Учёт хранится здесь',
-      'backup.storedText' =>
-        'Только на этом устройстве, без серверов. Копия в файле поможет перенести его или не потерять.',
-      'backup.noCopyYet' => 'Копии ещё не было',
-      'backup.lastCopy' =>
-        ({required Object when}) => 'Последняя копия: ${when}',
-      'backup.todayAt' => ({required Object time}) => 'сегодня, ${time}',
-      'backup.yesterdayAt' => ({required Object time}) => 'вчера, ${time}',
-      'backup.dayAt' =>
-        ({required Object day, required Object time}) => '${day}, ${time}',
-      'backup.operations' => 'Операции',
-      'backup.accounts' => 'Счета',
-      'backup.categories' => 'Категории',
-      'backup.save' => 'Сохранить копию',
-      'backup.restore' => 'Восстановить из копии',
-      'backup.export' => 'Экспорт',
-      'backup.exportTitle' => 'Операции в CSV',
-      'backup.exportText' =>
-        'Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория',
-      'backup.records' => 'Учёт',
-      'backup.demo' => 'Демо-данные',
-      'backup.demoText' => 'Пример счетов и операций, чтобы осмотреться',
-      'backup.wipe' => 'Удалить все данные',
-      'backup.filesNote' =>
-        'Файлы сохраняются только туда, куда вы укажете в окне системы.',
-      'backup.filesNoteSite' =>
-        'Файлы сохраняются туда же, куда браузер кладёт загрузки.',
-      'backup.restoreTitle' => 'Восстановить из копии?',
-      'backup.restoreText' =>
-        'Записи на этом устройстве заменятся содержимым файла. Отменить это нельзя, поэтому сначала сохраните копию нынешних, если они нужны.',
-      'backup.replace' => 'Заменить записи',
-      'backup.cancel' => 'Отмена',
-      'backup.wipeTitle' => 'Удалить все данные?',
-      'backup.wipeText' =>
-        'Счета, операции и категории исчезнут с этого устройства. Язык и другие настройки останутся. Без копии вернуть записи не получится.',
-      'backup.saveFirst' => 'Сначала сохранить копию',
-      'backup.wipeAll' => 'Удалить всё',
-      'backup.saved' => ({required Object name}) => 'Копия готова: ${name}',
-      'backup.restored' =>
-        ({required Object day}) => 'Записи восстановлены из копии от ${day}',
-      'backup.exported' => ({required Object name}) => 'Файл готов: ${name}',
-      'backup.wiped' => 'Все данные удалены с этого устройства',
-      'backup.notACopy' => 'Это не копия Birka.',
-      'backup.newer' =>
-        'Эту копию сделала более новая версия Birka. Обновите приложение и попробуйте снова.',
-      'backup.damaged' => 'Копия повреждена, её не получится восстановить.',
-      'backup.failed' => 'Не получилось. Попробуйте ещё раз.',
-      'backup.operationsCount' =>
-        ({required num n, required Object count}) =>
-            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+          'imports.notKnown' => 'Банк по колонкам не узнали',
+          'imports.notKnownText' =>
+            'Выберите его ниже или назначьте колонки сами на следующем шаге.',
+          'imports.skipped' =>
+            ({required Object header}) => '${header} — не берём',
+          'imports.formatsTitle' => 'Формат выписки',
+          'imports.formatTexts.alfa' => 'Операции одной карты или счёта',
+          'imports.formatTexts.tbank' => 'Карты и счета, с категориями банка',
+          'imports.formatTexts.sber' => 'PDF-выписка карты из СберБанк Онлайн',
+          'imports.formatTexts.zenmoney' =>
+            'Все счета, категории и переводы разом',
+          'imports.formatTexts.wise' => 'У каждой операции своя валюта и курс',
+          'imports.formatTexts.revolut' =>
+            'У каждой операции своя валюта и комиссия',
+          'imports.own' => 'Свой формат',
+          'imports.ownTag' => 'любой',
+          'imports.ownText' => 'Колонки назначите сами',
+          'imports.fileKinds.csv' => 'CSV',
+          'imports.fileKinds.xlsx' => 'Excel',
+          'imports.fileKinds.pdf' => 'PDF',
+          'imports.summaryTitle' => 'Что попадёт в учёт',
+          'imports.summaryFormat' => 'Формат',
+          'imports.summaryRows' => 'Строк в файле',
+          'imports.summaryPeriod' => 'Период',
+          'imports.summaryAccount' => 'Счёт',
+          'imports.accountLater' => 'выберем на 4-м шаге',
+          'imports.summaryOperations' => 'Операций',
+          'imports.summarySpent' => 'Расходы',
+          'imports.summaryReceived' => 'Поступления',
+          'imports.summaryUnsorted' => 'Без категории',
+          'imports.toInbox' =>
+            ({required Object count}) => '${count} → во «Входящие»',
+          'imports.summaryBalance' => 'Остаток после',
+          'imports.summaryFromFile' => 'Из файла',
+          'imports.summaryCopies' => 'Пропустим копий',
+          'imports.summaryAdded' => 'Добавим',
+          'imports.next.format' => 'Дальше: банк',
+          'imports.next.columns' => 'Дальше: колонки',
+          'imports.next.account' => 'Дальше: счёт',
+          'imports.next.copies' => 'Дальше: дубликаты',
+          'imports.write' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Импортировать ${count} операцию',
+                  few: 'Импортировать ${count} операции',
+                  many: 'Импортировать ${count} операций',
+                  other: 'Импортировать ${count} операции',
+                ),
+          'imports.nothingToWrite' => 'Нечего добавить',
+          'imports.planning' => 'Считаем…',
+          'imports.writing' =>
+            ({required Object done, required Object total}) =>
+                'Записываем: ${done} из ${total}',
+          'imports.writeNote' =>
+            'Весь импорт можно будет отменить одной кнопкой',
+          'imports.columnsTitle' => 'Колонки файла',
+          'imports.roles.date' => 'Дата',
+          'imports.roles.amount' => 'Сумма',
+          'imports.roles.expense' => 'Расход',
+          'imports.roles.income' => 'Поступление',
+          'imports.roles.fee' => 'Комиссия',
+          'imports.roles.currency' => 'Валюта',
+          'imports.roles.expenseCurrency' => 'Валюта расхода',
+          'imports.roles.incomeCurrency' => 'Валюта поступления',
+          'imports.roles.account' => 'Счёт',
+          'imports.roles.expenseAccount' => 'Счёт расхода',
+          'imports.roles.incomeAccount' => 'Счёт поступления',
+          'imports.roles.description' => 'Описание',
+          'imports.roles.note' => 'Заметка',
+          'imports.roles.category' => 'Категория банка',
+          'imports.roles.ownCategory' => 'Ваша категория',
+          'imports.roles.card' => 'Карта',
+          'imports.roles.balance' => 'Остаток',
+          'imports.roles.status' => 'Статус',
+          'imports.roles.skip' => 'Не брать',
+          'imports.roleOf' =>
+            ({required Object header}) => 'Что в колонке «${header}»',
+          'imports.signTitle' => 'Расход в файле записан',
+          'imports.signs.expenseNegative' => 'с минусом',
+          'imports.signs.expensePositive' => 'с плюсом',
+          'imports.signs.incomePlus' => 'без знака',
+          'imports.markTitle' => 'Копейки отделены',
+          'imports.marks.comma' => 'запятой',
+          'imports.marks.dot' => 'точкой',
+          'imports.datesTitle' => 'Даты',
+          'imports.dateOrders.dayMonthYear' => 'ДД.ММ.ГГГГ',
+          'imports.dateOrders.monthDayYear' => 'ММ.ДД.ГГГГ',
+          'imports.missing' =>
+            'Отметьте колонку даты и колонку суммы: без них строки не станут операциями.',
+          'imports.previewTitle' => 'Так строки попадут в учёт',
+          'imports.previewNote' =>
+            ({required Object shown, required Object total}) =>
+                'первые ${shown} из ${total} · заголовок и итог не считаем',
+          'imports.previewDate' => 'Дата',
+          'imports.previewText' => 'Описание',
+          'imports.previewCategory' => 'Категория',
+          'imports.previewAmount' => 'Сумма',
+          'imports.transfer' => 'Перевод',
+          'imports.inbox' => 'Решу во «Входящих»',
+          'imports.problems' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} строка не прочиталась',
+                  few: '${count} строки не прочитались',
+                  many: '${count} строк не прочитались',
+                  other: '${count} строки не прочитались',
+                ),
+          'imports.problemLine' =>
+            ({required Object line, required Object fault}) =>
+                'Строка ${line}: ${fault}',
+          'imports.andMore' => ({required Object count}) => 'и ещё ${count}',
+          'imports.rowFaults.unreadableDate' => 'дата не читается',
+          'imports.rowFaults.noSuchDay' => 'такого дня нет',
+          'imports.rowFaults.noAmount' => 'нет суммы',
+          'imports.rowFaults.unreadableAmount' => 'сумма не читается',
+          'imports.rowFaults.zeroAmount' => 'сумма ноль',
+          'imports.rowFaults.declined' => 'операция не прошла',
+          'imports.categoriesTitle' => 'Категории банка → ваши',
+          'imports.categoriesNote' =>
+            'Без выбора операции подождут во «Входящих»',
+          'imports.categoryKinds.expense' => 'расход',
+          'imports.categoryKinds.income' => 'поступление',
+          'imports.noBankCategory' => 'Без категории банка',
+          'imports.newCategory' => ({required Object name}) => 'Новая: ${name}',
+          'imports.fees' => 'Комиссии банка',
+          'imports.categoryOf' =>
+            ({required Object name}) => 'Категория для «${name}»',
+          'imports.accountTitleCard' =>
+            ({required Object card}) =>
+                'Куда записать операции карты ••${card}',
+          'imports.accountTitleNamed' =>
+            ({required Object name}) => 'Куда записать операции «${name}»',
+          'imports.accountTitle' => 'Куда записать операции',
+          'imports.accountText' =>
+            ({required Object operations}) =>
+                '${operations}. Выберите счёт в Birka, заведите новый или не берите их.',
+          'imports.cardMatched' => 'совпал номер карты',
+          'imports.nameMatched' => 'совпало название',
+          'imports.otherCurrency' =>
+            ({required Object currency, required Object fileCurrency}) =>
+                '${currency}, а в файле ${fileCurrency}',
+          'imports.newAccount' => 'Новый счёт',
+          'imports.newAccountText' =>
+            ({required Object name, required Object balance}) =>
+                'Заведём «${name}» с остатком ${balance}',
+          'imports.leaveOut' => 'Не брать',
+          'imports.leaveOutText' => 'Операции этого счёта не попадут в учёт',
+          'imports.balanceMatches' => 'Остаток сойдётся с банком',
+          'imports.balanceDiffers' => 'Остаток разойдётся с банком',
+          'imports.balanceInFile' =>
+            ({required Object day}) => 'В выписке на ${day}',
+          'imports.balanceInBirka' => 'В Birka после импорта',
+          'imports.balanceHint' =>
+            'В учёте есть операции, которых нет в выписке, или их не хватает. Проверьте счёт и дубликаты.',
+          'imports.copiesTitle' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} операция уже есть в учёте',
+                  few: '${count} операции уже есть в учёте',
+                  many: '${count} операций уже есть в учёте',
+                  other: '${count} операции уже есть в учёте',
+                ),
+          'imports.copiesText' =>
+            'Похоже, вы записали их вручную. Копии из выписки пропустим, а ваши записи, с вашими названиями и категориями, останутся как есть.',
+          'imports.noCopies' => 'Повторов нет',
+          'imports.noCopiesText' =>
+            'Ни одна операция выписки не похожа на то, что уже есть в учёте.',
+          'imports.fromFile' => 'Из выписки',
+          'imports.inLedger' => 'Уже в учёте',
+          'imports.reasons.imported' => 'из этого же файла',
+          'imports.reasons.sameAmount' => 'та же сумма',
+          'imports.reasons.sameDay' => 'тот же день',
+          'imports.reasons.dayBefore' => 'на день раньше',
+          'imports.reasons.dayAfter' => 'на день позже',
+          'imports.reasons.sameAccount' => 'тот же счёт',
+          'imports.reasons.similarName' => 'похожее название',
+          'imports.skipCopy' => 'Пропустить копию',
+          'imports.keepBoth' => 'Оставить обе',
+          'imports.leftTitle' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} операция не попадёт в учёт',
+                  few: '${count} операции не попадут в учёт',
+                  many: '${count} операций не попадут в учёт',
+                  other: '${count} операции не попадут в учёт',
+                ),
+          'imports.planFaults.otherCurrency' => 'у счёта другая валюта',
+          'imports.planFaults.tooPrecise' => 'больше знаков, чем у валюты',
+          'imports.planFaults.unevenTransfer' =>
+            'перевод в одной валюте с двумя суммами',
+          'imports.doneTitle' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Добавили ${count} операцию',
+                  few: 'Добавили ${count} операции',
+                  many: 'Добавили ${count} операций',
+                  other: 'Добавили ${count} операции',
+                ),
+          'imports.doneWhere' =>
+            ({
+              required Object format,
+              required Object period,
+              required Object accounts,
+            }) => '${format}, ${period} → ${accounts}',
+          'imports.doneIncome' => 'Поступления',
+          'imports.doneSpent' => 'Новые траты',
+          'imports.doneSkipped' => 'Пропустили копий',
+          'imports.doneBalance' => 'Остаток счёта',
+          'imports.asInBank' => 'как в банке',
+          'imports.unsortedTitle' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} операция без категории',
+                  few: '${count} операции без категории',
+                  many: '${count} операций без категории',
+                  other: '${count} операции без категории',
+                ),
+          'imports.unsortedText' =>
+            'В отчётах они уже есть, просто без категории. Её можно выбрать в самой операции.',
+          'imports.undoTitle' => 'Передумали?',
+          'imports.undoText' =>
+            ({
+              required num n,
+              required Object count,
+            }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
               n,
-              one: '${count} операция',
-              few: '${count} операции',
-              many: '${count} операций',
-              other: '${count} операции',
+              one:
+                  'Отмена уберёт ${count} операцию этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
+              few:
+                  'Отмена уберёт ${count} операции этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
+              many:
+                  'Отмена уберёт ${count} операций этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
+              other:
+                  'Отмена уберёт ${count} операции этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
             ),
-      'backup.accountsCount' =>
-        ({required num n, required Object count}) =>
-            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
-              n,
-              one: '${count} счёт',
-              few: '${count} счёта',
-              many: '${count} счетов',
-              other: '${count} счёта',
-            ),
-      'backup.csv.date' => 'Дата',
-      'backup.csv.kind' => 'Тип',
-      'backup.csv.amount' => 'Сумма',
-      'backup.csv.currency' => 'Валюта',
-      'backup.csv.account' => 'Счёт',
-      'backup.csv.category' => 'Категория',
-      'backup.csv.subcategory' => 'Подкатегория',
-      'backup.csv.note' => 'Заметка',
-      'backup.csv.expense' => 'Расход',
-      'backup.csv.income' => 'Доход',
-      'backup.csv.transfer' => 'Перевод',
-      'backup.csv.adjustment' => 'Корректировка',
-      'categories.title' => 'Категории',
-      'categories.back' => 'Назад',
-      'categories.add' => 'Добавить категорию',
-      'categories.expense' => 'Расходы',
-      'categories.income' => 'Доходы',
-      'categories.emptyTitle' => 'Пока нет категорий',
-      'categories.emptyHint' => 'Возьмите готовый набор или создайте свои.',
-      'categories.addPresets' => 'Добавить готовый набор',
-      'categories.addOwn' => 'Создать свою',
-      'categories.archive' => 'Архив',
-      'categories.failed' => 'Не удалось прочитать категории.',
-      'categories.subcategories' =>
-        ({required num n}) =>
-            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
-              n,
-              one: '${n} подкатегория',
-              few: '${n} подкатегории',
-              many: '${n} подкатегорий',
-              other: '${n} подкатегории',
-            ),
-      'categories.presets.groceries' => 'Продукты',
-      'categories.presets.cafe' => 'Кафе',
-      'categories.presets.transport' => 'Транспорт',
-      'categories.presets.home' => 'Дом',
-      'categories.presets.health' => 'Здоровье',
-      'categories.presets.leisure' => 'Досуг',
-      'categories.presets.subscriptions' => 'Подписки',
-      'categories.presets.clothes' => 'Одежда',
-      'categories.presets.travel' => 'Поездки',
-      'categories.presets.education' => 'Обучение',
-      'categories.presets.gifts' => 'Подарки',
-      'categories.presets.salary' => 'Зарплата',
-      'categories.presets.freelance' => 'Подработка',
-      'categories.presets.interest' => 'Проценты',
-      'categories.presets.giftsReceived' => 'Подарки',
-      'categories.form.newTitle' => 'Новая категория',
-      'categories.form.editTitle' => 'Категория',
-      'categories.form.name' => 'Название',
-      'categories.form.namePlaceholder' => 'Продукты',
-      'categories.form.kind' => 'Тип',
-      'categories.form.parent' => 'Внутри',
-      'categories.form.noParent' => 'Отдельно',
-      'categories.form.color' => 'Цвет',
-      'categories.form.icon' => 'Значок',
-      'categories.form.save' => 'Сохранить',
-      'categories.form.archive' => 'Убрать в архив',
-      'categories.form.restore' => 'Вернуть из архива',
-      'categories.form.nameMissing' => 'Дайте категории название.',
-      'categories.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
-      'demo.card' => 'Зарплатная карта',
-      'demo.cash' => 'Наличные',
-      'demo.savings' => 'Накопления',
-      'demo.euro' => 'Карта в евро',
-      'demo.advance' => 'Аванс',
-      'demo.salary' => 'Зарплата',
-      'demo.project' => 'Подработка',
-      'demo.interest' => 'Проценты на остаток',
-      'demo.supermarket' => 'Супермаркет',
-      'demo.market' => 'Рынок',
-      'demo.bakery' => 'Пекарня',
-      'demo.coffee' => 'Кофейня',
-      'demo.lunch' => 'Обед с коллегами',
-      'demo.metro' => 'Метро',
-      'demo.taxi' => 'Такси',
-      'demo.utilities' => 'Коммуналка',
-      'demo.phone' => 'Связь и интернет',
-      'demo.music' => 'Музыка',
-      'demo.movies' => 'Кино и сериалы',
-      'demo.pharmacy' => 'Аптека',
-      'demo.cinema' => 'Кино',
-      'demo.concert' => 'Концерт',
-      'demo.clothes' => 'Одежда',
-      'demo.gift' => 'Подарок',
-      'demo.hotel' => 'Гостиница',
-      'demo.trip' => 'Поездка',
-      'demo.toCash' => 'Снятие наличных',
-      'demo.toSavings' => 'В накопления',
-      'demo.toEuro' => 'Евро на поездку',
-      'help.title' => 'Помощь',
-      'help.back' => 'Назад',
-      'help.search' => 'Поиск по справке',
-      'help.clearSearch' => 'Очистить поиск',
-      'help.questions' => 'Частые вопросы',
-      'help.nothingFound' =>
-        'Ничего не нашлось. Напишите разработчику: ответ пригодится и другим, он появится в справке.',
-      'help.storageQuestion' => 'Где хранятся мои данные?',
-      'help.storageAnswer' =>
-        'Только на этом устройстве или в этом браузере. Birka не отправляет записи на сервер и не просит пароли от банков.',
-      'help.moveQuestion' => 'Как перенести учёт на другое устройство?',
-      'help.moveAnswer' =>
-        'Сохраните копию в «Ещё → Данные», перешлите файл себе и восстановите его на новом устройстве. Синхронизация появится позже.',
-      'help.ratesQuestion' => 'Откуда берётся курс валют?',
-      'help.ratesAnswer' =>
-        'Это курс Банка России на день операции. Курсы обновляются раз в день и хранятся на устройстве.',
-      'help.importQuestion' => 'Можно ли загрузить операции из банка?',
-      'help.importAnswer' =>
-        'Пока операции вносятся вручную. Загрузка выписок банков — следующая большая функция.',
-      'help.hideQuestion' => 'Как скрыть суммы?',
-      'help.hideAnswer' =>
-        'Нажмите на глаз на Обзоре. Чтобы суммы были скрыты с самого запуска, включите «Скрывать суммы» в «Ещё».',
-      'help.contact' => 'Связаться',
-      'help.write' => 'Написать разработчику',
-      'help.writeText' => 'Откроется ваша почта',
-      'help.bug' => 'Сообщить об ошибке',
-      'help.bugText' =>
-        'В письмо добавятся версия и система, без ваших записей',
-      'help.idea' => 'Предложить идею',
-      'help.ideaText' => 'Расскажите, чего не хватает в Birka',
-      'help.github' => 'Ошибки и идеи на GitHub',
-      'help.githubText' => 'Публично: не пишите туда суммы и названия счетов',
-      'help.letterTitle' => 'Письмо разработчику',
-      'help.letterText' =>
-        'Откроется ваша почта с этим письмом. В нём будет только то, что видно ниже, и вы сможете его дописать.',
-      'help.to' => 'Кому',
-      'help.subject' => 'Тема',
-      'help.letterPrivacy' =>
-        'Операции, суммы и названия счетов в письмо не попадают.',
-      'help.openMail' => 'Открыть почту',
-      'help.cancel' => 'Отмена',
-      'help.questionSubject' => 'Birka · вопрос',
-      'help.bugSubject' =>
-        ({required Object version}) => 'Birka ${version} · ошибка',
-      'help.ideaSubject' => 'Birka · идея',
-      'help.questionBody' => 'Здравствуйте!\n',
-      'help.bugBody' => 'Что случилось:\n\nЧто ожидали:',
-      'help.ideaBody' => 'Чего не хватает:\n\nКак это помогло бы:',
-      'help.language' => 'русский',
-      'help.about' =>
-        ({
-          required Object version,
-          required Object system,
-          required Object language,
-        }) => 'Birka ${version} · ${system} · ${language}',
-      'help.noMail' =>
-        ({required Object address}) =>
-            'Почта не открылась. Адрес скопирован: ${address}',
-      'help.noPage' => 'Страница не открылась. Попробуйте ещё раз.',
-      'imports.account' => 'Счёт из выписки',
-      'imports.formats.alfa' => 'Альфа-Банк',
-      'imports.formats.tbank' => 'Т-Банк',
-      'imports.formats.sber' => 'Сбербанк',
-      'imports.formats.zenmoney' => 'Дзен-мани',
-      'imports.formats.wise' => 'Wise',
-      'imports.formats.revolut' => 'Revolut',
-      'onboarding.skip' => 'Пропустить',
-      'onboarding.back' => 'Назад',
-      'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
-      'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
-      'onboarding.welcome.text' =>
-        'Счета в любой валюте и без паролей от банков. Данные остаются на вашем устройстве.',
-      'onboarding.welcome.start' => 'Начать',
-      'onboarding.account.title' => 'Первый счёт',
-      'onboarding.account.text' =>
-        'С него начнётся капитал. Остаток можно поправить в любой момент.',
-      'onboarding.account.next' => 'Дальше',
-      'onboarding.categories.title' => 'Категории',
-      'onboarding.categories.text' =>
-        'Возьмите готовый набор. Его можно менять в любой момент.',
-      'onboarding.categories.short' => 'Короткий набор',
-      'onboarding.categories.full' => 'Полный набор',
-      'onboarding.categories.count' =>
-        ({required num n}) =>
-            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
-              n,
-              one: '${n} категория',
-              few: '${n} категории',
-              many: '${n} категорий',
-              other: '${n} категории',
-            ),
-      'onboarding.categories.finish' => 'Готово',
-      'overview.capital' => 'Капитал',
-      'overview.rateOn' => ({required Object day}) => 'Курс ЦБ РФ на ${day}',
-      'overview.currencies' =>
-        ({required num n}) =>
-            (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
-              n,
-              one: '${n} валюта',
-              few: '${n} валюты',
-              many: '${n} валют',
-              other: '${n} валюты',
-            ),
-      'overview.week' => 'Неделя',
-      'overview.month' => 'Месяц',
-      'overview.year' => 'Год',
-      'overview.inWeek' => 'за неделю',
-      'overview.inYear' => 'за год',
-      'overview.chart' => 'Капитал за период',
-      'overview.accounts' => 'Счета',
-      'overview.allAccounts' => ({required Object n}) => 'Все ${n}',
-      'overview.spendingIn' => ({required Object month}) => 'Траты ${month}',
-      'overview.monthsIn.0' => 'в январе',
-      'overview.monthsIn.1' => 'в феврале',
-      'overview.monthsIn.2' => 'в марте',
-      'overview.monthsIn.3' => 'в апреле',
-      'overview.monthsIn.4' => 'в мае',
-      'overview.monthsIn.5' => 'в июне',
-      'overview.monthsIn.6' => 'в июле',
-      'overview.monthsIn.7' => 'в августе',
-      'overview.monthsIn.8' => 'в сентябре',
-      'overview.monthsIn.9' => 'в октябре',
-      'overview.monthsIn.10' => 'в ноябре',
-      'overview.monthsIn.11' => 'в декабре',
-      'overview.noSpending' => 'В этом месяце трат пока нет.',
-      'overview.ring' => 'Траты по категориям',
-      'overview.failed' => 'Не удалось прочитать обзор.',
-      'overview.hideAmounts' => 'Скрыть суммы',
-      'overview.showAmounts' => 'Показать суммы',
-      'overview.changeIn.0' => 'за январь',
-      'overview.changeIn.1' => 'за февраль',
-      'overview.changeIn.2' => 'за март',
-      'overview.changeIn.3' => 'за апрель',
-      'overview.changeIn.4' => 'за май',
-      'overview.changeIn.5' => 'за июнь',
-      'overview.changeIn.6' => 'за июль',
-      'overview.changeIn.7' => 'за август',
-      'overview.changeIn.8' => 'за сентябрь',
-      'overview.changeIn.9' => 'за октябрь',
-      'overview.changeIn.10' => 'за ноябрь',
-      'overview.changeIn.11' => 'за декабрь',
-      'reports.expenses' => 'Расходы',
-      'reports.income' => 'Доходы',
-      'reports.byMonth' => 'По месяцам',
-      'reports.average' => ({required Object amount}) => 'в среднем ${amount}',
-      'reports.noExpenses' => 'В этом месяце расходов нет.',
-      'reports.noIncome' => 'В этом месяце доходов нет.',
-      'reports.ring' => 'Доли категорий',
-      'reports.dayRates' => 'Курс ЦБ РФ на день операции',
-      'reports.failed' => 'Не удалось прочитать отчёт.',
-      'reports.against.0' => 'к январю',
-      'reports.against.1' => 'к февралю',
-      'reports.against.2' => 'к марту',
-      'reports.against.3' => 'к апрелю',
-      'reports.against.4' => 'к маю',
-      'reports.against.5' => 'к июню',
-      'reports.against.6' => 'к июлю',
-      'reports.against.7' => 'к августу',
-      'reports.against.8' => 'к сентябрю',
-      'reports.against.9' => 'к октябрю',
-      'reports.against.10' => 'к ноябрю',
-      'reports.against.11' => 'к декабрю',
-      'reports.monthsShort.0' => 'Янв',
-      'reports.monthsShort.1' => 'Фев',
-      'reports.monthsShort.2' => 'Мар',
-      'reports.monthsShort.3' => 'Апр',
-      'reports.monthsShort.4' => 'Май',
-      'reports.monthsShort.5' => 'Июн',
-      'reports.monthsShort.6' => 'Июл',
-      'reports.monthsShort.7' => 'Авг',
-      'reports.monthsShort.8' => 'Сен',
-      'reports.monthsShort.9' => 'Окт',
-      'reports.monthsShort.10' => 'Ноя',
-      'reports.monthsShort.11' => 'Дек',
-      'settings.general' => 'Основное',
-      'settings.language' => 'Язык',
-      'settings.deviceLanguage' => 'Как на устройстве',
-      'settings.english' => 'English',
-      'settings.russian' => 'Русский',
-      'settings.baseCurrency' => 'Базовая валюта',
-      'settings.firstAccountCurrency' => 'Первый счёт',
-      'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
-      'settings.security' => 'Безопасность',
-      'settings.hideAmounts' => 'Скрывать суммы',
-      'settings.onLaunch' => 'При запуске',
-      'transactions.expense' => 'Расход',
-      'transactions.income' => 'Доход',
-      'transactions.transfer' => 'Перевод',
-      'transactions.adjustment' => 'Корректировка',
-      'transactions.today' => 'Сегодня',
-      'transactions.yesterday' => 'Вчера',
-      'transactions.pickDay' => 'Выбрать день',
-      'transactions.note' => 'Заметка',
-      'transactions.addNote' => 'Заметка',
-      'transactions.done' => 'Готово',
-      'transactions.account' => 'Счёт',
-      'transactions.to' => 'Куда',
-      'transactions.sent' => 'Списать',
-      'transactions.received' => 'Зачислить',
-      'transactions.save' => 'Сохранить',
-      'transactions.more' => 'Ещё',
-      'transactions.allCategories' => 'Все категории',
-      'transactions.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
-      'transactions.failedToRead' => 'Не удалось прочитать счета и категории.',
-      'transactions.noAccountsTitle' => 'Пока нет счетов',
-      'transactions.noAccountsHint' =>
-        'Добавьте счёт, чтобы записывать, куда уходят деньги.',
-      'transactions.addAccount' => 'Добавить счёт',
-      'transactions.oneAccountHint' => 'Для перевода нужен второй счёт.',
-      'transactions.noCategoriesHint' =>
-        'Добавьте категории, чтобы разбирать траты.',
-      'transactions.addCategories' => 'Добавить категории',
-      'transactions.search' => 'Поиск',
-      'transactions.searchHint' => 'Кафе, 250 или заметка',
-      'transactions.clearSearch' => 'Очистить поиск',
-      'transactions.filterAll' => 'Все',
-      'transactions.filterExpenses' => 'Расходы',
-      'transactions.filterIncome' => 'Доходы',
-      'transactions.filterTransfers' => 'Переводы',
-      'transactions.pickMonth' => 'Выбрать месяц',
-      'transactions.noOperationsTitle' => 'Пока нет операций',
-      'transactions.noAccountOperations' => 'По этому счёту операций пока нет.',
-      'transactions.balanceChart' => 'Остаток за период',
-      'transactions.accountGone' => 'Этого счёта больше нет.',
-      'transactions.noOperationsHint' => 'Нажмите плюс, чтобы записать первую.',
-      'transactions.nothingFound' => 'Ничего не нашлось',
-      'transactions.failedToReadOperations' => 'Не удалось прочитать операции.',
-      'transactions.failedToDelete' =>
-        'Не удалось удалить. Попробуйте ещё раз.',
-      'transactions.operation' => 'Операция',
-      'transactions.edit' => 'Изменить',
-      'transactions.editOperation' => 'Изменить операцию',
-      'transactions.repeat' => 'Повторить',
-      'transactions.delete' => 'Удалить',
-      'transactions.deleteTitle' => 'Удалить операцию?',
-      'transactions.cancel' => 'Отмена',
-      'transactions.back' => 'Назад',
-      'transactions.category' => 'Категория',
-      'transactions.from' => 'Откуда',
-      'transactions.date' => 'Дата',
-      'transactions.sources.manual' => 'Вручную',
-      'transactions.sources.import' => 'Из выписки',
-      'transactions.sources.notification' => 'Из уведомления',
-      'transactions.sources.recurring' => 'Регулярная',
-      'transactions.sources.bank' => 'Из банка',
-      'transactions.keys.point' => 'Запятая',
-      'transactions.keys.add' => 'Плюс',
-      'transactions.keys.subtract' => 'Минус',
-      'transactions.keys.multiply' => 'Умножить',
-      'transactions.keys.divide' => 'Разделить',
-      'transactions.keys.backspace' => 'Стереть',
-      'transactions.dayOfMonth' =>
-        ({required Object day, required Object month}) => '${day} ${month}',
-      'transactions.months.0' => 'января',
-      'transactions.months.1' => 'февраля',
-      'transactions.months.2' => 'марта',
-      'transactions.months.3' => 'апреля',
-      'transactions.months.4' => 'мая',
-      'transactions.months.5' => 'июня',
-      'transactions.months.6' => 'июля',
-      'transactions.months.7' => 'августа',
-      'transactions.months.8' => 'сентября',
-      'transactions.months.9' => 'октября',
-      'transactions.months.10' => 'ноября',
-      'transactions.months.11' => 'декабря',
-      'transactions.monthNames.0' => 'Январь',
-      'transactions.monthNames.1' => 'Февраль',
-      'transactions.monthNames.2' => 'Март',
-      'transactions.monthNames.3' => 'Апрель',
-      'transactions.monthNames.4' => 'Май',
-      'transactions.monthNames.5' => 'Июнь',
-      'transactions.monthNames.6' => 'Июль',
-      'transactions.monthNames.7' => 'Август',
-      'transactions.monthNames.8' => 'Сентябрь',
-      'transactions.monthNames.9' => 'Октябрь',
-      'transactions.monthNames.10' => 'Ноябрь',
-      'transactions.monthNames.11' => 'Декабрь',
-      _ => null,
-    };
+          'imports.undoImport' => 'Отменить импорт',
+          'imports.undoneTitle' => 'Импорт отменён',
+          'imports.undoneText' =>
+            'Операции этого файла убраны из учёта. Ваши записи остались как были.',
+          'imports.toOperations' => 'К операциям',
+          'imports.another' => 'Загрузить ещё выписку',
+          'imports.monthsWhole.0' => 'январь',
+          'imports.monthsWhole.1' => 'февраль',
+          'imports.monthsWhole.2' => 'март',
+          'imports.monthsWhole.3' => 'апрель',
+          'imports.monthsWhole.4' => 'май',
+          'imports.monthsWhole.5' => 'июнь',
+          'imports.monthsWhole.6' => 'июль',
+          'imports.monthsWhole.7' => 'август',
+          'imports.monthsWhole.8' => 'сентябрь',
+          'imports.monthsWhole.9' => 'октябрь',
+          'imports.monthsWhole.10' => 'ноябрь',
+          'imports.monthsWhole.11' => 'декабрь',
+          'imports.periodMonth' =>
+            ({required Object month, required Object year}) =>
+                '${month} ${year}',
+          'imports.periodInMonth' =>
+            ({
+              required Object from,
+              required Object to,
+              required Object month,
+              required Object year,
+            }) => '${from}–${to} ${month} ${year}',
+          'imports.periodInYear' =>
+            ({
+              required Object from,
+              required Object to,
+              required Object year,
+            }) => '${from} – ${to} ${year}',
+          'imports.periodFar' =>
+            ({required Object from, required Object to}) => '${from} – ${to}',
+          'onboarding.skip' => 'Пропустить',
+          'onboarding.back' => 'Назад',
+          'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+          'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
+          'onboarding.welcome.text' =>
+            'Счета в любой валюте и без паролей от банков. Данные остаются на вашем устройстве.',
+          'onboarding.welcome.start' => 'Начать',
+          'onboarding.account.title' => 'Первый счёт',
+          'onboarding.account.text' =>
+            'С него начнётся капитал. Остаток можно поправить в любой момент.',
+          'onboarding.account.next' => 'Дальше',
+          'onboarding.categories.title' => 'Категории',
+          'onboarding.categories.text' =>
+            'Возьмите готовый набор. Его можно менять в любой момент.',
+          'onboarding.categories.short' => 'Короткий набор',
+          'onboarding.categories.full' => 'Полный набор',
+          'onboarding.categories.count' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} категория',
+                  few: '${n} категории',
+                  many: '${n} категорий',
+                  other: '${n} категории',
+                ),
+          'onboarding.categories.finish' => 'Готово',
+          'overview.capital' => 'Капитал',
+          'overview.rateOn' =>
+            ({required Object day}) => 'Курс ЦБ РФ на ${day}',
+          'overview.currencies' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} валюта',
+                  few: '${n} валюты',
+                  many: '${n} валют',
+                  other: '${n} валюты',
+                ),
+          'overview.week' => 'Неделя',
+          'overview.month' => 'Месяц',
+          'overview.year' => 'Год',
+          'overview.inWeek' => 'за неделю',
+          'overview.inYear' => 'за год',
+          'overview.chart' => 'Капитал за период',
+          'overview.accounts' => 'Счета',
+          'overview.allAccounts' => ({required Object n}) => 'Все ${n}',
+          'overview.spendingIn' =>
+            ({required Object month}) => 'Траты ${month}',
+          'overview.monthsIn.0' => 'в январе',
+          'overview.monthsIn.1' => 'в феврале',
+          'overview.monthsIn.2' => 'в марте',
+          'overview.monthsIn.3' => 'в апреле',
+          'overview.monthsIn.4' => 'в мае',
+          'overview.monthsIn.5' => 'в июне',
+          'overview.monthsIn.6' => 'в июле',
+          'overview.monthsIn.7' => 'в августе',
+          'overview.monthsIn.8' => 'в сентябре',
+          'overview.monthsIn.9' => 'в октябре',
+          'overview.monthsIn.10' => 'в ноябре',
+          'overview.monthsIn.11' => 'в декабре',
+          'overview.noSpending' => 'В этом месяце трат пока нет.',
+          'overview.ring' => 'Траты по категориям',
+          'overview.failed' => 'Не удалось прочитать обзор.',
+          'overview.hideAmounts' => 'Скрыть суммы',
+          'overview.showAmounts' => 'Показать суммы',
+          'overview.changeIn.0' => 'за январь',
+          _ => null,
+        } ??
+        switch (path) {
+          'overview.changeIn.1' => 'за февраль',
+          'overview.changeIn.2' => 'за март',
+          'overview.changeIn.3' => 'за апрель',
+          'overview.changeIn.4' => 'за май',
+          'overview.changeIn.5' => 'за июнь',
+          'overview.changeIn.6' => 'за июль',
+          'overview.changeIn.7' => 'за август',
+          'overview.changeIn.8' => 'за сентябрь',
+          'overview.changeIn.9' => 'за октябрь',
+          'overview.changeIn.10' => 'за ноябрь',
+          'overview.changeIn.11' => 'за декабрь',
+          'reports.expenses' => 'Расходы',
+          'reports.income' => 'Доходы',
+          'reports.byMonth' => 'По месяцам',
+          'reports.average' =>
+            ({required Object amount}) => 'в среднем ${amount}',
+          'reports.noExpenses' => 'В этом месяце расходов нет.',
+          'reports.noIncome' => 'В этом месяце доходов нет.',
+          'reports.ring' => 'Доли категорий',
+          'reports.dayRates' => 'Курс ЦБ РФ на день операции',
+          'reports.failed' => 'Не удалось прочитать отчёт.',
+          'reports.against.0' => 'к январю',
+          'reports.against.1' => 'к февралю',
+          'reports.against.2' => 'к марту',
+          'reports.against.3' => 'к апрелю',
+          'reports.against.4' => 'к маю',
+          'reports.against.5' => 'к июню',
+          'reports.against.6' => 'к июлю',
+          'reports.against.7' => 'к августу',
+          'reports.against.8' => 'к сентябрю',
+          'reports.against.9' => 'к октябрю',
+          'reports.against.10' => 'к ноябрю',
+          'reports.against.11' => 'к декабрю',
+          'reports.monthsShort.0' => 'Янв',
+          'reports.monthsShort.1' => 'Фев',
+          'reports.monthsShort.2' => 'Мар',
+          'reports.monthsShort.3' => 'Апр',
+          'reports.monthsShort.4' => 'Май',
+          'reports.monthsShort.5' => 'Июн',
+          'reports.monthsShort.6' => 'Июл',
+          'reports.monthsShort.7' => 'Авг',
+          'reports.monthsShort.8' => 'Сен',
+          'reports.monthsShort.9' => 'Окт',
+          'reports.monthsShort.10' => 'Ноя',
+          'reports.monthsShort.11' => 'Дек',
+          'settings.general' => 'Основное',
+          'settings.language' => 'Язык',
+          'settings.deviceLanguage' => 'Как на устройстве',
+          'settings.english' => 'English',
+          'settings.russian' => 'Русский',
+          'settings.baseCurrency' => 'Базовая валюта',
+          'settings.firstAccountCurrency' => 'Первый счёт',
+          'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
+          'settings.security' => 'Безопасность',
+          'settings.hideAmounts' => 'Скрывать суммы',
+          'settings.onLaunch' => 'При запуске',
+          'transactions.expense' => 'Расход',
+          'transactions.income' => 'Доход',
+          'transactions.transfer' => 'Перевод',
+          'transactions.adjustment' => 'Корректировка',
+          'transactions.today' => 'Сегодня',
+          'transactions.yesterday' => 'Вчера',
+          'transactions.pickDay' => 'Выбрать день',
+          'transactions.note' => 'Заметка',
+          'transactions.addNote' => 'Заметка',
+          'transactions.done' => 'Готово',
+          'transactions.account' => 'Счёт',
+          'transactions.to' => 'Куда',
+          'transactions.sent' => 'Списать',
+          'transactions.received' => 'Зачислить',
+          'transactions.save' => 'Сохранить',
+          'transactions.more' => 'Ещё',
+          'transactions.allCategories' => 'Все категории',
+          'transactions.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+          'transactions.failedToRead' =>
+            'Не удалось прочитать счета и категории.',
+          'transactions.noAccountsTitle' => 'Пока нет счетов',
+          'transactions.noAccountsHint' =>
+            'Добавьте счёт, чтобы записывать, куда уходят деньги.',
+          'transactions.addAccount' => 'Добавить счёт',
+          'transactions.oneAccountHint' => 'Для перевода нужен второй счёт.',
+          'transactions.noCategoriesHint' =>
+            'Добавьте категории, чтобы разбирать траты.',
+          'transactions.addCategories' => 'Добавить категории',
+          'transactions.search' => 'Поиск',
+          'transactions.searchHint' => 'Кафе, 250 или заметка',
+          'transactions.clearSearch' => 'Очистить поиск',
+          'transactions.filterAll' => 'Все',
+          'transactions.filterExpenses' => 'Расходы',
+          'transactions.filterIncome' => 'Доходы',
+          'transactions.filterTransfers' => 'Переводы',
+          'transactions.pickMonth' => 'Выбрать месяц',
+          'transactions.noOperationsTitle' => 'Пока нет операций',
+          'transactions.noAccountOperations' =>
+            'По этому счёту операций пока нет.',
+          'transactions.balanceChart' => 'Остаток за период',
+          'transactions.accountGone' => 'Этого счёта больше нет.',
+          'transactions.noOperationsHint' =>
+            'Нажмите плюс, чтобы записать первую.',
+          'transactions.nothingFound' => 'Ничего не нашлось',
+          'transactions.failedToReadOperations' =>
+            'Не удалось прочитать операции.',
+          'transactions.failedToDelete' =>
+            'Не удалось удалить. Попробуйте ещё раз.',
+          'transactions.operation' => 'Операция',
+          'transactions.edit' => 'Изменить',
+          'transactions.editOperation' => 'Изменить операцию',
+          'transactions.repeat' => 'Повторить',
+          'transactions.delete' => 'Удалить',
+          'transactions.deleteTitle' => 'Удалить операцию?',
+          'transactions.cancel' => 'Отмена',
+          'transactions.back' => 'Назад',
+          'transactions.category' => 'Категория',
+          'transactions.from' => 'Откуда',
+          'transactions.date' => 'Дата',
+          'transactions.sources.manual' => 'Вручную',
+          'transactions.sources.import' => 'Из выписки',
+          'transactions.sources.notification' => 'Из уведомления',
+          'transactions.sources.recurring' => 'Регулярная',
+          'transactions.sources.bank' => 'Из банка',
+          'transactions.keys.point' => 'Запятая',
+          'transactions.keys.add' => 'Плюс',
+          'transactions.keys.subtract' => 'Минус',
+          'transactions.keys.multiply' => 'Умножить',
+          'transactions.keys.divide' => 'Разделить',
+          'transactions.keys.backspace' => 'Стереть',
+          'transactions.dayOfMonth' =>
+            ({required Object day, required Object month}) => '${day} ${month}',
+          'transactions.months.0' => 'января',
+          'transactions.months.1' => 'февраля',
+          'transactions.months.2' => 'марта',
+          'transactions.months.3' => 'апреля',
+          'transactions.months.4' => 'мая',
+          'transactions.months.5' => 'июня',
+          'transactions.months.6' => 'июля',
+          'transactions.months.7' => 'августа',
+          'transactions.months.8' => 'сентября',
+          'transactions.months.9' => 'октября',
+          'transactions.months.10' => 'ноября',
+          'transactions.months.11' => 'декабря',
+          'transactions.monthNames.0' => 'Январь',
+          'transactions.monthNames.1' => 'Февраль',
+          'transactions.monthNames.2' => 'Март',
+          'transactions.monthNames.3' => 'Апрель',
+          'transactions.monthNames.4' => 'Май',
+          'transactions.monthNames.5' => 'Июнь',
+          'transactions.monthNames.6' => 'Июль',
+          'transactions.monthNames.7' => 'Август',
+          'transactions.monthNames.8' => 'Сентябрь',
+          'transactions.monthNames.9' => 'Октябрь',
+          'transactions.monthNames.10' => 'Ноябрь',
+          'transactions.monthNames.11' => 'Декабрь',
+          _ => null,
+        };
   }
 }

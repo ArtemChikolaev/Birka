@@ -8,6 +8,7 @@ import 'package:birka_web/app/site_version.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 import 'package:help_common/help_common.dart';
+import 'package:import_common/import_common.dart';
 import 'package:sqlite3/wasm.dart';
 import 'package:web/web.dart' as web;
 
@@ -250,34 +251,62 @@ final class BrowserBackupFiles implements BackupFiles {
   }
 
   @override
-  Future<ChosenFile?> open() {
-    final chosen = Completer<ChosenFile?>();
+  Future<ChosenFile?> open() async {
     // A computer shows only copies. Safari on iPhone knows no `.birka` and
     // would grey every copy out, and the octet-stream lets it show any file,
     // as the app on a phone does.
-    final input = web.HTMLInputElement()
-      ..type = 'file'
-      ..accept = '.birka,application/json,application/octet-stream';
-    input.style.display = 'none';
-    void done(ChosenFile? file) {
-      if (chosen.isCompleted) return;
-      input.remove();
-      chosen.complete(file);
-    }
-
-    input
-      ..addEventListener(
-        'change',
-        ((web.Event _) {
-          final file = input.files?.item(0);
-          done(file == null ? null : _BrowserFile(file));
-        }).toJS,
-      )
-      ..addEventListener('cancel', ((web.Event _) => done(null)).toJS);
-    web.document.body?.append(input);
-    input.click();
-    return chosen.future;
+    final file = await _chooseFile(
+      '.birka,application/json,application/octet-stream',
+    );
+    return file == null ? null : _BrowserFile(file);
   }
+}
+
+/// Opens a statement through the file chooser of the browser, as
+/// [BrowserBackupFiles] opens a copy (ADR 0021).
+final class BrowserStatementFiles implements StatementFiles {
+  /// Creates the window of the browser.
+  const BrowserStatementFiles();
+
+  /// CSV, Excel and PDF, by their names and their types: a phone names the
+  /// downloads of a bank by their types.
+  static const _statements =
+      '.csv,.txt,.xlsx,.pdf,text/csv,text/plain,application/pdf,'
+      'application/vnd.ms-excel,'
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+  @override
+  Future<ChosenStatement?> choose() async {
+    final file = await _chooseFile(_statements);
+    if (file == null) return null;
+    final bytes = (await file.arrayBuffer().toDart).toDart.asUint8List();
+    return ChosenStatement(file.name, bytes);
+  }
+}
+
+/// Lets the person choose a file of the types in [accept] through the file
+/// chooser of the browser. It gives `null` when they close it without one.
+Future<web.File?> _chooseFile(String accept) {
+  final chosen = Completer<web.File?>();
+  final input = web.HTMLInputElement()
+    ..type = 'file'
+    ..accept = accept;
+  input.style.display = 'none';
+  void done(web.File? file) {
+    if (chosen.isCompleted) return;
+    input.remove();
+    chosen.complete(file);
+  }
+
+  input
+    ..addEventListener(
+      'change',
+      ((web.Event _) => done(input.files?.item(0))).toJS,
+    )
+    ..addEventListener('cancel', ((web.Event _) => done(null)).toJS);
+  web.document.body?.append(input);
+  input.click();
+  return chosen.future;
 }
 
 /// A file that the person chose in the browser.

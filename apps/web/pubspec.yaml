@@ -34,6 +34,10 @@ dependencies:
   help_jaspr:
     path: ../../packages/features/help/jaspr
   http: ^1.6.0
+  import_common:
+    path: ../../packages/features/import/common
+  import_jaspr:
+    path: ../../packages/features/import/jaspr
   jaspr: ^0.22.3
   jaspr_bloc: ^1.0.1
   jaspr_router: ^0.8.1

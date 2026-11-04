@@ -168,8 +168,9 @@
 - Before anything is written, the hosts can show the bank the file looks
   like, its columns with an example of each, the rows left out with their
   numbers and a summary for each account.
-- The wizard on the site, the inbox and the sheet of the phone come next.
-  They draw these steps and keep the choices of a format for its next file.
+- The wizard on the site draws these steps (`import_jaspr`), as the mockups
+  do. The inbox, the sheet of the phone and the choices of a format kept for
+  its next file come next.
 - A copy of the ledger is version 2 ([ADR 0016](0016-ledger-copy.md)): an app
   from before it says that the file comes from a newer version.
 - Two banks with the same headers look like one. They read alike, so only the
