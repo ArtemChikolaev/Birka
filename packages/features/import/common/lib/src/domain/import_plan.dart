@@ -450,8 +450,6 @@ PlanProblem? _fitting(
   return null;
 }
 
-/// [amount] in minor units of [currency], or `null` when it has more digits
-/// after the point than the currency.
 /// [amount] in the minor units of [currency], or `null` when it has more
 /// digits than the currency or lies past what money holds (ADR 0003).
 Money? moneyIn(Decimal amount, Currency currency) {
