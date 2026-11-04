@@ -66,7 +66,12 @@ void main() {
     );
     home = await ledger.addCategory(kind: CategoryKind.expense, name: 'Дом');
     await ledger.addCategory(kind: CategoryKind.income, name: 'Зарплата');
-    cubit = ImportCubit(repository, const FileStatementReader(), files);
+    cubit = ImportCubit(
+      repository,
+      const FileStatementReader(),
+      files,
+      today: () => CivilDate(2026, 11, 4),
+    );
     await cubit.start();
   });
 
@@ -76,10 +81,12 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.en);
   });
 
+  /// The state once [test] holds for it, which can be at once.
+  Future<ImportState> until(bool Function(ImportState state) test) async =>
+      test(cubit.state) ? cubit.state : cubit.stream.firstWhere(test);
+
   /// The state once the plan follows the latest choices.
-  Future<ImportState> planned() async => cubit.state.planned
-      ? cubit.state
-      : cubit.stream.firstWhere((state) => state.planned);
+  Future<ImportState> planned() => until((state) => state.planned);
 
   Future<List<Transaction>> october(String accountId) =>
       repository.transactions(
@@ -96,6 +103,7 @@ void main() {
       'Дом',
       'Зарплата',
     ]);
+    expect(cubit.state.balances, {card.id: Money(0, Currency.rub)});
   });
 
   group('a file', () {
@@ -175,6 +183,41 @@ void main() {
       expect(cubit.state.step, ImportStep.copies);
     });
 
+    test('go one by one and remember how far the person went', () async {
+      await cubit.read(_fileName, _october());
+      await planned();
+      expect(cubit.state.reachable, ImportStep.format);
+
+      cubit
+        ..next()
+        ..next()
+        ..back();
+
+      expect(cubit.state.step, ImportStep.columns);
+      expect(cubit.state.reachable, ImportStep.account);
+
+      cubit
+        ..next()
+        ..next()
+        ..next();
+
+      expect(cubit.state.step, ImportStep.copies);
+    });
+
+    test('that the file no longer allows close', () async {
+      await cubit.read(_fileName, _october());
+      await planned();
+      cubit
+        ..next()
+        ..next()
+        ..back();
+      final date = cubit.state.layout!.roles.indexOf(ColumnRole.date);
+
+      cubit.setRole(date, ColumnRole.skip);
+
+      expect(cubit.state.reachable, ImportStep.columns);
+    });
+
     test('wait for the columns of a date and an amount', () async {
       await cubit.read(_fileName, _october());
       await planned();
@@ -220,6 +263,8 @@ void main() {
       expect(cubit.state.step, ImportStep.done);
       expect(cubit.state.importId, isNotNull);
       expect(cubit.state.progress, (done: 4, total: 4));
+      expect(cubit.state.seen, ImportStep.done);
+      expect(cubit.state.balances[card.id], Money(17539420, Currency.rub));
       final transactions = await october(card.id);
       expect(transactions, hasLength(4));
       expect(
@@ -262,9 +307,7 @@ void main() {
       await planned();
       await cubit.write();
 
-      final state = await cubit.stream.firstWhere(
-        (state) => state.history.isNotEmpty,
-      );
+      final state = await until((state) => state.history.isNotEmpty);
       expect(state.history.single.id, cubit.state.importId);
       expect(state.history.single.fileName, _fileName);
     });

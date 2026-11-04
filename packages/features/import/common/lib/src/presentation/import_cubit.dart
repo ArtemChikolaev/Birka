@@ -14,6 +14,7 @@ import 'package:import_common/src/domain/statement_table.dart';
 import 'package:import_common/src/presentation/import_labels.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
+import 'package:money/money.dart';
 
 /// The steps of the import, as the boards draw them.
 enum ImportStep {
@@ -56,6 +57,8 @@ final class ImportState {
     this.undone = false,
     this.failed = false,
     this.history = const [],
+    this.seen = ImportStep.file,
+    this.balances = const {},
   });
 
   /// The step on screen.
@@ -103,6 +106,12 @@ final class ImportState {
   /// The past imports, the latest first.
   final List<LedgerImport> history;
 
+  /// The furthest step that the person opened since the file came.
+  final ImportStep seen;
+
+  /// What each account of the ledger holds today, by its id.
+  final Map<String, Money> balances;
+
   /// The name of the file.
   String? get fileName => table?.fileName;
 
@@ -130,6 +139,9 @@ final class ImportState {
     return ImportStep.copies;
   }
 
+  /// The furthest step that the person opened and can open again now.
+  ImportStep get reachable => seen.index < furthest.index ? seen : furthest;
+
   ImportState _with({
     ImportStep? step,
     bool? reading,
@@ -146,6 +158,8 @@ final class ImportState {
     bool? undone,
     bool? failed,
     List<LedgerImport>? history,
+    ImportStep? seen,
+    Map<String, Money>? balances,
   }) => ImportState(
     step: step ?? this.step,
     reading: reading ?? this.reading,
@@ -170,6 +184,8 @@ final class ImportState {
     undone: undone ?? this.undone,
     failed: failed ?? this.failed,
     history: history ?? this.history,
+    seen: seen ?? this.seen,
+    balances: balances ?? this.balances,
   );
 
   static const _same = Object();
@@ -183,13 +199,22 @@ final class ImportState {
 /// name, a category of the same name. The plan follows every choice.
 final class ImportCubit extends Cubit<ImportState> {
   /// Creates the import on [_repository], reading files with [_reader] and
-  /// letting the person choose them through [_files].
-  ImportCubit(this._repository, this._reader, this._files)
-    : super(const ImportState());
+  /// letting the person choose them through [_files]. [today] says what day
+  /// it is, which tests can fix.
+  ImportCubit(
+    this._repository,
+    this._reader,
+    this._files, {
+    CivilDate Function()? today,
+  }) : _today = today ?? _now,
+       super(const ImportState());
 
   final ImportRepository _repository;
   final StatementReader _reader;
   final StatementFiles _files;
+  final CivilDate Function() _today;
+
+  static CivilDate _now() => CivilDate.of(DateTime.now());
   StreamSubscription<List<LedgerImport>>? _history;
 
   /// The number of the latest plan, so that an older one that comes late is
@@ -216,8 +241,20 @@ final class ImportCubit extends Cubit<ImportState> {
         ...await _repository.categories(CategoryKind.expense),
         ...await _repository.categories(CategoryKind.income),
       ];
+      final today = _today();
+      final balances = {
+        for (final account in accounts)
+          if (!account.archived)
+            account.id: await _repository.balanceOn(account.id, today),
+      };
       if (isClosed) return;
-      emit(state._with(accounts: accounts, categories: categories));
+      emit(
+        state._with(
+          accounts: accounts,
+          categories: categories,
+          balances: balances,
+        ),
+      );
     } on Object {
       if (!isClosed) emit(state._with(failed: true));
     }
@@ -325,7 +362,20 @@ final class ImportCubit extends Cubit<ImportState> {
   void goTo(ImportStep step) {
     if (state.writing || step.index > state.furthest.index) return;
     if (state.importId != null && step != ImportStep.done) return;
-    emit(state._with(step: step));
+    final seen = step.index > state.seen.index ? step : state.seen;
+    emit(state._with(step: step, seen: seen));
+  }
+
+  /// Opens the step after the one on screen.
+  void next() {
+    final index = state.step.index + 1;
+    if (index < ImportStep.done.index) goTo(ImportStep.values[index]);
+  }
+
+  /// Opens the step before the one on screen.
+  void back() {
+    final index = state.step.index - 1;
+    if (index >= 0) goTo(ImportStep.values[index]);
   }
 
   /// Puts the plan into the ledger at once and goes on to its result.
@@ -348,7 +398,9 @@ final class ImportCubit extends Cubit<ImportState> {
         },
       );
       if (isClosed) return;
-      emit(state._with(step: ImportStep.done, importId: id));
+      emit(
+        state._with(step: ImportStep.done, seen: ImportStep.done, importId: id),
+      );
       await _readLedger();
     } on Object {
       if (isClosed) return;
@@ -395,6 +447,7 @@ final class ImportCubit extends Cubit<ImportState> {
     history: state.history,
     accounts: state.accounts,
     categories: state.categories,
+    balances: state.balances,
   );
 
   void _show(
@@ -408,6 +461,7 @@ final class ImportCubit extends Cubit<ImportState> {
     emit(
       base._with(
         step: step,
+        seen: step != null && step.index > base.seen.index ? step : null,
         reading: false,
         table: table,
         layout: layout,
