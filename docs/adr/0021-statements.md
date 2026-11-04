@@ -57,13 +57,15 @@
    Dates read day first or month first; a date that starts with four digits
    always starts with the year.
 6. The known formats are data (`statementFormats`): Alfa-Bank, T-Bank,
-   Zenmoney, Wise and Revolut, each with the headers it knows, its decimal
-   mark, its order of dates and the statuses of operations that went
-   through. They follow what is known of these exports and get checked
-   against real files before people rely on them. T-Bank is checked against
-   the CSV of its web cabinet of November 2026, which lists the accounts and
-   cards picked there together; the others are not yet. Real files stay in
-   `private/`; the tests use made-up ones.
+   Sberbank, Zenmoney, Wise and Revolut, each with the headers it knows, its
+   decimal mark, its order of dates, its sign and the statuses of operations
+   that went through; the table of Sberbank comes from its PDF. They follow
+   what is known of these exports and get checked against real files before
+   people rely on them. T-Bank is checked against the CSV and the workbook
+   of its web cabinet of November 2026, which list the accounts and cards
+   picked there together, and Sberbank against a statement of a year; the
+   others are not yet. Real files stay in `private/`; the tests use made-up
+   ones.
 7. A table matches a format when one of its first 30 rows has a date and
    money among the headers the format knows, and the format knows at least
    60% of the named headers of that row. The highest share wins, and a header
