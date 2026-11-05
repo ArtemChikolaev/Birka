@@ -60,6 +60,13 @@
 7. «Это доход» keeps the pair apart on this device, by the ids of its two
    operations in the settings ([ADR 0011](0011-settings.md)), and its income
    waits for a category as any other.
+8. The phone shows the same inbox in a page of its own (`inbox_flutter`),
+   as its board draws it: the pairs above, then the operations, each with a
+   box that picks it, its hint with «Да» and a sheet of any category, the
+   hinted one marked; the picked get one category from a bar at the
+   bottom. A word after each choice says what was done. The result of an
+   import on the phone leads to it, and with nothing to sort it offers a
+   statement.
 
 ## Options considered
 
@@ -80,5 +87,6 @@
   to the memory, and the next import gives such operations their category
   at once ([ADR 0021](0021-statements.md), point 17).
 - The site draws the inbox (`inbox_jaspr`) as the mockup does, and the
-  result of an import leads to it. A lasting way to it, from More or the
-  overview, is not drawn yet; nor is the inbox of the phone.
+  phone as its own board does (`inbox_flutter`); on both the result of an
+  import leads to it. A lasting way to it, from More or the overview, is
+  not drawn yet.

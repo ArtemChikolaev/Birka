@@ -17,6 +17,7 @@ class BirkaChip extends StatelessWidget {
     this.dashed = false,
     this.compact = false,
     this.order,
+    this.count,
     super.key,
   });
 
@@ -45,11 +46,16 @@ class BirkaChip extends StatelessWidget {
   /// one at once.
   final Comparable<Object?>? order;
 
+  /// How many the chip stands for, beside its label, such as the operations
+  /// of a filter.
+  final int? count;
+
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
     final glyph = this.glyph;
     final order = this.order;
+    final count = this.count;
     final foreground = selected ? colors.background : colors.textSecondary;
     final text = Text(
       label,
@@ -64,7 +70,7 @@ class BirkaChip extends StatelessWidget {
       button: true,
       selected: selected,
       enabled: onTap != null,
-      label: label,
+      label: count == null ? label : '$label, $count',
       excludeSemantics: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -115,6 +121,32 @@ class BirkaChip extends StatelessWidget {
                             ),
                           ),
                   ),
+                  if (count != null) ...[
+                    const SizedBox(width: BirkaTokens.spaceXs),
+                    AnimatedContainer(
+                      duration: const Duration(
+                        milliseconds: BirkaTokens.durationFastMs,
+                      ),
+                      constraints: const BoxConstraints(minWidth: 22),
+                      height: 22,
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? colors.background.withValues(alpha: 0.12)
+                            : colors.surface,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(BirkaTokens.radiusPill),
+                        ),
+                      ),
+                      child: Text(
+                        '$count',
+                        style: BirkaTextStyles.of(
+                          context,
+                        ).caption.copyWith(color: foreground),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -24,6 +24,7 @@ class BirkaButton extends StatefulWidget {
     this.danger = false,
     this.done = false,
     this.onDone,
+    this.compact = false,
     super.key,
   });
 
@@ -47,8 +48,15 @@ class BirkaButton extends StatefulWidget {
   /// the form.
   final VoidCallback? onDone;
 
+  /// Whether this is the small pill of a row, as wide as its label, such as
+  /// «Да» beside a hint.
+  final bool compact;
+
   /// The height of the pill.
   static const double height = 56;
+
+  /// The height of a [compact] pill, whose touch reaches above and below it.
+  static const double compactHeight = 36;
 
   @override
   State<BirkaButton> createState() => _BirkaButtonState();
@@ -122,18 +130,38 @@ class _BirkaButtonState extends State<BirkaButton>
           child: AnimatedBuilder(
             animation: _done,
             builder: (context, _) => _done.value == 0
-                ? Container(
-                    height: BirkaButton.height,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: BirkaTokens.spaceLg,
-                    ),
-                    decoration: BoxDecoration(
-                      color: fill,
-                      borderRadius: _pill,
-                    ),
-                    child: label,
-                  )
+                ? widget.compact
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical:
+                                (BirkaTokens.sizeTouchTarget -
+                                    BirkaButton.compactHeight) /
+                                2,
+                          ),
+                          child: Container(
+                            height: BirkaButton.compactHeight,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: BirkaTokens.spaceMd,
+                            ),
+                            decoration: BoxDecoration(
+                              color: fill,
+                              borderRadius: _pill,
+                            ),
+                            child: Center(widthFactor: 1, child: label),
+                          ),
+                        )
+                      : Container(
+                          height: BirkaButton.height,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: BirkaTokens.spaceLg,
+                          ),
+                          decoration: BoxDecoration(
+                            color: fill,
+                            borderRadius: _pill,
+                          ),
+                          child: label,
+                        )
                 : _check(fill, ink, label),
           ),
         ),

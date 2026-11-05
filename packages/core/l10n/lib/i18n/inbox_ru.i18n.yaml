@@ -56,3 +56,9 @@ learns: "Каждое «Да» учит Birka: в следующей выпис�
 stillCounted: Пока операция здесь, она уже есть в учёте и в отчётах, просто без категории.
 failed: Не получилось. Попробуйте ещё раз.
 madeTransfer: Сделали перевод
+accepted: "$category: дальше Birka поставит сама"
+sorted: "$category · $operations"
+keptIncome: Оставили доходом
+toImport: Загрузить выписку
+hinted: подсказка
+unpick: Снять

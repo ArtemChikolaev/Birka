@@ -482,6 +482,19 @@ void main() {
       expect(find.bySemanticsLabel('Save'), findsOneWidget);
     });
 
+    testWidgets('a compact one is as wide as its label, with room to touch', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        app(BirkaButton(label: 'Yes', compact: true, onPressed: () {})),
+      );
+
+      final size = tester.getSize(find.byType(BirkaButton));
+      expect(size.width, lessThan(120));
+      expect(size.height, BirkaTokens.sizeTouchTarget);
+      expect(find.text('YES'), findsOneWidget);
+    });
+
     testWidgets('does nothing while it is disabled', (tester) async {
       await tester.pumpWidget(app(const BirkaButton(label: 'Save')));
       await tester.tap(find.text('SAVE'));
@@ -641,6 +654,55 @@ void main() {
       );
       await tester.tap(find.text('EUR'));
       expect(taps, 1);
+    });
+
+    testWidgets('shows its count beside its label', (tester) async {
+      await tester.pumpWidget(
+        app(BirkaChip(label: 'All', selected: true, count: 15, onTap: () {})),
+      );
+
+      expect(find.text('15'), findsOneWidget);
+      expect(find.bySemanticsLabel('All, 15'), findsOneWidget);
+    });
+  });
+
+  group('BirkaCheckbox', () {
+    testWidgets('asks for the other state, in a place as large as a finger', (
+      tester,
+    ) async {
+      bool? asked;
+      await tester.pumpWidget(
+        app(
+          BirkaCheckbox(
+            checked: false,
+            label: 'Pick the coffee',
+            onChanged: (value) => asked = value,
+          ),
+        ),
+      );
+      await tester.tap(find.bySemanticsLabel('Pick the coffee'));
+
+      expect(asked, isTrue);
+      expect(
+        tester.getSize(find.byType(BirkaCheckbox)),
+        const Size.square(BirkaTokens.sizeTouchTarget),
+      );
+    });
+
+    testWidgets('shows its check only when it is ticked', (tester) async {
+      double check() =>
+          tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity;
+
+      await tester.pumpWidget(
+        app(BirkaCheckbox(checked: false, label: 'Pick', onChanged: (_) {})),
+      );
+      expect(check(), 0);
+
+      await tester.pumpWidget(
+        app(BirkaCheckbox(checked: true, label: 'Pick', onChanged: (_) {})),
+      );
+      await tester.pumpAndSettle();
+      expect(check(), 1);
     });
   });
 

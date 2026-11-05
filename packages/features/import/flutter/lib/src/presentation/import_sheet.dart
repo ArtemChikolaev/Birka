@@ -10,30 +10,39 @@ import 'package:ledger/ledger.dart';
 
 /// Lets the person choose a statement through [files] and imports it in a
 /// sheet from the bottom of the screen, as the board of the phone draws it
-/// (ADR 0021). [cubit] makes the import, which closes with the sheet.
+/// (ADR 0021). [cubit] makes the import, which closes with the sheet; what
+/// waits in the inbox after it leads to [onInbox], when the host has one.
 Future<void> showImportSheet(
   BuildContext context, {
   required ImportCubit Function() cubit,
   required StatementFiles files,
+  VoidCallback? onInbox,
 }) async {
   final file = await files.choose();
   if (file == null || !context.mounted) return;
   final importing = cubit();
   unawaited(_read(importing, file));
+  bool? toInbox;
   try {
-    await showModalBottomSheet<void>(
+    toInbox = await showModalBottomSheet<bool>(
       context: context,
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: BirkaColors.of(context).background,
       builder: (context) => BlocProvider.value(
         value: importing,
-        child: ImportSheet(fileName: file.name, files: files),
+        child: ImportSheet(
+          fileName: file.name,
+          files: files,
+          toInbox: onInbox != null,
+        ),
       ),
     );
   } finally {
-    await importing.close();
+    // The way on does not wait for the import to let go of the ledger.
+    unawaited(importing.close());
   }
+  if (toInbox ?? false) onInbox?.call();
 }
 
 /// Reads what the ledger offers to choose from, then [file].
@@ -86,13 +95,22 @@ enum _Stage {
 /// needs an [ImportCubit] above it.
 class ImportSheet extends StatefulWidget {
   /// Creates the sheet of the file [fileName], which [files] can change.
-  const ImportSheet({required this.fileName, required this.files, super.key});
+  const ImportSheet({
+    required this.fileName,
+    required this.files,
+    this.toInbox = false,
+    super.key,
+  });
 
   /// The name of the file chosen first, said before its table is read.
   final String fileName;
 
   /// The window that chooses another file.
   final StatementFiles files;
+
+  /// Whether what waits in the inbox leads there, which closes the sheet
+  /// with `true`.
+  final bool toInbox;
 
   @override
   State<ImportSheet> createState() => _ImportSheetState();
@@ -491,33 +509,52 @@ class _ImportSheetState extends State<ImportSheet> {
       ),
       if (plan.unsorted > 0) ...[
         const SizedBox(height: BirkaTokens.spaceMd),
-        GlassSurface(
-          child: Row(
-            children: [
-              const GlyphBadge(
-                glyph: BirkaGlyph.list,
-                color: Color(BirkaTokens.colorPaletteAmber),
-              ),
-              const SizedBox(width: BirkaTokens.spaceSm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.imports.unsortedTitle(
-                        n: plan.unsorted,
-                        count: formatCount(plan.unsorted),
-                      ),
-                      style: styles.bodyStrong.copyWith(color: colors.text),
+        Semantics(
+          button: widget.toInbox,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: widget.toInbox
+                ? () => Navigator.of(context).pop(true)
+                : null,
+            child: GlassSurface(
+              child: Row(
+                children: [
+                  const GlyphBadge(
+                    glyph: BirkaGlyph.list,
+                    color: Color(BirkaTokens.colorPaletteAmber),
+                  ),
+                  const SizedBox(width: BirkaTokens.spaceSm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          t.imports.unsortedTitle(
+                            n: plan.unsorted,
+                            count: formatCount(plan.unsorted),
+                          ),
+                          style: styles.bodyStrong.copyWith(
+                            color: colors.text,
+                          ),
+                        ),
+                        Text(
+                          t.imports.unsortedText,
+                          style: styles.caption.copyWith(
+                            color: colors.textMuted,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      t.imports.unsortedText,
-                      style: styles.caption.copyWith(color: colors.textMuted),
+                  ),
+                  if (widget.toInbox)
+                    BirkaIcon(
+                      BirkaGlyph.chevron,
+                      size: 18,
+                      color: colors.textSubtle,
                     ),
-                  ],
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ],

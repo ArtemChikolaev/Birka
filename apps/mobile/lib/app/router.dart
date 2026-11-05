@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
 import 'package:backup_common/backup_common.dart'
@@ -17,6 +19,8 @@ import 'package:help_flutter/help_flutter.dart';
 import 'package:import_common/import_common.dart'
     show ImportCubit, StatementFiles;
 import 'package:import_flutter/import_flutter.dart';
+import 'package:inbox_common/inbox_common.dart' show InboxCubit;
+import 'package:inbox_flutter/inbox_flutter.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:onboarding_flutter/onboarding_flutter.dart';
 import 'package:overview_common/overview_common.dart' show OverviewCubit;
@@ -76,6 +80,9 @@ abstract final class Paths {
 
   /// Help and feedback.
   static const help = '/help';
+
+  /// What waits for a decision after an import.
+  static const inbox = '/inbox';
 
   /// The form of a new category of [kind].
   static String newCategory(CategoryKind kind) =>
@@ -186,6 +193,7 @@ GoRouter buildRouter(
                       context,
                       cubit: getIt.call<ImportCubit>,
                       files: getIt<StatementFiles>(),
+                      onInbox: () => context.push(Paths.inbox),
                     ),
                   ),
                 ),
@@ -299,6 +307,24 @@ GoRouter buildRouter(
         builder: (context, state) => BlocProvider(
           create: (_) => getIt<HelpCubit>(),
           child: HelpPage(onBack: () => context.pop()),
+        ),
+      ),
+      GoRoute(
+        path: Paths.inbox,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<InboxCubit>(),
+          child: InboxPage(
+            onBack: () => context.pop(),
+            // A statement imported here comes into this inbox at once.
+            onImport: () => unawaited(
+              showImportSheet(
+                context,
+                cubit: getIt.call<ImportCubit>,
+                files: getIt<StatementFiles>(),
+              ),
+            ),
+          ),
         ),
       ),
       GoRoute(
