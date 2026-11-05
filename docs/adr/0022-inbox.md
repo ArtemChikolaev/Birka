@@ -77,8 +77,8 @@
 - A transfer that the person links cannot be split again; deleting it and
   typing the two sides in is the way back.
 - The hints learn from every choice: a «Да» adds an operation of that name
-  to the memory. The import can take the same hints for the operations of
-  its next file.
+  to the memory, and the next import gives such operations their category
+  at once ([ADR 0021](0021-statements.md), point 17).
 - The site draws the inbox (`inbox_jaspr`) as the mockup does, and the
   result of an import leads to it. A lasting way to it, from More or the
   overview, is not drawn yet; nor is the inbox of the phone.

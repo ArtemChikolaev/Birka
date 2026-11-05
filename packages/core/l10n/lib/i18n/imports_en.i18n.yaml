@@ -173,6 +173,7 @@ previewText: Description
 previewCategory: Category
 previewAmount: Amount
 transfer: Transfer
+learned: as before
 inbox: Decide in the inbox
 problems(n):
   one: $count row did not read

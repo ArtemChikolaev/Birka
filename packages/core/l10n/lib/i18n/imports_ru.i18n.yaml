@@ -183,6 +183,7 @@ previewText: Описание
 previewCategory: Категория
 previewAmount: Сумма
 transfer: Перевод
+learned: как раньше
 inbox: Решу во «Входящих»
 problems(n):
   one: $count строка не прочиталась

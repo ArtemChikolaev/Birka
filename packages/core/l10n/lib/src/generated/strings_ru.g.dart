@@ -915,6 +915,8 @@ class _Translations$imports$ru extends Translations$imports$en {
   @override
   String get transfer => 'Перевод';
   @override
+  String get learned => 'как раньше';
+  @override
   String get inbox => 'Решу во «Входящих»';
   @override
   String problems({required num n, required Object count}) =>
@@ -1270,7 +1272,7 @@ class _Translations$inbox$ru extends Translations$inbox$en {
       'Из ваших прошлых решений: как вы уже называли эти места и какие категории им давали. Считается здесь, на устройстве.';
   @override
   String get learns =>
-      'Каждое «Да» учит Birka: такие операции дальше придут с той же подсказкой.';
+      'Каждое «Да» учит Birka: в следующей выписке такие операции придут уже с категорией.';
   @override
   String get stillCounted =>
       'Пока операция здесь, она уже есть в учёте и в отчётах, просто без категории.';
@@ -2421,6 +2423,7 @@ extension on TranslationsRu {
           'imports.previewCategory' => 'Категория',
           'imports.previewAmount' => 'Сумма',
           'imports.transfer' => 'Перевод',
+          'imports.learned' => 'как раньше',
           'imports.inbox' => 'Решу во «Входящих»',
           'imports.problems' =>
             ({required num n, required Object count}) =>
@@ -2694,17 +2697,17 @@ extension on TranslationsRu {
           'inbox.sourceText' =>
             'Из ваших прошлых решений: как вы уже называли эти места и какие категории им давали. Считается здесь, на устройстве.',
           'inbox.learns' =>
-            'Каждое «Да» учит Birka: такие операции дальше придут с той же подсказкой.',
+            'Каждое «Да» учит Birka: в следующей выписке такие операции придут уже с категорией.',
           'inbox.stillCounted' =>
             'Пока операция здесь, она уже есть в учёте и в отчётах, просто без категории.',
           'inbox.failed' => 'Не получилось. Попробуйте ещё раз.',
           'inbox.madeTransfer' => 'Сделали перевод',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
-          'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
           _ => null,
         } ??
         switch (path) {
+          'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
           'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
           'onboarding.welcome.text' =>
             'Счета в любой валюте и без паролей от банков. Данные остаются на вашем устройстве.',

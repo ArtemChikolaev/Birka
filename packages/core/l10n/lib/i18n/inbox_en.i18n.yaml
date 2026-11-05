@@ -44,7 +44,7 @@ pickNone: Pick none
 pick: "Pick «$name»"
 sourceTitle: Where the hints come from
 sourceText: "From your past choices: how you named these places before and which categories you gave them. Counted here, on the device."
-learns: "Each «Yes» teaches Birka: such operations come with the same hint later."
+learns: "Each «Yes» teaches Birka: in the next statement such operations come with their category."
 stillCounted: While an operation is here, it already counts in the ledger and the reports, only without a category.
 failed: That did not work. Try again.
 madeTransfer: Made a transfer

@@ -175,6 +175,37 @@ void main() {
     expect(find.text('ЖКХ'), findsOneComponent);
   });
 
+  testComponents('gives a row the category the person chose before', (
+    tester,
+  ) async {
+    final home =
+        (await ledger
+                .watchCategories(
+                  CategoryKind.expense,
+                )
+                .first)
+            .singleWhere((it) => it.name == 'Дом');
+    final card = (await ledger.watchAccounts().first).single;
+    await ledger.record(
+      TransactionDraft.expense(
+        accountId: card.id,
+        allocations: [
+          Allocation(categoryId: home.id, amount: Money(42000, Currency.rub)),
+        ],
+        occurredOn: CivilDate(2026, 9, 20),
+        note: 'ZERNO COFFEE',
+      ),
+    );
+    await cubit.start();
+    await pump(tester);
+    await read(tester);
+
+    await clickText(tester, 'Дальше: колонки');
+
+    expect(find.text('Дом · как раньше'), findsOneComponent);
+    expect(cubit.state.plan!.unsorted, 1);
+  });
+
   testComponents('finds the account of the card', (tester) async {
     await pump(tester);
     await read(tester);
