@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:database/database.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:drift/native.dart';
 import 'package:import_common/import_common.dart';
 import 'package:l10n/l10n.dart';
@@ -31,6 +32,26 @@ Uint8List _october({String card = '4821'}) => utf8.encode(
   ].join('\n'),
 );
 
+/// The settings in memory.
+final class _Store implements SettingsStore {
+  final values = <String, String>{};
+
+  @override
+  String? read(String key) => values[key];
+
+  @override
+  Future<void> write(String key, String value) async => values[key] = value;
+}
+
+/// A CSV of a bank that no format knows, with [rows] under its headers: a
+/// day, a text, the amount that the guess takes for a currency, a balance.
+Uint8List _own(List<String> rows) => utf8.encode(
+  [
+    'День;Назначение платежа;Сумма в валюте счёта;Остаток',
+    ...rows,
+  ].join('\n'),
+);
+
 const _fileName = 'alfa-2026-10.csv';
 const BankCategory _bills = (kind: CategoryKind.expense, name: 'ЖКХ');
 const BankCategory _cafe = (
@@ -44,6 +65,7 @@ void main() {
   late LedgerImportRepository repository;
   late _Files files;
   late ImportCubit cubit;
+  late _Store store;
   late Account card;
   late Category food;
   late Category home;
@@ -54,6 +76,7 @@ void main() {
     ledger = LedgerRepository(database);
     repository = LedgerImportRepository(ledger);
     files = _Files();
+    store = _Store();
     card = await ledger.addAccount(
       name: 'Зарплатная карта',
       type: AccountType.debit,
@@ -70,6 +93,7 @@ void main() {
       repository,
       const FileStatementReader(),
       files,
+      remembered: ImportMemory(store),
       today: () => CivilDate(2026, 11, 4),
     );
     await cubit.start();
@@ -406,6 +430,105 @@ void main() {
       final state = await planned();
       expect(state.accounts.map((it) => it.id), [card.id]);
       expect(state.choices!.accounts['RUB'], isA<NewAccount>());
+    });
+  });
+
+  group('the next file of a format', () {
+    test('of its own reads by the columns that the person set', () async {
+      await cubit.read(
+        'statement_oct_2026.csv',
+        _own([
+          '01.10.2026;Зарплата;96500,00;142679,81',
+          '03.10.2026;Кофейня Зерно;-420,00;142259,81',
+        ]),
+      );
+      var state = await until((state) => state.layout != null);
+      expect(state.layout!.format, isNull);
+      expect(state.readable, isFalse);
+
+      cubit.setRole(2, ColumnRole.amount);
+      state = await planned();
+      expect(state.choices!.accounts[''], isA<NewAccount>());
+      await cubit.write();
+      final made = cubit.state.accounts.singleWhere((it) => it.id != card.id);
+      cubit.restart();
+      await cubit.read(
+        'statement_nov_2026.csv',
+        _own([
+          '02.11.2026;Аптека №12;-1180,00;141079,81',
+        ]),
+      );
+
+      state = await planned();
+      expect(isOwnFormat(state.layout!.format), isTrue);
+      expect(state.readable, isTrue);
+      expect(
+        state.choices!.accounts[''],
+        isA<IntoAccount>().having((it) => it.account.id, 'account', made.id),
+      );
+      expect(state.plan!.added, hasLength(1));
+    });
+
+    test('puts a category of the bank where the person put it', () async {
+      await cubit.read(_fileName, _october());
+      await planned();
+      cubit.chooseCategory(_cafe, IntoCategory(home.id));
+      await planned();
+      await cubit.write();
+      cubit.restart();
+
+      await cubit.read(_fileName, _october());
+
+      final state = await planned();
+      expect(
+        state.choices!.categories[_cafe],
+        isA<IntoCategory>().having((it) => it.categoryId, 'id', home.id),
+      );
+    });
+
+    test('keeps out an account that the person left out', () async {
+      await ImportMemory(
+        store,
+      ).remember(alfa, const RememberedChoices(accounts: {'RUB·4821': null}));
+
+      await cubit.read(_fileName, _october());
+
+      final state = await planned();
+      expect(state.choices!.accounts['RUB'], isA<LeaveOut>());
+    });
+
+    test('of another card of the bank goes its own way', () async {
+      await cubit.read(_fileName, _october(card: '7777'));
+      await planned();
+      await cubit.write();
+      cubit.restart();
+
+      await cubit.read(_fileName, _october());
+
+      final state = await planned();
+      expect(
+        state.choices!.accounts['RUB'],
+        isA<IntoAccount>().having((it) => it.account.id, 'account', card.id),
+      );
+    });
+
+    test('chooses anew what is no longer there', () async {
+      await ImportMemory(store).remember(
+        alfa,
+        const RememberedChoices(
+          accounts: {'RUB·4821': 'gone'},
+          categories: {_cafe: 'gone'},
+        ),
+      );
+
+      await cubit.read(_fileName, _october());
+
+      final state = await planned();
+      expect(
+        state.choices!.accounts['RUB'],
+        isA<IntoAccount>().having((it) => it.account.id, 'account', card.id),
+      );
+      expect(state.choices!.categories[_cafe], isA<Unsorted>());
     });
   });
 }

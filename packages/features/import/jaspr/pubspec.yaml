@@ -24,5 +24,7 @@ dependencies:
 dev_dependencies:
   database:
     path: ../../../core/database
+  device_settings:
+    path: ../../../core/device_settings
   drift: ^2.31.0
   jaspr_test: ^0.22.3

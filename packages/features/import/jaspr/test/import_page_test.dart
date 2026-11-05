@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:database/database.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:drift/native.dart';
 import 'package:import_common/import_common.dart';
 import 'package:import_jaspr/import_jaspr.dart';
@@ -22,6 +23,26 @@ final class _Files implements StatementFiles {
   Future<ChosenStatement?> choose() async => null;
 }
 
+/// The settings in memory.
+final class _Store implements SettingsStore {
+  final values = <String, String>{};
+
+  @override
+  String? read(String key) => values[key];
+
+  @override
+  Future<void> write(String key, String value) async => values[key] = value;
+}
+
+/// A CSV of a bank that no format knows.
+final Uint8List _own = utf8.encode(
+  [
+    'День;Назначение платежа;Сумма в валюте счёта;Остаток',
+    '01.10.2026;Зарплата;96500,00;142679,81',
+    '03.10.2026;Кофейня Зерно;-420,00;142259,81',
+  ].join('\n'),
+);
+
 /// A CSV of a card of Alfa-Bank in October.
 final Uint8List _october = utf8.encode(
   [
@@ -38,6 +59,7 @@ void main() {
   late BirkaDatabase database;
   late LedgerRepository ledger;
   late ImportCubit cubit;
+  late _Store store;
 
   Future<void> pump(
     ComponentTester tester, {
@@ -103,10 +125,12 @@ void main() {
     );
     await ledger.addCategory(kind: CategoryKind.expense, name: 'Продукты');
     await ledger.addCategory(kind: CategoryKind.expense, name: 'Дом');
+    store = _Store();
     cubit = ImportCubit(
       LedgerImportRepository(ledger),
       const FileStatementReader(),
       _Files(),
+      remembered: ImportMemory(store),
       today: () => CivilDate(2026, 11, 4),
     );
     await cubit.start();
@@ -155,6 +179,35 @@ void main() {
     expect(find.text('Шаг 2 из 6 · чья это выписка'), findsOneComponent);
     expect(find.text('alfa-2026-10.csv'), findsOneComponent);
     expect(find.text('1–7 октября 2026'), findsOneComponent);
+  });
+
+  testComponents("knows a format of the person's own the next time", (
+    tester,
+  ) async {
+    final table = await const FileStatementReader().read('own.csv', _own);
+    await ImportMemory(store).remember(
+      ownFormatOf(
+        table,
+        guessLayout(table).withRole(2, ColumnRole.amount),
+      )!,
+      const RememberedChoices(),
+    );
+    await pump(tester);
+
+    await cubit.read('statement_nov_2026.csv', _own);
+    await until(tester, (state) => state.planned);
+
+    expect(find.text('Узнали ваш формат'), findsOneComponent);
+    expect(cubit.state.readable, isTrue);
+    final own = find.ancestor(
+      of: find.text('Свой формат'),
+      matching: find.tag('button'),
+    );
+    expect(
+      (own.evaluate().first.component as DomComponent)
+          .attributes?['aria-checked'],
+      'true',
+    );
   });
 
   testComponents('shows the rows and the categories as they go in', (

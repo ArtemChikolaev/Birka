@@ -169,6 +169,16 @@
     they will come in; the sheet goes on once the date and the amount read.
     What comes in without a category leads to the inbox of the phone
     ([ADR 0022](0022-inbox.md), point 8).
+19. Birka keeps on the device what the next file of a format reuses
+    (`ImportMemory`, in the settings of [ADR 0011](0011-settings.md)): a
+    format of one's own as headers with their roles and the way of its
+    values, under an id of its headers, so that a file with the same
+    headers reads at once («Узнали ваш формат», «Свой формат · узнали по
+    колонкам»); and for each format the account of each account of its
+    file, one left out, and the category of each category of the bank and
+    of fees, those that an import made included. A choice whose account or
+    category is gone gives way to Birka's own. At most 20 formats of one's
+    own stay, the latest first.
 
 ## Options considered
 
@@ -188,8 +198,10 @@
   numbers and a summary for each account.
 - The wizard on the site draws these steps (`import_jaspr`), as the mockups
   do, and the sheet of the phone imports any of them, setting the columns
-  of a format of one's own. The choices of a format kept for its next file
-  come next, on both hosts.
+  of a format of one's own; the next file of a format goes where the last
+  one went.
+- What a device keeps of past imports is not in a copy of the ledger
+  ([ADR 0016](0016-ledger-copy.md)): another device asks once more.
 - A copy of the ledger is version 2 ([ADR 0016](0016-ledger-copy.md)): an app
   from before it says that the file comes from a newer version.
 - Two banks with the same headers look like one. They read alike, so only the

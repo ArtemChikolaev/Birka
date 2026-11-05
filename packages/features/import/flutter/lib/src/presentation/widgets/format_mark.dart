@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:import_common/import_common.dart';
 
 /// The mark of a format: the first letter of its bank in its color, as on
-/// the site.
+/// the site, or the file of a format of one's own.
 class FormatMark extends StatelessWidget {
   /// Creates the mark of [format].
   const FormatMark(this.format, {super.key});
@@ -24,6 +24,12 @@ class FormatMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isOwnFormat(format)) {
+      return GlyphBadge(
+        glyph: BirkaGlyph.file,
+        color: BirkaColors.of(context).accent,
+      );
+    }
     final color = colorOf(format);
     return ExcludeSemantics(
       child: Container(

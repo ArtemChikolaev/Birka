@@ -38,6 +38,8 @@ class FormatStep extends StatelessComponent {
             .text(
               format == null
                   ? t.imports.notKnown
+                  : isOwnFormat(format)
+                  ? t.imports.looksLikeOwn
                   : t.imports.looksLike(
                       bank: t.imports.formatsOf[format.id] ?? format.id,
                     ),
@@ -90,13 +92,14 @@ class FormatStep extends StatelessComponent {
                 selected: format?.id == known.id,
                 onTap: () => cubit.useFormat(known),
               ),
+            // A format of one's own that Birka kept stands here too.
             GlassOption(
               leading: const FormatMark(null),
               title: t.imports.own,
               tag: t.imports.ownTag,
               subtitle: t.imports.ownText,
-              selected: format == null,
-              onTap: () => cubit.useFormat(null),
+              selected: format == null || isOwnFormat(format),
+              onTap: () => cubit.useFormat(isOwnFormat(format) ? format : null),
             ),
           ],
         ),

@@ -69,7 +69,7 @@ void registerDependencies(
   registerBackup(getIt, settings);
   registerCategories(getIt);
   registerHelp(getIt, about: readAppAbout);
-  registerImport(getIt);
+  registerImport(getIt, settings);
   registerInbox(getIt, settings);
   registerOnboarding(getIt, settings, deviceLanguage: deviceLanguage);
   registerOverview(getIt);

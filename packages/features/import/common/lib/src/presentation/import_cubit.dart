@@ -3,11 +3,13 @@ import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:import_common/src/domain/import_defaults.dart';
+import 'package:import_common/src/domain/import_memory.dart';
 import 'package:import_common/src/domain/import_plan.dart';
 import 'package:import_common/src/domain/import_repository.dart';
 import 'package:import_common/src/domain/statement.dart';
 import 'package:import_common/src/domain/statement_files.dart';
 import 'package:import_common/src/domain/statement_format.dart';
+import 'package:import_common/src/domain/statement_formats.dart';
 import 'package:import_common/src/domain/statement_layout.dart';
 import 'package:import_common/src/domain/statement_reader.dart';
 import 'package:import_common/src/domain/statement_table.dart';
@@ -200,25 +202,30 @@ final class ImportState {
 /// reads, where its accounts and categories go, what the ledger already
 /// has, and the writing with its undo.
 ///
-/// Birka chooses what it can on its own: an account of the same card or
-/// name, a category of the same name. The plan follows every choice.
+/// Birka chooses what it can on its own: what the person chose for the last
+/// file of the format, an account of the same card or name, a category of
+/// the same name. The plan follows every choice.
 final class ImportCubit extends Cubit<ImportState> {
   /// Creates the import on [_repository], reading files with [_reader] and
   /// letting the person choose them through [_files]. A file that names no
-  /// currency is in [currency], the base currency of the device. [today] says
-  /// what day it is, which tests can fix.
+  /// currency is in [currency], the base currency of the device. [remembered]
+  /// keeps the formats of one's own and the choices of each format for the
+  /// next file. [today] says what day it is, which tests can fix.
   ImportCubit(
     this._repository,
     this._reader,
     this._files, {
     Currency currency = Currency.rub,
+    ImportMemory? remembered,
     CivilDate Function()? today,
-  }) : _today = today ?? _now,
+  }) : _remembered = remembered,
+       _today = today ?? _now,
        super(ImportState(currency: currency));
 
   final ImportRepository _repository;
   final StatementReader _reader;
   final StatementFiles _files;
+  final ImportMemory? _remembered;
   final CivilDate Function() _today;
 
   static CivilDate _now() => CivilDate.of(DateTime.now());
@@ -286,7 +293,11 @@ final class ImportCubit extends Cubit<ImportState> {
     try {
       final table = await _reader.read(name, bytes);
       if (isClosed) return;
-      _show(table, detectLayout(table), step: ImportStep.format, fresh: true);
+      final layout = detectLayout(
+        table,
+        formats: [...statementFormats, ...?_remembered?.formats],
+      );
+      _show(table, asOwnFormat(layout), step: ImportStep.format, fresh: true);
     } on UnreadableFile catch (error) {
       if (isClosed) return;
       emit(_fresh()._with(unreadable: error.reason));
@@ -297,7 +308,12 @@ final class ImportCubit extends Cubit<ImportState> {
   void useFormat(StatementFormat? format) {
     final table = state.table;
     if (table == null || !state.open) return;
-    _show(table, format == null ? guessLayout(table) : layoutAs(table, format));
+    _show(
+      table,
+      format == null
+          ? guessLayout(table)
+          : asOwnFormat(layoutAs(table, format)),
+    );
   }
 
   /// Gives [column] the role [role].
@@ -397,6 +413,8 @@ final class ImportCubit extends Cubit<ImportState> {
     if (!state.planned || !state.open || fileName == null) return;
     final total = plan!.added.length;
     if (total == 0) return;
+    final accounts = {for (final account in state.accounts) account.id};
+    final categories = {for (final category in state.categories) category.id};
     emit(state._with(progress: (done: 0, total: total), failed: false));
     try {
       final id = await _repository.write(
@@ -414,6 +432,7 @@ final class ImportCubit extends Cubit<ImportState> {
         state._with(step: ImportStep.done, seen: ImportStep.done, importId: id),
       );
       await _readLedger();
+      await _keep(plan, accounts: accounts, categories: categories);
     } on Object {
       if (isClosed) return;
       emit(state._with(progress: null, failed: true));
@@ -479,7 +498,11 @@ final class ImportCubit extends Cubit<ImportState> {
         table: table,
         layout: layout,
         statement: statement,
-        choices: _defaults(statement, layout.format, before: base.choices),
+        choices: _defaults(
+          statement,
+          layout.format,
+          before: base.choices ?? _keptFor(statement, layout.format),
+        ),
         plan: null,
       ),
     );
@@ -545,6 +568,94 @@ final class ImportCubit extends Cubit<ImportState> {
       },
       keep: before?.keep ?? const {},
     );
+  }
+
+  /// What the person chose for the last file of [format], as choices for the
+  /// accounts of [statement] and the categories that are still there.
+  ImportChoices? _keptFor(Statement statement, StatementFormat? format) {
+    final kept = format == null ? null : _remembered?.choicesOf(format.id);
+    if (kept == null) return null;
+    final ledger = {
+      for (final account in state.accounts) account.id: account,
+    };
+    final accounts = <String, AccountChoice>{};
+    for (final source in statement.accounts) {
+      final key = sourceKeyOf(source);
+      if (!kept.accounts.containsKey(key)) continue;
+      final id = kept.accounts[key];
+      if (id == null) {
+        accounts[source.key] = const LeaveOut();
+      } else if (ledger[id] case final account?) {
+        accounts[source.key] = IntoAccount(account);
+      }
+    }
+    final fees = kept.fees;
+    return ImportChoices(
+      accounts: accounts,
+      categories: {
+        for (final MapEntry(:key, :value) in kept.categories.entries)
+          key: IntoCategory(value),
+      },
+      fees: fees == null ? const Unsorted() : IntoCategory(fees),
+    );
+  }
+
+  /// Keeps the format of the import that went in, when it is the person's
+  /// own, and what the person chose for it, for its next file. An account or
+  /// a category that the import made counts by its name among those that
+  /// were not there before, of [accounts] and [categories].
+  Future<void> _keep(
+    ImportPlan plan, {
+    required Set<String> accounts,
+    required Set<String> categories,
+  }) async {
+    final remembered = _remembered;
+    final table = state.table;
+    final layout = state.layout;
+    if (remembered == null || table == null || layout == null) return;
+    final format = layout.format == null || isOwnFormat(layout.format)
+        ? ownFormatOf(table, layout)
+        : layout.format;
+    if (format == null) return;
+    String? made(String name) => state.accounts
+        .where((it) => !accounts.contains(it.id) && it.name == name)
+        .firstOrNull
+        ?.id;
+    String? categoryOf(CategoryChoice choice) => switch (choice) {
+      IntoCategory(:final categoryId) => categoryId,
+      NewCategory(:final name) =>
+        state.categories
+            .where((it) => !categories.contains(it.id) && it.name == name)
+            .firstOrNull
+            ?.id,
+      Unsorted() => null,
+    };
+    try {
+      await remembered.remember(
+        format,
+        RememberedChoices(
+          accounts: {
+            for (final source in state.statement?.accounts ?? <SourceAccount>[])
+              if (plan.choices.accounts[source.key] case final choice?)
+                ...switch (choice) {
+                  IntoAccount(:final account) => {
+                    sourceKeyOf(source): account.id,
+                  },
+                  NewAccount(:final name) => {sourceKeyOf(source): ?made(name)},
+                  LeaveOut() => {sourceKeyOf(source): null},
+                },
+          },
+          categories: {
+            for (final MapEntry(:key, :value)
+                in plan.choices.categories.entries)
+              key: ?categoryOf(value),
+          },
+          fees: categoryOf(plan.choices.fees),
+        ),
+      );
+    } on Object {
+      // The import went in; only the next file asks again.
+    }
   }
 
   bool _fits(AccountChoice choice) => switch (choice) {
