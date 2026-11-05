@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:device_settings/device_settings.dart';
+import 'package:inbox_common/src/domain/dismissed_pairs.dart';
 import 'package:inbox_common/src/domain/inbox_repository.dart';
 import 'package:inbox_common/src/domain/transfer_pairs.dart';
+import 'package:inbox_common/src/domain/waiting.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:rates/rates.dart';
@@ -146,16 +147,11 @@ final class InboxState {
 /// The inbox (ADR 0022): the operations without a category, each with the
 /// category that past choices suggest, and the transfers between one's own
 /// accounts that imports split into an expense and an income. The pairs
-/// that the person says are no transfers stay apart on this device, in
-/// [_store].
+/// that the person says are no transfers stay apart in [_dismissed].
 final class InboxCubit extends Cubit<InboxState> {
   /// Creates the inbox on [_repository], keeping its pairs apart in
-  /// [_store].
-  InboxCubit(this._repository, this._store) : super(const InboxState()) {
-    _dismissed = {
-      for (final key in (_store.read(dismissedKey) ?? '').split(','))
-        if (key.isNotEmpty) key,
-    };
+  /// [_dismissed].
+  InboxCubit(this._repository, this._dismissed) : super(const InboxState()) {
     _subscriptions = [
       _repository.watchTransactions().listen((it) {
         _transactions = it;
@@ -177,16 +173,13 @@ final class InboxCubit extends Cubit<InboxState> {
       _repository.watchImports().listen((it) {
         if (!isClosed) emit(state._with(latestImport: it.firstOrNull));
       }, onError: _failed),
+      _dismissed.changes.listen((_) => _update()),
     ];
   }
 
-  /// Where the pairs that are no transfers stay, as their keys.
-  static const dismissedKey = 'inboxNotTransfers';
-
   final InboxRepository _repository;
-  final SettingsStore _store;
+  final DismissedPairs _dismissed;
   late final List<StreamSubscription<Object>> _subscriptions;
-  late Set<String> _dismissed;
 
   List<Transaction>? _transactions;
   List<Account> _accounts = const [];
@@ -209,19 +202,11 @@ final class InboxCubit extends Cubit<InboxState> {
         if (!category.archived) category.id: category.kind,
     };
     final memory = CategoryMemory(transactions);
-    final pairs = transferPairs(
+    final (:waiting, :pairs) = waitingIn(
       transactions,
       rates: _rates,
-      dismissed: _dismissed,
+      dismissed: _dismissed.keys,
     );
-    final paired = {
-      for (final pair in pairs) ...[pair.out.id, pair.into.id],
-    };
-    final waiting = [
-      for (final transaction in transactions)
-        if (_waits(transaction) && !paired.contains(transaction.id))
-          transaction,
-    ]..sort(_byDay);
     final items = [
       for (final transaction in waiting)
         InboxItem(
@@ -247,21 +232,12 @@ final class InboxCubit extends Cubit<InboxState> {
     );
   }
 
-  static bool _waits(Transaction transaction) =>
-      _kindOf(transaction) != null &&
-      transaction.allocations.any((it) => it.categoryId == null);
-
   static CategoryKind? _kindOf(Transaction transaction) =>
       switch (transaction.kind) {
         TransactionKind.expense => CategoryKind.expense,
         TransactionKind.income => CategoryKind.income,
         _ => null,
       };
-
-  static int _byDay(Transaction a, Transaction b) {
-    final byDay = a.occurredOn.compareTo(b.occurredOn);
-    return byDay != 0 ? byDay : a.id.compareTo(b.id);
-  }
 
   /// Shows [filter].
   void show(InboxFilter filter) => emit(state._with(filter: filter));
@@ -354,12 +330,9 @@ final class InboxCubit extends Cubit<InboxState> {
   /// Keeps [pair] apart: its income then waits for a category of its own.
   /// A pair that the settings cannot keep stays, and the inbox says so.
   Future<void> notTransfer(TransferPair pair) async {
-    final before = _dismissed;
-    _dismissed = {..._dismissed, pair.key};
     try {
-      await _store.write(dismissedKey, _dismissed.join(','));
+      await _dismissed.add(pair.key);
     } on Object {
-      _dismissed = before;
       if (!isClosed) emit(state._with(failed: true));
       return;
     }

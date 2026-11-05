@@ -29,7 +29,7 @@ void main() {
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
     final ledger = repository ?? october();
-    final cubit = InboxCubit(ledger, store);
+    final cubit = InboxCubit(ledger, DismissedPairs(store));
     addTearDown(cubit.close);
     await tester.pumpWidget(
       MaterialApp(
@@ -197,7 +197,7 @@ void main() {
 
     await tapText(tester, 'ЭТО ДОХОД');
 
-    expect(store.values[InboxCubit.dismissedKey], isNotEmpty);
+    expect(store.values[DismissedPairs.key], isNotEmpty);
     expect(find.text('Оставили доходом'), findsOneWidget);
     expect(find.text('Похоже на перевод между вашими счетами'), findsNothing);
   });

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:decimal/decimal.dart';
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
@@ -111,7 +112,11 @@ void main() {
 
   late _FakeRepository repository;
 
-  Future<void> pump(ComponentTester tester, {String? note}) async {
+  Future<void> pump(
+    ComponentTester tester, {
+    String? note,
+    Component? notice,
+  }) async {
     tester.pumpComponent(
       _Host(
         child: BlocProvider(
@@ -124,6 +129,7 @@ void main() {
             accountsHref: 'accounts',
             hrefOfAccount: (id) => 'open/$id',
             note: note,
+            notice: notice,
           ),
         ),
       ),
@@ -300,6 +306,20 @@ void main() {
     ]);
     expect(find.text('Все 3'), findsOneComponent);
     expect(find.text('Рубли · •• 4568'), findsOneComponent);
+  });
+
+  testComponents('what waits stands between the capital and the accounts', (
+    tester,
+  ) async {
+    await pump(tester, notice: const a(href: 'inbox/', [.text('Входящие')]));
+
+    expect(links(), [
+      'inbox/',
+      'accounts',
+      'open/Карта',
+      'open/Наличные',
+      'open/Доллары',
+    ]);
   });
 
   testComponents('one account takes the whole row', (tester) async {

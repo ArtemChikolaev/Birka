@@ -131,6 +131,81 @@ void main() {
     );
   });
 
+  group('the way to the inbox on the overview says what waits', () {
+    final pair = TransferPair(
+      out: _operation(
+        'top-up',
+        TransactionKind.expense,
+        'wise',
+        Money(231000, Currency.usd),
+        CivilDate(2026, 9, 30),
+      ),
+      into: _operation(
+        'arrived',
+        TransactionKind.income,
+        'card',
+        Money(18500000, Currency.rub),
+        CivilDate(2026, 10, 1),
+      ),
+    );
+    final items = [
+      for (final id in ['cafe', 'shop'])
+        InboxItem(
+          _operation(
+            id,
+            TransactionKind.expense,
+            'card',
+            Money(45000, Currency.rub),
+            CivilDate(2026, 10, 4),
+          ),
+        ),
+    ];
+    final wise = Account(
+      id: 'wise',
+      name: 'Wise',
+      type: AccountType.debit,
+      openingBalance: Money(0, Currency.usd),
+      includeInTotals: true,
+      archived: false,
+      sortOrder: 1,
+    );
+
+    test('the operations and the transfer with its account', () {
+      expect(
+        entryLine(
+          InboxState(
+            items: items,
+            pairs: [pair],
+            accounts: [wise],
+            latestImport: _import(),
+          ),
+        ),
+        '2 без категории и перевод со счёта «Wise» · после импорта '
+        'Альфа-Банка',
+      );
+      expect(
+        t.inbox.entryTitle(n: 3, count: formatCount(3)),
+        '3 ждут решения во «Входящих»',
+      );
+      expect(
+        t.inbox.entryTitle(n: 1, count: formatCount(1)),
+        '1 ждёт решения во «Входящих»',
+      );
+    });
+
+    test('the operations alone, before any import', () {
+      expect(entryLine(InboxState(items: items)), '2 без категории');
+    });
+
+    test('several transfers, or one whose account is gone, by their count', () {
+      expect(
+        entryLine(InboxState(pairs: [pair, pair, pair])),
+        '3 перевода между счетами',
+      );
+      expect(entryLine(InboxState(pairs: [pair])), '1 перевод между счетами');
+    });
+  });
+
   test('a pair of two currencies says its rate and that of the bank', () {
     final pair = TransferPair(
       out: _operation(

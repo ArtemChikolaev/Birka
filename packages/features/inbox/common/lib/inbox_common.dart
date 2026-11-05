@@ -5,7 +5,10 @@ library;
 
 export 'src/data/ledger_inbox_repository.dart';
 export 'src/di/register_inbox.dart';
+export 'src/domain/dismissed_pairs.dart';
 export 'src/domain/inbox_repository.dart';
 export 'src/domain/transfer_pairs.dart';
+export 'src/domain/waiting.dart';
 export 'src/presentation/inbox_cubit.dart';
 export 'src/presentation/inbox_labels.dart';
+export 'src/presentation/inbox_summary_cubit.dart';

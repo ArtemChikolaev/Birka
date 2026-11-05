@@ -19,7 +19,8 @@ import 'package:help_flutter/help_flutter.dart';
 import 'package:import_common/import_common.dart'
     show ImportCubit, StatementFiles;
 import 'package:import_flutter/import_flutter.dart';
-import 'package:inbox_common/inbox_common.dart' show InboxCubit;
+import 'package:inbox_common/inbox_common.dart'
+    show InboxCubit, InboxSummaryCubit;
 import 'package:inbox_flutter/inbox_flutter.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:onboarding_flutter/onboarding_flutter.dart';
@@ -126,13 +127,17 @@ GoRouter buildRouter(
             routes: [
               GoRoute(
                 path: Paths.overview,
-                builder: (context, state) => BlocProvider(
-                  create: (_) => getIt<OverviewCubit>(),
+                builder: (context, state) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (_) => getIt<OverviewCubit>()),
+                    BlocProvider(create: (_) => getIt<InboxSummaryCubit>()),
+                  ],
                   child: OverviewPage(
                     onAddAccount: () => context.push(Paths.newAccount),
                     onAccounts: () => context.push(Paths.accounts),
                     onOpenAccount: (id) =>
                         context.push(Paths.account(id), extra: _fromCard),
+                    notice: InboxCard(onOpen: () => context.push(Paths.inbox)),
                   ),
                 ),
               ),
@@ -185,8 +190,11 @@ GoRouter buildRouter(
             routes: [
               GoRoute(
                 path: Paths.more,
-                builder: (context, state) => BlocProvider(
-                  create: (_) => getIt<SettingsCubit>(),
+                builder: (context, state) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (_) => getIt<SettingsCubit>()),
+                    BlocProvider(create: (_) => getIt<InboxSummaryCubit>()),
+                  ],
                   child: MorePage(
                     links: getIt<HelpLinks>(),
                     onImport: (context) => showImportSheet(

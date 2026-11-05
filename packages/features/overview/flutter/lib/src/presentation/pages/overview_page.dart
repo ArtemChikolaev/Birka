@@ -17,6 +17,7 @@ class OverviewPage extends StatefulWidget {
     required this.onAddAccount,
     required this.onAccounts,
     required this.onOpenAccount,
+    this.notice,
     super.key,
   });
 
@@ -30,6 +31,11 @@ class OverviewPage extends StatefulWidget {
   /// into the page of the account when it opens as a [BirkaZoomPage] with the
   /// id as its tag.
   final ValueChanged<String> onOpenAccount;
+
+  /// What waits for the person, such as the way to the inbox, between the
+  /// capital and the accounts. It keeps the space under it itself, so that
+  /// it can close with it.
+  final Widget? notice;
 
   @override
   State<OverviewPage> createState() => _OverviewPageState();
@@ -92,6 +98,7 @@ class _OverviewPageState extends State<OverviewPage> {
                     _Periods(selected: state.period),
                     gap,
                   ],
+                  ?widget.notice,
                   _Accounts(
                     accounts: state.accounts,
                     onAccounts: widget.onAccounts,

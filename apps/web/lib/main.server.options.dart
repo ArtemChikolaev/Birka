@@ -94,6 +94,8 @@ import 'package:import_jaspr/src/presentation/components/import_bits.dart'
     as _import_bits;
 import 'package:import_jaspr/src/presentation/pages/import_page.dart'
     as _import_page;
+import 'package:inbox_jaspr/src/presentation/components/inbox_entry.dart'
+    as _inbox_entry;
 import 'package:inbox_jaspr/src/presentation/components/inbox_row.dart'
     as _inbox_row;
 import 'package:inbox_jaspr/src/presentation/components/pair_card.dart'
@@ -237,6 +239,8 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._import_bits.FormatMark.styles,
     ..._import_bits.SummaryRow.styles,
     ..._import_page.ImportPage.styles,
+    ..._inbox_entry.InboxCard.styles,
+    ..._inbox_entry.InboxTile.styles,
     ..._inbox_row.InboxRow.styles,
     ..._pair_card.PairCard.styles,
     ..._inbox_page.InboxPage.styles,

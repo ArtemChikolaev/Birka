@@ -19,6 +19,26 @@ import 'package:settings_common/settings_common.dart';
 
 enum _Stage { opening, ready, busy, failed }
 
+/// Opens the database of this browser, that of the ledger or of the demo,
+/// and registers the objects of the app in [getIt] on it. It throws
+/// [OpenInAnotherTab] while another tab holds the database.
+Future<OpenedDatabase> openData(GetIt getIt) async {
+  const settings = BrowserSettingsStore();
+  final name = databaseNameIn(settings);
+  final opened = await openLocalDatabase(name);
+  registerDependencies(getIt, opened.executor);
+  // A demo that has just come on fills before the page shows it. Another
+  // tab can turn it on meanwhile, so only the database that opened says
+  // whether this is the demo.
+  await settleDemo(
+    settings,
+    getIt<LedgerRepository>(),
+    opened: name,
+    now: DateTime.now(),
+  );
+  return opened;
+}
+
 /// An island with data: it takes the language of the browser, opens the
 /// database and follows the fragment of the address (ADR 0008).
 ///
@@ -97,19 +117,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
 
   Future<void> _open() async {
     try {
-      const settings = BrowserSettingsStore();
-      final name = databaseNameIn(settings);
-      final opened = await openLocalDatabase(name);
-      registerDependencies(getIt, opened.executor);
-      // A demo that has just come on fills before the page shows it. Another
-      // tab can turn it on meanwhile, so only the database that opened says
-      // whether this is the demo.
-      await settleDemo(
-        settings,
-        getIt<LedgerRepository>(),
-        opened: name,
-        now: DateTime.now(),
-      );
+      final opened = await openData(getIt);
       await prepare();
       setState(() {
         _persists = opened.persists;

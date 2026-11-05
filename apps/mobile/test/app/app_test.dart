@@ -19,12 +19,22 @@ import 'package:help_common/help_common.dart';
 import 'package:help_flutter/help_flutter.dart';
 import 'package:import_common/import_common.dart'
     show ChosenStatement, StatementFiles;
+import 'package:inbox_common/inbox_common.dart'
+    show
+        DismissedPairs,
+        InboxCubit,
+        InboxRepository,
+        InboxSummaryCubit,
+        TransferPair;
+import 'package:inbox_flutter/inbox_flutter.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart'
     show
+        Account,
         AccountType,
         DayChange,
         Entry,
+        LedgerImport,
         Transaction,
         TransactionDraft,
         TransactionSource,
@@ -92,6 +102,31 @@ final class _NewDevice implements OnboardingRepository {
     required FirstAccount? account,
     required List<ReadyCategory> categories,
   }) async {}
+}
+
+/// A ledger with nothing in the inbox.
+final class _NoInbox implements InboxRepository {
+  @override
+  Stream<List<Transaction>> watchTransactions() => Stream.value(const []);
+
+  @override
+  Stream<List<Account>> watchAccounts() => Stream.value(const []);
+
+  @override
+  Stream<List<Category>> watchCategories(CategoryKind kind) =>
+      Stream.value(const []);
+
+  @override
+  Stream<RateBook> watchRates() => Stream.value(const RateBook.empty());
+
+  @override
+  Stream<List<LedgerImport>> watchImports() => Stream.value(const []);
+
+  @override
+  Future<void> categorize(List<(Transaction, String)> choices) async {}
+
+  @override
+  Future<String> makeTransfer(TransferPair pair) async => 'transfer';
 }
 
 final class _NoCategories implements CategoriesRepository {
@@ -350,6 +385,10 @@ void main() {
         ),
       )
       ..registerFactory(() => OverviewCubit(overview))
+      ..registerFactory(
+        () => InboxSummaryCubit(_NoInbox(), DismissedPairs(settings)),
+      )
+      ..registerFactory(() => InboxCubit(_NoInbox(), DismissedPairs(settings)))
       ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerFactory(() => BackupCubit(_EmptyLedger(), _NoFiles(), settings))
       ..registerFactory(
@@ -637,6 +676,34 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(formatMoney(Money(-100, Currency.rub))), findsNothing);
+  });
+
+  testWidgets('More leads to the inbox, which says all is sorted', (
+    tester,
+  ) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    expect(find.text(t.inbox.title), findsOneWidget);
+    expect(find.text(t.inbox.emptyTitle), findsOneWidget);
+    await tester.tap(find.text(t.inbox.title));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(InboxPage), findsOneWidget);
+  });
+
+  testWidgets('the overview shows no way to an empty inbox', (tester) async {
+    final coffee = _coffee();
+    overview.accounts = [
+      AccountBalance(coffee.account!, Money(100, Currency.rub)),
+    ];
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(InboxCard), findsOneWidget);
+    expect(find.textContaining('inbox'), findsNothing);
   });
 
   testWidgets('the setting waits for the next launch', (tester) async {

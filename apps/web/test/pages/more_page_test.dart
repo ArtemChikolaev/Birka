@@ -1,5 +1,6 @@
 import 'package:birka_web/app/site_version.dart';
 import 'package:birka_web/pages/more_page.dart';
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
@@ -25,14 +26,14 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.en);
   });
 
-  void pump(ComponentTester tester) => tester.pumpComponent(
+  void pump(ComponentTester tester, {Component? inbox}) => tester.pumpComponent(
     BlocProvider(
       create: (_) => SettingsCubit(
         _Store(),
         deviceLanguage: 'ru',
         baseCurrency: BaseCurrency(null),
       ),
-      child: const MorePage(),
+      child: MorePage(inbox: inbox),
     ),
   );
 
@@ -77,6 +78,23 @@ void main() {
       find.descendant(of: find.tag('a'), matching: find.text('Помощь и отзыв')),
       findsOneComponent,
     );
+  });
+
+  testComponents('puts the way to the inbox over the tiles, as wide', (
+    tester,
+  ) async {
+    pump(tester, inbox: const a(href: 'inbox/', [.text('Входящие')]));
+
+    final links = [
+      for (final element in find.tag('a').evaluate())
+        (element.component as DomComponent).attributes?['href'],
+    ];
+    expect(links.take(2), ['inbox/', 'accounts/']);
+    final wide = [
+      for (final element in find.byType(div).evaluate())
+        if ((element.component as div).classes == 'more__wide') element,
+    ];
+    expect(wide, hasLength(1));
   });
 
   testComponents('has nothing left to come', (tester) async {

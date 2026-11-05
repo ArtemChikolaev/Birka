@@ -95,7 +95,7 @@ void main() {
   var listed = 0;
   late List<String> opened;
 
-  Future<void> pump(WidgetTester tester) async {
+  Future<void> pump(WidgetTester tester, {Widget? notice}) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -111,6 +111,7 @@ void main() {
                 onAddAccount: () => added++,
                 onAccounts: () => listed++,
                 onOpenAccount: opened.add,
+                notice: notice,
               ),
             ),
           ),
@@ -235,6 +236,16 @@ void main() {
     await tester.tap(find.text('ЗАРПЛАТНАЯ'));
 
     expect(opened, ['Зарплатная']);
+  });
+
+  testWidgets('what waits stands between the capital and the accounts', (
+    tester,
+  ) async {
+    await pump(tester, notice: const Text('3 ждут решения во «Входящих»'));
+
+    final notice = tester.getTopLeft(find.text('3 ждут решения во «Входящих»'));
+    expect(notice.dy, greaterThan(tester.getTopLeft(find.text('Неделя')).dy));
+    expect(notice.dy, lessThan(tester.getTopLeft(find.text('СЧЕТА')).dy));
   });
 
   testWidgets('the link leads to all the accounts', (tester) async {

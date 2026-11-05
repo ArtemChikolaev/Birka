@@ -9,15 +9,20 @@ import 'package:settings_jaspr/settings_jaspr.dart';
 
 /// The tab with everything that has no tab of its own, and the settings.
 class MorePage extends StatelessComponent {
-  /// Creates the page.
-  const MorePage({super.key});
+  /// Creates the page, with [inbox] as the way to the inbox over the tiles.
+  const MorePage({this.inbox, super.key});
+
+  /// The way to the inbox, as wide as the tiles.
+  final Component? inbox;
 
   @override
   Component build(BuildContext context) {
+    final inbox = this.inbox;
     return BirkaColumn(
       children: [
         GlassPageHeader(title: t.app.more),
         div(classes: 'more__tiles', [
+          if (inbox != null) div(classes: 'more__wide', [inbox]),
           _Tile(
             color: 'var(--color-palette-green)',
             label: t.accounts.title,
@@ -83,6 +88,7 @@ class MorePage extends StatelessComponent {
         'grid-template-columns': 'repeat(2, minmax(0, 1fr))',
       },
     ),
+    css('.more__wide').styles(raw: {'grid-column': '1 / -1'}),
     css('.more__link').styles(
       raw: {
         'border-radius': 'var(--radius-lg)',

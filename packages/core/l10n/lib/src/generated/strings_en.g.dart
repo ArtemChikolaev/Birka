@@ -1639,6 +1639,34 @@ class Translations$inbox$en {
   /// en: 'New category'
   String get newCategory => 'New category';
 
+  /// en: '(one) {$count waits for you in the inbox} (other) {$count wait for you in the inbox}'
+  String entryTitle({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} waits for you in the inbox',
+        other: '${count} wait for you in the inbox',
+      );
+
+  /// en: '$count without a category'
+  String entryUncategorized({required Object count}) =>
+      '${count} without a category';
+
+  /// en: 'a transfer from «$account»'
+  String entryTransfer({required Object account}) =>
+      'a transfer from «${account}»';
+
+  /// en: '(one) {$count transfer between accounts} (other) {$count transfers between accounts}'
+  String entryTransfers({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} transfer between accounts',
+        other: '${count} transfers between accounts',
+      );
+
+  /// en: '$first and $second'
+  String entryBoth({required Object first, required Object second}) =>
+      '${first} and ${second}';
+
   /// en: 'Clear'
   String get unpick => 'Clear';
 }
@@ -3213,6 +3241,29 @@ extension on Translations {
           'inbox.toImport' => 'Import a statement',
           'inbox.hinted' => 'suggested',
           'inbox.newCategory' => 'New category',
+          'inbox.entryTitle' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} waits for you in the inbox',
+                  other: '${count} wait for you in the inbox',
+                ),
+          'inbox.entryUncategorized' =>
+            ({required Object count}) => '${count} without a category',
+          'inbox.entryTransfer' =>
+            ({required Object account}) => 'a transfer from «${account}»',
+          'inbox.entryTransfers' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} transfer between accounts',
+                  other: '${count} transfers between accounts',
+                ),
+          'inbox.entryBoth' =>
+            ({required Object first, required Object second}) =>
+                '${first} and ${second}',
           'inbox.unpick' => 'Clear',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
