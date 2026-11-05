@@ -77,7 +77,7 @@ class FormatMark extends StatelessComponent {
       ),
       attributes: const {'aria-hidden': 'true'},
       [
-        if (format == null)
+        if (format == null || isOwnFormat(format))
           const BirkaIcon(BirkaGlyph.plus)
         else
           .text(formatLabel(format).substring(0, 1)),

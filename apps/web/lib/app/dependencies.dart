@@ -44,7 +44,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   registerAccounts(getIt);
   registerBackup(getIt, const BrowserSettingsStore());
   registerCategories(getIt);
-  registerImport(getIt);
+  registerImport(getIt, const BrowserSettingsStore());
   registerInbox(getIt, const BrowserSettingsStore());
   registerOnboarding(
     getIt,

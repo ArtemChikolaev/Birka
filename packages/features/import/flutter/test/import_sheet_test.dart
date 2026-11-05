@@ -33,6 +33,7 @@ void main() {
     WidgetTester tester,
     List<ChosenStatement?> files, {
     VoidCallback? onInbox,
+    ImportMemory? remembered,
   }) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
@@ -51,6 +52,7 @@ void main() {
                   repository,
                   const FileStatementReader(),
                   window,
+                  remembered: remembered,
                 ),
                 files: window,
                 onInbox: onInbox,
@@ -179,6 +181,25 @@ void main() {
     await tapText(tester, 'ИМПОРТИРОВАТЬ 2 ОПЕРАЦИИ');
 
     expect(repository.written.single.added, hasLength(2));
+  });
+
+  testWidgets("goes on at once with a format of the person's own", (
+    tester,
+  ) async {
+    final store = FakeSettingsStore();
+    final file = unknown();
+    final table = (await tester.runAsync(
+      () => const FileStatementReader().read(file.name, file.bytes),
+    ))!;
+    await ImportMemory(store).remember(
+      ownFormatOf(table, guessLayout(table).withRole(2, ColumnRole.amount))!,
+      const RememberedChoices(),
+    );
+
+    await open(tester, [unknown()], remembered: ImportMemory(store));
+
+    expect(find.text('Свой формат · узнали по колонкам'), findsOneWidget);
+    expect(find.text('ИМПОРТИРОВАТЬ 2 ОПЕРАЦИИ'), findsOneWidget);
   });
 
   testWidgets('keeps a format of its own unknown until the person is done', (

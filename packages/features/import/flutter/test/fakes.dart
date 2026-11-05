@@ -1,9 +1,22 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:device_settings/device_settings.dart';
 import 'package:import_common/import_common.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+
+/// The settings in memory.
+final class FakeSettingsStore implements SettingsStore {
+  /// What the settings hold.
+  final values = <String, String>{};
+
+  @override
+  String? read(String key) => values[key];
+
+  @override
+  Future<void> write(String key, String value) async => values[key] = value;
+}
 
 /// The window of files, with the files that the person chooses in turn.
 final class FakeStatementFiles implements StatementFiles {

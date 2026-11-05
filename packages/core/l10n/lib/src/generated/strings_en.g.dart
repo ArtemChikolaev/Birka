@@ -1452,6 +1452,9 @@ class Translations$imports$en {
 
   /// en: 'columns set by you'
   String get ownColumns => 'columns set by you';
+
+  /// en: 'Your own format, as before'
+  String get looksLikeOwn => 'Your own format, as before';
 }
 
 // Path: inbox
@@ -3107,6 +3110,7 @@ extension on Translations {
           'imports.columnsDone' =>
             ({required Object operations}) => 'Done · ${operations}',
           'imports.ownColumns' => 'columns set by you',
+          'imports.looksLikeOwn' => 'Your own format, as before',
           'inbox.title' => 'Inbox',
           'inbox.back' => 'Back',
           'inbox.waiting' =>
@@ -3129,11 +3133,11 @@ extension on Translations {
           'inbox.emptyText' =>
             'Operations without a category and transfers between your accounts come here from statements.',
           'inbox.pairTitle' => 'Looks like a transfer between your accounts',
-          'inbox.pairText' =>
-            'Neither spending nor income: your capital stays the same',
           _ => null,
         } ??
         switch (path) {
+          'inbox.pairText' =>
+            'Neither spending nor income: your capital stays the same',
           'inbox.rate' =>
             ({required Object rate, required Object unit}) =>
                 'Rate ${rate} for ${unit}',
