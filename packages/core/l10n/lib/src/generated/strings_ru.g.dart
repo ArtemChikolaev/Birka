@@ -1219,6 +1219,8 @@ class _Translations$imports$ru extends Translations$imports$en {
   String columnsDone({required Object operations}) => 'Готово · ${operations}';
   @override
   String get ownColumns => 'колонки назначили вы';
+  @override
+  String get looksLikeOwn => 'Узнали ваш формат';
 }
 
 // Path: inbox
@@ -2753,6 +2755,7 @@ extension on TranslationsRu {
           'imports.columnsDone' =>
             ({required Object operations}) => 'Готово · ${operations}',
           'imports.ownColumns' => 'колонки назначили вы',
+          'imports.looksLikeOwn' => 'Узнали ваш формат',
           'inbox.title' => 'Входящие',
           'inbox.back' => 'Назад',
           'inbox.waiting' =>
@@ -2777,11 +2780,11 @@ extension on TranslationsRu {
           'inbox.emptyText' =>
             'Здесь появятся операции без категории и переводы между вашими счетами, когда придут из выписки.',
           'inbox.pairTitle' => 'Похоже на перевод между вашими счетами',
-          'inbox.pairText' =>
-            'Не трата и не доход: капитал от него не изменится',
           _ => null,
         } ??
         switch (path) {
+          'inbox.pairText' =>
+            'Не трата и не доход: капитал от него не изменится',
           'inbox.rate' =>
             ({required Object rate, required Object unit}) =>
                 'Курс обмена ${rate} за ${unit}',

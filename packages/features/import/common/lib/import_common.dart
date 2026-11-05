@@ -8,6 +8,7 @@ export 'src/data/ledger_import_repository.dart';
 export 'src/di/register_import.dart';
 export 'src/domain/cell_values.dart';
 export 'src/domain/import_defaults.dart';
+export 'src/domain/import_memory.dart';
 export 'src/domain/import_plan.dart';
 export 'src/domain/import_repository.dart';
 export 'src/domain/statement.dart';

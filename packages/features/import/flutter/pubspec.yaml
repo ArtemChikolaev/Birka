@@ -23,6 +23,8 @@ dependencies:
     path: ../../../core/ledger
 
 dev_dependencies:
+  device_settings:
+    path: ../../../core/device_settings
   flutter_test:
     sdk: flutter
   money:

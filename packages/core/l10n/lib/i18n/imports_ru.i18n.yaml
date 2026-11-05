@@ -338,3 +338,4 @@ roleNotes(map):
 noAmounts: Ни одна сумма не прочиталась. Проверьте, чем в файле отделены копейки.
 columnsDone: "Готово · $operations"
 ownColumns: колонки назначили вы
+looksLikeOwn: Узнали ваш формат

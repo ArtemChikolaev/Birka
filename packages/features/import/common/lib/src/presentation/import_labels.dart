@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:import_common/src/domain/import_defaults.dart';
+import 'package:import_common/src/domain/import_memory.dart';
 import 'package:import_common/src/domain/import_plan.dart';
 import 'package:import_common/src/domain/statement.dart';
 import 'package:import_common/src/domain/statement_format.dart';
@@ -8,9 +9,11 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 
-/// The name of [format] for people, such as «Т-Банк» or «Дзен-мани».
-String formatLabel(StatementFormat format) =>
-    t.imports.formats[format.id] ?? format.id;
+/// The name of [format] for people, such as «Т-Банк» or «Дзен-мани», or
+/// «Свой формат» for one that the person set themselves.
+String formatLabel(StatementFormat format) => isOwnFormat(format)
+    ? t.imports.own
+    : t.imports.formats[format.id] ?? format.id;
 
 /// The names of new accounts for [accounts] of a file of [format], by their
 /// keys: the name of an account in the file, or else the bank with the digits
@@ -22,7 +25,9 @@ Map<String, String> newAccountNames(
   String nameOf(SourceAccount source) {
     final key = source.key;
     if (key.isNotEmpty && key != source.currency) return key;
-    final bank = format == null ? t.imports.account : formatLabel(format);
+    final bank = format == null || isOwnFormat(format)
+        ? t.imports.account
+        : formatLabel(format);
     return source.cards.length == 1 ? '$bank ••${source.cards.single}' : bank;
   }
 

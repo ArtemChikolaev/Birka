@@ -312,3 +312,4 @@ roleNotes(map):
 noAmounts: No amount read. Check what the file puts before the cents.
 columnsDone: "Done · $operations"
 ownColumns: columns set by you
+looksLikeOwn: Your own format, as before
