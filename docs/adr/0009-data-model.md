@@ -49,9 +49,11 @@
    and rates are `Decimal` strings. `occurredOn` is a civil date, with an
    optional moment and offset beside it.
 6. The schema is ready for sync from the start. Ids are UUIDv7 strings created
-   on the device, every row has `createdAt`, `updatedAt` and `deletedAt`,
-   deleting leaves a tombstone, there are no cascades, and every change also
-   goes into a `changes` outbox.
+   on the device, whose twelve bits after the version count up within one
+   millisecond (RFC 9562, method 1), so that rows written one after another
+   sort as they were written. Every row has `createdAt`, `updatedAt` and
+   `deletedAt`, deleting leaves a tombstone, there are no cascades, and every
+   change also goes into a `changes` outbox.
 7. One Drift schema lives in `packages/core/database`, in pure Dart, and the
    hosts open the connection: `drift_flutter` on phones and `WasmDatabase` on
    the web. Migrations go step by step with `drift_dev make-migrations`,

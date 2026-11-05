@@ -828,6 +828,25 @@ void main() {
       expect(dates, [20, 1]);
     });
 
+    test('of one day are listed the latest written first', () async {
+      // The ids share the one millisecond of the clock.
+      for (var i = 1; i <= 20; i++) {
+        await ledger.record(coffee(rub(i)));
+      }
+
+      final amounts = (await ledger.watchTransactions(limit: null).first).map(
+        (transaction) => transaction.allocations.single.amount,
+      );
+      expect(amounts, [for (var i = 20; i >= 1; i--) rub(i)]);
+    });
+
+    test('have ids of the time they were written', () async {
+      final id = await ledger.record(coffee(rub(100)));
+
+      final time = id.replaceAll('-', '').substring(0, 12);
+      expect(int.parse(time, radix: 16), at.millisecondsSinceEpoch);
+    });
+
     test('can be listed by account', () async {
       await ledger.record(coffee(rub(100)));
       await ledger.record(
@@ -877,7 +896,8 @@ void main() {
     });
 
     test('a transfer starts with what leaves, whatever its ids say', () async {
-      // Two ids of one millisecond can come in any order.
+      // Ids written before they counted up within a millisecond can come in
+      // any order.
       final ids = ['t', 'z', 'a'];
       final reversed = LedgerRepository(
         database,

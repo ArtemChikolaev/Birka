@@ -5,25 +5,26 @@ import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
 import 'package:ledger/src/ledger_copy.dart';
 import 'package:ledger/src/ledger_exception.dart';
+import 'package:ledger/src/ledger_ids.dart';
 import 'package:ledger/src/ledger_import.dart';
 import 'package:ledger/src/ledger_totals.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
 import 'package:money/money.dart';
-import 'package:uuid/uuid.dart';
 
 /// Reads and writes the ledger, and keeps the rules of ADR 0009.
 ///
 /// Every write is one database transaction: it stamps the rows, leaves
 /// tombstones instead of deleting, and records each change in the outbox.
 final class LedgerRepository {
-  /// Creates a repository on [_db]. Tests can fix [now] and [newId].
+  /// Creates a repository on [_db]. Tests can fix [now], which also gives
+  /// the ids their time, and [newId].
   LedgerRepository(
     this._db, {
     DateTime Function()? now,
     String Function()? newId,
   }) : _now = now ?? DateTime.now,
-       _newId = newId ?? const Uuid().v7;
+       _newId = newId ?? LedgerIds(now: now).call;
 
   final BirkaDatabase _db;
   final DateTime Function() _now;
