@@ -52,6 +52,44 @@ String waitingLabel(InboxState state) => [
   ?afterLabel(state),
 ].join(' · ');
 
+/// What waits, for the line of the way to the inbox on the overview: «14 без
+/// категории и перевод со счёта «Wise» · после импорта Альфа-Банка». One
+/// transfer names the account the money left.
+String entryLine(InboxState state) {
+  final uncategorized = state.items.length;
+  final parts = [
+    if (uncategorized > 0)
+      t.inbox.entryUncategorized(count: formatCount(uncategorized)),
+    if (state.pairs.isNotEmpty) _transfersLabel(state),
+  ];
+  return [
+    switch (parts) {
+      [final first, final second] => t.inbox.entryBoth(
+        first: first,
+        second: second,
+      ),
+      [final only] => only,
+      _ => null,
+    },
+    afterLabel(state),
+  ].nonNulls.join(' · ');
+}
+
+String _transfersLabel(InboxState state) {
+  final pairs = state.pairs;
+  final from = pairs.length == 1
+      ? state.accounts
+            .where((it) => it.id == pairs.single.fromAccountId)
+            .firstOrNull
+      : null;
+  return from == null
+      ? t.inbox.entryTransfers(
+          n: pairs.length,
+          count: formatCount(pairs.length),
+        )
+      : t.inbox.entryTransfer(account: from.name);
+}
+
 /// Which import the inbox follows: «после импорта Альфа-Банка», or of a file
 /// of no format that Birka knows by its name; `null` before any import.
 String? afterLabel(InboxState state) {

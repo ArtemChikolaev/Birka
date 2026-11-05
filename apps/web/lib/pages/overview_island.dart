@@ -5,6 +5,8 @@ import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:inbox_common/inbox_common.dart' show InboxSummaryCubit;
+import 'package:inbox_jaspr/inbox_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -98,13 +100,17 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         ]),
       );
     }
-    return BlocProvider<OverviewCubit>(
-      create: (_) => _overview = getIt(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<OverviewCubit>(create: (_) => _overview = getIt()),
+        BlocProvider<InboxSummaryCubit>(create: (_) => getIt()),
+      ],
       child: OverviewPage(
         addAccountHref: 'accounts/#new',
         accountsHref: 'accounts/',
         hrefOfAccount: (id) => 'accounts/#$id',
         note: storageNote,
+        notice: const InboxCard(href: 'inbox/'),
       ),
     );
   }

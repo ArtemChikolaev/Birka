@@ -112,7 +112,10 @@ enum BirkaGlyph {
   upload,
 
   /// A sheet of paper with lines.
-  file
+  file,
+
+  /// A tray of what came in.
+  inbox
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

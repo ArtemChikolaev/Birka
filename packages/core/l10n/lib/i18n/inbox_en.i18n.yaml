@@ -54,4 +54,13 @@ keptIncome: Kept as income
 toImport: Import a statement
 hinted: suggested
 newCategory: New category
+entryTitle(n):
+  one: $count waits for you in the inbox
+  other: $count wait for you in the inbox
+entryUncategorized: $count without a category
+entryTransfer: "a transfer from «$account»"
+entryTransfers(n):
+  one: $count transfer between accounts
+  other: $count transfers between accounts
+entryBoth: "$first and $second"
 unpick: Clear

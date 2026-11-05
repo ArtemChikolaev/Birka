@@ -154,7 +154,7 @@ void main() {
     );
     cubit = InboxCubit(
       LedgerInboxRepository(ledger, RatesRepository(database)),
-      _Store(),
+      DismissedPairs(_Store()),
     );
   });
 
@@ -292,7 +292,7 @@ void main() {
     ledger = LedgerRepository(database);
     cubit = InboxCubit(
       LedgerInboxRepository(ledger, RatesRepository(database)),
-      _Store(),
+      DismissedPairs(_Store()),
     );
 
     await pump(tester);

@@ -185,7 +185,7 @@ void main() {
     store = _Store();
     cubit = InboxCubit(
       LedgerInboxRepository(ledger, RatesRepository(database)),
-      store,
+      DismissedPairs(store),
     );
   });
 
@@ -333,7 +333,7 @@ void main() {
     await cubit.close();
     cubit = InboxCubit(
       LedgerInboxRepository(ledger, RatesRepository(database)),
-      store,
+      DismissedPairs(store),
     );
 
     expect((await ready()).pairs, isEmpty);
@@ -343,7 +343,7 @@ void main() {
     await cubit.close();
     cubit = InboxCubit(
       LedgerInboxRepository(ledger, RatesRepository(database)),
-      _FullStore(),
+      DismissedPairs(_FullStore()),
     );
     final pair = (await ready()).pairs.single;
 
@@ -351,6 +351,66 @@ void main() {
 
     expect(cubit.state.failed, isTrue);
     expect(cubit.state.pairs, [pair]);
+  });
+
+  group('the count for the ways to the inbox', () {
+    late InboxSummaryCubit summary;
+
+    Future<InboxState> counted(bool Function(InboxState state) test) async =>
+        test(summary.state) ? summary.state : summary.stream.firstWhere(test);
+
+    setUp(() async {
+      await cubit.close();
+      final repository = LedgerInboxRepository(
+        ledger,
+        RatesRepository(database),
+      );
+      final dismissed = DismissedPairs(store);
+      cubit = InboxCubit(repository, dismissed);
+      summary = InboxSummaryCubit(repository, dismissed);
+    });
+
+    tearDown(() => summary.close());
+
+    test('counts what the inbox shows, without its hints', () async {
+      final state = await counted((state) => !state.loading);
+
+      expect(state.count, 5);
+      expect(
+        [for (final item in state.items) item.id],
+        [
+          sokolov,
+          ivan,
+          bonus,
+          market,
+        ],
+      );
+      expect([for (final item in state.items) item.hint], everyElement(null));
+      expect(state.pairs.single.fromAccountId, wise.id);
+      expect(state.latestImport?.format, 'alfa');
+    });
+
+    test('a pair kept apart in the inbox leaves the count at once', () async {
+      final pair = (await ready()).pairs.single;
+      await counted((state) => !state.loading);
+
+      await cubit.notTransfer(pair);
+
+      final state = await counted((state) => state.pairs.isEmpty);
+      expect(state.count, 6);
+    });
+
+    test('an operation sorted in the inbox leaves the count', () async {
+      await ready();
+      await counted((state) => !state.loading);
+
+      await cubit.choose(ivan, shop.id);
+
+      final state = await counted(
+        (state) => state.items.every((item) => item.id != ivan),
+      );
+      expect(state.count, 4);
+    });
   });
 
   test('shows the operations or the transfers alone', () async {

@@ -1368,6 +1368,33 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   @override
   String get newCategory => 'Новая категория';
   @override
+  String entryTitle({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} ждёт решения во «Входящих»',
+        few: '${count} ждут решения во «Входящих»',
+        many: '${count} ждут решения во «Входящих»',
+        other: '${count} ждут решения во «Входящих»',
+      );
+  @override
+  String entryUncategorized({required Object count}) =>
+      '${count} без категории';
+  @override
+  String entryTransfer({required Object account}) =>
+      'перевод со счёта «${account}»';
+  @override
+  String entryTransfers({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} перевод между счетами',
+        few: '${count} перевода между счетами',
+        many: '${count} переводов между счетами',
+        other: '${count} перевода между счетами',
+      );
+  @override
+  String entryBoth({required Object first, required Object second}) =>
+      '${first} и ${second}';
+  @override
   String get unpick => 'Снять';
 }
 
@@ -2863,6 +2890,33 @@ extension on TranslationsRu {
           'inbox.toImport' => 'Загрузить выписку',
           'inbox.hinted' => 'подсказка',
           'inbox.newCategory' => 'Новая категория',
+          'inbox.entryTitle' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} ждёт решения во «Входящих»',
+                  few: '${count} ждут решения во «Входящих»',
+                  many: '${count} ждут решения во «Входящих»',
+                  other: '${count} ждут решения во «Входящих»',
+                ),
+          'inbox.entryUncategorized' =>
+            ({required Object count}) => '${count} без категории',
+          'inbox.entryTransfer' =>
+            ({required Object account}) => 'перевод со счёта «${account}»',
+          'inbox.entryTransfers' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} перевод между счетами',
+                  few: '${count} перевода между счетами',
+                  many: '${count} переводов между счетами',
+                  other: '${count} перевода между счетами',
+                ),
+          'inbox.entryBoth' =>
+            ({required Object first, required Object second}) =>
+                '${first} и ${second}',
           'inbox.unpick' => 'Снять',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',

@@ -18,6 +18,7 @@ class OverviewPage extends StatelessComponent {
     required this.accountsHref,
     required this.hrefOfAccount,
     this.note,
+    this.notice,
     super.key,
   });
 
@@ -32,6 +33,10 @@ class OverviewPage extends StatelessComponent {
 
   /// A quiet line under the page, such as where the data lives.
   final String? note;
+
+  /// What waits for the person, such as the way to the inbox, between the
+  /// capital and the accounts.
+  final Component? notice;
 
   @override
   Component build(BuildContext context) {
@@ -65,6 +70,7 @@ class OverviewPage extends StatelessComponent {
             ],
             OverviewStatus.ready => [
               if (state.main != null) _capital(context, state),
+              ?notice,
               _accounts(state.accounts),
               _spending(state.spending, today: state.today),
             ],

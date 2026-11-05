@@ -69,6 +69,16 @@
    statement. The sheet of categories ends with «Новая категория»: the
    form of a category opens over the inbox, and the category it saves
    goes to the operations at once, those of its kind only.
+9. A lasting way leads to the inbox on both hosts, as its board draws it:
+   on the overview a strip between the capital and the accounts says how
+   much waits, of what and after which import, and closes once nothing
+   waits; More starts with a row of the inbox, with its count or «Всё
+   разобрано». They count with `InboxSummaryCubit`, as the inbox counts
+   but without its hints, and every count shares one `DismissedPairs`, so
+   that a pair kept apart leaves them all at once. The More page of the
+   site needs no data and shows at once; it opens the database only for
+   the count, and beside a tab that holds the database its row goes
+   without one.
 
 ## Options considered
 
@@ -90,5 +100,7 @@
   at once ([ADR 0021](0021-statements.md), point 17).
 - The site draws the inbox (`inbox_jaspr`) as the mockup does, and the
   phone as its own board does (`inbox_flutter`); on both the result of an
-  import leads to it. A lasting way to it, from More or the overview, is
-  not drawn yet.
+  import, the overview and More lead to it.
+- Where the site keeps to one tab at a time ([ADR 0009](0009-data-model.md),
+  point 8), More now holds the database like any page with data, so
+  another tab of Birka waits for it.

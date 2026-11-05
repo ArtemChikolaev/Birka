@@ -62,4 +62,17 @@ keptIncome: Оставили доходом
 toImport: Загрузить выписку
 hinted: подсказка
 newCategory: Новая категория
+entryTitle(n):
+  one: $count ждёт решения во «Входящих»
+  few: $count ждут решения во «Входящих»
+  many: $count ждут решения во «Входящих»
+  other: $count ждут решения во «Входящих»
+entryUncategorized: $count без категории
+entryTransfer: "перевод со счёта «$account»"
+entryTransfers(n):
+  one: $count перевод между счетами
+  few: $count перевода между счетами
+  many: $count переводов между счетами
+  other: $count перевода между счетами
+entryBoth: "$first и $second"
 unpick: Снять
