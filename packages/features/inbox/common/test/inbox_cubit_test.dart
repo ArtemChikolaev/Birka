@@ -250,16 +250,30 @@ void main() {
 
     expect(cubit.state.picked, hasLength(3));
 
-    await cubit.choosePicked(shop.id);
+    await cubit.choosePicked(shop);
 
     final state = await until((state) => state.items.length == 2);
     expect([for (final item in state.items) item.id], [sokolov, bonus]);
     expect(state.selected, {bonus});
 
-    await cubit.choosePicked(side.id);
+    await cubit.choosePicked(side);
 
     await until((state) => state.items.length == 1);
     expect(cubit.state.selected, isEmpty);
+  });
+
+  test('a category made a moment ago goes to the picked at once', () async {
+    await ready();
+    cubit.toggle(ivan);
+    final gifts = await ledger.addCategory(
+      kind: CategoryKind.expense,
+      name: 'Подарки',
+    );
+
+    await cubit.choosePicked(gifts);
+
+    await until((state) => state.items.every((item) => item.id != ivan));
+    expect((await transaction(ivan)).allocations.single.categoryId, gifts.id);
   });
 
   test('picks all on screen, or none', () async {

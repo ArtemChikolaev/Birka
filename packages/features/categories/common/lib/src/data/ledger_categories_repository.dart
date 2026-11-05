@@ -18,7 +18,7 @@ final class LedgerCategoriesRepository implements CategoriesRepository {
   Future<Category?> category(String id) => _ledger.category(id);
 
   @override
-  Future<void> add(CategoryDraft draft) => _ledger.addCategory(
+  Future<Category> add(CategoryDraft draft) => _ledger.addCategory(
     kind: draft.kind,
     name: draft.name,
     parentId: draft.parentId,

@@ -1636,6 +1636,9 @@ class Translations$inbox$en {
   /// en: 'suggested'
   String get hinted => 'suggested';
 
+  /// en: 'New category'
+  String get newCategory => 'New category';
+
   /// en: 'Clear'
   String get unpick => 'Clear';
 }
@@ -3209,6 +3212,7 @@ extension on Translations {
           'inbox.keptIncome' => 'Kept as income',
           'inbox.toImport' => 'Import a statement',
           'inbox.hinted' => 'suggested',
+          'inbox.newCategory' => 'New category',
           'inbox.unpick' => 'Clear',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',

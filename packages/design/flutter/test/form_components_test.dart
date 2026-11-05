@@ -322,6 +322,47 @@ void main() {
 
       expect(picked, isNull);
     });
+
+    testWidgets('ends with an action that closes the sheet first', (
+      tester,
+    ) async {
+      (String,)? picked = ('untouched',);
+      final acted = <bool>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: BirkaTheme.dark(),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => BirkaButton(
+                label: 'Open',
+                onPressed: () async => picked = await showChoiceSheet<String>(
+                  context,
+                  title: 'Pick',
+                  choices: const ['One'],
+                  selected: 'One',
+                  labelOf: (choice) => choice,
+                  action: (
+                    label: 'New one',
+                    onTap: () => acted.add(Navigator.of(context).canPop()),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.bySemanticsLabel('Open'));
+      await tester.pumpAndSettle();
+
+      final label = tester.widget<Text>(find.text('New one'));
+      expect(label.style!.color, BirkaColors.dark.accent);
+      await tester.tap(find.text('New one'));
+      await tester.pumpAndSettle();
+
+      expect(acted, [false]);
+      expect(picked, isNull);
+      expect(find.text('Pick'), findsNothing);
+    });
   });
 
   group('GlassListValue', () {

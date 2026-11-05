@@ -1366,6 +1366,8 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   @override
   String get hinted => 'подсказка';
   @override
+  String get newCategory => 'Новая категория';
+  @override
   String get unpick => 'Снять';
 }
 
@@ -2860,6 +2862,7 @@ extension on TranslationsRu {
           'inbox.keptIncome' => 'Оставили доходом',
           'inbox.toImport' => 'Загрузить выписку',
           'inbox.hinted' => 'подсказка',
+          'inbox.newCategory' => 'Новая категория',
           'inbox.unpick' => 'Снять',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:inbox_common/inbox_common.dart';
 import 'package:inbox_flutter/inbox_flutter.dart';
 import 'package:l10n/l10n.dart';
+import 'package:ledger/ledger.dart';
 
 import 'fakes.dart';
 
@@ -22,6 +23,7 @@ void main() {
   Future<FakeInboxRepository> pump(
     WidgetTester tester, [
     FakeInboxRepository? repository,
+    CategoryMaker? onNewCategory,
   ]) async {
     tester.view.physicalSize = const Size(780, 2400);
     tester.view.devicePixelRatio = 2;
@@ -37,6 +39,7 @@ void main() {
           child: InboxPage(
             onBack: () {},
             onImport: () => imports++,
+            onNewCategory: onNewCategory,
             clock: () => DateTime(2026, 11, 4),
           ),
         ),
@@ -109,6 +112,75 @@ void main() {
     await tapText(tester, 'Покупки');
 
     expect(ledger.categorized, [('ivan', 'shop')]);
+  });
+
+  group('a new category', () {
+    late List<CategoryKind> asked;
+
+    CategoryMaker maker({CategoryKind? kind}) => (wanted) async {
+      asked.add(wanted);
+      return Category(
+        id: 'gifts',
+        kind: kind ?? wanted,
+        name: 'Подарки',
+        archived: false,
+        sortOrder: 9,
+      );
+    };
+
+    setUp(() => asked = []);
+
+    testWidgets('is made from the sheet of a row and goes to it', (
+      tester,
+    ) async {
+      final ledger = await pump(tester, null, maker());
+
+      await tapText(tester, 'Другая');
+      await tapText(tester, 'Новая категория');
+
+      expect(asked, [CategoryKind.expense]);
+      expect(ledger.categorized, [('soko', 'gifts')]);
+      expect(find.text('Подарки · 1 операция'), findsOneWidget);
+    });
+
+    testWidgets('goes to the picked of its kind', (tester) async {
+      final ledger = await pump(tester, null, maker());
+
+      await tester.ensureVisible(find.text('Перевод Ивану К.'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.bySemanticsLabel('Выбрать «Перевод Ивану К.»'));
+      await tester.pumpAndSettle();
+      await tapText(tester, 'КАТЕГОРИЯ');
+      await tapText(tester, 'Новая категория');
+
+      expect(ledger.categorized, [('ivan', 'gifts')]);
+      expect(find.text('Подарки · 1 операция'), findsOneWidget);
+    });
+
+    testWidgets('of the other kind leaves the operation as it was', (
+      tester,
+    ) async {
+      final ledger = await pump(
+        tester,
+        null,
+        maker(kind: CategoryKind.income),
+      );
+
+      await tapText(tester, 'Другая');
+      await tapText(tester, 'Новая категория');
+
+      expect(ledger.categorized, isEmpty);
+      expect(find.text('ИП Соколов А. В.'), findsOneWidget);
+    });
+
+    testWidgets('is not offered when nothing can make one', (tester) async {
+      await pump(tester);
+
+      await tapText(tester, 'Другая');
+
+      expect(find.text('Покупки'), findsOneWidget);
+      expect(find.text('Новая категория'), findsNothing);
+    });
   });
 
   testWidgets('a pair becomes a transfer with a word', (tester) async {

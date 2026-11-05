@@ -53,4 +53,5 @@ sorted: "$category · $operations"
 keptIncome: Kept as income
 toImport: Import a statement
 hinted: suggested
+newCategory: New category
 unpick: Clear

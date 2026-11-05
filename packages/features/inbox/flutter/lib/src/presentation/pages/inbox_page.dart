@@ -16,10 +16,12 @@ import 'package:ledger/ledger.dart';
 /// picked at once for one category. It needs an [InboxCubit] above it.
 class InboxPage extends StatefulWidget {
   /// Creates the page, which [onBack] leaves; [onImport] starts the import
-  /// of a statement when nothing waits.
+  /// of a statement when nothing waits, and [onNewCategory] makes a category
+  /// for the operations being sorted.
   const InboxPage({
     required this.onBack,
     this.onImport,
+    this.onNewCategory,
     this.clock = DateTime.now,
     super.key,
   });
@@ -29,6 +31,10 @@ class InboxPage extends StatefulWidget {
 
   /// Starts the import of a statement.
   final VoidCallback? onImport;
+
+  /// Makes a category with the person, which the operations being sorted get
+  /// at once; without it the sheet of categories offers none.
+  final CategoryMaker? onNewCategory;
 
   /// What the time is now, which tests can fix.
   final DateTime Function() clock;
@@ -49,17 +55,24 @@ class _InboxPageState extends State<InboxPage> {
   }
 
   Future<void> _choosePicked(InboxCubit cubit, InboxState state) async {
-    final picked = state.picked;
-    final kinds = {for (final item in picked) kindOf(item.transaction)};
-    final category = await chooseCategory(context, state, [
-      for (final kind in CategoryKind.values)
-        if (kinds.contains(kind)) kind,
-    ], title: t.inbox.pickedCategory);
+    final kinds = {for (final item in state.picked) kindOf(item.transaction)};
+    final category = await chooseCategory(
+      context,
+      state,
+      [
+        for (final kind in CategoryKind.values)
+          if (kinds.contains(kind)) kind,
+      ],
+      title: t.inbox.pickedCategory,
+      onNew: widget.onNewCategory,
+    );
     if (category == null) return;
-    final count = picked
+    // A new category may come after a while, and of the other kind.
+    final count = cubit.state.picked
         .where((it) => kindOf(it.transaction) == category.kind)
         .length;
-    await cubit.choosePicked(category.id);
+    if (count == 0) return;
+    await cubit.choosePicked(category);
     if (!cubit.state.failed) {
       _say(
         t.inbox.sorted(
@@ -243,6 +256,7 @@ class _InboxPageState extends State<InboxPage> {
                 state: state,
                 thisYear: thisYear,
                 onSay: _say,
+                onNewCategory: widget.onNewCategory,
               ),
             if (items.length > _shown)
               _More(

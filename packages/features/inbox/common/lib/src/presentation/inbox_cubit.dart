@@ -306,17 +306,14 @@ final class InboxCubit extends Cubit<InboxState> {
     await _categorize([(item.transaction, categoryId)]);
   }
 
-  /// Gives the picked operations of its kind the category [categoryId], at
-  /// once; those of the other kind stay picked.
-  Future<void> choosePicked(String categoryId) async {
-    final category = state.categories
-        .where((it) => it.id == categoryId)
-        .firstOrNull;
-    if (category == null) return;
+  /// Gives the picked operations of the kind of [category] that category,
+  /// at once; those of the other kind stay picked. A category made a moment
+  /// ago does too, before the list of the ledger brings it.
+  Future<void> choosePicked(Category category) async {
     await _categorize([
       for (final item in state.picked)
         if (_kindOf(item.transaction) == category.kind)
-          (item.transaction, categoryId),
+          (item.transaction, category.id),
     ]);
   }
 
