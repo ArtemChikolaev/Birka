@@ -9,11 +9,15 @@ import 'package:settings_flutter/settings_flutter.dart';
 
 /// The tab with everything that has no tab of its own, and the settings.
 class MorePage extends StatelessWidget {
-  /// Creates the page; [links] open the code of Birka.
-  const MorePage({required this.links, super.key});
+  /// Creates the page; [links] open the code of Birka, and [onImport]
+  /// starts the import of a statement.
+  const MorePage({required this.links, required this.onImport, super.key});
 
   /// The ways out of the app.
   final HelpLinks links;
+
+  /// Starts the import of a statement over the page in the context it gets.
+  final Future<void> Function(BuildContext context) onImport;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +61,7 @@ class MorePage extends StatelessWidget {
                 child: _Tile(
                   color: const Color(BirkaTokens.colorPaletteSky),
                   label: t.app.import,
+                  onTap: () => onImport(context),
                 ),
               ),
               const SizedBox(width: BirkaTokens.spaceSm),

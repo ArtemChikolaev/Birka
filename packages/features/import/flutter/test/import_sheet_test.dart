@@ -1,0 +1,158 @@
+import 'package:design_flutter/design_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:import_common/import_common.dart';
+import 'package:import_flutter/import_flutter.dart';
+import 'package:l10n/l10n.dart';
+
+import 'fakes.dart';
+
+void main() {
+  late FakeImportRepository repository;
+
+  setUp(() {
+    LocaleSettings.setLocaleSync(AppLocale.ru);
+    repository = FakeImportRepository([card]);
+  });
+  tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
+
+  /// Pumps until the file is read and planned, then lets the sheet settle.
+  Future<void> settle(WidgetTester tester) async {
+    for (var i = 0; i < 50; i++) {
+      await tester.pump(const Duration(milliseconds: 20));
+      if (find.byType(ImportSheet).evaluate().isNotEmpty &&
+          find.byType(LinearProgressIndicator).evaluate().isEmpty) {
+        break;
+      }
+    }
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> open(WidgetTester tester, List<ChosenStatement?> files) async {
+    tester.view.physicalSize = const Size(780, 1688);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final window = FakeStatementFiles(files);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: BirkaTheme.dark(),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => BirkaButton(
+              label: 'Импорт',
+              onPressed: () => showImportSheet(
+                context,
+                cubit: () => ImportCubit(
+                  repository,
+                  const FileStatementReader(),
+                  window,
+                ),
+                files: window,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.bySemanticsLabel('Импорт'));
+    await settle(tester);
+  }
+
+  Future<void> tapText(WidgetTester tester, String text) async {
+    await tester.ensureVisible(find.text(text));
+    await tester.tap(find.text(text));
+    await settle(tester);
+  }
+
+  testWidgets('shows what Birka knew in the file and where it goes', (
+    tester,
+  ) async {
+    await open(tester, [october()]);
+
+    expect(find.text('Импорт выписки'), findsOneWidget);
+    expect(find.text('alfa-2026-10.csv'), findsOneWidget);
+    expect(find.text('Альфа-Банк · узнали по колонкам'), findsOneWidget);
+    expect(find.text('Зарплатная карта'), findsOneWidget);
+    expect(find.text('••4821 · совпал номер карты'), findsOneWidget);
+    expect(find.text('Операций за 1–7 октября 2026'), findsOneWidget);
+    expect(find.text('4'), findsOneWidget);
+    expect(find.text('Разобрать потом'), findsOneWidget);
+    expect(find.text('4 во «Входящих»'), findsOneWidget);
+    expect(find.text('Остаток после'), findsOneWidget);
+    expect(find.text('Уже есть в учёте'), findsNothing);
+    expect(find.text('ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ'), findsOneWidget);
+  });
+
+  testWidgets('imports the operations and takes them back out', (
+    tester,
+  ) async {
+    await open(tester, [october()]);
+
+    await tapText(tester, 'ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ');
+
+    expect(repository.written, hasLength(1));
+    expect(find.text('Добавили 4 операции'), findsOneWidget);
+    expect(
+      find.text('Альфа-Банк, 1–7 октября 2026 → Зарплатная карта'),
+      findsOneWidget,
+    );
+    expect(find.text('4 ждут вашего решения во «Входящих»'), findsOneWidget);
+
+    await tapText(tester, 'ОТМЕНИТЬ ИМПОРТ');
+
+    expect(repository.undone, ['import-1']);
+    expect(find.text('Импорт отменён'), findsOneWidget);
+
+    await tapText(tester, 'ГОТОВО');
+
+    expect(find.byType(ImportSheet), findsNothing);
+  });
+
+  testWidgets('sends the operations into a new account when asked', (
+    tester,
+  ) async {
+    await open(tester, [october()]);
+
+    await tapText(tester, 'Зарплатная карта');
+    expect(find.text('Куда записать операции карты ••4821'), findsOneWidget);
+    await tapText(tester, 'Новый счёт');
+
+    expect(find.text('Новый счёт'), findsOneWidget);
+    await tapText(tester, 'ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ');
+    expect(
+      repository.written.single.choices.accounts.values.single,
+      isA<NewAccount>(),
+    );
+  });
+
+  testWidgets('says when the format is unknown, and takes another file', (
+    tester,
+  ) async {
+    await open(tester, [unknown(), october()]);
+
+    expect(find.text('Формат не узнали'), findsOneWidget);
+    expect(find.text('statement_oct_2026.csv'), findsOneWidget);
+    expect(find.text('3 колонки · 2 строки'), findsOneWidget);
+    expect(find.textContaining('Альфа-Банка, Т-Банка'), findsOneWidget);
+
+    await tapText(tester, 'ВЫБРАТЬ ДРУГОЙ ФАЙЛ');
+
+    expect(find.text('Альфа-Банк · узнали по колонкам'), findsOneWidget);
+  });
+
+  testWidgets('says when a file holds no table', (tester) async {
+    await open(tester, [picture()]);
+
+    expect(find.text('Файл не прочитался'), findsOneWidget);
+
+    await tapText(tester, 'ОТМЕНА');
+
+    expect(find.byType(ImportSheet), findsNothing);
+  });
+
+  testWidgets('opens nothing when no file was chosen', (tester) async {
+    await open(tester, [null]);
+
+    expect(find.byType(ImportSheet), findsNothing);
+  });
+}

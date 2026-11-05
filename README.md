@@ -10,7 +10,8 @@ currencies up at the rates of the Bank of Russia, report on your months and
 save a copy of everything to a file. This first milestone is manual tracking
 with several currencies and reports. The site also imports statements: CSV and
 Excel of banks and Zenmoney, and the PDF of Sberbank, and sorts what they bring
-in an inbox, with hints from past choices; the app comes next.
+in an inbox, with hints from past choices; the app imports the statements of
+the banks it knows.
 
 ## Why
 
@@ -76,7 +77,7 @@ packages/design/flutter  theme, fonts and glass widgets for Flutter
 packages/design/jaspr    styles, web fonts and glass components for Jaspr
 packages/design/brand    the app icon and the art of the first screen: SVG and PNG masters
 packages/features        one folder per feature: accounts, backup, categories, help, import,
-                         onboarding, overview, reports, settings, transactions
+                         inbox, onboarding, overview, reports, settings, transactions
 tools                    repository tooling: package boundary checks, dev scripts
 third_party/drift        drift 2.31.0 with fixes of 2.34.2 and 2.35.1, until the Flutter upgrade
 docs/adr                 architecture decision records

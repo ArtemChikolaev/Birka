@@ -179,10 +179,7 @@ class DoneStep extends StatelessComponent {
   Component? _balance(ImportPlan plan, SourceAccount source) {
     final after = plan.balances[source.key];
     if (after == null) return null;
-    final closing = source.closing;
-    final bank = closing == null
-        ? null
-        : moneyOf(closing, source.currency, fallback: after.currency);
+    final bank = bankBalance(source, after);
     final name = switch (plan.choices.accounts[source.key]) {
       IntoAccount(:final account) => account.name,
       NewAccount(:final name) => name,

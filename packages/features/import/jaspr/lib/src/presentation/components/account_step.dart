@@ -107,16 +107,11 @@ class AccountStep extends StatelessComponent {
     final other = own != currency;
     final digits = account.lastDigits;
     final balance = state.balances[account.id];
+    final match = other ? null : matchOf(account, source);
     return GlassOption(
       leading: CardArtThumbnail(art: CardArt.values.byName(account.art.name)),
       title: account.name,
-      badge: other
-          ? null
-          : digits != null && source.cards.contains(digits)
-          ? t.imports.cardMatched
-          : sameName(account.name, source.key)
-          ? t.imports.nameMatched
-          : null,
+      badge: match == null ? null : matchLabel(match),
       subtitle: other
           ? t.imports.otherCurrency(
               currency: t.app.currencies[own] ?? own,
@@ -143,7 +138,7 @@ class AccountStep extends StatelessComponent {
     final after = state.plan?.balances[source.key];
     final last = statement.to;
     if (closing == null || after == null || last == null) return null;
-    final bank = moneyOf(closing, source.currency, fallback: after.currency);
+    final bank = bankBalance(source, after);
     final matches = bank == after;
     return div(
       classes: matches

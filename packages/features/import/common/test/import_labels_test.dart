@@ -122,6 +122,42 @@ void main() {
     });
   });
 
+  group('the match of an account', () {
+    test('says what ties it to the file', () {
+      expect(matchLabel(AccountMatch.card), 'совпал номер карты');
+      expect(matchLabel(AccountMatch.name), 'совпало название');
+    });
+  });
+
+  group('the balance of the bank', () {
+    SourceAccount closing(String? currency, String? balance) => SourceAccount(
+      key: '',
+      operations: 1,
+      spent: Decimal.zero,
+      received: Decimal.zero,
+      currency: currency,
+      closing: balance == null ? null : Decimal.parse(balance),
+    );
+
+    test('is the one at the end of the file, in its currency', () {
+      expect(
+        bankBalance(closing('RUB', '188913.71'), Money(0, Currency.rub)),
+        Money(18891371, Currency.rub),
+      );
+    });
+
+    test('is in the currency after the import when the file names none', () {
+      expect(
+        bankBalance(closing(null, '12.5'), Money(0, Currency.eur)),
+        Money(1250, Currency.eur),
+      );
+    });
+
+    test('is none when the file gives none', () {
+      expect(bankBalance(closing('RUB', null), Money(0, Currency.rub)), isNull);
+    });
+  });
+
   group('an amount of a file', () {
     test('is money of its currency, or of the fallback', () {
       expect(

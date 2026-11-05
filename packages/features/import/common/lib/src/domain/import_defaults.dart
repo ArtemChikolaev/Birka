@@ -58,6 +58,23 @@ AccountChoice defaultAccount(
   );
 }
 
+/// Why an account of the ledger fits an account of a file.
+enum AccountMatch {
+  /// The digits of its card are those of the file.
+  card,
+
+  /// Its name is the one of the account of the file.
+  name,
+}
+
+/// Why [account] fits [source]: the digits of its card, or else its name;
+/// `null` when neither ties them.
+AccountMatch? matchOf(Account account, SourceAccount source) {
+  final digits = account.lastDigits;
+  if (digits != null && source.cards.contains(digits)) return AccountMatch.card;
+  return sameName(account.name, source.key) ? AccountMatch.name : null;
+}
+
 /// Where [bank] goes unless the person says otherwise: a category of its kind
 /// with its name, a subcategory for a name such as «Путешествия / Билеты»,
 /// and else a new category when [create] says so, as for the categories of

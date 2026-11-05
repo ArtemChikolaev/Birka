@@ -171,3 +171,19 @@ Money? moneyOf(
   String? currency, {
   Currency fallback = Currency.rub,
 }) => moneyIn(amount, currency == null ? fallback : currencyNamed(currency));
+
+/// What [match] says beside an account, such as «совпал номер карты».
+String matchLabel(AccountMatch match) => switch (match) {
+  AccountMatch.card => t.imports.cardMatched,
+  AccountMatch.name => t.imports.nameMatched,
+};
+
+/// What the bank says [source] holds at the end of its statement, in the
+/// currency of [after] when the file names none: `null` when the file gives
+/// no balance, or one past what money holds.
+Money? bankBalance(SourceAccount source, Money after) {
+  final closing = source.closing;
+  return closing == null
+      ? null
+      : moneyOf(closing, source.currency, fallback: after.currency);
+}

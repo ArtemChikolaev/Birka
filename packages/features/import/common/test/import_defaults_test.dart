@@ -172,6 +172,31 @@ void main() {
     });
   });
 
+  group('why an account fits one of a file', () {
+    test('is the card first, then the name', () {
+      final source = _source('Зарплатная', cards: {'4821'});
+
+      expect(
+        matchOf(_account('a', lastDigits: '4821'), source),
+        AccountMatch.card,
+      );
+      expect(
+        matchOf(_account('b', name: 'зарплатная'), source),
+        AccountMatch.name,
+      );
+      expect(
+        matchOf(_account('c', name: 'Зарплатная', lastDigits: '4821'), source),
+        AccountMatch.card,
+      );
+    });
+
+    test('is none for another card and another name', () {
+      final source = _source('Зарплатная', cards: {'4821'});
+
+      expect(matchOf(_account('a', lastDigits: '1111'), source), isNull);
+    });
+  });
+
   group('the category of the bank', () {
     final food = _category('food', 'Продукты');
     final shops = _category('shops', 'Супермаркеты', parentId: 'food');

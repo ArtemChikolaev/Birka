@@ -26,6 +26,7 @@ export 'src/components/chip_switch.dart';
 export 'src/components/choice_sheet.dart';
 export 'src/components/dot_badge.dart';
 export 'src/components/fading_text.dart';
+export 'src/components/glass_file_card.dart';
 export 'src/components/glass_icon_button.dart';
 export 'src/components/glass_keypad.dart';
 export 'src/components/glass_list.dart';

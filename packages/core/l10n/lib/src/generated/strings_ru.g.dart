@@ -1148,6 +1148,51 @@ class _Translations$imports$ru extends Translations$imports$en {
   @override
   String periodFar({required Object from, required Object to}) =>
       '${from} – ${to}';
+  @override
+  String get cancel => 'Отмена';
+  @override
+  String get finish => 'Готово';
+  @override
+  String get readingTitle => 'Читаем выписку';
+  @override
+  String get readingNote => 'Файл читается на телефоне и никуда не уходит';
+  @override
+  String knownBy({required Object bank}) => '${bank} · узнали по колонкам';
+  @override
+  String operationsIn({required Object period}) => 'Операций за ${period}';
+  @override
+  String get alreadyIn => 'Уже есть в учёте';
+  @override
+  String willSkip({required Object count}) => '${count}, пропустим';
+  @override
+  String get sortLater => 'Разобрать потом';
+  @override
+  String inInbox({required Object count}) => '${count} во «Входящих»';
+  @override
+  String get unknownTitle => 'Формат не узнали';
+  @override
+  String columnsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} колонка',
+        few: '${count} колонки',
+        many: '${count} колонок',
+        other: '${count} колонки',
+      );
+  @override
+  String rowsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} строка',
+        few: '${count} строки',
+        many: '${count} строк',
+        other: '${count} строки',
+      );
+  @override
+  String unknownText({required Object banks}) =>
+      'Колонки такой выписки на телефоне пока не назначить. Birka сама узнаёт выписки ${banks}.';
+  @override
+  String get chooseAnother => 'Выбрать другой файл';
 }
 
 // Path: inbox
@@ -2608,6 +2653,46 @@ extension on TranslationsRu {
             }) => '${from} – ${to} ${year}',
           'imports.periodFar' =>
             ({required Object from, required Object to}) => '${from} – ${to}',
+          'imports.cancel' => 'Отмена',
+          'imports.finish' => 'Готово',
+          'imports.readingTitle' => 'Читаем выписку',
+          'imports.readingNote' =>
+            'Файл читается на телефоне и никуда не уходит',
+          'imports.knownBy' =>
+            ({required Object bank}) => '${bank} · узнали по колонкам',
+          'imports.operationsIn' =>
+            ({required Object period}) => 'Операций за ${period}',
+          'imports.alreadyIn' => 'Уже есть в учёте',
+          'imports.willSkip' =>
+            ({required Object count}) => '${count}, пропустим',
+          'imports.sortLater' => 'Разобрать потом',
+          'imports.inInbox' =>
+            ({required Object count}) => '${count} во «Входящих»',
+          'imports.unknownTitle' => 'Формат не узнали',
+          'imports.columnsCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} колонка',
+                  few: '${count} колонки',
+                  many: '${count} колонок',
+                  other: '${count} колонки',
+                ),
+          'imports.rowsCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} строка',
+                  few: '${count} строки',
+                  many: '${count} строк',
+                  other: '${count} строки',
+                ),
+          'imports.unknownText' =>
+            ({required Object banks}) =>
+                'Колонки такой выписки на телефоне пока не назначить. Birka сама узнаёт выписки ${banks}.',
+          'imports.chooseAnother' => 'Выбрать другой файл',
           'inbox.title' => 'Входящие',
           'inbox.back' => 'Назад',
           'inbox.waiting' =>
@@ -2668,6 +2753,9 @@ extension on TranslationsRu {
           'inbox.similarName' =>
             ({required Object name, required Object when}) =>
                 'как «${name}» ${when}',
+          _ => null,
+        } ??
+        switch (path) {
           'inbox.since' => ({required Object month}) => 'с ${month}',
           'inbox.more' =>
             ({required num n, required Object count}) =>
@@ -2704,9 +2792,6 @@ extension on TranslationsRu {
           'inbox.madeTransfer' => 'Сделали перевод',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
-          _ => null,
-        } ??
-        switch (path) {
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
           'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
           'onboarding.welcome.text' =>

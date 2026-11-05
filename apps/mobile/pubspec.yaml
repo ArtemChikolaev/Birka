@@ -39,6 +39,10 @@ dependencies:
   help_flutter:
     path: ../../packages/features/help/flutter
   http: ^1.6.0
+  import_common:
+    path: ../../packages/features/import/common
+  import_flutter:
+    path: ../../packages/features/import/flutter
   l10n:
     path: ../../packages/core/l10n
   ledger:
