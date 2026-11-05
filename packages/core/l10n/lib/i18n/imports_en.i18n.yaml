@@ -277,3 +277,22 @@ periodMonth: $month $year
 periodInMonth: $month $from–$to, $year
 periodInYear: $from – $to, $year
 periodFar: $from – $to
+cancel: Cancel
+finish: Done
+readingTitle: Reading the statement
+readingNote: The file is read on this phone and goes nowhere
+knownBy: "$bank · told by the columns"
+operationsIn: "Operations for $period"
+alreadyIn: Already in the ledger
+willSkip: "$count, skipped"
+sortLater: To sort later
+inInbox: "$count in the inbox"
+unknownTitle: The format is unknown
+columnsCount(n):
+  one: $count column
+  other: $count columns
+rowsCount(n):
+  one: $count row
+  other: $count rows
+unknownText: "The columns of such a statement cannot be set on the phone yet. Birka knows the statements of $banks by itself."
+chooseAnother: Choose another file

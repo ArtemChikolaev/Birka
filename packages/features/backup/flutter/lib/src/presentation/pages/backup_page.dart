@@ -166,35 +166,13 @@ class BackupPage extends StatelessWidget {
             style: styles.body.copyWith(color: colors.textSecondary),
           ),
           const SizedBox(height: BirkaTokens.spaceMd),
-          GlassSurface(
-            child: Row(
-              children: [
-                const GlyphBadge(
-                  glyph: BirkaGlyph.file,
-                  color: Color(BirkaTokens.colorPaletteViolet),
-                ),
-                const SizedBox(width: BirkaTokens.spaceSm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        offer.fileName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: styles.bodyStrong.copyWith(color: colors.text),
-                      ),
-                      Text(
-                        offerLabel(offer, now: clock()),
-                        style: styles.caption.copyWith(
-                          color: colors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          GlassFileCard(
+            mark: const GlyphBadge(
+              glyph: BirkaGlyph.file,
+              color: Color(BirkaTokens.colorPaletteViolet),
             ),
+            name: offer.fileName,
+            line: offerLabel(offer, now: clock()),
           ),
           const SizedBox(height: BirkaTokens.spaceLg),
           BirkaButton(

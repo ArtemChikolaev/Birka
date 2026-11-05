@@ -17,6 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:help_common/help_common.dart';
 import 'package:help_flutter/help_flutter.dart';
+import 'package:import_common/import_common.dart'
+    show ChosenStatement, StatementFiles;
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart'
     show
@@ -217,6 +219,17 @@ final class _NoFiles implements BackupFiles {
   Future<ChosenFile?> open() async => null;
 }
 
+/// The window of statements, closed each time it opens.
+final class _Statements implements StatementFiles {
+  int opened = 0;
+
+  @override
+  Future<ChosenStatement?> choose() async {
+    opened++;
+    return null;
+  }
+}
+
 final class _NoWayOut implements HelpLinks {
   @override
   Future<bool> mail(Uri letter) async => false;
@@ -306,11 +319,13 @@ void main() {
   late _Overview overview;
   late _Settings settings;
   late _Links links;
+  late _Statements statements;
 
   setUp(() {
     getIt = GetIt.asNewInstance();
     settings = _Settings();
     links = _Links();
+    statements = _Statements();
     accounts = _Accounts();
     final CategoriesRepository categories = _NoCategories();
     transactions = _Transactions();
@@ -346,6 +361,7 @@ void main() {
       )
       ..registerSingleton<SettingsStore>(settings)
       ..registerSingleton<HelpLinks>(links)
+      ..registerSingleton<StatementFiles>(statements)
       ..registerFactory(
         () => SettingsCubit(
           settings,
@@ -777,6 +793,20 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.help.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('the more tab opens the window of a statement', (tester) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+
+    expect(find.text(t.app.soon.toUpperCase()), findsNothing);
+    await tester.tap(find.text(t.app.import));
+    await tester.pumpAndSettle();
+
+    expect(statements.opened, 1);
+    expect(find.byType(MorePage), findsOneWidget);
   });
 
   Future<Finder> scrollToTheEndOfMore(WidgetTester tester) async {

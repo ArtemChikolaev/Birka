@@ -1364,6 +1364,62 @@ class Translations$imports$en {
   /// en: '$from – $to'
   String periodFar({required Object from, required Object to}) =>
       '${from} – ${to}';
+
+  /// en: 'Cancel'
+  String get cancel => 'Cancel';
+
+  /// en: 'Done'
+  String get finish => 'Done';
+
+  /// en: 'Reading the statement'
+  String get readingTitle => 'Reading the statement';
+
+  /// en: 'The file is read on this phone and goes nowhere'
+  String get readingNote => 'The file is read on this phone and goes nowhere';
+
+  /// en: '$bank · told by the columns'
+  String knownBy({required Object bank}) => '${bank} · told by the columns';
+
+  /// en: 'Operations for $period'
+  String operationsIn({required Object period}) => 'Operations for ${period}';
+
+  /// en: 'Already in the ledger'
+  String get alreadyIn => 'Already in the ledger';
+
+  /// en: '$count, skipped'
+  String willSkip({required Object count}) => '${count}, skipped';
+
+  /// en: 'To sort later'
+  String get sortLater => 'To sort later';
+
+  /// en: '$count in the inbox'
+  String inInbox({required Object count}) => '${count} in the inbox';
+
+  /// en: 'The format is unknown'
+  String get unknownTitle => 'The format is unknown';
+
+  /// en: '(one) {$count column} (other) {$count columns}'
+  String columnsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} column',
+        other: '${count} columns',
+      );
+
+  /// en: '(one) {$count row} (other) {$count rows}'
+  String rowsCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} row',
+        other: '${count} rows',
+      );
+
+  /// en: 'The columns of such a statement cannot be set on the phone yet. Birka knows the statements of $banks by itself.'
+  String unknownText({required Object banks}) =>
+      'The columns of such a statement cannot be set on the phone yet. Birka knows the statements of ${banks} by itself.';
+
+  /// en: 'Choose another file'
+  String get chooseAnother => 'Choose another file';
 }
 
 // Path: inbox
@@ -2945,6 +3001,42 @@ extension on Translations {
             }) => '${from} – ${to}, ${year}',
           'imports.periodFar' =>
             ({required Object from, required Object to}) => '${from} – ${to}',
+          'imports.cancel' => 'Cancel',
+          'imports.finish' => 'Done',
+          'imports.readingTitle' => 'Reading the statement',
+          'imports.readingNote' =>
+            'The file is read on this phone and goes nowhere',
+          'imports.knownBy' =>
+            ({required Object bank}) => '${bank} · told by the columns',
+          'imports.operationsIn' =>
+            ({required Object period}) => 'Operations for ${period}',
+          'imports.alreadyIn' => 'Already in the ledger',
+          'imports.willSkip' =>
+            ({required Object count}) => '${count}, skipped',
+          'imports.sortLater' => 'To sort later',
+          'imports.inInbox' =>
+            ({required Object count}) => '${count} in the inbox',
+          'imports.unknownTitle' => 'The format is unknown',
+          'imports.columnsCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} column',
+                  other: '${count} columns',
+                ),
+          'imports.rowsCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} row',
+                  other: '${count} rows',
+                ),
+          'imports.unknownText' =>
+            ({required Object banks}) =>
+                'The columns of such a statement cannot be set on the phone yet. Birka knows the statements of ${banks} by itself.',
+          'imports.chooseAnother' => 'Choose another file',
           'inbox.title' => 'Inbox',
           'inbox.back' => 'Back',
           'inbox.waiting' =>
@@ -3001,6 +3093,9 @@ extension on Translations {
           'inbox.similarName' =>
             ({required Object name, required Object when}) =>
                 'like «${name}» ${when}',
+          _ => null,
+        } ??
+        switch (path) {
           'inbox.since' => ({required Object month}) => 'since ${month}',
           'inbox.more' =>
             ({required num n, required Object count}) =>
@@ -3033,9 +3128,6 @@ extension on Translations {
           'inbox.madeTransfer' => 'Made a transfer',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
-          _ => null,
-        } ??
-        switch (path) {
           'onboarding.failed' => 'Could not save. Try again.',
           'onboarding.welcome.title' => 'All your money\nin one place',
           'onboarding.welcome.text' =>

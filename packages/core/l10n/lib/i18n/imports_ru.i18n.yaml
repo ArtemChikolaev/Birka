@@ -299,3 +299,26 @@ periodMonth: $month $year
 periodInMonth: $from–$to $month $year
 periodInYear: $from – $to $year
 periodFar: $from – $to
+cancel: Отмена
+finish: Готово
+readingTitle: Читаем выписку
+readingNote: Файл читается на телефоне и никуда не уходит
+knownBy: "$bank · узнали по колонкам"
+operationsIn: "Операций за $period"
+alreadyIn: Уже есть в учёте
+willSkip: "$count, пропустим"
+sortLater: Разобрать потом
+inInbox: "$count во «Входящих»"
+unknownTitle: Формат не узнали
+columnsCount(n):
+  one: $count колонка
+  few: $count колонки
+  many: $count колонок
+  other: $count колонки
+rowsCount(n):
+  one: $count строка
+  few: $count строки
+  many: $count строк
+  other: $count строки
+unknownText: "Колонки такой выписки на телефоне пока не назначить. Birka сама узнаёт выписки $banks."
+chooseAnother: Выбрать другой файл

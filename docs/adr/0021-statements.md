@@ -159,6 +159,14 @@
     раньше». A category that the person chose for the category of the bank
     wins, a similar name only suggests one in the inbox, and the categories
     in the archive teach nothing.
+18. On the phone the import is one sheet from the More tab, as its board
+    draws it: the window of the system gives the file, a format that Birka
+    knows goes in with Birka's own choices, each account of the file can go
+    into another account in a list, and what came in can be taken back out
+    at once (`import_flutter`). The columns of a format that Birka does not
+    know cannot be set on the phone yet: the sheet says so and names the
+    formats it knows. The operations without a category wait for the inbox
+    of the phone, which has no board yet.
 
 ## Options considered
 
@@ -177,7 +185,8 @@
   like, its columns with an example of each, the rows left out with their
   numbers and a summary for each account.
 - The wizard on the site draws these steps (`import_jaspr`), as the mockups
-  do. The inbox, the sheet of the phone and the choices of a format kept for
+  do, and the sheet of the phone imports a format that Birka knows. The
+  columns and the inbox on the phone and the choices of a format kept for
   its next file come next.
 - A copy of the ledger is version 2 ([ADR 0016](0016-ledger-copy.md)): an app
   from before it says that the file comes from a newer version.

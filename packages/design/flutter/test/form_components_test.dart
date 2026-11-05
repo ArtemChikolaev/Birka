@@ -198,6 +198,37 @@ void main() {
     });
   });
 
+  testWidgets('GlassFileCard keeps the name of a file to one line', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: BirkaTheme.dark(),
+        home: const Scaffold(
+          body: SizedBox(
+            width: 240,
+            child: GlassFileCard(
+              mark: GlyphBadge(
+                glyph: BirkaGlyph.file,
+                color: Color(0xFF8B5CF6),
+              ),
+              name: 'birka-2026-11-02-a-very-long-name-of-a-copy.birka',
+              line: 'вчера, 18:40',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final name = tester.widget<Text>(
+      find.text('birka-2026-11-02-a-very-long-name-of-a-copy.birka'),
+    );
+    expect(name.maxLines, 1);
+    expect(name.overflow, TextOverflow.ellipsis);
+    expect(find.text('вчера, 18:40'), findsOneWidget);
+    expect(find.byType(GlyphBadge), findsOneWidget);
+  });
+
   group('showChoiceSheet', () {
     Future<void> open(
       WidgetTester tester,
@@ -233,6 +264,37 @@ void main() {
 
       expect(find.text('Pick'), findsOneWidget);
       expect(find.byType(BirkaIcon), findsOneWidget);
+    });
+
+    testWidgets('can give a choice a line and a mark', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: BirkaTheme.dark(),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => BirkaButton(
+                label: 'Open',
+                onPressed: () => showChoiceSheet<String>(
+                  context,
+                  title: 'Pick',
+                  choices: const ['One', 'Two'],
+                  selected: 'One',
+                  labelOf: (choice) => choice,
+                  subtitleOf: (choice) => choice == 'Two' ? 'second' : null,
+                  leadingOf: (choice) => choice == 'Two'
+                      ? const CardArtThumbnail(art: CardArt.emerald)
+                      : null,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.bySemanticsLabel('Open'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('second'), findsOneWidget);
+      expect(find.byType(CardArtThumbnail), findsOneWidget);
     });
 
     testWidgets('gives `null` as a choice in a record', (tester) async {

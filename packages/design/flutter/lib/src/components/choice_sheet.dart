@@ -6,14 +6,17 @@ import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/material.dart';
 
 /// Asks for one of [choices] in a sheet from the bottom of the screen, with
-/// [selected] marked. The answer comes in a record, because `null` can be a
-/// choice, and a closed sheet gives no record.
+/// [selected] marked. [subtitleOf] and [leadingOf] can give a choice a
+/// quieter line and a mark before it. The answer comes in a record, because
+/// `null` can be a choice, and a closed sheet gives no record.
 Future<(T,)?> showChoiceSheet<T>(
   BuildContext context, {
   required String title,
   required List<T> choices,
   required T selected,
   required String Function(T) labelOf,
+  String? Function(T)? subtitleOf,
+  Widget? Function(T)? leadingOf,
 }) {
   final colors = BirkaColors.of(context);
   return showModalBottomSheet<(T,)>(
@@ -29,6 +32,9 @@ Future<(T,)?> showChoiceSheet<T>(
             for (final choice in choices)
               GlassListRow(
                 title: labelOf(choice),
+                subtitle: subtitleOf?.call(choice),
+                subtitleLines: 2,
+                leading: leadingOf?.call(choice),
                 trailing: choice == selected
                     ? BirkaIcon(BirkaGlyph.check, color: colors.accent)
                     : null,

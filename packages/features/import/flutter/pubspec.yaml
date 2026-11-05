@@ -1,0 +1,29 @@
+name: import_flutter
+description: >-
+  The sheet of the import feature in Flutter, and the window of the system
+  that opens a statement on phones.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  file_picker: ^13.3.2
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  import_common:
+    path: ../common
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  money:
+    path: ../../../core/money

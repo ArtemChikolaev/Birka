@@ -14,6 +14,9 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:help_common/help_common.dart' show HelpCubit, HelpLinks;
 import 'package:help_flutter/help_flutter.dart';
+import 'package:import_common/import_common.dart'
+    show ImportCubit, StatementFiles;
+import 'package:import_flutter/import_flutter.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:onboarding_flutter/onboarding_flutter.dart';
 import 'package:overview_common/overview_common.dart' show OverviewCubit;
@@ -177,7 +180,14 @@ GoRouter buildRouter(
                 path: Paths.more,
                 builder: (context, state) => BlocProvider(
                   create: (_) => getIt<SettingsCubit>(),
-                  child: MorePage(links: getIt<HelpLinks>()),
+                  child: MorePage(
+                    links: getIt<HelpLinks>(),
+                    onImport: (context) => showImportSheet(
+                      context,
+                      cubit: getIt.call<ImportCubit>,
+                      files: getIt<StatementFiles>(),
+                    ),
+                  ),
                 ),
               ),
             ],
