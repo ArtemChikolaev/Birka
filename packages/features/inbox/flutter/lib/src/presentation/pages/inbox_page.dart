@@ -196,7 +196,10 @@ class _InboxPageState extends State<InboxPage> {
         ],
       ),
       const SizedBox(height: BirkaTokens.spaceLg),
+      // A list of another filter comes at once; a row that goes within one
+      // closes.
       AnimatedColumn(
+        key: ValueKey(state.filter),
         children: [
           for (final pair in pairs)
             Padding(
@@ -231,6 +234,7 @@ class _InboxPageState extends State<InboxPage> {
         ),
         const SizedBox(height: BirkaTokens.spaceXs),
         GlassListGroup(
+          key: ValueKey(state.filter),
           children: [
             for (final item in shown)
               InboxRow(
