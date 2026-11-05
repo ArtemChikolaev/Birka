@@ -69,6 +69,7 @@ class GlassListRow extends StatelessWidget {
     this.leading,
     this.trailing,
     this.danger = false,
+    this.accent = false,
     this.onTap,
     super.key,
   });
@@ -91,6 +92,10 @@ class GlassListRow extends StatelessWidget {
   /// Whether the row does what cannot be taken back, with its title in the
   /// color of a loss.
   final bool danger;
+
+  /// Whether the row adds something new, such as «Новая категория», with
+  /// its title in the color of the accent.
+  final bool accent;
 
   /// Called on a tap. Without it the row is not a button.
   final VoidCallback? onTap;
@@ -122,7 +127,9 @@ class GlassListRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: styles.bodyStrong.copyWith(
-                      color: danger ? colors.negative : colors.text,
+                      color: danger
+                          ? colors.negative
+                          : (accent ? colors.accent : colors.text),
                     ),
                   ),
                   if (subtitle != null)

@@ -325,6 +325,17 @@ void main() {
       expect(title.style!.color, BirkaColors.dark.negative);
     });
 
+    testWidgets('a row that adds something has a title of the accent', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        app(GlassListRow(title: 'New category', accent: true, onTap: () {})),
+      );
+
+      final title = tester.widget<Text>(find.text('New category'));
+      expect(title.style!.color, BirkaColors.dark.accent);
+    });
+
     testWidgets('a subtitle takes the lines it is given', (tester) async {
       await tester.pumpWidget(
         app(

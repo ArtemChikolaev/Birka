@@ -66,7 +66,9 @@
    hinted one marked; the picked get one category from a bar at the
    bottom. A word after each choice says what was done. The result of an
    import on the phone leads to it, and with nothing to sort it offers a
-   statement.
+   statement. The sheet of categories ends with «Новая категория»: the
+   form of a category opens over the inbox, and the category it saves
+   goes to the operations at once, those of its kind only.
 
 ## Options considered
 

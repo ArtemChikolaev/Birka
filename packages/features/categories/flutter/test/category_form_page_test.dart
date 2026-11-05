@@ -16,6 +16,7 @@ void main() {
     WidgetTester tester, {
     String? categoryId,
     CategoryKind kind = CategoryKind.expense,
+    ValueChanged<Category>? onSaved,
   }) async {
     tester.view.physicalSize = const Size(780, 2200);
     tester.view.devicePixelRatio = 2;
@@ -29,7 +30,7 @@ void main() {
             categoryId: categoryId,
             kind: kind,
           ),
-          child: CategoryFormPage(onClose: () => closed++),
+          child: CategoryFormPage(onClose: () => closed++, onSaved: onSaved),
         ),
       ),
     );
@@ -64,6 +65,25 @@ void main() {
     expect(draft.icon, 'cup');
     expect(draft.color, categoryColors[1]);
     expect(closed, 1);
+  });
+
+  testWidgets('gives the new category to whatever opened it to make one', (
+    tester,
+  ) async {
+    final saved = <Category>[];
+    await pump(tester, kind: CategoryKind.income, onSaved: saved.add);
+
+    await typeName(tester, 'Фриланс');
+    await tester.tap(find.text('СОХРАНИТЬ'));
+    await tester.pumpAndSettle();
+
+    expect(
+      [for (final it in saved) (it.name, it.kind)],
+      [
+        ('Фриланс', CategoryKind.income),
+      ],
+    );
+    expect(closed, 0);
   });
 
   testWidgets('says that the name is missing and stays open', (tester) async {
@@ -131,6 +151,21 @@ void main() {
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.controller?.text, 'Кафе');
       expect(find.text('ДОХОДЫ'), findsNothing);
+    });
+
+    testWidgets('closes after a change, as it makes nothing new', (
+      tester,
+    ) async {
+      final saved = <Category>[];
+      await pump(tester, categoryId: 'Кафе', onSaved: saved.add);
+
+      await typeName(tester, 'Кофейни');
+      await tester.tap(find.text('СОХРАНИТЬ'));
+      await tester.pumpAndSettle();
+
+      expect(repository.updated['Кафе']?.name, 'Кофейни');
+      expect(saved, isEmpty);
+      expect(closed, 1);
     });
 
     testWidgets('can be moved to the archive', (tester) async {

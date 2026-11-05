@@ -51,10 +51,23 @@ final class FakeCategoriesRepository implements CategoriesRepository {
   }
 
   @override
-  Future<void> add(CategoryDraft draft) async {
+  Future<Category> add(CategoryDraft draft) async {
     if (failure case final failure?) throw failure;
     added.add(draft);
+    return _made(draft);
   }
+
+  /// The category that [draft] became, the last of [added].
+  Category _made(CategoryDraft draft) => Category(
+    id: 'new-${added.length}',
+    kind: draft.kind,
+    name: draft.name,
+    parentId: draft.parentId,
+    icon: draft.icon,
+    color: draft.color,
+    archived: false,
+    sortOrder: _categories.length + added.length,
+  );
 
   @override
   Future<void> addAll(List<CategoryDraft> drafts) async {

@@ -382,9 +382,10 @@ class _InboxPageState extends State<InboxPage> {
           nested: nested,
           selected: '',
           onChanged: (categoryId) {
-            if (categoryId.isNotEmpty) {
-              unawaited(cubit.choosePicked(categoryId));
-            }
+            final category = state.categories
+                .where((it) => it.id == categoryId)
+                .firstOrNull;
+            if (category != null) unawaited(cubit.choosePicked(category));
           },
         ),
         button(

@@ -316,6 +316,9 @@ GoRouter buildRouter(
           create: (_) => getIt<InboxCubit>(),
           child: InboxPage(
             onBack: () => context.pop(),
+            // The form gives the category it made, which the operations get.
+            onNewCategory: (kind) =>
+                context.push<Category>(Paths.newCategory(kind)),
             // A statement imported here comes into this inbox at once.
             onImport: () => unawaited(
               showImportSheet(
@@ -369,7 +372,9 @@ Page<void> _formPage(GetIt getIt, String? accountId) {
       : BirkaFadePage(child: form);
 }
 
-Page<void> _categoryFormPage(
+/// The form of a category; a new one closes with the category it made, for
+/// whatever pushed it to make one.
+Page<Category> _categoryFormPage(
   GetIt getIt, {
   String? categoryId,
   CategoryKind? kind,
@@ -377,7 +382,10 @@ Page<void> _categoryFormPage(
   child: BlocProvider(
     create: (_) => getIt<CategoryFormCubit>(param1: categoryId, param2: kind),
     child: Builder(
-      builder: (context) => CategoryFormPage(onClose: () => context.pop()),
+      builder: (context) => CategoryFormPage(
+        onClose: () => context.pop(),
+        onSaved: (category) => context.pop(category),
+      ),
     ),
   ),
 );

@@ -46,6 +46,8 @@ void main() {
     expect(draft.color, categoryColors[2]);
     expect(draft.icon, 'briefcase');
     expect(draft.parentId, isNull);
+    expect(cubit.state.saved?.name, 'Salary');
+    expect(cubit.state.saved?.kind, CategoryKind.income);
   });
 
   test('offers the live categories of the first level as parents', () async {
@@ -142,6 +144,7 @@ void main() {
 
       expect(repository.updated['Cafe']?.name, 'Coffee');
       expect(repository.updated['Cafe']?.parentId, isNull);
+      expect(cubit.state.saved, isNull);
     });
 
     test('can be put away and brought back', () async {

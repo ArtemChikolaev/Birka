@@ -12,12 +12,14 @@ import 'package:ledger/ledger.dart';
 /// and account, its amount, and under them its hint with a «Да» and any
 /// other category.
 class InboxRow extends StatelessWidget {
-  /// Creates the row of [item]; [onSay] tells the person what happened.
+  /// Creates the row of [item]; [onSay] tells the person what happened, and
+  /// [onNewCategory] makes a category for it.
   const InboxRow({
     required this.item,
     required this.state,
     required this.thisYear,
     required this.onSay,
+    this.onNewCategory,
     super.key,
   });
 
@@ -33,20 +35,27 @@ class InboxRow extends StatelessWidget {
   /// Shows a word on what was done, over the page.
   final ValueChanged<String> onSay;
 
+  /// Makes a category with the person, for the sheet of categories.
+  final CategoryMaker? onNewCategory;
+
   Future<void> _accept(InboxCubit cubit, Category category) async {
     await cubit.accept(item.id);
     if (!cubit.state.failed) onSay(t.inbox.accepted(category: category.name));
   }
 
   Future<void> _choose(BuildContext context, InboxCubit cubit) async {
+    final kind = kindOf(item.transaction);
     final category = await chooseCategory(
       context,
       state,
-      [kindOf(item.transaction)],
+      [kind],
       title: t.inbox.categoryFor(name: nameOf(item)),
       hinted: item.hint?.categoryId,
+      onNew: onNewCategory,
     );
-    if (category == null) return;
+    // A new category can be of the other kind, which the operation cannot
+    // take.
+    if (category == null || category.kind != kind) return;
     await cubit.choose(item.id, category.id);
     if (!cubit.state.failed) {
       onSay(

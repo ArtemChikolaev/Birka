@@ -9,11 +9,16 @@ import 'package:l10n/l10n.dart';
 /// It needs a [CategoryFormCubit] above it.
 class CategoryFormPage extends StatelessWidget {
   /// Creates the page. [onClose] is called when the form is done or
-  /// cancelled.
-  const CategoryFormPage({required this.onClose, super.key});
+  /// cancelled, and [onSaved], when given, in its place with a new category
+  /// once it is saved.
+  const CategoryFormPage({required this.onClose, this.onSaved, super.key});
 
   /// Closes the form.
   final VoidCallback onClose;
+
+  /// Closes the form with the new category, for whatever opened it to make
+  /// one.
+  final ValueChanged<Category>? onSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,7 @@ class CategoryFormPage extends StatelessWidget {
                 previous.status == CategoryFormStatus.loading,
             builder: (context, state) => switch (state.status) {
               CategoryFormStatus.loading => const SizedBox.shrink(),
-              _ => _Form(initial: state, onClose: onClose),
+              _ => _Form(initial: state, onClose: onClose, onSaved: onSaved),
             },
           ),
         ),
@@ -36,10 +41,15 @@ class CategoryFormPage extends StatelessWidget {
 }
 
 class _Form extends StatefulWidget {
-  const _Form({required this.initial, required this.onClose});
+  const _Form({
+    required this.initial,
+    required this.onClose,
+    required this.onSaved,
+  });
 
   final CategoryFormState initial;
   final VoidCallback onClose;
+  final ValueChanged<Category>? onSaved;
 
   @override
   State<_Form> createState() => _FormState();
@@ -225,7 +235,10 @@ class _FormState extends State<_Form> {
                       ? null
                       : cubit.save,
                   done: state.status == CategoryFormStatus.saved,
-                  onDone: widget.onClose,
+                  onDone: () => switch ((state.saved, widget.onSaved)) {
+                    (final saved?, final onSaved?) => onSaved(saved),
+                    _ => widget.onClose(),
+                  },
                 ),
               ],
             ),

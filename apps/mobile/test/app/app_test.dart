@@ -103,7 +103,13 @@ final class _NoCategories implements CategoriesRepository {
   Future<Category?> category(String id) async => null;
 
   @override
-  Future<void> add(CategoryDraft draft) async {}
+  Future<Category> add(CategoryDraft draft) async => Category(
+    id: 'new',
+    kind: draft.kind,
+    name: draft.name,
+    archived: false,
+    sortOrder: 0,
+  );
 
   @override
   Future<void> addAll(List<CategoryDraft> drafts) async {}

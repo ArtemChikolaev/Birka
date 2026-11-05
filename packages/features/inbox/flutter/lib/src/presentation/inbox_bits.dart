@@ -20,15 +20,22 @@ AmountTone toneOf(Transaction transaction) =>
 String operationsOf(int count) =>
     t.imports.operations(n: count, count: formatCount(count));
 
+/// Makes a category of [kind] with the person and gives it, or `null` when
+/// they made none.
+typedef CategoryMaker = Future<Category?> Function(CategoryKind kind);
+
 /// Lets the person choose an open category of [kinds] in a sheet titled
 /// [title], each parent followed by its subcategories and the one that
 /// [hinted] names marked; gives the category, or `null` when they chose none.
+/// With [onNew] the sheet ends with «Новая категория», which gives the
+/// category made through [onNew], of the first of [kinds] to begin with.
 Future<Category?> chooseCategory(
   BuildContext context,
   InboxState state,
   Iterable<CategoryKind> kinds, {
   required String title,
   String? hinted,
+  CategoryMaker? onNew,
 }) async {
   final tree = [
     for (final kind in kinds) ...categoryTree(state.categories, kind),
@@ -40,6 +47,7 @@ Future<Category?> chooseCategory(
     for (final (:category, :nested) in tree)
       if (nested) category.id,
   };
+  var making = false;
   final picked = await showChoiceSheet<String>(
     context,
     title: title,
@@ -53,7 +61,11 @@ Future<Category?> chooseCategory(
       ),
       child: CategoryDot(byId[id]!),
     ),
+    action: onNew == null
+        ? null
+        : (label: t.inbox.newCategory, onTap: () => making = true),
   );
+  if (making) return onNew?.call(kinds.first);
   return picked == null ? null : byId[picked.$1];
 }
 

@@ -9,8 +9,8 @@ abstract interface class CategoriesRepository {
   /// The category [id], if it exists.
   Future<Category?> category(String id);
 
-  /// Adds a category after the others of its kind.
-  Future<void> add(CategoryDraft draft);
+  /// Adds a category after the others of its kind, and gives it.
+  Future<Category> add(CategoryDraft draft);
 
   /// Adds every category of [drafts] in one go.
   Future<void> addAll(List<CategoryDraft> drafts);

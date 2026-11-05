@@ -40,6 +40,7 @@ final class CategoryFormState {
     this.parents = const [],
     this.archived = false,
     this.nameMissing = false,
+    this.saved,
   });
 
   /// Where the form stands.
@@ -72,6 +73,10 @@ final class CategoryFormState {
   /// Whether the name was left empty on a save.
   final bool nameMissing;
 
+  /// The new category once it is saved, for whatever opened the form to
+  /// make one.
+  final Category? saved;
+
   /// A copy with the given fields changed. [parentId] takes a function, so it
   /// can also become `null`.
   CategoryFormState copyWith({
@@ -84,6 +89,7 @@ final class CategoryFormState {
     List<Category>? parents,
     bool? archived,
     bool? nameMissing,
+    Category? saved,
   }) {
     return CategoryFormState(
       status: status ?? this.status,
@@ -96,6 +102,7 @@ final class CategoryFormState {
       parents: parents ?? this.parents,
       archived: archived ?? this.archived,
       nameMissing: nameMissing ?? this.nameMissing,
+      saved: saved ?? this.saved,
     );
   }
 }
@@ -178,10 +185,17 @@ class CategoryFormCubit extends Cubit<CategoryFormState> {
     await _finish(_repository.setArchived(id, archived: !state.archived));
   }
 
-  Future<void> _finish(Future<void> write) async {
+  /// Waits for [write] and closes the form, keeping the category that
+  /// [write] gives, when it makes one.
+  Future<void> _finish(Future<Object?> write) async {
     try {
-      await write;
-      emit(state.copyWith(status: CategoryFormStatus.saved));
+      final written = await write;
+      emit(
+        state.copyWith(
+          status: CategoryFormStatus.saved,
+          saved: written is Category ? written : null,
+        ),
+      );
     } on Exception {
       emit(state.copyWith(status: CategoryFormStatus.failed));
     }
