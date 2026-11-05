@@ -28,6 +28,10 @@ final class LedgerImportRepository implements ImportRepository {
       .first;
 
   @override
+  Future<List<Transaction>> history() =>
+      _ledger.watchTransactions(limit: null).first;
+
+  @override
   Future<Money> balanceOn(String accountId, CivilDate day) async {
     var balance = await _ledger.balance(accountId);
     final later = await _ledger
@@ -129,7 +133,11 @@ final class LedgerImportRepository implements ImportRepository {
           _ => one(
             accounts[operation.from ?? operation.to]!,
             operation.amount,
-            await categoryOf(plan.choices.categories[operation.category], kind),
+            operation.learned?.categoryId ??
+                await categoryOf(
+                  plan.choices.categories[operation.category],
+                  kind,
+                ),
           ),
         }, importId: id);
         if (operation.fee case final fee?) {

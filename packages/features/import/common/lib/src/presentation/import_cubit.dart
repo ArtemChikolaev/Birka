@@ -228,6 +228,10 @@ final class ImportCubit extends Cubit<ImportState> {
   /// dropped.
   var _planned = 0;
 
+  /// What the past choices of the person teach the plan, read with the
+  /// ledger.
+  CategoryMemory? _memory;
+
   /// Follows the past imports and reads what there is to choose from.
   Future<void> start() async {
     _history ??= _repository.watchImports().listen(
@@ -248,6 +252,7 @@ final class ImportCubit extends Cubit<ImportState> {
         ...await _repository.categories(CategoryKind.expense),
         ...await _repository.categories(CategoryKind.income),
       ];
+      _memory = await learnFrom(_repository);
       final today = _today();
       final balances = {
         for (final account in accounts)
@@ -565,7 +570,12 @@ final class ImportCubit extends Cubit<ImportState> {
     final choices = state.choices;
     if (statement == null || choices == null || !state.readable) return;
     try {
-      final plan = await prepareImport(_repository, statement, choices);
+      final plan = await prepareImport(
+        _repository,
+        statement,
+        choices,
+        memory: _memory,
+      );
       if (isClosed || number != _planned) return;
       emit(state._with(plan: plan, failed: false));
     } on Object {

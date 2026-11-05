@@ -465,4 +465,125 @@ void main() {
       rub(14267981 - 42000 - 684530 - 219900 - 10000),
     );
   });
+
+  group('the past choices of the person', () {
+    /// A month of the card with operations that the bank gives no category
+    /// Birka knows.
+    Statement month(int number) => _statement([
+      [
+        'Дата операции',
+        'Описание',
+        'Сумма',
+        'Валюта',
+        'Категория',
+        'Номер карты',
+      ],
+      ['0$number.11.2026', 'ZERNO COFFEE', '−420,00', 'RUR', 'Разное', '*4821'],
+      [
+        '1$number.11.2026',
+        'BARBERSHOP 77',
+        '−2 000,00',
+        'RUR',
+        'Разное',
+        '*4821',
+      ],
+      ['2$number.11.2026', 'Подписка', '−399,00', 'RUR', 'Разное', '*4821'],
+    ]);
+
+    test('give the next file the category of the same name', () async {
+      // The person sorted the coffee of October in the inbox.
+      await spend(rub(42000), CivilDate(2026, 10, 9), 'ZERNO COFFEE', cafe);
+
+      final plan = await prepareImport(
+        repository,
+        month(1),
+        ImportChoices(accounts: {'RUB': IntoAccount(card)}),
+      );
+
+      final coffee = plan.operations.first;
+      expect(coffee.learned?.categoryId, cafe.id);
+      expect(coffee.learned?.reason, HintReason.sameName);
+      expect(plan.operations[1].learned, isNull);
+      expect(plan.unsorted, 2);
+
+      final id = await repository.write(plan, fileName: 'card.csv');
+      final written = [
+        for (final it in await ledger.watchTransactions(limit: null).first)
+          if (it.importId == id && it.note == 'ZERNO COFFEE') it,
+      ];
+      expect(written.single.allocations.single.categoryId, cafe.id);
+    });
+
+    test('never over a category that the person chose for the bank', () async {
+      await spend(rub(42000), CivilDate(2026, 10, 9), 'ZERNO COFFEE', cafe);
+
+      final plan = await prepareImport(
+        repository,
+        month(1),
+        ImportChoices(
+          accounts: {'RUB': IntoAccount(card)},
+          categories: {
+            (kind: CategoryKind.expense, name: 'Разное'): IntoCategory(food.id),
+          },
+        ),
+      );
+
+      expect(plan.operations.first.learned, isNull);
+      expect(plan.unsorted, 0);
+    });
+
+    test('of a similar name only wait in the inbox', () async {
+      await spend(rub(200000), CivilDate(2026, 10, 14), 'Барбершоп', home);
+
+      final plan = await prepareImport(
+        repository,
+        month(1),
+        ImportChoices(accounts: {'RUB': IntoAccount(card)}),
+      );
+
+      expect(plan.operations[1].learned, isNull);
+    });
+
+    test('of an amount month after month need the account', () async {
+      for (final day in [CivilDate(2026, 9, 21), CivilDate(2026, 10, 21)]) {
+        await spend(rub(39900), day, 'APPLE.COM/BILL', home);
+      }
+
+      final into = await prepareImport(
+        repository,
+        month(1),
+        ImportChoices(accounts: {'RUB': IntoAccount(card)}),
+      );
+      final fresh = await prepareImport(
+        repository,
+        month(1),
+        ImportChoices(
+          accounts: {
+            'RUB': NewAccount(
+              name: 'Новая карта',
+              type: AccountType.debit,
+              openingBalance: rub(0),
+            ),
+          },
+        ),
+      );
+
+      expect(into.operations.last.learned?.reason, HintReason.everyMonth);
+      expect(into.operations.last.learned?.categoryId, home.id);
+      expect(fresh.operations.last.learned, isNull);
+    });
+
+    test('of a category in the archive teach nothing', () async {
+      await spend(rub(42000), CivilDate(2026, 10, 9), 'ZERNO COFFEE', cafe);
+      await ledger.updateCategory(cafe.id, archived: true);
+
+      final plan = await prepareImport(
+        repository,
+        month(1),
+        ImportChoices(accounts: {'RUB': IntoAccount(card)}),
+      );
+
+      expect(plan.operations.first.learned, isNull);
+    });
+  });
 }

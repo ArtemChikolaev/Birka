@@ -1086,6 +1086,9 @@ class Translations$imports$en {
   /// en: 'Transfer'
   String get transfer => 'Transfer';
 
+  /// en: 'as before'
+  String get learned => 'as before';
+
   /// en: 'Decide in the inbox'
   String get inbox => 'Decide in the inbox';
 
@@ -1511,9 +1514,9 @@ class Translations$inbox$en {
   String get sourceText =>
       'From your past choices: how you named these places before and which categories you gave them. Counted here, on the device.';
 
-  /// en: 'Each «Yes» teaches Birka: such operations come with the same hint later.'
+  /// en: 'Each «Yes» teaches Birka: in the next statement such operations come with their category.'
   String get learns =>
-      'Each «Yes» teaches Birka: such operations come with the same hint later.';
+      'Each «Yes» teaches Birka: in the next statement such operations come with their category.';
 
   /// en: 'While an operation is here, it already counts in the ledger and the reports, only without a category.'
   String get stillCounted =>
@@ -2768,6 +2771,7 @@ extension on Translations {
           'imports.previewCategory' => 'Category',
           'imports.previewAmount' => 'Amount',
           'imports.transfer' => 'Transfer',
+          'imports.learned' => 'as before',
           'imports.inbox' => 'Decide in the inbox',
           'imports.problems' =>
             ({required num n, required Object count}) =>
@@ -3022,17 +3026,17 @@ extension on Translations {
           'inbox.sourceText' =>
             'From your past choices: how you named these places before and which categories you gave them. Counted here, on the device.',
           'inbox.learns' =>
-            'Each «Yes» teaches Birka: such operations come with the same hint later.',
+            'Each «Yes» teaches Birka: in the next statement such operations come with their category.',
           'inbox.stillCounted' =>
             'While an operation is here, it already counts in the ledger and the reports, only without a category.',
           'inbox.failed' => 'That did not work. Try again.',
           'inbox.madeTransfer' => 'Made a transfer',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
-          'onboarding.failed' => 'Could not save. Try again.',
           _ => null,
         } ??
         switch (path) {
+          'onboarding.failed' => 'Could not save. Try again.',
           'onboarding.welcome.title' => 'All your money\nin one place',
           'onboarding.welcome.text' =>
             'Accounts in any currency and no bank passwords. Your data stays on your device.',

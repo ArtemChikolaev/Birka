@@ -206,6 +206,7 @@ final class PlannedOperation {
     this.fee,
     this.category,
     this.duplicate,
+    this.learned,
   });
 
   /// The row of the statement.
@@ -235,6 +236,10 @@ final class PlannedOperation {
 
   /// The transaction of the ledger that it looks like.
   final Duplicate? duplicate;
+
+  /// The category that past choices of the person give it, for an expense
+  /// or an income whose category of the bank waits in the inbox (ADR 0022).
+  final CategoryHint? learned;
 
   /// What it changes on the account of [key].
   Money? changeOn(String key) {
@@ -296,6 +301,7 @@ final class ImportPlan {
   int get unsorted => [
     for (final operation in added)
       if (operation.kind != TransactionKind.transfer &&
+          operation.learned == null &&
           choices.categories[operation.category] is! IntoCategory &&
           choices.categories[operation.category] is! NewCategory)
         operation,
@@ -311,11 +317,15 @@ final class ImportPlan {
 /// the same amount on the same account within a day of it. Each transaction
 /// stands for one operation at most, so two equal operations of one file
 /// both go in when the ledger has one of them.
+///
+/// [memory] gives a category to what would wait in the inbox, from the past
+/// choices of the person.
 ImportPlan planImport(
   Statement statement,
   ImportChoices choices, {
   Map<String, List<Transaction>> existing = const {},
   Map<String, Money> balances = const {},
+  CategoryMemory? memory,
 }) {
   final operations = <PlannedOperation>[];
   final problems = <PlanProblem>[];
@@ -369,19 +379,34 @@ ImportPlan planImport(
       final kind = out != null
           ? TransactionKind.expense
           : TransactionKind.income;
+      final category = (
+        kind: kind == TransactionKind.expense
+            ? CategoryKind.expense
+            : CategoryKind.income,
+        name: row.category,
+      );
+      final amount = moneyIn(leg.amount, currencyOf(leg.account)!)!;
       planned = PlannedOperation(
         row: row,
         kind: kind,
         from: out?.account,
         to: into?.account,
-        amount: moneyIn(leg.amount, currencyOf(leg.account)!)!,
+        amount: amount,
         fee: fee,
-        category: (
-          kind: kind == TransactionKind.expense
-              ? CategoryKind.expense
-              : CategoryKind.income,
-          name: row.category,
-        ),
+        category: category,
+        learned: switch (choices.categories[category]) {
+          IntoCategory() || NewCategory() => null,
+          _ => _learned(
+            memory,
+            row,
+            kind,
+            switch (choices.accounts[leg.account]) {
+              IntoAccount(:final account) => account.id,
+              _ => null,
+            },
+            amount,
+          ),
+        },
       );
     }
     operations.add(
@@ -499,6 +524,7 @@ PlannedOperation _withDuplicate(
         fee: planned.fee,
         category: planned.category,
         duplicate: duplicate,
+        learned: planned.learned,
       );
     }
   }
@@ -552,6 +578,42 @@ String noteOf(StatementRow row) => [
   row.description,
   row.note,
 ].where((text) => text.isNotEmpty).join(' · ');
+
+/// What the past choices of the person in [memory] give an operation whose
+/// category of the bank waits in the inbox: the category of operations of
+/// the same name, or of the same amount on the account [accountId] of the
+/// ledger month after month (ADR 0022). A similar name only suggests one in
+/// the inbox, and a new account has no months yet.
+CategoryHint? _learned(
+  CategoryMemory? memory,
+  StatementRow row,
+  TransactionKind kind,
+  String? accountId,
+  Money amount,
+) {
+  if (memory == null) return null;
+  final hint = memory.hintFor(
+    Transaction(
+      id: '',
+      kind: kind,
+      occurredOn: row.date.day,
+      note: noteOf(row),
+      status: TransactionStatus.cleared,
+      source: TransactionSource.import,
+      entries: [
+        Entry(
+          accountId: accountId ?? '',
+          amount: kind == TransactionKind.expense ? -amount : amount,
+        ),
+      ],
+      allocations: [Allocation(categoryId: null, amount: amount)],
+    ),
+  );
+  return switch (hint?.reason) {
+    HintReason.sameName || HintReason.everyMonth => hint,
+    _ => null,
+  };
+}
 
 /// How many days [day] comes after [other].
 int _daysBetween(CivilDate day, CivilDate other) => DateTime.utc(

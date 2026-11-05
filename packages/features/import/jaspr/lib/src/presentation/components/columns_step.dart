@@ -161,16 +161,24 @@ class ColumnsStep extends StatelessComponent {
             .text(t.imports.previewAmount),
           ]),
         ]),
-        for (final row in rows) _row(row, thisYear),
+        for (final row in rows) _row(row, thisYear, _learned()),
       ]),
     ]);
   }
 
-  Component _row(StatementRow row, int thisYear) {
+  /// The categories that past choices give rows of the plan, by their lines.
+  Map<int, String> _learned() => {
+    for (final operation
+        in state.plan?.operations ?? const <PlannedOperation>[])
+      if (operation.learned case final hint?)
+        operation.row.line: hint.categoryId,
+  };
+
+  Component _row(StatementRow row, int thisYear, Map<int, String> learned) {
     final leg = row.out ?? row.into!;
     final value = row.isTransfer ? leg.amount : row.change;
     final money = moneyOf(value, leg.currency, fallback: state.currency);
-    final (label, color) = _categoryOf(row);
+    final (label, color) = _categoryOf(row, learned[row.line]);
     return div(classes: 'import-table__row', [
       span(classes: 'text-body import-table__date', [
         .text(dayLabel(row.date.day, thisYear: thisYear)),
@@ -203,9 +211,17 @@ class ColumnsStep extends StatelessComponent {
     ]);
   }
 
-  /// What category a row goes into, and its color.
-  (String, String) _categoryOf(StatementRow row) {
+  /// What category a row goes into, and its color: the one that [learned]
+  /// names from past choices, says so.
+  (String, String) _categoryOf(StatementRow row, String? learned) {
     if (row.isTransfer) return (t.imports.transfer, 'var(--color-palette-sky)');
+    final known = learned == null ? null : _category(learned);
+    if (known != null) {
+      return (
+        '${known.name} · ${t.imports.learned}',
+        known.color ?? 'var(--color-text-subtle)',
+      );
+    }
     final bank = (
       kind: row.out != null ? CategoryKind.expense : CategoryKind.income,
       name: row.category,

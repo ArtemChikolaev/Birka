@@ -151,6 +151,14 @@
     plans the import again and a late plan is dropped, so only the plan of the
     latest choices goes in, and the choices stay fixed while it does. Each
     host opens the window of files through `StatementFiles`.
+17. An expense or an income whose category of the bank waits in the inbox
+    takes the category that the past choices of the person give an
+    operation of the same name, or of the same amount on the same account of
+    the ledger month after month (`CategoryMemory`,
+    [ADR 0022](0022-inbox.md)); the preview of the columns says «как
+    раньше». A category that the person chose for the category of the bank
+    wins, a similar name only suggests one in the inbox, and the categories
+    in the archive teach nothing.
 
 ## Options considered
 
