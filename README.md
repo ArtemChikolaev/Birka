@@ -10,8 +10,8 @@ currencies up at the rates of the Bank of Russia, report on your months and
 save a copy of everything to a file. This first milestone is manual tracking
 with several currencies and reports. The site also imports statements: CSV and
 Excel of banks and Zenmoney, and the PDF of Sberbank, and sorts what they bring
-in an inbox, with hints from past choices; the app imports the statements of
-the banks it knows and sorts them in an inbox of its own.
+in an inbox, with hints from past choices; the app imports statements too and
+sorts them in an inbox of its own.
 
 ## Why
 

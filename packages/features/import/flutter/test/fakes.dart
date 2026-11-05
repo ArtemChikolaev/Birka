@@ -97,10 +97,15 @@ ChosenStatement october() => ChosenStatement(
   ]),
 );
 
-/// A made-up CSV of columns that no format names.
+/// A made-up CSV of columns that no format names: a date, a text, a sum
+/// with a comma that the guess leaves out, and a balance.
 ChosenStatement unknown() => ChosenStatement(
   'statement_oct_2026.csv',
-  _text(['When;What;How much', '01.10.2026;Coffee;-4.20']),
+  _text([
+    'День;Назначение платежа;Сумма в валюте счёта;Остаток',
+    '01.10.2026;Зарплата;96500,00;142679,81',
+    '03.10.2026;Кофейня Зерно;-420,00;142259,81',
+  ]),
 );
 
 /// A file that holds no table.

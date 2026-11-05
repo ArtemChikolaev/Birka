@@ -320,5 +320,21 @@ rowsCount(n):
   few: $count строки
   many: $count строк
   other: $count строки
-unknownText: "Колонки такой выписки на телефоне пока не назначить. Birka сама узнаёт выписки $banks."
+unknownText: Назначьте колонки этого файла, где дата и где сумма. Остальное Birka прочитает сама.
 chooseAnother: Выбрать другой файл
+assignColumns: Назначить колонки
+columnsHeading: Колонки выписки
+columnsText: Отметьте, где в файле дата и где сумма, и строки станут операциями.
+roleNotes(map):
+  date: день операции
+  amount: расход и поступление в одной колонке
+  expense: только списания
+  income: только зачисления
+  currency: RUB, USD, EUR…
+  description: магазин, получатель или назначение
+  category: разберём во «Входящих»
+  balance: сверим с банком
+  skip: колонку пропустим
+noAmounts: Ни одна сумма не прочиталась. Проверьте, чем в файле отделены копейки.
+columnsDone: "Готово · $operations"
+ownColumns: колонки назначили вы
