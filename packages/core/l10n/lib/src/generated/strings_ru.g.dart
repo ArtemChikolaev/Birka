@@ -1189,10 +1189,36 @@ class _Translations$imports$ru extends Translations$imports$en {
         other: '${count} строки',
       );
   @override
-  String unknownText({required Object banks}) =>
-      'Колонки такой выписки на телефоне пока не назначить. Birka сама узнаёт выписки ${banks}.';
+  String get unknownText =>
+      'Назначьте колонки этого файла, где дата и где сумма. Остальное Birka прочитает сама.';
   @override
   String get chooseAnother => 'Выбрать другой файл';
+  @override
+  String get assignColumns => 'Назначить колонки';
+  @override
+  String get columnsHeading => 'Колонки выписки';
+  @override
+  String get columnsText =>
+      'Отметьте, где в файле дата и где сумма, и строки станут операциями.';
+  @override
+  Map<String, String> get roleNotes => {
+    'date': 'день операции',
+    'amount': 'расход и поступление в одной колонке',
+    'expense': 'только списания',
+    'income': 'только зачисления',
+    'currency': 'RUB, USD, EUR…',
+    'description': 'магазин, получатель или назначение',
+    'category': 'разберём во «Входящих»',
+    'balance': 'сверим с банком',
+    'skip': 'колонку пропустим',
+  };
+  @override
+  String get noAmounts =>
+      'Ни одна сумма не прочиталась. Проверьте, чем в файле отделены копейки.';
+  @override
+  String columnsDone({required Object operations}) => 'Готово · ${operations}';
+  @override
+  String get ownColumns => 'колонки назначили вы';
 }
 
 // Path: inbox
@@ -2704,9 +2730,27 @@ extension on TranslationsRu {
                   other: '${count} строки',
                 ),
           'imports.unknownText' =>
-            ({required Object banks}) =>
-                'Колонки такой выписки на телефоне пока не назначить. Birka сама узнаёт выписки ${banks}.',
+            'Назначьте колонки этого файла, где дата и где сумма. Остальное Birka прочитает сама.',
           'imports.chooseAnother' => 'Выбрать другой файл',
+          'imports.assignColumns' => 'Назначить колонки',
+          'imports.columnsHeading' => 'Колонки выписки',
+          'imports.columnsText' =>
+            'Отметьте, где в файле дата и где сумма, и строки станут операциями.',
+          'imports.roleNotes.date' => 'день операции',
+          'imports.roleNotes.amount' => 'расход и поступление в одной колонке',
+          'imports.roleNotes.expense' => 'только списания',
+          'imports.roleNotes.income' => 'только зачисления',
+          'imports.roleNotes.currency' => 'RUB, USD, EUR…',
+          'imports.roleNotes.description' =>
+            'магазин, получатель или назначение',
+          'imports.roleNotes.category' => 'разберём во «Входящих»',
+          'imports.roleNotes.balance' => 'сверим с банком',
+          'imports.roleNotes.skip' => 'колонку пропустим',
+          'imports.noAmounts' =>
+            'Ни одна сумма не прочиталась. Проверьте, чем в файле отделены копейки.',
+          'imports.columnsDone' =>
+            ({required Object operations}) => 'Готово · ${operations}',
+          'imports.ownColumns' => 'колонки назначили вы',
           'inbox.title' => 'Входящие',
           'inbox.back' => 'Назад',
           'inbox.waiting' =>
@@ -2733,6 +2777,9 @@ extension on TranslationsRu {
           'inbox.pairTitle' => 'Похоже на перевод между вашими счетами',
           'inbox.pairText' =>
             'Не трата и не доход: капитал от него не изменится',
+          _ => null,
+        } ??
+        switch (path) {
           'inbox.rate' =>
             ({required Object rate, required Object unit}) =>
                 'Курс обмена ${rate} за ${unit}',
@@ -2767,9 +2814,6 @@ extension on TranslationsRu {
           'inbox.similarName' =>
             ({required Object name, required Object when}) =>
                 'как «${name}» ${when}',
-          _ => null,
-        } ??
-        switch (path) {
           'inbox.since' => ({required Object month}) => 'с ${month}',
           'inbox.more' =>
             ({required num n, required Object count}) =>

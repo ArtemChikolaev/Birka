@@ -1414,12 +1414,44 @@ class Translations$imports$en {
         other: '${count} rows',
       );
 
-  /// en: 'The columns of such a statement cannot be set on the phone yet. Birka knows the statements of $banks by itself.'
-  String unknownText({required Object banks}) =>
-      'The columns of such a statement cannot be set on the phone yet. Birka knows the statements of ${banks} by itself.';
+  /// en: 'Set the columns of this file, where the date and the amount are. Birka reads the rest by itself.'
+  String get unknownText =>
+      'Set the columns of this file, where the date and the amount are. Birka reads the rest by itself.';
 
   /// en: 'Choose another file'
   String get chooseAnother => 'Choose another file';
+
+  /// en: 'Set the columns'
+  String get assignColumns => 'Set the columns';
+
+  /// en: 'Columns of the statement'
+  String get columnsHeading => 'Columns of the statement';
+
+  /// en: 'Mark where the file keeps the date and the amount, and its rows become operations.'
+  String get columnsText =>
+      'Mark where the file keeps the date and the amount, and its rows become operations.';
+
+  Map<String, String> get roleNotes => {
+    'date': 'the day of the operation',
+    'amount': 'money out and in, in one column',
+    'expense': 'only money out',
+    'income': 'only money in',
+    'currency': 'RUB, USD, EUR…',
+    'description': 'a shop, a payee or what it was for',
+    'category': 'sorted in the inbox',
+    'balance': 'checked against the bank',
+    'skip': 'the column is left out',
+  };
+
+  /// en: 'No amount read. Check what the file puts before the cents.'
+  String get noAmounts =>
+      'No amount read. Check what the file puts before the cents.';
+
+  /// en: 'Done · $operations'
+  String columnsDone({required Object operations}) => 'Done · ${operations}';
+
+  /// en: 'columns set by you'
+  String get ownColumns => 'columns set by you';
 }
 
 // Path: inbox
@@ -3054,9 +3086,27 @@ extension on Translations {
                   other: '${count} rows',
                 ),
           'imports.unknownText' =>
-            ({required Object banks}) =>
-                'The columns of such a statement cannot be set on the phone yet. Birka knows the statements of ${banks} by itself.',
+            'Set the columns of this file, where the date and the amount are. Birka reads the rest by itself.',
           'imports.chooseAnother' => 'Choose another file',
+          'imports.assignColumns' => 'Set the columns',
+          'imports.columnsHeading' => 'Columns of the statement',
+          'imports.columnsText' =>
+            'Mark where the file keeps the date and the amount, and its rows become operations.',
+          'imports.roleNotes.date' => 'the day of the operation',
+          'imports.roleNotes.amount' => 'money out and in, in one column',
+          'imports.roleNotes.expense' => 'only money out',
+          'imports.roleNotes.income' => 'only money in',
+          'imports.roleNotes.currency' => 'RUB, USD, EUR…',
+          'imports.roleNotes.description' =>
+            'a shop, a payee or what it was for',
+          'imports.roleNotes.category' => 'sorted in the inbox',
+          'imports.roleNotes.balance' => 'checked against the bank',
+          'imports.roleNotes.skip' => 'the column is left out',
+          'imports.noAmounts' =>
+            'No amount read. Check what the file puts before the cents.',
+          'imports.columnsDone' =>
+            ({required Object operations}) => 'Done · ${operations}',
+          'imports.ownColumns' => 'columns set by you',
           'inbox.title' => 'Inbox',
           'inbox.back' => 'Back',
           'inbox.waiting' =>
@@ -3081,6 +3131,9 @@ extension on Translations {
           'inbox.pairTitle' => 'Looks like a transfer between your accounts',
           'inbox.pairText' =>
             'Neither spending nor income: your capital stays the same',
+          _ => null,
+        } ??
+        switch (path) {
           'inbox.rate' =>
             ({required Object rate, required Object unit}) =>
                 'Rate ${rate} for ${unit}',
@@ -3113,9 +3166,6 @@ extension on Translations {
           'inbox.similarName' =>
             ({required Object name, required Object when}) =>
                 'like «${name}» ${when}',
-          _ => null,
-        } ??
-        switch (path) {
           'inbox.since' => ({required Object month}) => 'since ${month}',
           'inbox.more' =>
             ({required num n, required Object count}) =>

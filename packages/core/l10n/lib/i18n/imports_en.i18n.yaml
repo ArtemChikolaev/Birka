@@ -294,5 +294,21 @@ columnsCount(n):
 rowsCount(n):
   one: $count row
   other: $count rows
-unknownText: "The columns of such a statement cannot be set on the phone yet. Birka knows the statements of $banks by itself."
+unknownText: Set the columns of this file, where the date and the amount are. Birka reads the rest by itself.
 chooseAnother: Choose another file
+assignColumns: Set the columns
+columnsHeading: Columns of the statement
+columnsText: Mark where the file keeps the date and the amount, and its rows become operations.
+roleNotes(map):
+  date: the day of the operation
+  amount: money out and in, in one column
+  expense: only money out
+  income: only money in
+  currency: RUB, USD, EUR…
+  description: a shop, a payee or what it was for
+  category: sorted in the inbox
+  balance: checked against the bank
+  skip: the column is left out
+noAmounts: No amount read. Check what the file puts before the cents.
+columnsDone: "Done · $operations"
+ownColumns: columns set by you

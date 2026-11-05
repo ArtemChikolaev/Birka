@@ -163,10 +163,12 @@
     draws it: the window of the system gives the file, a format that Birka
     knows goes in with Birka's own choices, each account of the file can go
     into another account in a list, and what came in can be taken back out
-    at once (`import_flutter`). The columns of a format that Birka does not
-    know cannot be set on the phone yet: the sheet says so and names the
-    formats it knows. The operations without a category wait for the inbox
-    of the phone, which has no board yet.
+    at once (`import_flutter`). A format that Birka does not know opens a
+    page of its columns, as its own board draws it: the role of each column
+    from a sheet, how amounts and dates are written, and the first rows as
+    they will come in; the sheet goes on once the date and the amount read.
+    What comes in without a category leads to the inbox of the phone
+    ([ADR 0022](0022-inbox.md), point 8).
 
 ## Options considered
 
@@ -185,9 +187,9 @@
   like, its columns with an example of each, the rows left out with their
   numbers and a summary for each account.
 - The wizard on the site draws these steps (`import_jaspr`), as the mockups
-  do, and the sheet of the phone imports a format that Birka knows. The
-  columns and the inbox on the phone and the choices of a format kept for
-  its next file come next.
+  do, and the sheet of the phone imports any of them, setting the columns
+  of a format of one's own. The choices of a format kept for its next file
+  come next, on both hosts.
 - A copy of the ledger is version 2 ([ADR 0016](0016-ledger-copy.md)): an app
   from before it says that the file comes from a newer version.
 - Two banks with the same headers look like one. They read alike, so only the

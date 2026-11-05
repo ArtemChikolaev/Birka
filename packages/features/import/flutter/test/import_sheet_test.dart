@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:import_common/import_common.dart';
 import 'package:import_flutter/import_flutter.dart';
+import 'package:import_flutter/src/presentation/import_columns_page.dart';
 import 'package:l10n/l10n.dart';
 
 import 'fakes.dart';
@@ -143,19 +144,53 @@ void main() {
     );
   });
 
-  testWidgets('says when the format is unknown, and takes another file', (
+  testWidgets('leads a format it does not know to its columns', (
     tester,
   ) async {
-    await open(tester, [unknown(), october()]);
+    await open(tester, [unknown()]);
 
     expect(find.text('Формат не узнали'), findsOneWidget);
     expect(find.text('statement_oct_2026.csv'), findsOneWidget);
-    expect(find.text('3 колонки · 2 строки'), findsOneWidget);
-    expect(find.textContaining('Альфа-Банка, Т-Банка'), findsOneWidget);
+    expect(find.text('4 колонки · 3 строки'), findsOneWidget);
 
-    await tapText(tester, 'ВЫБРАТЬ ДРУГОЙ ФАЙЛ');
+    await tapText(tester, 'НАЗНАЧИТЬ КОЛОНКИ');
 
-    expect(find.text('Альфа-Банк · узнали по колонкам'), findsOneWidget);
+    expect(find.byType(ImportColumnsPage), findsOneWidget);
+    expect(find.text('КОЛОНКИ ВЫПИСКИ'), findsOneWidget);
+  });
+
+  testWidgets('imports a format of its own once its columns are set', (
+    tester,
+  ) async {
+    await open(tester, [unknown()]);
+    await tapText(tester, 'НАЗНАЧИТЬ КОЛОНКИ');
+
+    await tapText(tester, 'Сумма в валюте счёта');
+    expect(find.text('Что в колонке «Сумма в валюте счёта»'), findsOneWidget);
+    expect(
+      find.text('расход и поступление в одной колонке'),
+      findsOneWidget,
+    );
+    await tapText(tester, 'Сумма');
+    await tapText(tester, 'ГОТОВО · 2 ОПЕРАЦИИ');
+
+    expect(find.byType(ImportColumnsPage), findsNothing);
+    expect(find.text('Свой формат · колонки назначили вы'), findsOneWidget);
+    await tapText(tester, 'ИМПОРТИРОВАТЬ 2 ОПЕРАЦИИ');
+
+    expect(repository.written.single.added, hasLength(2));
+  });
+
+  testWidgets('keeps a format of its own unknown until the person is done', (
+    tester,
+  ) async {
+    await open(tester, [unknown()]);
+    await tapText(tester, 'НАЗНАЧИТЬ КОЛОНКИ');
+
+    await tester.tap(find.bySemanticsLabel('Назад'));
+    await settle(tester);
+
+    expect(find.text('Формат не узнали'), findsOneWidget);
   });
 
   testWidgets('says when a file holds no table', (tester) async {

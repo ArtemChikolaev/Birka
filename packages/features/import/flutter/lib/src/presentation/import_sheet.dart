@@ -4,7 +4,9 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:import_common/import_common.dart';
+import 'package:import_flutter/src/presentation/import_columns_page.dart';
 import 'package:import_flutter/src/presentation/widgets/format_mark.dart';
+import 'package:import_flutter/src/presentation/widgets/table_card.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 
@@ -63,7 +65,8 @@ enum _Stage {
   /// The file holds no operations to read.
   unreadable,
 
-  /// The columns are of no format that Birka knows.
+  /// The columns are of no format that Birka knows, or lack the date or
+  /// the amount, until the person sets them.
   unknown,
 
   /// What Birka recognized, where it goes and what comes in.
@@ -76,13 +79,18 @@ enum _Stage {
   undone
   ;
 
-  static _Stage of(ImportState state) {
+  /// The stage of [state]; the columns of a format of one's own count once
+  /// the person has [set] them.
+  static _Stage of(ImportState state, {required bool set}) {
     if (state.undone) return undone;
     if (state.importId != null) return done;
     if (state.unreadable != null) return unreadable;
     final layout = state.layout;
     if (state.reading || layout == null) return reading;
-    if (layout.format == null || layout.missing.isNotEmpty) return unknown;
+    final own = layout.format == null;
+    if (layout.missing.isNotEmpty || own && (!set || !state.readable)) {
+      return unknown;
+    }
     if (!state.readable) return unreadable;
     return state.planned ? ready : reading;
   }
@@ -90,9 +98,8 @@ enum _Stage {
 
 /// The import of one statement in a sheet, as the board of the phone draws
 /// it: the file being read, what Birka recognized in it and where it goes,
-/// a format it does not know, and what came in with its undo. The columns
-/// of an unknown format and the inbox wait for boards of their own. It
-/// needs an [ImportCubit] above it.
+/// a format it does not know with the way to its columns, and what came in
+/// with its undo. It needs an [ImportCubit] above it.
 class ImportSheet extends StatefulWidget {
   /// Creates the sheet of the file [fileName], which [files] can change.
   const ImportSheet({
@@ -119,11 +126,29 @@ class ImportSheet extends StatefulWidget {
 class _ImportSheetState extends State<ImportSheet> {
   late String _fileName = widget.fileName;
 
+  /// Whether the person set the columns of a format of their own.
+  bool _columnsSet = false;
+
   Future<void> _chooseAnother(ImportCubit cubit) async {
     final file = await widget.files.choose();
     if (file == null || !mounted) return;
-    setState(() => _fileName = file.name);
+    setState(() {
+      _fileName = file.name;
+      _columnsSet = false;
+    });
     await cubit.read(file.name, file.bytes);
+  }
+
+  Future<void> _setColumns(ImportCubit cubit) async {
+    final set = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: cubit,
+          child: const ImportColumnsPage(),
+        ),
+      ),
+    );
+    if ((set ?? false) && mounted) setState(() => _columnsSet = true);
   }
 
   void _close() => Navigator.of(context).pop();
@@ -136,7 +161,7 @@ class _ImportSheetState extends State<ImportSheet> {
         final cubit = context.read<ImportCubit>();
         final colors = BirkaColors.of(context);
         final styles = BirkaTextStyles.of(context);
-        final stage = _Stage.of(state);
+        final stage = _Stage.of(state, set: _columnsSet);
         return PopScope(
           canPop: !state.writing,
           child: AnimatedSize(
@@ -237,32 +262,20 @@ class _ImportSheetState extends State<ImportSheet> {
   ) {
     final colors = BirkaColors.of(context);
     final styles = BirkaTextStyles.of(context);
-    final table = state.table!;
-    final columns = table.width;
-    final rows = table.rows.length;
-    final banks = [
-      for (final format in statementFormats)
-        t.imports.formatsOf[format.id] ?? formatLabel(format),
-    ].join(', ');
     return [
-      GlassFileCard(
-        mark: const GlyphBadge(
-          glyph: BirkaGlyph.file,
-          color: Color(BirkaTokens.colorPaletteAmber),
-        ),
-        name: table.fileName,
-        line: [
-          t.imports.columnsCount(n: columns, count: formatCount(columns)),
-          t.imports.rowsCount(n: rows, count: formatCount(rows)),
-        ].join(' · '),
-      ),
+      TableCard(table: state.table!),
       const SizedBox(height: BirkaTokens.spaceMd),
       Text(
-        t.imports.unknownText(banks: banks),
+        t.imports.unknownText,
         style: styles.body.copyWith(color: colors.textSecondary),
       ),
       const SizedBox(height: BirkaTokens.spaceLg),
-      ..._another(cubit),
+      BirkaButton(
+        label: t.imports.assignColumns,
+        onPressed: () => unawaited(_setColumns(cubit)),
+      ),
+      const SizedBox(height: BirkaTokens.spaceXs),
+      BirkaButton(label: t.imports.cancel, quiet: true, onPressed: _close),
     ];
   }
 
@@ -283,7 +296,7 @@ class _ImportSheetState extends State<ImportSheet> {
   ) {
     final colors = BirkaColors.of(context);
     final styles = BirkaTextStyles.of(context);
-    final format = state.layout!.format!;
+    final format = state.layout!.format;
     final statement = state.statement!;
     final plan = state.plan!;
     final choices = plan.choices.accounts;
@@ -295,9 +308,13 @@ class _ImportSheetState extends State<ImportSheet> {
     final several = statement.accounts.length > 1;
     return [
       GlassFileCard(
-        mark: FormatMark(format),
+        mark: format == null
+            ? GlyphBadge(glyph: BirkaGlyph.file, color: colors.accent)
+            : FormatMark(format),
         name: state.fileName ?? _fileName,
-        line: t.imports.knownBy(bank: formatLabel(format)),
+        line: format == null
+            ? '${t.imports.own} · ${t.imports.ownColumns}'
+            : t.imports.knownBy(bank: formatLabel(format)),
       ),
       const SizedBox(height: BirkaTokens.spaceSm),
       GlassListGroup(
