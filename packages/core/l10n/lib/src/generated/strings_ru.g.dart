@@ -1325,6 +1325,20 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   String get failed => 'Не получилось. Попробуйте ещё раз.';
   @override
   String get madeTransfer => 'Сделали перевод';
+  @override
+  String accepted({required Object category}) =>
+      '${category}: дальше Birka поставит сама';
+  @override
+  String sorted({required Object category, required Object operations}) =>
+      '${category} · ${operations}';
+  @override
+  String get keptIncome => 'Оставили доходом';
+  @override
+  String get toImport => 'Загрузить выписку';
+  @override
+  String get hinted => 'подсказка';
+  @override
+  String get unpick => 'Снять';
 }
 
 // Path: onboarding
@@ -2790,6 +2804,16 @@ extension on TranslationsRu {
             'Пока операция здесь, она уже есть в учёте и в отчётах, просто без категории.',
           'inbox.failed' => 'Не получилось. Попробуйте ещё раз.',
           'inbox.madeTransfer' => 'Сделали перевод',
+          'inbox.accepted' =>
+            ({required Object category}) =>
+                '${category}: дальше Birka поставит сама',
+          'inbox.sorted' =>
+            ({required Object category, required Object operations}) =>
+                '${category} · ${operations}',
+          'inbox.keptIncome' => 'Оставили доходом',
+          'inbox.toImport' => 'Загрузить выписку',
+          'inbox.hinted' => 'подсказка',
+          'inbox.unpick' => 'Снять',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',

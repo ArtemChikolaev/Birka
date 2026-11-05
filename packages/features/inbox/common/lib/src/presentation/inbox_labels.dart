@@ -47,22 +47,50 @@ String sinceMonth(CivilDate day, {required int thisYear}) {
 
 /// What waits, for the line under the title: «15 ждут решения · после
 /// импорта Альфа-Банка».
-String waitingLabel(InboxState state) {
-  final waiting = t.inbox.waiting(
-    n: state.count,
-    count: formatCount(state.count),
-  );
+String waitingLabel(InboxState state) => [
+  t.inbox.waiting(n: state.count, count: formatCount(state.count)),
+  ?afterLabel(state),
+].join(' · ');
+
+/// Which import the inbox follows: «после импорта Альфа-Банка», or of a file
+/// of no format that Birka knows by its name; `null` before any import.
+String? afterLabel(InboxState state) {
   final latest = state.latestImport;
-  if (latest == null) return waiting;
+  if (latest == null) return null;
   final bank = t.imports.formatsOf[latest.format ?? ''];
+  return bank == null
+      ? t.inbox.afterFile(name: latest.fileName)
+      : t.inbox.afterImport(bank: bank);
+}
+
+/// What [transaction] does to money, for people: «−1 450 ₽» or «+700 ₽».
+String amountLabel(Transaction transaction) {
+  final amount = transaction.entries.single.amount;
+  return amount.isPositive ? '+${formatMoney(amount)}' : formatMoney(amount);
+}
+
+/// The day and the account of [transaction]: «4 октября · Зарплатная карта».
+/// A day of [thisYear] leaves the year out.
+String placeLabel(Transaction transaction, InboxState state, int thisYear) {
+  final day = transaction.occurredOn;
+  final accountId = transaction.entries.single.accountId;
+  final account = state.accounts.where((it) => it.id == accountId).firstOrNull;
   return [
-    waiting,
-    if (bank != null)
-      t.inbox.afterImport(bank: bank)
-    else
-      t.inbox.afterFile(name: latest.fileName),
+    dateLabel(
+      year: day.year,
+      month: day.month,
+      day: day.day,
+      thisYear: thisYear,
+    ),
+    ?account?.name,
   ].join(' · ');
 }
+
+/// The kind of categories that [transaction] takes.
+CategoryKind kindOf(Transaction transaction) =>
+    transaction.kind == TransactionKind.income
+    ? CategoryKind.income
+    : CategoryKind.expense;
 
 /// The rate of [pair] between two currencies, and that of the Bank of Russia
 /// on its day by [rates]: «Курс обмена 80,09 ₽ за 1 $ · ЦБ в тот день

@@ -160,4 +160,56 @@ void main() {
     );
     expect(rateLabel(pair, const RateBook.empty()), isNot(contains('ЦБ')));
   });
+
+  test('the import that the inbox follows is that of its bank or file', () {
+    expect(afterLabel(const InboxState()), isNull);
+    expect(
+      afterLabel(InboxState(latestImport: _import())),
+      'после импорта Альфа-Банка',
+    );
+    expect(
+      afterLabel(InboxState(latestImport: _import(format: null))),
+      'после импорта «alfa-2026-10.xlsx»',
+    );
+  });
+
+  test('an operation says its money, its day and its account', () {
+    final coffee = _operation(
+      'coffee',
+      TransactionKind.expense,
+      'card',
+      Money(145000, Currency.rub),
+      CivilDate(2026, 10, 4),
+    );
+    final salary = _operation(
+      'salary',
+      TransactionKind.income,
+      'card',
+      Money(9650000, Currency.rub),
+      CivilDate(2025, 12, 30),
+    );
+    final state = InboxState(
+      accounts: [
+        Account(
+          id: 'card',
+          name: 'Зарплатная карта',
+          type: AccountType.debit,
+          openingBalance: Money(0, Currency.rub),
+          includeInTotals: true,
+          archived: false,
+          sortOrder: 0,
+        ),
+      ],
+    );
+
+    expect(amountLabel(coffee), formatMoney(Money(-145000, Currency.rub)));
+    expect(
+      amountLabel(salary),
+      '+${formatMoney(Money(9650000, Currency.rub))}',
+    );
+    expect(placeLabel(coffee, state, 2026), '4 октября · Зарплатная карта');
+    expect(placeLabel(salary, state, 2026), startsWith('30 декабря 2025'));
+    expect(kindOf(coffee), CategoryKind.expense);
+    expect(kindOf(salary), CategoryKind.income);
+  });
 }

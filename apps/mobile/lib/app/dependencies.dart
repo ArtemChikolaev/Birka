@@ -12,6 +12,7 @@ import 'package:help_flutter/help_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:import_common/import_common.dart';
 import 'package:import_flutter/import_flutter.dart';
+import 'package:inbox_common/inbox_common.dart';
 import 'package:ledger/ledger.dart';
 import 'package:onboarding_common/onboarding_common.dart'
     show OnboardingRepository, onboardingNeeded, registerOnboarding;
@@ -69,6 +70,7 @@ void registerDependencies(
   registerCategories(getIt);
   registerHelp(getIt, about: readAppAbout);
   registerImport(getIt);
+  registerInbox(getIt, settings);
   registerOnboarding(getIt, settings, deviceLanguage: deviceLanguage);
   registerOverview(getIt);
   registerReports(getIt);

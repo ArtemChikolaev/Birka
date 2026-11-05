@@ -1583,6 +1583,26 @@ class Translations$inbox$en {
 
   /// en: 'Made a transfer'
   String get madeTransfer => 'Made a transfer';
+
+  /// en: '$category: Birka will put such ones there next time'
+  String accepted({required Object category}) =>
+      '${category}: Birka will put such ones there next time';
+
+  /// en: '$category · $operations'
+  String sorted({required Object category, required Object operations}) =>
+      '${category} · ${operations}';
+
+  /// en: 'Kept as income'
+  String get keptIncome => 'Kept as income';
+
+  /// en: 'Import a statement'
+  String get toImport => 'Import a statement';
+
+  /// en: 'suggested'
+  String get hinted => 'suggested';
+
+  /// en: 'Clear'
+  String get unpick => 'Clear';
 }
 
 // Path: onboarding
@@ -3126,6 +3146,16 @@ extension on Translations {
             'While an operation is here, it already counts in the ledger and the reports, only without a category.',
           'inbox.failed' => 'That did not work. Try again.',
           'inbox.madeTransfer' => 'Made a transfer',
+          'inbox.accepted' =>
+            ({required Object category}) =>
+                '${category}: Birka will put such ones there next time',
+          'inbox.sorted' =>
+            ({required Object category, required Object operations}) =>
+                '${category} · ${operations}',
+          'inbox.keptIncome' => 'Kept as income',
+          'inbox.toImport' => 'Import a statement',
+          'inbox.hinted' => 'suggested',
+          'inbox.unpick' => 'Clear',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
           'onboarding.failed' => 'Could not save. Try again.',

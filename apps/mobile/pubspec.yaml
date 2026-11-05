@@ -43,6 +43,10 @@ dependencies:
     path: ../../packages/features/import/common
   import_flutter:
     path: ../../packages/features/import/flutter
+  inbox_common:
+    path: ../../packages/features/inbox/common
+  inbox_flutter:
+    path: ../../packages/features/inbox/flutter
   l10n:
     path: ../../packages/core/l10n
   ledger:

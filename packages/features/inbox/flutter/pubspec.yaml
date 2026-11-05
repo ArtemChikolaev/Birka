@@ -1,0 +1,33 @@
+name: inbox_flutter
+description: >-
+  The page of the inbox feature in Flutter: the operations without a
+  category and the transfers between one's own accounts, on phones.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  inbox_common:
+    path: ../common
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+
+dev_dependencies:
+  decimal: ^3.2.6
+  device_settings:
+    path: ../../../core/device_settings
+  flutter_test:
+    sdk: flutter
+  money:
+    path: ../../../core/money
+  rates:
+    path: ../../../core/rates

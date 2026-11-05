@@ -28,7 +28,11 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> open(WidgetTester tester, List<ChosenStatement?> files) async {
+  Future<void> open(
+    WidgetTester tester,
+    List<ChosenStatement?> files, {
+    VoidCallback? onInbox,
+  }) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -48,6 +52,7 @@ void main() {
                   window,
                 ),
                 files: window,
+                onInbox: onInbox,
               ),
             ),
           ),
@@ -105,6 +110,19 @@ void main() {
 
     await tapText(tester, 'ГОТОВО');
 
+    expect(find.byType(ImportSheet), findsNothing);
+  });
+
+  testWidgets('leads from what waits to the inbox of the host', (
+    tester,
+  ) async {
+    var opened = 0;
+    await open(tester, [october()], onInbox: () => opened++);
+    await tapText(tester, 'ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ');
+
+    await tapText(tester, '4 ждут вашего решения во «Входящих»');
+
+    expect(opened, 1);
     expect(find.byType(ImportSheet), findsNothing);
   });
 

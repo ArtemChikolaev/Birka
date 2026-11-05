@@ -48,3 +48,9 @@ learns: "Each «Yes» teaches Birka: in the next statement such operations come 
 stillCounted: While an operation is here, it already counts in the ledger and the reports, only without a category.
 failed: That did not work. Try again.
 madeTransfer: Made a transfer
+accepted: "$category: Birka will put such ones there next time"
+sorted: "$category · $operations"
+keptIncome: Kept as income
+toImport: Import a statement
+hinted: suggested
+unpick: Clear
