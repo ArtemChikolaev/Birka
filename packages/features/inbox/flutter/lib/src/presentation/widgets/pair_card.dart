@@ -34,6 +34,12 @@ class PairCard extends StatelessWidget {
   /// Shows a word on what was done, over the page.
   final ValueChanged<String> onSay;
 
+  /// Keeps the pair apart, and says so once it is kept.
+  Future<void> _keepApart(InboxCubit cubit) async {
+    await cubit.notTransfer(pair);
+    if (!cubit.state.failed) onSay(t.inbox.keptIncome);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
@@ -108,12 +114,7 @@ class PairCard extends StatelessWidget {
           BirkaButton(
             label: t.inbox.notTransfer,
             quiet: true,
-            onPressed: busy
-                ? null
-                : () {
-                    unawaited(cubit.notTransfer(pair));
-                    onSay(t.inbox.keptIncome);
-                  },
+            onPressed: busy ? null : () => unawaited(_keepApart(cubit)),
           ),
         ],
       ),

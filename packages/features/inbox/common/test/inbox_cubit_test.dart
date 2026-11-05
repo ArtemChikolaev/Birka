@@ -1,6 +1,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:io';
+
 import 'package:database/database.dart';
 import 'package:decimal/decimal.dart';
 import 'package:device_settings/device_settings.dart';
@@ -20,6 +22,16 @@ final class _Store implements SettingsStore {
 
   @override
   Future<void> write(String key, String value) async => values[key] = value;
+}
+
+/// The settings that cannot keep anything.
+final class _FullStore implements SettingsStore {
+  @override
+  String? read(String key) => null;
+
+  @override
+  Future<void> write(String key, String value) async =>
+      throw const FileSystemException('full');
 }
 
 Money _rub(int rubles) => Money(rubles * 100, Currency.rub);
@@ -311,6 +323,20 @@ void main() {
     );
 
     expect((await ready()).pairs, isEmpty);
+  });
+
+  test('a pair that the settings cannot keep stays, with a word', () async {
+    await cubit.close();
+    cubit = InboxCubit(
+      LedgerInboxRepository(ledger, RatesRepository(database)),
+      _FullStore(),
+    );
+    final pair = (await ready()).pairs.single;
+
+    await cubit.notTransfer(pair);
+
+    expect(cubit.state.failed, isTrue);
+    expect(cubit.state.pairs, [pair]);
   });
 
   test('shows the operations or the transfers alone', () async {

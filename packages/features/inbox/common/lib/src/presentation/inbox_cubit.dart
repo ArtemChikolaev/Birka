@@ -355,9 +355,18 @@ final class InboxCubit extends Cubit<InboxState> {
   }
 
   /// Keeps [pair] apart: its income then waits for a category of its own.
+  /// A pair that the settings cannot keep stays, and the inbox says so.
   Future<void> notTransfer(TransferPair pair) async {
+    final before = _dismissed;
     _dismissed = {..._dismissed, pair.key};
-    await _store.write(dismissedKey, _dismissed.join(','));
+    try {
+      await _store.write(dismissedKey, _dismissed.join(','));
+    } on Object {
+      _dismissed = before;
+      if (!isClosed) emit(state._with(failed: true));
+      return;
+    }
+    if (!isClosed) emit(state._with(failed: false));
     _update();
   }
 

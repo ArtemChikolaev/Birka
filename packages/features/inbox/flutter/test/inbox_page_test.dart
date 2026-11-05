@@ -130,6 +130,16 @@ void main() {
     expect(find.text('Похоже на перевод между вашими счетами'), findsNothing);
   });
 
+  testWidgets('another filter changes the list at once', (tester) async {
+    await pump(tester);
+
+    await tester.tap(find.bySemanticsLabel('Без категории, 2'));
+    await tester.pump();
+
+    expect(find.text('Похоже на перевод между вашими счетами'), findsNothing);
+    expect(find.text('ИП Соколов А. В.'), findsOneWidget);
+  });
+
   testWidgets('says when everything is sorted and offers a statement', (
     tester,
   ) async {
