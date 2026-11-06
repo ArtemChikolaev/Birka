@@ -1343,6 +1343,15 @@ class _Translations$imports$ru extends Translations$imports$en {
       'Похоже, банк поменял выписку: проверьте, где в ней дата и сумма и чем отделены копейки.';
   @override
   String get checkColumns => 'Проверить колонки';
+  @override
+  String declinedRows({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} операция не прошла в банке',
+        few: '${count} операции не прошли в банке',
+        many: '${count} операций не прошли в банке',
+        other: '${count} операции не прошли в банке',
+      );
 }
 
 // Path: inbox
@@ -3018,6 +3027,16 @@ extension on TranslationsRu {
           'imports.mostUnreadText' =>
             'Похоже, банк поменял выписку: проверьте, где в ней дата и сумма и чем отделены копейки.',
           'imports.checkColumns' => 'Проверить колонки',
+          'imports.declinedRows' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} операция не прошла в банке',
+                  few: '${count} операции не прошли в банке',
+                  many: '${count} операций не прошли в банке',
+                  other: '${count} операции не прошли в банке',
+                ),
           'inbox.title' => 'Входящие',
           'inbox.back' => 'Назад',
           'inbox.waiting' =>

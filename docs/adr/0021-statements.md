@@ -197,7 +197,9 @@
     that does not read. A balance that will not be the bank's gets a mark
     and what the bank holds. When more rows did not read than did, as when
     a bank changes its statement, the sheet leads to the columns instead
-    of importing the rest.
+    of importing the rest. The columns step of the site keeps the rows
+    that the bank declined apart in the same way, under «N операций не
+    прошли в банке».
 
 ## Options considered
 

@@ -26,7 +26,8 @@ class ColumnsStep extends StatelessComponent {
     final layout = state.layout!;
     final statement = state.statement!;
     final options = layout.options;
-    final problems = statement.problems;
+    final unread = unreadRows(statement);
+    final declined = declinedRows(statement);
     return div(classes: 'import-stack', [
       section(classes: 'import-section', [
         SectionLabel(t.imports.columnsTitle),
@@ -76,21 +77,37 @@ class ColumnsStep extends StatelessComponent {
         ),
       ]),
       if (layout.missing.isNotEmpty) GlassNotice(text: t.imports.missing),
-      if (problems.isNotEmpty)
+      if (unread.isNotEmpty)
         GlassNotice(
           title: t.imports.problems(
-            n: problems.length,
-            count: formatCount(problems.length),
+            n: unread.length,
+            count: formatCount(unread.length),
           ),
-          text: [
-            for (final problem in problems.take(3))
+          text: _some([
+            for (final problem in unread)
               t.imports.problemLine(
                 line: problem.line,
                 fault: t.imports.rowFaults[problem.fault.name] ?? problem.text,
               ),
-            if (problems.length > 3)
-              t.imports.andMore(count: formatCount(problems.length - 3)),
-          ].join('; '),
+          ]),
+        ),
+      // What the bank declined never happened, so it is no row that did
+      // not read.
+      if (declined.isNotEmpty)
+        GlassNotice(
+          title: t.imports.declinedRows(
+            n: declined.length,
+            count: formatCount(declined.length),
+          ),
+          text: _some([
+            for (final problem in declined)
+              t.imports.problemLine(
+                line: problem.line,
+                fault: problem.description.isEmpty
+                    ? problem.text
+                    : problem.description,
+              ),
+          ]),
         ),
       if (statement.rows.isNotEmpty) _preview(statement),
       if (state.choices case final choices?
@@ -98,6 +115,13 @@ class ColumnsStep extends StatelessComponent {
         _categories(cubit, choices, statement),
     ]);
   }
+
+  /// The first three of [lines], and how many more there are.
+  static String _some(List<String> lines) => [
+    ...lines.take(3),
+    if (lines.length > 3)
+      t.imports.andMore(count: formatCount(lines.length - 3)),
+  ].join('; ');
 
   Component _column(
     ImportCubit cubit,
