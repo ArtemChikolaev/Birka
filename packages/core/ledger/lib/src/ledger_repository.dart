@@ -8,6 +8,7 @@ import 'package:ledger/src/ledger_exception.dart';
 import 'package:ledger/src/ledger_ids.dart';
 import 'package:ledger/src/ledger_import.dart';
 import 'package:ledger/src/ledger_totals.dart';
+import 'package:ledger/src/schedule.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
 import 'package:money/money.dart';
@@ -247,6 +248,12 @@ final class LedgerRepository {
       final transactions = _db.selectOnly(_db.transactions)
         ..addColumns([_db.transactions.id])
         ..where(_db.transactions.deletedAt.isNull());
+      final accounts = _db.selectOnly(_db.accounts)
+        ..addColumns([_db.accounts.id])
+        ..where(_db.accounts.deletedAt.isNull());
+      final categories = _db.selectOnly(_db.categories)
+        ..addColumns([_db.categories.id])
+        ..where(_db.categories.deletedAt.isNull());
       return LedgerCopy.of(
         madeAt: _timestamp(),
         importRows:
@@ -308,6 +315,24 @@ final class LedgerRepository {
                     (row) => OrderingTerm(expression: row.id),
                   ]))
                 .get(),
+        // Only payments whose accounts and category travel with them, so that
+        // the copy restores.
+        scheduleRows:
+            await (_db.select(_db.schedules)
+                  ..where(
+                    (row) =>
+                        row.deletedAt.isNull() &
+                        row.accountId.isInQuery(accounts) &
+                        (row.toAccountId.isNull() |
+                            row.toAccountId.isInQuery(accounts)) &
+                        (row.categoryId.isNull() |
+                            row.categoryId.isInQuery(categories)),
+                  )
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.nextOn),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
       );
     });
   }
@@ -327,6 +352,7 @@ final class LedgerRepository {
         (_db.transactions, copy.transactionRows.map((row) => row.id)),
         (_db.entries, copy.entryRows.map((row) => row.id)),
         (_db.allocations, copy.allocationRows.map((row) => row.id)),
+        (_db.schedules, copy.scheduleRows.map((row) => row.id)),
       ];
       await _db.batch((batch) {
         batch
@@ -336,6 +362,7 @@ final class LedgerRepository {
           ..insertAll(_db.transactions, copy.transactionRows)
           ..insertAll(_db.entries, copy.entryRows)
           ..insertAll(_db.allocations, copy.allocationRows)
+          ..insertAll(_db.schedules, copy.scheduleRows)
           ..insertAll(_db.changes, [
             for (final (table, ids) in written)
               for (final id in ids)
@@ -358,6 +385,7 @@ final class LedgerRepository {
   /// Leaves the ledger empty, with the rows that point to others going first.
   Future<void> _clear() async {
     for (final table in <TableInfo<Table, Object?>>[
+      _db.schedules,
       _db.allocations,
       _db.entries,
       _db.transactions,
@@ -640,10 +668,19 @@ final class LedgerRepository {
               ))
               .get();
       for (final account in accounts) {
-        final used = await _exists(
-          _db.entries,
-          (row) => row.accountId.equals(account.id) & row.deletedAt.isNull(),
-        );
+        final used =
+            await _exists(
+              _db.entries,
+              (row) =>
+                  row.accountId.equals(account.id) & row.deletedAt.isNull(),
+            ) ||
+            await _exists(
+              _db.schedules,
+              (row) =>
+                  (row.accountId.equals(account.id) |
+                      row.toAccountId.equals(account.id)) &
+                  row.deletedAt.isNull(),
+            );
         await (_db.update(
           _db.accounts,
         )..where((row) => row.id.equals(account.id))).write(
@@ -680,6 +717,11 @@ final class LedgerRepository {
               _db.categories,
               (row) =>
                   row.parentId.equals(category.id) & row.deletedAt.isNull(),
+            ) ||
+            await _exists(
+              _db.schedules,
+              (row) =>
+                  row.categoryId.equals(category.id) & row.deletedAt.isNull(),
             );
         await (_db.update(
           _db.categories,
@@ -740,6 +782,324 @@ final class LedgerRepository {
               ),
           ],
         );
+  }
+
+  /// Adds a regular payment that first comes on [next] and then again every
+  /// [every], on [day] of the month, which is the day of [next] unless said
+  /// otherwise (ADR 0023). An expense or an income without [categoryId] gives
+  /// transactions that wait in the inbox for one; a transfer goes to
+  /// [toAccountId] in the same currency.
+  Future<Schedule> addSchedule({
+    required TransactionKind kind,
+    required String name,
+    required String accountId,
+    required Money amount,
+    required ScheduleEvery every,
+    required CivilDate next,
+    int? day,
+    String? toAccountId,
+    String? categoryId,
+    ScheduleOnDay onDay = ScheduleOnDay.ask,
+    ScheduleReminder reminder = ScheduleReminder.onDay,
+  }) {
+    return _db.transaction(() async {
+      final schedule = Schedule(
+        id: _newId(),
+        kind: kind,
+        name: name,
+        accountId: accountId,
+        toAccountId: toAccountId,
+        categoryId: categoryId,
+        amount: amount,
+        every: every,
+        day: day ?? next.day,
+        next: next,
+        onDay: onDay,
+        reminder: reminder,
+      );
+      await _checkSchedule(schedule);
+      final at = _timestamp();
+      await _db
+          .into(_db.schedules)
+          .insert(
+            SchedulesCompanion.insert(
+              id: schedule.id,
+              createdAt: at,
+              updatedAt: at,
+              kind: kind.name,
+              name: name,
+              accountId: accountId,
+              toAccountId: Value(toAccountId),
+              categoryId: Value(categoryId),
+              amountMinor: amount.minorUnits,
+              every: every.name,
+              day: schedule.day,
+              nextOn: next.toString(),
+              onDay: onDay.name,
+              reminder: reminder.name,
+            ),
+          );
+      await _log(_db.schedules, schedule.id, 'insert', at);
+      return schedule;
+    });
+  }
+
+  /// Puts [schedule] in place of the regular payment with its id. The
+  /// transactions that the payment gave before stay as they are.
+  Future<void> updateSchedule(Schedule schedule) {
+    return _db.transaction(() async {
+      await _checkSchedule(schedule);
+      final at = _timestamp();
+      final updated =
+          await (_db.update(_db.schedules)..where(
+                (row) => row.id.equals(schedule.id) & row.deletedAt.isNull(),
+              ))
+              .write(
+                SchedulesCompanion(
+                  updatedAt: Value(at),
+                  kind: Value(schedule.kind.name),
+                  name: Value(schedule.name),
+                  accountId: Value(schedule.accountId),
+                  toAccountId: Value(schedule.toAccountId),
+                  categoryId: Value(schedule.categoryId),
+                  amountMinor: Value(schedule.amount.minorUnits),
+                  every: Value(schedule.every.name),
+                  day: Value(schedule.day),
+                  nextOn: Value(schedule.next.toString()),
+                  onDay: Value(schedule.onDay.name),
+                  reminder: Value(schedule.reminder.name),
+                ),
+              );
+      if (updated == 0) throw LedgerException('No schedule ${schedule.id}');
+      await _log(_db.schedules, schedule.id, 'update', at);
+    });
+  }
+
+  /// Deletes regular payment [id]. The transactions it gave stay.
+  Future<void> deleteSchedule(String id) {
+    return _db.transaction(() async {
+      final at = _timestamp();
+      final updated =
+          await (_db.update(
+            _db.schedules,
+          )..where((row) => row.id.equals(id) & row.deletedAt.isNull())).write(
+            SchedulesCompanion(updatedAt: Value(at), deletedAt: Value(at)),
+          );
+      if (updated == 0) throw LedgerException('No schedule $id');
+      await _log(_db.schedules, id, 'delete', at);
+    });
+  }
+
+  /// Regular payment [id], if it exists.
+  Future<Schedule?> schedule(String id) async {
+    final rows = await (_schedulesQuery()..where(_db.schedules.id.equals(id)))
+        .get();
+    return rows.map(_scheduleOf).singleOrNull;
+  }
+
+  /// The regular payments, the nearest first, again after every change.
+  Stream<List<Schedule>> watchSchedules() => _schedulesQuery().watch().map(
+    (rows) => rows.map(_scheduleOf).toList(),
+  );
+
+  /// Records the next time of regular payment [id] as a transaction of its
+  /// own and moves the payment on to its time after that, in one write, and
+  /// returns the id of the transaction. The transaction falls on that time
+  /// unless [on] says otherwise, and takes the amount of the payment unless
+  /// [amount] says otherwise, as for a bill that changes from month to month.
+  Future<String> postSchedule(String id, {Money? amount, CivilDate? on}) {
+    return _db.transaction(() async {
+      final schedule = await _scheduleOrThrow(id);
+      final transactionId = await record(
+        _draftOf(schedule, amount ?? schedule.amount, on ?? schedule.next),
+      );
+      await _moveSchedule(schedule, schedule.after(schedule.next));
+      return transactionId;
+    });
+  }
+
+  /// Moves regular payment [id] on to its time after the next one with no
+  /// transaction, as for a month that went without it.
+  Future<void> skipSchedule(String id) {
+    return _db.transaction(() async {
+      final schedule = await _scheduleOrThrow(id);
+      await _moveSchedule(schedule, schedule.after(schedule.next));
+    });
+  }
+
+  /// Posts every time that has come by [today] of the regular payments that
+  /// post themselves, the ones missed while the app was closed included, in
+  /// one write, and returns the ids of the transactions. The payments that
+  /// ask wait for the person.
+  Future<List<String>> postDueSchedules(CivilDate today) {
+    return _db.transaction(() async {
+      final posted = <String>[];
+      for (final row in await _schedulesQuery().get()) {
+        final schedule = _scheduleOf(row);
+        if (schedule.onDay != ScheduleOnDay.post) continue;
+        var next = schedule.next;
+        for (final time in schedule.timesUntil(today)) {
+          posted.add(await record(_draftOf(schedule, schedule.amount, time)));
+          next = schedule.after(time);
+        }
+        if (next != schedule.next) await _moveSchedule(schedule, next);
+      }
+      return posted;
+    });
+  }
+
+  /// The regular payments that exist, with their accounts for the currency,
+  /// the nearest first.
+  JoinedSelectStatement<HasResultSet, dynamic> _schedulesQuery() =>
+      _db.select(_db.schedules).join([
+          innerJoin(
+            _db.accounts,
+            _db.accounts.id.equalsExp(_db.schedules.accountId),
+          ),
+        ])
+        ..where(
+          _db.schedules.deletedAt.isNull() & _db.accounts.deletedAt.isNull(),
+        )
+        ..orderBy([
+          OrderingTerm(expression: _db.schedules.nextOn),
+          OrderingTerm(expression: _db.schedules.name),
+          OrderingTerm(expression: _db.schedules.id),
+        ]);
+
+  Future<Schedule> _scheduleOrThrow(String id) async =>
+      await schedule(id) ?? (throw LedgerException('No schedule $id'));
+
+  Future<void> _moveSchedule(Schedule schedule, CivilDate next) async {
+    final at = _timestamp();
+    await (_db.update(
+      _db.schedules,
+    )..where((row) => row.id.equals(schedule.id))).write(
+      SchedulesCompanion(
+        updatedAt: Value(at),
+        nextOn: Value(next.toString()),
+      ),
+    );
+    await _log(_db.schedules, schedule.id, 'update', at);
+  }
+
+  /// The transaction that regular payment [schedule] gives on [on].
+  TransactionDraft _draftOf(Schedule schedule, Money amount, CivilDate on) {
+    final allocations = [
+      Allocation(categoryId: schedule.categoryId, amount: amount),
+    ];
+    return switch (schedule.kind) {
+      TransactionKind.expense => TransactionDraft.expense(
+        accountId: schedule.accountId,
+        allocations: allocations,
+        occurredOn: on,
+        note: schedule.name,
+        source: TransactionSource.recurring,
+      ),
+      TransactionKind.income => TransactionDraft.income(
+        accountId: schedule.accountId,
+        allocations: allocations,
+        occurredOn: on,
+        note: schedule.name,
+        source: TransactionSource.recurring,
+      ),
+      TransactionKind.transfer => TransactionDraft.transfer(
+        fromAccountId: schedule.accountId,
+        sent: amount,
+        toAccountId: schedule.toAccountId!,
+        received: amount,
+        occurredOn: on,
+        note: schedule.name,
+        source: TransactionSource.recurring,
+      ),
+      TransactionKind.adjustment => throw const LedgerException(
+        'A regular payment cannot adjust a balance',
+      ),
+    };
+  }
+
+  /// Checks that [schedule] can give its transactions: its accounts and its
+  /// category exist and fit it.
+  Future<void> _checkSchedule(Schedule schedule) async {
+    if (schedule.name.trim().isEmpty) {
+      throw const LedgerException('A regular payment needs a name');
+    }
+    if (!schedule.amount.isPositive) {
+      throw const LedgerException('A regular payment moves a positive amount');
+    }
+    if (schedule.day < 1 || schedule.day > 31) {
+      throw LedgerException('No day ${schedule.day} in a month');
+    }
+    final account = await this.account(schedule.accountId);
+    if (account == null) {
+      throw LedgerException('No account ${schedule.accountId}');
+    }
+    if (account.currency != schedule.amount.currency) {
+      throw LedgerException(
+        'Account ${account.name} is in ${account.currency}, not in '
+        '${schedule.amount.currency}',
+      );
+    }
+    switch (schedule.kind) {
+      case TransactionKind.transfer:
+        final toAccountId = schedule.toAccountId;
+        if (toAccountId == null || toAccountId == schedule.accountId) {
+          throw const LedgerException(
+            'A transfer needs two different accounts',
+          );
+        }
+        if (schedule.categoryId != null) {
+          throw const LedgerException('A transfer has no category');
+        }
+        final to = await this.account(toAccountId);
+        if (to == null) throw LedgerException('No account $toAccountId');
+        if (to.currency != account.currency) {
+          throw LedgerException(
+            'A regular transfer stays in ${account.currency}, not in '
+            '${to.currency}',
+          );
+        }
+      case TransactionKind.expense || TransactionKind.income:
+        if (schedule.toAccountId != null) {
+          throw const LedgerException(
+            'Only a transfer goes to another account',
+          );
+        }
+        final categoryId = schedule.categoryId;
+        if (categoryId == null) return;
+        final category = await this.category(categoryId);
+        if (category == null) throw LedgerException('No category $categoryId');
+        if (category.kind.name != schedule.kind.name) {
+          throw LedgerException(
+            'Category ${category.name} is not for ${schedule.kind.name}',
+          );
+        }
+      case TransactionKind.adjustment:
+        throw const LedgerException(
+          'A regular payment cannot adjust a balance',
+        );
+    }
+  }
+
+  Schedule _scheduleOf(TypedResult row) {
+    final schedule = row.readTable(_db.schedules);
+    final account = row.readTable(_db.accounts);
+    return Schedule(
+      id: schedule.id,
+      kind: TransactionKind.values.byName(schedule.kind),
+      name: schedule.name,
+      accountId: schedule.accountId,
+      toAccountId: schedule.toAccountId,
+      categoryId: schedule.categoryId,
+      amount: Money(
+        schedule.amountMinor,
+        _currency(account.currency, account.decimalDigits),
+      ),
+      every: ScheduleEvery.values.byName(schedule.every),
+      day: schedule.day,
+      next: CivilDate.parse(schedule.nextOn),
+      onDay: ScheduleOnDay.values.byName(schedule.onDay),
+      reminder: ScheduleReminder.values.byName(schedule.reminder),
+    );
   }
 
   /// Whether [table] has a row that [where] picks.

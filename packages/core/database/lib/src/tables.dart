@@ -169,6 +169,47 @@ class Imports extends Table with SyncedRow {
   TextColumn get lastDay => text()();
 }
 
+/// A payment that comes again, such as the rent or a salary: a rule that
+/// gives a transaction each time it comes (ADR 0023).
+@DataClassName('ScheduleRow')
+@TableIndex(name: 'schedules_next_on', columns: {#nextOn})
+class Schedules extends Table with SyncedRow {
+  /// `expense`, `income` or `transfer` of `TransactionKind` in the ledger.
+  TextColumn get kind => text()();
+
+  /// What the person calls it, which becomes the note of each transaction.
+  TextColumn get name => text()();
+
+  /// The account the money leaves, or the account an income reaches.
+  TextColumn get accountId => text().references(Accounts, #id)();
+
+  /// The account a transfer reaches.
+  TextColumn get toAccountId => text().nullable().references(Accounts, #id)();
+
+  /// The category of an expense or an income, or `null` to let each of its
+  /// transactions wait in the inbox for one.
+  TextColumn get categoryId => text().nullable().references(Categories, #id)();
+
+  /// The positive amount in minor units of the currency of [accountId].
+  IntColumn get amountMinor => integer()();
+
+  /// One of the names of `ScheduleEvery` in the ledger.
+  TextColumn get every => text()();
+
+  /// The day of the month it falls on, every month or every year; a shorter
+  /// month takes its last day.
+  IntColumn get day => integer()();
+
+  /// The civil date of its next time as `YYYY-MM-DD`.
+  TextColumn get nextOn => text()();
+
+  /// One of the names of `ScheduleOnDay` in the ledger.
+  TextColumn get onDay => text()();
+
+  /// One of the names of `ScheduleReminder` in the ledger.
+  TextColumn get reminder => text()();
+}
+
 /// What one unit of a currency cost in rubles on a day (ADR 0012). Any device
 /// can fetch these again, so sync does not carry them.
 @DataClassName('ExchangeRateRow')

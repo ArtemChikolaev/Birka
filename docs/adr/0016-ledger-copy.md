@@ -21,7 +21,9 @@
    `packages/core/ledger` writes and reads it, the same code on both hosts.
    Version 2 added the imports, the import that brought an account, a
    category or a transaction, and allocations without a category
-   ([ADR 0021](0021-statements.md)); a file of version 1 still reads.
+   ([ADR 0021](0021-statements.md)), and version 3 the regular payments
+   ([ADR 0023](0023-regular-payments.md)); files of the versions before
+   still read.
 2. Tombstones stay out of a copy: what a person deleted does not travel in a
    file that they may send somewhere. Exchange rates stay out because any
    device fetches them again, and settings because they belong to a device

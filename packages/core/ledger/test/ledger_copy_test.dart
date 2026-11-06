@@ -103,6 +103,43 @@ Map<String, Object?> sample() {
   };
 }
 
+/// [sample] as version 3, with a second account in rubles and regular
+/// payments of every kind: an expense, an income, a transfer and an expense
+/// that waits for a category.
+Map<String, Object?> withSchedules() {
+  final json = sample()..['version'] = 3;
+  final accounts = rowsOf(json, 'accounts');
+  accounts.add({...accounts.first, 'id': 'cash', 'name': 'Cash'});
+  Map<String, Object?> schedule(
+    String id,
+    String kind, {
+    String? toAccountId,
+    String? categoryId,
+  }) => {
+    'id': id,
+    'createdAt': '2026-10-01T09:00:00.000Z',
+    'updatedAt': '2026-10-02T09:00:00.000Z',
+    'kind': kind,
+    'name': 'Payment $id',
+    'accountId': 'card',
+    'toAccountId': toAccountId,
+    'categoryId': categoryId,
+    'amountMinor': 4500000,
+    'every': 'month',
+    'day': 25,
+    'nextOn': '2026-11-25',
+    'onDay': 'ask',
+    'reminder': 'onDay',
+  };
+  json['schedules'] = [
+    schedule('rent', 'expense', categoryId: 'food'),
+    schedule('pay', 'income', categoryId: 'salary'),
+    schedule('save', 'transfer', toAccountId: 'cash'),
+    schedule('tv', 'expense'),
+  ];
+  return json;
+}
+
 /// The rows under [key] in [json], to break one of them.
 List<Map<String, Object?>> rowsOf(Map<String, Object?> json, String key) =>
     (json[key]! as List).cast();
@@ -332,6 +369,95 @@ void main() {
       expectDamaged(
         (json) => legsOf(json, 'fix', 'entries').first['amountMinor'] = 0,
       );
+    });
+  });
+
+  group('regular payments', () {
+    test('travel since version 3, with every field', () {
+      final copy = LedgerCopy.parse(jsonEncode(withSchedules()));
+      final again = LedgerCopy.parse(copy.encode());
+
+      expect(copy.scheduleRows.map((row) => row.id), [
+        'rent',
+        'pay',
+        'save',
+        'tv',
+      ]);
+      final save = copy.scheduleRows[2];
+      expect(save.kind, 'transfer');
+      expect(save.toAccountId, 'cash');
+      expect(save.categoryId, isNull);
+      expect(save.amountMinor, 4500000);
+      expect(save.every, 'month');
+      expect(save.day, 25);
+      expect(save.nextOn, '2026-11-25');
+      expect(save.onDay, 'ask');
+      expect(save.reminder, 'onDay');
+      expect(save.createdAt, DateTime.utc(2026, 10, 1, 9));
+      expect(again.encode(), copy.encode());
+      expect(copy.encode(), contains('"schedules"'));
+    });
+
+    test('are none in a copy of an older version', () {
+      for (final version in [1, 2]) {
+        final json = sample()..['version'] = version;
+
+        expect(LedgerCopy.parse(jsonEncode(json)).scheduleRows, isEmpty);
+      }
+    });
+
+    group('refuse a copy where one', () {
+      void expectDamaged(
+        String id,
+        void Function(Map<String, Object?> schedule) damage,
+      ) {
+        final json = withSchedules();
+        damage(rowsOf(json, 'schedules').singleWhere((it) => it['id'] == id));
+        expect(
+          () => LedgerCopy.parse(jsonEncode(json)),
+          throwsProblem(LedgerCopyProblem.damaged),
+        );
+      }
+
+      test('has no name, no account or no positive amount', () {
+        expectDamaged('rent', (it) => it['name'] = ' ');
+        expectDamaged('rent', (it) => it['accountId'] = 'none');
+        expectDamaged('rent', (it) => it['amountMinor'] = 0);
+        expectDamaged('rent', (it) => it['amountMinor'] = -100);
+      });
+
+      test('falls on no day', () {
+        expectDamaged('rent', (it) => it['day'] = 0);
+        expectDamaged('rent', (it) => it['day'] = 32);
+        expectDamaged('rent', (it) => it['nextOn'] = '2026-11-31');
+      });
+
+      test(
+        'has a kind, a period or a choice that the ledger does not know',
+        () {
+          expectDamaged('rent', (it) => it['kind'] = 'adjustment');
+          expectDamaged('rent', (it) => it['every'] = 'day');
+          expectDamaged('rent', (it) => it['onDay'] = 'never');
+          expectDamaged('rent', (it) => it['reminder'] = 'hourly');
+        },
+      );
+
+      test('is a transfer that does not go to another account in rubles', () {
+        expectDamaged('save', (it) => it['toAccountId'] = null);
+        expectDamaged('save', (it) => it['toAccountId'] = 'card');
+        expectDamaged('save', (it) => it['toAccountId'] = 'wallet');
+        expectDamaged('save', (it) => it['categoryId'] = 'food');
+      });
+
+      test('goes to an account or a category that its kind does not have', () {
+        expectDamaged('rent', (it) => it['toAccountId'] = 'cash');
+        expectDamaged('rent', (it) => it['categoryId'] = 'salary');
+        expectDamaged('pay', (it) => it['categoryId'] = 'none');
+      });
+
+      test('comes twice', () {
+        expectDamaged('tv', (it) => it['id'] = 'rent');
+      });
     });
   });
 }

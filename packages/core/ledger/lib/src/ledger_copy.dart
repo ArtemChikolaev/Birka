@@ -4,6 +4,7 @@ import 'package:database/database.dart';
 import 'package:ledger/src/account.dart';
 import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
+import 'package:ledger/src/schedule.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
 import 'package:meta/meta.dart';
@@ -74,8 +75,9 @@ final class LedgerCopyException implements Exception {
 /// Everything the ledger holds, in the form of a file (ADR 0016).
 ///
 /// It keeps every import, account, category and transaction with its entries
-/// and allocations, their ids and stamps, so that a restored ledger is the one
-/// that was copied. Tombstones stay out: what was deleted does not travel.
+/// and allocations, and every regular payment, with their ids and stamps, so
+/// that a restored ledger is the one that was copied. Tombstones stay out:
+/// what was deleted does not travel.
 final class LedgerCopy {
   /// Creates a copy of rows that the ledger has read.
   @internal
@@ -87,6 +89,7 @@ final class LedgerCopy {
     required this.transactionRows,
     required this.entryRows,
     required this.allocationRows,
+    required this.scheduleRows,
   }) : madeAt = madeAt.toUtc();
 
   /// Reads a copy from the text of its file.
@@ -120,8 +123,8 @@ final class LedgerCopy {
 
   /// The version of the format that this code writes. It reads every version
   /// up to this one: version 2 added imports and operations that wait for a
-  /// category (ADR 0021).
-  static const version = 2;
+  /// category (ADR 0021), and version 3 regular payments (ADR 0023).
+  static const version = 3;
 
   static const _format = 'birka-copy';
 
@@ -151,6 +154,10 @@ final class LedgerCopy {
   /// The allocations, for the ledger to write back.
   @internal
   final List<AllocationRow> allocationRows;
+
+  /// The regular payments, for the ledger to write back.
+  @internal
+  final List<ScheduleRow> scheduleRows;
 
   /// How much the copy holds.
   LedgerCounts get counts => LedgerCounts(
@@ -252,6 +259,23 @@ final class LedgerCopy {
             ],
           },
       ],
+      'schedules': [
+        for (final row in scheduleRows)
+          {
+            ..._stamps(row.id, row.createdAt, row.updatedAt),
+            'kind': row.kind,
+            'name': row.name,
+            'accountId': row.accountId,
+            'toAccountId': row.toAccountId,
+            'categoryId': row.categoryId,
+            'amountMinor': row.amountMinor,
+            'every': row.every,
+            'day': row.day,
+            'nextOn': row.nextOn,
+            'onDay': row.onDay,
+            'reminder': row.reminder,
+          },
+      ],
     });
   }
 
@@ -264,8 +288,8 @@ final class LedgerCopy {
   static String _text(DateTime moment) => moment.toUtc().toIso8601String();
 }
 
-/// Reads the rows of versions 1 and 2, and checks them as the ledger checks a
-/// write. Version 1 has no imports.
+/// Reads the rows of versions 1 to 3, and checks them as the ledger checks a
+/// write. Version 1 has no imports, and versions 1 and 2 no regular payments.
 LedgerCopy _read(Map<String, Object?> json) {
   final imports = <String, ImportRow>{};
   for (final item
@@ -327,6 +351,13 @@ LedgerCopy _read(Map<String, Object?> json) {
       allocations[allocation.id] = allocation;
     }
   }
+  final schedules = <String, ScheduleRow>{};
+  for (final item
+      in json['schedules'] == null ? const [] : _list(json, 'schedules')) {
+    final row = _schedule(_object(item), accounts, categories);
+    if (schedules.containsKey(row.id)) _damaged('Schedule ${row.id} twice');
+    schedules[row.id] = row;
+  }
   return LedgerCopy.of(
     madeAt: _moment(json, 'madeAt'),
     importRows: [...imports.values],
@@ -338,6 +369,7 @@ LedgerCopy _read(Map<String, Object?> json) {
     transactionRows: [...transactions.values],
     entryRows: [...entries.values],
     allocationRows: [...allocations.values],
+    scheduleRows: [...schedules.values],
   );
 }
 
@@ -549,6 +581,69 @@ void _checkLegs(
         ),
       );
   }
+}
+
+/// A regular payment, checked as the ledger checks one that it adds: its
+/// accounts and its category exist and fit its kind (ADR 0023).
+ScheduleRow _schedule(
+  Map<String, Object?> json,
+  Map<String, AccountRow> accounts,
+  Map<String, CategoryRow> categories,
+) {
+  final id = _id(json);
+  final kind = _name(json, 'kind', TransactionKind.values);
+  final name = _string(json, 'name');
+  if (name.trim().isEmpty) _damaged('Schedule $id has no name');
+  final accountId = _string(json, 'accountId');
+  final toAccountId = _field<String?>(json, 'toAccountId');
+  final categoryId = _field<String?>(json, 'categoryId');
+  final account =
+      accounts[accountId] ?? _damaged('Schedule $id has no account $accountId');
+  final amountMinor = _int(json, 'amountMinor');
+  final amount = _money(
+    amountMinor,
+    account.currency,
+    account.decimalDigits,
+    'Schedule $id',
+  );
+  if (!amount.isPositive) _damaged('Schedule $id moves no positive amount');
+  final day = _int(json, 'day');
+  if (day < 1 || day > 31) _damaged('Schedule $id falls on no day $day');
+  final nextOn = _string(json, 'nextOn');
+  _obeying('$nextOn is not a date', () => CivilDate.parse(nextOn));
+  switch (TransactionKind.values.byName(kind)) {
+    case TransactionKind.transfer:
+      final to = accounts[toAccountId];
+      if (to == null || toAccountId == accountId || categoryId != null) {
+        _damaged('Schedule $id does not move money between two accounts');
+      }
+      if (to.currency != account.currency) {
+        _damaged('Schedule $id moves money between currencies');
+      }
+    case TransactionKind.expense || TransactionKind.income:
+      if (toAccountId != null) _damaged('Schedule $id goes to an account');
+      if (categoryId != null && categories[categoryId]?.kind != kind) {
+        _damaged('Schedule $id goes to no $kind category');
+      }
+    case TransactionKind.adjustment:
+      _damaged('Schedule $id adjusts a balance');
+  }
+  return ScheduleRow(
+    id: id,
+    createdAt: _moment(json, 'createdAt'),
+    updatedAt: _moment(json, 'updatedAt'),
+    kind: kind,
+    name: name,
+    accountId: accountId,
+    toAccountId: toAccountId,
+    categoryId: categoryId,
+    amountMinor: amountMinor,
+    every: _name(json, 'every', ScheduleEvery.values),
+    day: day,
+    nextOn: nextOn,
+    onDay: _name(json, 'onDay', ScheduleOnDay.values),
+    reminder: _name(json, 'reminder', ScheduleReminder.values),
+  );
 }
 
 /// Money as the ledger would read it, with the currency of an account.
