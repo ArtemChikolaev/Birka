@@ -65,6 +65,10 @@ dependencies:
     path: ../../packages/features/reports/common
   reports_flutter:
     path: ../../packages/features/reports/flutter
+  schedules_common:
+    path: ../../packages/features/schedules/common
+  schedules_flutter:
+    path: ../../packages/features/schedules/flutter
   settings_common:
     path: ../../packages/features/settings/common
   settings_flutter:

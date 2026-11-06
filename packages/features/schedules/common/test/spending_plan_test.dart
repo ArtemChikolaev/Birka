@@ -1,0 +1,249 @@
+import 'package:ledger/ledger.dart';
+import 'package:money/money.dart';
+import 'package:schedules_common/schedules_common.dart';
+import 'package:test/test.dart';
+
+Money rub(int rubles) => Money(rubles * 100, Currency.rub);
+
+AccountBalance account(
+  String id,
+  int rubles, {
+  AccountType type = AccountType.debit,
+}) => AccountBalance(
+  Account(
+    id: id,
+    name: id,
+    type: type,
+    openingBalance: rub(rubles),
+    includeInTotals: true,
+    archived: false,
+    sortOrder: 0,
+  ),
+  rub(rubles),
+);
+
+Schedule schedule(
+  String id,
+  int rubles,
+  CivilDate next, {
+  TransactionKind kind = TransactionKind.expense,
+  String accountId = 'card',
+  String? toAccountId,
+  ScheduleEvery every = ScheduleEvery.month,
+  ScheduleOnDay onDay = ScheduleOnDay.ask,
+}) => Schedule(
+  id: id,
+  kind: kind,
+  name: id,
+  accountId: accountId,
+  toAccountId: toAccountId,
+  amount: rub(rubles),
+  every: every,
+  day: next.day,
+  next: next,
+  onDay: onDay,
+  reminder: ScheduleReminder.onDay,
+);
+
+Transaction spending(
+  int rubles, {
+  String accountId = 'card',
+  TransactionSource source = TransactionSource.manual,
+}) => Transaction(
+  id: 'spent-$rubles',
+  kind: TransactionKind.expense,
+  occurredOn: CivilDate(2026, 11, 18),
+  note: '',
+  status: TransactionStatus.cleared,
+  source: source,
+  entries: [Entry(accountId: accountId, amount: -rub(rubles))],
+  allocations: [Allocation(categoryId: null, amount: rub(rubles))],
+);
+
+void main() {
+  // The story of the boards: Wednesday, November 18, 2026, the salary on the
+  // 5th, the card and the cash counted, 10 000 ₽ aside.
+  final today = CivilDate(2026, 11, 18);
+  final schedules = [
+    schedule('rent', 45000, CivilDate(2026, 11, 25)),
+    schedule('internet', 650, CivilDate(2026, 11, 28)),
+    schedule(
+      'netflix',
+      799,
+      CivilDate(2026, 12, 1),
+      onDay: ScheduleOnDay.post,
+    ),
+    schedule('gym', 3500, CivilDate(2026, 12, 3)),
+    schedule(
+      'salary',
+      120000,
+      CivilDate(2026, 12, 5),
+      kind: TransactionKind.income,
+    ),
+    schedule(
+      'insurance',
+      24000,
+      CivilDate(2027, 3, 12),
+      every: ScheduleEvery.year,
+    ),
+  ];
+
+  SpendingPlan? plan({
+    int spent = 620,
+    SpendUntil until = SpendUntil.payday,
+    List<Schedule>? payments,
+    List<Transaction>? todays,
+    int aside = 10000,
+  }) => SpendingPlan.of(
+    today: today,
+    until: until,
+    currency: Currency.rub,
+    schedules: payments ?? schedules,
+    // What the accounts hold now, after what was spent today.
+    counted: [
+      account('card', 86400 - spent),
+      account('cash', 3200, type: AccountType.cash),
+    ],
+    todays: todays ?? [spending(spent)],
+    aside: rub(aside),
+  );
+
+  group('until the salary', () {
+    test('splits what is left after the payments between the days', () {
+      final it = plan()!;
+
+      expect(it.payday, CivilDate(2026, 12, 5));
+      expect(it.end, CivilDate(2026, 12, 4));
+      expect(it.days, 17);
+      expect(it.morning, rub(89600));
+      expect(it.payments.map((it) => it.schedule.id), [
+        'rent',
+        'internet',
+        'netflix',
+        'gym',
+      ]);
+      expect(it.paid, rub(49949));
+      expect(it.free, rub(29651));
+      expect(it.perDay, rub(1744));
+      expect(it.spentToday, rub(620));
+      expect(it.leftToday, rub(1124));
+      expect(it.over, isFalse);
+    });
+
+    test('says what tomorrow allows once today took more than its share', () {
+      final it = plan(spent: 2100)!;
+
+      expect(it.perDay, rub(1744));
+      expect(it.leftToday, rub(-356));
+      expect(it.over, isTrue);
+      expect(it.tomorrow, rub(1721));
+    });
+
+    test('has none without a regular income to a counted account', () {
+      final noSalary = [
+        for (final it in schedules)
+          if (it.kind != TransactionKind.income) it,
+      ];
+
+      expect(plan(payments: noSalary), isNull);
+      expect(
+        plan(
+          payments: [
+            ...noSalary,
+            schedule(
+              'salary',
+              120000,
+              CivilDate(2026, 12, 5),
+              kind: TransactionKind.income,
+              accountId: 'savings',
+            ),
+          ],
+        ),
+        isNull,
+      );
+    });
+
+    test('takes the salary of today as the one of the next month', () {
+      final it = plan(
+        payments: [
+          schedule(
+            'salary',
+            120000,
+            CivilDate(2026, 11, 18),
+            kind: TransactionKind.income,
+          ),
+        ],
+      )!;
+
+      expect(it.payday, CivilDate(2026, 12, 18));
+      expect(it.days, 30);
+    });
+  });
+
+  test('counts until the end of the month when asked', () {
+    final it = plan(until: SpendUntil.monthEnd)!;
+
+    expect(it.end, CivilDate(2026, 11, 30));
+    expect(it.days, 13);
+    expect(it.paid, rub(45650));
+    expect(it.perDay, rub(2611));
+  });
+
+  test('counts a payment that waits for the person', () {
+    final it = plan(
+      payments: [
+        ...schedules.where((it) => it.id != 'rent'),
+        schedule('rent', 45000, CivilDate(2026, 11, 15)),
+      ],
+    )!;
+
+    expect(it.payments.first.on, CivilDate(2026, 11, 15));
+    expect(it.paid, rub(49949));
+  });
+
+  test('takes a transfer that leaves the counted accounts, not one between '
+      'them', () {
+    final it = plan(
+      payments: [
+        ...schedules,
+        schedule(
+          'save',
+          5000,
+          CivilDate(2026, 11, 20),
+          kind: TransactionKind.transfer,
+          toAccountId: 'savings',
+        ),
+        schedule(
+          'cash',
+          2000,
+          CivilDate(2026, 11, 21),
+          kind: TransactionKind.transfer,
+          toAccountId: 'cash',
+        ),
+      ],
+    )!;
+
+    expect(it.paid, rub(49949 + 5000));
+  });
+
+  test('leaves the posts of regular payments and other days out of today', () {
+    final it = plan(
+      todays: [
+        spending(620),
+        spending(45000, source: TransactionSource.recurring),
+        spending(300, accountId: 'savings'),
+      ],
+    )!;
+
+    expect(it.spentToday, rub(620));
+  });
+
+  test('gives no money to the days when the payments take it all', () {
+    final it = plan(aside: 50000)!;
+
+    expect(it.free.isNegative, isTrue);
+    expect(it.perDay, rub(0));
+    expect(it.leftToday, rub(-620));
+    expect(it.tomorrow, rub(0));
+  });
+}

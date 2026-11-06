@@ -525,58 +525,13 @@ class _Details extends StatelessWidget {
 
   Future<void> _editNote(BuildContext context) async {
     final cubit = context.read<QuickAddCubit>();
-    final note = await showModalBottomSheet<String>(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      backgroundColor: BirkaColors.of(context).background,
-      builder: (context) => _NoteSheet(initial: state.note),
+    final note = await showFieldSheet(
+      context,
+      label: t.transactions.note,
+      done: t.transactions.done,
+      initial: state.note,
     );
     if (note != null) cubit.noteChanged(note);
-  }
-}
-
-class _NoteSheet extends StatefulWidget {
-  const _NoteSheet({required this.initial});
-
-  final String initial;
-
-  @override
-  State<_NoteSheet> createState() => _NoteSheetState();
-}
-
-class _NoteSheetState extends State<_NoteSheet> {
-  late final _note = TextEditingController(text: widget.initial);
-
-  @override
-  void dispose() {
-    _note.dispose();
-    super.dispose();
-  }
-
-  void _done() => Navigator.of(context).pop(_note.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.viewInsetsOf(context).bottom,
-      ),
-      child: ChoiceSheet(
-        children: [
-          BirkaTextField(
-            label: t.transactions.note,
-            controller: _note,
-            autofocus: true,
-            textCapitalization: TextCapitalization.sentences,
-            textInputAction: TextInputAction.done,
-            onSubmitted: (_) => _done(),
-          ),
-          const SizedBox(height: BirkaTokens.spaceMd),
-          BirkaButton(label: t.transactions.done, onPressed: _done),
-        ],
-      ),
-    );
   }
 }
 

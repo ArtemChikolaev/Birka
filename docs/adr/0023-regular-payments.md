@@ -58,9 +58,45 @@
    1 and 2 without them. It checks a payment as the ledger checks one that it
    adds, and holds only the payments whose accounts and category travel with
    them, so that every copy restores.
-9. The screens, the reminders, how much can be spent today, the payday and
-   the first day of a month come with their own changes and add their points
-   here.
+9. The phone shows them as the boards «Будущие деньги на телефоне» of the
+   canvas draw them, in `packages/features/schedules`: `schedules_common`
+   holds the rules of the screens and `schedules_flutter` the screens.
+   - The overview gets a card above the inbox strip: what today may still
+     take, a bar of what it took, the three nearest payments and the way to
+     all of them. Without a salary to count until it asks for the payday,
+     and without accounts it stays away.
+   - «Регулярные платежи» lists the payments that wait for the person with
+     «Провести» and «Пропустить», the next 30 days and every payment.
+   - The form of a payment is a sheet, as the other forms are
+     ([ADR 0017](0017-motion.md)). Its name and amount come from a sheet with
+     one field, which the note of an operation now shares.
+   - «Деньги до зарплаты» shows the sum in the open: what the counted
+     accounts held this morning, the payments until the end, what stays
+     aside, and the days.
+10. How much a day may take (`SpendingPlan`): the money of the counted
+    accounts as it was in the morning, less the payments that leave them
+    until the end and what stays aside, split evenly between the days left,
+    today included, in whole units of the currency.
+    - The end is the day before the salary, the nearest time after today of a
+      regular income to a counted account, or the last day of the month.
+    - The payments are the regular expenses from the counted accounts and
+      the regular transfers from them to others, the ones that wait
+      included. Regular incomes before the salary do not count, so that the
+      plan never promises money that may not come.
+    - What the person spent today on the counted accounts comes out of
+      today's share only; the transactions of regular payments are part of
+      the payments instead. Once today took more than its share, the card
+      says what each day after it may take.
+11. The device keeps until when it counts, which accounts and what stays
+    aside, as it keeps its other settings ([ADR 0011](0011-settings.md)). It
+    counts the debit cards and the cash in the base currency until told
+    otherwise; an account in another currency cannot be counted yet.
+12. The app posts the payments that post themselves when it starts and
+    whenever it comes back to the screen.
+13. Reminders need a plugin for notifications, the first day of a month is a
+    setting of its own, and the site gets its boards first; they come with
+    their own changes and add their points here. So does an import that
+    marks a waiting payment done.
 
 ## Consequences
 

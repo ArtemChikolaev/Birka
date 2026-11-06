@@ -1,0 +1,143 @@
+title: Regular payments
+back: Back
+add: New payment
+close: Close
+waitingTitle: Waits for you
+post: Post
+skip: Skip
+waitingNote: When it comes in a bank statement, Birka will not count it twice.
+waitingDay: "$name · $day"
+ahead: The next 30 days
+aheadTotal: until $date $amount
+leftAfterPayday: By the salary on $date your accounts will hold ≈ $amount, before everyday spending.
+leftAfterMonth: By the end of the month your accounts will hold ≈ $amount, before everyday spending.
+section: "$title · $count"
+all: All regular payments
+emptyTitle: No regular payments yet
+emptyText: "Rent, subscriptions, salary: add them once, and Birka shows the month ahead and how much you can spend a day."
+emptyAdd: Add a payment
+everyMonth: every month on day $day
+everyWeek: every week, $weekday
+everyYear: once a year, $date
+asks: ask
+posts: posts itself
+today: today
+tomorrow: tomorrow
+posted: Posted «$name» · $amount
+skippedAsk: Skipped «$name» · we will ask on $date
+skippedPost: Skipped «$name» · next on $date
+deleted: Deleted «$name»
+on(map):
+  mon: on Mondays
+  tue: on Tuesdays
+  wed: on Wednesdays
+  thu: on Thursdays
+  fri: on Fridays
+  sat: on Saturdays
+  sun: on Sundays
+weekday(map):
+  mon: Mon
+  tue: Tue
+  wed: Wed
+  thu: Thu
+  fri: Fri
+  sat: Sat
+  sun: Sun
+newTitle: New payment
+kinds(map):
+  expense: Expense
+  income: Income
+  transfer: Transfer
+kindLabel: What kind of payment
+amount: Amount
+name: Name
+namePlaceholder: Rent, for example
+category: Category
+noCategory: No category
+categoryLater: to sort in the inbox
+account: Account
+toAccount: To
+fromAccount: From
+incomeAccount: To the account
+pickAccount: Pick an account
+every: Repeat every
+everyOptions(map):
+  month: Month
+  week: Week
+  year: Year
+dayOfMonth: Day of the month
+dayOfWeek: Day of the week
+dayOfYear: Day of the year
+dayNumber: day $day
+next: Next time
+onDayTitle: On its day
+onDay(map):
+  ask: Ask me
+  post: Post itself
+askNote: "Good for an amount that changes, like utility bills: on its day the payment waits for your «Post»."
+postNote: For subscriptions of one amount. When it comes in a bank statement, there will be no copy.
+save: Save
+saveNote: Shows up in «The next payments» and in «You can spend today»
+changeNote: "Changes from the next time: $date"
+done: Done
+delete: Delete the payment
+deleteNote: Past operations stay
+deleteTitle: Delete «$name»?
+canSpend: You can spend today
+overToday: Today is over the daily amount
+ofPerDay: of $amount a day
+spentUntilPayday: Spent $amount · $days to the salary
+spentUntilMonth: Spent $amount · $days to the end of the month
+spentOver: Spent $amount · tomorrow you can spend $tomorrow a day
+short: $amount short until $date
+upcoming: The next payments
+noPaydayLabel: Until the salary
+noPaydayTitle: How much can you spend a day?
+noPaydayText: Tell Birka your payday. It takes the regular payments until then away and splits the rest between the days.
+noPaydayAction: Set the payday
+days(n):
+  one: $n day
+  other: $n days
+paydayTitle: Money until the salary
+perDay: $amount a day
+notEnough: $amount short
+untilPayday: until the salary on $date · $days
+untilDate: until $date · $days
+morning: In the accounts this morning
+paymentsUntilPayday(n):
+  one: $n payment until the salary
+  other: $n payments until the salary
+paymentsUntilMonth(n):
+  one: $n payment until the end of the month
+  other: $n payments until the end of the month
+aside: Keep aside
+leftFor(n):
+  one: Left for $n day
+  other: Left for $n days
+countUntil: Count until
+until(map):
+  payday: The payday
+  monthEnd: The end of the month
+payday: Payday
+paydayFrom: from the payment «$name»
+paydayNone: add a regular income
+paydayDay: day $day
+accountsTitle: Which accounts to count
+count: Count «$name»
+otherCurrency: another currency, not counted yet
+asideRow: Keep aside until the salary
+asideNote: not to spend, even if «you can»
+salaryName: Salary
+monthsShort:
+  - Jan
+  - Feb
+  - Mar
+  - Apr
+  - May
+  - Jun
+  - Jul
+  - Aug
+  - Sep
+  - Oct
+  - Nov
+  - Dec
