@@ -377,6 +377,12 @@ class _ImportSheetState extends State<ImportSheet> {
     final unfit = plan.problems.length;
     final left = unread + declined + unfit;
     const amber = Color(BirkaTokens.colorPaletteAmber);
+    // Outside the list below: the analyzer of Dart 3.10 fails on a
+    // null-aware element in a list that also uses the context.
+    String balanceOf(SourceAccount source) => [
+      t.imports.summaryBalance,
+      if (several) ?_nameOf(choices[source.key]),
+    ].join(' · ');
     return [
       _fileCard(context, state),
       const SizedBox(height: BirkaTokens.spaceSm),
@@ -452,10 +458,7 @@ class _ImportSheetState extends State<ImportSheet> {
       for (final source in statement.accounts)
         if (plan.balances[source.key] case final after?) ...[
           _Line(
-            label: [
-              t.imports.summaryBalance,
-              if (several) ?_nameOf(choices[source.key]),
-            ].join(' · '),
+            label: balanceOf(source),
             value: AmountText(
               formatMoney(after),
               style: styles.bodyStrong.copyWith(color: colors.text),
