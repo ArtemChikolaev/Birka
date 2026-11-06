@@ -357,3 +357,43 @@ newCategoryNote: появится при импорте
 newCategoryMark: новая категория
 categoriesDone: "Готово · $count во «Входящих»"
 categoriesKept: "Выбор запомним для выписок $source"
+rowsLeft(n):
+  one: $count строка не попадёт в учёт
+  few: $count строки не попадут в учёт
+  many: $count строк не попадут в учёт
+  other: $count строки не попадут в учёт
+unreadCount(n):
+  one: $count не прочиталась
+  few: $count не прочитались
+  many: $count не прочитались
+  other: $count не прочитались
+declinedCount(n):
+  one: $count не прошла в банке
+  few: $count не прошли в банке
+  many: $count не прошли в банке
+  other: $count не прошли в банке
+unfitCount(n):
+  one: $count не подходит счёту
+  few: $count не подходят счёту
+  many: $count не подходят счёту
+  other: $count не подходят счёту
+restFine(n):
+  one: ещё $count в порядке
+  few: остальные $count в порядке
+  many: остальные $count в порядке
+  other: остальные $count в порядке
+unreadTitle: Не прочитали
+declinedTitle: Не прошли в банке
+unfitTitle: Не подходят счёту
+rowLine: "Строка $line · $what"
+leftNote: "Непрочитанные запишите вручную или скачайте выписку заново: Birka добавит только то, чего ещё нет в учёте."
+understood: Понятно
+bankHas: "В банке $amount"
+bankHasMissing: "В банке $amount: похоже, не хватает непрочитанных строк"
+mostUnread(n):
+  one: "$count строка из $total не прочиталась"
+  few: "$count строки из $total не прочитались"
+  many: "$count строк из $total не прочитались"
+  other: "$count строки из $total не прочитались"
+mostUnreadText: "Похоже, банк поменял выписку: проверьте, где в ней дата и сумма и чем отделены копейки."
+checkColumns: Проверить колонки

@@ -198,6 +198,91 @@ ChosenStatement october() => ChosenStatement(
   ]),
 );
 
+/// [october] with two rows that do not read: one without an amount, and
+/// one of a day that does not exist.
+ChosenStatement octoberWithGaps() => ChosenStatement(
+  'alfa-2026-10.csv',
+  _text([
+    'Дата операции;Описание;Сумма;Валюта;Категория;Номер карты',
+    '01.10.2026 10:00;TOPUP WISE;185 000,00;RUR;Переводы;*4821',
+    '02.10.2026 18:40;PRODUKTY BEREZKA;−2 340,50;RUR;Продукты;*4821',
+    '03.10.2026 09:12;ZERNO COFFEE;−420,00;RUR;Рестораны и кафе;*4821',
+    '07.10.2026;ZHKU MOSKVA;−6 845,30;RUR;ЖКХ;*4821',
+    '05.10.2026;Перевод по номеру телефона;;RUR;Переводы;*4821',
+    '31.09.2026;Аптека №12;−1 180,00;RUR;Аптеки;*4821',
+  ]),
+);
+
+/// A made-up CSV of Alfa-Bank whose amounts do not read at all.
+ChosenStatement octoberGarbled() => ChosenStatement(
+  'alfa-2026-10.csv',
+  _text([
+    'Дата операции;Описание;Сумма;Валюта;Категория;Номер карты',
+    '02.10.2026 18:40;PRODUKTY BEREZKA;н/д;RUR;Продукты;*4821',
+    '03.10.2026 09:12;ZERNO COFFEE;н/д;RUR;Рестораны и кафе;*4821',
+    '07.10.2026;ZHKU MOSKVA;н/д;RUR;ЖКХ;*4821',
+  ]),
+);
+
+/// A made-up CSV of an older export of T-Bank with a purchase that did not
+/// go through.
+ChosenStatement tbankDeclined() => ChosenStatement(
+  'tbank-2026-10.csv',
+  _text([
+    for (final cells in [
+      [
+        'Дата операции',
+        'Дата платежа',
+        'Номер карты',
+        'Статус',
+        'Сумма операции',
+        'Валюта операции',
+        'Сумма платежа',
+        'Валюта платежа',
+        'Категория',
+        'Описание',
+      ],
+      [
+        '03.10.2026 12:00:00',
+        '04.10.2026',
+        '*4821',
+        'OK',
+        '-1 050,00',
+        'RUB',
+        '-1 050,00',
+        'RUB',
+        'Рестораны',
+        'Кофейня Зерно',
+      ],
+      [
+        '04.10.2026 13:00:00',
+        '',
+        '*4821',
+        'FAILED',
+        '-500,00',
+        'RUB',
+        '-500,00',
+        'RUB',
+        'Супермаркеты',
+        'Магнит',
+      ],
+      [
+        '05.10.2026 09:00:00',
+        '06.10.2026',
+        '*4821',
+        'OK',
+        '-62,00',
+        'RUB',
+        '-62,00',
+        'RUB',
+        'Транспорт',
+        'Метро',
+      ],
+    ])
+      cells.join(';'),
+  ]),
+);
+
 /// A made-up CSV of columns that no format names: a date, a text, a sum
 /// with a comma that the guess leaves out, and a balance.
 ChosenStatement unknown() => ChosenStatement(

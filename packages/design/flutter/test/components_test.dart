@@ -443,4 +443,48 @@ void main() {
       );
     });
   });
+
+  group('TintedNotice', () {
+    Future<void> pump(WidgetTester tester, Widget notice) => tester.pumpWidget(
+      MaterialApp(
+        theme: BirkaTheme.dark(),
+        home: Scaffold(body: notice),
+      ),
+    );
+
+    testWidgets('says its title in its color over a quieter text', (
+      tester,
+    ) async {
+      const color = Color(BirkaTokens.colorPaletteAmber);
+      await pump(
+        tester,
+        const TintedNotice(
+          color: color,
+          glyph: BirkaGlyph.alert,
+          title: 'Rows did not read',
+          text: 'Check the columns',
+        ),
+      );
+
+      final title = tester.widget<Text>(find.text('Rows did not read'));
+      final text = tester.widget<Text>(find.text('Check the columns'));
+      expect(title.style!.color, color);
+      expect(text.style!.color, BirkaColors.dark.textSecondary);
+      expect(find.byType(GlyphBadge), findsOneWidget);
+    });
+
+    testWidgets('without a title says its text plainly', (tester) async {
+      await pump(
+        tester,
+        const TintedNotice(
+          color: Color(BirkaTokens.colorPaletteAmber),
+          text: 'Set the columns',
+        ),
+      );
+
+      final text = tester.widget<Text>(find.text('Set the columns'));
+      expect(text.style!.color, BirkaColors.dark.text);
+      expect(find.byType(GlyphBadge), findsNothing);
+    });
+  });
 }

@@ -249,3 +249,76 @@ String _sourceOf(StatementFormat? format) =>
     format == null || isOwnFormat(format)
     ? t.imports.ownFormatOf
     : t.imports.formatsOf[format.id] ?? format.id;
+
+/// A row of the file that will not go in, as the phone lists it: the
+/// operation it was, and its number in the file with what is wrong, such as
+/// «Аптека №12» and «Строка 131 · 31.09.2026, такого дня нет».
+typedef LeftRow = ({String title, String line});
+
+/// [problem] as the phone lists it.
+LeftRow rowProblemLabel(RowProblem problem) => _leftRow(
+  problem.line,
+  t.imports.rowFaults[problem.fault.name] ?? problem.fault.name,
+  value: problem.text,
+  description: problem.description,
+);
+
+/// [problem] as the phone lists it.
+LeftRow planProblemLabel(PlanProblem problem) => _leftRow(
+  problem.line,
+  t.imports.planFaults[problem.fault.name] ?? problem.fault.name,
+  value: problem.text,
+  description: problem.description,
+);
+
+LeftRow _leftRow(
+  int line,
+  String fault, {
+  required String value,
+  required String description,
+}) {
+  final shown = value.trim();
+  final named = description.trim();
+  final title = named.isNotEmpty ? named : (shown.isNotEmpty ? shown : '—');
+  return (
+    title: title,
+    line: t.imports.rowLine(
+      line: line,
+      what: shown.isEmpty || shown == title ? fault : '$shown, $fault',
+    ),
+  );
+}
+
+/// The rows of [statement] that did not read, those that the bank declined
+/// left aside.
+List<RowProblem> unreadRows(Statement statement) => [
+  for (final problem in statement.problems)
+    if (problem.fault != RowFault.declined) problem,
+];
+
+/// The rows of [statement] that the bank declined.
+List<RowProblem> declinedRows(Statement statement) => [
+  for (final problem in statement.problems)
+    if (problem.fault == RowFault.declined) problem,
+];
+
+/// Whether more rows of [statement] did not read than did, so that its
+/// columns are likely read wrong.
+bool mostlyUnread(Statement statement) {
+  final unread = unreadRows(statement).length;
+  return unread > 0 && unread > statement.rows.length;
+}
+
+/// What the phone says under the count of the rows that will not go in: how
+/// many of them did not read, did not go through the bank, and do not fit
+/// their account, such as «2 не прочитались, 1 не прошла в банке».
+String leftLine({
+  required int unread,
+  required int declined,
+  required int unfit,
+}) => [
+  if (unread > 0) t.imports.unreadCount(n: unread, count: formatCount(unread)),
+  if (declined > 0)
+    t.imports.declinedCount(n: declined, count: formatCount(declined)),
+  if (unfit > 0) t.imports.unfitCount(n: unfit, count: formatCount(unfit)),
+].join(', ');

@@ -1262,6 +1262,87 @@ class _Translations$imports$ru extends Translations$imports$en {
   @override
   String categoriesKept({required Object source}) =>
       'Выбор запомним для выписок ${source}';
+  @override
+  String rowsLeft({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} строка не попадёт в учёт',
+        few: '${count} строки не попадут в учёт',
+        many: '${count} строк не попадут в учёт',
+        other: '${count} строки не попадут в учёт',
+      );
+  @override
+  String unreadCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} не прочиталась',
+        few: '${count} не прочитались',
+        many: '${count} не прочитались',
+        other: '${count} не прочитались',
+      );
+  @override
+  String declinedCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} не прошла в банке',
+        few: '${count} не прошли в банке',
+        many: '${count} не прошли в банке',
+        other: '${count} не прошли в банке',
+      );
+  @override
+  String unfitCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} не подходит счёту',
+        few: '${count} не подходят счёту',
+        many: '${count} не подходят счёту',
+        other: '${count} не подходят счёту',
+      );
+  @override
+  String restFine({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'ещё ${count} в порядке',
+        few: 'остальные ${count} в порядке',
+        many: 'остальные ${count} в порядке',
+        other: 'остальные ${count} в порядке',
+      );
+  @override
+  String get unreadTitle => 'Не прочитали';
+  @override
+  String get declinedTitle => 'Не прошли в банке';
+  @override
+  String get unfitTitle => 'Не подходят счёту';
+  @override
+  String rowLine({required Object line, required Object what}) =>
+      'Строка ${line} · ${what}';
+  @override
+  String get leftNote =>
+      'Непрочитанные запишите вручную или скачайте выписку заново: Birka добавит только то, чего ещё нет в учёте.';
+  @override
+  String get understood => 'Понятно';
+  @override
+  String bankHas({required Object amount}) => 'В банке ${amount}';
+  @override
+  String bankHasMissing({required Object amount}) =>
+      'В банке ${amount}: похоже, не хватает непрочитанных строк';
+  @override
+  String mostUnread({
+    required num n,
+    required Object count,
+    required Object total,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one: '${count} строка из ${total} не прочиталась',
+    few: '${count} строки из ${total} не прочитались',
+    many: '${count} строк из ${total} не прочитались',
+    other: '${count} строки из ${total} не прочитались',
+  );
+  @override
+  String get mostUnreadText =>
+      'Похоже, банк поменял выписку: проверьте, где в ней дата и сумма и чем отделены копейки.';
+  @override
+  String get checkColumns => 'Проверить колонки';
 }
 
 // Path: inbox
@@ -2860,6 +2941,83 @@ extension on TranslationsRu {
           'imports.categoriesKept' =>
             ({required Object source}) =>
                 'Выбор запомним для выписок ${source}',
+          'imports.rowsLeft' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} строка не попадёт в учёт',
+                  few: '${count} строки не попадут в учёт',
+                  many: '${count} строк не попадут в учёт',
+                  other: '${count} строки не попадут в учёт',
+                ),
+          'imports.unreadCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} не прочиталась',
+                  few: '${count} не прочитались',
+                  many: '${count} не прочитались',
+                  other: '${count} не прочитались',
+                ),
+          'imports.declinedCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} не прошла в банке',
+                  few: '${count} не прошли в банке',
+                  many: '${count} не прошли в банке',
+                  other: '${count} не прошли в банке',
+                ),
+          'imports.unfitCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} не подходит счёту',
+                  few: '${count} не подходят счёту',
+                  many: '${count} не подходят счёту',
+                  other: '${count} не подходят счёту',
+                ),
+          'imports.restFine' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'ещё ${count} в порядке',
+                  few: 'остальные ${count} в порядке',
+                  many: 'остальные ${count} в порядке',
+                  other: 'остальные ${count} в порядке',
+                ),
+          'imports.unreadTitle' => 'Не прочитали',
+          'imports.declinedTitle' => 'Не прошли в банке',
+          'imports.unfitTitle' => 'Не подходят счёту',
+          'imports.rowLine' =>
+            ({required Object line, required Object what}) =>
+                'Строка ${line} · ${what}',
+          'imports.leftNote' =>
+            'Непрочитанные запишите вручную или скачайте выписку заново: Birka добавит только то, чего ещё нет в учёте.',
+          'imports.understood' => 'Понятно',
+          'imports.bankHas' =>
+            ({required Object amount}) => 'В банке ${amount}',
+          'imports.bankHasMissing' =>
+            ({required Object amount}) =>
+                'В банке ${amount}: похоже, не хватает непрочитанных строк',
+          'imports.mostUnread' =>
+            ({required num n, required Object count, required Object total}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} строка из ${total} не прочиталась',
+                  few: '${count} строки из ${total} не прочитались',
+                  many: '${count} строк из ${total} не прочитались',
+                  other: '${count} строки из ${total} не прочитались',
+                ),
+          'imports.mostUnreadText' =>
+            'Похоже, банк поменял выписку: проверьте, где в ней дата и сумма и чем отделены копейки.',
+          'imports.checkColumns' => 'Проверить колонки',
           'inbox.title' => 'Входящие',
           'inbox.back' => 'Назад',
           'inbox.waiting' =>

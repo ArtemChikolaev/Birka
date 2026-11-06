@@ -115,7 +115,10 @@ enum BirkaGlyph {
   file,
 
   /// A tray of what came in.
-  inbox
+  inbox,
+
+  /// A mark of attention in a circle.
+  alert
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer
