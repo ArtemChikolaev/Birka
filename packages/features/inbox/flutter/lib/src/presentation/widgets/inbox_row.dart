@@ -137,7 +137,7 @@ class InboxRow extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  CategoryDot(hinted),
+                                  CategoryDot(hinted.color),
                                   const SizedBox(width: BirkaTokens.spaceXs),
                                   Flexible(
                                     child: Text(

@@ -62,6 +62,8 @@ final class ImportState {
     this.seen = ImportStep.file,
     this.balances = const {},
     this.currency = Currency.rub,
+    this.chosen = const {},
+    this.remembered = false,
   });
 
   /// The step on screen.
@@ -118,6 +120,14 @@ final class ImportState {
   /// The currency of a file that names none: the base currency of the device.
   final Currency currency;
 
+  /// The categories of the bank whose place the person chose since the file
+  /// came; Birka placed the others.
+  final Set<BankCategory> chosen;
+
+  /// Whether the places of the categories of the bank began as the person
+  /// chose them for the last file of the format.
+  final bool remembered;
+
   /// The name of the file.
   String? get fileName => table?.fileName;
 
@@ -166,6 +176,8 @@ final class ImportState {
     List<LedgerImport>? history,
     ImportStep? seen,
     Map<String, Money>? balances,
+    Set<BankCategory>? chosen,
+    bool? remembered,
   }) => ImportState(
     step: step ?? this.step,
     reading: reading ?? this.reading,
@@ -193,6 +205,8 @@ final class ImportState {
     seen: seen ?? this.seen,
     balances: balances ?? this.balances,
     currency: currency,
+    chosen: chosen ?? this.chosen,
+    remembered: remembered ?? this.remembered,
   );
 
   static const _same = Object();
@@ -356,6 +370,7 @@ final class ImportCubit extends Cubit<ImportState> {
         fees: choices.fees,
         keep: choices.keep,
       ),
+      chosen: {...state.chosen, category},
     );
   }
 
@@ -490,6 +505,14 @@ final class ImportCubit extends Cubit<ImportState> {
   }) {
     final base = fresh ? _fresh() : state;
     final statement = readStatement(table, layout);
+    final kept = base.choices == null
+        ? _keptFor(statement, layout.format)
+        : null;
+    final choices = _defaults(
+      statement,
+      layout.format,
+      before: base.choices ?? kept,
+    );
     emit(
       base._with(
         step: step,
@@ -498,25 +521,26 @@ final class ImportCubit extends Cubit<ImportState> {
         table: table,
         layout: layout,
         statement: statement,
-        choices: _defaults(
-          statement,
-          layout.format,
-          before: base.choices ?? _keptFor(statement, layout.format),
-        ),
+        choices: choices,
         plan: null,
+        remembered: kept?.categories.entries.any(
+          (it) => identical(choices.categories[it.key], it.value),
+        ),
       ),
     );
     unawaited(_plan());
   }
 
   /// Takes [choices], with Birka's own for what they leave open, and plans
-  /// the import by them.
-  void _choose(ImportChoices choices) {
+  /// the import by them; [chosen] are the categories of the bank whose place
+  /// the person chose by now.
+  void _choose(ImportChoices choices, {Set<BankCategory>? chosen}) {
     final statement = state.statement;
     if (statement == null || !state.open) return;
     emit(
       state._with(
         choices: _defaults(statement, state.layout?.format, before: choices),
+        chosen: chosen,
       ),
     );
     unawaited(_plan());

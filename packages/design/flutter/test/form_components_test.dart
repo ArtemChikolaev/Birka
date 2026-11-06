@@ -297,6 +297,42 @@ void main() {
       expect(find.byType(CardArtThumbnail), findsOneWidget);
     });
 
+    testWidgets('can say more under the title and give a choice the accent', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: BirkaTheme.dark(),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => BirkaButton(
+                label: 'Open',
+                onPressed: () => showChoiceSheet<String>(
+                  context,
+                  title: 'Pick',
+                  subtitle: '14 operations',
+                  choices: const ['One', 'New: Two'],
+                  selected: 'One',
+                  labelOf: (choice) => choice,
+                  leadingOf: (choice) => const CategoryDot('#4ADE80'),
+                  accentOf: (choice) => choice.startsWith('New'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.bySemanticsLabel('Open'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('14 operations'), findsOneWidget);
+      expect(find.byType(CategoryDot), findsNWidgets(2));
+      final made = tester.widget<Text>(find.text('New: Two'));
+      final kept = tester.widget<Text>(find.text('One'));
+      expect(made.style!.color, BirkaColors.dark.accent);
+      expect(kept.style!.color, isNot(BirkaColors.dark.accent));
+    });
+
     testWidgets('gives `null` as a choice in a record', (tester) async {
       (String?,)? picked;
       var closed = false;

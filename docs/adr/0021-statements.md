@@ -179,6 +179,15 @@
     of fees, those that an import made included. A choice whose account or
     category is gone gives way to Birka's own. At most 20 formats of one's
     own stay, the latest first.
+20. On the phone the categories of the bank have a page of their own, as
+    their board draws it. The sheet says how many of them Birka placed
+    itself, or that they are placed as for the last file of the format
+    (`ImportState.chosen`, `ImportState.remembered`). The page lists the
+    expenses and the income apart, with the fees among the expenses, each
+    with how many operations that go in carry it. A sheet sends them to
+    the inbox, into a category of their kind, or into a new one of the
+    name of the bank, which the import makes. The button says how many
+    operations will wait in the inbox.
 
 ## Options considered
 

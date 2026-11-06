@@ -339,3 +339,21 @@ noAmounts: Ни одна сумма не прочиталась. Проверь�
 columnsDone: "Готово · $operations"
 ownColumns: колонки назначили вы
 looksLikeOwn: Узнали ваш формат
+categoriesHeading: Категории банка
+categoriesCount(n):
+  one: $count категория в выписке
+  few: $count категории в выписке
+  many: $count категорий в выписке
+  other: $count категории в выписке
+categoriesKnown: "$known из $total узнали сами"
+categoriesNone: Birka их пока не знает
+categoriesAsBefore: Как в прошлой выписке
+categoriesKnownText: "$known из $total узнали по названиям. Операции сразу встанут в ваши категории, а без выбора подождут во «Входящих»."
+categoriesText: Выберите, куда записать операции каждой категории банка. Без выбора они подождут во «Входящих».
+categoriesAsBeforeText: "Взяли ваш выбор с прошлой выписки $source. Поменяйте, если что-то теперь иначе."
+ownFormatOf: вашего формата
+inboxNote: операции подождут без категории
+newCategoryNote: появится при импорте
+newCategoryMark: новая категория
+categoriesDone: "Готово · $count во «Входящих»"
+categoriesKept: "Выбор запомним для выписок $source"

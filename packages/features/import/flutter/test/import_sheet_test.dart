@@ -88,7 +88,28 @@ void main() {
     expect(find.text('4 во «Входящих»'), findsOneWidget);
     expect(find.text('Остаток после'), findsOneWidget);
     expect(find.text('Уже есть в учёте'), findsNothing);
+    expect(find.text('Категории банка'), findsOneWidget);
+    expect(find.text('Birka их пока не знает'), findsOneWidget);
     expect(find.text('ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ'), findsOneWidget);
+  });
+
+  testWidgets('leads to the categories of the bank and back', (tester) async {
+    repository = FakeImportRepository([
+      card,
+    ], ledgerCategories: ledgerCategories);
+    await open(tester, [october()]);
+
+    expect(find.text('3 из 4 узнали сами'), findsOneWidget);
+    expect(find.text('1 во «Входящих»'), findsOneWidget);
+
+    await tapText(tester, 'Категории банка');
+    await tapText(tester, 'Переводы');
+    await tapText(tester, 'Новая: Переводы');
+    await tapText(tester, 'ГОТОВО');
+
+    expect(find.text('Импорт выписки'), findsOneWidget);
+    expect(find.text('3 из 4 узнали сами'), findsOneWidget);
+    expect(find.text('Разобрать потом'), findsNothing);
   });
 
   testWidgets('imports the operations and takes them back out', (

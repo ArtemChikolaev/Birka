@@ -31,14 +31,17 @@ final class FakeStatementFiles implements StatementFiles {
       files.isEmpty ? null : files.removeAt(0);
 }
 
-/// The ledger of the import in memory: its accounts, without categories and
+/// The ledger of the import in memory: its accounts and categories, without
 /// transactions, and the imports written into it.
 final class FakeImportRepository implements ImportRepository {
-  /// Creates the ledger of [ledgerAccounts].
-  FakeImportRepository(this.ledgerAccounts);
+  /// Creates the ledger of [ledgerAccounts] and [ledgerCategories].
+  FakeImportRepository(this.ledgerAccounts, {this.ledgerCategories = const []});
 
   /// The accounts of the ledger.
   final List<Account> ledgerAccounts;
+
+  /// The categories of the ledger.
+  final List<Category> ledgerCategories;
 
   /// The plans written, in turn.
   final written = <ImportPlan>[];
@@ -50,7 +53,10 @@ final class FakeImportRepository implements ImportRepository {
   Future<List<Account>> accounts() async => ledgerAccounts;
 
   @override
-  Future<List<Category>> categories(CategoryKind kind) async => const [];
+  Future<List<Category>> categories(CategoryKind kind) async => [
+    for (final category in ledgerCategories)
+      if (category.kind == kind) category,
+  ];
 
   @override
   Future<List<Transaction>> transactions(
@@ -96,6 +102,88 @@ final card = Account(
   archived: false,
   sortOrder: 0,
   lastDigits: '4821',
+);
+
+/// The categories of a ledger in which «Продукты», «Кафе» and «Дом» stand
+/// for three categories of the bank of [october], and «Переводы» for none.
+const ledgerCategories = [
+  Category(
+    id: 'food',
+    kind: CategoryKind.expense,
+    name: 'Продукты',
+    archived: false,
+    sortOrder: 0,
+    color: '#4ADE80',
+  ),
+  Category(
+    id: 'cafe',
+    kind: CategoryKind.expense,
+    name: 'Кафе',
+    archived: false,
+    sortOrder: 1,
+    color: '#FBBF24',
+  ),
+  Category(
+    id: 'home',
+    kind: CategoryKind.expense,
+    name: 'Дом',
+    archived: false,
+    sortOrder: 2,
+    color: '#22D3EE',
+  ),
+  Category(
+    id: 'salary',
+    kind: CategoryKind.income,
+    name: 'Зарплата',
+    archived: false,
+    sortOrder: 3,
+  ),
+];
+
+/// A made-up CSV of Revolut in October: a coffee with a fee, and a top-up.
+ChosenStatement revolutOctober() => ChosenStatement(
+  'revolut-2026-10.csv',
+  _text([
+    for (final cells in [
+      [
+        'Type',
+        'Product',
+        'Started Date',
+        'Completed Date',
+        'Description',
+        'Amount',
+        'Fee',
+        'Currency',
+        'State',
+        'Balance',
+      ],
+      [
+        'TOPUP',
+        'Current',
+        '2026-10-01 10:00:00',
+        '2026-10-01 10:00:00',
+        'Top-up',
+        '100.00',
+        '0.00',
+        'EUR',
+        'COMPLETED',
+        '100.00',
+      ],
+      [
+        'CARD_PAYMENT',
+        'Current',
+        '2026-10-03 09:12:00',
+        '2026-10-03 10:00:00',
+        'Coffee',
+        '-4.20',
+        '0.50',
+        'EUR',
+        'COMPLETED',
+        '95.30',
+      ],
+    ])
+      cells.join(','),
+  ]),
 );
 
 /// A made-up CSV of a card of Alfa-Bank in October.

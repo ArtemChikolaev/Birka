@@ -158,6 +158,13 @@ void main() {
       );
       expect(plan.added, hasLength(4));
       expect(plan.unsorted, 2);
+      expect(plan.categoryUses, {
+        (kind: CategoryKind.income, name: 'Переводы'): 1,
+        (kind: CategoryKind.expense, name: 'Супермаркеты'): 1,
+        (kind: CategoryKind.expense, name: 'Рестораны и кафе'): 1,
+        (kind: CategoryKind.expense, name: null): 1,
+      });
+      expect(plan.withFees, 0);
     });
 
     test(
@@ -439,6 +446,7 @@ void main() {
         );
         expect(plan.left, 1);
         expect(plan.operations.single.fee, rub(50));
+        expect(plan.withFees, 1);
         final id = await repository.write(plan, fileName: 'bank.csv');
         final imported = [
           for (final it in await ledger.watchTransactions(limit: null).first)
