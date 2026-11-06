@@ -1593,6 +1593,14 @@ class Translations$imports$en {
 
   /// en: 'Check the columns'
   String get checkColumns => 'Check the columns';
+
+  /// en: '(one) {$count operation did not go through the bank} (other) {$count operations did not go through the bank}'
+  String declinedRows({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} operation did not go through the bank',
+        other: '${count} operations did not go through the bank',
+      );
 }
 
 // Path: inbox
@@ -3379,6 +3387,14 @@ extension on Translations {
           'imports.mostUnreadText' =>
             'The bank seems to have changed its statement: check where its date and amount are and what comes before the cents.',
           'imports.checkColumns' => 'Check the columns',
+          'imports.declinedRows' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} operation did not go through the bank',
+                  other: '${count} operations did not go through the bank',
+                ),
           'inbox.title' => 'Inbox',
           'inbox.back' => 'Back',
           'inbox.waiting' =>

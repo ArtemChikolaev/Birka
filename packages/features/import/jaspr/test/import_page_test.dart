@@ -54,6 +54,64 @@ final Uint8List _october = utf8.encode(
   ].join('\n'),
 );
 
+/// A CSV of an older export of T-Bank with a purchase that the bank did not
+/// carry out, and a day that does not exist.
+final Uint8List _tbank = utf8.encode(
+  [
+    for (final cells in [
+      [
+        'Дата операции',
+        'Дата платежа',
+        'Номер карты',
+        'Статус',
+        'Сумма операции',
+        'Валюта операции',
+        'Сумма платежа',
+        'Валюта платежа',
+        'Категория',
+        'Описание',
+      ],
+      [
+        '03.10.2026 12:00:00',
+        '04.10.2026',
+        '*4821',
+        'OK',
+        '-1 050,00',
+        'RUB',
+        '-1 050,00',
+        'RUB',
+        'Рестораны',
+        'Кофейня Зерно',
+      ],
+      [
+        '04.10.2026 13:00:00',
+        '',
+        '*4821',
+        'FAILED',
+        '-500,00',
+        'RUB',
+        '-500,00',
+        'RUB',
+        'Супермаркеты',
+        'Магнит',
+      ],
+      [
+        '31.09.2026 09:00:00',
+        '01.10.2026',
+        '*4821',
+        'OK',
+        '-62,00',
+        'RUB',
+        '-62,00',
+        'RUB',
+        'Транспорт',
+        'Метро',
+      ],
+    ])
+      cells.join(';'),
+  ].join('\n'),
+);
+
 void main() {
   final now = DateTime(2026, 11, 4, 12);
   late BirkaDatabase database;
@@ -226,6 +284,21 @@ void main() {
     );
     expect(find.text('Категории банка → ваши'), findsOneComponent);
     expect(find.text('ЖКХ'), findsOneComponent);
+  });
+
+  testComponents('keeps what the bank declined apart from what did not read', (
+    tester,
+  ) async {
+    await pump(tester);
+    await cubit.read('tbank-2026-10.csv', _tbank);
+    await until(tester, (state) => state.planned);
+
+    await clickText(tester, 'Дальше: колонки');
+
+    expect(find.text('1 строка не прочиталась'), findsOneComponent);
+    expect(find.text('Строка 4: такого дня нет'), findsOneComponent);
+    expect(find.text('1 операция не прошла в банке'), findsOneComponent);
+    expect(find.text('Строка 3: Магнит'), findsOneComponent);
   });
 
   testComponents('gives a row the category the person chose before', (

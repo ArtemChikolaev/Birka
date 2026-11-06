@@ -357,3 +357,6 @@ mostUnread(n):
   other: "$count rows of $total did not read"
 mostUnreadText: "The bank seems to have changed its statement: check where its date and amount are and what comes before the cents."
 checkColumns: Check the columns
+declinedRows(n):
+  one: $count operation did not go through the bank
+  other: $count operations did not go through the bank
