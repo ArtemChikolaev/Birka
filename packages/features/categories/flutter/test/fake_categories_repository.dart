@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:categories_common/categories_common.dart';
 
 /// Keeps categories in memory.
@@ -20,13 +22,23 @@ final class FakeCategoriesRepository implements CategoriesRepository {
   /// The ids whose state of being archived changed, with the new state.
   final archived = <String, bool>{};
 
+  final _changes = StreamController<void>.broadcast();
+
+  /// Tells those who watch the categories that [categories] changed.
+  void changed() => _changes.add(null);
+
   @override
-  Stream<List<Category>> watchCategories(CategoryKind kind) => broken
-      ? Stream.error(Exception('broken'))
-      : Stream.value([
-          for (final category in categories)
-            if (category.kind == kind) category,
-        ]);
+  Stream<List<Category>> watchCategories(CategoryKind kind) =>
+      broken ? Stream.error(Exception('broken')) : _watch(kind);
+
+  Stream<List<Category>> _watch(CategoryKind kind) async* {
+    List<Category> ofKind() => [
+      for (final category in categories)
+        if (category.kind == kind) category,
+    ];
+    yield ofKind();
+    yield* _changes.stream.map((_) => ofKind());
+  }
 
   @override
   Future<Category?> category(String id) async {

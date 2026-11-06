@@ -61,6 +61,15 @@ void main() {
     await pump(tester);
 
     expect(find.text('3 ждут решения'), findsOneWidget);
+    // The count rolls as rows close, and stays when amounts are hidden.
+    final count = tester.widget<AmountText>(
+      find.ancestor(
+        of: find.text('3 ждут решения'),
+        matching: find.byType(AmountText),
+      ),
+    );
+    expect(count.value, 3);
+    expect(count.alwaysShown, isTrue);
     expect(find.text('После импорта Альфа-Банка'), findsOneWidget);
     expect(find.text('Похоже на перевод между вашими счетами'), findsOneWidget);
     expect(find.text('Пополнение с Wise · из выписки'), findsOneWidget);

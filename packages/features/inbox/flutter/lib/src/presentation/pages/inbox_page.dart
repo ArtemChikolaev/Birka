@@ -180,8 +180,12 @@ class _InboxPageState extends State<InboxPage> {
     final all = visible.isNotEmpty && visible.every(state.selected.contains);
     final after = afterLabel(state);
     return [
-      Text(
+      // The count rolls down as the sorted rows close; it is no amount, so it
+      // stays when amounts are hidden.
+      AmountText(
         t.inbox.waiting(n: state.count, count: formatCount(state.count)),
+        value: state.count,
+        alwaysShown: true,
         style: styles.title.copyWith(color: colors.text),
       ),
       if (after != null)

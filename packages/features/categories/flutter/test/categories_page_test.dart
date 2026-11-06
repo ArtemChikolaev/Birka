@@ -8,6 +8,23 @@ import 'package:l10n/l10n.dart';
 
 import 'fake_categories_repository.dart';
 
+/// How far the row or the block around [text] has opened, from 0 to 1.
+double openOf(WidgetTester tester, String text) => tester
+    .widget<SizeTransition>(
+      find
+          .ancestor(of: find.text(text), matching: find.byType(SizeTransition))
+          .first,
+    )
+    .sizeFactor
+    .value;
+
+/// Lets a change reach the page and its rows start to move.
+Future<void> settleIn(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump();
+  await tester.pump(BirkaMotion.slow ~/ 2);
+}
+
 void main() {
   final opened = <String>[];
   final addedKinds = <CategoryKind>[];
@@ -137,6 +154,58 @@ void main() {
     expect(find.text('АРХИВ'), findsOneWidget);
     await tester.tap(find.text('Старая'));
     expect(opened, ['Старая']);
+  });
+
+  testWidgets('a new category opens in the list, and the archive with the '
+      'first category in it', (tester) async {
+    final repository = FakeCategoriesRepository([
+      category('Еда'),
+      category('Дом'),
+    ]);
+    await pump(tester, repository);
+
+    repository
+      ..categories = [
+        ...repository.categories,
+        category('Кафе', parentId: 'Еда'),
+      ]
+      ..changed();
+    await settleIn(tester);
+
+    expect(openOf(tester, 'Кафе'), inExclusiveRange(0, 1));
+    await tester.pumpAndSettle();
+    expect(openOf(tester, 'Кафе'), 1);
+    expect(find.text('1 подкатегория'), findsOneWidget);
+
+    repository
+      ..categories = [
+        category('Еда'),
+        category('Кафе', parentId: 'Еда'),
+        category('Дом', archived: true),
+      ]
+      ..changed();
+    await settleIn(tester);
+
+    expect(openOf(tester, 'АРХИВ'), inExclusiveRange(0, 1));
+    await tester.pumpAndSettle();
+    expect(openOf(tester, 'АРХИВ'), 1);
+    expect(openOf(tester, 'Дом'), 1);
+  });
+
+  testWidgets('the categories of the other kind come at once', (tester) async {
+    await pump(
+      tester,
+      FakeCategoriesRepository([
+        category('Еда'),
+        category('Зарплата', kind: CategoryKind.income),
+      ]),
+    );
+
+    await tester.tap(find.text('ДОХОДЫ'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(openOf(tester, 'Зарплата'), 1);
   });
 
   testWidgets('a failed read offers to try again', (tester) async {

@@ -87,50 +87,66 @@ class AccountsPage extends StatelessWidget {
         _Capital(overview: overview),
       ],
       const SizedBox(height: BirkaTokens.spaceLg),
-      if (first != null) ...[
-        BirkaZoomSource(
-          tag: first.account.id,
-          child: AccountCard(
-            art: cardArtOf(first.account.art),
-            name: first.account.name,
-            subtitle: accountSubtitle(
-              currency: first.account.currency,
-              type: first.account.type,
-              lastDigits: first.account.lastDigits,
+      // The rows open and close in their groups, and so do the groups: the
+      // archive opens with its first account and closes after its last.
+      AnimatedColumn(
+        children: [
+          if (first != null)
+            Column(
+              key: const ValueKey('active'),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                BirkaZoomSource(
+                  tag: first.account.id,
+                  child: AccountCard(
+                    art: cardArtOf(first.account.art),
+                    name: first.account.name,
+                    subtitle: accountSubtitle(
+                      currency: first.account.currency,
+                      type: first.account.type,
+                      lastDigits: first.account.lastDigits,
+                    ),
+                    amount: formatMoney(first.balance),
+                    value: first.balance.minorUnits,
+                    onTap: () => onOpenCard(first.account.id),
+                  ),
+                ),
+                const SizedBox(height: BirkaTokens.spaceMd),
+                GlassListGroup(
+                  children: [
+                    for (final (index, row) in overview.active.indexed)
+                      AccountRow(
+                        key: ValueKey(row.account.id),
+                        row: row,
+                        main: index == 0,
+                        onTap: () => onOpen(row.account.id),
+                      ),
+                  ],
+                ),
+              ],
             ),
-            amount: formatMoney(first.balance),
-            value: first.balance.minorUnits,
-            onTap: () => onOpenCard(first.account.id),
-          ),
-        ),
-        const SizedBox(height: BirkaTokens.spaceMd),
-        GlassListGroup(
-          children: [
-            for (final (index, row) in overview.active.indexed)
-              AccountRow(
-                key: ValueKey(row.account.id),
-                row: row,
-                main: index == 0,
-                onTap: () => onOpen(row.account.id),
-              ),
-          ],
-        ),
-      ],
-      if (overview.archived.isNotEmpty) ...[
-        const SizedBox(height: BirkaTokens.spaceLg),
-        SectionLabel(t.accounts.archive, color: colors.textSubtle),
-        const SizedBox(height: BirkaTokens.spaceXs),
-        GlassListGroup(
-          children: [
-            for (final row in overview.archived)
-              AccountRow(
-                key: ValueKey(row.account.id),
-                row: row,
-                onTap: () => onOpen(row.account.id),
-              ),
-          ],
-        ),
-      ],
+          if (overview.archived.isNotEmpty)
+            Column(
+              key: const ValueKey('archive'),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: BirkaTokens.spaceLg),
+                SectionLabel(t.accounts.archive, color: colors.textSubtle),
+                const SizedBox(height: BirkaTokens.spaceXs),
+                GlassListGroup(
+                  children: [
+                    for (final row in overview.archived)
+                      AccountRow(
+                        key: ValueKey(row.account.id),
+                        row: row,
+                        onTap: () => onOpen(row.account.id),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+        ],
+      ),
     ];
   }
 }

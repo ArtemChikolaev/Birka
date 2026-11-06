@@ -83,6 +83,7 @@ class CategoriesPage extends StatelessWidget {
                   CategoriesLoaded(:final overview) => _content(
                     context,
                     overview,
+                    state.kind,
                   ),
                 },
               ],
@@ -93,48 +94,69 @@ class CategoriesPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _content(BuildContext context, CategoriesOverview overview) {
+  List<Widget> _content(
+    BuildContext context,
+    CategoriesOverview overview,
+    CategoryKind kind,
+  ) {
     final colors = BirkaColors.of(context);
     return [
-      if (overview.groups.isNotEmpty)
-        GlassListGroup(
-          children: [
-            for (final group in overview.groups) ...[
-              GlassListRow(
-                title: group.category.name,
-                subtitle: group.children.isEmpty
-                    ? null
-                    : t.categories.subcategories(n: group.children.length),
-                leading: categoryBadge(group.category),
-                onTap: () => onOpen(group.category.id),
-              ),
-              for (final child in group.children)
-                Padding(
-                  padding: const EdgeInsets.only(left: BirkaTokens.spaceXl),
-                  child: GlassListRow(
-                    title: child.name,
-                    leading: categoryBadge(child, size: 28),
-                    onTap: () => onOpen(child.id),
+      // The categories of another kind come at once. Within a kind a row that
+      // comes opens and one that goes closes, and so does the archive with its
+      // first and its last category.
+      AnimatedColumn(
+        key: ValueKey(kind),
+        children: [
+          if (overview.groups.isNotEmpty)
+            GlassListGroup(
+              key: const ValueKey('groups'),
+              children: [
+                for (final group in overview.groups) ...[
+                  GlassListRow(
+                    key: ValueKey(group.category.id),
+                    title: group.category.name,
+                    subtitle: group.children.isEmpty
+                        ? null
+                        : t.categories.subcategories(n: group.children.length),
+                    leading: categoryBadge(group.category),
+                    onTap: () => onOpen(group.category.id),
                   ),
+                  for (final child in group.children)
+                    Padding(
+                      key: ValueKey(child.id),
+                      padding: const EdgeInsets.only(left: BirkaTokens.spaceXl),
+                      child: GlassListRow(
+                        title: child.name,
+                        leading: categoryBadge(child, size: 28),
+                        onTap: () => onOpen(child.id),
+                      ),
+                    ),
+                ],
+              ],
+            ),
+          if (overview.archived.isNotEmpty)
+            Column(
+              key: const ValueKey('archive'),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: BirkaTokens.spaceLg),
+                SectionLabel(t.categories.archive, color: colors.textSubtle),
+                const SizedBox(height: BirkaTokens.spaceXs),
+                GlassListGroup(
+                  children: [
+                    for (final category in overview.archived)
+                      GlassListRow(
+                        key: ValueKey(category.id),
+                        title: category.name,
+                        leading: categoryBadge(category),
+                        onTap: () => onOpen(category.id),
+                      ),
+                  ],
                 ),
-            ],
-          ],
-        ),
-      if (overview.archived.isNotEmpty) ...[
-        const SizedBox(height: BirkaTokens.spaceLg),
-        SectionLabel(t.categories.archive, color: colors.textSubtle),
-        const SizedBox(height: BirkaTokens.spaceXs),
-        GlassListGroup(
-          children: [
-            for (final category in overview.archived)
-              GlassListRow(
-                title: category.name,
-                leading: categoryBadge(category),
-                onTap: () => onOpen(category.id),
-              ),
-          ],
-        ),
-      ],
+              ],
+            ),
+        ],
+      ),
     ];
   }
 }
