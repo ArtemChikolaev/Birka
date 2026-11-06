@@ -11,6 +11,7 @@ import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
+import 'generated/schema_v5.dart' as v5;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -158,4 +159,82 @@ void main() {
       );
     },
   );
+
+  test('the ledger keeps its rows and gets regular payments in v5', () async {
+    const at = '2026-11-06T12:00:00.000Z';
+    await verifier.testWithDataIntegrity(
+      oldVersion: 4,
+      newVersion: 5,
+      createOld: v4.DatabaseAtV4.new,
+      createNew: v5.DatabaseAtV5.new,
+      openTestedDatabase: BirkaDatabase.new,
+      createItems: (batch, old) {
+        batch
+          ..insert(
+            old.accounts,
+            v4.AccountsCompanion.insert(
+              id: 'card',
+              createdAt: at,
+              updatedAt: at,
+              name: 'Card',
+              type: 'debit',
+              currency: 'RUB',
+              decimalDigits: 2,
+            ),
+          )
+          ..insert(
+            old.categories,
+            v4.CategoriesCompanion.insert(
+              id: 'home',
+              createdAt: at,
+              updatedAt: at,
+              kind: 'expense',
+              name: 'Home',
+            ),
+          )
+          ..insert(
+            old.transactions,
+            v4.TransactionsCompanion.insert(
+              id: 'rent',
+              createdAt: at,
+              updatedAt: at,
+              kind: 'expense',
+              occurredOn: '2026-10-25',
+              status: 'cleared',
+              source: 'manual',
+            ),
+          );
+      },
+      validateItems: (migrated) async {
+        expect(
+          (await migrated.select(migrated.transactions).getSingle()).id,
+          'rent',
+        );
+        expect(await migrated.select(migrated.schedules).get(), isEmpty);
+        await migrated
+            .into(migrated.schedules)
+            .insert(
+              v5.SchedulesCompanion.insert(
+                id: 'rent-monthly',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'expense',
+                name: 'Rent',
+                accountId: 'card',
+                categoryId: const Value('home'),
+                amountMinor: 4500000,
+                every: 'month',
+                day: 25,
+                nextOn: '2026-11-25',
+                onDay: 'ask',
+                reminder: 'onDay',
+              ),
+            );
+        final schedule = await migrated.select(migrated.schedules).getSingle();
+        expect(schedule.accountId, 'card');
+        expect(schedule.toAccountId, isNull);
+        expect(schedule.deletedAt, isNull);
+      },
+    );
+  });
 }
