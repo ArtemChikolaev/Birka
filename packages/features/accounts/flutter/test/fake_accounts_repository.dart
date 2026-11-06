@@ -35,9 +35,19 @@ final class FakeAccountsRepository implements AccountsRepository {
   @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(base);
 
+  final _changes = StreamController<void>.broadcast();
+
+  /// Tells those who watch the accounts that [rows] changed.
+  void changed() => _changes.add(null);
+
   @override
   Stream<List<AccountBalance>> watchAccounts() =>
-      broken ? Stream.error(Exception('broken')) : Stream.value(rows);
+      broken ? Stream.error(Exception('broken')) : _watch();
+
+  Stream<List<AccountBalance>> _watch() async* {
+    yield rows;
+    yield* _changes.stream.map((_) => rows);
+  }
 
   @override
   Future<AccountBalance?> account(String id) async {

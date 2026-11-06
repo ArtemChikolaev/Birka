@@ -9,6 +9,23 @@ import 'package:money/money.dart';
 
 import 'fake_accounts_repository.dart';
 
+/// How far the row or the block around [text] has opened, from 0 to 1.
+double openOf(WidgetTester tester, String text) => tester
+    .widget<SizeTransition>(
+      find
+          .ancestor(of: find.text(text), matching: find.byType(SizeTransition))
+          .first,
+    )
+    .sizeFactor
+    .value;
+
+/// Lets a change reach the page and its rows start to move.
+Future<void> settleIn(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump();
+  await tester.pump(BirkaMotion.slow ~/ 2);
+}
+
 void main() {
   const space = ' ';
   Money rub(int minorUnits) => Money(minorUnits, Currency.rub);
@@ -164,6 +181,39 @@ void main() {
     expect(find.text('АРХИВ'), findsOneWidget);
     await tester.tap(find.text('Старая'));
     expect(opened, ['Старая']);
+  });
+
+  testWidgets('the archive opens with its first account and closes after its '
+      'last', (tester) async {
+    final repository = FakeAccountsRepository([
+      row('Карта', rub(100)),
+      row('Наличные', rub(100)),
+    ]);
+    await pump(tester, repository);
+    expect(find.text('АРХИВ'), findsNothing);
+
+    repository
+      ..rows = [
+        row('Карта', rub(100)),
+        row('Наличные', rub(100), archived: true),
+      ]
+      ..changed();
+    await settleIn(tester);
+
+    expect(openOf(tester, 'АРХИВ'), inExclusiveRange(0, 1));
+    await tester.pumpAndSettle();
+    expect(openOf(tester, 'АРХИВ'), 1);
+    expect(openOf(tester, 'Наличные'), 1);
+
+    repository
+      ..rows = [row('Карта', rub(100)), row('Наличные', rub(100))]
+      ..changed();
+    await settleIn(tester);
+
+    expect(openOf(tester, 'АРХИВ'), inExclusiveRange(0, 1));
+    await tester.pumpAndSettle();
+    expect(find.text('АРХИВ'), findsNothing);
+    expect(find.text('Наличные'), findsOneWidget);
   });
 
   testWidgets('with only archived accounts it still shows them', (
