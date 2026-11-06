@@ -40,6 +40,7 @@ void main() {
   late Category cafe;
   late Category salary;
   late String deleted;
+  late Schedule rent;
 
   setUp(() async {
     database = BirkaDatabase(NativeDatabase.memory());
@@ -130,6 +131,25 @@ void main() {
     );
     await ledger.delete(deleted);
     await ledger.updateAccount(euro.id, archived: true);
+    rent = await ledger.addSchedule(
+      kind: TransactionKind.expense,
+      name: 'Rent',
+      accountId: card.id,
+      categoryId: food.id,
+      amount: rub(4500000),
+      every: ScheduleEvery.month,
+      next: CivilDate(2026, 11, 25),
+      reminder: ScheduleReminder.dayBefore,
+    );
+    final gone = await ledger.addSchedule(
+      kind: TransactionKind.income,
+      name: 'Gone',
+      accountId: card.id,
+      amount: rub(100),
+      every: ScheduleEvery.week,
+      next: CivilDate(2026, 11, 2),
+    );
+    await ledger.deleteSchedule(gone.id);
   });
 
   tearDown(() => database.close());
@@ -160,7 +180,9 @@ void main() {
       );
       expect(copy.entryRows, hasLength(5));
       expect(copy.allocationRows, hasLength(3));
+      expect(copy.scheduleRows.map((row) => row.id), [rent.id]);
       expect(copy.encode(), isNot(contains('Deleted')));
+      expect(copy.encode(), isNot(contains('Gone')));
     });
 
     test('reads back from its file', () async {
@@ -213,6 +235,7 @@ void main() {
       ]);
       expect(categories.first.icon, 'cart');
       expect(categories.first.color, '#4ade80');
+      expect(await restored.watchSchedules().first, [rent]);
       final card_ = await (other.select(
         other.accounts,
       )..where((row) => row.id.equals(card.id))).getSingle();
@@ -245,7 +268,7 @@ void main() {
       await restored.restore(await ledger.copy());
 
       final changes = await other.select(other.changes).get();
-      expect(changes, hasLength(2 + 3 + 4 + 5 + 3));
+      expect(changes, hasLength(2 + 3 + 4 + 5 + 3 + 1));
       expect(changes.map((it) => it.operation).toSet(), {'insert'});
       expect(changes.map((it) => it.changedAt).toSet(), {
         DateTime.utc(2026, 11, 2, 18),
@@ -272,6 +295,7 @@ void main() {
         transactionRows: copy.transactionRows,
         entryRows: copy.entryRows,
         allocationRows: copy.allocationRows,
+        scheduleRows: copy.scheduleRows,
       );
 
       await expectLater(restored.restore(broken), throwsA(anything));
@@ -305,6 +329,7 @@ void main() {
       database.transactions,
       database.entries,
       database.allocations,
+      database.schedules,
       database.changes,
     ]) {
       expect(await rowsIn(database, table), 0, reason: table.actualTableName);

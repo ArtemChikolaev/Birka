@@ -33,6 +33,14 @@ final class CivilDate implements Comparable<CivilDate> {
     );
   }
 
+  /// [day] of [month] of [year], or the last day of a shorter month. A month
+  /// past December goes on into the next year.
+  factory CivilDate.onDay(int year, int month, int day) {
+    final first = DateTime.utc(year, month);
+    final last = DateTime.utc(first.year, first.month + 1, 0).day;
+    return CivilDate(first.year, first.month, day < last ? day : last);
+  }
+
   static final _format = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$');
 
   /// The year.
@@ -43,6 +51,23 @@ final class CivilDate implements Comparable<CivilDate> {
 
   /// The day of the month.
   final int day;
+
+  /// The date [days] days later, or earlier when [days] is negative.
+  CivilDate addDays(int days) {
+    final moved = DateTime.utc(year, month, day + days);
+    return CivilDate(moved.year, moved.month, moved.day);
+  }
+
+  /// The day of the week, from 1 for Monday to 7 for Sunday.
+  int get weekday => DateTime.utc(year, month, day).weekday;
+
+  /// How many days [other] comes after this date, or before it when the
+  /// count is negative.
+  int daysUntil(CivilDate other) => DateTime.utc(
+    other.year,
+    other.month,
+    other.day,
+  ).difference(DateTime.utc(year, month, day)).inDays;
 
   @override
   int compareTo(CivilDate other) => toString().compareTo(other.toString());
