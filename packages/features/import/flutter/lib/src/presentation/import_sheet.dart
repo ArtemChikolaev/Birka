@@ -4,6 +4,7 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:import_common/import_common.dart';
+import 'package:import_flutter/src/presentation/import_categories_page.dart';
 import 'package:import_flutter/src/presentation/import_columns_page.dart';
 import 'package:import_flutter/src/presentation/widgets/format_mark.dart';
 import 'package:import_flutter/src/presentation/widgets/table_card.dart';
@@ -150,6 +151,15 @@ class _ImportSheetState extends State<ImportSheet> {
     );
     if ((set ?? false) && mounted) setState(() => _columnsSet = true);
   }
+
+  Future<void> _setCategories(ImportCubit cubit) => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => BlocProvider.value(
+        value: cubit,
+        child: const ImportCategoriesPage(),
+      ),
+    ),
+  );
 
   void _close() => Navigator.of(context).pop();
 
@@ -323,6 +333,29 @@ class _ImportSheetState extends State<ImportSheet> {
             _account(context, cubit, state, source, choices[source.key]),
         ],
       ),
+      if (plan.choices.categories.isNotEmpty || plan.withFees > 0) ...[
+        const SizedBox(height: BirkaTokens.spaceSm),
+        GlassListGroup(
+          children: [
+            GlassListRow(
+              title: t.imports.categoriesHeading,
+              subtitle: categoriesLine(state),
+              leading: GlyphBadge(
+                glyph: BirkaGlyph.list,
+                color: colors.textMuted,
+              ),
+              trailing: BirkaIcon(
+                BirkaGlyph.chevron,
+                size: 18,
+                color: colors.textSubtle,
+              ),
+              onTap: state.writing
+                  ? null
+                  : () => unawaited(_setCategories(cubit)),
+            ),
+          ],
+        ),
+      ],
       const SizedBox(height: BirkaTokens.spaceMd),
       _Line(
         label: from == null || to == null

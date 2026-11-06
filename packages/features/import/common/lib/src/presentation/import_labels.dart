@@ -5,6 +5,7 @@ import 'package:import_common/src/domain/import_plan.dart';
 import 'package:import_common/src/domain/statement.dart';
 import 'package:import_common/src/domain/statement_format.dart';
 import 'package:import_common/src/domain/statement_formats.dart';
+import 'package:import_common/src/presentation/import_cubit.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
@@ -192,3 +193,59 @@ Money? bankBalance(SourceAccount source, Money after) {
       ? null
       : moneyOf(closing, source.currency, fallback: after.currency);
 }
+
+/// What the row of the categories of the bank says on the phone: that their
+/// places are those of the last file of the format, how many of them Birka
+/// placed itself, or that it knows none of them.
+String categoriesLine(ImportState state) {
+  if (state.remembered) return t.imports.categoriesAsBefore;
+  final (:known, :total) = _placed(state);
+  return known == 0
+      ? t.imports.categoriesNone
+      : t.imports.categoriesKnown(
+          known: formatCount(known),
+          total: formatCount(total),
+        );
+}
+
+/// What the page of the categories of the bank says above them, in the
+/// same three ways as [categoriesLine].
+String categoriesIntro(ImportState state) {
+  if (state.remembered) {
+    return t.imports.categoriesAsBeforeText(
+      source: _sourceOf(state.layout?.format),
+    );
+  }
+  final (:known, :total) = _placed(state);
+  return known == 0
+      ? t.imports.categoriesText
+      : t.imports.categoriesKnownText(
+          known: formatCount(known),
+          total: formatCount(total),
+        );
+}
+
+/// What the page of the categories of the bank promises under them: that
+/// the choice stays for the next statements of [format].
+String categoriesKept(StatementFormat? format) =>
+    t.imports.categoriesKept(source: _sourceOf(format));
+
+/// How many categories of the bank Birka placed itself, those whose place
+/// the person chose left aside, of all of them.
+({int known, int total}) _placed(ImportState state) {
+  final categories =
+      state.choices?.categories ?? const <BankCategory, CategoryChoice>{};
+  return (
+    known: categories.entries
+        .where((it) => !state.chosen.contains(it.key) && it.value is! Unsorted)
+        .length,
+    total: categories.length,
+  );
+}
+
+/// The bank or the app of [format] as «выписки» takes it, such as
+/// «Альфа-Банка», or «вашего формата» for one that the person set.
+String _sourceOf(StatementFormat? format) =>
+    format == null || isOwnFormat(format)
+    ? t.imports.ownFormatOf
+    : t.imports.formatsOf[format.id] ?? format.id;

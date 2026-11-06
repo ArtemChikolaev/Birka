@@ -23,6 +23,7 @@ export 'src/components/birka_ring.dart';
 export 'src/components/birka_step_bars.dart';
 export 'src/components/birka_text_field.dart';
 export 'src/components/card_art.dart';
+export 'src/components/category_dot.dart';
 export 'src/components/chip_switch.dart';
 export 'src/components/choice_sheet.dart';
 export 'src/components/dot_badge.dart';

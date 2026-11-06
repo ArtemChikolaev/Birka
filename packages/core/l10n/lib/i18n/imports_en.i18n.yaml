@@ -313,3 +313,19 @@ noAmounts: No amount read. Check what the file puts before the cents.
 columnsDone: "Done · $operations"
 ownColumns: columns set by you
 looksLikeOwn: Your own format, as before
+categoriesHeading: Categories of the bank
+categoriesCount(n):
+  one: $count category in the statement
+  other: $count categories in the statement
+categoriesKnown: "$known of $total recognized by Birka"
+categoriesNone: Birka doesn't know them yet
+categoriesAsBefore: As in the last statement
+categoriesKnownText: "$known of $total recognized by their names. Operations go straight into your categories, and without a choice they wait in the inbox."
+categoriesText: Choose where the operations of each category of the bank go. Without a choice they wait in the inbox.
+categoriesAsBeforeText: "Your choice for the last statement of $source. Change it if something is different now."
+ownFormatOf: your format
+inboxNote: operations wait without a category
+newCategoryNote: made with the import
+newCategoryMark: new category
+categoriesDone: "Done · $count in the inbox"
+categoriesKept: "Birka keeps the choice for statements of $source"

@@ -156,6 +156,8 @@ void main() {
       );
       expect(state.plan!.added, hasLength(4));
       expect(state.plan!.unsorted, 2);
+      expect(state.chosen, isEmpty);
+      expect(state.remembered, isFalse);
     });
 
     test('that does not read says why', () async {
@@ -291,6 +293,7 @@ void main() {
       expect(state.layout!.format, isNull);
       expect(state.choices!.categories[_cafe], isA<IntoCategory>());
       expect(state.choices!.accounts['RUB'], isA<IntoAccount>());
+      expect(state.chosen, {_cafe});
     });
   });
 
@@ -484,6 +487,8 @@ void main() {
         state.choices!.categories[_cafe],
         isA<IntoCategory>().having((it) => it.categoryId, 'id', home.id),
       );
+      expect(state.remembered, isTrue);
+      expect(state.chosen, isEmpty);
     });
 
     test('keeps out an account that the person left out', () async {
@@ -495,6 +500,7 @@ void main() {
 
       final state = await planned();
       expect(state.choices!.accounts['RUB'], isA<LeaveOut>());
+      expect(state.remembered, isFalse);
     });
 
     test('of another card of the bank goes its own way', () async {
@@ -529,6 +535,7 @@ void main() {
         isA<IntoAccount>().having((it) => it.account.id, 'account', card.id),
       );
       expect(state.choices!.categories[_cafe], isA<Unsorted>());
+      expect(state.remembered, isFalse);
     });
   });
 }

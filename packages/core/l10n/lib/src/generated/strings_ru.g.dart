@@ -1221,6 +1221,47 @@ class _Translations$imports$ru extends Translations$imports$en {
   String get ownColumns => 'колонки назначили вы';
   @override
   String get looksLikeOwn => 'Узнали ваш формат';
+  @override
+  String get categoriesHeading => 'Категории банка';
+  @override
+  String categoriesCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} категория в выписке',
+        few: '${count} категории в выписке',
+        many: '${count} категорий в выписке',
+        other: '${count} категории в выписке',
+      );
+  @override
+  String categoriesKnown({required Object known, required Object total}) =>
+      '${known} из ${total} узнали сами';
+  @override
+  String get categoriesNone => 'Birka их пока не знает';
+  @override
+  String get categoriesAsBefore => 'Как в прошлой выписке';
+  @override
+  String categoriesKnownText({required Object known, required Object total}) =>
+      '${known} из ${total} узнали по названиям. Операции сразу встанут в ваши категории, а без выбора подождут во «Входящих».';
+  @override
+  String get categoriesText =>
+      'Выберите, куда записать операции каждой категории банка. Без выбора они подождут во «Входящих».';
+  @override
+  String categoriesAsBeforeText({required Object source}) =>
+      'Взяли ваш выбор с прошлой выписки ${source}. Поменяйте, если что-то теперь иначе.';
+  @override
+  String get ownFormatOf => 'вашего формата';
+  @override
+  String get inboxNote => 'операции подождут без категории';
+  @override
+  String get newCategoryNote => 'появится при импорте';
+  @override
+  String get newCategoryMark => 'новая категория';
+  @override
+  String categoriesDone({required Object count}) =>
+      'Готово · ${count} во «Входящих»';
+  @override
+  String categoriesKept({required Object source}) =>
+      'Выбор запомним для выписок ${source}';
 }
 
 // Path: inbox
@@ -2783,6 +2824,42 @@ extension on TranslationsRu {
             ({required Object operations}) => 'Готово · ${operations}',
           'imports.ownColumns' => 'колонки назначили вы',
           'imports.looksLikeOwn' => 'Узнали ваш формат',
+          'imports.categoriesHeading' => 'Категории банка',
+          'imports.categoriesCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} категория в выписке',
+                  few: '${count} категории в выписке',
+                  many: '${count} категорий в выписке',
+                  other: '${count} категории в выписке',
+                ),
+          'imports.categoriesKnown' =>
+            ({required Object known, required Object total}) =>
+                '${known} из ${total} узнали сами',
+          'imports.categoriesNone' => 'Birka их пока не знает',
+          'imports.categoriesAsBefore' => 'Как в прошлой выписке',
+          'imports.categoriesKnownText' =>
+            ({required Object known, required Object total}) =>
+                '${known} из ${total} узнали по названиям. Операции сразу встанут в ваши категории, а без выбора подождут во «Входящих».',
+          'imports.categoriesText' =>
+            'Выберите, куда записать операции каждой категории банка. Без выбора они подождут во «Входящих».',
+          'imports.categoriesAsBeforeText' =>
+            ({required Object source}) =>
+                'Взяли ваш выбор с прошлой выписки ${source}. Поменяйте, если что-то теперь иначе.',
+          'imports.ownFormatOf' => 'вашего формата',
+          'imports.inboxNote' => 'операции подождут без категории',
+          'imports.newCategoryNote' => 'появится при импорте',
+          'imports.newCategoryMark' => 'новая категория',
+          _ => null,
+        } ??
+        switch (path) {
+          'imports.categoriesDone' =>
+            ({required Object count}) => 'Готово · ${count} во «Входящих»',
+          'imports.categoriesKept' =>
+            ({required Object source}) =>
+                'Выбор запомним для выписок ${source}',
           'inbox.title' => 'Входящие',
           'inbox.back' => 'Назад',
           'inbox.waiting' =>
@@ -2807,9 +2884,6 @@ extension on TranslationsRu {
           'inbox.emptyText' =>
             'Здесь появятся операции без категории и переводы между вашими счетами, когда придут из выписки.',
           'inbox.pairTitle' => 'Похоже на перевод между вашими счетами',
-          _ => null,
-        } ??
-        switch (path) {
           'inbox.pairText' =>
             'Не трата и не доход: капитал от него не изменится',
           'inbox.rate' =>

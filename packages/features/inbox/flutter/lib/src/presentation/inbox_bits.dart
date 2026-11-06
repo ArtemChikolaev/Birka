@@ -59,7 +59,7 @@ Future<Category?> chooseCategory(
       padding: EdgeInsetsDirectional.only(
         start: nested.contains(id) ? BirkaTokens.spaceMd : 0,
       ),
-      child: CategoryDot(byId[id]!),
+      child: CategoryDot(byId[id]!.color),
     ),
     action: onNew == null
         ? null
@@ -67,28 +67,4 @@ Future<Category?> chooseCategory(
   );
   if (making) return onNew?.call(kinds.first);
   return picked == null ? null : byId[picked.$1];
-}
-
-/// The dot of the color of [category], or of a quiet one when it has none.
-class CategoryDot extends StatelessWidget {
-  /// Creates the dot of [category].
-  const CategoryDot(this.category, {super.key});
-
-  /// The category.
-  final Category category;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = category.color;
-    return Container(
-      width: 10,
-      height: 10,
-      decoration: BoxDecoration(
-        color: color == null
-            ? BirkaColors.of(context).textSubtle
-            : BirkaColors.fromHex(color),
-        shape: BoxShape.circle,
-      ),
-    );
-  }
 }

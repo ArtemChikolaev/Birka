@@ -306,6 +306,20 @@ final class ImportPlan {
           choices.categories[operation.category] is! NewCategory)
         operation,
   ].length;
+
+  /// How many operations that go in carry each category of the bank.
+  Map<BankCategory, int> get categoryUses {
+    final uses = <BankCategory, int>{};
+    for (final operation in added) {
+      if (operation.category case final category?) {
+        uses[category] = (uses[category] ?? 0) + 1;
+      }
+    }
+    return uses;
+  }
+
+  /// How many operations that go in carry a fee of the bank.
+  int get withFees => added.where((operation) => operation.fee != null).length;
 }
 
 /// Plans the import of [statement] by [choices] against what the ledger holds:

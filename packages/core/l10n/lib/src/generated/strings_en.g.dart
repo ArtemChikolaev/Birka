@@ -1455,6 +1455,59 @@ class Translations$imports$en {
 
   /// en: 'Your own format, as before'
   String get looksLikeOwn => 'Your own format, as before';
+
+  /// en: 'Categories of the bank'
+  String get categoriesHeading => 'Categories of the bank';
+
+  /// en: '(one) {$count category in the statement} (other) {$count categories in the statement}'
+  String categoriesCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} category in the statement',
+        other: '${count} categories in the statement',
+      );
+
+  /// en: '$known of $total recognized by Birka'
+  String categoriesKnown({required Object known, required Object total}) =>
+      '${known} of ${total} recognized by Birka';
+
+  /// en: 'Birka doesn't know them yet'
+  String get categoriesNone => 'Birka doesn\'t know them yet';
+
+  /// en: 'As in the last statement'
+  String get categoriesAsBefore => 'As in the last statement';
+
+  /// en: '$known of $total recognized by their names. Operations go straight into your categories, and without a choice they wait in the inbox.'
+  String categoriesKnownText({required Object known, required Object total}) =>
+      '${known} of ${total} recognized by their names. Operations go straight into your categories, and without a choice they wait in the inbox.';
+
+  /// en: 'Choose where the operations of each category of the bank go. Without a choice they wait in the inbox.'
+  String get categoriesText =>
+      'Choose where the operations of each category of the bank go. Without a choice they wait in the inbox.';
+
+  /// en: 'Your choice for the last statement of $source. Change it if something is different now.'
+  String categoriesAsBeforeText({required Object source}) =>
+      'Your choice for the last statement of ${source}. Change it if something is different now.';
+
+  /// en: 'your format'
+  String get ownFormatOf => 'your format';
+
+  /// en: 'operations wait without a category'
+  String get inboxNote => 'operations wait without a category';
+
+  /// en: 'made with the import'
+  String get newCategoryNote => 'made with the import';
+
+  /// en: 'new category'
+  String get newCategoryMark => 'new category';
+
+  /// en: 'Done · $count in the inbox'
+  String categoriesDone({required Object count}) =>
+      'Done · ${count} in the inbox';
+
+  /// en: 'Birka keeps the choice for statements of $source'
+  String categoriesKept({required Object source}) =>
+      'Birka keeps the choice for statements of ${source}';
 }
 
 // Path: inbox
@@ -3142,6 +3195,40 @@ extension on Translations {
             ({required Object operations}) => 'Done · ${operations}',
           'imports.ownColumns' => 'columns set by you',
           'imports.looksLikeOwn' => 'Your own format, as before',
+          'imports.categoriesHeading' => 'Categories of the bank',
+          'imports.categoriesCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} category in the statement',
+                  other: '${count} categories in the statement',
+                ),
+          'imports.categoriesKnown' =>
+            ({required Object known, required Object total}) =>
+                '${known} of ${total} recognized by Birka',
+          'imports.categoriesNone' => 'Birka doesn\'t know them yet',
+          'imports.categoriesAsBefore' => 'As in the last statement',
+          'imports.categoriesKnownText' =>
+            ({required Object known, required Object total}) =>
+                '${known} of ${total} recognized by their names. Operations go straight into your categories, and without a choice they wait in the inbox.',
+          'imports.categoriesText' =>
+            'Choose where the operations of each category of the bank go. Without a choice they wait in the inbox.',
+          'imports.categoriesAsBeforeText' =>
+            ({required Object source}) =>
+                'Your choice for the last statement of ${source}. Change it if something is different now.',
+          'imports.ownFormatOf' => 'your format',
+          'imports.inboxNote' => 'operations wait without a category',
+          'imports.newCategoryNote' => 'made with the import',
+          'imports.newCategoryMark' => 'new category',
+          _ => null,
+        } ??
+        switch (path) {
+          'imports.categoriesDone' =>
+            ({required Object count}) => 'Done · ${count} in the inbox',
+          'imports.categoriesKept' =>
+            ({required Object source}) =>
+                'Birka keeps the choice for statements of ${source}',
           'inbox.title' => 'Inbox',
           'inbox.back' => 'Back',
           'inbox.waiting' =>
@@ -3164,9 +3251,6 @@ extension on Translations {
           'inbox.emptyText' =>
             'Operations without a category and transfers between your accounts come here from statements.',
           'inbox.pairTitle' => 'Looks like a transfer between your accounts',
-          _ => null,
-        } ??
-        switch (path) {
           'inbox.pairText' =>
             'Neither spending nor income: your capital stays the same',
           'inbox.rate' =>

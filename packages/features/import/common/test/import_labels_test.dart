@@ -158,6 +158,94 @@ void main() {
     });
   });
 
+  group('the categories of the bank', () {
+    const BankCategory food = (kind: CategoryKind.expense, name: 'Продукты');
+    const BankCategory cafe = (kind: CategoryKind.expense, name: 'Кафе');
+    const BankCategory gifts = (kind: CategoryKind.expense, name: 'Цветы');
+    const layout = StatementLayout(
+      header: 0,
+      columns: [],
+      roles: [],
+      options: ReadingOptions(),
+      format: alfa,
+    );
+
+    ImportState placed(
+      Map<BankCategory, CategoryChoice> categories, {
+      Set<BankCategory> chosen = const {},
+      bool remembered = false,
+      StatementLayout? layout = layout,
+    }) => ImportState(
+      layout: layout,
+      choices: ImportChoices(accounts: const {}, categories: categories),
+      chosen: chosen,
+      remembered: remembered,
+    );
+
+    test('count those that Birka placed itself', () {
+      final state = placed({
+        food: const IntoCategory('food'),
+        cafe: const NewCategory('Кафе'),
+        gifts: const Unsorted(),
+      });
+
+      expect(categoriesLine(state), '2 из 3 узнали сами');
+      expect(
+        categoriesIntro(state),
+        '2 из 3 узнали по названиям. Операции сразу встанут в ваши '
+        'категории, а без выбора подождут во «Входящих».',
+      );
+    });
+
+    test('leave out those that the person placed', () {
+      final state = placed(
+        {
+          food: const IntoCategory('food'),
+          cafe: const IntoCategory('cafe'),
+          gifts: const IntoCategory('gifts'),
+        },
+        chosen: {cafe, gifts},
+      );
+
+      expect(categoriesLine(state), '1 из 3 узнали сами');
+    });
+
+    test('say when Birka knows none of them', () {
+      final state = placed({food: const Unsorted(), gifts: const Unsorted()});
+
+      expect(categoriesLine(state), 'Birka их пока не знает');
+      expect(
+        categoriesIntro(state),
+        'Выберите, куда записать операции каждой категории банка. Без '
+        'выбора они подождут во «Входящих».',
+      );
+    });
+
+    test('say when they are placed as for the last file', () {
+      final state = placed({
+        food: const IntoCategory('food'),
+      }, remembered: true);
+
+      expect(categoriesLine(state), 'Как в прошлой выписке');
+      expect(
+        categoriesIntro(state),
+        'Взяли ваш выбор с прошлой выписки Альфа-Банка. Поменяйте, если '
+        'что-то теперь иначе.',
+      );
+      expect(
+        categoriesIntro(
+          placed({food: const Unsorted()}, remembered: true, layout: null),
+        ),
+        startsWith('Взяли ваш выбор с прошлой выписки вашего формата.'),
+      );
+    });
+
+    test('stay for the next statements of the bank', () {
+      expect(categoriesKept(alfa), 'Выбор запомним для выписок Альфа-Банка');
+      expect(categoriesKept(null), 'Выбор запомним для выписок вашего формата');
+    });
+  });
+
   group('an amount of a file', () {
     test('is money of its currency, or of the fallback', () {
       expect(
