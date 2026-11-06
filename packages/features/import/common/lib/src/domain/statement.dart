@@ -124,7 +124,7 @@ enum RowFault {
 @immutable
 final class RowProblem {
   /// Creates a problem.
-  const RowProblem(this.line, this.fault, this.text);
+  const RowProblem(this.line, this.fault, this.text, {this.description = ''});
 
   /// The number of the row in the file.
   final int line;
@@ -135,6 +135,9 @@ final class RowProblem {
   /// What to show of the row: the value that does not read, or the
   /// description of the operation.
   final String text;
+
+  /// The description of the operation, when the row has one.
+  final String description;
 
   @override
   String toString() => 'RowProblem($line, ${fault.name}, $text)';
@@ -282,14 +285,28 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
       final fault = error.fault == CellFault.noSuchDay
           ? RowFault.noSuchDay
           : RowFault.unreadableDate;
-      problems.add(RowProblem(row.line, fault, dateCell.text.trim()));
+      problems.add(
+        RowProblem(
+          row.line,
+          fault,
+          dateCell.text.trim(),
+          description: description,
+        ),
+      );
       continue;
     }
     final status = cellOf(row, ColumnRole.status);
     if (status != null &&
         accepted.isNotEmpty &&
         !accepted.contains(status.text.trim().toLowerCase())) {
-      problems.add(RowProblem(row.line, RowFault.declined, description));
+      problems.add(
+        RowProblem(
+          row.line,
+          RowFault.declined,
+          description,
+          description: description,
+        ),
+      );
       continue;
     }
     final account = cellOf(row, ColumnRole.account)?.text.trim() ?? '';
@@ -352,7 +369,14 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
       final taken = moneyOf(row, ColumnRole.fee)?.abs();
       if (taken != null && taken > Decimal.zero) fee = taken;
     } on _Unreadable catch (error) {
-      problems.add(RowProblem(row.line, RowFault.unreadableAmount, error.text));
+      problems.add(
+        RowProblem(
+          row.line,
+          RowFault.unreadableAmount,
+          error.text,
+          description: description,
+        ),
+      );
       continue;
     }
     if (out == null && into == null) {
@@ -366,6 +390,7 @@ Statement readStatement(StatementTable table, StatementLayout layout) {
           row.line,
           written ? RowFault.zeroAmount : RowFault.noAmount,
           description,
+          description: description,
         ),
       );
       continue;

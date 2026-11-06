@@ -167,6 +167,68 @@ void main() {
     );
   });
 
+  testWidgets('says which rows stay out and why', (tester) async {
+    await open(tester, [octoberWithGaps()]);
+
+    expect(find.text('2 строки не попадут в учёт'), findsOneWidget);
+    expect(find.text('2 не прочитались'), findsOneWidget);
+    expect(find.text('ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ'), findsOneWidget);
+
+    await tapText(tester, '2 строки не попадут в учёт');
+
+    expect(
+      find.text('alfa-2026-10.csv · остальные 4 в порядке'),
+      findsOneWidget,
+    );
+    expect(find.text('НЕ ПРОЧИТАЛИ'), findsOneWidget);
+    expect(find.text('Перевод по номеру телефона'), findsOneWidget);
+    expect(find.text('Строка 6 · нет суммы'), findsOneWidget);
+    expect(find.text('Аптека №12'), findsOneWidget);
+    expect(
+      find.text('Строка 7 · 31.09.2026, такого дня нет'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Непрочитанные запишите вручную'),
+      findsOneWidget,
+    );
+
+    await tapText(tester, 'ПОНЯТНО');
+
+    expect(find.text('НЕ ПРОЧИТАЛИ'), findsNothing);
+    expect(find.text('ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ'), findsOneWidget);
+  });
+
+  testWidgets('keeps apart what the bank did not carry out', (tester) async {
+    await open(tester, [tbankDeclined()]);
+
+    expect(find.text('1 строка не попадёт в учёт'), findsOneWidget);
+    expect(find.text('1 не прошла в банке'), findsOneWidget);
+
+    await tapText(tester, '1 строка не попадёт в учёт');
+
+    expect(find.text('НЕ ПРОШЛИ В БАНКЕ'), findsOneWidget);
+    expect(find.text('Магнит'), findsOneWidget);
+    expect(find.text('Строка 3 · операция не прошла'), findsOneWidget);
+    expect(find.text('НЕ ПРОЧИТАЛИ'), findsNothing);
+    expect(find.textContaining('Непрочитанные запишите вручную'), findsNothing);
+  });
+
+  testWidgets('leads a statement that mostly does not read to its columns', (
+    tester,
+  ) async {
+    await open(tester, [octoberGarbled()]);
+
+    expect(find.text('Импорт выписки'), findsOneWidget);
+    expect(find.text('3 строки из 3 не прочитались'), findsOneWidget);
+    expect(find.textContaining('проверьте, где в ней дата'), findsOneWidget);
+    expect(find.textContaining('ИМПОРТИРОВАТЬ'), findsNothing);
+
+    await tapText(tester, 'ПРОВЕРИТЬ КОЛОНКИ');
+
+    expect(find.byType(ImportColumnsPage), findsOneWidget);
+  });
+
   testWidgets('leads a format it does not know to its columns', (
     tester,
   ) async {
@@ -202,6 +264,30 @@ void main() {
     await tapText(tester, 'ИМПОРТИРОВАТЬ 2 ОПЕРАЦИИ');
 
     expect(repository.written.single.added, hasLength(2));
+  });
+
+  testWidgets('says what the bank holds when the balance will differ', (
+    tester,
+  ) async {
+    await open(tester, [unknown()]);
+    await tapText(tester, 'НАЗНАЧИТЬ КОЛОНКИ');
+    await tapText(tester, 'Сумма в валюте счёта');
+    await tapText(tester, 'Сумма');
+    await tapText(tester, 'ГОТОВО · 2 ОПЕРАЦИИ');
+
+    expect(find.textContaining('В банке'), findsNothing);
+    // Into the card of the ledger, which does not hold what the file began
+    // with.
+    await tapText(tester, 'Новый счёт');
+    await tapText(tester, 'Зарплатная карта');
+
+    expect(find.textContaining('В банке 142'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is BirkaIcon && widget.glyph == BirkaGlyph.alert,
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets("goes on at once with a format of the person's own", (

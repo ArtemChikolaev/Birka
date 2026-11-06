@@ -207,8 +207,8 @@ void main() {
       );
       expect(plan.operations, hasLength(1));
       expect(plan.left, 1);
-      expect(plan.problems.map((it) => (it.line, it.fault)), [
-        (4, PlanFault.tooPrecise),
+      expect(plan.problems.map((it) => (it.line, it.fault, it.description)), [
+        (4, PlanFault.tooPrecise, 'Dust'),
       ]);
       final other = await prepareImport(
         repository,

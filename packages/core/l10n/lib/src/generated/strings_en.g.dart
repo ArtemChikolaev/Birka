@@ -1508,6 +1508,91 @@ class Translations$imports$en {
   /// en: 'Birka keeps the choice for statements of $source'
   String categoriesKept({required Object source}) =>
       'Birka keeps the choice for statements of ${source}';
+
+  /// en: '(one) {$count row stays out of the ledger} (other) {$count rows stay out of the ledger}'
+  String rowsLeft({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} row stays out of the ledger',
+        other: '${count} rows stay out of the ledger',
+      );
+
+  /// en: '(one) {$count did not read} (other) {$count did not read}'
+  String unreadCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} did not read',
+        other: '${count} did not read',
+      );
+
+  /// en: '(one) {$count did not go through the bank} (other) {$count did not go through the bank}'
+  String declinedCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} did not go through the bank',
+        other: '${count} did not go through the bank',
+      );
+
+  /// en: '(one) {$count does not fit its account} (other) {$count do not fit their account}'
+  String unfitCount({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} does not fit its account',
+        other: '${count} do not fit their account',
+      );
+
+  /// en: '(one) {$count more is fine} (other) {the other $count are fine}'
+  String restFine({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} more is fine',
+        other: 'the other ${count} are fine',
+      );
+
+  /// en: 'Did not read'
+  String get unreadTitle => 'Did not read';
+
+  /// en: 'Did not go through the bank'
+  String get declinedTitle => 'Did not go through the bank';
+
+  /// en: 'Do not fit the account'
+  String get unfitTitle => 'Do not fit the account';
+
+  /// en: 'Row $line · $what'
+  String rowLine({required Object line, required Object what}) =>
+      'Row ${line} · ${what}';
+
+  /// en: 'Record the unread ones by hand or download the statement again: Birka adds only what the ledger does not have yet.'
+  String get leftNote =>
+      'Record the unread ones by hand or download the statement again: Birka adds only what the ledger does not have yet.';
+
+  /// en: 'Got it'
+  String get understood => 'Got it';
+
+  /// en: 'The bank has $amount'
+  String bankHas({required Object amount}) => 'The bank has ${amount}';
+
+  /// en: 'The bank has $amount: rows that did not read seem to be missing'
+  String bankHasMissing({required Object amount}) =>
+      'The bank has ${amount}: rows that did not read seem to be missing';
+
+  /// en: '(one) {$count row of $total did not read} (other) {$count rows of $total did not read}'
+  String mostUnread({
+    required num n,
+    required Object count,
+    required Object total,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one: '${count} row of ${total} did not read',
+    other: '${count} rows of ${total} did not read',
+  );
+
+  /// en: 'The bank seems to have changed its statement: check where its date and amount are and what comes before the cents.'
+  String get mostUnreadText =>
+      'The bank seems to have changed its statement: check where its date and amount are and what comes before the cents.';
+
+  /// en: 'Check the columns'
+  String get checkColumns => 'Check the columns';
 }
 
 // Path: inbox
@@ -3229,6 +3314,71 @@ extension on Translations {
           'imports.categoriesKept' =>
             ({required Object source}) =>
                 'Birka keeps the choice for statements of ${source}',
+          'imports.rowsLeft' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} row stays out of the ledger',
+                  other: '${count} rows stay out of the ledger',
+                ),
+          'imports.unreadCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} did not read',
+                  other: '${count} did not read',
+                ),
+          'imports.declinedCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} did not go through the bank',
+                  other: '${count} did not go through the bank',
+                ),
+          'imports.unfitCount' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} does not fit its account',
+                  other: '${count} do not fit their account',
+                ),
+          'imports.restFine' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} more is fine',
+                  other: 'the other ${count} are fine',
+                ),
+          'imports.unreadTitle' => 'Did not read',
+          'imports.declinedTitle' => 'Did not go through the bank',
+          'imports.unfitTitle' => 'Do not fit the account',
+          'imports.rowLine' =>
+            ({required Object line, required Object what}) =>
+                'Row ${line} · ${what}',
+          'imports.leftNote' =>
+            'Record the unread ones by hand or download the statement again: Birka adds only what the ledger does not have yet.',
+          'imports.understood' => 'Got it',
+          'imports.bankHas' =>
+            ({required Object amount}) => 'The bank has ${amount}',
+          'imports.bankHasMissing' =>
+            ({required Object amount}) =>
+                'The bank has ${amount}: rows that did not read seem to be missing',
+          'imports.mostUnread' =>
+            ({required num n, required Object count, required Object total}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} row of ${total} did not read',
+                  other: '${count} rows of ${total} did not read',
+                ),
+          'imports.mostUnreadText' =>
+            'The bank seems to have changed its statement: check where its date and amount are and what comes before the cents.',
+          'imports.checkColumns' => 'Check the columns',
           'inbox.title' => 'Inbox',
           'inbox.back' => 'Back',
           'inbox.waiting' =>

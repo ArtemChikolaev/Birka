@@ -180,7 +180,7 @@ enum PlanFault {
 @immutable
 final class PlanProblem {
   /// Creates a problem.
-  const PlanProblem(this.line, this.fault, this.text);
+  const PlanProblem(this.line, this.fault, this.text, {this.description = ''});
 
   /// The number of the row in the file.
   final int line;
@@ -190,6 +190,9 @@ final class PlanProblem {
 
   /// What to show: the currency or the amount that does not fit.
   final String text;
+
+  /// The description of the operation of the row.
+  final String description;
 }
 
 /// An operation of a statement as it goes into the ledger.
@@ -466,15 +469,30 @@ PlanProblem? _fitting(
   for (final leg in legs) {
     final currency = currencyOf(leg.account)!;
     if (leg.currency != null && leg.currency != currency.code) {
-      return PlanProblem(row.line, PlanFault.otherCurrency, leg.currency!);
+      return PlanProblem(
+        row.line,
+        PlanFault.otherCurrency,
+        leg.currency!,
+        description: row.description,
+      );
     }
     if (moneyIn(leg.amount, currency) == null) {
-      return PlanProblem(row.line, PlanFault.tooPrecise, '${leg.amount}');
+      return PlanProblem(
+        row.line,
+        PlanFault.tooPrecise,
+        '${leg.amount}',
+        description: row.description,
+      );
     }
   }
   if (row.fee case final fee?) {
     if (moneyIn(fee, currencyOf(legs.first.account)!) == null) {
-      return PlanProblem(row.line, PlanFault.tooPrecise, '$fee');
+      return PlanProblem(
+        row.line,
+        PlanFault.tooPrecise,
+        '$fee',
+        description: row.description,
+      );
     }
   }
   if (legs.length == 2 &&
@@ -484,6 +502,7 @@ PlanProblem? _fitting(
       row.line,
       PlanFault.unevenTransfer,
       '${legs.first.amount} / ${legs.last.amount}',
+      description: row.description,
     );
   }
   return null;

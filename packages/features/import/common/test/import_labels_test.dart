@@ -5,6 +5,8 @@ import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:test/test.dart';
 
+import 'fixtures.dart';
+
 LedgerImport _import({
   String? format = 'alfa',
   Set<String> accountIds = const {'salary'},
@@ -243,6 +245,81 @@ void main() {
     test('stay for the next statements of the bank', () {
       expect(categoriesKept(alfa), 'Выбор запомним для выписок Альфа-Банка');
       expect(categoriesKept(null), 'Выбор запомним для выписок вашего формата');
+    });
+  });
+
+  group('the rows that stay out', () {
+    test('name their operation and what is wrong with their row', () {
+      expect(
+        rowProblemLabel(
+          const RowProblem(
+            131,
+            RowFault.noSuchDay,
+            '31.09.2026',
+            description: 'Аптека №12',
+          ),
+        ),
+        (title: 'Аптека №12', line: 'Строка 131 · 31.09.2026, такого дня нет'),
+      );
+      expect(
+        rowProblemLabel(
+          const RowProblem(
+            57,
+            RowFault.noAmount,
+            'Перевод по номеру телефона',
+            description: 'Перевод по номеру телефона',
+          ),
+        ),
+        (title: 'Перевод по номеру телефона', line: 'Строка 57 · нет суммы'),
+      );
+      expect(
+        rowProblemLabel(const RowProblem(12, RowFault.unreadableDate, 'вчера')),
+        (title: 'вчера', line: 'Строка 12 · дата не читается'),
+      );
+      expect(
+        planProblemLabel(
+          const PlanProblem(
+            4,
+            PlanFault.otherCurrency,
+            'USD',
+            description: 'Burger',
+          ),
+        ),
+        (title: 'Burger', line: 'Строка 4 · USD, у счёта другая валюта'),
+      );
+    });
+
+    test('tell those that did not read from those the bank declined', () {
+      final statement = readStatement(
+        tableOf([
+          ['Дата', 'Описание', 'Сумма'],
+          ['01.10.2026', 'Кофейня', '-420,00'],
+          ['31.09.2026', 'Аптека', '-1180,00'],
+          ['02.10.2026', 'Перевод', ''],
+        ]),
+        const StatementLayout(
+          header: 0,
+          columns: [],
+          roles: [
+            ColumnRole.date,
+            ColumnRole.description,
+            ColumnRole.amount,
+          ],
+          options: ReadingOptions(),
+        ),
+      );
+
+      expect(unreadRows(statement).map((it) => it.line), [3, 4]);
+      expect(declinedRows(statement), isEmpty);
+      expect(mostlyUnread(statement), isTrue);
+    });
+
+    test('count each kind under their number', () {
+      expect(
+        leftLine(unread: 2, declined: 1, unfit: 0),
+        '2 не прочитались, 1 не прошла в банке',
+      );
+      expect(leftLine(unread: 0, declined: 0, unfit: 1), '1 не подходит счёту');
     });
   });
 

@@ -83,6 +83,10 @@ void main() {
         (9, RowFault.noAmount, 'Перевод по номеру телефона'),
         (10, RowFault.noSuchDay, '31.09.2026'),
       ]);
+      expect(statement.problems.map((it) => it.description), [
+        'Перевод по номеру телефона',
+        'MARKET ONLINE',
+      ]);
     });
 
     test('sums up its one account', () {
@@ -117,6 +121,7 @@ void main() {
         hasLength(9),
       );
       expect(wrong.problems.first.text, '185 000,00');
+      expect(wrong.problems.first.description, 'TOPUP WISE EUROPE');
     });
   });
 
@@ -485,6 +490,7 @@ void main() {
     expect(cafe.card, '4821');
     expect(statement.problems.single.fault, RowFault.declined);
     expect(statement.problems.single.text, 'Магнит');
+    expect(statement.problems.single.description, 'Магнит');
   });
 
   test('takes the fees of Revolut and what it completed', () {

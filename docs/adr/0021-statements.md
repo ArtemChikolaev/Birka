@@ -188,6 +188,16 @@
     the inbox, into a category of their kind, or into a new one of the
     name of the bank, which the import makes. The button says how many
     operations will wait in the inbox.
+21. The phone says what will not go in, as its board draws it. A row of
+    the sheet counts the rows that did not read, those that the bank
+    declined and those that do not fit their account, and opens a sheet
+    that lists them apart, each with its operation and its row («Аптека
+    №12», «Строка 131 · 31.09.2026, такого дня нет»): a `RowProblem` and
+    a `PlanProblem` keep the description of their row beside the value
+    that does not read. A balance that will not be the bank's gets a mark
+    and what the bank holds. When more rows did not read than did, as when
+    a bank changes its statement, the sheet leads to the columns instead
+    of importing the rest.
 
 ## Options considered
 

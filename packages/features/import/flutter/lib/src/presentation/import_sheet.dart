@@ -7,6 +7,7 @@ import 'package:import_common/import_common.dart';
 import 'package:import_flutter/src/presentation/import_categories_page.dart';
 import 'package:import_flutter/src/presentation/import_columns_page.dart';
 import 'package:import_flutter/src/presentation/widgets/format_mark.dart';
+import 'package:import_flutter/src/presentation/widgets/left_rows_sheet.dart';
 import 'package:import_flutter/src/presentation/widgets/table_card.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
@@ -70,6 +71,10 @@ enum _Stage {
   /// the amount, until the person sets them.
   unknown,
 
+  /// More rows did not read than did, so the columns are likely read
+  /// wrong, as when a bank changes its statement.
+  unread,
+
   /// What Birka recognized, where it goes and what comes in.
   ready,
 
@@ -91,6 +96,9 @@ enum _Stage {
     final own = layout.format == null;
     if (layout.missing.isNotEmpty || own && (!set || !state.readable)) {
       return unknown;
+    }
+    if (state.statement case final statement? when mostlyUnread(statement)) {
+      return unread;
     }
     if (!state.readable) return unreadable;
     return state.planned ? ready : reading;
@@ -188,7 +196,7 @@ class _ImportSheetState extends State<ImportSheet> {
                   _Stage.reading => t.imports.readingTitle,
                   _Stage.unreadable => t.imports.unreadableTitle,
                   _Stage.unknown => t.imports.unknownTitle,
-                  _Stage.ready => t.imports.title,
+                  _Stage.unread || _Stage.ready => t.imports.title,
                   _Stage.done => null,
                   _Stage.undone => t.imports.undoneTitle,
                 },
@@ -204,6 +212,7 @@ class _ImportSheetState extends State<ImportSheet> {
                     _Stage.reading => _reading(context),
                     _Stage.unreadable => _unreadable(context, cubit, state),
                     _Stage.unknown => _unknown(context, cubit, state),
+                    _Stage.unread => _unread(context, cubit, state),
                     _Stage.ready => _ready(context, cubit, state),
                     _Stage.done => _done(context, cubit, state),
                     _Stage.undone => _undone(context),
@@ -289,6 +298,54 @@ class _ImportSheetState extends State<ImportSheet> {
     ];
   }
 
+  List<Widget> _unread(
+    BuildContext context,
+    ImportCubit cubit,
+    ImportState state,
+  ) {
+    final statement = state.statement!;
+    final unread = unreadRows(statement).length;
+    final total = statement.rows.length + statement.problems.length;
+    return [
+      _fileCard(context, state),
+      const SizedBox(height: BirkaTokens.spaceSm),
+      TintedNotice(
+        color: BirkaColors.of(context).negative,
+        glyph: BirkaGlyph.alert,
+        title: t.imports.mostUnread(
+          n: unread,
+          count: formatCount(unread),
+          total: formatCount(total),
+        ),
+        text: t.imports.mostUnreadText,
+      ),
+      const SizedBox(height: BirkaTokens.spaceLg),
+      BirkaButton(
+        label: t.imports.checkColumns,
+        onPressed: () => unawaited(_setColumns(cubit)),
+      ),
+      const SizedBox(height: BirkaTokens.spaceXs),
+      BirkaButton(label: t.imports.cancel, quiet: true, onPressed: _close),
+    ];
+  }
+
+  /// The file and how Birka read it.
+  Widget _fileCard(BuildContext context, ImportState state) {
+    final format = state.layout!.format;
+    return GlassFileCard(
+      mark: format == null
+          ? GlyphBadge(
+              glyph: BirkaGlyph.file,
+              color: BirkaColors.of(context).accent,
+            )
+          : FormatMark(format),
+      name: state.fileName ?? _fileName,
+      line: format == null
+          ? '${t.imports.own} · ${t.imports.ownColumns}'
+          : t.imports.knownBy(bank: formatLabel(format)),
+    );
+  }
+
   /// The way to another file, and out.
   List<Widget> _another(ImportCubit cubit) => [
     BirkaButton(
@@ -306,7 +363,6 @@ class _ImportSheetState extends State<ImportSheet> {
   ) {
     final colors = BirkaColors.of(context);
     final styles = BirkaTextStyles.of(context);
-    final format = state.layout!.format;
     final statement = state.statement!;
     final plan = state.plan!;
     final choices = plan.choices.accounts;
@@ -316,16 +372,19 @@ class _ImportSheetState extends State<ImportSheet> {
     final to = statement.to;
     final progress = state.progress;
     final several = statement.accounts.length > 1;
+    final unread = unreadRows(statement).length;
+    final declined = declinedRows(statement).length;
+    final unfit = plan.problems.length;
+    final left = unread + declined + unfit;
+    const amber = Color(BirkaTokens.colorPaletteAmber);
+    // Outside the list below: the analyzer of Dart 3.10 fails on a
+    // null-aware element in a list that also uses the context.
+    String balanceOf(SourceAccount source) => [
+      t.imports.summaryBalance,
+      if (several) ?_nameOf(choices[source.key]),
+    ].join(' · ');
     return [
-      GlassFileCard(
-        mark: format == null
-            ? GlyphBadge(glyph: BirkaGlyph.file, color: colors.accent)
-            : FormatMark(format),
-        name: state.fileName ?? _fileName,
-        line: format == null
-            ? '${t.imports.own} · ${t.imports.ownColumns}'
-            : t.imports.knownBy(bank: formatLabel(format)),
-      ),
+      _fileCard(context, state),
       const SizedBox(height: BirkaTokens.spaceSm),
       GlassListGroup(
         children: [
@@ -356,6 +415,29 @@ class _ImportSheetState extends State<ImportSheet> {
           ],
         ),
       ],
+      if (left > 0) ...[
+        const SizedBox(height: BirkaTokens.spaceSm),
+        GlassListGroup(
+          children: [
+            GlassListRow(
+              title: t.imports.rowsLeft(n: left, count: formatCount(left)),
+              subtitle: leftLine(
+                unread: unread,
+                declined: declined,
+                unfit: unfit,
+              ),
+              subtitleLines: 2,
+              leading: const GlyphBadge(glyph: BirkaGlyph.alert, color: amber),
+              trailing: BirkaIcon(
+                BirkaGlyph.chevron,
+                size: 18,
+                color: colors.textSubtle,
+              ),
+              onTap: () => unawaited(showLeftRows(context, state)),
+            ),
+          ],
+        ),
+      ],
       const SizedBox(height: BirkaTokens.spaceMd),
       _Line(
         label: from == null || to == null
@@ -374,18 +456,26 @@ class _ImportSheetState extends State<ImportSheet> {
           value: Text(t.imports.inInbox(count: formatCount(plan.unsorted))),
         ),
       for (final source in statement.accounts)
-        if (plan.balances[source.key] case final after?)
+        if (plan.balances[source.key] case final after?) ...[
           _Line(
-            label: [
-              t.imports.summaryBalance,
-              if (several) ?_nameOf(choices[source.key]),
-            ].join(' · '),
+            label: balanceOf(source),
             value: AmountText(
               formatMoney(after),
               style: styles.bodyStrong.copyWith(color: colors.text),
             ),
-            matches: bankBalance(source, after) == after,
+            matches: switch (bankBalance(source, after)) {
+              null => null,
+              final bank => bank == after,
+            },
           ),
+          if (bankBalance(source, after) case final bank? when bank != after)
+            Text(
+              (unread > 0 ? t.imports.bankHasMissing : t.imports.bankHas)(
+                amount: HiddenAmounts.mask(context, formatMoney(bank)),
+              ),
+              style: styles.caption.copyWith(color: amber),
+            ),
+        ],
       const SizedBox(height: BirkaTokens.spaceLg),
       BirkaButton(
         label: progress != null
@@ -664,7 +754,7 @@ String _lineOf(Account account, SourceAccount source) {
 }
 
 /// A line of the summary: what it counts, and how much, with a check when
-/// it agrees with the bank.
+/// it agrees with the bank and a mark of attention when it does not.
 class _Line extends StatelessWidget {
   const _Line({required this.label, required this.value, this.matches});
 
@@ -691,14 +781,18 @@ class _Line extends StatelessWidget {
             style: styles.bodyStrong.copyWith(color: colors.text),
             child: value,
           ),
-          if (matches ?? false) ...[
+          if (matches case final matches?) ...[
             const SizedBox(width: BirkaTokens.spaceXs),
             Semantics(
-              label: t.imports.balanceMatches,
+              label: matches
+                  ? t.imports.balanceMatches
+                  : t.imports.balanceDiffers,
               child: BirkaIcon(
-                BirkaGlyph.check,
+                matches ? BirkaGlyph.check : BirkaGlyph.alert,
                 size: 16,
-                color: colors.positive,
+                color: matches
+                    ? colors.positive
+                    : const Color(BirkaTokens.colorPaletteAmber),
               ),
             ),
           ],

@@ -329,3 +329,31 @@ newCategoryNote: made with the import
 newCategoryMark: new category
 categoriesDone: "Done · $count in the inbox"
 categoriesKept: "Birka keeps the choice for statements of $source"
+rowsLeft(n):
+  one: $count row stays out of the ledger
+  other: $count rows stay out of the ledger
+unreadCount(n):
+  one: $count did not read
+  other: $count did not read
+declinedCount(n):
+  one: $count did not go through the bank
+  other: $count did not go through the bank
+unfitCount(n):
+  one: $count does not fit its account
+  other: $count do not fit their account
+restFine(n):
+  one: $count more is fine
+  other: the other $count are fine
+unreadTitle: Did not read
+declinedTitle: Did not go through the bank
+unfitTitle: Do not fit the account
+rowLine: "Row $line · $what"
+leftNote: "Record the unread ones by hand or download the statement again: Birka adds only what the ledger does not have yet."
+understood: Got it
+bankHas: "The bank has $amount"
+bankHasMissing: "The bank has $amount: rows that did not read seem to be missing"
+mostUnread(n):
+  one: "$count row of $total did not read"
+  other: "$count rows of $total did not read"
+mostUnreadText: "The bank seems to have changed its statement: check where its date and amount are and what comes before the cents."
+checkColumns: Check the columns

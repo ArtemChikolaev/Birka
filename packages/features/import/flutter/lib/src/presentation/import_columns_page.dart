@@ -244,8 +244,6 @@ class _Missing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = BirkaColors.of(context);
-    const amber = Color(BirkaTokens.colorPaletteAmber);
     return AnimatedSize(
       duration: BirkaMotion.reduced(context) ? Duration.zero : BirkaMotion.base,
       curve: BirkaMotion.standardCurve,
@@ -256,21 +254,9 @@ class _Missing extends StatelessWidget {
               padding: const EdgeInsets.only(top: BirkaTokens.spaceMd),
               child: Semantics(
                 liveRegion: true,
-                child: Container(
-                  padding: const EdgeInsets.all(BirkaTokens.spaceMd),
-                  decoration: BoxDecoration(
-                    color: amber.withValues(alpha: 0.10),
-                    border: Border.all(color: amber.withValues(alpha: 0.28)),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(BirkaTokens.radiusMd),
-                    ),
-                  ),
-                  child: Text(
-                    t.imports.missing,
-                    style: BirkaTextStyles.of(
-                      context,
-                    ).body.copyWith(color: colors.text),
-                  ),
+                child: TintedNotice(
+                  color: const Color(BirkaTokens.colorPaletteAmber),
+                  text: t.imports.missing,
                 ),
               ),
             ),
