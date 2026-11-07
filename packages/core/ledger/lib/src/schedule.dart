@@ -117,6 +117,7 @@ final class Schedule {
     required this.reminder,
     this.toAccountId,
     this.categoryId,
+    this.advanceDay,
     this.last,
   });
 
@@ -148,6 +149,11 @@ final class Schedule {
   /// The day of the month it falls on, every month or every year.
   final int day;
 
+  /// The day of the month of its advance, for a payment that comes twice a
+  /// month, such as a salary paid in halves: its advance on this day and the
+  /// rest on [day], each time with [amount].
+  final int? advanceDay;
+
   /// When it comes next.
   final CivilDate next;
 
@@ -163,9 +169,32 @@ final class Schedule {
   /// The time of the rule that comes after [time].
   CivilDate after(CivilDate time) => switch (every) {
     ScheduleEvery.week => time.addDays(7),
-    ScheduleEvery.month => CivilDate.onDay(time.year, time.month + 1, day),
+    ScheduleEvery.month => switch (advanceDay) {
+      final advance? => _earlier(_nextOn(time, advance), _nextOn(time, day)),
+      null => CivilDate.onDay(time.year, time.month + 1, day),
+    },
     ScheduleEvery.year => CivilDate.onDay(time.year + 1, time.month, day),
   };
+
+  /// Whether [time] is the time of its advance rather than of the rest.
+  bool isAdvance(CivilDate time) => switch (advanceDay) {
+    final advance? =>
+      CivilDate.onDay(time.year, time.month, advance) == time &&
+          CivilDate.onDay(time.year, time.month, day) != time,
+    null => false,
+  };
+
+  /// The first time after [time] on [day] of a month, or on the last day of a
+  /// shorter one.
+  static CivilDate _nextOn(CivilDate time, int day) {
+    final same = CivilDate.onDay(time.year, time.month, day);
+    return same.compareTo(time) > 0
+        ? same
+        : CivilDate.onDay(time.year, time.month + 1, day);
+  }
+
+  static CivilDate _earlier(CivilDate a, CivilDate b) =>
+      a.compareTo(b) <= 0 ? a : b;
 
   /// Its times from [next] to [until], both included.
   Iterable<CivilDate> timesUntil(CivilDate until) sync* {
@@ -189,6 +218,7 @@ final class Schedule {
     amount: amount,
     every: every,
     day: day,
+    advanceDay: advanceDay,
     next: next,
     onDay: onDay,
     reminder: reminder,
@@ -207,6 +237,7 @@ final class Schedule {
       other.amount == amount &&
       other.every == every &&
       other.day == day &&
+      other.advanceDay == advanceDay &&
       other.next == next &&
       other.onDay == onDay &&
       other.reminder == reminder &&
@@ -223,6 +254,7 @@ final class Schedule {
     amount,
     every,
     day,
+    advanceDay,
     next,
     onDay,
     reminder,

@@ -11,6 +11,8 @@ ahead: Ближайшие 30 дней
 aheadTotal: до $date $amount
 leftAfterPayday: К зарплате $date на счетах останется ≈ $amount, если не считать ежедневных трат.
 leftAfterMonth: К концу месяца на счетах останется ≈ $amount, если не считать ежедневных трат.
+leftAfterPaydayAdvance: К зарплате $date на счетах останется ≈ $amount с авансом, если не считать ежедневных трат.
+leftAfterMonthAdvance: К концу месяца на счетах останется ≈ $amount с авансом, если не считать ежедневных трат.
 section: "$title · $count"
 all: Все регулярные
 emptyTitle: Регулярных платежей пока нет
@@ -155,3 +157,27 @@ monthsShort:
   - окт
   - ноя
   - дек
+advance: Аванс
+everyTwice: аванс $advance-го и зарплата $day-го
+advancePosted: аванс проведён сегодня · зарплата $date
+advanceSkipped: аванс пропущен · зарплата $date
+advanceFound: аванс нашли в выписке · зарплата $date
+restPosted: зарплата проведена сегодня · аванс $date
+restSkipped: зарплата пропущена · аванс $date
+restFound: зарплату нашли в выписке · аванс $date
+advanceOn: Аванс $date
+nearEnough: "До аванса $date хватает: $amount на $days"
+nearShort: До аванса $date не хватает $amount
+paydayTwice: Аванс и зарплата
+paydayTwiceDays: $advance-го и $day-го
+partsTitle: Как приходит
+parts(map):
+  one: Одной суммой
+  two: С авансом
+partsOne: Вся сумма приходит в один день.
+partsTwo: "Пополам: аванс $advance-го, зарплата $day-го."
+amountMonthly: Сумма в месяц
+halves: по $amount авансом и зарплатой
+advanceDay: Аванс
+restDay: Зарплата
+nextAdvance: аванс, $date

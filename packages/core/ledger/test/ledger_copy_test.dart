@@ -422,6 +422,17 @@ void main() {
       expect(LedgerCopy.parse(copy.encode()).encode(), copy.encode());
     });
 
+    test('travel with their advance since version 5', () {
+      final json = withSchedules()..['version'] = 5;
+      rowsOf(json, 'schedules')[1]['advanceDay'] = 20;
+
+      final copy = LedgerCopy.parse(jsonEncode(json));
+
+      expect(copy.scheduleRows[1].advanceDay, 20);
+      expect(copy.scheduleRows.first.advanceDay, isNull);
+      expect(LedgerCopy.parse(copy.encode()).encode(), copy.encode());
+    });
+
     test('are none in a copy of an older version', () {
       for (final version in [1, 2]) {
         final json = sample()..['version'] = version;
@@ -481,6 +492,15 @@ void main() {
 
       test('comes twice', () {
         expectDamaged('tv', (it) => it['id'] = 'rent');
+      });
+
+      test('has an advance on its own day, out of a month or on no day', () {
+        expectDamaged('pay', (it) => it['advanceDay'] = 25);
+        expectDamaged('pay', (it) => it['advanceDay'] = 32);
+        expectDamaged(
+          'pay',
+          (it) => it.addAll({'advanceDay': 10, 'every': 'week'}),
+        );
       });
 
       test('was done in a way or on times that the ledger does not know', () {

@@ -4590,6 +4590,17 @@ class $SchedulesTable extends Schedules
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _advanceDayMeta = const VerificationMeta(
+    'advanceDay',
+  );
+  @override
+  late final GeneratedColumn<int> advanceDay = GeneratedColumn<int>(
+    'advance_day',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nextOnMeta = const VerificationMeta('nextOn');
   @override
   late final GeneratedColumn<String> nextOn = GeneratedColumn<String>(
@@ -4696,6 +4707,7 @@ class $SchedulesTable extends Schedules
     amountMinor,
     every,
     day,
+    advanceDay,
     nextOn,
     onDay,
     reminder,
@@ -4810,6 +4822,12 @@ class $SchedulesTable extends Schedules
       );
     } else if (isInserting) {
       context.missing(_dayMeta);
+    }
+    if (data.containsKey('advance_day')) {
+      context.handle(
+        _advanceDayMeta,
+        advanceDay.isAcceptableOrUnknown(data['advance_day']!, _advanceDayMeta),
+      );
     }
     if (data.containsKey('next_on')) {
       context.handle(
@@ -4934,6 +4952,10 @@ class $SchedulesTable extends Schedules
         DriftSqlType.int,
         data['${effectivePrefix}day'],
       )!,
+      advanceDay: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}advance_day'],
+      ),
       nextOn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}next_on'],
@@ -5018,6 +5040,10 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
   /// month takes its last day.
   final int day;
 
+  /// The day of the month of its advance, for a payment that comes twice a
+  /// month, such as a salary: its advance on this day and the rest on [day].
+  final int? advanceDay;
+
   /// The civil date of its next time as `YYYY-MM-DD`.
   final String nextOn;
 
@@ -5060,6 +5086,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     required this.amountMinor,
     required this.every,
     required this.day,
+    this.advanceDay,
     required this.nextOn,
     required this.onDay,
     required this.reminder,
@@ -5091,6 +5118,9 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     map['amount_minor'] = Variable<int>(amountMinor);
     map['every'] = Variable<String>(every);
     map['day'] = Variable<int>(day);
+    if (!nullToAbsent || advanceDay != null) {
+      map['advance_day'] = Variable<int>(advanceDay);
+    }
     map['next_on'] = Variable<String>(nextOn);
     map['on_day'] = Variable<String>(onDay);
     map['reminder'] = Variable<String>(reminder);
@@ -5135,6 +5165,9 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       amountMinor: Value(amountMinor),
       every: Value(every),
       day: Value(day),
+      advanceDay: advanceDay == null && nullToAbsent
+          ? const Value.absent()
+          : Value(advanceDay),
       nextOn: Value(nextOn),
       onDay: Value(onDay),
       reminder: Value(reminder),
@@ -5177,6 +5210,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       amountMinor: serializer.fromJson<int>(json['amountMinor']),
       every: serializer.fromJson<String>(json['every']),
       day: serializer.fromJson<int>(json['day']),
+      advanceDay: serializer.fromJson<int?>(json['advanceDay']),
       nextOn: serializer.fromJson<String>(json['nextOn']),
       onDay: serializer.fromJson<String>(json['onDay']),
       reminder: serializer.fromJson<String>(json['reminder']),
@@ -5206,6 +5240,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       'amountMinor': serializer.toJson<int>(amountMinor),
       'every': serializer.toJson<String>(every),
       'day': serializer.toJson<int>(day),
+      'advanceDay': serializer.toJson<int?>(advanceDay),
       'nextOn': serializer.toJson<String>(nextOn),
       'onDay': serializer.toJson<String>(onDay),
       'reminder': serializer.toJson<String>(reminder),
@@ -5231,6 +5266,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     int? amountMinor,
     String? every,
     int? day,
+    Value<int?> advanceDay = const Value.absent(),
     String? nextOn,
     String? onDay,
     String? reminder,
@@ -5253,6 +5289,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     amountMinor: amountMinor ?? this.amountMinor,
     every: every ?? this.every,
     day: day ?? this.day,
+    advanceDay: advanceDay.present ? advanceDay.value : this.advanceDay,
     nextOn: nextOn ?? this.nextOn,
     onDay: onDay ?? this.onDay,
     reminder: reminder ?? this.reminder,
@@ -5285,6 +5322,9 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           : this.amountMinor,
       every: data.every.present ? data.every.value : this.every,
       day: data.day.present ? data.day.value : this.day,
+      advanceDay: data.advanceDay.present
+          ? data.advanceDay.value
+          : this.advanceDay,
       nextOn: data.nextOn.present ? data.nextOn.value : this.nextOn,
       onDay: data.onDay.present ? data.onDay.value : this.onDay,
       reminder: data.reminder.present ? data.reminder.value : this.reminder,
@@ -5316,6 +5356,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           ..write('amountMinor: $amountMinor, ')
           ..write('every: $every, ')
           ..write('day: $day, ')
+          ..write('advanceDay: $advanceDay, ')
           ..write('nextOn: $nextOn, ')
           ..write('onDay: $onDay, ')
           ..write('reminder: $reminder, ')
@@ -5343,6 +5384,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     amountMinor,
     every,
     day,
+    advanceDay,
     nextOn,
     onDay,
     reminder,
@@ -5369,6 +5411,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           other.amountMinor == this.amountMinor &&
           other.every == this.every &&
           other.day == this.day &&
+          other.advanceDay == this.advanceDay &&
           other.nextOn == this.nextOn &&
           other.onDay == this.onDay &&
           other.reminder == this.reminder &&
@@ -5393,6 +5436,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
   final Value<int> amountMinor;
   final Value<String> every;
   final Value<int> day;
+  final Value<int?> advanceDay;
   final Value<String> nextOn;
   final Value<String> onDay;
   final Value<String> reminder;
@@ -5416,6 +5460,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     this.amountMinor = const Value.absent(),
     this.every = const Value.absent(),
     this.day = const Value.absent(),
+    this.advanceDay = const Value.absent(),
     this.nextOn = const Value.absent(),
     this.onDay = const Value.absent(),
     this.reminder = const Value.absent(),
@@ -5440,6 +5485,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     required int amountMinor,
     required String every,
     required int day,
+    this.advanceDay = const Value.absent(),
     required String nextOn,
     required String onDay,
     required String reminder,
@@ -5475,6 +5521,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     Expression<int>? amountMinor,
     Expression<String>? every,
     Expression<int>? day,
+    Expression<int>? advanceDay,
     Expression<String>? nextOn,
     Expression<String>? onDay,
     Expression<String>? reminder,
@@ -5499,6 +5546,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
       if (amountMinor != null) 'amount_minor': amountMinor,
       if (every != null) 'every': every,
       if (day != null) 'day': day,
+      if (advanceDay != null) 'advance_day': advanceDay,
       if (nextOn != null) 'next_on': nextOn,
       if (onDay != null) 'on_day': onDay,
       if (reminder != null) 'reminder': reminder,
@@ -5525,6 +5573,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     Value<int>? amountMinor,
     Value<String>? every,
     Value<int>? day,
+    Value<int?>? advanceDay,
     Value<String>? nextOn,
     Value<String>? onDay,
     Value<String>? reminder,
@@ -5549,6 +5598,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
       amountMinor: amountMinor ?? this.amountMinor,
       every: every ?? this.every,
       day: day ?? this.day,
+      advanceDay: advanceDay ?? this.advanceDay,
       nextOn: nextOn ?? this.nextOn,
       onDay: onDay ?? this.onDay,
       reminder: reminder ?? this.reminder,
@@ -5601,6 +5651,9 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     if (day.present) {
       map['day'] = Variable<int>(day.value);
     }
+    if (advanceDay.present) {
+      map['advance_day'] = Variable<int>(advanceDay.value);
+    }
     if (nextOn.present) {
       map['next_on'] = Variable<String>(nextOn.value);
     }
@@ -5649,6 +5702,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
           ..write('amountMinor: $amountMinor, ')
           ..write('every: $every, ')
           ..write('day: $day, ')
+          ..write('advanceDay: $advanceDay, ')
           ..write('nextOn: $nextOn, ')
           ..write('onDay: $onDay, ')
           ..write('reminder: $reminder, ')
@@ -9534,6 +9588,7 @@ typedef $$SchedulesTableCreateCompanionBuilder =
       required int amountMinor,
       required String every,
       required int day,
+      Value<int?> advanceDay,
       required String nextOn,
       required String onDay,
       required String reminder,
@@ -9559,6 +9614,7 @@ typedef $$SchedulesTableUpdateCompanionBuilder =
       Value<int> amountMinor,
       Value<String> every,
       Value<int> day,
+      Value<int?> advanceDay,
       Value<String> nextOn,
       Value<String> onDay,
       Value<String> reminder,
@@ -9684,6 +9740,11 @@ class $$SchedulesTableFilterComposer
 
   ColumnFilters<int> get day => $composableBuilder(
     column: $table.day,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get advanceDay => $composableBuilder(
+    column: $table.advanceDay,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9856,6 +9917,11 @@ class $$SchedulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get advanceDay => $composableBuilder(
+    column: $table.advanceDay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get nextOn => $composableBuilder(
     column: $table.nextOn,
     builder: (column) => ColumnOrderings(column),
@@ -10009,6 +10075,11 @@ class $$SchedulesTableAnnotationComposer
   GeneratedColumn<int> get day =>
       $composableBuilder(column: $table.day, builder: (column) => column);
 
+  GeneratedColumn<int> get advanceDay => $composableBuilder(
+    column: $table.advanceDay,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get nextOn =>
       $composableBuilder(column: $table.nextOn, builder: (column) => column);
 
@@ -10154,6 +10225,7 @@ class $$SchedulesTableTableManager
                 Value<int> amountMinor = const Value.absent(),
                 Value<String> every = const Value.absent(),
                 Value<int> day = const Value.absent(),
+                Value<int?> advanceDay = const Value.absent(),
                 Value<String> nextOn = const Value.absent(),
                 Value<String> onDay = const Value.absent(),
                 Value<String> reminder = const Value.absent(),
@@ -10177,6 +10249,7 @@ class $$SchedulesTableTableManager
                 amountMinor: amountMinor,
                 every: every,
                 day: day,
+                advanceDay: advanceDay,
                 nextOn: nextOn,
                 onDay: onDay,
                 reminder: reminder,
@@ -10202,6 +10275,7 @@ class $$SchedulesTableTableManager
                 required int amountMinor,
                 required String every,
                 required int day,
+                Value<int?> advanceDay = const Value.absent(),
                 required String nextOn,
                 required String onDay,
                 required String reminder,
@@ -10225,6 +10299,7 @@ class $$SchedulesTableTableManager
                 amountMinor: amountMinor,
                 every: every,
                 day: day,
+                advanceDay: advanceDay,
                 nextOn: nextOn,
                 onDay: onDay,
                 reminder: reminder,

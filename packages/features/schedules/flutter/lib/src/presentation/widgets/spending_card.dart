@@ -293,7 +293,7 @@ class _Upcoming extends StatelessWidget {
           const SizedBox(width: BirkaTokens.spaceSm),
           Expanded(
             child: Text(
-              schedule.name,
+              occurrenceName(schedule, occurrence.on),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: styles.bodyStrong.copyWith(color: colors.text),

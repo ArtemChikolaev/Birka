@@ -1739,6 +1739,15 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String leftAfterMonth({required Object amount}) =>
       'К концу месяца на счетах останется ≈ ${amount}, если не считать ежедневных трат.';
   @override
+  String leftAfterPaydayAdvance({
+    required Object date,
+    required Object amount,
+  }) =>
+      'К зарплате ${date} на счетах останется ≈ ${amount} с авансом, если не считать ежедневных трат.';
+  @override
+  String leftAfterMonthAdvance({required Object amount}) =>
+      'К концу месяца на счетах останется ≈ ${amount} с авансом, если не считать ежедневных трат.';
+  @override
   String section({required Object title, required Object count}) =>
       '${title} · ${count}';
   @override
@@ -2013,6 +2022,67 @@ class _Translations$schedules$ru extends Translations$schedules$en {
     'ноя',
     'дек',
   ];
+  @override
+  String get advance => 'Аванс';
+  @override
+  String everyTwice({required Object advance, required Object day}) =>
+      'аванс ${advance}-го и зарплата ${day}-го';
+  @override
+  String advancePosted({required Object date}) =>
+      'аванс проведён сегодня · зарплата ${date}';
+  @override
+  String advanceSkipped({required Object date}) =>
+      'аванс пропущен · зарплата ${date}';
+  @override
+  String advanceFound({required Object date}) =>
+      'аванс нашли в выписке · зарплата ${date}';
+  @override
+  String restPosted({required Object date}) =>
+      'зарплата проведена сегодня · аванс ${date}';
+  @override
+  String restSkipped({required Object date}) =>
+      'зарплата пропущена · аванс ${date}';
+  @override
+  String restFound({required Object date}) =>
+      'зарплату нашли в выписке · аванс ${date}';
+  @override
+  String advanceOn({required Object date}) => 'Аванс ${date}';
+  @override
+  String nearEnough({
+    required Object date,
+    required Object amount,
+    required Object days,
+  }) => 'До аванса ${date} хватает: ${amount} на ${days}';
+  @override
+  String nearShort({required Object date, required Object amount}) =>
+      'До аванса ${date} не хватает ${amount}';
+  @override
+  String get paydayTwice => 'Аванс и зарплата';
+  @override
+  String paydayTwiceDays({required Object advance, required Object day}) =>
+      '${advance}-го и ${day}-го';
+  @override
+  String get partsTitle => 'Как приходит';
+  @override
+  Map<String, String> get parts => {
+    'one': 'Одной суммой',
+    'two': 'С авансом',
+  };
+  @override
+  String get partsOne => 'Вся сумма приходит в один день.';
+  @override
+  String partsTwo({required Object advance, required Object day}) =>
+      'Пополам: аванс ${advance}-го, зарплата ${day}-го.';
+  @override
+  String get amountMonthly => 'Сумма в месяц';
+  @override
+  String halves({required Object amount}) => 'по ${amount} авансом и зарплатой';
+  @override
+  String get advanceDay => 'Аванс';
+  @override
+  String get restDay => 'Зарплата';
+  @override
+  String nextAdvance({required Object date}) => 'аванс, ${date}';
 }
 
 // Path: settings
@@ -3622,6 +3692,12 @@ extension on TranslationsRu {
           'schedules.leftAfterMonth' =>
             ({required Object amount}) =>
                 'К концу месяца на счетах останется ≈ ${amount}, если не считать ежедневных трат.',
+          'schedules.leftAfterPaydayAdvance' =>
+            ({required Object date, required Object amount}) =>
+                'К зарплате ${date} на счетах останется ≈ ${amount} с авансом, если не считать ежедневных трат.',
+          'schedules.leftAfterMonthAdvance' =>
+            ({required Object amount}) =>
+                'К концу месяца на счетах останется ≈ ${amount} с авансом, если не считать ежедневных трат.',
           'schedules.section' =>
             ({required Object title, required Object count}) =>
                 '${title} · ${count}',
@@ -3822,6 +3898,54 @@ extension on TranslationsRu {
           'schedules.monthsShort.9' => 'окт',
           'schedules.monthsShort.10' => 'ноя',
           'schedules.monthsShort.11' => 'дек',
+          'schedules.advance' => 'Аванс',
+          'schedules.everyTwice' =>
+            ({required Object advance, required Object day}) =>
+                'аванс ${advance}-го и зарплата ${day}-го',
+          'schedules.advancePosted' =>
+            ({required Object date}) =>
+                'аванс проведён сегодня · зарплата ${date}',
+          'schedules.advanceSkipped' =>
+            ({required Object date}) => 'аванс пропущен · зарплата ${date}',
+          'schedules.advanceFound' =>
+            ({required Object date}) =>
+                'аванс нашли в выписке · зарплата ${date}',
+          'schedules.restPosted' =>
+            ({required Object date}) =>
+                'зарплата проведена сегодня · аванс ${date}',
+          'schedules.restSkipped' =>
+            ({required Object date}) => 'зарплата пропущена · аванс ${date}',
+          'schedules.restFound' =>
+            ({required Object date}) =>
+                'зарплату нашли в выписке · аванс ${date}',
+          'schedules.advanceOn' => ({required Object date}) => 'Аванс ${date}',
+          'schedules.nearEnough' =>
+            ({
+              required Object date,
+              required Object amount,
+              required Object days,
+            }) => 'До аванса ${date} хватает: ${amount} на ${days}',
+          'schedules.nearShort' =>
+            ({required Object date, required Object amount}) =>
+                'До аванса ${date} не хватает ${amount}',
+          'schedules.paydayTwice' => 'Аванс и зарплата',
+          'schedules.paydayTwiceDays' =>
+            ({required Object advance, required Object day}) =>
+                '${advance}-го и ${day}-го',
+          'schedules.partsTitle' => 'Как приходит',
+          'schedules.parts.one' => 'Одной суммой',
+          'schedules.parts.two' => 'С авансом',
+          'schedules.partsOne' => 'Вся сумма приходит в один день.',
+          'schedules.partsTwo' =>
+            ({required Object advance, required Object day}) =>
+                'Пополам: аванс ${advance}-го, зарплата ${day}-го.',
+          'schedules.amountMonthly' => 'Сумма в месяц',
+          'schedules.halves' =>
+            ({required Object amount}) => 'по ${amount} авансом и зарплатой',
+          'schedules.advanceDay' => 'Аванс',
+          'schedules.restDay' => 'Зарплата',
+          'schedules.nextAdvance' =>
+            ({required Object date}) => 'аванс, ${date}',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',

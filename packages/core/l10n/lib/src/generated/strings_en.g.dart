@@ -2056,6 +2056,17 @@ class Translations$schedules$en {
   String leftAfterMonth({required Object amount}) =>
       'By the end of the month your accounts will hold ≈ ${amount}, before everyday spending.';
 
+  /// en: 'By the salary on $date your accounts will hold ≈ $amount with the advance, before everyday spending.'
+  String leftAfterPaydayAdvance({
+    required Object date,
+    required Object amount,
+  }) =>
+      'By the salary on ${date} your accounts will hold ≈ ${amount} with the advance, before everyday spending.';
+
+  /// en: 'By the end of the month your accounts will hold ≈ $amount with the advance, before everyday spending.'
+  String leftAfterMonthAdvance({required Object amount}) =>
+      'By the end of the month your accounts will hold ≈ ${amount} with the advance, before everyday spending.';
+
   /// en: '$title · $count'
   String section({required Object title, required Object count}) =>
       '${title} · ${count}';
@@ -2405,6 +2416,89 @@ class Translations$schedules$en {
     'Nov',
     'Dec',
   ];
+
+  /// en: 'Advance'
+  String get advance => 'Advance';
+
+  /// en: 'the advance on day $advance and the salary on day $day'
+  String everyTwice({required Object advance, required Object day}) =>
+      'the advance on day ${advance} and the salary on day ${day}';
+
+  /// en: 'advance posted today · salary on $date'
+  String advancePosted({required Object date}) =>
+      'advance posted today · salary on ${date}';
+
+  /// en: 'advance skipped · salary on $date'
+  String advanceSkipped({required Object date}) =>
+      'advance skipped · salary on ${date}';
+
+  /// en: 'advance found in a statement · salary on $date'
+  String advanceFound({required Object date}) =>
+      'advance found in a statement · salary on ${date}';
+
+  /// en: 'salary posted today · advance on $date'
+  String restPosted({required Object date}) =>
+      'salary posted today · advance on ${date}';
+
+  /// en: 'salary skipped · advance on $date'
+  String restSkipped({required Object date}) =>
+      'salary skipped · advance on ${date}';
+
+  /// en: 'salary found in a statement · advance on $date'
+  String restFound({required Object date}) =>
+      'salary found in a statement · advance on ${date}';
+
+  /// en: 'Advance on $date'
+  String advanceOn({required Object date}) => 'Advance on ${date}';
+
+  /// en: 'Until the advance on $date: $amount for $days'
+  String nearEnough({
+    required Object date,
+    required Object amount,
+    required Object days,
+  }) => 'Until the advance on ${date}: ${amount} for ${days}';
+
+  /// en: 'Until the advance on $date, $amount short'
+  String nearShort({required Object date, required Object amount}) =>
+      'Until the advance on ${date}, ${amount} short';
+
+  /// en: 'Advance and salary'
+  String get paydayTwice => 'Advance and salary';
+
+  /// en: 'days $advance and $day'
+  String paydayTwiceDays({required Object advance, required Object day}) =>
+      'days ${advance} and ${day}';
+
+  /// en: 'How it comes'
+  String get partsTitle => 'How it comes';
+
+  Map<String, String> get parts => {
+    'one': 'One sum',
+    'two': 'With an advance',
+  };
+
+  /// en: 'The whole sum comes on one day.'
+  String get partsOne => 'The whole sum comes on one day.';
+
+  /// en: 'Half and half: the advance on day $advance, the salary on day $day.'
+  String partsTwo({required Object advance, required Object day}) =>
+      'Half and half: the advance on day ${advance}, the salary on day ${day}.';
+
+  /// en: 'Amount a month'
+  String get amountMonthly => 'Amount a month';
+
+  /// en: '$amount as the advance and as the salary'
+  String halves({required Object amount}) =>
+      '${amount} as the advance and as the salary';
+
+  /// en: 'Advance'
+  String get advanceDay => 'Advance';
+
+  /// en: 'Salary'
+  String get restDay => 'Salary';
+
+  /// en: 'advance, $date'
+  String nextAdvance({required Object date}) => 'advance, ${date}';
 }
 
 // Path: settings
@@ -4051,6 +4145,12 @@ extension on Translations {
           'schedules.leftAfterMonth' =>
             ({required Object amount}) =>
                 'By the end of the month your accounts will hold ≈ ${amount}, before everyday spending.',
+          'schedules.leftAfterPaydayAdvance' =>
+            ({required Object date, required Object amount}) =>
+                'By the salary on ${date} your accounts will hold ≈ ${amount} with the advance, before everyday spending.',
+          'schedules.leftAfterMonthAdvance' =>
+            ({required Object amount}) =>
+                'By the end of the month your accounts will hold ≈ ${amount} with the advance, before everyday spending.',
           'schedules.section' =>
             ({required Object title, required Object count}) =>
                 '${title} · ${count}',
@@ -4243,6 +4343,56 @@ extension on Translations {
           'schedules.monthsShort.9' => 'Oct',
           'schedules.monthsShort.10' => 'Nov',
           'schedules.monthsShort.11' => 'Dec',
+          'schedules.advance' => 'Advance',
+          'schedules.everyTwice' =>
+            ({required Object advance, required Object day}) =>
+                'the advance on day ${advance} and the salary on day ${day}',
+          'schedules.advancePosted' =>
+            ({required Object date}) =>
+                'advance posted today · salary on ${date}',
+          'schedules.advanceSkipped' =>
+            ({required Object date}) => 'advance skipped · salary on ${date}',
+          'schedules.advanceFound' =>
+            ({required Object date}) =>
+                'advance found in a statement · salary on ${date}',
+          'schedules.restPosted' =>
+            ({required Object date}) =>
+                'salary posted today · advance on ${date}',
+          'schedules.restSkipped' =>
+            ({required Object date}) => 'salary skipped · advance on ${date}',
+          'schedules.restFound' =>
+            ({required Object date}) =>
+                'salary found in a statement · advance on ${date}',
+          'schedules.advanceOn' =>
+            ({required Object date}) => 'Advance on ${date}',
+          'schedules.nearEnough' =>
+            ({
+              required Object date,
+              required Object amount,
+              required Object days,
+            }) => 'Until the advance on ${date}: ${amount} for ${days}',
+          'schedules.nearShort' =>
+            ({required Object date, required Object amount}) =>
+                'Until the advance on ${date}, ${amount} short',
+          'schedules.paydayTwice' => 'Advance and salary',
+          'schedules.paydayTwiceDays' =>
+            ({required Object advance, required Object day}) =>
+                'days ${advance} and ${day}',
+          'schedules.partsTitle' => 'How it comes',
+          'schedules.parts.one' => 'One sum',
+          'schedules.parts.two' => 'With an advance',
+          'schedules.partsOne' => 'The whole sum comes on one day.',
+          'schedules.partsTwo' =>
+            ({required Object advance, required Object day}) =>
+                'Half and half: the advance on day ${advance}, the salary on day ${day}.',
+          'schedules.amountMonthly' => 'Amount a month',
+          'schedules.halves' =>
+            ({required Object amount}) =>
+                '${amount} as the advance and as the salary',
+          'schedules.advanceDay' => 'Advance',
+          'schedules.restDay' => 'Salary',
+          'schedules.nextAdvance' =>
+            ({required Object date}) => 'advance, ${date}',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',

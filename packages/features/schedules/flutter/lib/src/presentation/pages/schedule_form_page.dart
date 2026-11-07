@@ -174,37 +174,77 @@ class _Form extends StatelessWidget {
                       ),
                   ],
                 ),
+                AnimatedColumn(
+                  children: [
+                    if (state.kind == TransactionKind.income)
+                      Padding(
+                        key: const ValueKey('parts'),
+                        padding: const EdgeInsets.only(
+                          top: BirkaTokens.spaceLg,
+                        ),
+                        child: _Parts(state: state),
+                      ),
+                  ],
+                ),
                 const SizedBox(height: BirkaTokens.spaceLg),
                 GlassSurface(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _Caption(t.schedules.every),
-                      ChipSwitch<ScheduleEvery>(
-                        options: {
-                          for (final every in ScheduleEvery.values)
-                            every:
-                                t.schedules.everyOptions[every.name] ??
-                                every.name,
-                        },
-                        selected: state.every,
-                        onChanged: cubit.everyChanged,
+                      // A salary in halves comes every month, on two days.
+                      AnimatedColumn(
+                        children: [
+                          if (!state.halves)
+                            Column(
+                              key: const ValueKey('every'),
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _Caption(t.schedules.every),
+                                ChipSwitch<ScheduleEvery>(
+                                  options: {
+                                    for (final every in ScheduleEvery.values)
+                                      every:
+                                          t.schedules.everyOptions[every
+                                              .name] ??
+                                          every.name,
+                                  },
+                                  selected: state.every,
+                                  onChanged: cubit.everyChanged,
+                                ),
+                                const SizedBox(height: BirkaTokens.spaceSm),
+                              ],
+                            ),
+                          if (state.advanceDay case final advance?
+                              when state.halves)
+                            _Line(
+                              key: const ValueKey('advance'),
+                              label: t.schedules.advanceDay,
+                              value: t.schedules.dayNumber(day: advance),
+                              onTap: () => unawaited(
+                                _pickDay(context, advance: true),
+                              ),
+                            ),
+                        ],
                       ),
-                      const SizedBox(height: BirkaTokens.spaceSm),
                       _Line(
-                        label: switch (state.every) {
-                          ScheduleEvery.month => t.schedules.dayOfMonth,
-                          ScheduleEvery.week => t.schedules.dayOfWeek,
-                          ScheduleEvery.year => t.schedules.dayOfYear,
-                        },
+                        label: state.halves
+                            ? t.schedules.restDay
+                            : switch (state.every) {
+                                ScheduleEvery.month => t.schedules.dayOfMonth,
+                                ScheduleEvery.week => t.schedules.dayOfWeek,
+                                ScheduleEvery.year => t.schedules.dayOfYear,
+                              },
                         value: _dayLabel(state),
+                        onTap: state.halves
+                            ? () => unawaited(_pickDay(context, advance: false))
+                            : null,
                       ),
                       _Line(
                         label: t.schedules.next,
-                        value:
-                            '${fullDate(state.next, state.today)}, '
-                            '${weekdayLabel(state.next)}',
-                        onTap: () => unawaited(_pickNext(context)),
+                        value: _nextLabel(state),
+                        onTap: state.halves
+                            ? null
+                            : () => unawaited(_pickNext(context)),
                       ),
                     ],
                   ),
@@ -281,7 +321,11 @@ class _Form extends StatelessWidget {
                 Text(
                   state.editing
                       ? t.schedules.changeNote(
-                          date: fullDate(state.next, state.today),
+                          date: state.nextIsAdvance
+                              ? t.schedules.nextAdvance(
+                                  date: fullDate(state.next, state.today),
+                                )
+                              : fullDate(state.next, state.today),
                         )
                       : t.schedules.saveNote,
                   textAlign: TextAlign.center,
@@ -293,6 +337,13 @@ class _Form extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// `аванс, 20 ноября, пт` or `5 декабря, сб`.
+  static String _nextLabel(ScheduleFormState state) {
+    final date =
+        '${fullDate(state.next, state.today)}, ${weekdayLabel(state.next)}';
+    return state.nextIsAdvance ? t.schedules.nextAdvance(date: date) : date;
   }
 
   static String _dayLabel(ScheduleFormState state) => switch (state.every) {
@@ -371,6 +422,25 @@ class _Form extends StatelessWidget {
     if (picked != null) cubit.nextChanged(CivilDate.of(picked));
   }
 
+  /// Picks the day of the advance, or of the rest, of a salary in halves
+  /// from a date of the month.
+  Future<void> _pickDay(BuildContext context, {required bool advance}) async {
+    final cubit = context.read<ScheduleFormCubit>();
+    final today = state.today;
+    final day = advance ? state.advanceDay ?? state.day : state.day;
+    final initial = CivilDate.onDay(today.year, today.month, day);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(initial.year, initial.month, initial.day),
+      firstDate: DateTime(today.year, today.month),
+      lastDate: DateTime(today.year, today.month + 2, 0),
+    );
+    if (picked == null) return;
+    advance
+        ? cubit.advanceDayChanged(picked.day)
+        : cubit.nextChanged(CivilDate.of(picked));
+  }
+
   Future<void> _delete(BuildContext context) async {
     final cubit = context.read<ScheduleFormCubit>();
     final sure = await showModalBottomSheet<bool>(
@@ -405,6 +475,7 @@ class _Amount extends StatelessWidget {
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
     final amount = state.amount;
+    final part = state.part;
     final text = amount == null
         ? '0'
         : switch (state.kind) {
@@ -419,7 +490,11 @@ class _Amount extends StatelessWidget {
         onTap: amount == null ? null : () => unawaited(_edit(context, amount)),
         child: Column(
           children: [
-            SectionLabel(t.schedules.amount, color: colors.textMuted),
+            FadingText(
+              (state.halves ? t.schedules.amountMonthly : t.schedules.amount)
+                  .toUpperCase(),
+              style: styles.label.copyWith(color: colors.textMuted),
+            ),
             const SizedBox(height: BirkaTokens.spaceXxs),
             AmountText(
               text,
@@ -428,6 +503,25 @@ class _Amount extends StatelessWidget {
                   ? AmountTone.positive
                   : AmountTone.neutral,
               style: styles.display,
+            ),
+            AnimatedColumn(
+              children: [
+                if (part != null && part.isPositive && state.halves)
+                  SizedBox(
+                    key: const ValueKey('halves'),
+                    width: double.infinity,
+                    child: Text(
+                      HiddenAmounts.mask(
+                        context,
+                        t.schedules.halves(amount: formatMoney(part)),
+                      ),
+                      textAlign: TextAlign.center,
+                      style: styles.caption.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),
@@ -439,7 +533,7 @@ class _Amount extends StatelessWidget {
     final cubit = context.read<ScheduleFormCubit>();
     final typed = await showFieldSheet(
       context,
-      label: t.schedules.amount,
+      label: state.halves ? t.schedules.amountMonthly : t.schedules.amount,
       done: t.schedules.done,
       initial: amount.isZero ? '' : typedAmount(amount),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -447,6 +541,44 @@ class _Amount extends StatelessWidget {
     if (typed == null) return;
     final money = amountTyped(typed, amount.currency);
     if (money != null) cubit.amountChanged(money.minorUnits);
+  }
+}
+
+/// How an income comes: in one sum, or in halves, an advance and the rest.
+class _Parts extends StatelessWidget {
+  const _Parts({required this.state});
+
+  final ScheduleFormState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    final advance = state.advanceDay;
+    return GlassSurface(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Caption(t.schedules.partsTitle),
+          ChipSwitch<bool>(
+            options: {
+              false: t.schedules.parts['one'] ?? '',
+              true: t.schedules.parts['two'] ?? '',
+            },
+            selected: state.halves,
+            onChanged: (halves) =>
+                context.read<ScheduleFormCubit>().halvesChanged(halves: halves),
+          ),
+          const SizedBox(height: BirkaTokens.spaceSm),
+          FadingText(
+            advance != null && state.halves
+                ? t.schedules.partsTwo(advance: advance, day: state.day)
+                : t.schedules.partsOne,
+            style: styles.caption.copyWith(color: colors.textSecondary),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -506,7 +638,12 @@ class _Caption extends StatelessWidget {
 }
 
 class _Line extends StatelessWidget {
-  const _Line({required this.label, required this.value, this.onTap});
+  const _Line({
+    required this.label,
+    required this.value,
+    this.onTap,
+    super.key,
+  });
 
   final String label;
   final String value;
@@ -531,9 +668,16 @@ class _Line extends StatelessWidget {
                   style: styles.caption.copyWith(color: colors.textMuted),
                 ),
               ),
-              FadingText(
-                value,
-                style: styles.bodyStrong.copyWith(color: colors.text),
+              // The old value and the new one share the width while they
+              // cross-fade, so neither may push the row past its edge.
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 200),
+                child: FadingText(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: styles.bodyStrong.copyWith(color: colors.text),
+                ),
               ),
               if (onTap != null) ...[
                 const SizedBox(width: BirkaTokens.spaceXs),

@@ -123,9 +123,9 @@ final class LedgerCopy {
 
   /// The version of the format that this code writes. It reads every version
   /// up to this one: version 2 added imports and operations that wait for a
-  /// category (ADR 0021), version 3 regular payments, and version 4 what was
-  /// done to their last times (ADR 0023).
-  static const version = 4;
+  /// category (ADR 0021), version 3 regular payments, version 4 what was done
+  /// to their last times, and version 5 their advances (ADR 0023).
+  static const version = 5;
 
   static const _format = 'birka-copy';
 
@@ -272,6 +272,7 @@ final class LedgerCopy {
             'amountMinor': row.amountMinor,
             'every': row.every,
             'day': row.day,
+            'advanceDay': row.advanceDay,
             'nextOn': row.nextOn,
             'onDay': row.onDay,
             'reminder': row.reminder,
@@ -298,9 +299,9 @@ final class LedgerCopy {
   static String _text(DateTime moment) => moment.toUtc().toIso8601String();
 }
 
-/// Reads the rows of versions 1 to 4, and checks them as the ledger checks a
-/// write. Version 1 has no imports, versions 1 and 2 no regular payments, and
-/// version 3 nothing done to their times.
+/// Reads the rows of versions 1 to 5, and checks them as the ledger checks a
+/// write. Version 1 has no imports, versions 1 and 2 no regular payments,
+/// version 3 nothing done to their times, and version 4 no advances.
 LedgerCopy _read(Map<String, Object?> json) {
   final imports = <String, ImportRow>{};
   for (final item
@@ -620,6 +621,14 @@ ScheduleRow _schedule(
   if (!amount.isPositive) _damaged('Schedule $id moves no positive amount');
   final day = _int(json, 'day');
   if (day < 1 || day > 31) _damaged('Schedule $id falls on no day $day');
+  final advanceDay = _field<int?>(json, 'advanceDay');
+  if (advanceDay != null &&
+      (advanceDay < 1 ||
+          advanceDay > 31 ||
+          advanceDay == day ||
+          json['every'] != ScheduleEvery.month.name)) {
+    _damaged('Schedule $id has no advance on day $advanceDay');
+  }
   final nextOn = _string(json, 'nextOn');
   _obeying('$nextOn is not a date', () => CivilDate.parse(nextOn));
   switch (TransactionKind.values.byName(kind)) {
@@ -674,6 +683,7 @@ ScheduleRow _schedule(
     amountMinor: amountMinor,
     every: _name(json, 'every', ScheduleEvery.values),
     day: day,
+    advanceDay: advanceDay,
     nextOn: nextOn,
     onDay: _name(json, 'onDay', ScheduleOnDay.values),
     reminder: _name(json, 'reminder', ScheduleReminder.values),

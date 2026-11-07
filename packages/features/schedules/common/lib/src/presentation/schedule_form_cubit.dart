@@ -46,6 +46,7 @@ final class ScheduleFormState {
     this.every = ScheduleEvery.month,
     CivilDate? next,
     int? day,
+    this.advanceDay,
     this.onDay = ScheduleOnDay.ask,
     this.reminder = ScheduleReminder.onDay,
     this.accounts = const [],
@@ -70,7 +71,8 @@ final class ScheduleFormState {
   /// What the person calls it.
   final String name;
 
-  /// The amount in minor units of the currency of the account.
+  /// The amount in minor units of the currency of the account: what comes
+  /// in a month for a salary in halves.
   final int amountMinor;
 
   /// The account the money leaves, or the account an income reaches.
@@ -88,8 +90,11 @@ final class ScheduleFormState {
   /// When it comes next.
   final CivilDate next;
 
-  /// Its day of the month.
+  /// Its day of the month: the day of the rest for a salary in halves.
   final int day;
+
+  /// The day of the month of its advance, for a salary in halves.
+  final int? advanceDay;
 
   /// What its day does.
   final ScheduleOnDay onDay;
@@ -132,6 +137,26 @@ final class ScheduleFormState {
     null => null,
   };
 
+  /// Whether it is an income that comes in halves: an advance and the rest.
+  bool get halves => kind == TransactionKind.income && advanceDay != null;
+
+  /// What each time brings: half of [amount] for a salary in halves.
+  Money? get part => switch (account) {
+    final account? => Money(
+      halves ? amountMinor ~/ 2 : amountMinor,
+      account.currency,
+    ),
+    null => null,
+  };
+
+  /// Whether its next time is the advance of a salary in halves.
+  bool get nextIsAdvance => switch (advanceDay) {
+    final advance? when halves =>
+      CivilDate.onDay(next.year, next.month, advance) == next &&
+          CivilDate.onDay(next.year, next.month, day) != next,
+    _ => false,
+  };
+
   /// The accounts a transfer can reach: the others of the same currency.
   List<Account> get targets => [
     for (final other in accounts)
@@ -141,7 +166,7 @@ final class ScheduleFormState {
   /// Whether the form holds a payment that the ledger takes.
   bool get valid =>
       name.trim().isNotEmpty &&
-      amountMinor > 0 &&
+      (part?.isPositive ?? false) &&
       account != null &&
       (kind != TransactionKind.transfer || toAccount != null);
 
@@ -161,6 +186,7 @@ final class ScheduleFormState {
     ScheduleEvery? every,
     CivilDate? next,
     int? day,
+    (int?,)? advanceDay,
     ScheduleOnDay? onDay,
     ScheduleReminder? reminder,
     List<Account>? accounts,
@@ -180,6 +206,7 @@ final class ScheduleFormState {
     every: every ?? this.every,
     next: next ?? this.next,
     day: day ?? this.day,
+    advanceDay: advanceDay == null ? this.advanceDay : advanceDay.$1,
     onDay: onDay ?? this.onDay,
     reminder: reminder ?? this.reminder,
     accounts: accounts ?? this.accounts,
@@ -205,9 +232,13 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
   final String? _id;
 
   /// Makes it an expense, an income or a transfer. A category of the other
-  /// kind goes, and a transfer gets an account to reach.
+  /// kind goes, a transfer gets an account to reach, and only an income keeps
+  /// its advance.
   void kindChanged(TransactionKind kind) {
-    final next = state.copyWith(kind: kind);
+    final next = state.copyWith(
+      kind: kind,
+      advanceDay: kind == TransactionKind.income ? null : (null,),
+    );
     final category = next.category;
     final target = kind == TransactionKind.transfer
         ? next.toAccount ?? next.targets.firstOrNull
@@ -249,9 +280,48 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
   /// Repeats the payment [every] month, week or year.
   void everyChanged(ScheduleEvery every) => emit(state.copyWith(every: every));
 
-  /// Moves its next time to [day], whose day of the month it keeps.
-  void nextChanged(CivilDate day) =>
-      emit(state.copyWith(next: day, day: day.day));
+  /// Moves its next time to [day], whose day of the month it keeps. For a
+  /// salary in halves, [day] gives the day of the rest, and the next time is
+  /// the nearest of the two days.
+  void nextChanged(CivilDate day) {
+    final advance = state.advanceDay;
+    if (!state.halves || advance == null) {
+      return emit(state.copyWith(next: day, day: day.day));
+    }
+    if (day.day == advance) return;
+    emit(
+      state.copyWith(
+        day: day.day,
+        next: _firstOn(state.today, advance, day.day),
+      ),
+    );
+  }
+
+  /// Makes an income come in [halves], an advance and the rest, every month,
+  /// or in one sum.
+  void halvesChanged({required bool halves}) {
+    if (!halves) return emit(state.copyWith(advanceDay: (null,)));
+    final day = state.day;
+    final advance = state.advanceDay ?? (day <= 15 ? day + 15 : day - 15);
+    emit(
+      state.copyWith(
+        every: ScheduleEvery.month,
+        advanceDay: (advance,),
+        next: _firstOn(state.today, advance, day),
+      ),
+    );
+  }
+
+  /// Moves the advance of a salary in halves to [day] of the month.
+  void advanceDayChanged(int day) {
+    if (!state.halves || day == state.day) return;
+    emit(
+      state.copyWith(
+        advanceDay: (day,),
+        next: _firstOn(state.today, day, state.day),
+      ),
+    );
+  }
 
   /// Says what its day does.
   void onDayChanged(ScheduleOnDay onDay) => emit(state.copyWith(onDay: onDay));
@@ -267,8 +337,9 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
     if (!form.valid || account == null) return;
     if (form.status != ScheduleFormStatus.editing) return;
     emit(form.copyWith(status: ScheduleFormStatus.saving, failed: false));
-    final amount = Money(form.amountMinor, account.currency);
+    final amount = form.part!;
     final transfer = form.kind == TransactionKind.transfer;
+    final advance = form.halves ? form.advanceDay : null;
     try {
       if (form.id case final id?) {
         await _repository.update(
@@ -282,6 +353,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
             amount: amount,
             every: form.every,
             day: form.day,
+            advanceDay: advance,
             next: form.next,
             onDay: form.onDay,
             reminder: form.reminder,
@@ -298,6 +370,8 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
             amount: amount,
             every: form.every,
             next: form.next,
+            day: advance == null ? null : form.day,
+            advanceDay: advance,
             onDay: form.onDay,
             reminder: form.reminder,
           ),
@@ -370,13 +444,16 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
         id: schedule.id,
         kind: schedule.kind,
         name: schedule.name,
-        amountMinor: schedule.amount.minorUnits,
+        // A salary in halves shows what it brings in a month.
+        amountMinor:
+            schedule.amount.minorUnits * (schedule.advanceDay == null ? 1 : 2),
         accountId: schedule.accountId,
         toAccountId: schedule.toAccountId,
         categoryId: schedule.categoryId,
         every: schedule.every,
         next: schedule.next,
         day: schedule.day,
+        advanceDay: schedule.advanceDay,
         onDay: schedule.onDay,
         reminder: schedule.reminder,
         accounts: loaded.accounts,
@@ -385,4 +462,19 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
       ),
     );
   }
+}
+
+/// The nearest time from [today] on of a salary with its advance on day
+/// [advance] and the rest on day [day] of a month.
+CivilDate _firstOn(CivilDate today, int advance, int day) {
+  CivilDate from(int day) {
+    final same = CivilDate.onDay(today.year, today.month, day);
+    return same.compareTo(today) >= 0
+        ? same
+        : CivilDate.onDay(today.year, today.month + 1, day);
+  }
+
+  final a = from(advance);
+  final b = from(day);
+  return a.compareTo(b) <= 0 ? a : b;
 }

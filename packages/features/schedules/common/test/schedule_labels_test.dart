@@ -117,6 +117,65 @@ void main() {
     );
   });
 
+  test('names the advance and the halves of a salary', () {
+    final salary = Schedule(
+      id: 'salary',
+      kind: TransactionKind.income,
+      name: 'Зарплата',
+      accountId: 'card',
+      amount: rub(60000),
+      every: ScheduleEvery.month,
+      day: 5,
+      advanceDay: 20,
+      next: CivilDate(2026, 11, 20),
+      onDay: ScheduleOnDay.ask,
+      reminder: ScheduleReminder.onDay,
+    );
+    ScheduleLast posted(CivilDate on) => ScheduleLast(
+      done: ScheduleDone.posted,
+      from: on,
+      on: on,
+      at: DateTime(on.year, on.month, on.day, 9),
+    );
+
+    expect(
+      scheduleLine(salary, today),
+      'аванс 20-го и зарплата 5-го · спросить',
+    );
+    expect(occurrenceName(salary, CivilDate(2026, 11, 20)), 'Аванс');
+    expect(occurrenceName(salary, CivilDate(2026, 12, 5)), 'Зарплата');
+    expect(scheduleAmount(salary), nb('+60 000 ₽'));
+    expect(scheduleTotal(salary), nb('+120 000 ₽'));
+    expect(
+      postedLabel(salary, salary.amount),
+      'Провели «Аванс» · ${nb('+60 000 ₽')}',
+    );
+    expect(
+      skippedLabel(salary, today),
+      'Пропустили «Аванс» · спросим 5 декабря',
+    );
+    expect(
+      doneLine(
+        salary.movedTo(
+          CivilDate(2026, 12, 5),
+          last: posted(CivilDate(2026, 11, 20)),
+        ),
+        CivilDate(2026, 11, 20),
+      ),
+      'аванс проведён сегодня · зарплата 5 декабря',
+    );
+    expect(
+      doneLine(
+        salary.movedTo(
+          CivilDate(2026, 12, 20),
+          last: posted(CivilDate(2026, 12, 5)),
+        ),
+        CivilDate(2026, 12, 5),
+      ),
+      'зарплата проведена сегодня · аванс 20 декабря',
+    );
+  });
+
   test('names days and dates', () {
     expect(dayLabel(today, today), 'сегодня');
     expect(dayLabel(CivilDate(2026, 11, 19), today), 'завтра');
