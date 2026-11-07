@@ -96,6 +96,24 @@ List<Schedule> boardSchedules() => [
   ),
 ];
 
+/// [schedule] moved on from its next time, which was done as [done] at noon
+/// of [at], as the ledger does.
+Schedule doneAs(
+  Schedule schedule,
+  ScheduleDone done, {
+  required CivilDate at,
+  String? importId,
+}) => schedule.movedTo(
+  schedule.after(schedule.next),
+  last: ScheduleLast(
+    done: done,
+    from: schedule.next,
+    on: schedule.next,
+    at: DateTime(at.year, at.month, at.day, 12),
+    importId: importId,
+  ),
+);
+
 /// What was spent today on the card.
 Transaction spent(int rubles) => Transaction(
   id: 'spent',
@@ -141,6 +159,7 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   List<Schedule> schedules;
   List<AccountBalance> accounts;
   List<Transaction> todays;
+  List<LedgerImport> imports = const [];
   PaydaySettings settings = const PaydaySettings(asideMinor: 1000000);
   final categories = [
     const Category(
@@ -203,6 +222,9 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
   @override
+  Stream<List<LedgerImport>> watchImports() => _watch(() => imports);
+
+  @override
   Stream<PaydaySettings> watchSettings() => _watch(() => settings);
 
   @override
@@ -239,20 +261,19 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   @override
   Future<String> post(String id, {Money? amount, CivilDate? on}) async {
     posted.add(id);
-    schedules = [
-      for (final it in schedules)
-        it.id == id ? it.movedTo(it.after(it.next)) : it,
-    ];
-    changed();
+    _done(id, ScheduleDone.posted);
     return 'transaction';
   }
 
   @override
   Future<void> skip(String id) async {
     skipped.add(id);
+    _done(id, ScheduleDone.skipped);
+  }
+
+  void _done(String id, ScheduleDone done) {
     schedules = [
-      for (final it in schedules)
-        it.id == id ? it.movedTo(it.after(it.next)) : it,
+      for (final it in schedules) it.id == id ? doneAs(it, done, at: day) : it,
     ];
     changed();
   }

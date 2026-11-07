@@ -123,8 +123,9 @@ final class LedgerCopy {
 
   /// The version of the format that this code writes. It reads every version
   /// up to this one: version 2 added imports and operations that wait for a
-  /// category (ADR 0021), and version 3 regular payments (ADR 0023).
-  static const version = 3;
+  /// category (ADR 0021), version 3 regular payments, and version 4 what was
+  /// done to their last times (ADR 0023).
+  static const version = 4;
 
   static const _format = 'birka-copy';
 
@@ -274,6 +275,15 @@ final class LedgerCopy {
             'nextOn': row.nextOn,
             'onDay': row.onDay,
             'reminder': row.reminder,
+            'lastDone': row.lastDone,
+            'lastFrom': row.lastFrom,
+            'lastOn': row.lastOn,
+            'lastTransactionId': row.lastTransactionId,
+            'lastImportId': row.lastImportId,
+            'lastAt': switch (row.lastAt) {
+              final at? => _text(at),
+              null => null,
+            },
           },
       ],
     });
@@ -288,8 +298,9 @@ final class LedgerCopy {
   static String _text(DateTime moment) => moment.toUtc().toIso8601String();
 }
 
-/// Reads the rows of versions 1 to 3, and checks them as the ledger checks a
-/// write. Version 1 has no imports, and versions 1 and 2 no regular payments.
+/// Reads the rows of versions 1 to 4, and checks them as the ledger checks a
+/// write. Version 1 has no imports, versions 1 and 2 no regular payments, and
+/// version 3 nothing done to their times.
 LedgerCopy _read(Map<String, Object?> json) {
   final imports = <String, ImportRow>{};
   for (final item
@@ -628,6 +639,29 @@ ScheduleRow _schedule(
     case TransactionKind.adjustment:
       _damaged('Schedule $id adjusts a balance');
   }
+  final lastDone = _field<String?>(json, 'lastDone');
+  final lastFrom = _field<String?>(json, 'lastFrom');
+  final lastOn = _field<String?>(json, 'lastOn');
+  if (lastDone == null) {
+    if (lastFrom != null || lastOn != null || json['lastAt'] != null) {
+      _damaged('Schedule $id has times done, but not how');
+    }
+  } else {
+    if (!ScheduleDone.values.any((value) => value.name == lastDone)) {
+      _damaged('lastDone $lastDone is unknown');
+    }
+    if (lastFrom == null || lastOn == null) {
+      _damaged('Schedule $id was $lastDone on no times');
+    }
+    final from = _obeying(
+      '$lastFrom is not a date',
+      () => CivilDate.parse(lastFrom),
+    );
+    final on = _obeying('$lastOn is not a date', () => CivilDate.parse(lastOn));
+    if (on.compareTo(from) < 0) {
+      _damaged('Schedule $id was done from $lastFrom back to $lastOn');
+    }
+  }
   return ScheduleRow(
     id: id,
     createdAt: _moment(json, 'createdAt'),
@@ -643,6 +677,12 @@ ScheduleRow _schedule(
     nextOn: nextOn,
     onDay: _name(json, 'onDay', ScheduleOnDay.values),
     reminder: _name(json, 'reminder', ScheduleReminder.values),
+    lastDone: lastDone,
+    lastFrom: lastFrom,
+    lastOn: lastOn,
+    lastTransactionId: _field<String?>(json, 'lastTransactionId'),
+    lastImportId: _field<String?>(json, 'lastImportId'),
+    lastAt: lastDone == null ? null : _moment(json, 'lastAt'),
   );
 }
 

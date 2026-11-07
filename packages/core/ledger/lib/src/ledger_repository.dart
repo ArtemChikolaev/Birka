@@ -635,8 +635,9 @@ final class LedgerRepository {
 
   /// Takes import [id] out of the ledger in one write: its transactions become
   /// tombstones, and so do the accounts and categories it added that nothing
-  /// else uses now. What the person recorded and other imports stay, and an
-  /// account or a category that stays no longer names the import.
+  /// else uses now. What the person recorded and other imports stay, an
+  /// account or a category that stays no longer names the import, and a
+  /// regular payment that its statement brought waits again for those times.
   Future<void> undoImport(String id) {
     return _db.transaction(() async {
       final at = _timestamp();
@@ -661,6 +662,27 @@ final class LedgerRepository {
       for (final transaction in transactions) {
         await _log(_db.transactions, transaction.id, 'delete', at);
         await _buryLegs(transaction.id, at);
+      }
+      // A regular payment that the statement brought waits again for the
+      // times it brought (ADR 0023).
+      final found =
+          await (_db.select(_db.schedules)..where(
+                (row) => row.lastImportId.equals(id) & row.deletedAt.isNull(),
+              ))
+              .get();
+      for (final schedule in found) {
+        await (_db.update(
+          _db.schedules,
+        )..where((row) => row.id.equals(schedule.id))).write(
+          _withLast(
+            SchedulesCompanion(
+              updatedAt: Value(at),
+              nextOn: Value(schedule.lastFrom ?? schedule.nextOn),
+            ),
+            null,
+          ),
+        );
+        await _log(_db.schedules, schedule.id, 'update', at);
       }
       final accounts =
           await (_db.select(_db.accounts)..where(
@@ -845,30 +867,36 @@ final class LedgerRepository {
   }
 
   /// Puts [schedule] in place of the regular payment with its id. The
-  /// transactions that the payment gave before stay as they are.
+  /// transactions that the payment gave before stay as they are, and so does
+  /// what was done to its last times, unless its next time moves: what was
+  /// done then no longer leads to it.
   Future<void> updateSchedule(Schedule schedule) {
     return _db.transaction(() async {
       await _checkSchedule(schedule);
+      final before = await this.schedule(schedule.id);
       final at = _timestamp();
+      final values = SchedulesCompanion(
+        updatedAt: Value(at),
+        kind: Value(schedule.kind.name),
+        name: Value(schedule.name),
+        accountId: Value(schedule.accountId),
+        toAccountId: Value(schedule.toAccountId),
+        categoryId: Value(schedule.categoryId),
+        amountMinor: Value(schedule.amount.minorUnits),
+        every: Value(schedule.every.name),
+        day: Value(schedule.day),
+        nextOn: Value(schedule.next.toString()),
+        onDay: Value(schedule.onDay.name),
+        reminder: Value(schedule.reminder.name),
+      );
       final updated =
           await (_db.update(_db.schedules)..where(
                 (row) => row.id.equals(schedule.id) & row.deletedAt.isNull(),
               ))
               .write(
-                SchedulesCompanion(
-                  updatedAt: Value(at),
-                  kind: Value(schedule.kind.name),
-                  name: Value(schedule.name),
-                  accountId: Value(schedule.accountId),
-                  toAccountId: Value(schedule.toAccountId),
-                  categoryId: Value(schedule.categoryId),
-                  amountMinor: Value(schedule.amount.minorUnits),
-                  every: Value(schedule.every.name),
-                  day: Value(schedule.day),
-                  nextOn: Value(schedule.next.toString()),
-                  onDay: Value(schedule.onDay.name),
-                  reminder: Value(schedule.reminder.name),
-                ),
+                before != null && before.next != schedule.next
+                    ? _withLast(values, null)
+                    : values,
               );
       if (updated == 0) throw LedgerException('No schedule ${schedule.id}');
       await _log(_db.schedules, schedule.id, 'update', at);
@@ -913,7 +941,11 @@ final class LedgerRepository {
       final transactionId = await record(
         _draftOf(schedule, amount ?? schedule.amount, on ?? schedule.next),
       );
-      await _moveSchedule(schedule, schedule.after(schedule.next));
+      await _done(
+        schedule,
+        ScheduleDone.posted,
+        transactionId: transactionId,
+      );
       return transactionId;
     });
   }
@@ -923,7 +955,37 @@ final class LedgerRepository {
   Future<void> skipSchedule(String id) {
     return _db.transaction(() async {
       final schedule = await _scheduleOrThrow(id);
-      await _moveSchedule(schedule, schedule.after(schedule.next));
+      await _done(schedule, ScheduleDone.skipped);
+    });
+  }
+
+  /// Marks the times of regular payment [id] from its next one through
+  /// [through] as done by the statement of import [importId], whose
+  /// transaction [transactionId] brought the last of them, and moves the
+  /// payment on to its time after that (ADR 0023). Those times give no
+  /// transactions of their own, and the payment waits for them again when
+  /// the import goes out.
+  Future<void> findSchedule(
+    String id, {
+    required CivilDate through,
+    required String transactionId,
+    required String importId,
+  }) {
+    return _db.transaction(() async {
+      final schedule = await _scheduleOrThrow(id);
+      if (through.compareTo(schedule.next) < 0) {
+        throw LedgerException(
+          'Regular payment ${schedule.name} comes next on ${schedule.next}, '
+          'after $through',
+        );
+      }
+      await _done(
+        schedule,
+        ScheduleDone.found,
+        through: through,
+        transactionId: transactionId,
+        importId: importId,
+      );
     });
   }
 
@@ -937,12 +999,23 @@ final class LedgerRepository {
       for (final row in await _schedulesQuery().get()) {
         final schedule = _scheduleOf(row);
         if (schedule.onDay != ScheduleOnDay.post) continue;
-        var next = schedule.next;
+        CivilDate? through;
+        String? transactionId;
         for (final time in schedule.timesUntil(today)) {
-          posted.add(await record(_draftOf(schedule, schedule.amount, time)));
-          next = schedule.after(time);
+          transactionId = await record(
+            _draftOf(schedule, schedule.amount, time),
+          );
+          posted.add(transactionId);
+          through = time;
         }
-        if (next != schedule.next) await _moveSchedule(schedule, next);
+        if (through != null) {
+          await _done(
+            schedule,
+            ScheduleDone.posted,
+            through: through,
+            transactionId: transactionId,
+          );
+        }
       }
       return posted;
     });
@@ -969,18 +1042,50 @@ final class LedgerRepository {
   Future<Schedule> _scheduleOrThrow(String id) async =>
       await schedule(id) ?? (throw LedgerException('No schedule $id'));
 
-  Future<void> _moveSchedule(Schedule schedule, CivilDate next) async {
+  /// Records that the times of [schedule] from its next one through
+  /// [through], the next one unless said otherwise, were done as [done], and
+  /// moves it on to its time after them.
+  Future<void> _done(
+    Schedule schedule,
+    ScheduleDone done, {
+    CivilDate? through,
+    String? transactionId,
+    String? importId,
+  }) async {
     final at = _timestamp();
+    final on = through ?? schedule.next;
     await (_db.update(
       _db.schedules,
     )..where((row) => row.id.equals(schedule.id))).write(
-      SchedulesCompanion(
-        updatedAt: Value(at),
-        nextOn: Value(next.toString()),
+      _withLast(
+        SchedulesCompanion(
+          updatedAt: Value(at),
+          nextOn: Value(schedule.after(on).toString()),
+        ),
+        ScheduleLast(
+          done: done,
+          from: schedule.next,
+          on: on,
+          at: at,
+          transactionId: transactionId,
+          importId: importId,
+        ),
       ),
     );
     await _log(_db.schedules, schedule.id, 'update', at);
   }
+
+  /// [values] that also say what was done to the last times of a schedule,
+  /// or that nothing was.
+  SchedulesCompanion _withLast(SchedulesCompanion values, ScheduleLast? last) =>
+      values.copyWith(
+        lastDone: Value(last?.done.name),
+        lastFrom: Value(last?.from.toString()),
+        lastOn: Value(last?.on.toString()),
+        lastTransactionId: Value(last?.transactionId),
+        lastImportId: Value(last?.importId),
+        lastAt: Value(last?.at),
+      );
 
   /// The transaction that regular payment [schedule] gives on [on].
   TransactionDraft _draftOf(Schedule schedule, Money amount, CivilDate on) {
@@ -1099,6 +1204,22 @@ final class LedgerRepository {
       next: CivilDate.parse(schedule.nextOn),
       onDay: ScheduleOnDay.values.byName(schedule.onDay),
       reminder: ScheduleReminder.values.byName(schedule.reminder),
+      last: switch ((
+        schedule.lastDone,
+        schedule.lastFrom,
+        schedule.lastOn,
+        schedule.lastAt,
+      )) {
+        (final done?, final from?, final on?, final at?) => ScheduleLast(
+          done: ScheduleDone.values.byName(done),
+          from: CivilDate.parse(from),
+          on: CivilDate.parse(on),
+          at: at,
+          transactionId: schedule.lastTransactionId,
+          importId: schedule.lastImportId,
+        ),
+        _ => null,
+      },
     );
   }
 

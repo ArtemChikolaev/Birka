@@ -12,6 +12,7 @@ import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
+import 'generated/schema_v6.dart' as v6;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -234,6 +235,61 @@ void main() {
         expect(schedule.accountId, 'card');
         expect(schedule.toAccountId, isNull);
         expect(schedule.deletedAt, isNull);
+      },
+    );
+  });
+
+  test('a regular payment keeps its rule and has nothing done in v6', () async {
+    const at = '2026-11-07T12:00:00.000Z';
+    await verifier.testWithDataIntegrity(
+      oldVersion: 5,
+      newVersion: 6,
+      createOld: v5.DatabaseAtV5.new,
+      createNew: v6.DatabaseAtV6.new,
+      openTestedDatabase: BirkaDatabase.new,
+      createItems: (batch, old) {
+        batch
+          ..insert(
+            old.accounts,
+            v5.AccountsCompanion.insert(
+              id: 'card',
+              createdAt: at,
+              updatedAt: at,
+              name: 'Card',
+              type: 'debit',
+              currency: 'RUB',
+              decimalDigits: 2,
+            ),
+          )
+          ..insert(
+            old.schedules,
+            v5.SchedulesCompanion.insert(
+              id: 'rent-monthly',
+              createdAt: at,
+              updatedAt: at,
+              kind: 'expense',
+              name: 'Rent',
+              accountId: 'card',
+              amountMinor: 4500000,
+              every: 'month',
+              day: 25,
+              nextOn: '2026-11-25',
+              onDay: 'ask',
+              reminder: 'onDay',
+            ),
+          );
+      },
+      validateItems: (migrated) async {
+        final schedule = await migrated.select(migrated.schedules).getSingle();
+        expect(schedule.name, 'Rent');
+        expect(schedule.amountMinor, 4500000);
+        expect(schedule.nextOn, '2026-11-25');
+        expect(schedule.lastDone, isNull);
+        expect(schedule.lastFrom, isNull);
+        expect(schedule.lastOn, isNull);
+        expect(schedule.lastTransactionId, isNull);
+        expect(schedule.lastImportId, isNull);
+        expect(schedule.lastAt, isNull);
       },
     );
   });

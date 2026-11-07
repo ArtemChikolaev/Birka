@@ -55,6 +55,36 @@ String scheduleLine(Schedule schedule, CivilDate today) {
       '${posts ? t.schedules.posts : t.schedules.asks}';
 }
 
+/// The line under a regular payment in its list on the day something was
+/// done to it: `проведён сегодня · следующий 25 декабря`, or `null` when
+/// nothing was.
+String? doneLine(Schedule schedule, CivilDate today) {
+  final last = schedule.last;
+  if (last == null || CivilDate.of(last.at.toLocal()) != today) return null;
+  final date = fullDate(schedule.next, today);
+  return switch (last.done) {
+    ScheduleDone.posted => t.schedules.donePosted(date: date),
+    ScheduleDone.skipped => t.schedules.doneSkipped(date: date),
+    ScheduleDone.found => t.schedules.doneFound(date: date),
+  };
+}
+
+/// `Нашли «Аренда» в выписке Альфа-Банка`: the statement of [import], or of
+/// no bank that Birka knows, brought the last times of [schedule].
+String foundTitle(Schedule schedule, LedgerImport? import) {
+  final bank = t.imports.formatsOf[import?.format];
+  return bank == null
+      ? t.schedules.found(name: schedule.name)
+      : t.schedules.foundOf(name: schedule.name, bank: bank);
+}
+
+/// `25 ноября · −45 000 ₽ · отметили платёж проведённым, копии не будет`:
+/// the last time of [schedule] that a statement brought.
+String foundText(Schedule schedule, CivilDate today) => t.schedules.foundText(
+  date: fullDate(schedule.last?.on ?? schedule.next, today),
+  amount: scheduleAmount(schedule),
+);
+
 /// The amount of [schedule] as its transactions show it: `−45 000 ₽`,
 /// `+120 000 ₽`, or `10 000 ₽` for a transfer.
 String scheduleAmount(Schedule schedule, {Money? amount}) {

@@ -32,6 +32,9 @@ final class LedgerImportRepository implements ImportRepository {
       _ledger.watchTransactions(limit: null).first;
 
   @override
+  Future<List<Schedule>> schedules() => _ledger.watchSchedules().first;
+
+  @override
   Future<Money> balanceOn(String accountId, CivilDate day) async {
     var balance = await _ledger.balance(accountId);
     final later = await _ledger
@@ -82,6 +85,12 @@ final class LedgerImportRepository implements ImportRepository {
         }
       }
       final categories = _NewCategories(_ledger, id);
+      // The transaction that stands for each operation: its own, or the one
+      // of the ledger that it is a copy of.
+      final transactions = <PlannedOperation, String>{
+        for (final operation in plan.copies)
+          operation: operation.duplicate!.transaction.id,
+      };
       Future<String?> categoryOf(CategoryChoice? choice, CategoryKind kind) =>
           switch (choice) {
             IntoCategory(:final categoryId) => Future.value(categoryId),
@@ -119,7 +128,7 @@ final class LedgerImportRepository implements ImportRepository {
         final kind = operation.kind == TransactionKind.income
             ? CategoryKind.income
             : CategoryKind.expense;
-        await _ledger.record(switch (operation.kind) {
+        transactions[operation] = await _ledger.record(switch (operation.kind) {
           TransactionKind.transfer => TransactionDraft.transfer(
             fromAccountId: accounts[operation.from]!,
             sent: operation.amount,
@@ -162,6 +171,14 @@ final class LedgerImportRepository implements ImportRepository {
           );
         }
         progress?.call(index + 1, operations.length);
+      }
+      for (final found in plan.found) {
+        await _ledger.findSchedule(
+          found.schedule.id,
+          through: found.last.time,
+          transactionId: transactions[found.last.operation]!,
+          importId: id,
+        );
       }
       return id;
     });

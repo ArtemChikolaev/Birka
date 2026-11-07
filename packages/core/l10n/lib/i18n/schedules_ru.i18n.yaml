@@ -27,6 +27,12 @@ posted: Провели «$name» · $amount
 skippedAsk: Пропустили «$name» · спросим $date
 skippedPost: Пропустили «$name» · следующий раз $date
 deleted: Удалили «$name»
+found: Нашли «$name» в выписке
+foundOf: Нашли «$name» в выписке $bank
+foundText: $date · $amount · отметили платёж проведённым, копии не будет
+donePosted: проведён сегодня · следующий $date
+doneSkipped: пропущен · следующий $date
+doneFound: нашли в выписке · следующий $date
 on(map):
   mon: по понедельникам
   tue: по вторникам

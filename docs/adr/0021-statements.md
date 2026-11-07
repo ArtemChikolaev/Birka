@@ -100,9 +100,11 @@
     tombstones, and so do the accounts and the categories it added that
     nothing else uses now, subcategories before their parents. What the
     person recorded and other imports stay, even when they moved money on an
-    account of the import, and an account or a category that stays forgets
-    the import. `watchImports` lists the imports that still have
-    transactions, the latest first, for the list of past imports.
+    account of the import, an account or a category that stays forgets the
+    import, and a regular payment that the statement brought waits for those
+    times again ([ADR 0023](0023-regular-payments.md)). `watchImports` lists
+    the imports that still have transactions, the latest first, for the list
+    of past imports.
 12. An imported expense or income can wait for its category: its allocation
     has the amount and no category ([ADR 0009](0009-data-model.md)). It
     counts in the balances, the overview and the reports from the start,

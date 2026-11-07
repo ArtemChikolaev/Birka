@@ -137,6 +137,9 @@ final class _NoSchedules implements SchedulesRepository {
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
   @override
+  Stream<List<LedgerImport>> watchImports() => Stream.value(const []);
+
+  @override
   Stream<PaydaySettings> watchSettings() =>
       Stream.value(const PaydaySettings());
 

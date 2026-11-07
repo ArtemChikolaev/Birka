@@ -23,6 +23,10 @@ abstract interface class SchedulesRepository {
   /// The currency that totals are in, or `null` to follow the first account.
   Stream<Currency?> watchBaseCurrency();
 
+  /// The imports whose transactions the ledger holds, for the statements that
+  /// brought the times of payments (ADR 0023).
+  Stream<List<LedgerImport>> watchImports();
+
   /// How this device counts the money until the salary, now and after every
   /// change.
   Stream<PaydaySettings> watchSettings();

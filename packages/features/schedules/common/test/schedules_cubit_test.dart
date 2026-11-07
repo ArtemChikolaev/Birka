@@ -304,6 +304,54 @@ void main() {
     expect(after.plan!.days, before.plan!.days - 1);
   });
 
+  test('tells which payments a statement brought today', () async {
+    final rent = await ledger.addSchedule(
+      kind: TransactionKind.expense,
+      name: 'ЖКХ',
+      accountId: card.id,
+      amount: rub(5200),
+      every: ScheduleEvery.month,
+      next: today,
+    );
+    final importId = await ledger.addImport(
+      fileName: 'alfa.xlsx',
+      format: 'alfa',
+      firstDay: CivilDate(2026, 11, 1),
+      lastDay: today,
+    );
+    final transactionId = await ledger.record(
+      TransactionDraft.expense(
+        accountId: card.id,
+        allocations: [Allocation(categoryId: home.id, amount: rub(5200))],
+        occurredOn: today,
+        note: 'ZHKU MOSKVA',
+        source: TransactionSource.import,
+      ),
+      importId: importId,
+    );
+    final cubit = SchedulesCubit(repository);
+    addTearDown(cubit.close);
+    expect((await viewOf(cubit)).waiting.map((it) => it.name), ['ЖКХ']);
+
+    await ledger.findSchedule(
+      rent.id,
+      through: today,
+      transactionId: transactionId,
+      importId: importId,
+    );
+
+    final view = await viewOf(cubit, (view) => view.found.isNotEmpty);
+    expect(view.waiting, isEmpty);
+    final [found] = view.found;
+    expect(found.schedule.name, 'ЖКХ');
+    expect(found.import?.format, 'alfa');
+    expect(view.doneToday(found.schedule), isTrue);
+    expect(
+      view.schedules.where(view.doneToday).map((it) => it.name),
+      ['ЖКХ'],
+    );
+  });
+
   test('has no plan until a salary comes to a counted account', () async {
     await repository.saveSettings(PaydaySettings(accounts: {cash.id}));
     final cubit = SchedulesCubit(repository);

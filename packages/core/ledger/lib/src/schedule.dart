@@ -37,6 +37,67 @@ enum ScheduleReminder {
   none,
 }
 
+/// How the last times of a schedule were done.
+enum ScheduleDone {
+  /// The person or Birka posted them, each as a transaction of its own.
+  posted,
+
+  /// The person skipped them.
+  skipped,
+
+  /// A statement brought them, so they need no transaction of their own.
+  found,
+}
+
+/// The last times of a schedule that were done, and how (ADR 0023).
+@immutable
+final class ScheduleLast {
+  /// Creates what was done to the times from [from] to [on].
+  const ScheduleLast({
+    required this.done,
+    required this.from,
+    required this.on,
+    required this.at,
+    this.transactionId,
+    this.importId,
+  });
+
+  /// How they were done.
+  final ScheduleDone done;
+
+  /// The first of them.
+  final CivilDate from;
+
+  /// The last of them.
+  final CivilDate on;
+
+  /// When they were done.
+  final DateTime at;
+
+  /// The transaction of the last one: the one a post gave or the one a
+  /// statement brought, or `null` when they were skipped.
+  final String? transactionId;
+
+  /// The import whose statement brought them, or `null`.
+  final String? importId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ScheduleLast &&
+      other.done == done &&
+      other.from == from &&
+      other.on == on &&
+      other.at == at &&
+      other.transactionId == transactionId &&
+      other.importId == importId;
+
+  @override
+  int get hashCode => Object.hash(done, from, on, at, transactionId, importId);
+
+  @override
+  String toString() => 'ScheduleLast(${done.name}, $from to $on)';
+}
+
 /// A payment that comes again, such as the rent or a salary: a rule that
 /// gives a transaction of its own each time it comes, rather than a
 /// transaction itself (ADR 0023).
@@ -56,6 +117,7 @@ final class Schedule {
     required this.reminder,
     this.toAccountId,
     this.categoryId,
+    this.last,
   });
 
   /// The id.
@@ -95,6 +157,9 @@ final class Schedule {
   /// When Birka reminds of it.
   final ScheduleReminder reminder;
 
+  /// Its last times that were done, or `null` while none is.
+  final ScheduleLast? last;
+
   /// The time of the rule that comes after [time].
   CivilDate after(CivilDate time) => switch (every) {
     ScheduleEvery.week => time.addDays(7),
@@ -112,8 +177,9 @@ final class Schedule {
   /// Whether it waits on [today]: its day has come and it is not posted.
   bool isDue(CivilDate today) => next.compareTo(today) <= 0;
 
-  /// The same schedule with [next] as its next time.
-  Schedule movedTo(CivilDate next) => Schedule(
+  /// The same schedule with [next] as its next time, and with [last] as its
+  /// last times done when it is given.
+  Schedule movedTo(CivilDate next, {ScheduleLast? last}) => Schedule(
     id: id,
     kind: kind,
     name: name,
@@ -126,6 +192,7 @@ final class Schedule {
     next: next,
     onDay: onDay,
     reminder: reminder,
+    last: last ?? this.last,
   );
 
   @override
@@ -142,7 +209,8 @@ final class Schedule {
       other.day == day &&
       other.next == next &&
       other.onDay == onDay &&
-      other.reminder == reminder;
+      other.reminder == reminder &&
+      other.last == last;
 
   @override
   int get hashCode => Object.hash(
@@ -158,6 +226,7 @@ final class Schedule {
     next,
     onDay,
     reminder,
+    last,
   );
 
   @override

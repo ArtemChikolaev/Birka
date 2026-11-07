@@ -55,9 +55,9 @@
    regular payment uses it, as while an operation does
    ([ADR 0021](0021-statements.md), point 11).
 8. The copy of the ledger is version 3, with `schedules`, and reads versions
-   1 and 2 without them. It checks a payment as the ledger checks one that it
-   adds, and holds only the payments whose accounts and category travel with
-   them, so that every copy restores.
+   1 and 2 without them; version 4 adds point 14. It checks a payment as the
+   ledger checks one that it adds, and holds only the payments whose
+   accounts and category travel with them, so that every copy restores.
 9. The phone shows them as the boards «Будущие деньги на телефоне» of the
    canvas draw them, in `packages/features/schedules`: `schedules_common`
    holds the rules of the screens and `schedules_flutter` the screens.
@@ -95,8 +95,33 @@
     whenever it comes back to the screen.
 13. Reminders need a plugin for notifications, the first day of a month is a
     setting of its own, and the site gets its boards first; they come with
-    their own changes and add their points here. So does an import that
-    marks a waiting payment done.
+    their own changes and add their points here.
+14. A payment keeps what was done to its last times (`ScheduleLast`, from
+    version 6 of the schema): posted, skipped or found in a statement, the
+    first and the last of those times, the transaction of the last one, the
+    import of the statement and when. «Провести», «Пропустить» and
+    `postDueSchedules` write it in the same write that moves the payment on.
+    A change of the payment keeps it unless its next time moves, since then
+    what was done no longer leads to it.
+15. A statement brings a time of a regular payment as it brings a copy of a
+    transaction ([ADR 0021](0021-statements.md), point 14): an operation of
+    the kind of the payment moves its amount on its account, or on both of
+    its accounts for a transfer, within a day of that time, and a name that
+    shares a word makes it likelier. The times come from the next one on,
+    one after another up to a day after the statement ends, and each
+    operation brings one time at most. An operation that stays out as a
+    copy brings it too, since the bank says that the payment went through.
+16. `ImportRepository.write` marks those times done (`findSchedule`) in the
+    write of the import: the payment moves on with no transactions of its
+    own, so nothing posts or asks for them again, and the operation of the
+    statement, or the transaction it is a copy of, stands for the last one.
+    The undo of the import moves the payment back to the first of them.
+17. On the day something was done to a payment, its line in «Регулярные
+    платежи» says what: «проведён сегодня», «пропущен» or «нашли в выписке»,
+    with its next time, in the color of a gain unless it was skipped; on
+    other days it says how often the payment comes. On the day of an import,
+    a payment that the statement brought says so at the top of the list, in
+    a notice that names the bank when Birka knows the format.
 
 ## Consequences
 
@@ -104,5 +129,10 @@
   change of a payment shows at once everywhere.
 - No transaction names the rule that gave it. An import that brings a
   payment the person posted is caught by the check for copies
-  ([ADR 0021](0021-statements.md)); marking a waiting payment done from a
-  statement comes with its own change.
+  ([ADR 0021](0021-statements.md)), and one that brings a payment that
+  waits marks it done; only the last done times point at a transaction.
+- A bill whose amount changes is found only when the statement brings the
+  amount of the rule. Otherwise the person posts it with its own amount,
+  and the check for copies then keeps the operation of the statement out.
+- The copy of the ledger is version 4, with what was done to the last times
+  of each payment, and reads version 3 without it.

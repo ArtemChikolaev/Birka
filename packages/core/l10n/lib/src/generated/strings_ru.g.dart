@@ -1776,6 +1776,22 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   @override
   String deleted({required Object name}) => 'Удалили «${name}»';
   @override
+  String found({required Object name}) => 'Нашли «${name}» в выписке';
+  @override
+  String foundOf({required Object name, required Object bank}) =>
+      'Нашли «${name}» в выписке ${bank}';
+  @override
+  String foundText({required Object date, required Object amount}) =>
+      '${date} · ${amount} · отметили платёж проведённым, копии не будет';
+  @override
+  String donePosted({required Object date}) =>
+      'проведён сегодня · следующий ${date}';
+  @override
+  String doneSkipped({required Object date}) => 'пропущен · следующий ${date}';
+  @override
+  String doneFound({required Object date}) =>
+      'нашли в выписке · следующий ${date}';
+  @override
   Map<String, String> get on => {
     'mon': 'по понедельникам',
     'tue': 'по вторникам',
@@ -3635,6 +3651,20 @@ extension on TranslationsRu {
                 'Пропустили «${name}» · следующий раз ${date}',
           'schedules.deleted' =>
             ({required Object name}) => 'Удалили «${name}»',
+          'schedules.found' =>
+            ({required Object name}) => 'Нашли «${name}» в выписке',
+          'schedules.foundOf' =>
+            ({required Object name, required Object bank}) =>
+                'Нашли «${name}» в выписке ${bank}',
+          'schedules.foundText' =>
+            ({required Object date, required Object amount}) =>
+                '${date} · ${amount} · отметили платёж проведённым, копии не будет',
+          'schedules.donePosted' =>
+            ({required Object date}) => 'проведён сегодня · следующий ${date}',
+          'schedules.doneSkipped' =>
+            ({required Object date}) => 'пропущен · следующий ${date}',
+          'schedules.doneFound' =>
+            ({required Object date}) => 'нашли в выписке · следующий ${date}',
           'schedules.on.mon' => 'по понедельникам',
           'schedules.on.tue' => 'по вторникам',
           'schedules.on.wed' => 'по средам',

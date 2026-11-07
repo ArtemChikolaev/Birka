@@ -25,7 +25,7 @@ class BirkaDatabase extends _$BirkaDatabase {
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -64,6 +64,15 @@ class BirkaDatabase extends _$BirkaDatabase {
       from4To5: (m, schema) async {
         await m.createTable(schema.schedules);
         await m.createIndex(schema.schedulesNextOn);
+      },
+      from5To6: (m, schema) async {
+        final schedules = schema.schedules;
+        await m.addColumn(schedules, schedules.lastDone);
+        await m.addColumn(schedules, schedules.lastFrom);
+        await m.addColumn(schedules, schedules.lastOn);
+        await m.addColumn(schedules, schedules.lastTransactionId);
+        await m.addColumn(schedules, schedules.lastImportId);
+        await m.addColumn(schedules, schedules.lastAt);
       },
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
