@@ -121,32 +121,49 @@ class BirkaChip extends StatelessWidget {
                             ),
                           ),
                   ),
-                  if (count != null) ...[
-                    const SizedBox(width: BirkaTokens.spaceXs),
-                    AnimatedContainer(
-                      duration: const Duration(
-                        milliseconds: BirkaTokens.durationFastMs,
-                      ),
-                      constraints: const BoxConstraints(minWidth: 22),
-                      height: 22,
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: selected
-                            ? colors.background.withValues(alpha: 0.12)
-                            : colors.surface,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(BirkaTokens.radiusPill),
-                        ),
-                      ),
-                      child: Text(
-                        '$count',
-                        style: BirkaTextStyles.of(
-                          context,
-                        ).caption.copyWith(color: foreground),
-                      ),
-                    ),
-                  ],
+                  // A count that comes or goes opens or closes its room.
+                  AnimatedSize(
+                    duration: BirkaMotion.reduced(context)
+                        ? Duration.zero
+                        : BirkaMotion.slow,
+                    curve: BirkaMotion.standardCurve,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: count == null
+                        ? const SizedBox.shrink()
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(width: BirkaTokens.spaceXs),
+                              AnimatedContainer(
+                                duration: const Duration(
+                                  milliseconds: BirkaTokens.durationFastMs,
+                                ),
+                                constraints: const BoxConstraints(minWidth: 22),
+                                height: 22,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: selected
+                                      ? colors.background.withValues(
+                                          alpha: 0.12,
+                                        )
+                                      : colors.surface,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(BirkaTokens.radiusPill),
+                                  ),
+                                ),
+                                child: Text(
+                                  '$count',
+                                  style: BirkaTextStyles.of(
+                                    context,
+                                  ).caption.copyWith(color: foreground),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
                 ],
               ),
             ),

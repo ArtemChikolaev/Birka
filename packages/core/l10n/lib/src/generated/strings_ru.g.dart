@@ -76,6 +76,9 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$inbox$ru inbox = _Translations$inbox$ru._(_root);
   @override
+  late final _Translations$notifications$ru notifications =
+      _Translations$notifications$ru._(_root);
+  @override
   late final _Translations$onboarding$ru onboarding =
       _Translations$onboarding$ru._(_root);
   @override
@@ -1530,6 +1533,111 @@ class _Translations$inbox$ru extends Translations$inbox$en {
       '${first} и ${second}';
   @override
   String get unpick => 'Снять';
+}
+
+// Path: notifications
+class _Translations$notifications$ru extends Translations$notifications$en {
+  _Translations$notifications$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Уведомления';
+  @override
+  String get back => 'Назад';
+  @override
+  String get bell => 'Уведомления';
+  @override
+  String bellNew({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Уведомления, ${count} новое',
+        few: 'Уведомления, ${count} новых',
+        many: 'Уведомления, ${count} новых',
+        other: 'Уведомления, ${count} нового',
+      );
+  @override
+  String fresh({required Object count}) => 'Новые · ${count}';
+  @override
+  String get readAll => 'Прочитать все';
+  @override
+  Map<String, String> get filters => {
+    'all': 'Все',
+    'payment': 'Платежи',
+    'import': 'Импорт',
+  };
+  @override
+  String get filtersLabel => 'Чьи уведомления';
+  @override
+  String get emptyTitle => 'Пока тихо';
+  @override
+  String get emptyText =>
+      'Здесь появятся напоминания о платежах и итоги импорта.';
+  @override
+  String get keeps => 'Birka хранит уведомления 90 дней';
+  @override
+  String get yesterday => 'вчера';
+  @override
+  String tomorrow({required Object date}) => 'Завтра, ${date}';
+  @override
+  String get waitsToday => 'Сегодня, ждёт подтверждения';
+  @override
+  String get waits => 'Ждёт подтверждения';
+  @override
+  String get postsToday => 'Сегодня, проведётся сам';
+  @override
+  String get posts => 'Проведётся сам';
+  @override
+  String posted({required Object time}) => 'Провели в ${time}';
+  @override
+  String postedOn({required Object date}) => 'Провели ${date}';
+  @override
+  String get postedItself => 'Провёлся сам';
+  @override
+  String skipped({required Object date}) => 'Пропустили · следующий ${date}';
+  @override
+  String get found => 'Нашли в выписке';
+  @override
+  String importTitle({required Object bank, required Object period}) =>
+      '${bank} · ${period}';
+  @override
+  String importWaiting({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} из ${count} ждёт во «Входящих»',
+        few: '${n} из ${count} ждут во «Входящих»',
+        many: '${n} из ${count} ждут во «Входящих»',
+        other: '${n} из ${count} ждут во «Входящих»',
+      );
+  @override
+  String importAdded({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Добавили ${count} операцию',
+        few: 'Добавили ${count} операции',
+        many: 'Добавили ${count} операций',
+        other: 'Добавили ${count} операции',
+      );
+  @override
+  String get importUndone => 'Импорт отменён';
+  @override
+  List<String> get months => [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+  ];
 }
 
 // Path: onboarding
@@ -3760,6 +3868,81 @@ extension on TranslationsRu {
             ({required Object first, required Object second}) =>
                 '${first} и ${second}',
           'inbox.unpick' => 'Снять',
+          'notifications.title' => 'Уведомления',
+          'notifications.back' => 'Назад',
+          'notifications.bell' => 'Уведомления',
+          'notifications.bellNew' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Уведомления, ${count} новое',
+                  few: 'Уведомления, ${count} новых',
+                  many: 'Уведомления, ${count} новых',
+                  other: 'Уведомления, ${count} нового',
+                ),
+          'notifications.fresh' =>
+            ({required Object count}) => 'Новые · ${count}',
+          'notifications.readAll' => 'Прочитать все',
+          'notifications.filters.all' => 'Все',
+          'notifications.filters.payment' => 'Платежи',
+          'notifications.filters.import' => 'Импорт',
+          'notifications.filtersLabel' => 'Чьи уведомления',
+          'notifications.emptyTitle' => 'Пока тихо',
+          'notifications.emptyText' =>
+            'Здесь появятся напоминания о платежах и итоги импорта.',
+          'notifications.keeps' => 'Birka хранит уведомления 90 дней',
+          'notifications.yesterday' => 'вчера',
+          'notifications.tomorrow' =>
+            ({required Object date}) => 'Завтра, ${date}',
+          'notifications.waitsToday' => 'Сегодня, ждёт подтверждения',
+          'notifications.waits' => 'Ждёт подтверждения',
+          'notifications.postsToday' => 'Сегодня, проведётся сам',
+          'notifications.posts' => 'Проведётся сам',
+          'notifications.posted' =>
+            ({required Object time}) => 'Провели в ${time}',
+          'notifications.postedOn' =>
+            ({required Object date}) => 'Провели ${date}',
+          'notifications.postedItself' => 'Провёлся сам',
+          'notifications.skipped' =>
+            ({required Object date}) => 'Пропустили · следующий ${date}',
+          'notifications.found' => 'Нашли в выписке',
+          'notifications.importTitle' =>
+            ({required Object bank, required Object period}) =>
+                '${bank} · ${period}',
+          'notifications.importWaiting' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} из ${count} ждёт во «Входящих»',
+                  few: '${n} из ${count} ждут во «Входящих»',
+                  many: '${n} из ${count} ждут во «Входящих»',
+                  other: '${n} из ${count} ждут во «Входящих»',
+                ),
+          'notifications.importAdded' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Добавили ${count} операцию',
+                  few: 'Добавили ${count} операции',
+                  many: 'Добавили ${count} операций',
+                  other: 'Добавили ${count} операции',
+                ),
+          'notifications.importUndone' => 'Импорт отменён',
+          'notifications.months.0' => 'январь',
+          'notifications.months.1' => 'февраль',
+          'notifications.months.2' => 'март',
+          'notifications.months.3' => 'апрель',
+          'notifications.months.4' => 'май',
+          'notifications.months.5' => 'июнь',
+          'notifications.months.6' => 'июль',
+          'notifications.months.7' => 'август',
+          'notifications.months.8' => 'сентябрь',
+          'notifications.months.9' => 'октябрь',
+          'notifications.months.10' => 'ноябрь',
+          'notifications.months.11' => 'декабрь',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
@@ -4392,6 +4575,9 @@ extension on TranslationsRu {
           'transactions.months.5' => 'июня',
           'transactions.months.6' => 'июля',
           'transactions.months.7' => 'августа',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.months.8' => 'сентября',
           'transactions.months.9' => 'октября',
           'transactions.months.10' => 'ноября',

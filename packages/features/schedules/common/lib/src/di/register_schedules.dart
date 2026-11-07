@@ -2,6 +2,7 @@ import 'package:device_settings/device_settings.dart';
 import 'package:get_it/get_it.dart';
 import 'package:schedules_common/src/data/ledger_schedules_repository.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
+import 'package:schedules_common/src/presentation/reminder_notices.dart';
 import 'package:schedules_common/src/presentation/reminder_scheduler.dart';
 import 'package:schedules_common/src/presentation/reminders_cubit.dart';
 import 'package:schedules_common/src/presentation/schedule_form_cubit.dart';
@@ -19,6 +20,10 @@ void registerSchedules(GetIt getIt, SettingsStore store) {
     ..registerLazySingleton(
       () => ReminderScheduler(getIt(), getIt(), getIt()),
       dispose: (scheduler) => scheduler.stop(),
+    )
+    ..registerLazySingleton(
+      () => ReminderNotices(getIt()),
+      dispose: (notices) => notices.stop(),
     )
     ..registerFactory(() => RemindersCubit(getIt(), getIt(), getIt()))
     ..registerFactoryParam<ScheduleFormCubit, String?, bool?>(

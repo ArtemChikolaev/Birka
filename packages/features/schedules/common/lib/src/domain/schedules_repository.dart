@@ -65,4 +65,8 @@ abstract interface class SchedulesRepository {
   /// Posts what has come of the payments that post themselves, and returns
   /// the ids of the transactions.
   Future<List<String>> postDue();
+
+  /// Puts [reminders] that came into the notices of this device, each at its
+  /// moment, unless its time has a notice or was done meanwhile (ADR 0026).
+  Future<void> noteReminders(List<PlannedReminder> reminders);
 }

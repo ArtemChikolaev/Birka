@@ -40,7 +40,8 @@
    stamps and puts an insert of each into the outbox. Before sync, a tombstone
    of a row that no other device has means nothing, and a wipe that leaves
    tombstones keeps the data that it promised to remove. Sync will need its
-   own answer.
+   own answer. Both empty the notices of the bell too, which tell of the
+   ledger that goes and stay out of a copy ([ADR 0026](0026-notifications.md)).
 5. A person chooses where a file goes and where it comes from, in a window of
    the system: `file_picker` on the phones (Files on iOS, the documents of
    Android, a save panel on macOS) and the browser on the site. The share sheet

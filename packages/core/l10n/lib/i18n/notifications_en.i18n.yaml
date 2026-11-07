@@ -1,0 +1,48 @@
+title: Notifications
+back: Back
+bell: Notifications
+bellNew(n):
+  one: Notifications, $count new
+  other: Notifications, $count new
+fresh: "New · $count"
+readAll: Mark all read
+filters(map):
+  all: All
+  payment: Payments
+  import: Imports
+filtersLabel: Whose notifications
+emptyTitle: All quiet
+emptyText: Reminders of your payments and the results of imports come here.
+keeps: Birka keeps notifications for 90 days
+yesterday: yesterday
+tomorrow: Tomorrow, $date
+waitsToday: Today, waits for you
+waits: Waits for you
+postsToday: Today, it posts itself
+posts: Posts itself
+posted: Posted at $time
+postedOn: Posted on $date
+postedItself: Posted itself
+skipped: "Skipped · next on $date"
+found: Found in a statement
+importTitle: "$bank · $period"
+importWaiting(n):
+  one: $n of $count waits in the inbox
+  other: $n of $count wait in the inbox
+importAdded(n):
+  one: Added $count operation
+  other: Added $count operations
+importUndone: Import undone
+months:
+  - January
+  - February
+  - March
+  - April
+  - May
+  - June
+  - July
+  - August
+  - September
+  - October
+  - November
+  - December

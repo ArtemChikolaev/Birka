@@ -51,6 +51,10 @@ dependencies:
     path: ../../packages/core/l10n
   ledger:
     path: ../../packages/core/ledger
+  notifications_common:
+    path: ../../packages/features/notifications/common
+  notifications_flutter:
+    path: ../../packages/features/notifications/flutter
   onboarding_common:
     path: ../../packages/features/onboarding/common
   onboarding_flutter:

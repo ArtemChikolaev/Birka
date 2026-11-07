@@ -27,3 +27,4 @@
 | [0023](0023-regular-payments.md) | Regular payments | accepted 2026-11-06 |
 | [0024](0024-month-start.md) | The day a month starts on | accepted 2026-11-07 |
 | [0025](0025-reminders.md) | Reminders of the regular payments | accepted 2026-11-07 |
+| [0026](0026-notifications.md) | The notices of the bell | accepted 2026-11-07 |

@@ -35,6 +35,12 @@ String formatMoney(Money amount, {AppLocale? locale}) {
   return amount.isNegative ? '$_minus$text' : text;
 }
 
+/// `45 000 ₽` or `+60 000 ₽`: the amount of a time of a regular payment as
+/// its reminders and notices say it, with a sign only for what comes in
+/// (ADR 0025).
+String paymentAmount(Money amount, {required bool income}) =>
+    income ? '+${formatMoney(amount)}' : formatMoney(amount);
+
 /// Formats [count] for people in the current language, or in [locale]:
 /// Russian gives `1 248` and English `1,248`.
 String formatCount(int count, {AppLocale? locale}) {

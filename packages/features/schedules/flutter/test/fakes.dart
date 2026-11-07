@@ -330,6 +330,9 @@ final class FakeSchedulesRepository implements SchedulesRepository {
 
   @override
   Future<List<String>> postDue() async => const [];
+
+  @override
+  Future<void> noteReminders(List<PlannedReminder> reminders) async {}
 }
 
 /// [child] in the theme of Birka on a phone, with [cubit] above it.

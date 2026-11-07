@@ -63,6 +63,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$inbox$en inbox = Translations$inbox$en.internal(
     _root,
   );
+  late final Translations$notifications$en notifications =
+      Translations$notifications$en.internal(_root);
   late final Translations$onboarding$en onboarding =
       Translations$onboarding$en.internal(_root);
   late final Translations$overview$en overview =
@@ -1817,6 +1819,128 @@ class Translations$inbox$en {
 
   /// en: 'Clear'
   String get unpick => 'Clear';
+}
+
+// Path: notifications
+class Translations$notifications$en {
+  Translations$notifications$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Notifications'
+  String get title => 'Notifications';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'Notifications'
+  String get bell => 'Notifications';
+
+  /// en: '(one) {Notifications, $count new} (other) {Notifications, $count new}'
+  String bellNew({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Notifications, ${count} new',
+        other: 'Notifications, ${count} new',
+      );
+
+  /// en: 'New · $count'
+  String fresh({required Object count}) => 'New · ${count}';
+
+  /// en: 'Mark all read'
+  String get readAll => 'Mark all read';
+
+  Map<String, String> get filters => {
+    'all': 'All',
+    'payment': 'Payments',
+    'import': 'Imports',
+  };
+
+  /// en: 'Whose notifications'
+  String get filtersLabel => 'Whose notifications';
+
+  /// en: 'All quiet'
+  String get emptyTitle => 'All quiet';
+
+  /// en: 'Reminders of your payments and the results of imports come here.'
+  String get emptyText =>
+      'Reminders of your payments and the results of imports come here.';
+
+  /// en: 'Birka keeps notifications for 90 days'
+  String get keeps => 'Birka keeps notifications for 90 days';
+
+  /// en: 'yesterday'
+  String get yesterday => 'yesterday';
+
+  /// en: 'Tomorrow, $date'
+  String tomorrow({required Object date}) => 'Tomorrow, ${date}';
+
+  /// en: 'Today, waits for you'
+  String get waitsToday => 'Today, waits for you';
+
+  /// en: 'Waits for you'
+  String get waits => 'Waits for you';
+
+  /// en: 'Today, it posts itself'
+  String get postsToday => 'Today, it posts itself';
+
+  /// en: 'Posts itself'
+  String get posts => 'Posts itself';
+
+  /// en: 'Posted at $time'
+  String posted({required Object time}) => 'Posted at ${time}';
+
+  /// en: 'Posted on $date'
+  String postedOn({required Object date}) => 'Posted on ${date}';
+
+  /// en: 'Posted itself'
+  String get postedItself => 'Posted itself';
+
+  /// en: 'Skipped · next on $date'
+  String skipped({required Object date}) => 'Skipped · next on ${date}';
+
+  /// en: 'Found in a statement'
+  String get found => 'Found in a statement';
+
+  /// en: '$bank · $period'
+  String importTitle({required Object bank, required Object period}) =>
+      '${bank} · ${period}';
+
+  /// en: '(one) {$n of $count waits in the inbox} (other) {$n of $count wait in the inbox}'
+  String importWaiting({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} of ${count} waits in the inbox',
+        other: '${n} of ${count} wait in the inbox',
+      );
+
+  /// en: '(one) {Added $count operation} (other) {Added $count operations}'
+  String importAdded({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Added ${count} operation',
+        other: 'Added ${count} operations',
+      );
+
+  /// en: 'Import undone'
+  String get importUndone => 'Import undone';
+
+  List<String> get months => [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 }
 
 // Path: onboarding
@@ -4274,6 +4398,75 @@ extension on Translations {
             ({required Object first, required Object second}) =>
                 '${first} and ${second}',
           'inbox.unpick' => 'Clear',
+          'notifications.title' => 'Notifications',
+          'notifications.back' => 'Back',
+          'notifications.bell' => 'Notifications',
+          'notifications.bellNew' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Notifications, ${count} new',
+                  other: 'Notifications, ${count} new',
+                ),
+          'notifications.fresh' =>
+            ({required Object count}) => 'New · ${count}',
+          'notifications.readAll' => 'Mark all read',
+          'notifications.filters.all' => 'All',
+          'notifications.filters.payment' => 'Payments',
+          'notifications.filters.import' => 'Imports',
+          'notifications.filtersLabel' => 'Whose notifications',
+          'notifications.emptyTitle' => 'All quiet',
+          'notifications.emptyText' =>
+            'Reminders of your payments and the results of imports come here.',
+          'notifications.keeps' => 'Birka keeps notifications for 90 days',
+          'notifications.yesterday' => 'yesterday',
+          'notifications.tomorrow' =>
+            ({required Object date}) => 'Tomorrow, ${date}',
+          'notifications.waitsToday' => 'Today, waits for you',
+          'notifications.waits' => 'Waits for you',
+          'notifications.postsToday' => 'Today, it posts itself',
+          'notifications.posts' => 'Posts itself',
+          'notifications.posted' =>
+            ({required Object time}) => 'Posted at ${time}',
+          'notifications.postedOn' =>
+            ({required Object date}) => 'Posted on ${date}',
+          'notifications.postedItself' => 'Posted itself',
+          'notifications.skipped' =>
+            ({required Object date}) => 'Skipped · next on ${date}',
+          'notifications.found' => 'Found in a statement',
+          'notifications.importTitle' =>
+            ({required Object bank, required Object period}) =>
+                '${bank} · ${period}',
+          'notifications.importWaiting' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} of ${count} waits in the inbox',
+                  other: '${n} of ${count} wait in the inbox',
+                ),
+          'notifications.importAdded' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Added ${count} operation',
+                  other: 'Added ${count} operations',
+                ),
+          'notifications.importUndone' => 'Import undone',
+          'notifications.months.0' => 'January',
+          'notifications.months.1' => 'February',
+          'notifications.months.2' => 'March',
+          'notifications.months.3' => 'April',
+          'notifications.months.4' => 'May',
+          'notifications.months.5' => 'June',
+          'notifications.months.6' => 'July',
+          'notifications.months.7' => 'August',
+          'notifications.months.8' => 'September',
+          'notifications.months.9' => 'October',
+          'notifications.months.10' => 'November',
+          'notifications.months.11' => 'December',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
           'onboarding.failed' => 'Could not save. Try again.',
@@ -4886,6 +5079,9 @@ extension on Translations {
           'transactions.months.5' => 'June',
           'transactions.months.6' => 'July',
           'transactions.months.7' => 'August',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.months.8' => 'September',
           'transactions.months.9' => 'October',
           'transactions.months.10' => 'November',

@@ -6,13 +6,15 @@ import 'package:flutter/widgets.dart';
 
 /// A link in the accent: its [label] and a chevron, tall enough to hit, such
 /// as «Все регулярные · 6» under a card or «Включить напоминания» under a
-/// line.
+/// line. One that acts where it stands, such as «Прочитать все», goes
+/// without the chevron.
 class AccentLink extends StatelessWidget {
   /// Creates the link.
   const AccentLink({
     required this.label,
     required this.onTap,
     this.expand = false,
+    this.chevron = true,
     super.key,
   });
 
@@ -25,6 +27,10 @@ class AccentLink extends StatelessWidget {
   /// Whether it spans its width with the chevron at the end, rather than
   /// hugging its label.
   final bool expand;
+
+  /// Whether the chevron follows the label: a link that leads somewhere has
+  /// it, and one that acts where it stands has none.
+  final bool chevron;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +52,10 @@ class AccentLink extends StatelessWidget {
             mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
             children: [
               if (expand) Expanded(child: text) else text,
-              if (!expand) const SizedBox(width: BirkaTokens.spaceXxs),
-              BirkaIcon(BirkaGlyph.chevron, size: 16, color: colors.accent),
+              if (chevron) ...[
+                if (!expand) const SizedBox(width: BirkaTokens.spaceXxs),
+                BirkaIcon(BirkaGlyph.chevron, size: 16, color: colors.accent),
+              ],
             ],
           ),
         ),

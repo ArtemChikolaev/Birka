@@ -1,0 +1,54 @@
+title: Уведомления
+back: Назад
+bell: Уведомления
+bellNew(n):
+  one: Уведомления, $count новое
+  few: Уведомления, $count новых
+  many: Уведомления, $count новых
+  other: Уведомления, $count нового
+fresh: "Новые · $count"
+readAll: Прочитать все
+filters(map):
+  all: Все
+  payment: Платежи
+  import: Импорт
+filtersLabel: Чьи уведомления
+emptyTitle: Пока тихо
+emptyText: Здесь появятся напоминания о платежах и итоги импорта.
+keeps: Birka хранит уведомления 90 дней
+yesterday: вчера
+tomorrow: Завтра, $date
+waitsToday: Сегодня, ждёт подтверждения
+waits: Ждёт подтверждения
+postsToday: Сегодня, проведётся сам
+posts: Проведётся сам
+posted: Провели в $time
+postedOn: Провели $date
+postedItself: Провёлся сам
+skipped: "Пропустили · следующий $date"
+found: Нашли в выписке
+importTitle: "$bank · $period"
+importWaiting(n):
+  one: $n из $count ждёт во «Входящих»
+  few: $n из $count ждут во «Входящих»
+  many: $n из $count ждут во «Входящих»
+  other: $n из $count ждут во «Входящих»
+importAdded(n):
+  one: Добавили $count операцию
+  few: Добавили $count операции
+  many: Добавили $count операций
+  other: Добавили $count операции
+importUndone: Импорт отменён
+months:
+  - январь
+  - февраль
+  - март
+  - апрель
+  - май
+  - июнь
+  - июль
+  - август
+  - сентябрь
+  - октябрь
+  - ноябрь
+  - декабрь

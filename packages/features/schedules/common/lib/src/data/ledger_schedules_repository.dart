@@ -119,4 +119,15 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
 
   @override
   Future<List<String>> postDue() => _ledger.postDueSchedules(today());
+
+  @override
+  Future<void> noteReminders(List<PlannedReminder> reminders) =>
+      _ledger.noteReminders([
+        for (final reminder in reminders)
+          (
+            scheduleId: reminder.schedule.id,
+            time: reminder.on,
+            at: reminder.at,
+          ),
+      ]);
 }

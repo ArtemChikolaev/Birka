@@ -13,6 +13,7 @@ export 'src/ledger_exception.dart';
 export 'src/ledger_import.dart';
 export 'src/ledger_repository.dart';
 export 'src/ledger_totals.dart';
+export 'src/notice.dart';
 export 'src/schedule.dart';
 export 'src/transaction.dart';
 export 'src/transaction_draft.dart';
