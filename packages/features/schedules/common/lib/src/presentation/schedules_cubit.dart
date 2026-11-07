@@ -209,6 +209,16 @@ class SchedulesCubit extends Cubit<SchedulesState> {
     await cancelled;
   }
 
+  /// Catches up with the calendar after a night in the background, since
+  /// the money of the day, the payments that wait and the next 30 days all
+  /// start today. What it shows stays until the new day comes in.
+  Future<void> calendarChecked() async {
+    if (_repository.today() == _today) return;
+    final cancelled = _cancel();
+    _follow();
+    await cancelled;
+  }
+
   /// Records the next time of [schedule], for [amount] when it differs.
   Future<void> post(Schedule schedule, {Money? amount}) =>
       _repository.post(schedule.id, amount: amount);

@@ -32,46 +32,47 @@ class SchedulesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: AmbientBackground(
-        child: SafeArea(
-          bottom: false,
-          child: BlocBuilder<SchedulesCubit, SchedulesState>(
-            builder: (context, state) => ListView(
-              padding: const EdgeInsets.fromLTRB(
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceXs,
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceXxl,
-              ),
-              children: [
-                BackHeader(
-                  label: t.schedules.title,
-                  backLabel: t.schedules.back,
-                  onBack: onBack,
-                  trailing: GlassIconButton(
-                    glyph: BirkaGlyph.plus,
-                    label: t.schedules.add,
-                    onPressed: onAdd,
-                  ),
+    return CalendarCatchUp(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: AmbientBackground(
+          child: SafeArea(
+            bottom: false,
+            child: BlocBuilder<SchedulesCubit, SchedulesState>(
+              builder: (context, state) => ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceXs,
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceXxl,
                 ),
-                const SizedBox(height: BirkaTokens.spaceLg),
-                ...switch (state) {
-                  SchedulesLoading() => const <Widget>[],
-                  SchedulesFailed() => [
-                    BirkaButton(
-                      label: t.app.retry,
-                      onPressed: () =>
-                          unawaited(context.read<SchedulesCubit>().retry()),
+                children: [
+                  BackHeader(
+                    label: t.schedules.title,
+                    backLabel: t.schedules.back,
+                    onBack: onBack,
+                    trailing: GlassIconButton(
+                      glyph: BirkaGlyph.plus,
+                      label: t.schedules.add,
+                      onPressed: onAdd,
                     ),
-                  ],
-                  SchedulesLoaded(:final view) when view.schedules.isEmpty => [
-                    _Empty(onAdd: onAdd),
-                  ],
-                  SchedulesLoaded(:final view) => _content(context, view),
-                },
-              ],
+                  ),
+                  const SizedBox(height: BirkaTokens.spaceLg),
+                  ...switch (state) {
+                    SchedulesLoading() => const <Widget>[],
+                    SchedulesFailed() => [
+                      BirkaButton(
+                        label: t.app.retry,
+                        onPressed: () =>
+                            unawaited(context.read<SchedulesCubit>().retry()),
+                      ),
+                    ],
+                    SchedulesLoaded(:final view) when view.schedules.isEmpty =>
+                      [_Empty(onAdd: onAdd)],
+                    SchedulesLoaded(:final view) => _content(context, view),
+                  },
+                ],
+              ),
             ),
           ),
         ),

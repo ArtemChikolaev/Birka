@@ -101,6 +101,33 @@ void main() {
       expect(find.text('МОЖНО ТРАТИТЬ СЕГОДНЯ'), findsNothing);
       expect(find.text('Сколько можно тратить в день?'), findsNothing);
     });
+
+    testWidgets('starts the new day when the app comes back after a night', (
+      tester,
+    ) async {
+      final repository = FakeSchedulesRepository();
+      await pump(tester, repository, card());
+
+      repository.day = boardToday.addDays(1);
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      await tester.pump();
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      // What was spent yesterday stays in the balance, and a day less is left.
+      expect(find.text(nb('1 814 ₽')), findsOneWidget);
+      expect(find.text('из ${nb('1 814 ₽')} на день'), findsOneWidget);
+      expect(
+        find.text('Потратили ${nb('0 ₽')} · до зарплаты 16 дней'),
+        findsOneWidget,
+      );
+    });
   });
 
   group('the list of payments', () {

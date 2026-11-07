@@ -192,7 +192,12 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   );
 
   @override
-  Stream<List<Transaction>> watchDay(CivilDate day) => _watch(() => todays);
+  Stream<List<Transaction>> watchDay(CivilDate day) => _watch(
+    () => [
+      for (final it in todays)
+        if (it.occurredOn == day) it,
+    ],
+  );
 
   @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);

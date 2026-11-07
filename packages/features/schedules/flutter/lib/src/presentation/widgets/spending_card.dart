@@ -27,40 +27,42 @@ class SpendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SchedulesCubit, SchedulesState>(
-      builder: (context, state) {
-        final view = switch (state) {
-          SchedulesLoaded(:final view) when view.base != null => view,
-          _ => null,
-        };
-        final plan = view?.plan;
-        // It comes and goes as the inbox strip does, and keeps the space
-        // under it, so that it closes with it.
-        return AnimatedColumn(
-          children: [
-            if (view != null)
-              Padding(
-                key: const ValueKey('money'),
-                padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
-                child: AnimatedSize(
-                  duration: BirkaMotion.reduced(context)
-                      ? Duration.zero
-                      : BirkaMotion.slow,
-                  curve: BirkaMotion.standardCurve,
-                  alignment: Alignment.topCenter,
-                  child: plan == null
-                      ? _NoPayday(onOpenPlan: onOpenPlan)
-                      : _Plan(
-                          view: view,
-                          plan: plan,
-                          onOpenPlan: onOpenPlan,
-                          onOpenList: onOpenList,
-                        ),
+    return CalendarCatchUp(
+      child: BlocBuilder<SchedulesCubit, SchedulesState>(
+        builder: (context, state) {
+          final view = switch (state) {
+            SchedulesLoaded(:final view) when view.base != null => view,
+            _ => null,
+          };
+          final plan = view?.plan;
+          // It comes and goes as the inbox strip does, and keeps the space
+          // under it, so that it closes with it.
+          return AnimatedColumn(
+            children: [
+              if (view != null)
+                Padding(
+                  key: const ValueKey('money'),
+                  padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
+                  child: AnimatedSize(
+                    duration: BirkaMotion.reduced(context)
+                        ? Duration.zero
+                        : BirkaMotion.slow,
+                    curve: BirkaMotion.standardCurve,
+                    alignment: Alignment.topCenter,
+                    child: plan == null
+                        ? _NoPayday(onOpenPlan: onOpenPlan)
+                        : _Plan(
+                            view: view,
+                            plan: plan,
+                            onOpenPlan: onOpenPlan,
+                            onOpenList: onOpenList,
+                          ),
+                  ),
                 ),
-              ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
   }
 }

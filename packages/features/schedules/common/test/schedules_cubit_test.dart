@@ -269,6 +269,41 @@ void main() {
     expect(wise.currency, Currency.usd);
   });
 
+  test('catches up with a new day after a night in the background', () async {
+    var now = DateTime(2026, 11, 18, 23);
+    final night = LedgerSchedulesRepository(
+      ledger,
+      BaseCurrency(null),
+      store,
+      now: () => now,
+    );
+    await ledger.addSchedule(
+      kind: TransactionKind.expense,
+      name: 'ЖКХ',
+      accountId: card.id,
+      amount: rub(5200),
+      every: ScheduleEvery.month,
+      next: CivilDate(2026, 11, 19),
+    );
+    final cubit = SchedulesCubit(night);
+    addTearDown(cubit.close);
+    final before = await viewOf(cubit);
+    expect(before.waiting, isEmpty);
+    expect(before.plan!.spentToday, rub(620));
+
+    now = DateTime(2026, 11, 19, 8);
+    await cubit.calendarChecked();
+
+    final after = await viewOf(
+      cubit,
+      (view) => view.today == CivilDate(2026, 11, 19),
+    );
+    expect(after.waiting.map((it) => it.name), ['ЖКХ']);
+    expect(after.todays, isEmpty);
+    expect(after.plan!.spentToday, rub(0));
+    expect(after.plan!.days, before.plan!.days - 1);
+  });
+
   test('has no plan until a salary comes to a counted account', () async {
     await repository.saveSettings(PaydaySettings(accounts: {cash.id}));
     final cubit = SchedulesCubit(repository);

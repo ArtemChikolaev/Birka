@@ -33,39 +33,41 @@ class PaydayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: AmbientBackground(
-        child: SafeArea(
-          bottom: false,
-          child: BlocBuilder<SchedulesCubit, SchedulesState>(
-            builder: (context, state) => ListView(
-              padding: const EdgeInsets.fromLTRB(
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceXs,
-                BirkaTokens.spaceLg,
-                BirkaTokens.spaceXxl,
-              ),
-              children: [
-                BackHeader(
-                  label: t.schedules.paydayTitle,
-                  backLabel: t.schedules.back,
-                  onBack: onBack,
+    return CalendarCatchUp(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: AmbientBackground(
+          child: SafeArea(
+            bottom: false,
+            child: BlocBuilder<SchedulesCubit, SchedulesState>(
+              builder: (context, state) => ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceXs,
+                  BirkaTokens.spaceLg,
+                  BirkaTokens.spaceXxl,
                 ),
-                const SizedBox(height: BirkaTokens.spaceLg),
-                ...switch (state) {
-                  SchedulesLoaded(:final view) when view.base != null =>
-                    _content(context, view),
-                  SchedulesFailed() => [
-                    BirkaButton(
-                      label: t.app.retry,
-                      onPressed: () =>
-                          unawaited(context.read<SchedulesCubit>().retry()),
-                    ),
-                  ],
-                  _ => const <Widget>[],
-                },
-              ],
+                children: [
+                  BackHeader(
+                    label: t.schedules.paydayTitle,
+                    backLabel: t.schedules.back,
+                    onBack: onBack,
+                  ),
+                  const SizedBox(height: BirkaTokens.spaceLg),
+                  ...switch (state) {
+                    SchedulesLoaded(:final view) when view.base != null =>
+                      _content(context, view),
+                    SchedulesFailed() => [
+                      BirkaButton(
+                        label: t.app.retry,
+                        onPressed: () =>
+                            unawaited(context.read<SchedulesCubit>().retry()),
+                      ),
+                    ],
+                    _ => const <Widget>[],
+                  },
+                ],
+              ),
             ),
           ),
         ),

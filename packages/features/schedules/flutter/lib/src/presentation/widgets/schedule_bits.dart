@@ -1,9 +1,47 @@
+import 'dart:async';
+
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:schedules_common/schedules_common.dart';
+
+/// Has the [SchedulesCubit] above it catch up with the calendar each time
+/// the app comes back, as a night in the background may bring a new day.
+class CalendarCatchUp extends StatefulWidget {
+  /// Wraps [child].
+  const CalendarCatchUp({required this.child, super.key});
+
+  /// What it shows.
+  final Widget child;
+
+  @override
+  State<CalendarCatchUp> createState() => _CalendarCatchUpState();
+}
+
+class _CalendarCatchUpState extends State<CalendarCatchUp> {
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onResume: () =>
+          unawaited(context.read<SchedulesCubit>().calendarChecked()),
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
 
 /// The dot before a regular payment: the color of its category, or the
 /// accent for an income and a quiet one for a transfer.
