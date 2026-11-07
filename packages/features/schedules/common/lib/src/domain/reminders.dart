@@ -3,14 +3,15 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 
 /// How this device reminds of the regular payments (ADR 0025): with
-/// notifications of its own, at what time of the day, and whether a reminder
-/// shows the amount. It belongs to the device, as the other settings do
-/// (ADR 0011).
+/// notifications of its own, with the events of a calendar of its own, at
+/// what time of the day, and whether a reminder shows the amount. It belongs
+/// to the device, as the other settings do (ADR 0011).
 @immutable
 final class ReminderSettings {
   /// Creates the settings.
   const ReminderSettings({
     this.notify = false,
+    this.calendar = false,
     this.minutes = defaultMinutes,
     this.sums = true,
   });
@@ -20,6 +21,7 @@ final class ReminderSettings {
     final minutes = int.tryParse(store.read(_timeKey) ?? '');
     return ReminderSettings(
       notify: store.read(_notifyKey) == _on,
+      calendar: store.read(_calendarKey) == _on,
       minutes: minutes != null && minutes >= 0 && minutes < _day
           ? minutes
           : defaultMinutes,
@@ -32,6 +34,7 @@ final class ReminderSettings {
 
   static const int _day = 24 * 60;
   static const _notifyKey = 'remind-notify';
+  static const _calendarKey = 'remind-calendar';
   static const _timeKey = 'remind-time';
   static const _sumsKey = 'remind-sums';
   static const _on = 'on';
@@ -39,6 +42,13 @@ final class ReminderSettings {
 
   /// Whether Birka shows notifications of its own.
   final bool notify;
+
+  /// Whether Birka keeps the payments in a calendar of its own, whose events
+  /// remind even without the app.
+  final bool calendar;
+
+  /// Whether anything reminds: the notifications, the calendar or both.
+  bool get any => notify || calendar;
 
   /// When a reminder comes, in minutes after midnight on this device.
   final int minutes;
@@ -49,27 +59,34 @@ final class ReminderSettings {
   /// Keeps the settings in [store].
   Future<void> write(SettingsStore store) async {
     await store.write(_notifyKey, notify ? _on : _off);
+    await store.write(_calendarKey, calendar ? _on : _off);
     await store.write(_timeKey, '$minutes');
     await store.write(_sumsKey, sums ? _on : _off);
   }
 
   /// The same settings with the given ones changed.
-  ReminderSettings copyWith({bool? notify, int? minutes, bool? sums}) =>
-      ReminderSettings(
-        notify: notify ?? this.notify,
-        minutes: minutes ?? this.minutes,
-        sums: sums ?? this.sums,
-      );
+  ReminderSettings copyWith({
+    bool? notify,
+    bool? calendar,
+    int? minutes,
+    bool? sums,
+  }) => ReminderSettings(
+    notify: notify ?? this.notify,
+    calendar: calendar ?? this.calendar,
+    minutes: minutes ?? this.minutes,
+    sums: sums ?? this.sums,
+  );
 
   @override
   bool operator ==(Object other) =>
       other is ReminderSettings &&
       other.notify == notify &&
+      other.calendar == calendar &&
       other.minutes == minutes &&
       other.sums == sums;
 
   @override
-  int get hashCode => Object.hash(notify, minutes, sums);
+  int get hashCode => Object.hash(notify, calendar, minutes, sums);
 }
 
 /// Whether the phone lets Birka show notifications.
@@ -202,6 +219,80 @@ abstract interface class ReminderChannel {
 
   /// The taps on the reminders, the one that opened the app first.
   Stream<ReminderTap> get opened;
+}
+
+/// A recurring event of the calendar «Birka» (ADR 0025): [title] at
+/// [minutes] after midnight of each time of a rule from [first] on, every
+/// week, month or year as [every] says, on [day] of the month for a monthly
+/// or a yearly one, and in the month of [first] for a yearly one. Its alarm
+/// rings at its start, or a day before when [early].
+@immutable
+final class CalendarReminder {
+  /// Creates the event.
+  const CalendarReminder({
+    required this.title,
+    required this.first,
+    required this.minutes,
+    required this.every,
+    required this.day,
+    required this.early,
+  });
+
+  /// What the event says: the name of the time and, with the amounts, the
+  /// amount.
+  final String title;
+
+  /// Its first time, which also gives the day of the week of a weekly one
+  /// and the month of a yearly one.
+  final CivilDate first;
+
+  /// When it starts, in minutes after midnight.
+  final int minutes;
+
+  /// How often it comes.
+  final ScheduleEvery every;
+
+  /// The day of the month of a monthly or a yearly one, the last day of a
+  /// shorter month when that month has no such day.
+  final int day;
+
+  /// Whether its alarm rings the day before.
+  final bool early;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CalendarReminder &&
+      other.title == title &&
+      other.first == first &&
+      other.minutes == minutes &&
+      other.every == every &&
+      other.day == day &&
+      other.early == early;
+
+  @override
+  int get hashCode => Object.hash(title, first, minutes, every, day, early);
+}
+
+/// The calendar of this phone (ADR 0025), where Birka keeps a calendar of its
+/// own, «Birka». Its events remind of the payments even when the app is gone.
+abstract interface class ReminderCalendar {
+  /// Whether the phone lets Birka keep its calendar.
+  Future<ReminderAccess> access();
+
+  /// Asks the phone for the full access that the calendar needs, the first
+  /// time with its own question, and gives the answer.
+  Future<ReminderAccess> requestAccess();
+
+  /// Puts [events] in place of the events of the calendar «Birka», and makes
+  /// the calendar when it is not there.
+  Future<void> write(List<CalendarReminder> events);
+
+  /// Removes the calendar «Birka» with its events.
+  Future<void> remove();
+
+  /// Opens the settings of Birka on the phone, where the person allows its
+  /// calendar and its notifications.
+  Future<void> openSettings();
 }
 
 /// The reminders of [schedules] that come after [now], at [minutes] after

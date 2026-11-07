@@ -182,23 +182,51 @@ remindNotifyOn(n):
   one: $n payment · at $time
   other: $n payments · at $time
 remindNotifyDenied: no access to notifications
+remindCalendar: Calendar events
+remindCalendarOn(n):
+  one: the «Birka» calendar · $n event
+  other: the «Birka» calendar · $n events
+remindCalendarOff: reminds even without Birka
+remindCalendarDenied: no access to the calendar
 remindTime: Time
 remindSums: Amounts in reminders
-remindSumsNote: on the lock screen
+remindSumsNote: on the lock screen and in the calendar
 remindNoteOff: "A payment can remind on its day or the day before: each payment says which."
-remindNoteOn: Delete Birka and its reminders go with it.
+remindNoteOn: Delete Birka and its reminders go with it. The calendar reminds even without it.
 remindNoteDenied: For Birka to remind, allow its notifications in the settings of the phone.
+remindNoteCalendar: If the calendar syncs with iCloud or Google, the names and the amounts of the payments go there.
+remindNoteBoth: "A payment is reminded of twice: by Birka and by the calendar."
+remindNoteCalendarDenied: For the calendar to remind, give it access in the settings of the phone.
 remindAskTitle: Reminders from Birka
 remindAskText: Birka reminds of a payment at $time, on its day or the day before, as the payment says. The reminders are set on this phone and need no server.
 remindAskExample: $date, $time · a tap opens the payment
 remindAskLocalTitle: They live with Birka
-remindAskLocalText: Delete the app and its reminders go too.
+remindAskLocalText: Delete the app and its reminders go too. The calendar reminds even without it.
 remindAllow: Allow notifications
 remindNotNow: Not now
+remindCalendarAskText: Birka makes a calendar «Birka» and puts the regular payments in it. The calendar itself reminds, even if Birka is deleted.
+remindCalendarAskOwnTitle: The «Birka» calendar
+remindCalendarAskOwn(n):
+  one: $n payment · reminds at $time
+  other: $n payments · reminds at $time
+remindCalendarAskSyncTitle: If the calendar syncs
+remindCalendarAskSyncText: The names and the amounts of the payments go to iCloud or Google. The amounts can be left out in the settings.
+remindCalendarAskOthersTitle: Birka does not read other events
+remindCalendarAskOthersText: "The phone asks for full access: without it Birka cannot change or delete its own events."
+remindCalendarAllow: Allow access to the calendar
+remindCalendarRemoveTitle: Remove the «Birka» calendar?
+remindCalendarRemoveText(n):
+  one: The «Birka» calendar and its $n event leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.
+  other: The «Birka» calendar and its $n events leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.
+remindCalendarRemove: Remove the calendar
+remindCalendarDeniedTitle: No access to the calendar
+remindCalendarDeniedText: Access is off in the settings of the phone. Open Settings → Birka → Calendars and choose Full Access.
+remindCalendarOnToast: The payments are in the «Birka» calendar
+remindCalendarOffToast: The «Birka» calendar is removed
 remindDeniedTitle: No access to notifications
 remindDeniedText: Notifications of Birka are off in the settings of the phone. Open Settings → Birka → Notifications and turn them on.
 remindOpenSettings: Open settings
-remindUnderstood: Got it
+remindCancel: Cancel
 remindOnTitle: Reminders are on
 remindOnText(n):
   one: Birka will remind of $n payment
@@ -214,7 +242,10 @@ reminder(map):
   onDay: On the day
   dayBefore: The day before
   none: Don't remind
-remindLine: $date at $time · Birka reminds
+remindLine: $date at $time · $who
+remindByBirka: Birka reminds
+remindByCalendar: the «Birka» calendar reminds
+remindByBoth: Birka and the calendar remind
 remindLineNone: No reminder
 remindLineOff: Reminders are off in More
 remindEnable: Turn reminders on

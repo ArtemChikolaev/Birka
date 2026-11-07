@@ -1,0 +1,3 @@
+/* The calendar «Birka» of the reminders (ADR 0025). */
+"NSCalendarsFullAccessUsageDescription" = "Birka keeps your regular payments in a calendar of its own, «Birka», so that the calendar reminds you of them. Birka does not read your other events.";
+"NSCalendarsUsageDescription" = "Birka keeps your regular payments in a calendar of its own, «Birka», so that the calendar reminds you of them. Birka does not read your other events.";

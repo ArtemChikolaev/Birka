@@ -4,6 +4,9 @@
     <!-- For the reminders of the payments: the phone keeps them after a
          restart (ADR 0025). The plugin brings POST_NOTIFICATIONS itself. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- The calendar «Birka» of the reminders (ADR 0025). -->
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <application
         android:label="Birka"
         android:name="${applicationName}"

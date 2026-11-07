@@ -2111,20 +2111,43 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   @override
   String get remindNotifyDenied => 'нет доступа к уведомлениям';
   @override
+  String get remindCalendar => 'События в календаре';
+  @override
+  String remindCalendarOn({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'календарь «Birka» · ${n} событие',
+        few: 'календарь «Birka» · ${n} события',
+        many: 'календарь «Birka» · ${n} событий',
+        other: 'календарь «Birka» · ${n} событий',
+      );
+  @override
+  String get remindCalendarOff => 'напомнит и без Birka';
+  @override
+  String get remindCalendarDenied => 'нет доступа к календарю';
+  @override
   String get remindTime => 'Время';
   @override
   String get remindSums => 'Суммы в напоминаниях';
   @override
-  String get remindSumsNote => 'на экране блокировки';
+  String get remindSumsNote => 'на экране блокировки и в календаре';
   @override
   String get remindNoteOff =>
       'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа.';
   @override
   String get remindNoteOn =>
-      'Удалите Birka — напоминания исчезнут вместе с ней.';
+      'Удалите Birka — напоминания исчезнут вместе с ней. Календарь напомнит и без неё.';
   @override
   String get remindNoteDenied =>
       'Чтобы Birka напоминала, разрешите ей уведомления в настройках телефона.';
+  @override
+  String get remindNoteCalendar =>
+      'Если календарь синхронизируется с iCloud или Google, названия и суммы платежей попадут туда.';
+  @override
+  String get remindNoteBoth => 'О платеже напомнят дважды: Birka и календарь.';
+  @override
+  String get remindNoteCalendarDenied =>
+      'Чтобы календарь напоминал, откройте ему доступ в настройках телефона.';
   @override
   String get remindAskTitle => 'Напоминания от Birka';
   @override
@@ -2137,11 +2160,64 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String get remindAskLocalTitle => 'Живут вместе с Birka';
   @override
   String get remindAskLocalText =>
-      'Удалите приложение — исчезнут и напоминания.';
+      'Удалите приложение — исчезнут и напоминания. Календарь напомнит и без него.';
   @override
   String get remindAllow => 'Разрешить уведомления';
   @override
   String get remindNotNow => 'Не сейчас';
+  @override
+  String get remindCalendarAskText =>
+      'Birka заведёт календарь «Birka» и добавит в него регулярные платежи. Напоминать будет сам календарь — даже если удалить Birka.';
+  @override
+  String get remindCalendarAskOwnTitle => 'Календарь «Birka»';
+  @override
+  String remindCalendarAskOwn({required num n, required Object time}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} платёж · напомнит в ${time}',
+        few: '${n} платежа · напомнит в ${time}',
+        many: '${n} платежей · напомнит в ${time}',
+        other: '${n} платежей · напомнит в ${time}',
+      );
+  @override
+  String get remindCalendarAskSyncTitle => 'Если календарь синхронизируется';
+  @override
+  String get remindCalendarAskSyncText =>
+      'Названия и суммы платежей попадут в iCloud или Google. Суммы можно убрать в настройках.';
+  @override
+  String get remindCalendarAskOthersTitle => 'Чужие события Birka не читает';
+  @override
+  String get remindCalendarAskOthersText =>
+      'Телефон спросит полный доступ: без него Birka не сможет менять и удалять свои события.';
+  @override
+  String get remindCalendarAllow => 'Разрешить доступ к календарю';
+  @override
+  String get remindCalendarRemoveTitle => 'Убрать календарь «Birka»?';
+  @override
+  String remindCalendarRemoveText({
+    required num n,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one:
+        'Календарь «Birka» и ${n} событие в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+    few:
+        'Календарь «Birka» и ${n} события в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+    many:
+        'Календарь «Birka» и ${n} событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+    other:
+        'Календарь «Birka» и ${n} событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+  );
+  @override
+  String get remindCalendarRemove => 'Убрать календарь';
+  @override
+  String get remindCalendarDeniedTitle => 'Нет доступа к календарю';
+  @override
+  String get remindCalendarDeniedText =>
+      'Доступ выключен в настройках телефона. Откройте «Настройки» → «Birka» → «Календари» и выберите «Полный доступ».';
+  @override
+  String get remindCalendarOnToast => 'Платежи в календаре «Birka»';
+  @override
+  String get remindCalendarOffToast => 'Календарь «Birka» убран';
   @override
   String get remindDeniedTitle => 'Нет доступа к уведомлениям';
   @override
@@ -2150,7 +2226,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   @override
   String get remindOpenSettings => 'Открыть настройки';
   @override
-  String get remindUnderstood => 'Понятно';
+  String get remindCancel => 'Отмена';
   @override
   String get remindOnTitle => 'Напоминания включены';
   @override
@@ -2184,8 +2260,17 @@ class _Translations$schedules$ru extends Translations$schedules$en {
     'none': 'Не напоминать',
   };
   @override
-  String remindLine({required Object date, required Object time}) =>
-      '${date} в ${time} · напомнит Birka';
+  String remindLine({
+    required Object date,
+    required Object time,
+    required Object who,
+  }) => '${date} в ${time} · ${who}';
+  @override
+  String get remindByBirka => 'напомнит Birka';
+  @override
+  String get remindByCalendar => 'напомнит календарь «Birka»';
+  @override
+  String get remindByBoth => 'напомнят Birka и календарь';
   @override
   String get remindLineNone => 'Без напоминания';
   @override
@@ -4087,15 +4172,34 @@ extension on TranslationsRu {
                   other: '${n} платежей · в ${time}',
                 ),
           'schedules.remindNotifyDenied' => 'нет доступа к уведомлениям',
+          'schedules.remindCalendar' => 'События в календаре',
+          'schedules.remindCalendarOn' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'календарь «Birka» · ${n} событие',
+                  few: 'календарь «Birka» · ${n} события',
+                  many: 'календарь «Birka» · ${n} событий',
+                  other: 'календарь «Birka» · ${n} событий',
+                ),
+          'schedules.remindCalendarOff' => 'напомнит и без Birka',
+          'schedules.remindCalendarDenied' => 'нет доступа к календарю',
           'schedules.remindTime' => 'Время',
           'schedules.remindSums' => 'Суммы в напоминаниях',
-          'schedules.remindSumsNote' => 'на экране блокировки',
+          'schedules.remindSumsNote' => 'на экране блокировки и в календаре',
           'schedules.remindNoteOff' =>
             'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа.',
           'schedules.remindNoteOn' =>
-            'Удалите Birka — напоминания исчезнут вместе с ней.',
+            'Удалите Birka — напоминания исчезнут вместе с ней. Календарь напомнит и без неё.',
           'schedules.remindNoteDenied' =>
             'Чтобы Birka напоминала, разрешите ей уведомления в настройках телефона.',
+          'schedules.remindNoteCalendar' =>
+            'Если календарь синхронизируется с iCloud или Google, названия и суммы платежей попадут туда.',
+          'schedules.remindNoteBoth' =>
+            'О платеже напомнят дважды: Birka и календарь.',
+          'schedules.remindNoteCalendarDenied' =>
+            'Чтобы календарь напоминал, откройте ему доступ в настройках телефона.',
           'schedules.remindAskTitle' => 'Напоминания от Birka',
           'schedules.remindAskText' =>
             ({required Object time}) =>
@@ -4105,14 +4209,57 @@ extension on TranslationsRu {
                 '${date}, ${time} · нажмёте — откроется платёж',
           'schedules.remindAskLocalTitle' => 'Живут вместе с Birka',
           'schedules.remindAskLocalText' =>
-            'Удалите приложение — исчезнут и напоминания.',
+            'Удалите приложение — исчезнут и напоминания. Календарь напомнит и без него.',
           'schedules.remindAllow' => 'Разрешить уведомления',
           'schedules.remindNotNow' => 'Не сейчас',
+          'schedules.remindCalendarAskText' =>
+            'Birka заведёт календарь «Birka» и добавит в него регулярные платежи. Напоминать будет сам календарь — даже если удалить Birka.',
+          'schedules.remindCalendarAskOwnTitle' => 'Календарь «Birka»',
+          'schedules.remindCalendarAskOwn' =>
+            ({required num n, required Object time}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} платёж · напомнит в ${time}',
+                  few: '${n} платежа · напомнит в ${time}',
+                  many: '${n} платежей · напомнит в ${time}',
+                  other: '${n} платежей · напомнит в ${time}',
+                ),
+          'schedules.remindCalendarAskSyncTitle' =>
+            'Если календарь синхронизируется',
+          'schedules.remindCalendarAskSyncText' =>
+            'Названия и суммы платежей попадут в iCloud или Google. Суммы можно убрать в настройках.',
+          'schedules.remindCalendarAskOthersTitle' =>
+            'Чужие события Birka не читает',
+          'schedules.remindCalendarAskOthersText' =>
+            'Телефон спросит полный доступ: без него Birka не сможет менять и удалять свои события.',
+          'schedules.remindCalendarAllow' => 'Разрешить доступ к календарю',
+          'schedules.remindCalendarRemoveTitle' => 'Убрать календарь «Birka»?',
+          'schedules.remindCalendarRemoveText' =>
+            ({
+              required num n,
+            }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+              n,
+              one:
+                  'Календарь «Birka» и ${n} событие в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+              few:
+                  'Календарь «Birka» и ${n} события в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+              many:
+                  'Календарь «Birka» и ${n} событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+              other:
+                  'Календарь «Birka» и ${n} событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
+            ),
+          'schedules.remindCalendarRemove' => 'Убрать календарь',
+          'schedules.remindCalendarDeniedTitle' => 'Нет доступа к календарю',
+          'schedules.remindCalendarDeniedText' =>
+            'Доступ выключен в настройках телефона. Откройте «Настройки» → «Birka» → «Календари» и выберите «Полный доступ».',
+          'schedules.remindCalendarOnToast' => 'Платежи в календаре «Birka»',
+          'schedules.remindCalendarOffToast' => 'Календарь «Birka» убран',
           'schedules.remindDeniedTitle' => 'Нет доступа к уведомлениям',
           'schedules.remindDeniedText' =>
             'Уведомления Birka выключены в настройках телефона. Откройте «Настройки» → «Birka» → «Уведомления» и включите их.',
           'schedules.remindOpenSettings' => 'Открыть настройки',
-          'schedules.remindUnderstood' => 'Понятно',
+          'schedules.remindCancel' => 'Отмена',
           'schedules.remindOnTitle' => 'Напоминания включены',
           'schedules.remindOnText' =>
             ({required num n}) =>
@@ -4139,8 +4286,14 @@ extension on TranslationsRu {
           'schedules.reminder.dayBefore' => 'За день',
           'schedules.reminder.none' => 'Не напоминать',
           'schedules.remindLine' =>
-            ({required Object date, required Object time}) =>
-                '${date} в ${time} · напомнит Birka',
+            ({
+              required Object date,
+              required Object time,
+              required Object who,
+            }) => '${date} в ${time} · ${who}',
+          'schedules.remindByBirka' => 'напомнит Birka',
+          'schedules.remindByCalendar' => 'напомнит календарь «Birka»',
+          'schedules.remindByBoth' => 'напомнят Birka и календарь',
           'schedules.remindLineNone' => 'Без напоминания',
           'schedules.remindLineOff' => 'Напоминания выключены в «Ещё»',
           'schedules.remindEnable' => 'Включить напоминания',

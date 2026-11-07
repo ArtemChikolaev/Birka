@@ -24,6 +24,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Birka keeps your regular payments in a calendar of its own, «Birka», so that the calendar reminds you of them. Birka does not read your other events.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Birka keeps your regular payments in a calendar of its own, «Birka», so that the calendar reminds you of them. Birka does not read your other events.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

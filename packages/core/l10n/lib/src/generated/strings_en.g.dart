@@ -2533,25 +2533,55 @@ class Translations$schedules$en {
   /// en: 'no access to notifications'
   String get remindNotifyDenied => 'no access to notifications';
 
+  /// en: 'Calendar events'
+  String get remindCalendar => 'Calendar events';
+
+  /// en: '(one) {the «Birka» calendar · $n event} (other) {the «Birka» calendar · $n events}'
+  String remindCalendarOn({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'the «Birka» calendar · ${n} event',
+        other: 'the «Birka» calendar · ${n} events',
+      );
+
+  /// en: 'reminds even without Birka'
+  String get remindCalendarOff => 'reminds even without Birka';
+
+  /// en: 'no access to the calendar'
+  String get remindCalendarDenied => 'no access to the calendar';
+
   /// en: 'Time'
   String get remindTime => 'Time';
 
   /// en: 'Amounts in reminders'
   String get remindSums => 'Amounts in reminders';
 
-  /// en: 'on the lock screen'
-  String get remindSumsNote => 'on the lock screen';
+  /// en: 'on the lock screen and in the calendar'
+  String get remindSumsNote => 'on the lock screen and in the calendar';
 
   /// en: 'A payment can remind on its day or the day before: each payment says which.'
   String get remindNoteOff =>
       'A payment can remind on its day or the day before: each payment says which.';
 
-  /// en: 'Delete Birka and its reminders go with it.'
-  String get remindNoteOn => 'Delete Birka and its reminders go with it.';
+  /// en: 'Delete Birka and its reminders go with it. The calendar reminds even without it.'
+  String get remindNoteOn =>
+      'Delete Birka and its reminders go with it. The calendar reminds even without it.';
 
   /// en: 'For Birka to remind, allow its notifications in the settings of the phone.'
   String get remindNoteDenied =>
       'For Birka to remind, allow its notifications in the settings of the phone.';
+
+  /// en: 'If the calendar syncs with iCloud or Google, the names and the amounts of the payments go there.'
+  String get remindNoteCalendar =>
+      'If the calendar syncs with iCloud or Google, the names and the amounts of the payments go there.';
+
+  /// en: 'A payment is reminded of twice: by Birka and by the calendar.'
+  String get remindNoteBoth =>
+      'A payment is reminded of twice: by Birka and by the calendar.';
+
+  /// en: 'For the calendar to remind, give it access in the settings of the phone.'
+  String get remindNoteCalendarDenied =>
+      'For the calendar to remind, give it access in the settings of the phone.';
 
   /// en: 'Reminders from Birka'
   String get remindAskTitle => 'Reminders from Birka';
@@ -2567,14 +2597,78 @@ class Translations$schedules$en {
   /// en: 'They live with Birka'
   String get remindAskLocalTitle => 'They live with Birka';
 
-  /// en: 'Delete the app and its reminders go too.'
-  String get remindAskLocalText => 'Delete the app and its reminders go too.';
+  /// en: 'Delete the app and its reminders go too. The calendar reminds even without it.'
+  String get remindAskLocalText =>
+      'Delete the app and its reminders go too. The calendar reminds even without it.';
 
   /// en: 'Allow notifications'
   String get remindAllow => 'Allow notifications';
 
   /// en: 'Not now'
   String get remindNotNow => 'Not now';
+
+  /// en: 'Birka makes a calendar «Birka» and puts the regular payments in it. The calendar itself reminds, even if Birka is deleted.'
+  String get remindCalendarAskText =>
+      'Birka makes a calendar «Birka» and puts the regular payments in it. The calendar itself reminds, even if Birka is deleted.';
+
+  /// en: 'The «Birka» calendar'
+  String get remindCalendarAskOwnTitle => 'The «Birka» calendar';
+
+  /// en: '(one) {$n payment · reminds at $time} (other) {$n payments · reminds at $time}'
+  String remindCalendarAskOwn({required num n, required Object time}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} payment · reminds at ${time}',
+        other: '${n} payments · reminds at ${time}',
+      );
+
+  /// en: 'If the calendar syncs'
+  String get remindCalendarAskSyncTitle => 'If the calendar syncs';
+
+  /// en: 'The names and the amounts of the payments go to iCloud or Google. The amounts can be left out in the settings.'
+  String get remindCalendarAskSyncText =>
+      'The names and the amounts of the payments go to iCloud or Google. The amounts can be left out in the settings.';
+
+  /// en: 'Birka does not read other events'
+  String get remindCalendarAskOthersTitle => 'Birka does not read other events';
+
+  /// en: 'The phone asks for full access: without it Birka cannot change or delete its own events.'
+  String get remindCalendarAskOthersText =>
+      'The phone asks for full access: without it Birka cannot change or delete its own events.';
+
+  /// en: 'Allow access to the calendar'
+  String get remindCalendarAllow => 'Allow access to the calendar';
+
+  /// en: 'Remove the «Birka» calendar?'
+  String get remindCalendarRemoveTitle => 'Remove the «Birka» calendar?';
+
+  /// en: '(one) {The «Birka» calendar and its $n event leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.} (other) {The «Birka» calendar and its $n events leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.}'
+  String remindCalendarRemoveText({
+    required num n,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one:
+        'The «Birka» calendar and its ${n} event leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.',
+    other:
+        'The «Birka» calendar and its ${n} events leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.',
+  );
+
+  /// en: 'Remove the calendar'
+  String get remindCalendarRemove => 'Remove the calendar';
+
+  /// en: 'No access to the calendar'
+  String get remindCalendarDeniedTitle => 'No access to the calendar';
+
+  /// en: 'Access is off in the settings of the phone. Open Settings → Birka → Calendars and choose Full Access.'
+  String get remindCalendarDeniedText =>
+      'Access is off in the settings of the phone. Open Settings → Birka → Calendars and choose Full Access.';
+
+  /// en: 'The payments are in the «Birka» calendar'
+  String get remindCalendarOnToast =>
+      'The payments are in the «Birka» calendar';
+
+  /// en: 'The «Birka» calendar is removed'
+  String get remindCalendarOffToast => 'The «Birka» calendar is removed';
 
   /// en: 'No access to notifications'
   String get remindDeniedTitle => 'No access to notifications';
@@ -2586,8 +2680,8 @@ class Translations$schedules$en {
   /// en: 'Open settings'
   String get remindOpenSettings => 'Open settings';
 
-  /// en: 'Got it'
-  String get remindUnderstood => 'Got it';
+  /// en: 'Cancel'
+  String get remindCancel => 'Cancel';
 
   /// en: 'Reminders are on'
   String get remindOnTitle => 'Reminders are on';
@@ -2629,9 +2723,21 @@ class Translations$schedules$en {
     'none': 'Don\'t remind',
   };
 
-  /// en: '$date at $time · Birka reminds'
-  String remindLine({required Object date, required Object time}) =>
-      '${date} at ${time} · Birka reminds';
+  /// en: '$date at $time · $who'
+  String remindLine({
+    required Object date,
+    required Object time,
+    required Object who,
+  }) => '${date} at ${time} · ${who}';
+
+  /// en: 'Birka reminds'
+  String get remindByBirka => 'Birka reminds';
+
+  /// en: 'the «Birka» calendar reminds'
+  String get remindByCalendar => 'the «Birka» calendar reminds';
+
+  /// en: 'Birka and the calendar remind'
+  String get remindByBoth => 'Birka and the calendar remind';
 
   /// en: 'No reminder'
   String get remindLineNone => 'No reminder';
@@ -4569,15 +4675,33 @@ extension on Translations {
                   other: '${n} payments · at ${time}',
                 ),
           'schedules.remindNotifyDenied' => 'no access to notifications',
+          'schedules.remindCalendar' => 'Calendar events',
+          'schedules.remindCalendarOn' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'the «Birka» calendar · ${n} event',
+                  other: 'the «Birka» calendar · ${n} events',
+                ),
+          'schedules.remindCalendarOff' => 'reminds even without Birka',
+          'schedules.remindCalendarDenied' => 'no access to the calendar',
           'schedules.remindTime' => 'Time',
           'schedules.remindSums' => 'Amounts in reminders',
-          'schedules.remindSumsNote' => 'on the lock screen',
+          'schedules.remindSumsNote' =>
+            'on the lock screen and in the calendar',
           'schedules.remindNoteOff' =>
             'A payment can remind on its day or the day before: each payment says which.',
           'schedules.remindNoteOn' =>
-            'Delete Birka and its reminders go with it.',
+            'Delete Birka and its reminders go with it. The calendar reminds even without it.',
           'schedules.remindNoteDenied' =>
             'For Birka to remind, allow its notifications in the settings of the phone.',
+          'schedules.remindNoteCalendar' =>
+            'If the calendar syncs with iCloud or Google, the names and the amounts of the payments go there.',
+          'schedules.remindNoteBoth' =>
+            'A payment is reminded of twice: by Birka and by the calendar.',
+          'schedules.remindNoteCalendarDenied' =>
+            'For the calendar to remind, give it access in the settings of the phone.',
           'schedules.remindAskTitle' => 'Reminders from Birka',
           'schedules.remindAskText' =>
             ({required Object time}) =>
@@ -4587,14 +4711,53 @@ extension on Translations {
                 '${date}, ${time} · a tap opens the payment',
           'schedules.remindAskLocalTitle' => 'They live with Birka',
           'schedules.remindAskLocalText' =>
-            'Delete the app and its reminders go too.',
+            'Delete the app and its reminders go too. The calendar reminds even without it.',
           'schedules.remindAllow' => 'Allow notifications',
           'schedules.remindNotNow' => 'Not now',
+          'schedules.remindCalendarAskText' =>
+            'Birka makes a calendar «Birka» and puts the regular payments in it. The calendar itself reminds, even if Birka is deleted.',
+          'schedules.remindCalendarAskOwnTitle' => 'The «Birka» calendar',
+          'schedules.remindCalendarAskOwn' =>
+            ({required num n, required Object time}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} payment · reminds at ${time}',
+                  other: '${n} payments · reminds at ${time}',
+                ),
+          'schedules.remindCalendarAskSyncTitle' => 'If the calendar syncs',
+          'schedules.remindCalendarAskSyncText' =>
+            'The names and the amounts of the payments go to iCloud or Google. The amounts can be left out in the settings.',
+          'schedules.remindCalendarAskOthersTitle' =>
+            'Birka does not read other events',
+          'schedules.remindCalendarAskOthersText' =>
+            'The phone asks for full access: without it Birka cannot change or delete its own events.',
+          'schedules.remindCalendarAllow' => 'Allow access to the calendar',
+          'schedules.remindCalendarRemoveTitle' =>
+            'Remove the «Birka» calendar?',
+          'schedules.remindCalendarRemoveText' =>
+            ({
+              required num n,
+            }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+              n,
+              one:
+                  'The «Birka» calendar and its ${n} event leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.',
+              other:
+                  'The «Birka» calendar and its ${n} events leave the phone, and the calendar stops reminding of the payments. Other calendars stay as they are.',
+            ),
+          'schedules.remindCalendarRemove' => 'Remove the calendar',
+          'schedules.remindCalendarDeniedTitle' => 'No access to the calendar',
+          'schedules.remindCalendarDeniedText' =>
+            'Access is off in the settings of the phone. Open Settings → Birka → Calendars and choose Full Access.',
+          'schedules.remindCalendarOnToast' =>
+            'The payments are in the «Birka» calendar',
+          'schedules.remindCalendarOffToast' =>
+            'The «Birka» calendar is removed',
           'schedules.remindDeniedTitle' => 'No access to notifications',
           'schedules.remindDeniedText' =>
             'Notifications of Birka are off in the settings of the phone. Open Settings → Birka → Notifications and turn them on.',
           'schedules.remindOpenSettings' => 'Open settings',
-          'schedules.remindUnderstood' => 'Got it',
+          'schedules.remindCancel' => 'Cancel',
           'schedules.remindOnTitle' => 'Reminders are on',
           'schedules.remindOnText' =>
             ({required num n}) =>
@@ -4618,8 +4781,14 @@ extension on Translations {
           'schedules.reminder.dayBefore' => 'The day before',
           'schedules.reminder.none' => 'Don\'t remind',
           'schedules.remindLine' =>
-            ({required Object date, required Object time}) =>
-                '${date} at ${time} · Birka reminds',
+            ({
+              required Object date,
+              required Object time,
+              required Object who,
+            }) => '${date} at ${time} · ${who}',
+          'schedules.remindByBirka' => 'Birka reminds',
+          'schedules.remindByCalendar' => 'the «Birka» calendar reminds',
+          'schedules.remindByBoth' => 'Birka and the calendar remind',
           'schedules.remindLineNone' => 'No reminder',
           'schedules.remindLineOff' => 'Reminders are off in More',
           'schedules.remindEnable' => 'Turn reminders on',
