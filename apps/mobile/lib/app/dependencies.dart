@@ -54,12 +54,14 @@ void registerDependencies(
   final database = BirkaDatabase(driftDatabase(name: databaseName));
   final ledger = LedgerRepository(database);
   final rates = RatesRepository(database);
-  final baseCurrency = BaseCurrency(Settings.readFrom(settings).baseCurrency);
+  final kept = Settings.readFrom(settings);
+  final baseCurrency = BaseCurrency(kept.baseCurrency);
   getIt
     ..registerSingleton(database, dispose: (database) => database.close())
     ..registerSingleton(ledger)
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)
+    ..registerSingleton(MonthStart(kept.monthStart))
     ..registerSingleton(
       RatesUpdater(rates, CbrMirror(http.Client()), ledger, baseCurrency),
     )

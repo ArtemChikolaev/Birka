@@ -10,6 +10,8 @@ environment:
 
 dependencies:
   bloc: ^9.2.1
+  device_settings:
+    path: ../../../core/device_settings
   get_it: ^9.3.0
   l10n:
     path: ../../../core/l10n

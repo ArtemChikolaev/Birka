@@ -25,3 +25,4 @@
 | [0021](0021-statements.md) | Statements read on the device | accepted 2026-11-04 |
 | [0022](0022-inbox.md) | The inbox | accepted 2026-11-04 |
 | [0023](0023-regular-payments.md) | Regular payments | accepted 2026-11-06 |
+| [0024](0024-month-start.md) | The day a month starts on | accepted 2026-11-07 |

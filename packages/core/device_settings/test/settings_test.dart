@@ -14,6 +14,7 @@ void main() {
     expect(settings.language, isNull);
     expect(settings.hideAmountsOnLaunch, isFalse);
     expect(settings.onboarded, isFalse);
+    expect(settings.monthStart, 1);
   });
 
   test('comes back the way it was kept', () async {
@@ -24,9 +25,11 @@ void main() {
       hideAmountsOnLaunch: true,
       baseCurrency: Currency.eur,
       onboarded: true,
+      monthStart: 25,
     ).writeTo(store);
     final settings = Settings.readFrom(store);
 
+    expect(settings.monthStart, 25);
     expect(settings.language, AppLocale.ru);
     expect(settings.hideAmountsOnLaunch, isTrue);
     expect(settings.baseCurrency, Currency.eur);
@@ -55,6 +58,31 @@ void main() {
     expect(others.hideAmountsOnLaunch, isFalse);
     expect(others.baseCurrency, isNull);
     expect(others.onboarded, isFalse);
+  });
+
+  test('a month start out of 1 to 28 starts the months on the 1st', () async {
+    for (final kept in ['0', '29', 'May']) {
+      final store = FakeSettingsStore();
+      await store.write('month-start', kept);
+
+      expect(Settings.readFrom(store).monthStart, 1);
+    }
+  });
+
+  test('the month start tells its watchers of a change', () async {
+    final start = MonthStart(1);
+    final seen = <int>[];
+    final subscription = start.watch().listen(seen.add);
+    addTearDown(subscription.cancel);
+
+    start
+      ..choose(5)
+      ..choose(5)
+      ..choose(25);
+    await pumpEventQueue();
+
+    expect(start.day, 25);
+    expect(seen, [1, 5, 25]);
   });
 
   test('a currency that this version does not offer follows the account', () {

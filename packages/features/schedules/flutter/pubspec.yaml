@@ -12,6 +12,8 @@ environment:
 dependencies:
   design_flutter:
     path: ../../../design/flutter
+  device_settings:
+    path: ../../../core/device_settings
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
@@ -25,7 +27,5 @@ dependencies:
     path: ../common
 
 dev_dependencies:
-  device_settings:
-    path: ../../../core/device_settings
   flutter_test:
     sdk: flutter

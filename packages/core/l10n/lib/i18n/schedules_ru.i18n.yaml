@@ -182,3 +182,4 @@ halvesUneven: Сумма не делится пополам — поправьт
 advanceDay: Аванс
 restDay: Зарплата
 nextAdvance: аванс, $date
+monthStartHint: "Зарплата приходит $day-го: месяц можно начинать с этого дня, тогда $month — с $from по $to."

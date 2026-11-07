@@ -30,6 +30,15 @@ final class _FakeRepository implements ReportsRepository {
   @override
   Stream<Currency?> watchBaseCurrency() => _read(base);
 
+  /// The day the months start on.
+  int start = 1;
+
+  @override
+  int monthStart() => start;
+
+  @override
+  Stream<int> watchMonthStart() => Stream.value(start);
+
   @override
   Stream<RateBook> watchRates() => _read(rates);
 
@@ -46,7 +55,7 @@ final class _FakeRepository implements ReportsRepository {
   ]);
 
   @override
-  Future<List<CivilDate>> months() async => monthList;
+  Future<List<CivilDate>> months({int start = 1}) async => monthList;
 }
 
 CategoryTotal _total(

@@ -29,6 +29,7 @@ void main() {
               store,
               deviceLanguage: 'en',
               baseCurrency: BaseCurrency(null),
+              monthStart: MonthStart(Settings.readFrom(store).monthStart),
             ),
             child: const SettingsSection(),
           ),
@@ -139,6 +140,32 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(Settings.readFrom(store).language, AppLocale.ru);
+  });
+
+  testWidgets('a picked month start stays', (tester) async {
+    await pump(tester);
+    expect(find.text('Начало месяца'), findsOneWidget);
+    expect(find.text('1 число'), findsOneWidget);
+
+    await tester.tap(find.text('Начало месяца'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('для обзора и отчётов'), findsOneWidget);
+    expect(find.text('как в календаре'), findsOneWidget);
+    // The row of the section, and the choice with its mark.
+    expect(find.text('1 число'), findsNWidgets(2));
+
+    await tester.scrollUntilVisible(
+      find.text('25 число'),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('25 число'));
+    await tester.pumpAndSettle();
+
+    expect(Settings.readFrom(store).monthStart, 25);
+    expect(find.text('25 число'), findsOneWidget);
   });
 
   testWidgets('the switch stays', (tester) async {

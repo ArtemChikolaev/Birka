@@ -27,16 +27,18 @@ List<CategoryTotal> totalsIn(
 }
 
 /// What went through each month of [rows], one row for each month and currency,
-/// the earliest first. It adds up what [totalsIn] gives, so that the bar of a
-/// month is exactly the sum of its categories.
+/// the earliest first, when months start on day [monthStart]. It adds up what
+/// [totalsIn] gives, so that the bar of a month is exactly the sum of its
+/// categories.
 List<MonthTotal> monthTotalsIn(
   Currency? target,
   List<CategoryDayTotal> rows,
-  RateBook rates,
-) {
+  RateBook rates, {
+  int monthStart = 1,
+}) {
   final months = <CivilDate, List<CategoryDayTotal>>{};
   for (final row in rows) {
-    (months[CivilDate(row.day.year, row.day.month, 1)] ??= []).add(row);
+    (months[row.day.monthStart(monthStart)] ??= []).add(row);
   }
   return [
     for (final MapEntry(key: month, value: days) in months.entries)

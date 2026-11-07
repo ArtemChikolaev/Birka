@@ -3,6 +3,7 @@ library;
 
 import 'package:bloc/bloc.dart';
 import 'package:database/database.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:drift/native.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
@@ -53,6 +54,7 @@ void main() {
     repository = LedgerSchedulesRepository(
       ledger,
       BaseCurrency(null),
+      MonthStart(1),
       store,
       now: () => DateTime(2026, 11, 18, 12),
     );
@@ -237,6 +239,33 @@ void main() {
     );
   });
 
+  test('counts to the end of a month that starts on the picked day', () async {
+    final monthStart = MonthStart(1);
+    final cubit = SchedulesCubit(
+      LedgerSchedulesRepository(
+        ledger,
+        BaseCurrency(null),
+        monthStart,
+        store,
+        now: () => DateTime(2026, 11, 18, 12),
+      ),
+    );
+    addTearDown(cubit.close);
+    await viewOf(cubit);
+    await cubit.countUntil(SpendUntil.monthEnd);
+    final calendar = await viewOf(
+      cubit,
+      (view) => view.settings.until == SpendUntil.monthEnd,
+    );
+    expect(calendar.plan!.end, CivilDate(2026, 11, 30));
+
+    monthStart.choose(5);
+    final moved = await viewOf(cubit, (view) => view.monthStart == 5);
+
+    expect(moved.plan!.end, CivilDate(2026, 12, 4));
+    expect(moved.plan!.perDay, rub(1744));
+  });
+
   test('counts what the settings say, and the device keeps them', () async {
     final cubit = SchedulesCubit(repository);
     addTearDown(cubit.close);
@@ -274,6 +303,7 @@ void main() {
     final night = LedgerSchedulesRepository(
       ledger,
       BaseCurrency(null),
+      MonthStart(1),
       store,
       now: () => now,
     );

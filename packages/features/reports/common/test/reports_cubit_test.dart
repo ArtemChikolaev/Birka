@@ -55,6 +55,34 @@ void main() {
     ));
   });
 
+  test('starts its months on the day the settings say', () async {
+    now = DateTime(2026, 11, 3, 9);
+    repository
+      ..start = 5
+      ..days[CategoryKind.expense] = [
+        testDay('Food', CivilDate(2026, 9, 4), rub(500)),
+        testDay('Food', CivilDate(2026, 9, 5), rub(1000)),
+        testDay('Food', CivilDate(2026, 10, 4), rub(200)),
+        testDay('Food', CivilDate(2026, 10, 5), rub(1160)),
+        testDay('Food', CivilDate(2026, 11, 3), rub(40)),
+      ];
+
+    final reports = await open();
+
+    // The 3rd of November still belongs to the month of the 5th of October.
+    expect(reports.state.month, CivilDate(2026, 10, 5));
+    expect(repository.asked.single, (
+      CategoryKind.expense,
+      CivilDate(2026, 5, 5),
+      CivilDate(2026, 11, 4),
+    ));
+    expect(reports.state.report.total, rub(1200));
+    expect(
+      reports.state.report.months.map((it) => (it.month, it.total)).toList(),
+      contains((CivilDate(2026, 9, 5), rub(1200))),
+    );
+  });
+
   group('a month under way', () {
     test('compares with the same days of the month before', () async {
       now = DateTime(2026, 10, 10);

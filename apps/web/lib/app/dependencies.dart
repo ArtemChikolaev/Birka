@@ -15,7 +15,7 @@ import 'package:onboarding_common/onboarding_common.dart'
 import 'package:overview_common/overview_common.dart';
 import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart';
-import 'package:settings_common/settings_common.dart' show Settings;
+import 'package:settings_common/settings_common.dart' show MonthStart, Settings;
 import 'package:transactions_common/transactions_common.dart';
 
 /// Puts the objects of the app into [getIt]: the one place that knows every
@@ -31,6 +31,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
     ..registerSingleton(ledger)
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)
+    ..registerSingleton(MonthStart(settings.monthStart))
     ..registerSingleton<BackupFiles>(const BrowserBackupFiles())
     ..registerSingleton<StatementFiles>(const BrowserStatementFiles())
     ..registerSingleton(

@@ -23,6 +23,10 @@ abstract interface class SchedulesRepository {
   /// The currency that totals are in, or `null` to follow the first account.
   Stream<Currency?> watchBaseCurrency();
 
+  /// The day of the calendar that the months start on (ADR 0024), now and
+  /// after every change.
+  Stream<int> watchMonthStart();
+
   /// The imports whose transactions the ledger holds, for the statements that
   /// brought the times of payments (ADR 0023).
   Stream<List<LedgerImport>> watchImports();

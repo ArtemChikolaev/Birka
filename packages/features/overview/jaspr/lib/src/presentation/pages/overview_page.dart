@@ -72,7 +72,7 @@ class OverviewPage extends StatelessComponent {
               if (state.main != null) _capital(context, state),
               ?notice,
               _accounts(state.accounts),
-              _spending(state.spending, today: state.today),
+              _spending(state.spending, today: state.month),
             ],
           },
           if (note != null && state.status == OverviewStatus.ready)
@@ -85,7 +85,7 @@ class OverviewPage extends StatelessComponent {
   Component _header(BuildContext context, OverviewState state) {
     final hidden = HiddenAmounts.of(context);
     return GlassPageHeader(
-      title: monthTitle(state.today),
+      title: monthTitle(state.month),
       trailing: GlassIconButton(
         glyph: hidden ? BirkaGlyph.hidden : BirkaGlyph.eye,
         label: hidden ? t.overview.showAmounts : t.overview.hideAmounts,
@@ -125,7 +125,7 @@ class OverviewPage extends StatelessComponent {
             ),
             span(classes: 'text-body overview__caption', [
               .text(
-                chartPeriodCaption(state.period.name, month: state.today.month),
+                chartPeriodCaption(state.period.name, month: state.month.month),
               ),
             ]),
           ]),

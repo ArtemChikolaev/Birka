@@ -5,17 +5,18 @@ enum ChartPeriod {
   /// The last seven days.
   week,
 
-  /// The month so far.
+  /// The month so far, from the day the months start on.
   month,
 
   /// The last twelve months.
   year
   ;
 
-  /// The day whose end the chart starts from, when today is [today].
-  CivilDate startFrom(CivilDate today) => switch (this) {
+  /// The day whose end the chart starts from, when today is [today] and
+  /// months start on day [monthStart].
+  CivilDate startFrom(CivilDate today, {int monthStart = 1}) => switch (this) {
     week => _date(today.year, today.month, today.day - 7),
-    month => _date(today.year, today.month, 0),
+    month => today.monthStart(monthStart).addDays(-1),
     year => _date(today.year - 1, today.month, today.day),
   };
 

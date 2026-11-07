@@ -91,6 +91,9 @@ class _MoreIslandState extends State<MoreIsland> {
         const BrowserSettingsStore(),
         deviceLanguage: browserLanguage,
         baseCurrency: BaseCurrency(null),
+        monthStart: MonthStart(
+          Settings.readFrom(const BrowserSettingsStore()).monthStart,
+        ),
       ),
       child: div(key: ValueKey(LocaleSettings.currentLocale), [
         MorePage(

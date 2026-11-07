@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:design_flutter/design_flutter.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
@@ -10,7 +11,8 @@ import 'package:schedules_flutter/src/presentation/widgets/schedule_bits.dart';
 
 /// The money until the salary (ADR 0023): how much each day may take, with
 /// the sum that gives it in the open, until when it counts, on which
-/// accounts and with how much aside.
+/// accounts and with how much aside, and the day the months start on
+/// (ADR 0024).
 ///
 /// It needs a [SchedulesCubit] above it.
 class PaydayPage extends StatelessWidget {
@@ -19,6 +21,7 @@ class PaydayPage extends StatelessWidget {
     required this.onBack,
     required this.onOpenSalary,
     required this.onAddSalary,
+    required this.onMonthStart,
     super.key,
   });
 
@@ -30,6 +33,10 @@ class PaydayPage extends StatelessWidget {
 
   /// Opens the form of a new salary.
   final VoidCallback onAddSalary;
+
+  /// Asks which day the months start on. It is one setting of the device, the
+  /// same as in the settings, so the host keeps it.
+  final VoidCallback onMonthStart;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +89,11 @@ class PaydayPage extends StatelessWidget {
     final base = view.base!;
     final salary = view.salary;
     final aside = Money(view.settings.asideMinor, base);
+    final hint = monthStartHint(
+      salary,
+      today: view.today,
+      monthStart: view.monthStart,
+    );
     return [
       switch (view.plan) {
         final plan? => _Sum(plan: plan),
@@ -198,6 +210,34 @@ class PaydayPage extends StatelessWidget {
             ),
             onTap: () => unawaited(_keepAside(context, aside)),
           ),
+          GlassListRow(
+            title: t.settings.monthStart,
+            subtitle: t.settings.monthStartNote,
+            trailing: FadingText(
+              monthStartLabel(view.monthStart),
+              style: styles.bodyStrong.copyWith(color: colors.text),
+            ),
+            onTap: onMonthStart,
+          ),
+        ],
+      ),
+      // The hint goes once the months start on the day of the salary.
+      AnimatedColumn(
+        children: [
+          if (hint != null)
+            Padding(
+              key: const ValueKey('monthStartHint'),
+              padding: const EdgeInsets.fromLTRB(
+                BirkaTokens.spaceXxs,
+                BirkaTokens.spaceXs,
+                BirkaTokens.spaceXxs,
+                0,
+              ),
+              child: Text(
+                hint,
+                style: styles.caption.copyWith(color: colors.textMuted),
+              ),
+            ),
         ],
       ),
     ];

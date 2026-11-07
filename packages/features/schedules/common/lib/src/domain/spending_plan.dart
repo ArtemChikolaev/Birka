@@ -38,7 +38,8 @@ final class SpendingPlan {
 
   /// The plan of [today] for the [counted] accounts, all in [currency], or
   /// `null` when it counts [until] a salary that no regular income brings to
-  /// them.
+  /// them. The month that it may count until starts on day [monthStart] of
+  /// the calendar (ADR 0024).
   ///
   /// A salary is the nearest time after today of a regular income to one of
   /// the counted accounts, its advance aside. The payments are the times
@@ -58,6 +59,7 @@ final class SpendingPlan {
     required List<AccountBalance> counted,
     required List<Transaction> todays,
     required Money aside,
+    int monthStart = 1,
   }) {
     final ids = {for (final row in counted) row.account.id};
     final payday = _paydayAfter(today, schedules, ids);
@@ -67,7 +69,7 @@ final class SpendingPlan {
         if (payday == null) return null;
         end = payday.addDays(-1);
       case SpendUntil.monthEnd:
-        end = CivilDate.onDay(today.year, today.month, 31);
+        end = today.monthStart(monthStart).addMonths(1).addDays(-1);
     }
     final payments = <Occurrence>[
       for (final schedule in schedules)

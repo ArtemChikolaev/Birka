@@ -2503,6 +2503,15 @@ class Translations$schedules$en {
 
   /// en: 'advance, $date'
   String nextAdvance({required Object date}) => 'advance, ${date}';
+
+  /// en: 'The salary comes on day $day: a month can start on it, and then $month runs from $from to $to.'
+  String monthStartHint({
+    required Object day,
+    required Object month,
+    required Object from,
+    required Object to,
+  }) =>
+      'The salary comes on day ${day}: a month can start on it, and then ${month} runs from ${from} to ${to}.';
 }
 
 // Path: settings
@@ -2545,6 +2554,18 @@ class Translations$settings$en {
 
   /// en: 'At launch'
   String get onLaunch => 'At launch';
+
+  /// en: 'Month starts on'
+  String get monthStart => 'Month starts on';
+
+  /// en: 'day $day'
+  String monthStartDay({required Object day}) => 'day ${day}';
+
+  /// en: 'for the overview and the reports'
+  String get monthStartNote => 'for the overview and the reports';
+
+  /// en: 'as on the calendar'
+  String get monthStartCalendar => 'as on the calendar';
 }
 
 // Path: transactions
@@ -4399,6 +4420,14 @@ extension on Translations {
           'schedules.restDay' => 'Salary',
           'schedules.nextAdvance' =>
             ({required Object date}) => 'advance, ${date}',
+          'schedules.monthStartHint' =>
+            ({
+              required Object day,
+              required Object month,
+              required Object from,
+              required Object to,
+            }) =>
+                'The salary comes on day ${day}: a month can start on it, and then ${month} runs from ${from} to ${to}.',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -4410,6 +4439,10 @@ extension on Translations {
           'settings.security' => 'Security',
           'settings.hideAmounts' => 'Hide amounts',
           'settings.onLaunch' => 'At launch',
+          'settings.monthStart' => 'Month starts on',
+          'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
+          'settings.monthStartNote' => 'for the overview and the reports',
+          'settings.monthStartCalendar' => 'as on the calendar',
           'transactions.expense' => 'Expense',
           'transactions.income' => 'Income',
           'transactions.transfer' => 'Transfer',

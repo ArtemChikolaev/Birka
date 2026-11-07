@@ -77,6 +77,26 @@ final class FakeOverviewRepository implements OverviewRepository {
   @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(base);
 
+  /// The day the months start on.
+  int start = 1;
+  final _starts = StreamController<int>.broadcast();
+
+  /// Starts the months on [day], as the settings would.
+  void startOn(int day) {
+    start = day;
+    _starts.add(day);
+  }
+
+  @override
+  int monthStart() => start;
+
+  @override
+  Stream<int> watchMonthStart() => Stream.multi((controller) {
+    controller.add(start);
+    final subscription = _starts.stream.listen(controller.add);
+    controller.onCancel = subscription.cancel;
+  });
+
   @override
   Stream<List<AccountBalance>> watchAccounts() =>
       _follow(_accounts, () => accounts);

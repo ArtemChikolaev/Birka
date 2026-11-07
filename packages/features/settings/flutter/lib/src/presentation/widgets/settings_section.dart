@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:settings_common/settings_common.dart';
+import 'package:settings_flutter/src/presentation/widgets/month_start_sheet.dart';
 
 /// The settings of this device, for the tab with everything else.
 ///
@@ -74,6 +75,19 @@ class SettingsSection extends StatelessWidget {
                       onPicked: cubit.languageChanged,
                     ),
                   ),
+                ),
+                GlassListRow(
+                  title: t.settings.monthStart,
+                  trailing: GlassListValue(
+                    monthStartLabel(settings.monthStart),
+                  ),
+                  onTap: () => unawaited(() async {
+                    final day = await showMonthStartSheet(
+                      context,
+                      selected: settings.monthStart,
+                    );
+                    if (day != null) await cubit.monthStartChanged(day);
+                  }()),
                 ),
               ],
             ),

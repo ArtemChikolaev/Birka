@@ -174,3 +174,4 @@ halvesUneven: "The sum does not split into equal halves: change the cents"
 advanceDay: Advance
 restDay: Salary
 nextAdvance: advance, $date
+monthStartHint: "The salary comes on day $day: a month can start on it, and then $month runs from $from to $to."

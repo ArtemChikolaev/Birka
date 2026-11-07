@@ -94,6 +94,7 @@ void main() {
     List<Schedule>? payments,
     List<Transaction>? todays,
     int aside = 10000,
+    int monthStart = 1,
   }) => SpendingPlan.of(
     today: today,
     until: until,
@@ -106,6 +107,7 @@ void main() {
     ],
     todays: todays ?? [spending(spent)],
     aside: rub(aside),
+    monthStart: monthStart,
   );
 
   group('until the salary', () {
@@ -187,6 +189,21 @@ void main() {
     expect(it.days, 13);
     expect(it.paid, rub(45650));
     expect(it.perDay, rub(2611));
+  });
+
+  test('ends a month that starts on another day the day before', () {
+    // A month from the day of the salary counts as far as the salary does.
+    final fromPayday = plan(until: SpendUntil.monthEnd, monthStart: 5)!;
+    expect(fromPayday.end, CivilDate(2026, 12, 4));
+    expect(fromPayday.days, 17);
+    expect(fromPayday.paid, rub(49949));
+    expect(fromPayday.perDay, rub(1744));
+
+    // The month from October 25 is not over before November 24.
+    final from25th = plan(until: SpendUntil.monthEnd, monthStart: 25)!;
+    expect(from25th.end, CivilDate(2026, 11, 24));
+    expect(from25th.days, 7);
+    expect(from25th.paid, rub(0));
   });
 
   test('counts a payment that waits for the person', () {

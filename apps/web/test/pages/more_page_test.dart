@@ -32,6 +32,7 @@ void main() {
         _Store(),
         deviceLanguage: 'ru',
         baseCurrency: BaseCurrency(null),
+        monthStart: MonthStart(1),
       ),
       child: MorePage(inbox: inbox),
     ),

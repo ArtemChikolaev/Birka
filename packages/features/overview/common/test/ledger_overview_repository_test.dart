@@ -3,6 +3,7 @@ library;
 
 import 'package:database/database.dart';
 import 'package:decimal/decimal.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:drift/native.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
@@ -25,6 +26,7 @@ void main() {
       ledger,
       RatesRepository(database),
       BaseCurrency(Currency.eur),
+      MonthStart(1),
     );
   });
   tearDown(() => database.close());

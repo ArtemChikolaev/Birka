@@ -2085,6 +2085,14 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String get restDay => 'Зарплата';
   @override
   String nextAdvance({required Object date}) => 'аванс, ${date}';
+  @override
+  String monthStartHint({
+    required Object day,
+    required Object month,
+    required Object from,
+    required Object to,
+  }) =>
+      'Зарплата приходит ${day}-го: месяц можно начинать с этого дня, тогда ${month} — с ${from} по ${to}.';
 }
 
 // Path: settings
@@ -2118,6 +2126,14 @@ class _Translations$settings$ru extends Translations$settings$en {
   String get hideAmounts => 'Скрывать суммы';
   @override
   String get onLaunch => 'При запуске';
+  @override
+  String get monthStart => 'Начало месяца';
+  @override
+  String monthStartDay({required Object day}) => '${day} число';
+  @override
+  String get monthStartNote => 'для обзора и отчётов';
+  @override
+  String get monthStartCalendar => 'как в календаре';
 }
 
 // Path: transactions
@@ -3950,6 +3966,14 @@ extension on TranslationsRu {
           'schedules.restDay' => 'Зарплата',
           'schedules.nextAdvance' =>
             ({required Object date}) => 'аванс, ${date}',
+          'schedules.monthStartHint' =>
+            ({
+              required Object day,
+              required Object month,
+              required Object from,
+              required Object to,
+            }) =>
+                'Зарплата приходит ${day}-го: месяц можно начинать с этого дня, тогда ${month} — с ${from} по ${to}.',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -3961,6 +3985,10 @@ extension on TranslationsRu {
           'settings.security' => 'Безопасность',
           'settings.hideAmounts' => 'Скрывать суммы',
           'settings.onLaunch' => 'При запуске',
+          'settings.monthStart' => 'Начало месяца',
+          'settings.monthStartDay' => ({required Object day}) => '${day} число',
+          'settings.monthStartNote' => 'для обзора и отчётов',
+          'settings.monthStartCalendar' => 'как в календаре',
           'transactions.expense' => 'Расход',
           'transactions.income' => 'Доход',
           'transactions.transfer' => 'Перевод',

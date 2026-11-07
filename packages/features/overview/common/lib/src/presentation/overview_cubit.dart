@@ -34,6 +34,7 @@ final class OverviewState {
     this.spendingRows = const [],
     this.rates = const RateBook.empty(),
     this.base,
+    this.monthStart = 1,
   });
 
   /// Where the screen stands.
@@ -59,6 +60,12 @@ final class OverviewState {
 
   /// The currency picked for totals, if one was.
   final Currency? base;
+
+  /// The day of the calendar that a month starts on (ADR 0024).
+  final int monthStart;
+
+  /// The first day of the month of today.
+  CivilDate get month => today.monthStart(monthStart);
 
   /// What the accounts come to.
   late final Capital capital = Capital.of(accounts, rates: rates, base: base);
@@ -88,7 +95,7 @@ final class OverviewState {
       now: main,
       changes: changes,
       rates: rates,
-      start: period.startFrom(today),
+      start: period.startFrom(today, monthStart: monthStart),
       today: today,
     );
   }
@@ -117,6 +124,7 @@ final class OverviewState {
     List<CategoryDayTotal>? spendingRows,
     RateBook? rates,
     Currency? Function()? base,
+    int? monthStart,
   }) {
     return OverviewState(
       status: status ?? this.status,
@@ -127,6 +135,7 @@ final class OverviewState {
       spendingRows: spendingRows ?? this.spendingRows,
       rates: rates ?? this.rates,
       base: base == null ? this.base : base(),
+      monthStart: monthStart ?? this.monthStart,
     );
   }
 }
@@ -140,6 +149,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         OverviewState(
           status: OverviewStatus.loading,
           today: CivilDate.of((now ?? DateTime.now)()),
+          monthStart: _repository.monthStart(),
         ),
       ) {
     _follow();
@@ -179,6 +189,10 @@ class OverviewCubit extends Cubit<OverviewState> {
     final today = state.today;
     _arrived.clear();
     _subscriptions = [
+      // A new day for the months reads the month again from that day.
+      _repository.watchMonthStart().listen((day) {
+        if (day != state.monthStart) unawaited(_monthStartChanged(day));
+      }),
       _listen(
         _repository.watchAccounts(),
         (accounts) => state.copyWith(accounts: accounts),
@@ -188,10 +202,7 @@ class OverviewCubit extends Cubit<OverviewState> {
         (changes) => state.copyWith(changes: changes),
       ),
       _listen(
-        _repository.watchSpending(
-          from: CivilDate(today.year, today.month, 1),
-          to: today,
-        ),
+        _repository.watchSpending(from: state.month, to: today),
         (rows) => state.copyWith(spendingRows: rows),
       ),
       _listen(
@@ -203,6 +214,13 @@ class OverviewCubit extends Cubit<OverviewState> {
         (base) => state.copyWith(base: () => base),
       ),
     ];
+  }
+
+  Future<void> _monthStartChanged(int day) async {
+    final cancelled = _cancel();
+    emit(state.copyWith(monthStart: day, spendingRows: const []));
+    _follow();
+    await cancelled;
   }
 
   /// Follows [source]. The screen is ready once every source has spoken, so

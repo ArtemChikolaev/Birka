@@ -9,7 +9,7 @@ import 'package:overview_common/src/presentation/overview_cubit.dart';
 void registerOverview(GetIt getIt) {
   getIt
     ..registerLazySingleton<OverviewRepository>(
-      () => LedgerOverviewRepository(getIt(), getIt(), getIt()),
+      () => LedgerOverviewRepository(getIt(), getIt(), getIt(), getIt()),
     )
     ..registerFactory(() => OverviewCubit(getIt()));
 }

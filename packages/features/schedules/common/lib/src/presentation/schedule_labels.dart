@@ -89,6 +89,31 @@ String? doneLine(Schedule schedule, CivilDate today) {
   };
 }
 
+/// What the page of the money until the salary says under the month start
+/// (ADR 0024): that the months can start on the day of the monthly [salary],
+/// with the month of [today] they would give. `null` without such a salary,
+/// when the months start on its day already, or when its day is past the
+/// 28th, which not every month has.
+String? monthStartHint(
+  Schedule? salary, {
+  required CivilDate today,
+  required int monthStart,
+}) {
+  if (salary == null ||
+      salary.every != ScheduleEvery.month ||
+      salary.day > 28 ||
+      salary.day == monthStart) {
+    return null;
+  }
+  final from = today.monthStart(salary.day);
+  return t.schedules.monthStartHint(
+    day: salary.day,
+    month: t.imports.monthsWhole[from.month - 1],
+    from: fullDate(from, today),
+    to: fullDate(from.addMonths(1).addDays(-1), today),
+  );
+}
+
 /// What a time [on] of [schedule] is called: «Аванс» for the advance of a
 /// salary in halves, else the name of the payment.
 String occurrenceName(Schedule schedule, CivilDate on) =>

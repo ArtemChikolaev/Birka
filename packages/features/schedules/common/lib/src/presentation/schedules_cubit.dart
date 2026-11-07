@@ -29,6 +29,7 @@ final class SchedulesView {
     required this.settings,
     required this.todays,
     this.imports = const [],
+    this.monthStart = 1,
   });
 
   /// The day it shows.
@@ -55,6 +56,9 @@ final class SchedulesView {
 
   /// The imports whose transactions the ledger holds.
   final List<LedgerImport> imports;
+
+  /// The day of the calendar that the months start on (ADR 0024).
+  final int monthStart;
 
   /// The accounts by their ids.
   late final Map<String, Account> accountsById = {
@@ -145,6 +149,7 @@ final class SchedulesView {
       counted: counted,
       todays: todays,
       aside: Money(settings.asideMinor, base),
+      monthStart: monthStart,
     ),
     null => null,
   };
@@ -227,6 +232,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
   PaydaySettings? _settings;
   List<Transaction>? _todays;
   List<LedgerImport>? _imports;
+  int? _monthStart;
 
   /// Reads everything again after a failure.
   Future<void> retry() async {
@@ -294,6 +300,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
     _settings = null;
     _todays = null;
     _imports = null;
+    _monthStart = null;
     _subscriptions = [
       _repository.watchSchedules().listen((schedules) {
         _schedules = schedules;
@@ -327,6 +334,10 @@ class SchedulesCubit extends Cubit<SchedulesState> {
         _imports = imports;
         _show();
       }, onError: failed),
+      _repository.watchMonthStart().listen((day) {
+        _monthStart = day;
+        _show();
+      }, onError: failed),
     ];
   }
 
@@ -346,6 +357,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           _settings,
           _todays,
           _imports,
+          _monthStart,
         )
         case (
           final today?,
@@ -357,6 +369,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           final settings?,
           final todays?,
           final imports?,
+          final monthStart?,
         )) {
       final first = accounts.where((row) => !row.account.archived).firstOrNull;
       emit(
@@ -373,6 +386,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
             settings: settings,
             todays: todays,
             imports: imports,
+            monthStart: monthStart,
           ),
         ),
       );
