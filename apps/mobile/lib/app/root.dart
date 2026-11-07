@@ -7,7 +7,8 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rates/rates.dart';
-import 'package:schedules_common/schedules_common.dart' show ReminderScheduler;
+import 'package:schedules_common/schedules_common.dart'
+    show ReminderNotices, ReminderScheduler;
 import 'package:settings_common/settings_common.dart';
 
 /// The app on the ledger of the device or on its demo. A turn of the demo
@@ -78,6 +79,8 @@ class _BirkaRootState extends State<BirkaRoot> {
   /// device (ADR 0025). The demo leaves them as they stand: its payments are
   /// not the person's.
   void _followReminders() {
+    // The bell is the app's own: its notices come in the demo too.
+    widget.getIt<ReminderNotices>().start();
     if (demoStateIn(widget.settings).isOn) return;
     widget.getIt<ReminderScheduler>().start();
   }

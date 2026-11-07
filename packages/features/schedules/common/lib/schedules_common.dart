@@ -11,6 +11,7 @@ export 'src/domain/schedule_draft.dart';
 export 'src/domain/schedules_repository.dart';
 export 'src/domain/spending_plan.dart';
 export 'src/presentation/reminder_labels.dart';
+export 'src/presentation/reminder_notices.dart';
 export 'src/presentation/reminder_scheduler.dart';
 export 'src/presentation/reminders_cubit.dart';
 export 'src/presentation/schedule_form_cubit.dart';

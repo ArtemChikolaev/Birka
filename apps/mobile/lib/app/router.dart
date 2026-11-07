@@ -22,6 +22,9 @@ import 'package:import_flutter/import_flutter.dart';
 import 'package:inbox_common/inbox_common.dart'
     show InboxCubit, InboxSummaryCubit;
 import 'package:inbox_flutter/inbox_flutter.dart';
+import 'package:notifications_common/notifications_common.dart'
+    show NoticePlace, NotificationsCubit, NotificationsSummaryCubit;
+import 'package:notifications_flutter/notifications_flutter.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:onboarding_flutter/onboarding_flutter.dart';
 import 'package:overview_common/overview_common.dart' show OverviewCubit;
@@ -90,6 +93,9 @@ abstract final class Paths {
   /// What waits for a decision after an import.
   static const inbox = '/inbox';
 
+  /// What Birka told the person (ADR 0026).
+  static const notifications = '/notifications';
+
   /// The form of a new category of [kind].
   static String newCategory(CategoryKind kind) =>
       '/categories/new?kind=${kind.name}';
@@ -151,12 +157,18 @@ GoRouter buildRouter(
                     BlocProvider(create: (_) => getIt<OverviewCubit>()),
                     BlocProvider(create: (_) => getIt<InboxSummaryCubit>()),
                     BlocProvider(create: (_) => getIt<SchedulesCubit>()),
+                    BlocProvider(
+                      create: (_) => getIt<NotificationsSummaryCubit>(),
+                    ),
                   ],
                   child: OverviewPage(
                     onAddAccount: () => context.push(Paths.newAccount),
                     onAccounts: () => context.push(Paths.accounts),
                     onOpenAccount: (id) =>
                         context.push(Paths.account(id), extra: _fromCard),
+                    bell: NotificationsBell(
+                      onOpen: () => context.push(Paths.notifications),
+                    ),
                     notice: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -406,6 +418,22 @@ GoRouter buildRouter(
                 files: getIt<StatementFiles>(),
               ),
             ),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: Paths.notifications,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<NotificationsCubit>(),
+          child: NotificationsPage(
+            onBack: () => context.pop(),
+            onOpen: (place, id) => context.push(switch (place) {
+              NoticePlace.schedules => Paths.schedules,
+              NoticePlace.schedule when id != null => Paths.schedule(id),
+              NoticePlace.schedule => Paths.schedules,
+              NoticePlace.inbox => Paths.inbox,
+            }),
           ),
         ),
       ),

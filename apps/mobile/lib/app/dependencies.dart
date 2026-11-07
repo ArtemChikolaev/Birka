@@ -14,6 +14,7 @@ import 'package:import_common/import_common.dart';
 import 'package:import_flutter/import_flutter.dart';
 import 'package:inbox_common/inbox_common.dart';
 import 'package:ledger/ledger.dart';
+import 'package:notifications_common/notifications_common.dart';
 import 'package:onboarding_common/onboarding_common.dart'
     show OnboardingRepository, onboardingNeeded, registerOnboarding;
 import 'package:overview_common/overview_common.dart';
@@ -83,6 +84,7 @@ void registerDependencies(
   registerHelp(getIt, about: readAppAbout);
   registerImport(getIt, settings);
   registerInbox(getIt, settings);
+  registerNotifications(getIt);
   registerOnboarding(getIt, settings, deviceLanguage: deviceLanguage);
   registerOverview(getIt);
   registerReports(getIt);

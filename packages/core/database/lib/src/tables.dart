@@ -270,3 +270,79 @@ class Changes extends Table {
   /// When the row changed.
   DateTimeColumn get changedAt => dateTime()();
 }
+
+/// What Birka told the person on this device, which the bell of the overview
+/// shows (ADR 0026): a time of a regular payment that it reminded of or did
+/// itself, with what became of that time, or an import of a statement. The
+/// device keeps it as it keeps its settings: sync and the copies of the
+/// ledger leave it out, and it lasts 90 days.
+@DataClassName('NoticeRow')
+@TableIndex(name: 'notices_created_at', columns: {#createdAt})
+class Notices extends Table {
+  /// A UUIDv7 string created on the device.
+  TextColumn get id => text()();
+
+  /// One of the names of `NoticeSource` in the ledger.
+  TextColumn get source => text()();
+
+  /// When it came: when Birka reminded of the time, did it or imported.
+  DateTimeColumn get createdAt => dateTime()();
+
+  /// When the person read it, or `null` while it is new.
+  DateTimeColumn get readAt => dateTime().nullable()();
+
+  /// The regular payment of a notice of a time. It names no row by a key, as
+  /// the notices go before the ledger when the ledger is emptied.
+  TextColumn get scheduleId => text().nullable()();
+
+  /// The civil date of that time as `YYYY-MM-DD`.
+  TextColumn get timeOn => text().nullable()();
+
+  /// What the payment was called at that time.
+  TextColumn get name => text().nullable()();
+
+  /// One of the names of `TransactionKind` in the ledger: what the payment
+  /// moves.
+  TextColumn get kind => text().nullable()();
+
+  /// The amount of the payment at that time, in minor units.
+  IntColumn get amountMinor => integer().nullable()();
+
+  /// The code of the currency of its account.
+  TextColumn get currency => text().nullable()();
+
+  /// The number of decimal digits of that currency.
+  IntColumn get decimalDigits => integer().nullable()();
+
+  /// Whether the time is the advance of a salary paid in halves.
+  BoolColumn get advance => boolean().withDefault(const Constant(false))();
+
+  /// Whether the payment posts itself instead of waiting for the person.
+  BoolColumn get postsItself => boolean().withDefault(const Constant(false))();
+
+  /// What became of the time, one of the names of `NoticeOutcome` in the
+  /// ledger, or `null` while nothing has.
+  TextColumn get outcome => text().nullable()();
+
+  /// When it did.
+  DateTimeColumn get outcomeAt => dateTime().nullable()();
+
+  /// The next time of the payment after that, as `YYYY-MM-DD`.
+  TextColumn get nextOn => text().nullable()();
+
+  /// The import whose statement brought the time, which takes it back when
+  /// the import goes out.
+  TextColumn get foundBy => text().nullable()();
+
+  /// The import of a notice of an import, by its id alone, as for
+  /// [scheduleId].
+  TextColumn get importId => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+    {scheduleId, timeOn},
+  ];
+}

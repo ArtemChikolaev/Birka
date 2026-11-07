@@ -21,10 +21,12 @@ void main() {
       'changes',
       'exchange_rates',
       'schedules',
+      'notices',
     ]);
     // Reading from a table fails if it does not exist.
     await expectLater(database.select(database.entries).get(), completes);
     await expectLater(database.select(database.schedules).get(), completes);
+    await expectLater(database.select(database.notices).get(), completes);
   });
 
   test('foreign keys are on', () async {

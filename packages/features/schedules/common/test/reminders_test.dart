@@ -1,6 +1,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:async';
+
 import 'package:database/database.dart';
 import 'package:device_settings/device_settings.dart';
 import 'package:drift/native.dart';
@@ -202,6 +204,56 @@ void main() {
         planReminders([rent], now: now, minutes: 540, limit: 2),
         hasLength(2),
       );
+    });
+  });
+
+  group('reminders that came', () {
+    test('are the ones of the times still to do whose moment passed', () {
+      final rent = schedule('Аренда', 45000, CivilDate(2026, 11, 18));
+      final gym = schedule(
+        'Спортзал',
+        3500,
+        CivilDate(2026, 11, 19),
+        reminder: ScheduleReminder.dayBefore,
+      );
+      final later = schedule('Интернет', 650, CivilDate(2026, 11, 28));
+      final quiet = schedule(
+        'Подписка',
+        799,
+        CivilDate(2026, 11, 18),
+        reminder: ScheduleReminder.none,
+      );
+
+      final came = remindersCame(
+        [rent, gym, later, quiet],
+        now: now,
+        minutes: 9 * 60,
+      );
+
+      expect(
+        [for (final it in came) (it.schedule.name, it.on, it.at)],
+        [
+          ('Аренда', CivilDate(2026, 11, 18), DateTime(2026, 11, 18, 9)),
+          ('Спортзал', CivilDate(2026, 11, 19), DateTime(2026, 11, 18, 9)),
+        ],
+      );
+      expect(
+        remindersCame([rent, gym], now: now, minutes: 10 * 60 + 1),
+        isEmpty,
+      );
+    });
+
+    test('keep the times that wait since long ago, for 90 days', () {
+      final rent = schedule('Аренда', 45000, CivilDate(2026, 7, 18));
+
+      final came = remindersCame([rent], now: now, minutes: 9 * 60);
+
+      // August 18 was 92 days ago.
+      expect(came.map((it) => it.on), [
+        CivilDate(2026, 9, 18),
+        CivilDate(2026, 10, 18),
+        CivilDate(2026, 11, 18),
+      ]);
     });
   });
 
@@ -621,6 +673,54 @@ void main() {
 
       await cubit.openSettings();
       expect(calendar.settings, 1);
+    });
+
+    test('the notices take the reminders that came and wait for the next '
+        'one', () async {
+      await ledger.addSchedule(
+        kind: TransactionKind.expense,
+        name: 'Спортзал',
+        accountId: card.id,
+        amount: rub(3500),
+        every: ScheduleEvery.month,
+        next: CivilDate(2026, 11, 18),
+      );
+      await ledger.addSchedule(
+        kind: TransactionKind.expense,
+        name: 'Интернет',
+        accountId: card.id,
+        amount: rub(650),
+        every: ScheduleEvery.month,
+        next: CivilDate(2026, 11, 19),
+      );
+      final waits = <Duration>[];
+      final notices = ReminderNotices(
+        repository,
+        now: () => now,
+        timer: (after, callback) {
+          waits.add(after);
+          return Timer(const Duration(days: 1), callback);
+        },
+      );
+      addTearDown(notices.stop);
+
+      notices.start();
+      await pumpEventQueue();
+      await notices.catchUp();
+
+      final noted = (await ledger.watchNotices().first).cast<PaymentNotice>();
+      expect(
+        [for (final it in noted) (it.name, it.time, it.at)],
+        [
+          (
+            'Спортзал',
+            CivilDate(2026, 11, 18),
+            DateTime(2026, 11, 18, 9).toUtc(),
+          ),
+        ],
+      );
+      // The internet reminds tomorrow at 9:00, a day less an hour on.
+      expect(waits.last, const Duration(hours: 23, seconds: 1));
     });
 
     test('the form follows the settings of the reminders', () async {

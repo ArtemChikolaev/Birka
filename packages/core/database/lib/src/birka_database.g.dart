@@ -5718,6 +5718,1059 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
   }
 }
 
+class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NoticesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _readAtMeta = const VerificationMeta('readAt');
+  @override
+  late final GeneratedColumn<DateTime> readAt = GeneratedColumn<DateTime>(
+    'read_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _scheduleIdMeta = const VerificationMeta(
+    'scheduleId',
+  );
+  @override
+  late final GeneratedColumn<String> scheduleId = GeneratedColumn<String>(
+    'schedule_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _timeOnMeta = const VerificationMeta('timeOn');
+  @override
+  late final GeneratedColumn<String> timeOn = GeneratedColumn<String>(
+    'time_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta(
+    'amountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _decimalDigitsMeta = const VerificationMeta(
+    'decimalDigits',
+  );
+  @override
+  late final GeneratedColumn<int> decimalDigits = GeneratedColumn<int>(
+    'decimal_digits',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _advanceMeta = const VerificationMeta(
+    'advance',
+  );
+  @override
+  late final GeneratedColumn<bool> advance = GeneratedColumn<bool>(
+    'advance',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("advance" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _postsItselfMeta = const VerificationMeta(
+    'postsItself',
+  );
+  @override
+  late final GeneratedColumn<bool> postsItself = GeneratedColumn<bool>(
+    'posts_itself',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("posts_itself" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _outcomeMeta = const VerificationMeta(
+    'outcome',
+  );
+  @override
+  late final GeneratedColumn<String> outcome = GeneratedColumn<String>(
+    'outcome',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _outcomeAtMeta = const VerificationMeta(
+    'outcomeAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> outcomeAt = GeneratedColumn<DateTime>(
+    'outcome_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nextOnMeta = const VerificationMeta('nextOn');
+  @override
+  late final GeneratedColumn<String> nextOn = GeneratedColumn<String>(
+    'next_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _foundByMeta = const VerificationMeta(
+    'foundBy',
+  );
+  @override
+  late final GeneratedColumn<String> foundBy = GeneratedColumn<String>(
+    'found_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _importIdMeta = const VerificationMeta(
+    'importId',
+  );
+  @override
+  late final GeneratedColumn<String> importId = GeneratedColumn<String>(
+    'import_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    source,
+    createdAt,
+    readAt,
+    scheduleId,
+    timeOn,
+    name,
+    kind,
+    amountMinor,
+    currency,
+    decimalDigits,
+    advance,
+    postsItself,
+    outcome,
+    outcomeAt,
+    nextOn,
+    foundBy,
+    importId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'notices';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NoticeRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('read_at')) {
+      context.handle(
+        _readAtMeta,
+        readAt.isAcceptableOrUnknown(data['read_at']!, _readAtMeta),
+      );
+    }
+    if (data.containsKey('schedule_id')) {
+      context.handle(
+        _scheduleIdMeta,
+        scheduleId.isAcceptableOrUnknown(data['schedule_id']!, _scheduleIdMeta),
+      );
+    }
+    if (data.containsKey('time_on')) {
+      context.handle(
+        _timeOnMeta,
+        timeOn.isAcceptableOrUnknown(data['time_on']!, _timeOnMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(
+          data['amount_minor']!,
+          _amountMinorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    }
+    if (data.containsKey('decimal_digits')) {
+      context.handle(
+        _decimalDigitsMeta,
+        decimalDigits.isAcceptableOrUnknown(
+          data['decimal_digits']!,
+          _decimalDigitsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('advance')) {
+      context.handle(
+        _advanceMeta,
+        advance.isAcceptableOrUnknown(data['advance']!, _advanceMeta),
+      );
+    }
+    if (data.containsKey('posts_itself')) {
+      context.handle(
+        _postsItselfMeta,
+        postsItself.isAcceptableOrUnknown(
+          data['posts_itself']!,
+          _postsItselfMeta,
+        ),
+      );
+    }
+    if (data.containsKey('outcome')) {
+      context.handle(
+        _outcomeMeta,
+        outcome.isAcceptableOrUnknown(data['outcome']!, _outcomeMeta),
+      );
+    }
+    if (data.containsKey('outcome_at')) {
+      context.handle(
+        _outcomeAtMeta,
+        outcomeAt.isAcceptableOrUnknown(data['outcome_at']!, _outcomeAtMeta),
+      );
+    }
+    if (data.containsKey('next_on')) {
+      context.handle(
+        _nextOnMeta,
+        nextOn.isAcceptableOrUnknown(data['next_on']!, _nextOnMeta),
+      );
+    }
+    if (data.containsKey('found_by')) {
+      context.handle(
+        _foundByMeta,
+        foundBy.isAcceptableOrUnknown(data['found_by']!, _foundByMeta),
+      );
+    }
+    if (data.containsKey('import_id')) {
+      context.handle(
+        _importIdMeta,
+        importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {scheduleId, timeOn},
+  ];
+  @override
+  NoticeRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NoticeRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      readAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}read_at'],
+      ),
+      scheduleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}schedule_id'],
+      ),
+      timeOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}time_on'],
+      ),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      ),
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      ),
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      ),
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      ),
+      decimalDigits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}decimal_digits'],
+      ),
+      advance: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}advance'],
+      )!,
+      postsItself: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}posts_itself'],
+      )!,
+      outcome: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}outcome'],
+      ),
+      outcomeAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}outcome_at'],
+      ),
+      nextOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}next_on'],
+      ),
+      foundBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}found_by'],
+      ),
+      importId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_id'],
+      ),
+    );
+  }
+
+  @override
+  $NoticesTable createAlias(String alias) {
+    return $NoticesTable(attachedDatabase, alias);
+  }
+}
+
+class NoticeRow extends DataClass implements Insertable<NoticeRow> {
+  /// A UUIDv7 string created on the device.
+  final String id;
+
+  /// One of the names of `NoticeSource` in the ledger.
+  final String source;
+
+  /// When it came: when Birka reminded of the time, did it or imported.
+  final DateTime createdAt;
+
+  /// When the person read it, or `null` while it is new.
+  final DateTime? readAt;
+
+  /// The regular payment of a notice of a time. It names no row by a key, as
+  /// the notices go before the ledger when the ledger is emptied.
+  final String? scheduleId;
+
+  /// The civil date of that time as `YYYY-MM-DD`.
+  final String? timeOn;
+
+  /// What the payment was called at that time.
+  final String? name;
+
+  /// One of the names of `TransactionKind` in the ledger: what the payment
+  /// moves.
+  final String? kind;
+
+  /// The amount of the payment at that time, in minor units.
+  final int? amountMinor;
+
+  /// The code of the currency of its account.
+  final String? currency;
+
+  /// The number of decimal digits of that currency.
+  final int? decimalDigits;
+
+  /// Whether the time is the advance of a salary paid in halves.
+  final bool advance;
+
+  /// Whether the payment posts itself instead of waiting for the person.
+  final bool postsItself;
+
+  /// What became of the time, one of the names of `NoticeOutcome` in the
+  /// ledger, or `null` while nothing has.
+  final String? outcome;
+
+  /// When it did.
+  final DateTime? outcomeAt;
+
+  /// The next time of the payment after that, as `YYYY-MM-DD`.
+  final String? nextOn;
+
+  /// The import whose statement brought the time, which takes it back when
+  /// the import goes out.
+  final String? foundBy;
+
+  /// The import of a notice of an import, by its id alone, as for
+  /// [scheduleId].
+  final String? importId;
+  const NoticeRow({
+    required this.id,
+    required this.source,
+    required this.createdAt,
+    this.readAt,
+    this.scheduleId,
+    this.timeOn,
+    this.name,
+    this.kind,
+    this.amountMinor,
+    this.currency,
+    this.decimalDigits,
+    required this.advance,
+    required this.postsItself,
+    this.outcome,
+    this.outcomeAt,
+    this.nextOn,
+    this.foundBy,
+    this.importId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['source'] = Variable<String>(source);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || readAt != null) {
+      map['read_at'] = Variable<DateTime>(readAt);
+    }
+    if (!nullToAbsent || scheduleId != null) {
+      map['schedule_id'] = Variable<String>(scheduleId);
+    }
+    if (!nullToAbsent || timeOn != null) {
+      map['time_on'] = Variable<String>(timeOn);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || kind != null) {
+      map['kind'] = Variable<String>(kind);
+    }
+    if (!nullToAbsent || amountMinor != null) {
+      map['amount_minor'] = Variable<int>(amountMinor);
+    }
+    if (!nullToAbsent || currency != null) {
+      map['currency'] = Variable<String>(currency);
+    }
+    if (!nullToAbsent || decimalDigits != null) {
+      map['decimal_digits'] = Variable<int>(decimalDigits);
+    }
+    map['advance'] = Variable<bool>(advance);
+    map['posts_itself'] = Variable<bool>(postsItself);
+    if (!nullToAbsent || outcome != null) {
+      map['outcome'] = Variable<String>(outcome);
+    }
+    if (!nullToAbsent || outcomeAt != null) {
+      map['outcome_at'] = Variable<DateTime>(outcomeAt);
+    }
+    if (!nullToAbsent || nextOn != null) {
+      map['next_on'] = Variable<String>(nextOn);
+    }
+    if (!nullToAbsent || foundBy != null) {
+      map['found_by'] = Variable<String>(foundBy);
+    }
+    if (!nullToAbsent || importId != null) {
+      map['import_id'] = Variable<String>(importId);
+    }
+    return map;
+  }
+
+  NoticesCompanion toCompanion(bool nullToAbsent) {
+    return NoticesCompanion(
+      id: Value(id),
+      source: Value(source),
+      createdAt: Value(createdAt),
+      readAt: readAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(readAt),
+      scheduleId: scheduleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(scheduleId),
+      timeOn: timeOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timeOn),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      kind: kind == null && nullToAbsent ? const Value.absent() : Value(kind),
+      amountMinor: amountMinor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(amountMinor),
+      currency: currency == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currency),
+      decimalDigits: decimalDigits == null && nullToAbsent
+          ? const Value.absent()
+          : Value(decimalDigits),
+      advance: Value(advance),
+      postsItself: Value(postsItself),
+      outcome: outcome == null && nullToAbsent
+          ? const Value.absent()
+          : Value(outcome),
+      outcomeAt: outcomeAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(outcomeAt),
+      nextOn: nextOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextOn),
+      foundBy: foundBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(foundBy),
+      importId: importId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importId),
+    );
+  }
+
+  factory NoticeRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NoticeRow(
+      id: serializer.fromJson<String>(json['id']),
+      source: serializer.fromJson<String>(json['source']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      readAt: serializer.fromJson<DateTime?>(json['readAt']),
+      scheduleId: serializer.fromJson<String?>(json['scheduleId']),
+      timeOn: serializer.fromJson<String?>(json['timeOn']),
+      name: serializer.fromJson<String?>(json['name']),
+      kind: serializer.fromJson<String?>(json['kind']),
+      amountMinor: serializer.fromJson<int?>(json['amountMinor']),
+      currency: serializer.fromJson<String?>(json['currency']),
+      decimalDigits: serializer.fromJson<int?>(json['decimalDigits']),
+      advance: serializer.fromJson<bool>(json['advance']),
+      postsItself: serializer.fromJson<bool>(json['postsItself']),
+      outcome: serializer.fromJson<String?>(json['outcome']),
+      outcomeAt: serializer.fromJson<DateTime?>(json['outcomeAt']),
+      nextOn: serializer.fromJson<String?>(json['nextOn']),
+      foundBy: serializer.fromJson<String?>(json['foundBy']),
+      importId: serializer.fromJson<String?>(json['importId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'source': serializer.toJson<String>(source),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'readAt': serializer.toJson<DateTime?>(readAt),
+      'scheduleId': serializer.toJson<String?>(scheduleId),
+      'timeOn': serializer.toJson<String?>(timeOn),
+      'name': serializer.toJson<String?>(name),
+      'kind': serializer.toJson<String?>(kind),
+      'amountMinor': serializer.toJson<int?>(amountMinor),
+      'currency': serializer.toJson<String?>(currency),
+      'decimalDigits': serializer.toJson<int?>(decimalDigits),
+      'advance': serializer.toJson<bool>(advance),
+      'postsItself': serializer.toJson<bool>(postsItself),
+      'outcome': serializer.toJson<String?>(outcome),
+      'outcomeAt': serializer.toJson<DateTime?>(outcomeAt),
+      'nextOn': serializer.toJson<String?>(nextOn),
+      'foundBy': serializer.toJson<String?>(foundBy),
+      'importId': serializer.toJson<String?>(importId),
+    };
+  }
+
+  NoticeRow copyWith({
+    String? id,
+    String? source,
+    DateTime? createdAt,
+    Value<DateTime?> readAt = const Value.absent(),
+    Value<String?> scheduleId = const Value.absent(),
+    Value<String?> timeOn = const Value.absent(),
+    Value<String?> name = const Value.absent(),
+    Value<String?> kind = const Value.absent(),
+    Value<int?> amountMinor = const Value.absent(),
+    Value<String?> currency = const Value.absent(),
+    Value<int?> decimalDigits = const Value.absent(),
+    bool? advance,
+    bool? postsItself,
+    Value<String?> outcome = const Value.absent(),
+    Value<DateTime?> outcomeAt = const Value.absent(),
+    Value<String?> nextOn = const Value.absent(),
+    Value<String?> foundBy = const Value.absent(),
+    Value<String?> importId = const Value.absent(),
+  }) => NoticeRow(
+    id: id ?? this.id,
+    source: source ?? this.source,
+    createdAt: createdAt ?? this.createdAt,
+    readAt: readAt.present ? readAt.value : this.readAt,
+    scheduleId: scheduleId.present ? scheduleId.value : this.scheduleId,
+    timeOn: timeOn.present ? timeOn.value : this.timeOn,
+    name: name.present ? name.value : this.name,
+    kind: kind.present ? kind.value : this.kind,
+    amountMinor: amountMinor.present ? amountMinor.value : this.amountMinor,
+    currency: currency.present ? currency.value : this.currency,
+    decimalDigits: decimalDigits.present
+        ? decimalDigits.value
+        : this.decimalDigits,
+    advance: advance ?? this.advance,
+    postsItself: postsItself ?? this.postsItself,
+    outcome: outcome.present ? outcome.value : this.outcome,
+    outcomeAt: outcomeAt.present ? outcomeAt.value : this.outcomeAt,
+    nextOn: nextOn.present ? nextOn.value : this.nextOn,
+    foundBy: foundBy.present ? foundBy.value : this.foundBy,
+    importId: importId.present ? importId.value : this.importId,
+  );
+  NoticeRow copyWithCompanion(NoticesCompanion data) {
+    return NoticeRow(
+      id: data.id.present ? data.id.value : this.id,
+      source: data.source.present ? data.source.value : this.source,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      readAt: data.readAt.present ? data.readAt.value : this.readAt,
+      scheduleId: data.scheduleId.present
+          ? data.scheduleId.value
+          : this.scheduleId,
+      timeOn: data.timeOn.present ? data.timeOn.value : this.timeOn,
+      name: data.name.present ? data.name.value : this.name,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      amountMinor: data.amountMinor.present
+          ? data.amountMinor.value
+          : this.amountMinor,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      decimalDigits: data.decimalDigits.present
+          ? data.decimalDigits.value
+          : this.decimalDigits,
+      advance: data.advance.present ? data.advance.value : this.advance,
+      postsItself: data.postsItself.present
+          ? data.postsItself.value
+          : this.postsItself,
+      outcome: data.outcome.present ? data.outcome.value : this.outcome,
+      outcomeAt: data.outcomeAt.present ? data.outcomeAt.value : this.outcomeAt,
+      nextOn: data.nextOn.present ? data.nextOn.value : this.nextOn,
+      foundBy: data.foundBy.present ? data.foundBy.value : this.foundBy,
+      importId: data.importId.present ? data.importId.value : this.importId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NoticeRow(')
+          ..write('id: $id, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('readAt: $readAt, ')
+          ..write('scheduleId: $scheduleId, ')
+          ..write('timeOn: $timeOn, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency, ')
+          ..write('decimalDigits: $decimalDigits, ')
+          ..write('advance: $advance, ')
+          ..write('postsItself: $postsItself, ')
+          ..write('outcome: $outcome, ')
+          ..write('outcomeAt: $outcomeAt, ')
+          ..write('nextOn: $nextOn, ')
+          ..write('foundBy: $foundBy, ')
+          ..write('importId: $importId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    source,
+    createdAt,
+    readAt,
+    scheduleId,
+    timeOn,
+    name,
+    kind,
+    amountMinor,
+    currency,
+    decimalDigits,
+    advance,
+    postsItself,
+    outcome,
+    outcomeAt,
+    nextOn,
+    foundBy,
+    importId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NoticeRow &&
+          other.id == this.id &&
+          other.source == this.source &&
+          other.createdAt == this.createdAt &&
+          other.readAt == this.readAt &&
+          other.scheduleId == this.scheduleId &&
+          other.timeOn == this.timeOn &&
+          other.name == this.name &&
+          other.kind == this.kind &&
+          other.amountMinor == this.amountMinor &&
+          other.currency == this.currency &&
+          other.decimalDigits == this.decimalDigits &&
+          other.advance == this.advance &&
+          other.postsItself == this.postsItself &&
+          other.outcome == this.outcome &&
+          other.outcomeAt == this.outcomeAt &&
+          other.nextOn == this.nextOn &&
+          other.foundBy == this.foundBy &&
+          other.importId == this.importId);
+}
+
+class NoticesCompanion extends UpdateCompanion<NoticeRow> {
+  final Value<String> id;
+  final Value<String> source;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> readAt;
+  final Value<String?> scheduleId;
+  final Value<String?> timeOn;
+  final Value<String?> name;
+  final Value<String?> kind;
+  final Value<int?> amountMinor;
+  final Value<String?> currency;
+  final Value<int?> decimalDigits;
+  final Value<bool> advance;
+  final Value<bool> postsItself;
+  final Value<String?> outcome;
+  final Value<DateTime?> outcomeAt;
+  final Value<String?> nextOn;
+  final Value<String?> foundBy;
+  final Value<String?> importId;
+  final Value<int> rowid;
+  const NoticesCompanion({
+    this.id = const Value.absent(),
+    this.source = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.readAt = const Value.absent(),
+    this.scheduleId = const Value.absent(),
+    this.timeOn = const Value.absent(),
+    this.name = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.decimalDigits = const Value.absent(),
+    this.advance = const Value.absent(),
+    this.postsItself = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.outcomeAt = const Value.absent(),
+    this.nextOn = const Value.absent(),
+    this.foundBy = const Value.absent(),
+    this.importId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NoticesCompanion.insert({
+    required String id,
+    required String source,
+    required DateTime createdAt,
+    this.readAt = const Value.absent(),
+    this.scheduleId = const Value.absent(),
+    this.timeOn = const Value.absent(),
+    this.name = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.decimalDigits = const Value.absent(),
+    this.advance = const Value.absent(),
+    this.postsItself = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.outcomeAt = const Value.absent(),
+    this.nextOn = const Value.absent(),
+    this.foundBy = const Value.absent(),
+    this.importId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       source = Value(source),
+       createdAt = Value(createdAt);
+  static Insertable<NoticeRow> custom({
+    Expression<String>? id,
+    Expression<String>? source,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? readAt,
+    Expression<String>? scheduleId,
+    Expression<String>? timeOn,
+    Expression<String>? name,
+    Expression<String>? kind,
+    Expression<int>? amountMinor,
+    Expression<String>? currency,
+    Expression<int>? decimalDigits,
+    Expression<bool>? advance,
+    Expression<bool>? postsItself,
+    Expression<String>? outcome,
+    Expression<DateTime>? outcomeAt,
+    Expression<String>? nextOn,
+    Expression<String>? foundBy,
+    Expression<String>? importId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (source != null) 'source': source,
+      if (createdAt != null) 'created_at': createdAt,
+      if (readAt != null) 'read_at': readAt,
+      if (scheduleId != null) 'schedule_id': scheduleId,
+      if (timeOn != null) 'time_on': timeOn,
+      if (name != null) 'name': name,
+      if (kind != null) 'kind': kind,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (currency != null) 'currency': currency,
+      if (decimalDigits != null) 'decimal_digits': decimalDigits,
+      if (advance != null) 'advance': advance,
+      if (postsItself != null) 'posts_itself': postsItself,
+      if (outcome != null) 'outcome': outcome,
+      if (outcomeAt != null) 'outcome_at': outcomeAt,
+      if (nextOn != null) 'next_on': nextOn,
+      if (foundBy != null) 'found_by': foundBy,
+      if (importId != null) 'import_id': importId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NoticesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? source,
+    Value<DateTime>? createdAt,
+    Value<DateTime?>? readAt,
+    Value<String?>? scheduleId,
+    Value<String?>? timeOn,
+    Value<String?>? name,
+    Value<String?>? kind,
+    Value<int?>? amountMinor,
+    Value<String?>? currency,
+    Value<int?>? decimalDigits,
+    Value<bool>? advance,
+    Value<bool>? postsItself,
+    Value<String?>? outcome,
+    Value<DateTime?>? outcomeAt,
+    Value<String?>? nextOn,
+    Value<String?>? foundBy,
+    Value<String?>? importId,
+    Value<int>? rowid,
+  }) {
+    return NoticesCompanion(
+      id: id ?? this.id,
+      source: source ?? this.source,
+      createdAt: createdAt ?? this.createdAt,
+      readAt: readAt ?? this.readAt,
+      scheduleId: scheduleId ?? this.scheduleId,
+      timeOn: timeOn ?? this.timeOn,
+      name: name ?? this.name,
+      kind: kind ?? this.kind,
+      amountMinor: amountMinor ?? this.amountMinor,
+      currency: currency ?? this.currency,
+      decimalDigits: decimalDigits ?? this.decimalDigits,
+      advance: advance ?? this.advance,
+      postsItself: postsItself ?? this.postsItself,
+      outcome: outcome ?? this.outcome,
+      outcomeAt: outcomeAt ?? this.outcomeAt,
+      nextOn: nextOn ?? this.nextOn,
+      foundBy: foundBy ?? this.foundBy,
+      importId: importId ?? this.importId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (readAt.present) {
+      map['read_at'] = Variable<DateTime>(readAt.value);
+    }
+    if (scheduleId.present) {
+      map['schedule_id'] = Variable<String>(scheduleId.value);
+    }
+    if (timeOn.present) {
+      map['time_on'] = Variable<String>(timeOn.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (decimalDigits.present) {
+      map['decimal_digits'] = Variable<int>(decimalDigits.value);
+    }
+    if (advance.present) {
+      map['advance'] = Variable<bool>(advance.value);
+    }
+    if (postsItself.present) {
+      map['posts_itself'] = Variable<bool>(postsItself.value);
+    }
+    if (outcome.present) {
+      map['outcome'] = Variable<String>(outcome.value);
+    }
+    if (outcomeAt.present) {
+      map['outcome_at'] = Variable<DateTime>(outcomeAt.value);
+    }
+    if (nextOn.present) {
+      map['next_on'] = Variable<String>(nextOn.value);
+    }
+    if (foundBy.present) {
+      map['found_by'] = Variable<String>(foundBy.value);
+    }
+    if (importId.present) {
+      map['import_id'] = Variable<String>(importId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NoticesCompanion(')
+          ..write('id: $id, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('readAt: $readAt, ')
+          ..write('scheduleId: $scheduleId, ')
+          ..write('timeOn: $timeOn, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency, ')
+          ..write('decimalDigits: $decimalDigits, ')
+          ..write('advance: $advance, ')
+          ..write('postsItself: $postsItself, ')
+          ..write('outcome: $outcome, ')
+          ..write('outcomeAt: $outcomeAt, ')
+          ..write('nextOn: $nextOn, ')
+          ..write('foundBy: $foundBy, ')
+          ..write('importId: $importId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$BirkaDatabase extends GeneratedDatabase {
   _$BirkaDatabase(QueryExecutor e) : super(e);
   $BirkaDatabaseManager get managers => $BirkaDatabaseManager(this);
@@ -5730,6 +6783,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
   late final $ChangesTable changes = $ChangesTable(this);
   late final $ExchangeRatesTable exchangeRates = $ExchangeRatesTable(this);
   late final $SchedulesTable schedules = $SchedulesTable(this);
+  late final $NoticesTable notices = $NoticesTable(this);
   late final Index transactionsOccurredOn = Index(
     'transactions_occurred_on',
     'CREATE INDEX transactions_occurred_on ON transactions (occurred_on)',
@@ -5758,6 +6812,10 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     'schedules_next_on',
     'CREATE INDEX schedules_next_on ON schedules (next_on)',
   );
+  late final Index noticesCreatedAt = Index(
+    'notices_created_at',
+    'CREATE INDEX notices_created_at ON notices (created_at)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5772,6 +6830,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     changes,
     exchangeRates,
     schedules,
+    notices,
     transactionsOccurredOn,
     transactionsImport,
     entriesTransaction,
@@ -5779,6 +6838,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     allocationsTransaction,
     allocationsCategory,
     schedulesNextOn,
+    noticesCreatedAt,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -10409,6 +11469,458 @@ typedef $$SchedulesTableProcessedTableManager =
         bool categoryId,
       })
     >;
+typedef $$NoticesTableCreateCompanionBuilder =
+    NoticesCompanion Function({
+      required String id,
+      required String source,
+      required DateTime createdAt,
+      Value<DateTime?> readAt,
+      Value<String?> scheduleId,
+      Value<String?> timeOn,
+      Value<String?> name,
+      Value<String?> kind,
+      Value<int?> amountMinor,
+      Value<String?> currency,
+      Value<int?> decimalDigits,
+      Value<bool> advance,
+      Value<bool> postsItself,
+      Value<String?> outcome,
+      Value<DateTime?> outcomeAt,
+      Value<String?> nextOn,
+      Value<String?> foundBy,
+      Value<String?> importId,
+      Value<int> rowid,
+    });
+typedef $$NoticesTableUpdateCompanionBuilder =
+    NoticesCompanion Function({
+      Value<String> id,
+      Value<String> source,
+      Value<DateTime> createdAt,
+      Value<DateTime?> readAt,
+      Value<String?> scheduleId,
+      Value<String?> timeOn,
+      Value<String?> name,
+      Value<String?> kind,
+      Value<int?> amountMinor,
+      Value<String?> currency,
+      Value<int?> decimalDigits,
+      Value<bool> advance,
+      Value<bool> postsItself,
+      Value<String?> outcome,
+      Value<DateTime?> outcomeAt,
+      Value<String?> nextOn,
+      Value<String?> foundBy,
+      Value<String?> importId,
+      Value<int> rowid,
+    });
+
+class $$NoticesTableFilterComposer
+    extends Composer<_$BirkaDatabase, $NoticesTable> {
+  $$NoticesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get readAt => $composableBuilder(
+    column: $table.readAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get scheduleId => $composableBuilder(
+    column: $table.scheduleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get timeOn => $composableBuilder(
+    column: $table.timeOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get decimalDigits => $composableBuilder(
+    column: $table.decimalDigits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get advance => $composableBuilder(
+    column: $table.advance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get postsItself => $composableBuilder(
+    column: $table.postsItself,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get outcomeAt => $composableBuilder(
+    column: $table.outcomeAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nextOn => $composableBuilder(
+    column: $table.nextOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get foundBy => $composableBuilder(
+    column: $table.foundBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get importId => $composableBuilder(
+    column: $table.importId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NoticesTableOrderingComposer
+    extends Composer<_$BirkaDatabase, $NoticesTable> {
+  $$NoticesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get readAt => $composableBuilder(
+    column: $table.readAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get scheduleId => $composableBuilder(
+    column: $table.scheduleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get timeOn => $composableBuilder(
+    column: $table.timeOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get decimalDigits => $composableBuilder(
+    column: $table.decimalDigits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get advance => $composableBuilder(
+    column: $table.advance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get postsItself => $composableBuilder(
+    column: $table.postsItself,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get outcomeAt => $composableBuilder(
+    column: $table.outcomeAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nextOn => $composableBuilder(
+    column: $table.nextOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get foundBy => $composableBuilder(
+    column: $table.foundBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get importId => $composableBuilder(
+    column: $table.importId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NoticesTableAnnotationComposer
+    extends Composer<_$BirkaDatabase, $NoticesTable> {
+  $$NoticesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get readAt =>
+      $composableBuilder(column: $table.readAt, builder: (column) => column);
+
+  GeneratedColumn<String> get scheduleId => $composableBuilder(
+    column: $table.scheduleId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get timeOn =>
+      $composableBuilder(column: $table.timeOn, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<int> get decimalDigits => $composableBuilder(
+    column: $table.decimalDigits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get advance =>
+      $composableBuilder(column: $table.advance, builder: (column) => column);
+
+  GeneratedColumn<bool> get postsItself => $composableBuilder(
+    column: $table.postsItself,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get outcome =>
+      $composableBuilder(column: $table.outcome, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get outcomeAt =>
+      $composableBuilder(column: $table.outcomeAt, builder: (column) => column);
+
+  GeneratedColumn<String> get nextOn =>
+      $composableBuilder(column: $table.nextOn, builder: (column) => column);
+
+  GeneratedColumn<String> get foundBy =>
+      $composableBuilder(column: $table.foundBy, builder: (column) => column);
+
+  GeneratedColumn<String> get importId =>
+      $composableBuilder(column: $table.importId, builder: (column) => column);
+}
+
+class $$NoticesTableTableManager
+    extends
+        RootTableManager<
+          _$BirkaDatabase,
+          $NoticesTable,
+          NoticeRow,
+          $$NoticesTableFilterComposer,
+          $$NoticesTableOrderingComposer,
+          $$NoticesTableAnnotationComposer,
+          $$NoticesTableCreateCompanionBuilder,
+          $$NoticesTableUpdateCompanionBuilder,
+          (
+            NoticeRow,
+            BaseReferences<_$BirkaDatabase, $NoticesTable, NoticeRow>,
+          ),
+          NoticeRow,
+          PrefetchHooks Function()
+        > {
+  $$NoticesTableTableManager(_$BirkaDatabase db, $NoticesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NoticesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$NoticesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$NoticesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> readAt = const Value.absent(),
+                Value<String?> scheduleId = const Value.absent(),
+                Value<String?> timeOn = const Value.absent(),
+                Value<String?> name = const Value.absent(),
+                Value<String?> kind = const Value.absent(),
+                Value<int?> amountMinor = const Value.absent(),
+                Value<String?> currency = const Value.absent(),
+                Value<int?> decimalDigits = const Value.absent(),
+                Value<bool> advance = const Value.absent(),
+                Value<bool> postsItself = const Value.absent(),
+                Value<String?> outcome = const Value.absent(),
+                Value<DateTime?> outcomeAt = const Value.absent(),
+                Value<String?> nextOn = const Value.absent(),
+                Value<String?> foundBy = const Value.absent(),
+                Value<String?> importId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NoticesCompanion(
+                id: id,
+                source: source,
+                createdAt: createdAt,
+                readAt: readAt,
+                scheduleId: scheduleId,
+                timeOn: timeOn,
+                name: name,
+                kind: kind,
+                amountMinor: amountMinor,
+                currency: currency,
+                decimalDigits: decimalDigits,
+                advance: advance,
+                postsItself: postsItself,
+                outcome: outcome,
+                outcomeAt: outcomeAt,
+                nextOn: nextOn,
+                foundBy: foundBy,
+                importId: importId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String source,
+                required DateTime createdAt,
+                Value<DateTime?> readAt = const Value.absent(),
+                Value<String?> scheduleId = const Value.absent(),
+                Value<String?> timeOn = const Value.absent(),
+                Value<String?> name = const Value.absent(),
+                Value<String?> kind = const Value.absent(),
+                Value<int?> amountMinor = const Value.absent(),
+                Value<String?> currency = const Value.absent(),
+                Value<int?> decimalDigits = const Value.absent(),
+                Value<bool> advance = const Value.absent(),
+                Value<bool> postsItself = const Value.absent(),
+                Value<String?> outcome = const Value.absent(),
+                Value<DateTime?> outcomeAt = const Value.absent(),
+                Value<String?> nextOn = const Value.absent(),
+                Value<String?> foundBy = const Value.absent(),
+                Value<String?> importId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NoticesCompanion.insert(
+                id: id,
+                source: source,
+                createdAt: createdAt,
+                readAt: readAt,
+                scheduleId: scheduleId,
+                timeOn: timeOn,
+                name: name,
+                kind: kind,
+                amountMinor: amountMinor,
+                currency: currency,
+                decimalDigits: decimalDigits,
+                advance: advance,
+                postsItself: postsItself,
+                outcome: outcome,
+                outcomeAt: outcomeAt,
+                nextOn: nextOn,
+                foundBy: foundBy,
+                importId: importId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NoticesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$BirkaDatabase,
+      $NoticesTable,
+      NoticeRow,
+      $$NoticesTableFilterComposer,
+      $$NoticesTableOrderingComposer,
+      $$NoticesTableAnnotationComposer,
+      $$NoticesTableCreateCompanionBuilder,
+      $$NoticesTableUpdateCompanionBuilder,
+      (NoticeRow, BaseReferences<_$BirkaDatabase, $NoticesTable, NoticeRow>),
+      NoticeRow,
+      PrefetchHooks Function()
+    >;
 
 class $BirkaDatabaseManager {
   final _$BirkaDatabase _db;
@@ -10431,4 +11943,6 @@ class $BirkaDatabaseManager {
       $$ExchangeRatesTableTableManager(_db, _db.exchangeRates);
   $$SchedulesTableTableManager get schedules =>
       $$SchedulesTableTableManager(_db, _db.schedules);
+  $$NoticesTableTableManager get notices =>
+      $$NoticesTableTableManager(_db, _db.notices);
 }

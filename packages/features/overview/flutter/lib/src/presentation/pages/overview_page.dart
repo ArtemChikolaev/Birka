@@ -18,6 +18,7 @@ class OverviewPage extends StatefulWidget {
     required this.onAccounts,
     required this.onOpenAccount,
     this.notice,
+    this.bell,
     super.key,
   });
 
@@ -36,6 +37,10 @@ class OverviewPage extends StatefulWidget {
   /// capital and the accounts. It keeps the space under it itself, so that
   /// it can close with it.
   final Widget? notice;
+
+  /// What stands in the header before the eye, such as the bell of the
+  /// notices.
+  final Widget? bell;
 
   @override
   State<OverviewPage> createState() => _OverviewPageState();
@@ -75,7 +80,7 @@ class _OverviewPageState extends State<OverviewPage> {
               GlassNavBar.clearance + MediaQuery.viewPaddingOf(context).bottom,
             ),
             children: [
-              _Header(today: state.month),
+              _Header(today: state.month, bell: widget.bell),
               gap,
               ...switch (state.status) {
                 OverviewStatus.loading => const <Widget>[],
@@ -120,9 +125,10 @@ class _OverviewPageState extends State<OverviewPage> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.today});
+  const _Header({required this.today, this.bell});
 
   final CivilDate today;
+  final Widget? bell;
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +143,10 @@ class _Header extends StatelessWidget {
             ).title.copyWith(color: BirkaColors.of(context).text),
           ),
         ),
+        if (bell case final bell?) ...[
+          bell,
+          const SizedBox(width: BirkaTokens.spaceXs),
+        ],
         GlassIconButton(
           glyph: hidden ? BirkaGlyph.hidden : BirkaGlyph.eye,
           label: hidden ? t.overview.showAmounts : t.overview.hideAmounts,

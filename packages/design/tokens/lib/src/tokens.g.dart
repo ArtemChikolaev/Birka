@@ -321,6 +321,12 @@ abstract final class BirkaTokens {
   /// `size.scrollEdge` in logical pixels.
   static const double sizeScrollEdge = 48;
 
+  /// The height of the count on the corner of a button, such as the new notices
+  /// on the bell.
+  ///
+  /// `size.badge` in logical pixels.
+  static const double sizeBadge = 20;
+
   /// Headlines and large amounts.
   ///
   /// `font.family.display`.

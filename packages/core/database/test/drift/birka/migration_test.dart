@@ -14,6 +14,7 @@ import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
+import 'generated/schema_v8.dart' as v8;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -345,6 +346,54 @@ void main() {
         expect(schedule.nextOn, '2026-12-05');
         expect(schedule.lastDone, 'posted');
         expect(schedule.advanceDay, isNull);
+      },
+    );
+  });
+
+  test('the ledger keeps its rows and starts with no notices in v8', () async {
+    const at = '2026-11-07T12:00:00.000Z';
+    await verifier.testWithDataIntegrity(
+      oldVersion: 7,
+      newVersion: 8,
+      createOld: v7.DatabaseAtV7.new,
+      createNew: v8.DatabaseAtV8.new,
+      openTestedDatabase: BirkaDatabase.new,
+      createItems: (batch, old) {
+        batch
+          ..insert(
+            old.accounts,
+            v7.AccountsCompanion.insert(
+              id: 'card',
+              createdAt: at,
+              updatedAt: at,
+              name: 'Card',
+              type: 'debit',
+              currency: 'RUB',
+              decimalDigits: 2,
+            ),
+          )
+          ..insert(
+            old.schedules,
+            v7.SchedulesCompanion.insert(
+              id: 'rent',
+              createdAt: at,
+              updatedAt: at,
+              kind: 'expense',
+              name: 'Rent',
+              accountId: 'card',
+              amountMinor: 4500000,
+              every: 'month',
+              day: 25,
+              nextOn: '2026-11-25',
+              onDay: 'ask',
+              reminder: 'onDay',
+            ),
+          );
+      },
+      validateItems: (migrated) async {
+        final schedule = await migrated.select(migrated.schedules).getSingle();
+        expect(schedule.nextOn, '2026-11-25');
+        expect(await migrated.select(migrated.notices).get(), isEmpty);
       },
     );
   });

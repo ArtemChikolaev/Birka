@@ -132,3 +132,5 @@
 - A change of the time zone moves nothing that is planned until the next
   plan, which comes with the next return to the app.
 - The site has no reminders.
+- The reminders that came also go into the notices of the bell, whatever
+  the switches say ([ADR 0026](0026-notifications.md)).

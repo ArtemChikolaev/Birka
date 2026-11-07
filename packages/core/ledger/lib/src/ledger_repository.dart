@@ -8,6 +8,7 @@ import 'package:ledger/src/ledger_exception.dart';
 import 'package:ledger/src/ledger_ids.dart';
 import 'package:ledger/src/ledger_import.dart';
 import 'package:ledger/src/ledger_totals.dart';
+import 'package:ledger/src/notice.dart';
 import 'package:ledger/src/schedule.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
@@ -383,8 +384,10 @@ final class LedgerRepository {
   Future<void> wipe() => _db.transaction(_clear);
 
   /// Leaves the ledger empty, with the rows that point to others going first.
+  /// The notices go too: they tell of the ledger that goes (ADR 0026).
   Future<void> _clear() async {
     for (final table in <TableInfo<Table, Object?>>[
+      _db.notices,
       _db.schedules,
       _db.allocations,
       _db.entries,
@@ -629,6 +632,16 @@ final class LedgerRepository {
             ),
           );
       await _log(_db.imports, id, 'insert', at);
+      await _db
+          .into(_db.notices)
+          .insert(
+            NoticesCompanion.insert(
+              id: _newId(),
+              source: NoticeSource.import.name,
+              createdAt: at,
+              importId: Value(id),
+            ),
+          );
       return id;
     });
   }
@@ -684,6 +697,16 @@ final class LedgerRepository {
         );
         await _log(_db.schedules, schedule.id, 'update', at);
       }
+      await (_db.update(
+        _db.notices,
+      )..where((row) => row.foundBy.equals(id))).write(
+        const NoticesCompanion(
+          outcome: Value(null),
+          outcomeAt: Value(null),
+          nextOn: Value(null),
+          foundBy: Value(null),
+        ),
+      );
       final accounts =
           await (_db.select(_db.accounts)..where(
                 (row) => row.importId.equals(id) & row.deletedAt.isNull(),
@@ -905,6 +928,9 @@ final class LedgerRepository {
               );
       if (updated == 0) throw LedgerException('No schedule ${schedule.id}');
       await _log(_db.schedules, schedule.id, 'update', at);
+      if (before != null && before.next != schedule.next) {
+        await _dropOpenNotices(schedule.id);
+      }
     });
   }
 
@@ -920,6 +946,7 @@ final class LedgerRepository {
           );
       if (updated == 0) throw LedgerException('No schedule $id');
       await _log(_db.schedules, id, 'delete', at);
+      await _dropOpenNotices(id);
     });
   }
 
@@ -1019,12 +1046,104 @@ final class LedgerRepository {
             ScheduleDone.posted,
             through: through,
             transactionId: transactionId,
+            itself: true,
           );
         }
       }
       return posted;
     });
   }
+
+  /// The notices of this device, the latest first (ADR 0026), again after
+  /// every change: the times of the regular payments that Birka reminded of
+  /// or posted itself, with what became of them, and the imports, with how
+  /// many of their transactions the ledger holds and how many of those wait
+  /// in the inbox for a category.
+  Stream<List<Notice>> watchNotices() {
+    return _db
+        .customSelect(
+          '''
+          SELECT n.*, i.file_name AS import_file_name,
+            i.format AS import_format, i.first_day AS import_first_day,
+            i.last_day AS import_last_day,
+            i.deleted_at AS import_deleted_at,
+            (SELECT COUNT(*) FROM transactions t
+              WHERE t.import_id = n.import_id AND t.deleted_at IS NULL)
+              AS import_transactions,
+            (SELECT COUNT(DISTINCT t.id) FROM transactions t
+              JOIN allocations a
+                ON a.transaction_id = t.id AND a.deleted_at IS NULL
+              WHERE t.import_id = n.import_id AND t.deleted_at IS NULL
+                AND a.category_id IS NULL) AS import_waiting
+          FROM notices n
+          LEFT JOIN imports i ON i.id = n.import_id
+          ORDER BY n.created_at DESC, n.id DESC
+          ''',
+          readsFrom: {
+            _db.notices,
+            _db.imports,
+            _db.transactions,
+            _db.allocations,
+          },
+        )
+        .watch()
+        .map((rows) => [for (final row in rows) ?_noticeOf(row)]);
+  }
+
+  /// How many notices the person has not read yet, again after every change.
+  Stream<int> watchNewNotices() {
+    final count = _db.notices.id.count();
+    return (_db.selectOnly(_db.notices)
+          ..addColumns([count])
+          ..where(_db.notices.readAt.isNull()))
+        .map((row) => row.read(count) ?? 0)
+        .watchSingle();
+  }
+
+  /// Marks notices [ids] read, or every new one when [ids] is `null`.
+  Future<void> readNotices([Iterable<String>? ids]) async {
+    if (ids != null && ids.isEmpty) return;
+    final at = _timestamp();
+    await (_db.update(_db.notices)..where(
+          (row) => ids == null
+              ? row.readAt.isNull()
+              : row.readAt.isNull() & row.id.isIn(ids),
+        ))
+        .write(NoticesCompanion(readAt: Value(at)));
+  }
+
+  /// Puts into the notices each [reminders] of a time of a regular payment
+  /// that came at its moment (ADR 0026): one notice for each time, which
+  /// keeps the moment it came at. A time that has a notice already keeps it,
+  /// and a time before the next one of its payment was done meanwhile, so it
+  /// gets none, as a payment that is gone does.
+  Future<void> noteReminders(
+    Iterable<({String scheduleId, CivilDate time, DateTime at})> reminders,
+  ) {
+    return _db.transaction(() async {
+      final schedules = <String, Schedule?>{};
+      for (final reminder in reminders) {
+        final id = reminder.scheduleId;
+        if (!schedules.containsKey(id)) schedules[id] = await schedule(id);
+        final payment = schedules[id];
+        if (payment == null || reminder.time.compareTo(payment.next) < 0) {
+          continue;
+        }
+        await _db
+            .into(_db.notices)
+            .insert(
+              _noticeOfTime(payment, reminder.time, reminder.at.toUtc()),
+              mode: InsertMode.insertOrIgnore,
+            );
+      }
+    });
+  }
+
+  /// Forgets the notices that came before [before], read or not, and says
+  /// how many it forgot.
+  Future<int> forgetNotices({required DateTime before}) => (_db.delete(
+    _db.notices,
+  )..where((row) => row.createdAt.isSmallerThanValue(before.toUtc()))).go();
 
   /// The regular payments that exist, with their accounts for the currency,
   /// the nearest first.
@@ -1048,14 +1167,15 @@ final class LedgerRepository {
       await schedule(id) ?? (throw LedgerException('No schedule $id'));
 
   /// Records that the times of [schedule] from its next one through
-  /// [through], the next one unless said otherwise, were done as [done], and
-  /// moves it on to its time after them.
+  /// [through], the next one unless said otherwise, were done as [done], by
+  /// Birka [itself] or by the person, and moves it on to its time after them.
   Future<void> _done(
     Schedule schedule,
     ScheduleDone done, {
     CivilDate? through,
     String? transactionId,
     String? importId,
+    bool itself = false,
   }) async {
     final at = _timestamp();
     final on = through ?? schedule.next;
@@ -1078,6 +1198,14 @@ final class LedgerRepository {
       ),
     );
     await _log(_db.schedules, schedule.id, 'update', at);
+    await _noteDone(
+      schedule,
+      done,
+      on: on,
+      at: at,
+      importId: importId,
+      itself: itself,
+    );
   }
 
   /// [values] that also say what was done to the last times of a schedule,
@@ -1091,6 +1219,159 @@ final class LedgerRepository {
         lastImportId: Value(last?.importId),
         lastAt: Value(last?.at),
       );
+
+  /// Tells the notices of the times of [schedule] from its next one through
+  /// [on] that they were [done] at [at] (ADR 0026). A time that Birka posted
+  /// [itself] gets a notice when it has none, since nothing else told the
+  /// person of it; what the person did, and what the statement of import
+  /// [importId] brought, changes only the notices that are there. What the
+  /// person did is no news to them, so its notices are read.
+  Future<void> _noteDone(
+    Schedule schedule,
+    ScheduleDone done, {
+    required CivilDate on,
+    required DateTime at,
+    String? importId,
+    bool itself = false,
+  }) async {
+    final outcome = switch (done) {
+      ScheduleDone.posted when itself => NoticeOutcome.postedItself,
+      ScheduleDone.posted => NoticeOutcome.posted,
+      ScheduleDone.skipped => NoticeOutcome.skipped,
+      ScheduleDone.found => NoticeOutcome.found,
+    };
+    final values = NoticesCompanion(
+      outcome: Value(outcome.name),
+      outcomeAt: Value(at),
+      nextOn: Value(schedule.after(on).toString()),
+      foundBy: Value(importId),
+    );
+    final byPerson = done != ScheduleDone.found && !itself;
+    for (final time in schedule.timesUntil(on)) {
+      Expression<bool> ofTime($NoticesTable row) =>
+          row.scheduleId.equals(schedule.id) &
+          row.timeOn.equals(time.toString());
+      final updated = await (_db.update(
+        _db.notices,
+      )..where(ofTime)).write(values);
+      if (byPerson) {
+        await (_db.update(_db.notices)
+              ..where((row) => ofTime(row) & row.readAt.isNull()))
+            .write(NoticesCompanion(readAt: Value(at)));
+      }
+      if (updated == 0 && itself) {
+        await _db
+            .into(_db.notices)
+            .insert(
+              _noticeOfTime(
+                schedule,
+                time,
+                at,
+              ).copyWith(
+                outcome: values.outcome,
+                outcomeAt: values.outcomeAt,
+                nextOn: values.nextOn,
+              ),
+            );
+      }
+    }
+  }
+
+  /// A new notice of [time] of [schedule] that came at [at], with the name and
+  /// the amount the payment has now.
+  NoticesCompanion _noticeOfTime(
+    Schedule schedule,
+    CivilDate time,
+    DateTime at,
+  ) => NoticesCompanion.insert(
+    id: _newId(),
+    source: NoticeSource.payment.name,
+    createdAt: at,
+    scheduleId: Value(schedule.id),
+    timeOn: Value(time.toString()),
+    name: Value(schedule.name),
+    kind: Value(schedule.kind.name),
+    amountMinor: Value(schedule.amount.minorUnits),
+    currency: Value(schedule.amount.currency.code),
+    decimalDigits: Value(schedule.amount.currency.decimalDigits),
+    advance: Value(schedule.isAdvance(time)),
+    postsItself: Value(schedule.onDay == ScheduleOnDay.post),
+  );
+
+  /// Forgets the notices of regular payment [scheduleId] that still wait for
+  /// what becomes of their times, as their times no longer stand.
+  Future<void> _dropOpenNotices(String scheduleId) =>
+      (_db.delete(_db.notices)..where(
+            (row) => row.scheduleId.equals(scheduleId) & row.outcome.isNull(),
+          ))
+          .go();
+
+  /// The notice of [row] of [watchNotices], or `null` for one that this
+  /// version cannot read, such as of a source that a newer one added.
+  Notice? _noticeOf(QueryRow row) {
+    final notice = _db.notices.map(row.data);
+    switch (NoticeSource.values.asNameMap()[notice.source]) {
+      case NoticeSource.payment:
+        final NoticeRow(
+          :scheduleId,
+          :timeOn,
+          :name,
+          :kind,
+          :amountMinor,
+          :currency,
+          :decimalDigits,
+        ) = notice;
+        if (scheduleId == null ||
+            timeOn == null ||
+            name == null ||
+            kind == null ||
+            amountMinor == null ||
+            currency == null ||
+            decimalDigits == null) {
+          return null;
+        }
+        return PaymentNotice(
+          id: notice.id,
+          at: notice.createdAt,
+          readAt: notice.readAt,
+          scheduleId: scheduleId,
+          time: CivilDate.parse(timeOn),
+          name: name,
+          kind: TransactionKind.values.byName(kind),
+          amount: Money(amountMinor, _currency(currency, decimalDigits)),
+          advance: notice.advance,
+          postsItself: notice.postsItself,
+          outcome: switch (notice.outcome) {
+            final outcome? => NoticeOutcome.values.asNameMap()[outcome],
+            null => null,
+          },
+          outcomeAt: notice.outcomeAt,
+          next: switch (notice.nextOn) {
+            final next? => CivilDate.parse(next),
+            null => null,
+          },
+        );
+      case NoticeSource.import:
+        final fileName = row.read<String?>('import_file_name');
+        final importId = notice.importId;
+        if (fileName == null || importId == null) return null;
+        return ImportNotice(
+          id: notice.id,
+          at: notice.createdAt,
+          readAt: notice.readAt,
+          importId: importId,
+          fileName: fileName,
+          format: row.read<String?>('import_format'),
+          firstDay: CivilDate.parse(row.read<String>('import_first_day')),
+          lastDay: CivilDate.parse(row.read<String>('import_last_day')),
+          transactions: row.read<int>('import_transactions'),
+          waiting: row.read<int>('import_waiting'),
+          undone: row.read<DateTime?>('import_deleted_at') != null,
+        );
+      case null:
+        return null;
+    }
+  }
 
   /// The transaction that regular payment [schedule] gives on [on].
   TransactionDraft _draftOf(Schedule schedule, Money amount, CivilDate on) {

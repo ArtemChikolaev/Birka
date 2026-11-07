@@ -22,6 +22,7 @@
     "$type": "dimension",
     "touchTarget": { "$description": "The smallest tap area.", "$value": { "value": 44, "unit": "px" } },
     "navBar": { "$value": { "value": 64, "unit": "px" } },
-    "scrollEdge": { "$description": "How deep a list fades where it goes under a header or a button that stays in place.", "$value": { "value": 48, "unit": "px" } }
+    "scrollEdge": { "$description": "How deep a list fades where it goes under a header or a button that stays in place.", "$value": { "value": 48, "unit": "px" } },
+    "badge": { "$description": "The height of the count on the corner of a button, such as the new notices on the bell.", "$value": { "value": 20, "unit": "px" } }
   }
 }

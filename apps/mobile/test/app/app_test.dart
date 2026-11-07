@@ -38,12 +38,17 @@ import 'package:ledger/ledger.dart'
         DayChange,
         Entry,
         LedgerImport,
+        Notice,
         Schedule,
         Transaction,
         TransactionDraft,
         TransactionSource,
         TransactionStatus;
 import 'package:money/money.dart';
+import 'package:notifications_common/notifications_common.dart'
+    show NotificationsCubit, NotificationsRepository, NotificationsSummaryCubit;
+import 'package:notifications_flutter/notifications_flutter.dart'
+    show NotificationsPage;
 import 'package:onboarding_common/onboarding_common.dart'
     show FirstAccount, OnboardingCubit, OnboardingRepository, ReadyCategory;
 import 'package:onboarding_flutter/onboarding_flutter.dart';
@@ -56,6 +61,7 @@ import 'package:schedules_common/schedules_common.dart'
     show
         CalendarReminder,
         PaydaySettings,
+        PlannedReminder,
         ReminderAccess,
         ReminderCalendar,
         ReminderChannel,
@@ -221,6 +227,27 @@ final class _NoSchedules implements SchedulesRepository {
 
   @override
   Future<List<String>> postDue() async => const [];
+
+  @override
+  Future<void> noteReminders(List<PlannedReminder> reminders) async {}
+}
+
+/// A device that Birka told nothing yet.
+final class _NoNotices implements NotificationsRepository {
+  @override
+  DateTime now() => DateTime(2026, 11, 25, 10);
+
+  @override
+  Stream<List<Notice>> watchNotices() => Stream.value(const []);
+
+  @override
+  Stream<int> watchNew() => Stream.value(0);
+
+  @override
+  Future<void> read([Iterable<String>? ids]) async {}
+
+  @override
+  Future<void> forgetOld() async {}
 }
 
 /// A ledger with nothing in the inbox.
@@ -524,6 +551,8 @@ void main() {
         () => InboxSummaryCubit(_NoInbox(), DismissedPairs(settings)),
       )
       ..registerFactory(() => InboxCubit(_NoInbox(), DismissedPairs(settings)))
+      ..registerFactory(() => NotificationsSummaryCubit(_NoNotices()))
+      ..registerFactory(() => NotificationsCubit(_NoNotices()))
       ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerFactory(() => SchedulesCubit(_NoSchedules()))
       ..registerSingleton<ReminderChannel>(reminders)
@@ -841,6 +870,22 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(InboxPage), findsOneWidget);
+  });
+
+  testWidgets('the bell of the overview opens the notices and leads back', (
+    tester,
+  ) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel(t.notifications.bell));
+    await tester.pumpAndSettle();
+    expect(find.byType(NotificationsPage), findsOneWidget);
+    expect(find.text(t.notifications.emptyTitle), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel(t.notifications.back));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(NotificationsPage), findsNothing);
   });
 
   testWidgets('the overview shows no way to an empty inbox', (tester) async {

@@ -76,10 +76,10 @@ List<(CivilDate, int)> _series(Schedule schedule) {
 
 /// `45 000 ₽` or `+60 000 ₽`: the amount of a time of [schedule] in a
 /// reminder, with a sign only for what comes in.
-String reminderAmount(Schedule schedule) =>
-    schedule.kind == TransactionKind.income
-    ? '+${formatMoney(schedule.amount)}'
-    : formatMoney(schedule.amount);
+String reminderAmount(Schedule schedule) => paymentAmount(
+  schedule.amount,
+  income: schedule.kind == TransactionKind.income,
+);
 
 /// The line under «Напомнить» in the form (ADR 0025): `25 ноября в 9:00 ·
 /// напомнит Birka` for the first reminder of [schedule] still to come after

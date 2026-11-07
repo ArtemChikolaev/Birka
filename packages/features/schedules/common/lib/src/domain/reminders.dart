@@ -127,6 +127,10 @@ final class PlannedReminder {
 
   /// Whether it comes the day before the payment.
   bool get early => day != on;
+
+  /// The moment it comes, on the clock of this device.
+  DateTime get at =>
+      DateTime(day.year, day.month, day.day).add(Duration(minutes: minutes));
 }
 
 /// What the phone shows as a reminder: at [minutes] after midnight of [day],
@@ -329,6 +333,37 @@ List<PlannedReminder> planReminders(
             ),
   ]..sort(_earliest);
   return planned.length > limit ? planned.sublist(0, limit) : planned;
+}
+
+/// The reminders of [schedules] that came by [now], at [minutes] after
+/// midnight, in the last [days] days, the earliest first (ADR 0026): the ones
+/// of the times from the next one of each payment on, to which nothing was
+/// done yet. The feed of notices takes them in at their moments, the ones
+/// that came while the app was closed included.
+List<PlannedReminder> remindersCame(
+  List<Schedule> schedules, {
+  required DateTime now,
+  required int minutes,
+  int days = 90,
+}) {
+  final today = CivilDate.of(now);
+  final first = today.addDays(-days);
+  final passed = now.hour * 60 + now.minute;
+  return [
+    for (final schedule in schedules)
+      if (schedule.reminder != ScheduleReminder.none)
+        for (final on in schedule.timesUntil(today.addDays(1)))
+          if (_dayOf(schedule, on) case final day
+              when day.compareTo(first) >= 0 &&
+                  (day.compareTo(today) < 0 ||
+                      (day == today && minutes <= passed)))
+            PlannedReminder(
+              schedule: schedule,
+              on: on,
+              day: day,
+              minutes: minutes,
+            ),
+  ]..sort(_earliest);
 }
 
 CivilDate _dayOf(Schedule schedule, CivilDate on) =>

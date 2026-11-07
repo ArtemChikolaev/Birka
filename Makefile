@@ -8,6 +8,7 @@ CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/features/categories/common \
 	packages/features/help/common packages/features/import/common \
 	packages/features/inbox/common \
+	packages/features/notifications/common \
 	packages/features/onboarding/common packages/features/overview/common \
 	packages/features/reports/common \
 	packages/features/settings/common \
@@ -114,6 +115,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/import/jaspr && dart test
 	cd packages/features/inbox/flutter && flutter test
 	cd packages/features/inbox/jaspr && dart test
+	cd packages/features/notifications/flutter && flutter test
 	cd packages/features/onboarding/flutter && flutter test
 	cd packages/features/onboarding/jaspr && dart test
 	cd packages/features/overview/flutter && flutter test
