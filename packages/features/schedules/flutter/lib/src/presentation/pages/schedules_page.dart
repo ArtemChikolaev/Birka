@@ -107,64 +107,83 @@ class SchedulesPage extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
               child: _Waiting(view: view, schedule: schedule),
             ),
-        ],
-      ),
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: SectionLabel(t.schedules.ahead, color: colors.textMuted),
-          ),
-          if (plan != null)
-            Text(
-              mask(
-                context,
-                t.schedules.aheadTotal(
-                  date: fullDate(plan.payday ?? plan.end, view.today),
-                  amount: formatMoney(-plan.paid),
-                ),
+          // The next 30 days go while no time comes in them and no salary is
+          // counted, as when the only payment waits today.
+          if (view.ahead.isNotEmpty || plan != null)
+            Padding(
+              key: const ValueKey('ahead'),
+              padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: SectionLabel(
+                          t.schedules.ahead,
+                          color: colors.textMuted,
+                        ),
+                      ),
+                      if (plan != null)
+                        Text(
+                          mask(
+                            context,
+                            t.schedules.aheadTotal(
+                              date: fullDate(
+                                plan.payday ?? plan.end,
+                                view.today,
+                              ),
+                              amount: formatMoney(-plan.paid),
+                            ),
+                          ),
+                          style: styles.caption.copyWith(
+                            color: colors.textSubtle,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: BirkaTokens.spaceXs),
+                  if (view.ahead.isNotEmpty)
+                    GlassListGroup(
+                      children: [
+                        for (final it in view.ahead)
+                          GlassListRow(
+                            key: ValueKey('${it.schedule.id} ${it.on}'),
+                            leading: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                DateColumn(it.on),
+                                const SizedBox(width: BirkaTokens.spaceXs),
+                                ScheduleDot(view, it.schedule),
+                              ],
+                            ),
+                            title: occurrenceName(it.schedule, it.on),
+                            subtitle: scheduleWhere(view, it.schedule),
+                            trailing: Text(
+                              mask(context, scheduleAmount(it.schedule)),
+                              style: styles.bodyStrong.copyWith(
+                                color: scheduleInk(context, it.schedule),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  if (plan != null) ...[
+                    const SizedBox(height: BirkaTokens.spaceXs),
+                    Text(
+                      mask(
+                        context,
+                        _leftAfter(plan, view.today),
+                      ),
+                      style: styles.caption.copyWith(color: colors.textMuted),
+                    ),
+                  ],
+                ],
               ),
-              style: styles.caption.copyWith(color: colors.textSubtle),
             ),
         ],
       ),
-      const SizedBox(height: BirkaTokens.spaceXs),
-      if (view.ahead.isNotEmpty)
-        GlassListGroup(
-          children: [
-            for (final it in view.ahead)
-              GlassListRow(
-                key: ValueKey('${it.schedule.id} ${it.on}'),
-                leading: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DateColumn(it.on),
-                    const SizedBox(width: BirkaTokens.spaceXs),
-                    ScheduleDot(view, it.schedule),
-                  ],
-                ),
-                title: occurrenceName(it.schedule, it.on),
-                subtitle: scheduleWhere(view, it.schedule),
-                trailing: Text(
-                  mask(context, scheduleAmount(it.schedule)),
-                  style: styles.bodyStrong.copyWith(
-                    color: scheduleInk(context, it.schedule),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      if (plan != null) ...[
-        const SizedBox(height: BirkaTokens.spaceXs),
-        Text(
-          mask(
-            context,
-            _leftAfter(plan, view.today),
-          ),
-          style: styles.caption.copyWith(color: colors.textMuted),
-        ),
-      ],
-      const SizedBox(height: BirkaTokens.spaceLg),
       SectionLabel(
         t.schedules.section(
           title: t.schedules.all,
