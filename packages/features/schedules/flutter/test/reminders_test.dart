@@ -155,10 +155,11 @@ void main() {
     Future<void> pump(
       WidgetTester tester,
       FakeSchedulesRepository repository, {
+      String? id = 'rent',
       VoidCallback? onEnableReminders,
     }) async {
       tall(tester);
-      final cubit = ScheduleFormCubit(repository, id: 'rent');
+      final cubit = ScheduleFormCubit(repository, id: id);
       addTearDown(cubit.close);
       await tester.pumpWidget(
         phone(
@@ -189,6 +190,20 @@ void main() {
       await tester.tap(find.text('Не напоминать'));
       await tester.pumpAndSettle();
       expect(find.text('Без напоминания'), findsOneWidget);
+    });
+
+    testWidgets('a new payment of today names the reminder still to come', (
+      tester,
+    ) async {
+      final repository = FakeSchedulesRepository()
+        ..reminders = const ReminderSettings(notify: true);
+      await pump(tester, repository, id: null);
+
+      // A new payment starts today, 18 November, and the day before it has
+      // gone, so the first reminder comes before its next time.
+      await tester.tap(find.text('За день'));
+      await tester.pumpAndSettle();
+      expect(find.text('17 декабря в 9:00 · напомнит Birka'), findsOneWidget);
     });
 
     testWidgets('offers to turn the reminders on while they are off', (

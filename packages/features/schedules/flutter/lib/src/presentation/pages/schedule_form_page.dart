@@ -314,10 +314,9 @@ class _Form extends StatelessWidget {
                   ),
                   child: FadingText(
                     reminderLine(
-                      reminder: state.reminder,
+                      schedule: state.schedule,
                       settings: state.reminders,
-                      next: state.next,
-                      today: state.today,
+                      now: _now(state.today),
                     ),
                     style: styles.caption.copyWith(
                       color: colors.textSecondary,
@@ -762,4 +761,10 @@ class _Line extends StatelessWidget {
       ),
     );
   }
+}
+
+/// This moment of the day, on [today] of the form, which a test may set.
+DateTime _now(CivilDate today) {
+  final clock = DateTime.now();
+  return DateTime(today.year, today.month, today.day, clock.hour, clock.minute);
 }

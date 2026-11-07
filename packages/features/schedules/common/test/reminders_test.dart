@@ -224,46 +224,58 @@ void main() {
       expect(const ReminderTap('rent').payload, 'rent');
     });
 
-    test('the line of the form says when and who reminds', () {
-      final next = CivilDate(2026, 11, 25);
-      final today = CivilDate(2026, 11, 18);
+    test('the line of the form names the first reminder to come', () {
       const on = ReminderSettings(notify: true);
-
-      expect(
-        reminderLine(
-          reminder: ScheduleReminder.onDay,
-          settings: on,
-          next: next,
-          today: today,
-        ),
-        '25 ноября в 9:00 · напомнит Birka',
+      Schedule rent(
+        CivilDate next, {
+        ScheduleReminder reminder = ScheduleReminder.onDay,
+      }) => schedule('Аренда', 45000, next, reminder: reminder);
+      String line(
+        Schedule schedule, {
+        ReminderSettings? settings = on,
+        DateTime? at,
+      }) => reminderLine(
+        schedule: schedule,
+        settings: settings,
+        now: at ?? now,
       );
+      final next = CivilDate(2026, 11, 25);
+
+      expect(line(rent(next)), '25 ноября в 9:00 · напомнит Birka');
       expect(
-        reminderLine(
-          reminder: ScheduleReminder.dayBefore,
+        line(
+          rent(next, reminder: ScheduleReminder.dayBefore),
           settings: on.copyWith(minutes: 20 * 60),
-          next: next,
-          today: today,
         ),
         '24 ноября в 20:00 · напомнит Birka',
       );
       expect(
-        reminderLine(
-          reminder: ScheduleReminder.none,
-          settings: on,
-          next: next,
-          today: today,
-        ),
+        line(rent(next, reminder: ScheduleReminder.none)),
         'Без напоминания',
       );
       expect(
-        reminderLine(
-          reminder: ScheduleReminder.onDay,
-          settings: const ReminderSettings(),
-          next: next,
-          today: today,
-        ),
+        line(rent(next), settings: const ReminderSettings()),
         'Напоминания выключены в «Ещё»',
+      );
+      expect(line(rent(next), settings: null), 'Напоминания выключены в «Ещё»');
+
+      // A reminder that has passed gives way to the one of the next time: the
+      // day before today, and today once its hour has gone.
+      final today = CivilDate(2026, 11, 18);
+      expect(
+        line(rent(today, reminder: ScheduleReminder.dayBefore)),
+        '17 декабря в 9:00 · напомнит Birka',
+      );
+      expect(line(rent(today)), '18 декабря в 9:00 · напомнит Birka');
+      expect(
+        line(rent(today), at: DateTime(2026, 11, 18, 8)),
+        '18 ноября в 9:00 · напомнит Birka',
+      );
+
+      // A time more than a year away names its own day.
+      expect(
+        line(rent(CivilDate(2028, 1, 10))),
+        '10 января 2028 в 9:00 · напомнит Birka',
       );
     });
 

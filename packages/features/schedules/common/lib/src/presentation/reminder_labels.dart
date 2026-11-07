@@ -39,19 +39,33 @@ String reminderAmount(Schedule schedule) =>
     : formatMoney(schedule.amount);
 
 /// The line under «Напомнить» in the form (ADR 0025): `25 ноября в 9:00 ·
-/// напомнит Birka` for the [next] time, or why nothing will remind.
-/// [settings] are those of this device, `null` until they are read.
+/// напомнит Birka` for the first reminder of [schedule] still to come after
+/// [now], or why nothing will remind. A time whose reminder has passed, such
+/// as one of today with «За день», gives way to the next time. [settings] are
+/// those of this device, `null` until they are read.
 String reminderLine({
-  required ScheduleReminder reminder,
+  required Schedule schedule,
   required ReminderSettings? settings,
-  required CivilDate next,
-  required CivilDate today,
+  required DateTime now,
 }) {
+  final reminder = schedule.reminder;
   if (reminder == ScheduleReminder.none) return t.schedules.remindLineNone;
   if (settings == null || !settings.notify) return t.schedules.remindLineOff;
-  final day = reminder == ScheduleReminder.dayBefore ? next.addDays(-1) : next;
+  // A year and a day reach the next time of any rule.
+  final first = planReminders(
+    [schedule],
+    now: now,
+    minutes: settings.minutes,
+    limit: 1,
+    days: 367,
+  ).firstOrNull;
+  final next = schedule.next;
+  final day =
+      first?.day ??
+      // Only a time more than a year away is left, and its day is to come.
+      (reminder == ScheduleReminder.dayBefore ? next.addDays(-1) : next);
   return t.schedules.remindLine(
-    date: fullDate(day, today),
+    date: fullDate(day, CivilDate.of(now)),
     time: clockLabel(settings.minutes),
   );
 }

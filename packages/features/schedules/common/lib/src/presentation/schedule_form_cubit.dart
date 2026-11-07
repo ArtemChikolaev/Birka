@@ -160,6 +160,23 @@ final class ScheduleFormState {
   /// two equal halves.
   bool get uneven => halves && amount != null && part == null;
 
+  /// The payment as the form holds it, for what its rule gives before it is
+  /// saved, such as its first reminder. Its amount and its accounts play no
+  /// part in that, so a form without an account still gives one.
+  Schedule get schedule => Schedule(
+    id: id ?? '',
+    kind: kind,
+    name: name.trim(),
+    accountId: accountId ?? '',
+    amount: amount ?? const Money.zero(Currency.rub),
+    every: every,
+    day: day,
+    advanceDay: halves ? advanceDay : null,
+    next: next,
+    onDay: onDay,
+    reminder: reminder,
+  );
+
   /// Whether its next time is the advance of a salary in halves.
   bool get nextIsAdvance => switch (advanceDay) {
     final advance? when halves =>

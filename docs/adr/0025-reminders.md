@@ -66,7 +66,9 @@
 9. The form of a payment gets «Напомнить» with «В день», «За день» and «Не
    напоминать», and a line under it: «25 ноября в 9:00 · напомнит Birka», «Без
    напоминания», or «Напоминания выключены в «Ещё»» with «Включить
-   напоминания», which turns them on from the form.
+   напоминания», which turns them on from the form. The line names the first
+   reminder still to come: a time whose reminder has passed, such as one of
+   today with «За день», gives way to the next time.
 
 ## Options considered
 
