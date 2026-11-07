@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:backup_common/backup_common.dart' show demoStateIn;
 import 'package:birka_mobile/app/dependencies.dart';
 import 'package:birka_mobile/app/preferences_settings_store.dart';
 import 'package:birka_mobile/app/root.dart';
@@ -34,6 +35,10 @@ Future<void> main() async {
     onResume: () {
       unawaited(GetIt.instance<RatesUpdater>().refresh());
       unawaited(GetIt.instance<SchedulesRepository>().postDue());
+      // A new day drops the reminders that came and plans further ones.
+      if (!demoStateIn(settings).isOn) {
+        unawaited(GetIt.instance<ReminderScheduler>().refresh());
+      }
     },
   );
 }

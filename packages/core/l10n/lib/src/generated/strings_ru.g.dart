@@ -2093,6 +2093,105 @@ class _Translations$schedules$ru extends Translations$schedules$en {
     required Object to,
   }) =>
       'Зарплата приходит ${day}-го: месяц можно начинать с этого дня, тогда ${month} — с ${from} по ${to}.';
+  @override
+  String get remindTitle => 'Напоминания';
+  @override
+  String get remindNotify => 'Уведомления от Birka';
+  @override
+  String get remindNotifyOff => 'пока Birka на телефоне';
+  @override
+  String remindNotifyOn({required num n, required Object time}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} платёж · в ${time}',
+        few: '${n} платежа · в ${time}',
+        many: '${n} платежей · в ${time}',
+        other: '${n} платежей · в ${time}',
+      );
+  @override
+  String get remindNotifyDenied => 'нет доступа к уведомлениям';
+  @override
+  String get remindTime => 'Время';
+  @override
+  String get remindSums => 'Суммы в напоминаниях';
+  @override
+  String get remindSumsNote => 'на экране блокировки';
+  @override
+  String get remindNoteOff =>
+      'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа.';
+  @override
+  String get remindNoteOn =>
+      'Удалите Birka — напоминания исчезнут вместе с ней.';
+  @override
+  String get remindNoteDenied =>
+      'Чтобы Birka напоминала, разрешите ей уведомления в настройках телефона.';
+  @override
+  String get remindAskTitle => 'Напоминания от Birka';
+  @override
+  String remindAskText({required Object time}) =>
+      'Birka напомнит о платеже в ${time} — в день платежа или накануне, как выбрано у платежа. Напоминания ставятся на этом телефоне, сервер для них не нужен.';
+  @override
+  String remindAskExample({required Object date, required Object time}) =>
+      '${date}, ${time} · нажмёте — откроется платёж';
+  @override
+  String get remindAskLocalTitle => 'Живут вместе с Birka';
+  @override
+  String get remindAskLocalText =>
+      'Удалите приложение — исчезнут и напоминания.';
+  @override
+  String get remindAllow => 'Разрешить уведомления';
+  @override
+  String get remindNotNow => 'Не сейчас';
+  @override
+  String get remindDeniedTitle => 'Нет доступа к уведомлениям';
+  @override
+  String get remindDeniedText =>
+      'Уведомления Birka выключены в настройках телефона. Откройте «Настройки» → «Birka» → «Уведомления» и включите их.';
+  @override
+  String get remindOpenSettings => 'Открыть настройки';
+  @override
+  String get remindUnderstood => 'Понятно';
+  @override
+  String get remindOnTitle => 'Напоминания включены';
+  @override
+  String remindOnText({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Birka напомнит о ${n} платеже',
+        few: 'Birka напомнит о ${n} платежах',
+        many: 'Birka напомнит о ${n} платежах',
+        other: 'Birka напомнит о ${n} платежах',
+      );
+  @override
+  String get remindOnNone => 'Отметьте «Напомнить» у платежей';
+  @override
+  String get remindToday => 'Сегодня. Нажмите, чтобы провести или пропустить.';
+  @override
+  String get remindTodayAuto => 'Сегодня, проведётся само.';
+  @override
+  String remindTomorrow({required Object date}) =>
+      'Завтра, ${date}. Нажмите, чтобы открыть платёж.';
+  @override
+  String get remindChannel => 'Напоминания о платежах';
+  @override
+  String get remindChannelNote => 'Регулярные платежи в их день или накануне';
+  @override
+  String get remindSection => 'Напомнить';
+  @override
+  Map<String, String> get reminder => {
+    'onDay': 'В день',
+    'dayBefore': 'За день',
+    'none': 'Не напоминать',
+  };
+  @override
+  String remindLine({required Object date, required Object time}) =>
+      '${date} в ${time} · напомнит Birka';
+  @override
+  String get remindLineNone => 'Без напоминания';
+  @override
+  String get remindLineOff => 'Напоминания выключены в «Ещё»';
+  @override
+  String get remindEnable => 'Включить напоминания';
 }
 
 // Path: settings
@@ -3974,6 +4073,77 @@ extension on TranslationsRu {
               required Object to,
             }) =>
                 'Зарплата приходит ${day}-го: месяц можно начинать с этого дня, тогда ${month} — с ${from} по ${to}.',
+          'schedules.remindTitle' => 'Напоминания',
+          'schedules.remindNotify' => 'Уведомления от Birka',
+          'schedules.remindNotifyOff' => 'пока Birka на телефоне',
+          'schedules.remindNotifyOn' =>
+            ({required num n, required Object time}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} платёж · в ${time}',
+                  few: '${n} платежа · в ${time}',
+                  many: '${n} платежей · в ${time}',
+                  other: '${n} платежей · в ${time}',
+                ),
+          'schedules.remindNotifyDenied' => 'нет доступа к уведомлениям',
+          'schedules.remindTime' => 'Время',
+          'schedules.remindSums' => 'Суммы в напоминаниях',
+          'schedules.remindSumsNote' => 'на экране блокировки',
+          'schedules.remindNoteOff' =>
+            'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа.',
+          'schedules.remindNoteOn' =>
+            'Удалите Birka — напоминания исчезнут вместе с ней.',
+          'schedules.remindNoteDenied' =>
+            'Чтобы Birka напоминала, разрешите ей уведомления в настройках телефона.',
+          'schedules.remindAskTitle' => 'Напоминания от Birka',
+          'schedules.remindAskText' =>
+            ({required Object time}) =>
+                'Birka напомнит о платеже в ${time} — в день платежа или накануне, как выбрано у платежа. Напоминания ставятся на этом телефоне, сервер для них не нужен.',
+          'schedules.remindAskExample' =>
+            ({required Object date, required Object time}) =>
+                '${date}, ${time} · нажмёте — откроется платёж',
+          'schedules.remindAskLocalTitle' => 'Живут вместе с Birka',
+          'schedules.remindAskLocalText' =>
+            'Удалите приложение — исчезнут и напоминания.',
+          'schedules.remindAllow' => 'Разрешить уведомления',
+          'schedules.remindNotNow' => 'Не сейчас',
+          'schedules.remindDeniedTitle' => 'Нет доступа к уведомлениям',
+          'schedules.remindDeniedText' =>
+            'Уведомления Birka выключены в настройках телефона. Откройте «Настройки» → «Birka» → «Уведомления» и включите их.',
+          'schedules.remindOpenSettings' => 'Открыть настройки',
+          'schedules.remindUnderstood' => 'Понятно',
+          'schedules.remindOnTitle' => 'Напоминания включены',
+          'schedules.remindOnText' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Birka напомнит о ${n} платеже',
+                  few: 'Birka напомнит о ${n} платежах',
+                  many: 'Birka напомнит о ${n} платежах',
+                  other: 'Birka напомнит о ${n} платежах',
+                ),
+          'schedules.remindOnNone' => 'Отметьте «Напомнить» у платежей',
+          'schedules.remindToday' =>
+            'Сегодня. Нажмите, чтобы провести или пропустить.',
+          'schedules.remindTodayAuto' => 'Сегодня, проведётся само.',
+          'schedules.remindTomorrow' =>
+            ({required Object date}) =>
+                'Завтра, ${date}. Нажмите, чтобы открыть платёж.',
+          'schedules.remindChannel' => 'Напоминания о платежах',
+          'schedules.remindChannelNote' =>
+            'Регулярные платежи в их день или накануне',
+          'schedules.remindSection' => 'Напомнить',
+          'schedules.reminder.onDay' => 'В день',
+          'schedules.reminder.dayBefore' => 'За день',
+          'schedules.reminder.none' => 'Не напоминать',
+          'schedules.remindLine' =>
+            ({required Object date, required Object time}) =>
+                '${date} в ${time} · напомнит Birka',
+          'schedules.remindLineNone' => 'Без напоминания',
+          'schedules.remindLineOff' => 'Напоминания выключены в «Ещё»',
+          'schedules.remindEnable' => 'Включить напоминания',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',

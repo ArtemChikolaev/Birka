@@ -183,3 +183,50 @@ advanceDay: Аванс
 restDay: Зарплата
 nextAdvance: аванс, $date
 monthStartHint: "Зарплата приходит $day-го: месяц можно начинать с этого дня, тогда $month — с $from по $to."
+remindTitle: Напоминания
+remindNotify: Уведомления от Birka
+remindNotifyOff: пока Birka на телефоне
+remindNotifyOn(n):
+  one: $n платёж · в $time
+  few: $n платежа · в $time
+  many: $n платежей · в $time
+  other: $n платежей · в $time
+remindNotifyDenied: нет доступа к уведомлениям
+remindTime: Время
+remindSums: Суммы в напоминаниях
+remindSumsNote: на экране блокировки
+remindNoteOff: "Напомнить можно в день платежа или накануне: это выбирается у каждого платежа."
+remindNoteOn: Удалите Birka — напоминания исчезнут вместе с ней.
+remindNoteDenied: Чтобы Birka напоминала, разрешите ей уведомления в настройках телефона.
+remindAskTitle: Напоминания от Birka
+remindAskText: Birka напомнит о платеже в $time — в день платежа или накануне, как выбрано у платежа. Напоминания ставятся на этом телефоне, сервер для них не нужен.
+remindAskExample: $date, $time · нажмёте — откроется платёж
+remindAskLocalTitle: Живут вместе с Birka
+remindAskLocalText: Удалите приложение — исчезнут и напоминания.
+remindAllow: Разрешить уведомления
+remindNotNow: Не сейчас
+remindDeniedTitle: Нет доступа к уведомлениям
+remindDeniedText: Уведомления Birka выключены в настройках телефона. Откройте «Настройки» → «Birka» → «Уведомления» и включите их.
+remindOpenSettings: Открыть настройки
+remindUnderstood: Понятно
+remindOnTitle: Напоминания включены
+remindOnText(n):
+  one: Birka напомнит о $n платеже
+  few: Birka напомнит о $n платежах
+  many: Birka напомнит о $n платежах
+  other: Birka напомнит о $n платежах
+remindOnNone: Отметьте «Напомнить» у платежей
+remindToday: Сегодня. Нажмите, чтобы провести или пропустить.
+remindTodayAuto: Сегодня, проведётся само.
+remindTomorrow: Завтра, $date. Нажмите, чтобы открыть платёж.
+remindChannel: Напоминания о платежах
+remindChannelNote: Регулярные платежи в их день или накануне
+remindSection: Напомнить
+reminder(map):
+  onDay: В день
+  dayBefore: За день
+  none: Не напоминать
+remindLine: $date в $time · напомнит Birka
+remindLineNone: Без напоминания
+remindLineOff: Напоминания выключены в «Ещё»
+remindEnable: Включить напоминания

@@ -2512,6 +2512,135 @@ class Translations$schedules$en {
     required Object to,
   }) =>
       'The salary comes on day ${day}: a month can start on it, and then ${month} runs from ${from} to ${to}.';
+
+  /// en: 'Reminders'
+  String get remindTitle => 'Reminders';
+
+  /// en: 'Notifications from Birka'
+  String get remindNotify => 'Notifications from Birka';
+
+  /// en: 'while Birka is on the phone'
+  String get remindNotifyOff => 'while Birka is on the phone';
+
+  /// en: '(one) {$n payment · at $time} (other) {$n payments · at $time}'
+  String remindNotifyOn({required num n, required Object time}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} payment · at ${time}',
+        other: '${n} payments · at ${time}',
+      );
+
+  /// en: 'no access to notifications'
+  String get remindNotifyDenied => 'no access to notifications';
+
+  /// en: 'Time'
+  String get remindTime => 'Time';
+
+  /// en: 'Amounts in reminders'
+  String get remindSums => 'Amounts in reminders';
+
+  /// en: 'on the lock screen'
+  String get remindSumsNote => 'on the lock screen';
+
+  /// en: 'A payment can remind on its day or the day before: each payment says which.'
+  String get remindNoteOff =>
+      'A payment can remind on its day or the day before: each payment says which.';
+
+  /// en: 'Delete Birka and its reminders go with it.'
+  String get remindNoteOn => 'Delete Birka and its reminders go with it.';
+
+  /// en: 'For Birka to remind, allow its notifications in the settings of the phone.'
+  String get remindNoteDenied =>
+      'For Birka to remind, allow its notifications in the settings of the phone.';
+
+  /// en: 'Reminders from Birka'
+  String get remindAskTitle => 'Reminders from Birka';
+
+  /// en: 'Birka reminds of a payment at $time, on its day or the day before, as the payment says. The reminders are set on this phone and need no server.'
+  String remindAskText({required Object time}) =>
+      'Birka reminds of a payment at ${time}, on its day or the day before, as the payment says. The reminders are set on this phone and need no server.';
+
+  /// en: '$date, $time · a tap opens the payment'
+  String remindAskExample({required Object date, required Object time}) =>
+      '${date}, ${time} · a tap opens the payment';
+
+  /// en: 'They live with Birka'
+  String get remindAskLocalTitle => 'They live with Birka';
+
+  /// en: 'Delete the app and its reminders go too.'
+  String get remindAskLocalText => 'Delete the app and its reminders go too.';
+
+  /// en: 'Allow notifications'
+  String get remindAllow => 'Allow notifications';
+
+  /// en: 'Not now'
+  String get remindNotNow => 'Not now';
+
+  /// en: 'No access to notifications'
+  String get remindDeniedTitle => 'No access to notifications';
+
+  /// en: 'Notifications of Birka are off in the settings of the phone. Open Settings → Birka → Notifications and turn them on.'
+  String get remindDeniedText =>
+      'Notifications of Birka are off in the settings of the phone. Open Settings → Birka → Notifications and turn them on.';
+
+  /// en: 'Open settings'
+  String get remindOpenSettings => 'Open settings';
+
+  /// en: 'Got it'
+  String get remindUnderstood => 'Got it';
+
+  /// en: 'Reminders are on'
+  String get remindOnTitle => 'Reminders are on';
+
+  /// en: '(one) {Birka will remind of $n payment} (other) {Birka will remind of $n payments}'
+  String remindOnText({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Birka will remind of ${n} payment',
+        other: 'Birka will remind of ${n} payments',
+      );
+
+  /// en: 'Mark «Remind» on the payments'
+  String get remindOnNone => 'Mark «Remind» on the payments';
+
+  /// en: 'Today. Tap to post or skip it.'
+  String get remindToday => 'Today. Tap to post or skip it.';
+
+  /// en: 'Today, it posts itself.'
+  String get remindTodayAuto => 'Today, it posts itself.';
+
+  /// en: 'Tomorrow, $date. Tap to open the payment.'
+  String remindTomorrow({required Object date}) =>
+      'Tomorrow, ${date}. Tap to open the payment.';
+
+  /// en: 'Payment reminders'
+  String get remindChannel => 'Payment reminders';
+
+  /// en: 'Regular payments on their day or the day before'
+  String get remindChannelNote =>
+      'Regular payments on their day or the day before';
+
+  /// en: 'Remind'
+  String get remindSection => 'Remind';
+
+  Map<String, String> get reminder => {
+    'onDay': 'On the day',
+    'dayBefore': 'The day before',
+    'none': 'Don\'t remind',
+  };
+
+  /// en: '$date at $time · Birka reminds'
+  String remindLine({required Object date, required Object time}) =>
+      '${date} at ${time} · Birka reminds';
+
+  /// en: 'No reminder'
+  String get remindLineNone => 'No reminder';
+
+  /// en: 'Reminders are off in More'
+  String get remindLineOff => 'Reminders are off in More';
+
+  /// en: 'Turn reminders on'
+  String get remindEnable => 'Turn reminders on';
 }
 
 // Path: settings
@@ -4428,6 +4557,72 @@ extension on Translations {
               required Object to,
             }) =>
                 'The salary comes on day ${day}: a month can start on it, and then ${month} runs from ${from} to ${to}.',
+          'schedules.remindTitle' => 'Reminders',
+          'schedules.remindNotify' => 'Notifications from Birka',
+          'schedules.remindNotifyOff' => 'while Birka is on the phone',
+          'schedules.remindNotifyOn' =>
+            ({required num n, required Object time}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} payment · at ${time}',
+                  other: '${n} payments · at ${time}',
+                ),
+          'schedules.remindNotifyDenied' => 'no access to notifications',
+          'schedules.remindTime' => 'Time',
+          'schedules.remindSums' => 'Amounts in reminders',
+          'schedules.remindSumsNote' => 'on the lock screen',
+          'schedules.remindNoteOff' =>
+            'A payment can remind on its day or the day before: each payment says which.',
+          'schedules.remindNoteOn' =>
+            'Delete Birka and its reminders go with it.',
+          'schedules.remindNoteDenied' =>
+            'For Birka to remind, allow its notifications in the settings of the phone.',
+          'schedules.remindAskTitle' => 'Reminders from Birka',
+          'schedules.remindAskText' =>
+            ({required Object time}) =>
+                'Birka reminds of a payment at ${time}, on its day or the day before, as the payment says. The reminders are set on this phone and need no server.',
+          'schedules.remindAskExample' =>
+            ({required Object date, required Object time}) =>
+                '${date}, ${time} · a tap opens the payment',
+          'schedules.remindAskLocalTitle' => 'They live with Birka',
+          'schedules.remindAskLocalText' =>
+            'Delete the app and its reminders go too.',
+          'schedules.remindAllow' => 'Allow notifications',
+          'schedules.remindNotNow' => 'Not now',
+          'schedules.remindDeniedTitle' => 'No access to notifications',
+          'schedules.remindDeniedText' =>
+            'Notifications of Birka are off in the settings of the phone. Open Settings → Birka → Notifications and turn them on.',
+          'schedules.remindOpenSettings' => 'Open settings',
+          'schedules.remindUnderstood' => 'Got it',
+          'schedules.remindOnTitle' => 'Reminders are on',
+          'schedules.remindOnText' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Birka will remind of ${n} payment',
+                  other: 'Birka will remind of ${n} payments',
+                ),
+          'schedules.remindOnNone' => 'Mark «Remind» on the payments',
+          'schedules.remindToday' => 'Today. Tap to post or skip it.',
+          'schedules.remindTodayAuto' => 'Today, it posts itself.',
+          'schedules.remindTomorrow' =>
+            ({required Object date}) =>
+                'Tomorrow, ${date}. Tap to open the payment.',
+          'schedules.remindChannel' => 'Payment reminders',
+          'schedules.remindChannelNote' =>
+            'Regular payments on their day or the day before',
+          'schedules.remindSection' => 'Remind',
+          'schedules.reminder.onDay' => 'On the day',
+          'schedules.reminder.dayBefore' => 'The day before',
+          'schedules.reminder.none' => 'Don\'t remind',
+          'schedules.remindLine' =>
+            ({required Object date, required Object time}) =>
+                '${date} at ${time} · Birka reminds',
+          'schedules.remindLineNone' => 'No reminder',
+          'schedules.remindLineOff' => 'Reminders are off in More',
+          'schedules.remindEnable' => 'Turn reminders on',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',

@@ -31,6 +31,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // The plugin of notifications schedules with java.time (ADR 0025).
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -63,6 +65,9 @@ android {
         release {
             signingConfig =
                 signingConfigs.getByName(if (releaseKeystore != null) "release" else "debug")
+            // The plugin of notifications keeps its reminders through Gson,
+            // whose classes R8 must leave as they are (ADR 0025).
+            proguardFiles("proguard-rules.pro")
             // The plugin of Flutter has put its default ABIs here already.
             if (targetAbis != null) {
                 ndk.abiFilters.clear()
@@ -74,4 +79,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
