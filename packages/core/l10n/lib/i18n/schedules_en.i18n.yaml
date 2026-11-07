@@ -175,3 +175,46 @@ advanceDay: Advance
 restDay: Salary
 nextAdvance: advance, $date
 monthStartHint: "The salary comes on day $day: a month can start on it, and then $month runs from $from to $to."
+remindTitle: Reminders
+remindNotify: Notifications from Birka
+remindNotifyOff: while Birka is on the phone
+remindNotifyOn(n):
+  one: $n payment · at $time
+  other: $n payments · at $time
+remindNotifyDenied: no access to notifications
+remindTime: Time
+remindSums: Amounts in reminders
+remindSumsNote: on the lock screen
+remindNoteOff: "A payment can remind on its day or the day before: each payment says which."
+remindNoteOn: Delete Birka and its reminders go with it.
+remindNoteDenied: For Birka to remind, allow its notifications in the settings of the phone.
+remindAskTitle: Reminders from Birka
+remindAskText: Birka reminds of a payment at $time, on its day or the day before, as the payment says. The reminders are set on this phone and need no server.
+remindAskExample: $date, $time · a tap opens the payment
+remindAskLocalTitle: They live with Birka
+remindAskLocalText: Delete the app and its reminders go too.
+remindAllow: Allow notifications
+remindNotNow: Not now
+remindDeniedTitle: No access to notifications
+remindDeniedText: Notifications of Birka are off in the settings of the phone. Open Settings → Birka → Notifications and turn them on.
+remindOpenSettings: Open settings
+remindUnderstood: Got it
+remindOnTitle: Reminders are on
+remindOnText(n):
+  one: Birka will remind of $n payment
+  other: Birka will remind of $n payments
+remindOnNone: Mark «Remind» on the payments
+remindToday: Today. Tap to post or skip it.
+remindTodayAuto: Today, it posts itself.
+remindTomorrow: Tomorrow, $date. Tap to open the payment.
+remindChannel: Payment reminders
+remindChannelNote: Regular payments on their day or the day before
+remindSection: Remind
+reminder(map):
+  onDay: On the day
+  dayBefore: The day before
+  none: Don't remind
+remindLine: $date at $time · Birka reminds
+remindLineNone: No reminder
+remindLineOff: Reminders are off in More
+remindEnable: Turn reminders on

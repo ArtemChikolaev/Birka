@@ -448,6 +448,43 @@ void main() {
     });
   });
 
+  group('AccentLink', () {
+    testWidgets('says its label in the accent with a chevron and taps', (
+      tester,
+    ) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        app(AccentLink(label: 'Turn on', onTap: () => taps++)),
+      );
+
+      final label = tester.widget<Text>(find.text('Turn on'));
+      expect(label.style!.color, colors.accent);
+      expect(find.byType(BirkaIcon), findsOneWidget);
+      expect(tester.getSize(find.byType(AccentLink)).height, 44);
+      await tester.tap(find.text('Turn on'));
+      expect(taps, 1);
+    });
+
+    testWidgets('can span its width with the chevron at the end', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        app(
+          SizedBox(
+            width: 300,
+            child: AccentLink(label: 'All', onTap: () {}, expand: true),
+          ),
+        ),
+      );
+
+      expect(tester.getSize(find.byType(AccentLink)).width, 300);
+      expect(
+        tester.getTopRight(find.byType(BirkaIcon)).dx,
+        tester.getTopRight(find.byType(AccentLink)).dx,
+      );
+    });
+  });
+
   group('GlassListValue', () {
     testWidgets('leaves room for the title of its row', (tester) async {
       await tester.pumpWidget(

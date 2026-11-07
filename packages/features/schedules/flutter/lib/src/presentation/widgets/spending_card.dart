@@ -171,35 +171,15 @@ class _Plan extends StatelessWidget {
                 ),
             ],
           ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
+          AccentLink(
+            label: view.schedules.isEmpty
+                ? t.schedules.emptyAdd
+                : t.schedules.section(
+                    title: t.schedules.all,
+                    count: formatCount(view.schedules.length),
+                  ),
             onTap: onOpenList,
-            child: Semantics(
-              button: true,
-              child: SizedBox(
-                height: 44,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        view.schedules.isEmpty
-                            ? t.schedules.emptyAdd
-                            : t.schedules.section(
-                                title: t.schedules.all,
-                                count: formatCount(view.schedules.length),
-                              ),
-                        style: styles.bodyStrong.copyWith(color: colors.accent),
-                      ),
-                    ),
-                    BirkaIcon(
-                      BirkaGlyph.chevron,
-                      size: 16,
-                      color: colors.accent,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            expand: true,
           ),
         ],
       ),

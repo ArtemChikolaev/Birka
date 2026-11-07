@@ -8,6 +8,8 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
+import 'package:schedules_common/schedules_common.dart'
+    show ReminderChannel, ReminderTap;
 import 'package:settings_common/settings_common.dart';
 
 /// The root widget of the Flutter app.
@@ -52,11 +54,23 @@ class _BirkaAppState extends State<BirkaApp> {
     Settings.readFrom(widget.getIt<SettingsStore>()).hideAmountsOnLaunch,
   );
   late final StreamSubscription<AppLocale> _languages;
+  late final StreamSubscription<ReminderTap> _reminders;
 
   @override
   void initState() {
     super.initState();
     _languages = LocaleSettings.getLocaleStream().listen(_onLanguageChanged);
+    // A tapped reminder of the day before opens its payment, and one of the
+    // day the regular payments, where it is posted (ADR 0025). The steps of a
+    // new device stay.
+    _reminders = widget.getIt<ReminderChannel>().opened.listen((tap) {
+      if (_onboarding != null) return;
+      unawaited(
+        _router.push(
+          tap.early ? Paths.schedule(tap.scheduleId) : Paths.schedules,
+        ),
+      );
+    });
   }
 
   /// `t` is not reactive (ADR 0010), so a new language takes new widgets. A
@@ -77,6 +91,7 @@ class _BirkaAppState extends State<BirkaApp> {
   @override
   void dispose() {
     unawaited(_languages.cancel());
+    unawaited(_reminders.cancel());
     unawaited(_onboarding?.close());
     _router.dispose();
     _hiddenAmounts.dispose();

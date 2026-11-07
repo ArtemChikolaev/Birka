@@ -33,6 +33,18 @@ for spec in mdpi:256:288 hdpi:384:432 xhdpi:512:576 xxhdpi:768:864 \
     "$res/drawable-$density/launch_icon.png"
 done
 
+# The small icon of the notifications of Android, ic_notification, at 24 dp:
+# the coin of the one-color icon without its safe zone, which Android paints
+# white.
+coin="$(mktemp -t birka-coin).png"
+sips -c 512 512 --cropOffset 256 256 "$png/icon-monochrome.png" \
+  --out "$coin" >/dev/null
+for spec in mdpi:24 hdpi:36 xhdpi:48 xxhdpi:72 xxxhdpi:96; do
+  IFS=: read -r density size <<<"$spec"
+  scale "$coin" "$size" "$res/drawable-$density/ic_notification.png"
+done
+rm -f "$coin"
+
 # iOS centers LaunchImage, 256 points wide, on black.
 images="$app/ios/Runner/Assets.xcassets/LaunchImage.imageset"
 scale "$png/launch.png" 256 "$images/LaunchImage.png"

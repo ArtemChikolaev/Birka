@@ -5,6 +5,7 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
+import 'package:schedules_common/src/domain/reminders.dart';
 import 'package:schedules_common/src/domain/schedule_draft.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
 
@@ -49,6 +50,7 @@ final class ScheduleFormState {
     this.advanceDay,
     this.onDay = ScheduleOnDay.ask,
     this.reminder = ScheduleReminder.onDay,
+    this.reminders,
     this.accounts = const [],
     this.expenses = const [],
     this.incomes = const [],
@@ -102,6 +104,10 @@ final class ScheduleFormState {
   /// When to remind of it.
   final ScheduleReminder reminder;
 
+  /// How this device reminds of the payments, `null` until it is read
+  /// (ADR 0025).
+  final ReminderSettings? reminders;
+
   /// The accounts that are not archived, in their order.
   final List<Account> accounts;
 
@@ -154,6 +160,23 @@ final class ScheduleFormState {
   /// two equal halves.
   bool get uneven => halves && amount != null && part == null;
 
+  /// The payment as the form holds it, for what its rule gives before it is
+  /// saved, such as its first reminder. Its amount and its accounts play no
+  /// part in that, so a form without an account still gives one.
+  Schedule get schedule => Schedule(
+    id: id ?? '',
+    kind: kind,
+    name: name.trim(),
+    accountId: accountId ?? '',
+    amount: amount ?? const Money.zero(Currency.rub),
+    every: every,
+    day: day,
+    advanceDay: halves ? advanceDay : null,
+    next: next,
+    onDay: onDay,
+    reminder: reminder,
+  );
+
   /// Whether its next time is the advance of a salary in halves.
   bool get nextIsAdvance => switch (advanceDay) {
     final advance? when halves =>
@@ -194,6 +217,7 @@ final class ScheduleFormState {
     (int?,)? advanceDay,
     ScheduleOnDay? onDay,
     ScheduleReminder? reminder,
+    ReminderSettings? reminders,
     List<Account>? accounts,
     List<Category>? expenses,
     List<Category>? incomes,
@@ -214,6 +238,7 @@ final class ScheduleFormState {
     advanceDay: advanceDay == null ? this.advanceDay : advanceDay.$1,
     onDay: onDay ?? this.onDay,
     reminder: reminder ?? this.reminder,
+    reminders: reminders ?? this.reminders,
     accounts: accounts ?? this.accounts,
     expenses: expenses ?? this.expenses,
     incomes: incomes ?? this.incomes,
@@ -230,11 +255,15 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
   ScheduleFormCubit(this._repository, {String? id, bool salary = false})
     : _id = id,
       super(ScheduleFormState(today: _repository.today())) {
+    _reminders = _repository.watchReminders().listen(
+      (reminders) => emit(state.copyWith(reminders: reminders)),
+    );
     unawaited(_load(salary: salary));
   }
 
   final SchedulesRepository _repository;
   final String? _id;
+  late final StreamSubscription<ReminderSettings> _reminders;
 
   /// Makes it an expense, an income or a transfer. A category of the other
   /// kind goes, a transfer gets an account to reach, and only an income keeps
@@ -397,6 +426,12 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
     emit(state.copyWith(status: ScheduleFormStatus.deleted));
   }
 
+  @override
+  Future<void> close() async {
+    await _reminders.cancel();
+    return super.close();
+  }
+
   Future<void> _load({required bool salary}) async {
     final rows = await _repository.watchAccounts().first;
     final expenses = await _repository
@@ -461,6 +496,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
         advanceDay: schedule.advanceDay,
         onDay: schedule.onDay,
         reminder: schedule.reminder,
+        reminders: state.reminders,
         accounts: loaded.accounts,
         expenses: loaded.expenses,
         incomes: loaded.incomes,

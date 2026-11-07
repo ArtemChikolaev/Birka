@@ -6,6 +6,7 @@ library;
 
 export 'package:design_tokens/design_tokens.dart';
 
+export 'src/components/accent_link.dart';
 export 'src/components/account_card.dart';
 export 'src/components/ambient_background.dart';
 export 'src/components/amount_text.dart';

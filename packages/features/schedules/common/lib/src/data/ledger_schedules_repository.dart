@@ -5,6 +5,7 @@ import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:rates/rates.dart';
 import 'package:schedules_common/src/domain/payday_settings.dart';
+import 'package:schedules_common/src/domain/reminders.dart';
 import 'package:schedules_common/src/domain/schedule_draft.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
 
@@ -19,7 +20,8 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
     this._store, {
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now,
-       _settings = PaydaySettings.read(_store);
+       _settings = PaydaySettings.read(_store),
+       _reminders = ReminderSettings.read(_store);
 
   final LedgerRepository _ledger;
   final BaseCurrency _baseCurrency;
@@ -28,6 +30,8 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
   final DateTime Function() _now;
   PaydaySettings _settings;
   final _changes = StreamController<PaydaySettings>.broadcast();
+  ReminderSettings _reminders;
+  final _reminderChanges = StreamController<ReminderSettings>.broadcast();
 
   @override
   CivilDate today() => CivilDate.of(_now());
@@ -67,6 +71,20 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
   Future<void> saveSettings(PaydaySettings settings) async {
     _settings = settings;
     _changes.add(settings);
+    await settings.write(_store);
+  }
+
+  @override
+  Stream<ReminderSettings> watchReminders() => Stream.multi((controller) {
+    controller.add(_reminders);
+    final subscription = _reminderChanges.stream.listen(controller.add);
+    controller.onCancel = subscription.cancel;
+  });
+
+  @override
+  Future<void> saveReminders(ReminderSettings settings) async {
+    _reminders = settings;
+    _reminderChanges.add(settings);
     await settings.write(_store);
   }
 

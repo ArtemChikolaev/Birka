@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:accounts_common/accounts_common.dart';
@@ -54,10 +55,18 @@ import 'package:reports_flutter/reports_flutter.dart';
 import 'package:schedules_common/schedules_common.dart'
     show
         PaydaySettings,
+        ReminderAccess,
+        ReminderChannel,
+        ReminderNote,
+        ReminderSettings,
+        ReminderTap,
+        RemindersCubit,
         ScheduleDraft,
         ScheduleFormCubit,
         SchedulesCubit,
         SchedulesRepository;
+import 'package:schedules_flutter/schedules_flutter.dart'
+    show ScheduleFormPage, SchedulesPage;
 import 'package:settings_common/settings_common.dart'
     show BaseCurrency, MonthStart, Settings, SettingsCubit, SettingsStore;
 import 'package:transactions_common/transactions_common.dart';
@@ -114,6 +123,24 @@ final class _NewDevice implements OnboardingRepository {
   }) async {}
 }
 
+/// Notifications that the phone never shows, and taps on them that a test
+/// makes.
+final class _NoReminders implements ReminderChannel {
+  final taps = StreamController<ReminderTap>.broadcast();
+
+  @override
+  Future<ReminderAccess> access() async => ReminderAccess.unknown;
+
+  @override
+  Future<ReminderAccess> requestAccess() async => ReminderAccess.denied;
+
+  @override
+  Future<void> show(List<ReminderNote> notes) async {}
+
+  @override
+  Stream<ReminderTap> get opened => taps.stream;
+}
+
 /// No regular payments and no accounts for them, so the card of the money of
 /// the day stays away from the overview.
 final class _NoSchedules implements SchedulesRepository {
@@ -148,6 +175,13 @@ final class _NoSchedules implements SchedulesRepository {
 
   @override
   Future<void> saveSettings(PaydaySettings settings) async {}
+
+  @override
+  Stream<ReminderSettings> watchReminders() =>
+      Stream.value(const ReminderSettings());
+
+  @override
+  Future<void> saveReminders(ReminderSettings settings) async {}
 
   @override
   Future<Schedule> add(ScheduleDraft draft) =>
@@ -438,12 +472,16 @@ void main() {
   late _Settings settings;
   late _Links links;
   late _Statements statements;
+  late _NoReminders reminders;
+  late List<String?> forms;
 
   setUp(() {
     getIt = GetIt.asNewInstance();
     settings = _Settings();
     links = _Links();
     statements = _Statements();
+    reminders = _NoReminders();
+    forms = [];
     accounts = _Accounts();
     final CategoriesRepository categories = _NoCategories();
     transactions = _Transactions();
@@ -468,13 +506,16 @@ void main() {
       ..registerFactory(() => InboxCubit(_NoInbox(), DismissedPairs(settings)))
       ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerFactory(() => SchedulesCubit(_NoSchedules()))
-      ..registerFactoryParam<ScheduleFormCubit, String?, bool?>(
-        (id, salary) => ScheduleFormCubit(
+      ..registerSingleton<ReminderChannel>(reminders)
+      ..registerFactory(() => RemindersCubit(_NoSchedules(), reminders))
+      ..registerFactoryParam<ScheduleFormCubit, String?, bool?>((id, salary) {
+        forms.add(id);
+        return ScheduleFormCubit(
           _NoSchedules(),
           id: id,
           salary: salary ?? false,
-        ),
-      )
+        );
+      })
       ..registerFactory(() => BackupCubit(_EmptyLedger(), _NoFiles(), settings))
       ..registerFactory(
         () => HelpCubit(
@@ -799,9 +840,16 @@ void main() {
 
     await tester.tap(find.text(t.app.more));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byType(Switch));
+    final hide = find.descendant(
+      of: find.ancestor(
+        of: find.text(t.settings.hideAmounts),
+        matching: find.byType(GlassListRow),
+      ),
+      matching: find.byType(Switch),
+    );
+    await tester.ensureVisible(hide);
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(Switch));
+    await tester.tap(hide);
     await tester.pumpAndSettle();
     await tester.tap(find.text(t.app.operations));
     await tester.pumpAndSettle();
@@ -941,6 +989,9 @@ void main() {
     );
     final credit = find.textContaining('cbr-xml-daily.ru');
     await tester.scrollUntilVisible(credit, 200, scrollable: page.first);
+    // To the end, where nothing hides under the bar.
+    await tester.drag(page.first, const Offset(0, -1000));
+    await tester.pumpAndSettle();
     expect(credit, findsOneWidget);
     await tester.tap(find.text(t.app.help));
     await tester.pumpAndSettle();
@@ -952,6 +1003,33 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.help.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  group('a tapped reminder', () {
+    testWidgets('of the day opens the regular payments', (tester) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt));
+      await tester.pumpAndSettle();
+
+      reminders.taps.add(const ReminderTap('rent'));
+      await tester.pumpAndSettle();
+      expect(find.byType(SchedulesPage), findsOneWidget);
+      expect(forms, isEmpty);
+    });
+
+    testWidgets('of the day before opens the payment', (tester) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt));
+      await tester.pumpAndSettle();
+
+      reminders.taps.add(const ReminderTap('rent', early: true));
+      await tester.pumpAndSettle();
+      // The form of that payment opened, not the list. Here the payment is
+      // gone, as one deleted since the reminder came, so the form closed at
+      // once.
+      expect(forms, ['rent']);
+      expect(find.byType(SchedulesPage), findsNothing);
+      expect(find.byType(ScheduleFormPage), findsNothing);
+      expect(find.byType(GlassNavBar), findsOneWidget);
+    });
   });
 
   testWidgets('the more tab opens the window of a statement', (tester) async {
@@ -974,16 +1052,16 @@ void main() {
     await tester.tap(find.text(t.app.more));
     await tester.pumpAndSettle();
     final code = find.text(t.app.sourceCode);
-    await tester.scrollUntilVisible(
-      code,
-      200,
-      scrollable: find
-          .descendant(
-            of: find.byType(MorePage),
-            matching: find.byType(Scrollable),
-          )
-          .first,
-    );
+    final page = find
+        .descendant(
+          of: find.byType(MorePage),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    await tester.scrollUntilVisible(code, 200, scrollable: page);
+    // To the end, where nothing hides under the bar.
+    await tester.drag(page, const Offset(0, -1000));
+    await tester.pumpAndSettle();
     return code;
   }
 

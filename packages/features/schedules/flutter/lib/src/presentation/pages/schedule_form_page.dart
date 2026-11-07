@@ -15,10 +15,18 @@ import 'package:schedules_flutter/src/presentation/widgets/schedule_bits.dart';
 class ScheduleFormPage extends StatelessWidget {
   /// Creates the page. [onClose] is called when the form is done or
   /// cancelled.
-  const ScheduleFormPage({required this.onClose, super.key});
+  const ScheduleFormPage({
+    required this.onClose,
+    this.onEnableReminders,
+    super.key,
+  });
 
   /// Closes the form.
   final VoidCallback onClose;
+
+  /// Turns the reminders of Birka on, when they are off and the payment is
+  /// to remind (ADR 0025).
+  final VoidCallback? onEnableReminders;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +57,11 @@ class ScheduleFormPage extends StatelessWidget {
             builder: (context, state) => switch (state.status) {
               ScheduleFormStatus.loading ||
               ScheduleFormStatus.missing => const SizedBox.shrink(),
-              _ => _Form(state: state, onClose: onClose),
+              _ => _Form(
+                state: state,
+                onClose: onClose,
+                onEnableReminders: onEnableReminders,
+              ),
             },
           ),
         ),
@@ -59,10 +71,15 @@ class ScheduleFormPage extends StatelessWidget {
 }
 
 class _Form extends StatelessWidget {
-  const _Form({required this.state, required this.onClose});
+  const _Form({
+    required this.state,
+    required this.onClose,
+    required this.onEnableReminders,
+  });
 
   final ScheduleFormState state;
   final VoidCallback onClose;
+  final VoidCallback? onEnableReminders;
 
   @override
   Widget build(BuildContext context) {
@@ -274,6 +291,54 @@ class _Form extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: BirkaTokens.spaceLg),
+                SectionLabel(
+                  t.schedules.remindSection,
+                  color: colors.textMuted,
+                ),
+                const SizedBox(height: BirkaTokens.spaceXs),
+                ChipSwitch<ScheduleReminder>(
+                  options: {
+                    for (final reminder in ScheduleReminder.values)
+                      reminder:
+                          t.schedules.reminder[reminder.name] ?? reminder.name,
+                  },
+                  selected: state.reminder,
+                  onChanged: cubit.reminderChanged,
+                ),
+                const SizedBox(height: BirkaTokens.spaceXs),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BirkaTokens.spaceXxs,
+                  ),
+                  child: FadingText(
+                    reminderLine(
+                      schedule: state.schedule,
+                      settings: state.reminders,
+                      now: _now(state.today),
+                    ),
+                    style: styles.caption.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ),
+                // A payment that is to remind while the reminders are off
+                // offers to turn them on.
+                AnimatedColumn(
+                  children: [
+                    if (onEnableReminders case final enable?
+                        when state.reminder != ScheduleReminder.none &&
+                            !(state.reminders?.notify ?? true))
+                      Align(
+                        key: const ValueKey('enable'),
+                        alignment: Alignment.centerLeft,
+                        child: AccentLink(
+                          label: t.schedules.remindEnable,
+                          onTap: enable,
+                        ),
+                      ),
+                  ],
                 ),
                 if (state.editing) ...[
                   const SizedBox(height: BirkaTokens.spaceLg),
@@ -696,4 +761,10 @@ class _Line extends StatelessWidget {
       ),
     );
   }
+}
+
+/// This moment of the day, on [today] of the form, which a test may set.
+DateTime _now(CivilDate today) {
+  final clock = DateTime.now();
+  return DateTime(today.year, today.month, today.day, clock.hour, clock.minute);
 }

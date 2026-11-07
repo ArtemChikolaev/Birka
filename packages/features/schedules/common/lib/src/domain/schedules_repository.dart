@@ -1,6 +1,7 @@
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:schedules_common/src/domain/payday_settings.dart';
+import 'package:schedules_common/src/domain/reminders.dart';
 import 'package:schedules_common/src/domain/schedule_draft.dart';
 
 /// What the regular payments need of the ledger and of the device.
@@ -37,6 +38,13 @@ abstract interface class SchedulesRepository {
 
   /// Keeps [settings] on this device.
   Future<void> saveSettings(PaydaySettings settings);
+
+  /// How this device reminds of the payments, now and after every change
+  /// (ADR 0025).
+  Stream<ReminderSettings> watchReminders();
+
+  /// Keeps [settings] of the reminders on this device.
+  Future<void> saveReminders(ReminderSettings settings);
 
   /// Adds a regular payment.
   Future<Schedule> add(ScheduleDraft draft);

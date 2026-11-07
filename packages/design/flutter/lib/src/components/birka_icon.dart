@@ -117,6 +117,9 @@ enum BirkaGlyph {
   /// A tray of what came in.
   inbox,
 
+  /// A bell, for a reminder.
+  bell,
+
   /// A mark of attention in a circle.
   alert
   ;

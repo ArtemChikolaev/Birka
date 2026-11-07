@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:backup_common/backup_common.dart' show turnDemo;
+import 'package:backup_common/backup_common.dart' show demoStateIn, turnDemo;
 import 'package:birka_mobile/app/app.dart';
 import 'package:birka_mobile/app/dependencies.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rates/rates.dart';
+import 'package:schedules_common/schedules_common.dart' show ReminderScheduler;
 import 'package:settings_common/settings_common.dart';
 
 /// The app on the ledger of the device or on its demo. A turn of the demo
@@ -51,6 +52,7 @@ class _BirkaRootState extends State<BirkaRoot> {
   void initState() {
     super.initState();
     _followRates();
+    _followReminders();
   }
 
   @override
@@ -72,6 +74,14 @@ class _BirkaRootState extends State<BirkaRoot> {
         .listen((_) => unawaited(rates.refresh()));
   }
 
+  /// Keeps the reminders of the phone in step with the payments of the
+  /// device (ADR 0025). The demo leaves them as they stand: its payments are
+  /// not the person's.
+  void _followReminders() {
+    if (demoStateIn(widget.settings).isOn) return;
+    widget.getIt<ReminderScheduler>().start();
+  }
+
   Future<void> _turnDemo({required bool on}) async {
     // The app of the old ledger goes before the ledger does.
     setState(() => _turning = true);
@@ -81,6 +91,7 @@ class _BirkaRootState extends State<BirkaRoot> {
     final onboarding = await openLedger(widget.getIt, widget.settings);
     if (!mounted) return;
     _followRates();
+    _followReminders();
     setState(() {
       _onboarding = onboarding;
       _opening++;

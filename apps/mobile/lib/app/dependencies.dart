@@ -20,8 +20,15 @@ import 'package:overview_common/overview_common.dart';
 import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart';
 import 'package:schedules_common/schedules_common.dart';
+import 'package:schedules_flutter/schedules_flutter.dart'
+    show LocalReminderChannel;
 import 'package:settings_common/settings_common.dart';
 import 'package:transactions_common/transactions_common.dart';
+
+/// The notifications of the phone. One serves the whole life of the app, as
+/// a ledger opens anew, so that the tap that opened the app opens the
+/// payments once (ADR 0025).
+final ReminderChannel _reminders = LocalReminderChannel();
 
 /// The language that the device reports.
 String deviceLanguage() => PlatformDispatcher.instance.locale.languageCode;
@@ -67,7 +74,8 @@ void registerDependencies(
     )
     ..registerSingleton<BackupFiles>(const FilePickerBackupFiles())
     ..registerSingleton<StatementFiles>(const FilePickerStatementFiles())
-    ..registerSingleton<HelpLinks>(const UrlLauncherHelpLinks());
+    ..registerSingleton<HelpLinks>(const UrlLauncherHelpLinks())
+    ..registerSingleton<ReminderChannel>(_reminders);
   registerAccounts(getIt);
   registerBackup(getIt, settings);
   registerCategories(getIt);

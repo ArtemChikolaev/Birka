@@ -271,6 +271,18 @@ final class FakeSchedulesRepository implements SchedulesRepository {
     changed();
   }
 
+  /// How the device reminds.
+  ReminderSettings reminders = const ReminderSettings();
+
+  @override
+  Stream<ReminderSettings> watchReminders() => _watch(() => reminders);
+
+  @override
+  Future<void> saveReminders(ReminderSettings settings) async {
+    reminders = settings;
+    changed();
+  }
+
   @override
   Future<Schedule> add(ScheduleDraft draft) async {
     added.add(draft);

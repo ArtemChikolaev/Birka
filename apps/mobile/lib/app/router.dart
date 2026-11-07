@@ -29,7 +29,7 @@ import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart' show ReportsCubit;
 import 'package:reports_flutter/reports_flutter.dart';
 import 'package:schedules_common/schedules_common.dart'
-    show ScheduleFormCubit, SchedulesCubit;
+    show RemindersCubit, ScheduleFormCubit, SchedulesCubit;
 import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_common/settings_common.dart' show SettingsCubit;
 import 'package:settings_flutter/settings_flutter.dart'
@@ -223,6 +223,7 @@ GoRouter buildRouter(
                   providers: [
                     BlocProvider(create: (_) => getIt<SettingsCubit>()),
                     BlocProvider(create: (_) => getIt<InboxSummaryCubit>()),
+                    BlocProvider(create: (_) => getIt<RemindersCubit>()),
                   ],
                   child: MorePage(
                     links: getIt<HelpLinks>(),
@@ -475,7 +476,11 @@ Page<void> _scheduleFormPage(GetIt getIt, {String? id, bool salary = false}) =>
       child: BlocProvider(
         create: (_) => getIt<ScheduleFormCubit>(param1: id, param2: salary),
         child: Builder(
-          builder: (context) => ScheduleFormPage(onClose: () => context.pop()),
+          builder: (context) => ScheduleFormPage(
+            onClose: () => context.pop(),
+            onEnableReminders: () =>
+                unawaited(_enableReminders(context, getIt)),
+          ),
         ),
       ),
     );
@@ -492,5 +497,18 @@ Future<void> _pickMonthStart(BuildContext context, GetIt getIt) async {
     if (day != null) await settings.monthStartChanged(day);
   } finally {
     await settings.close();
+  }
+}
+
+/// Turns the reminders on from the form of a payment whose reminders are
+/// off, as «Ещё» does (ADR 0025).
+Future<void> _enableReminders(BuildContext context, GetIt getIt) async {
+  final reminders = getIt<RemindersCubit>();
+  try {
+    // The settings and the payments come in while the phone answers.
+    await reminders.accessChecked();
+    if (context.mounted) await turnRemindersOn(context, reminders);
+  } finally {
+    await reminders.close();
   }
 }

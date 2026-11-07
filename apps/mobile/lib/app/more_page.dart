@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:help_common/help_common.dart';
 import 'package:inbox_flutter/inbox_flutter.dart';
 import 'package:l10n/l10n.dart';
+import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_flutter/settings_flutter.dart';
 
 /// The tab with everything that has no tab of its own, and the settings.
@@ -81,6 +82,8 @@ class MorePage extends StatelessWidget {
           ),
           const SizedBox(height: BirkaTokens.spaceLg),
           const SettingsSection(),
+          const SizedBox(height: BirkaTokens.spaceLg),
+          const RemindersSection(),
           const SizedBox(height: BirkaTokens.spaceLg),
           SectionLabel(t.app.support, color: colors.textMuted),
           const SizedBox(height: BirkaTokens.spaceXs),

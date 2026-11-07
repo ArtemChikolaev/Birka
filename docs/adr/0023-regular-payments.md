@@ -96,6 +96,8 @@
 13. Reminders need a plugin for notifications, the first day of a month is a
     setting of its own, and the site gets its boards first; they come with
     their own changes and add their points here.
+    The reminders came with [ADR 0025](0025-reminders.md) and the first day
+    of a month with [ADR 0024](0024-month-start.md).
 14. A payment keeps what was done to its last times (`ScheduleLast`, from
     version 6 of the schema): posted, skipped or found in a statement, the
     first and the last of those times, the transaction of the last one, the
