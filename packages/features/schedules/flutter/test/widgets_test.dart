@@ -162,6 +162,21 @@ void main() {
       expect(opened, ['car']);
     });
 
+    testWidgets('leaves out the next 30 days while nothing comes in them', (
+      tester,
+    ) async {
+      // The only payment waits today, and its next time is a month on.
+      final repository = FakeSchedulesRepository()
+        ..schedules = [
+          schedule('rent', 'Аренда', 45000, boardToday, categoryId: 'home'),
+        ];
+      await pump(tester, repository, page());
+
+      expect(find.text('ЖДЁТ ПОДТВЕРЖДЕНИЯ'), findsOneWidget);
+      expect(find.text('БЛИЖАЙШИЕ 30 ДНЕЙ'), findsNothing);
+      expect(find.text('ВСЕ РЕГУЛЯРНЫЕ · 1'), findsOneWidget);
+    });
+
     testWidgets('a payment that waits is posted, and a toast says so', (
       tester,
     ) async {

@@ -66,7 +66,9 @@
      all of them. Without a salary to count until it asks for the payday,
      and without accounts it stays away.
    - «Регулярные платежи» lists the payments that wait for the person with
-     «Провести» and «Пропустить», the next 30 days and every payment.
+     «Провести» and «Пропустить», the next 30 days and every payment. The
+     next 30 days stay away while no time comes in them and no salary is
+     counted, as when the only payment waits today.
    - The form of a payment is a sheet, as the other forms are
      ([ADR 0017](0017-motion.md)). Its name and amount come from a sheet with
      one field, which the note of an operation now shares.
