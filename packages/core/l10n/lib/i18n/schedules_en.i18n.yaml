@@ -170,6 +170,7 @@ partsOne: The whole sum comes on one day.
 partsTwo: "Half and half: the advance on day $advance, the salary on day $day."
 amountMonthly: Amount a month
 halves: $amount as the advance and as the salary
+halvesUneven: "The sum does not split into equal halves: change the cents"
 advanceDay: Advance
 restDay: Salary
 nextAdvance: advance, $date

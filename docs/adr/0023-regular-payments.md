@@ -131,9 +131,11 @@
     transactions keep the name of the payment. The copy of the ledger is
     version 5 with `advanceDay`.
 19. The form of an income asks how it comes, «Одной суммой» or «С
-    авансом». With the advance, its amount is what comes in a month and is
-    saved as two equal halves (an odd minor unit goes), and its two days take
-    the place of «Повторять каждый». The next time is the nearest of the two
+    авансом». With the advance, its amount is what comes in a month, split
+    into two equal halves with `Money.split`; both times carry the one amount
+    of the rule, so a sum that does not split evenly is not saved, and the
+    form says so under it. Its two days take the place of «Повторять
+    каждый». The next time is the nearest of the two
     days, and it moves only when a day does, so an advance that waits for the
     person stays through a change.
 20. The money of the days counts until the salary, not until its advance:

@@ -11,6 +11,7 @@ class FadingText extends StatelessWidget {
     this.style,
     this.maxLines,
     this.overflow,
+    this.textAlign,
     super.key,
   });
 
@@ -26,6 +27,9 @@ class FadingText extends StatelessWidget {
   /// How it is cut.
   final TextOverflow? overflow;
 
+  /// How its lines align.
+  final TextAlign? textAlign;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
@@ -40,6 +44,7 @@ class FadingText extends StatelessWidget {
         style: style,
         maxLines: maxLines,
         overflow: overflow,
+        textAlign: textAlign,
       ),
     );
   }

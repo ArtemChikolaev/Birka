@@ -178,6 +178,7 @@ partsOne: Вся сумма приходит в один день.
 partsTwo: "Пополам: аванс $advance-го, зарплата $day-го."
 amountMonthly: Сумма в месяц
 halves: по $amount авансом и зарплатой
+halvesUneven: Сумма не делится пополам — поправьте копейки
 advanceDay: Аванс
 restDay: Зарплата
 nextAdvance: аванс, $date

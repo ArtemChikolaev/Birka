@@ -181,6 +181,33 @@ void main() {
     expect(saved.next, CivilDate(2026, 11, 17));
   });
 
+  test('a sum of a month that does not split into equal halves is not '
+      'saved', () async {
+    final cubit = ScheduleFormCubit(repository, salary: true);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit
+      ..amountChanged(12000001)
+      ..halvesChanged(halves: true);
+
+    expect(cubit.state.uneven, isTrue);
+    expect(cubit.state.part, isNull);
+    expect(cubit.state.valid, isFalse);
+    await cubit.save();
+    expect(await ledger.watchSchedules().first, isEmpty);
+
+    cubit.amountChanged(12000002);
+    expect(cubit.state.uneven, isFalse);
+    expect(cubit.state.part, Money(6000001, Currency.rub));
+    // One sum keeps every kopeck.
+    cubit
+      ..amountChanged(12000001)
+      ..halvesChanged(halves: false);
+    expect(cubit.state.part, Money(12000001, Currency.rub));
+    expect(cubit.state.valid, isTrue);
+  });
+
   test('only an income comes in halves', () async {
     final cubit = ScheduleFormCubit(repository, salary: true);
     addTearDown(cubit.close);

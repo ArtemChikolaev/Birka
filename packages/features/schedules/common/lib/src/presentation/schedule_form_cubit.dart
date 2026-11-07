@@ -140,14 +140,19 @@ final class ScheduleFormState {
   /// Whether it is an income that comes in halves: an advance and the rest.
   bool get halves => kind == TransactionKind.income && advanceDay != null;
 
-  /// What each time brings: half of [amount] for a salary in halves.
-  Money? get part => switch (account) {
-    final account? => Money(
-      halves ? amountMinor ~/ 2 : amountMinor,
-      account.currency,
-    ),
-    null => null,
-  };
+  /// What each time brings: half of [amount] for a salary in halves, or
+  /// `null` when the sum of a month does not split into equal halves, since
+  /// both times carry the one amount of the rule.
+  Money? get part {
+    final amount = this.amount;
+    if (amount == null || !halves) return amount;
+    final [advance, rest] = amount.split(2);
+    return advance == rest ? advance : null;
+  }
+
+  /// Whether the sum of a month of a salary in halves does not split into
+  /// two equal halves.
+  bool get uneven => halves && amount != null && part == null;
 
   /// Whether its next time is the advance of a salary in halves.
   bool get nextIsAdvance => switch (advanceDay) {

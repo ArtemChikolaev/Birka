@@ -506,18 +506,21 @@ class _Amount extends StatelessWidget {
             ),
             AnimatedColumn(
               children: [
-                if (part != null && part.isPositive && state.halves)
-                  SizedBox(
+                if (state.halves && state.amountMinor > 0)
+                  Center(
                     key: const ValueKey('halves'),
-                    width: double.infinity,
-                    child: Text(
-                      HiddenAmounts.mask(
-                        context,
-                        t.schedules.halves(amount: formatMoney(part)),
-                      ),
+                    child: FadingText(
+                      part == null
+                          ? t.schedules.halvesUneven
+                          : HiddenAmounts.mask(
+                              context,
+                              t.schedules.halves(amount: formatMoney(part)),
+                            ),
                       textAlign: TextAlign.center,
                       style: styles.caption.copyWith(
-                        color: colors.textSecondary,
+                        color: part == null
+                            ? colors.negative
+                            : colors.textSecondary,
                       ),
                     ),
                   ),

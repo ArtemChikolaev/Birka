@@ -2491,6 +2491,10 @@ class Translations$schedules$en {
   String halves({required Object amount}) =>
       '${amount} as the advance and as the salary';
 
+  /// en: 'The sum does not split into equal halves: change the cents'
+  String get halvesUneven =>
+      'The sum does not split into equal halves: change the cents';
+
   /// en: 'Advance'
   String get advanceDay => 'Advance';
 
@@ -4389,6 +4393,8 @@ extension on Translations {
           'schedules.halves' =>
             ({required Object amount}) =>
                 '${amount} as the advance and as the salary',
+          'schedules.halvesUneven' =>
+            'The sum does not split into equal halves: change the cents',
           'schedules.advanceDay' => 'Advance',
           'schedules.restDay' => 'Salary',
           'schedules.nextAdvance' =>

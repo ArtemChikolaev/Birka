@@ -58,6 +58,13 @@ void main() {
     expect(find.text('5-го'), findsOneWidget);
     expect(find.text('аванс, 20 ноября, пт'), findsOneWidget);
 
+    await type(tester, 'СУММА В МЕСЯЦ', '120 000,01');
+    expect(
+      find.text('Сумма не делится пополам — поправьте копейки'),
+      findsOneWidget,
+    );
+    await type(tester, 'СУММА В МЕСЯЦ', '120 000');
+
     await tester.tap(find.text('Одной суммой'));
     await tester.pumpAndSettle();
 

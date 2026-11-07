@@ -2078,6 +2078,8 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   @override
   String halves({required Object amount}) => 'по ${amount} авансом и зарплатой';
   @override
+  String get halvesUneven => 'Сумма не делится пополам — поправьте копейки';
+  @override
   String get advanceDay => 'Аванс';
   @override
   String get restDay => 'Зарплата';
@@ -3942,6 +3944,8 @@ extension on TranslationsRu {
           'schedules.amountMonthly' => 'Сумма в месяц',
           'schedules.halves' =>
             ({required Object amount}) => 'по ${amount} авансом и зарплатой',
+          'schedules.halvesUneven' =>
+            'Сумма не делится пополам — поправьте копейки',
           'schedules.advanceDay' => 'Аванс',
           'schedules.restDay' => 'Зарплата',
           'schedules.nextAdvance' =>
