@@ -143,7 +143,7 @@ class SchedulesPage extends StatelessWidget {
                     ScheduleDot(view, it.schedule),
                   ],
                 ),
-                title: it.schedule.name,
+                title: occurrenceName(it.schedule, it.on),
                 subtitle: scheduleWhere(view, it.schedule),
                 trailing: Text(
                   mask(context, scheduleAmount(it.schedule)),
@@ -159,16 +159,7 @@ class SchedulesPage extends StatelessWidget {
         Text(
           mask(
             context,
-            switch (plan.payday) {
-              final payday? when plan.until == SpendUntil.payday =>
-                t.schedules.leftAfterPayday(
-                  date: fullDate(payday, view.today),
-                  amount: formatMoney(plan.morning - plan.paid),
-                ),
-              _ => t.schedules.leftAfterMonth(
-                amount: formatMoney(plan.morning - plan.paid),
-              ),
-            },
+            _leftAfter(plan, view.today),
           ),
           style: styles.caption.copyWith(color: colors.textMuted),
         ),
@@ -200,7 +191,7 @@ class SchedulesPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    mask(context, scheduleAmount(schedule)),
+                    mask(context, scheduleTotal(schedule)),
                     style: styles.bodyStrong.copyWith(
                       color: scheduleInk(context, schedule),
                     ),
@@ -219,6 +210,29 @@ class SchedulesPage extends StatelessWidget {
       ),
     ];
   }
+}
+
+/// What the accounts hold at the end of [plan], before everyday spending:
+/// with the advances that come before it, which the line says.
+String _leftAfter(SpendingPlan plan, CivilDate today) {
+  final amount = formatMoney(plan.morning + plan.advanced - plan.paid);
+  final advance = plan.advances.isNotEmpty;
+  return switch (plan.payday) {
+    final payday? when plan.until == SpendUntil.payday =>
+      advance
+          ? t.schedules.leftAfterPaydayAdvance(
+              date: fullDate(payday, today),
+              amount: amount,
+            )
+          : t.schedules.leftAfterPayday(
+              date: fullDate(payday, today),
+              amount: amount,
+            ),
+    _ =>
+      advance
+          ? t.schedules.leftAfterMonthAdvance(amount: amount)
+          : t.schedules.leftAfterMonth(amount: amount),
+  };
 }
 
 /// The color of the line of [schedule] on the day it went through: posted
@@ -284,7 +298,7 @@ class _WaitingState extends State<_Waiting> {
                   children: [
                     Text(
                       t.schedules.waitingDay(
-                        name: schedule.name,
+                        name: occurrenceName(schedule, schedule.next),
                         day: dayLabel(schedule.next, view.today),
                       ),
                       style: styles.bodyStrong.copyWith(color: colors.text),

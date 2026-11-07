@@ -149,7 +149,8 @@ final class SchedulesView {
     null => null,
   };
 
-  /// The regular income that brings the next salary to a counted account.
+  /// The regular income that brings the next salary to a counted account, its
+  /// advance aside.
   late final Schedule? salary = () {
     final ids = {for (final row in counted) row.account.id};
     Schedule? found;
@@ -160,7 +161,7 @@ final class SchedulesView {
         continue;
       }
       var time = schedule.next;
-      while (time.compareTo(today) <= 0) {
+      while (time.compareTo(today) <= 0 || schedule.isAdvance(time)) {
         time = schedule.after(time);
       }
       if (first == null || time.compareTo(first) < 0) {

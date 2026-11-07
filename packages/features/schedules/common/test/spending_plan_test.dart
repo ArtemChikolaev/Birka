@@ -275,6 +275,104 @@ void main() {
     expect(it.leftToday, rub(1124));
   });
 
+  group('with an advance', () {
+    // The salary of 120 000 ₽ in halves: the advance on the 20th, the rest
+    // on the 5th, so the 5th brought only half and the card holds less.
+    final salary = Schedule(
+      id: 'salary',
+      kind: TransactionKind.income,
+      name: 'salary',
+      accountId: 'card',
+      amount: rub(60000),
+      every: ScheduleEvery.month,
+      day: 5,
+      advanceDay: 20,
+      next: CivilDate(2026, 11, 20),
+      onDay: ScheduleOnDay.ask,
+      reminder: ScheduleReminder.onDay,
+    );
+    final payments = [
+      for (final it in schedules)
+        if (it.id != 'salary') it,
+      salary,
+    ];
+
+    SpendingPlan? halves({
+      SpendUntil until = SpendUntil.payday,
+      List<AccountBalance>? counted,
+      CivilDate? on,
+    }) => SpendingPlan.of(
+      today: on ?? today,
+      until: until,
+      currency: Currency.rub,
+      schedules: payments,
+      counted:
+          counted ??
+          [
+            account('card', 26400 - 620),
+            account('cash', 3200, type: AccountType.cash),
+          ],
+      todays: [spending(620)],
+      aside: rub(10000),
+    );
+
+    test('counts until the salary and takes the advance in', () {
+      final it = halves()!;
+
+      expect(it.payday, CivilDate(2026, 12, 5));
+      expect(it.days, 17);
+      expect(it.morning, rub(29600));
+      expect(it.advances.map((a) => a.on), [CivilDate(2026, 11, 20)]);
+      expect(it.advanced, rub(60000));
+      expect(it.paid, rub(49949));
+      expect(it.free, rub(29651));
+      expect(it.near?.money, rub(19600));
+      expect(it.near?.days, 2);
+      expect(it.perDay, rub(1744));
+      expect(it.leftToday, rub(1124));
+      expect(it.short, isNull);
+    });
+
+    test('takes the advance in until the end of the month too', () {
+      final it = halves(until: SpendUntil.monthEnd)!;
+
+      expect(it.advanced, rub(60000));
+      expect(it.paid, rub(45650));
+      expect(it.perDay, rub(2611));
+    });
+
+    test('gives a day no more than the accounts allow before the advance', () {
+      // 3 200 ₽ on the card cannot keep 10 000 ₽ aside until the advance.
+      final empty = halves(counted: [account('card', 3200 - 620)])!;
+
+      expect(empty.free, rub(3251));
+      expect(empty.near?.money, rub(-6800));
+      expect(empty.perDay, rub(0));
+      expect(empty.short, rub(6800));
+
+      final thin = halves(
+        counted: [
+          account('card', 7800 - 620),
+          account('cash', 3200, type: AccountType.cash),
+        ],
+      )!;
+      // 11 000 ₽ less 10 000 ₽ aside for the 18th and the 19th, though the
+      // whole 17 days would allow 650 ₽ a day.
+      expect(thin.near?.money, rub(1000));
+      expect(thin.free.minorUnits ~/ thin.days ~/ 100, 650);
+      expect(thin.perDay, rub(500));
+      expect(thin.short, isNull);
+    });
+
+    test('waits for the advance of today without a limit before it', () {
+      final it = halves(on: CivilDate(2026, 11, 20))!;
+
+      expect(it.advances.map((a) => a.on), [CivilDate(2026, 11, 20)]);
+      expect(it.near, isNull);
+      expect(it.payday, CivilDate(2026, 12, 5));
+    });
+  });
+
   test('gives no money to the days when the payments take it all', () {
     final it = plan(aside: 50000)!;
 

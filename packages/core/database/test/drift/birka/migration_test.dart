@@ -13,6 +13,7 @@ import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
+import 'generated/schema_v7.dart' as v7;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -290,6 +291,60 @@ void main() {
         expect(schedule.lastTransactionId, isNull);
         expect(schedule.lastImportId, isNull);
         expect(schedule.lastAt, isNull);
+      },
+    );
+  });
+
+  test('a regular payment keeps its day and has no advance in v7', () async {
+    const at = '2026-11-07T12:00:00.000Z';
+    await verifier.testWithDataIntegrity(
+      oldVersion: 6,
+      newVersion: 7,
+      createOld: v6.DatabaseAtV6.new,
+      createNew: v7.DatabaseAtV7.new,
+      openTestedDatabase: BirkaDatabase.new,
+      createItems: (batch, old) {
+        batch
+          ..insert(
+            old.accounts,
+            v6.AccountsCompanion.insert(
+              id: 'card',
+              createdAt: at,
+              updatedAt: at,
+              name: 'Card',
+              type: 'debit',
+              currency: 'RUB',
+              decimalDigits: 2,
+            ),
+          )
+          ..insert(
+            old.schedules,
+            v6.SchedulesCompanion.insert(
+              id: 'salary',
+              createdAt: at,
+              updatedAt: at,
+              kind: 'income',
+              name: 'Salary',
+              accountId: 'card',
+              amountMinor: 12000000,
+              every: 'month',
+              day: 5,
+              nextOn: '2026-12-05',
+              onDay: 'ask',
+              reminder: 'onDay',
+              lastDone: const Value('posted'),
+              lastFrom: const Value('2026-11-05'),
+              lastOn: const Value('2026-11-05'),
+              lastAt: const Value('2026-11-05T09:00:00.000Z'),
+            ),
+          );
+      },
+      validateItems: (migrated) async {
+        final schedule = await migrated.select(migrated.schedules).getSingle();
+        expect(schedule.day, 5);
+        expect(schedule.nextOn, '2026-12-05');
+        expect(schedule.lastDone, 'posted');
+        expect(schedule.advanceDay, isNull);
       },
     );
   });

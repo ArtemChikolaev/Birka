@@ -11,11 +11,13 @@ typedef Occurrence = ({Schedule schedule, CivilDate on});
 /// How much can be spent each day until the salary or until the end of the
 /// month (ADR 0023).
 ///
-/// It takes the money of the counted accounts as it was in the morning, less
-/// the regular payments that leave them before the end and what stays aside,
-/// and splits it evenly between the days left, today included. What was spent
-/// today comes out of the share of today, so that it lowers the days to come
-/// only from tomorrow on.
+/// It takes the money of the counted accounts as it was in the morning, with
+/// the advances of the salary that come before the end, less the regular
+/// payments that leave them before the end and what stays aside, and splits
+/// it evenly between the days left, today included. Until an advance comes, a
+/// day takes no more than the accounts allow without it. What was spent today
+/// comes out of the share of today, so that it lowers the days to come only
+/// from tomorrow on.
 @immutable
 final class SpendingPlan {
   const SpendingPlan._({
@@ -29,6 +31,9 @@ final class SpendingPlan {
     required this.paid,
     required this.aside,
     required this.spentToday,
+    required this.advances,
+    required this.advanced,
+    required this.near,
   });
 
   /// The plan of [today] for the [counted] accounts, all in [currency], or
@@ -36,11 +41,12 @@ final class SpendingPlan {
   /// them.
   ///
   /// A salary is the nearest time after today of a regular income to one of
-  /// the counted accounts. The payments are the times until the end of the
-  /// regular expenses from those accounts and of the regular transfers from
-  /// them to other accounts, the ones that wait for the person included.
-  /// Regular incomes before the salary do not count, so that the plan never
-  /// promises money that may not come. Today's spending is what the person
+  /// the counted accounts, its advance aside. The payments are the times
+  /// until the end of the regular expenses from those accounts and of the
+  /// regular transfers from them to other accounts, the ones that wait for
+  /// the person included. Regular incomes before the salary do not count, so
+  /// that the plan never promises money that may not come, but the advance of
+  /// a salary does, as the salary itself. Today's spending is what the person
   /// recorded on those accounts today: the transactions of regular payments
   /// are part of the payments instead, and so is the operation of a
   /// statement that brought a time of one.
@@ -69,6 +75,14 @@ final class SpendingPlan {
           for (final on in schedule.timesUntil(end))
             (schedule: schedule, on: on),
     ]..sort((a, b) => a.on.compareTo(b.on));
+    final advances = <Occurrence>[
+      for (final schedule in schedules)
+        if (schedule.kind == TransactionKind.income &&
+            schedule.advanceDay != null &&
+            ids.contains(schedule.accountId))
+          for (final on in schedule.timesUntil(end))
+            if (schedule.isAdvance(on)) (schedule: schedule, on: on),
+    ]..sort((a, b) => a.on.compareTo(b.on));
     // A statement that brought a time of a payment stands for it.
     final found = {
       for (final schedule in schedules)
@@ -94,6 +108,22 @@ final class SpendingPlan {
       0,
       (sum, row) => sum + row.balance.minorUnits,
     );
+    int sumOf(Iterable<Occurrence> times) =>
+        times.fold(0, (sum, it) => sum + it.schedule.amount.minorUnits);
+    // The days before the first advance live on what the accounts hold.
+    final first = advances.firstOrNull?.on;
+    final before = first != null && first.compareTo(today) > 0
+        ? (
+            money: Money(
+              balance +
+                  spent -
+                  sumOf(payments.where((it) => it.on.compareTo(first) < 0)) -
+                  aside.minorUnits,
+              currency,
+            ),
+            days: today.daysUntil(first),
+          )
+        : null;
     return SpendingPlan._(
       today: today,
       until: until,
@@ -102,12 +132,12 @@ final class SpendingPlan {
       days: today.daysUntil(end) + 1,
       morning: Money(balance + spent, currency),
       payments: List.unmodifiable(payments),
-      paid: Money(
-        payments.fold(0, (sum, it) => sum + it.schedule.amount.minorUnits),
-        currency,
-      ),
+      paid: Money(sumOf(payments), currency),
       aside: aside,
       spentToday: Money(spent, currency),
+      advances: List.unmodifiable(advances),
+      advanced: Money(sumOf(advances), currency),
+      near: before,
     );
   }
 
@@ -142,12 +172,38 @@ final class SpendingPlan {
   /// What the person spent today on the counted accounts.
   final Money spentToday;
 
-  /// What is left for the days: [morning] less [paid] and [aside]. It is
-  /// negative when the money does not cover the payments.
-  Money get free => morning - paid - aside;
+  /// The times of the advances of a salary until [end], the earliest first.
+  final List<Occurrence> advances;
 
-  /// What each day may take, in whole units of the currency.
-  Money get perDay => _whole(free.isPositive ? free.minorUnits ~/ days : 0);
+  /// What [advances] bring together.
+  final Money advanced;
+
+  /// What is left for the days before the first advance, and how many they
+  /// are, today included, or `null` without an advance after today.
+  final ({Money money, int days})? near;
+
+  /// What is left for the days: [morning] and [advanced] less [paid] and
+  /// [aside]. It is negative when the money does not cover the payments.
+  Money get free => morning + advanced - paid - aside;
+
+  /// What the money lacks: what the payments take beyond it, or what the days
+  /// before the advance lack, or `null` when it is enough.
+  Money? get short {
+    if (free.isNegative) return -free;
+    if (near?.money case final money? when money.isNegative) return -money;
+    return null;
+  }
+
+  /// What each day may take, in whole units of the currency, and no more than
+  /// the days before the advance allow.
+  Money get perDay {
+    if (!free.isPositive) return _whole(0);
+    var rate = free.minorUnits ~/ days;
+    if (near case final near?) {
+      rate = math.min(rate, math.max(0, near.money.minorUnits) ~/ near.days);
+    }
+    return _whole(rate);
+  }
 
   /// What today may still take: negative when today took more than its
   /// share.
@@ -161,7 +217,12 @@ final class SpendingPlan {
   Money get tomorrow {
     if (days <= 1) return _whole(0);
     final rest = (free - spentToday).minorUnits;
-    return _whole(math.max(0, rest) ~/ (days - 1));
+    var rate = math.max(0, rest) ~/ (days - 1);
+    if (near case final near? when near.days > 1) {
+      final left = (near.money - spentToday).minorUnits;
+      rate = math.min(rate, math.max(0, left) ~/ (near.days - 1));
+    }
+    return _whole(rate);
   }
 
   Money _whole(int minorUnits) {
@@ -195,7 +256,7 @@ final class SpendingPlan {
         continue;
       }
       var time = schedule.next;
-      while (time.compareTo(today) <= 0) {
+      while (time.compareTo(today) <= 0 || schedule.isAdvance(time)) {
         time = schedule.after(time);
       }
       if (payday == null || time.compareTo(payday) < 0) payday = time;

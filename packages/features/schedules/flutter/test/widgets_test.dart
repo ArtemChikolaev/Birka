@@ -248,6 +248,26 @@ void main() {
       );
     });
 
+    testWidgets('names the advance and shows the salary of a month', (
+      tester,
+    ) async {
+      await pump(tester, halvesRepository(), page());
+
+      expect(find.text('Аванс'), findsOneWidget);
+      expect(find.text('20'), findsOneWidget);
+      expect(find.text(nb('+120 000 ₽')), findsOneWidget);
+      expect(find.text(nb('+60 000 ₽')), findsNWidgets(2));
+      expect(
+        find.text('аванс 20-го и зарплата 5-го · спросить'),
+        findsOneWidget,
+      );
+      // 29 600 ₽ in the morning and the advance of 60 000 ₽, less 49 949 ₽.
+      expect(
+        find.textContaining('≈ ${nb('39 651 ₽')} с авансом'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('a payment that waits can be skipped', (tester) async {
       final repository = FakeSchedulesRepository()
         ..schedules = [
@@ -309,6 +329,27 @@ void main() {
 
       await tester.tap(find.text('День зарплаты'));
       expect(salaries, ['pay']);
+    });
+
+    testWidgets('takes the advance of the salary in the open', (
+      tester,
+    ) async {
+      await pump(tester, halvesRepository(), page());
+
+      expect(find.text('${nb('1 744 ₽')} в день'), findsOneWidget);
+      expect(find.text('до зарплаты 5 декабря · 17 дней'), findsOneWidget);
+      expect(find.text(nb('29 600 ₽')), findsOneWidget);
+      expect(find.text('Аванс 20 ноября'), findsOneWidget);
+      expect(find.text(nb('+60 000 ₽')), findsOneWidget);
+      expect(find.text(nb('29 651 ₽')), findsOneWidget);
+      expect(
+        find.text(
+          'До аванса 20 ноября хватает: ${nb('19 600 ₽')} на 2 дня',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Аванс и зарплата'), findsOneWidget);
+      expect(find.text('20-го и 5-го'), findsOneWidget);
     });
 
     testWidgets('counts other accounts and until the end of the month', (

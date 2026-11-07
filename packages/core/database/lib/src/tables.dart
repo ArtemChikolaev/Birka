@@ -200,6 +200,10 @@ class Schedules extends Table with SyncedRow {
   /// month takes its last day.
   IntColumn get day => integer()();
 
+  /// The day of the month of its advance, for a payment that comes twice a
+  /// month, such as a salary: its advance on this day and the rest on [day].
+  IntColumn get advanceDay => integer().nullable()();
+
   /// The civil date of its next time as `YYYY-MM-DD`.
   TextColumn get nextOn => text()();
 

@@ -122,6 +122,30 @@
     other days it says how often the payment comes. On the day of an import,
     a payment that the statement brought says so at the top of the list, in
     a notice that names the bank when Birka knows the format.
+18. A regular payment can come twice a month (`advanceDay`, from version 7
+    of the schema): a salary paid in halves, its advance on that day and the
+    rest on its own day, each time with the amount of the rule. The times
+    alternate, and each keeps to the last day of a shorter month. Only a
+    monthly payment has an advance, on another day than its own. The lists,
+    the toasts and the line of what was done call the advance «Аванс»; its
+    transactions keep the name of the payment. The copy of the ledger is
+    version 5 with `advanceDay`.
+19. The form of an income asks how it comes, «Одной суммой» or «С
+    авансом». With the advance, its amount is what comes in a month, split
+    into two equal halves with `Money.split`; both times carry the one amount
+    of the rule, so a sum that does not split evenly is not saved, and the
+    form says so under it. Its two days take the place of «Повторять
+    каждый». The next time is the nearest of the two
+    days, and it moves only when a day does, so an advance that waits for the
+    person stays through a change.
+20. The money of the days counts until the salary, not until its advance:
+    an advance before the end comes in as income, in the open sum («Аванс 20
+    ноября +60 000 ₽»), as sure as the salary itself. Until the first advance,
+    a day takes no more than the counted accounts allow without it, less the
+    payments before it and what stays aside, and the sum says so («До аванса
+    20 ноября хватает: 19 600 ₽ на 2 дня»); when those days lack money, the
+    sum says what they lack. The row of the payday reads «Аванс и зарплата ·
+    20-го и 5-го».
 
 ## Consequences
 
@@ -135,4 +159,8 @@
   amount of the rule. Otherwise the person posts it with its own amount,
   and the check for copies then keeps the operation of the statement out.
 - The copy of the ledger is version 4, with what was done to the last times
-  of each payment, and reads version 3 without it.
+  of each payment, and reads version 3 without it; version 5 adds the day of
+  an advance.
+- Counting until the advance instead would let the days before it spend
+  what the payments after it need: on the boards, 39 800 ₽ a day for two
+  days, then little until the salary.

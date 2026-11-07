@@ -116,6 +116,25 @@ void main() {
       expect(schedule.after(schedule.next), CivilDate(2026, 12, 31));
     });
 
+    test('refuses an advance on its own day or out of a month', () async {
+      Future<Schedule> twice({int advance = 20, ScheduleEvery? every}) =>
+          ledger.addSchedule(
+            kind: TransactionKind.income,
+            name: 'Salary',
+            accountId: card.id,
+            amount: rub(6000000),
+            every: every ?? ScheduleEvery.month,
+            next: CivilDate(2026, 12, 5),
+            advanceDay: advance,
+          );
+
+      await expectLater(twice(advance: 5), throwsLedger());
+      await expectLater(twice(advance: 0), throwsLedger());
+      await expectLater(twice(advance: 32), throwsLedger());
+      await expectLater(twice(every: ScheduleEvery.week), throwsLedger());
+      expect(await ledger.watchSchedules().first, isEmpty);
+    });
+
     test('refuses what could not give a transaction', () async {
       Future<Schedule> add({
         TransactionKind kind = TransactionKind.expense,
@@ -194,6 +213,65 @@ void main() {
       expect(await ledger.watchSchedules().first, [changed]);
       await ledger.deleteSchedule(rent.id);
       await expectLater(ledger.updateSchedule(changed), throwsLedger());
+    });
+
+    test('with an advance comes twice a month, and each half posts on its '
+        'own', () async {
+      final pay = await ledger.addSchedule(
+        kind: TransactionKind.income,
+        name: 'Salary',
+        accountId: card.id,
+        categoryId: salary.id,
+        amount: rub(6000000),
+        every: ScheduleEvery.month,
+        next: CivilDate(2026, 11, 20),
+        day: 5,
+        advanceDay: 20,
+      );
+
+      expect(pay.timesUntil(CivilDate(2027, 1, 6)), [
+        CivilDate(2026, 11, 20),
+        CivilDate(2026, 12, 5),
+        CivilDate(2026, 12, 20),
+        CivilDate(2027, 1, 5),
+      ]);
+      expect(pay.isAdvance(CivilDate(2026, 11, 20)), isTrue);
+      expect(pay.isAdvance(CivilDate(2026, 12, 5)), isFalse);
+      expect(await ledger.schedule(pay.id), pay);
+      await ledger.postSchedule(pay.id);
+      await ledger.postSchedule(pay.id);
+      final transactions = await ledger.watchTransactions().first;
+      expect(transactions.map((it) => (it.occurredOn, it.note)), [
+        (CivilDate(2026, 12, 5), 'Salary'),
+        (CivilDate(2026, 11, 20), 'Salary'),
+      ]);
+      expect(await ledger.balance(card.id), rub(8640000 + 12000000));
+      expect(
+        (await ledger.schedule(pay.id))!.next,
+        CivilDate(2026, 12, 20),
+      );
+    });
+
+    test('with an advance late in the month keeps to the last day of a short '
+        'one', () async {
+      final salary = await ledger.addSchedule(
+        kind: TransactionKind.income,
+        name: 'Salary',
+        accountId: card.id,
+        amount: rub(6000000),
+        every: ScheduleEvery.month,
+        next: CivilDate(2027, 2, 15),
+        advanceDay: 30,
+      );
+
+      expect(salary.day, 15);
+      expect(salary.timesUntil(CivilDate(2027, 3, 31)), [
+        CivilDate(2027, 2, 15),
+        CivilDate(2027, 2, 28),
+        CivilDate(2027, 3, 15),
+        CivilDate(2027, 3, 30),
+      ]);
+      expect(salary.isAdvance(CivilDate(2027, 2, 28)), isTrue);
     });
 
     test('keeps what was done to it through a change, unless its next time '

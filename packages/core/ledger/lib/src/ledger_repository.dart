@@ -808,9 +808,10 @@ final class LedgerRepository {
 
   /// Adds a regular payment that first comes on [next] and then again every
   /// [every], on [day] of the month, which is the day of [next] unless said
-  /// otherwise (ADR 0023). An expense or an income without [categoryId] gives
-  /// transactions that wait in the inbox for one; a transfer goes to
-  /// [toAccountId] in the same currency.
+  /// otherwise (ADR 0023). A monthly one with [advanceDay] comes twice a
+  /// month: its advance on that day and the rest on [day]. An expense or an
+  /// income without [categoryId] gives transactions that wait in the inbox
+  /// for one; a transfer goes to [toAccountId] in the same currency.
   Future<Schedule> addSchedule({
     required TransactionKind kind,
     required String name,
@@ -819,6 +820,7 @@ final class LedgerRepository {
     required ScheduleEvery every,
     required CivilDate next,
     int? day,
+    int? advanceDay,
     String? toAccountId,
     String? categoryId,
     ScheduleOnDay onDay = ScheduleOnDay.ask,
@@ -835,6 +837,7 @@ final class LedgerRepository {
         amount: amount,
         every: every,
         day: day ?? next.day,
+        advanceDay: advanceDay,
         next: next,
         onDay: onDay,
         reminder: reminder,
@@ -856,6 +859,7 @@ final class LedgerRepository {
               amountMinor: amount.minorUnits,
               every: every.name,
               day: schedule.day,
+              advanceDay: Value(advanceDay),
               nextOn: next.toString(),
               onDay: onDay.name,
               reminder: reminder.name,
@@ -885,6 +889,7 @@ final class LedgerRepository {
         amountMinor: Value(schedule.amount.minorUnits),
         every: Value(schedule.every.name),
         day: Value(schedule.day),
+        advanceDay: Value(schedule.advanceDay),
         nextOn: Value(schedule.next.toString()),
         onDay: Value(schedule.onDay.name),
         reminder: Value(schedule.reminder.name),
@@ -1134,6 +1139,16 @@ final class LedgerRepository {
     if (schedule.day < 1 || schedule.day > 31) {
       throw LedgerException('No day ${schedule.day} in a month');
     }
+    if (schedule.advanceDay case final advance?) {
+      if (advance < 1 || advance > 31 || advance == schedule.day) {
+        throw LedgerException(
+          'No advance on day $advance besides day ${schedule.day}',
+        );
+      }
+      if (schedule.every != ScheduleEvery.month) {
+        throw const LedgerException('Only a monthly payment has an advance');
+      }
+    }
     final account = await this.account(schedule.accountId);
     if (account == null) {
       throw LedgerException('No account ${schedule.accountId}');
@@ -1201,6 +1216,7 @@ final class LedgerRepository {
       ),
       every: ScheduleEvery.values.byName(schedule.every),
       day: schedule.day,
+      advanceDay: schedule.advanceDay,
       next: CivilDate.parse(schedule.nextOn),
       onDay: ScheduleOnDay.values.byName(schedule.onDay),
       reminder: ScheduleReminder.values.byName(schedule.reminder),

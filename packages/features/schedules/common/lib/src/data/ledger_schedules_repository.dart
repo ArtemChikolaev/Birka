@@ -75,6 +75,8 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
     amount: draft.amount,
     every: draft.every,
     next: draft.next,
+    day: draft.day,
+    advanceDay: draft.advanceDay,
     onDay: draft.onDay,
     reminder: draft.reminder,
   );

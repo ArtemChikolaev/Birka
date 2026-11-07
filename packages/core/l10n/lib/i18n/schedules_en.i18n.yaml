@@ -11,6 +11,8 @@ ahead: The next 30 days
 aheadTotal: until $date $amount
 leftAfterPayday: By the salary on $date your accounts will hold ≈ $amount, before everyday spending.
 leftAfterMonth: By the end of the month your accounts will hold ≈ $amount, before everyday spending.
+leftAfterPaydayAdvance: By the salary on $date your accounts will hold ≈ $amount with the advance, before everyday spending.
+leftAfterMonthAdvance: By the end of the month your accounts will hold ≈ $amount with the advance, before everyday spending.
 section: "$title · $count"
 all: All regular payments
 emptyTitle: No regular payments yet
@@ -147,3 +149,28 @@ monthsShort:
   - Oct
   - Nov
   - Dec
+advance: Advance
+everyTwice: the advance on day $advance and the salary on day $day
+advancePosted: advance posted today · salary on $date
+advanceSkipped: advance skipped · salary on $date
+advanceFound: advance found in a statement · salary on $date
+restPosted: salary posted today · advance on $date
+restSkipped: salary skipped · advance on $date
+restFound: salary found in a statement · advance on $date
+advanceOn: Advance on $date
+nearEnough: "Until the advance on $date: $amount for $days"
+nearShort: Until the advance on $date, $amount short
+paydayTwice: Advance and salary
+paydayTwiceDays: days $advance and $day
+partsTitle: How it comes
+parts(map):
+  one: One sum
+  two: With an advance
+partsOne: The whole sum comes on one day.
+partsTwo: "Half and half: the advance on day $advance, the salary on day $day."
+amountMonthly: Amount a month
+halves: $amount as the advance and as the salary
+halvesUneven: "The sum does not split into equal halves: change the cents"
+advanceDay: Advance
+restDay: Salary
+nextAdvance: advance, $date

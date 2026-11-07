@@ -40,6 +40,51 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  testWidgets('a salary in halves shows its month, its two days and its '
+      'next advance', (tester) async {
+    final repository = halvesRepository();
+    await pump(tester, repository, id: 'pay');
+
+    expect(find.text('СУММА В МЕСЯЦ'), findsOneWidget);
+    expect(find.text(nb('+120 000 ₽')), findsOneWidget);
+    expect(
+      find.text('по ${nb('60 000 ₽')} авансом и зарплатой'),
+      findsOneWidget,
+    );
+    expect(find.text('Как приходит'), findsOneWidget);
+    expect(find.text('Пополам: аванс 20-го, зарплата 5-го.'), findsOneWidget);
+    expect(find.text('Повторять каждый'), findsNothing);
+    expect(find.text('20-го'), findsOneWidget);
+    expect(find.text('5-го'), findsOneWidget);
+    expect(find.text('аванс, 20 ноября, пт'), findsOneWidget);
+
+    await type(tester, 'СУММА В МЕСЯЦ', '120 000,01');
+    expect(
+      find.text('Сумма не делится пополам — поправьте копейки'),
+      findsOneWidget,
+    );
+    await type(tester, 'СУММА В МЕСЯЦ', '120 000');
+
+    await tester.tap(find.text('Одной суммой'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('СУММА'), findsOneWidget);
+    expect(find.text('Повторять каждый'), findsOneWidget);
+    expect(find.text('Вся сумма приходит в один день.'), findsOneWidget);
+
+    await tester.tap(find.text('С авансом'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('СОХРАНИТЬ'));
+    await tester.pump();
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    final saved = repository.updated.single;
+    expect(saved.amount, rub(60000));
+    expect(saved.advanceDay, 20);
+    expect(saved.day, 5);
+    expect(saved.next, CivilDate(2026, 11, 20));
+  });
+
   testWidgets('a new payment takes a name and an amount and saves', (
     tester,
   ) async {

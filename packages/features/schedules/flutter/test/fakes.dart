@@ -114,6 +114,38 @@ Schedule doneAs(
   ),
 );
 
+/// The payments and accounts of the boards with the salary in halves: the
+/// advance of 60 000 ₽ on the 20th and the rest on the 5th, so the card
+/// holds what half a salary left.
+FakeSchedulesRepository halvesRepository() {
+  final repository = FakeSchedulesRepository()
+    ..schedules = [
+      for (final it in boardSchedules())
+        if (it.id != 'pay') it,
+      Schedule(
+        id: 'pay',
+        kind: TransactionKind.income,
+        name: 'Зарплата',
+        accountId: 'card',
+        amount: rub(60000),
+        every: ScheduleEvery.month,
+        day: 5,
+        advanceDay: 20,
+        next: CivilDate(2026, 11, 20),
+        onDay: ScheduleOnDay.ask,
+        reminder: ScheduleReminder.onDay,
+      ),
+    ];
+  repository.accounts = [
+    AccountBalance(
+      account('card', 'Зарплатная карта', lastDigits: '4821'),
+      rub(26400 - 620),
+    ),
+    ...repository.accounts.skip(1),
+  ];
+  return repository;
+}
+
 /// What was spent today on the card.
 Transaction spent(int rubles) => Transaction(
   id: 'spent',

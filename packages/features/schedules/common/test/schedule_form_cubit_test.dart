@@ -120,6 +120,112 @@ void main() {
     expect(form.categories.map((it) => it.id), [pay.id]);
   });
 
+  test('a salary in halves saves half of the month for each time, the '
+      'advance first', () async {
+    final cubit = ScheduleFormCubit(repository, salary: true);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit
+      ..amountChanged(12000000)
+      ..categoryChanged(pay.id)
+      ..halvesChanged(halves: true);
+    // Today is the 18th, so the advance takes the 3rd at first.
+    expect(cubit.state.halves, isTrue);
+    expect(cubit.state.advanceDay, 3);
+    cubit
+      ..nextChanged(CivilDate(2026, 12, 5))
+      ..advanceDayChanged(20)
+      ..advanceDayChanged(5);
+    expect(cubit.state.day, 5);
+    expect(cubit.state.advanceDay, 20);
+    expect(cubit.state.next, CivilDate(2026, 11, 20));
+    expect(cubit.state.nextIsAdvance, isTrue);
+    expect(cubit.state.part, rub(60000));
+    await cubit.save();
+
+    final saved = (await ledger.watchSchedules().first).single;
+    expect(saved.amount, rub(60000));
+    expect(saved.every, ScheduleEvery.month);
+    expect(saved.day, 5);
+    expect(saved.advanceDay, 20);
+    expect(saved.next, CivilDate(2026, 11, 20));
+  });
+
+  test('a salary in halves opens with its month, and its waiting advance '
+      'stays through a change', () async {
+    final salary = await ledger.addSchedule(
+      kind: TransactionKind.income,
+      name: 'Зарплата',
+      accountId: card.id,
+      categoryId: pay.id,
+      amount: rub(60000),
+      every: ScheduleEvery.month,
+      next: CivilDate(2026, 11, 17),
+      day: 5,
+      advanceDay: 17,
+    );
+    final cubit = ScheduleFormCubit(repository, id: salary.id);
+    addTearDown(cubit.close);
+
+    final form = await at(cubit, ScheduleFormStatus.editing);
+    expect(form.amountMinor, 12000000);
+    expect(form.halves, isTrue);
+    cubit.nameChanged('Зарплата в «Ромашке»');
+    await cubit.save();
+
+    final saved = (await ledger.schedule(salary.id))!;
+    expect(saved.name, 'Зарплата в «Ромашке»');
+    expect(saved.amount, rub(60000));
+    expect(saved.advanceDay, 17);
+    expect(saved.next, CivilDate(2026, 11, 17));
+  });
+
+  test('a sum of a month that does not split into equal halves is not '
+      'saved', () async {
+    final cubit = ScheduleFormCubit(repository, salary: true);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit
+      ..amountChanged(12000001)
+      ..halvesChanged(halves: true);
+
+    expect(cubit.state.uneven, isTrue);
+    expect(cubit.state.part, isNull);
+    expect(cubit.state.valid, isFalse);
+    await cubit.save();
+    expect(await ledger.watchSchedules().first, isEmpty);
+
+    cubit.amountChanged(12000002);
+    expect(cubit.state.uneven, isFalse);
+    expect(cubit.state.part, Money(6000001, Currency.rub));
+    // One sum keeps every kopeck.
+    cubit
+      ..amountChanged(12000001)
+      ..halvesChanged(halves: false);
+    expect(cubit.state.part, Money(12000001, Currency.rub));
+    expect(cubit.state.valid, isTrue);
+  });
+
+  test('only an income comes in halves', () async {
+    final cubit = ScheduleFormCubit(repository, salary: true);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit
+      ..halvesChanged(halves: true)
+      ..kindChanged(TransactionKind.expense);
+
+    expect(cubit.state.advanceDay, isNull);
+    expect(cubit.state.halves, isFalse);
+    cubit
+      ..kindChanged(TransactionKind.income)
+      ..halvesChanged(halves: true)
+      ..halvesChanged(halves: false);
+    expect(cubit.state.advanceDay, isNull);
+  });
+
   test('a transfer reaches another account of its currency, with no '
       'category', () async {
     final cubit = ScheduleFormCubit(repository);

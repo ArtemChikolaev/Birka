@@ -13,6 +13,8 @@ final class ScheduleDraft {
     required this.amount,
     required this.every,
     required this.next,
+    this.day,
+    this.advanceDay,
     this.toAccountId,
     this.categoryId,
     this.onDay = ScheduleOnDay.ask,
@@ -40,8 +42,15 @@ final class ScheduleDraft {
   /// How often it comes.
   final ScheduleEvery every;
 
-  /// Its first time, whose day of the month it keeps.
+  /// Its first time, whose day of the month it keeps unless [day] says
+  /// otherwise.
   final CivilDate next;
+
+  /// Its day of the month, when its first time is its advance.
+  final int? day;
+
+  /// The day of the month of its advance, for a salary paid in halves.
+  final int? advanceDay;
 
   /// What its day does.
   final ScheduleOnDay onDay;

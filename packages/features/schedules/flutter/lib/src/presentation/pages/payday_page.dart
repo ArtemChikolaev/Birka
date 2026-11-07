@@ -119,7 +119,9 @@ class PaydayPage extends StatelessWidget {
                     key: const ValueKey('payday'),
                     padding: const EdgeInsets.only(top: BirkaTokens.spaceSm),
                     child: GlassListRow(
-                      title: t.schedules.payday,
+                      title: salary?.advanceDay == null
+                          ? t.schedules.payday
+                          : t.schedules.paydayTwice,
                       subtitle: salary == null
                           ? t.schedules.paydayNone
                           : t.schedules.paydayFrom(name: salary.name),
@@ -130,7 +132,13 @@ class PaydayPage extends StatelessWidget {
                               color: colors.accent,
                             )
                           : Text(
-                              t.schedules.paydayDay(day: salary.day),
+                              switch (salary.advanceDay) {
+                                final advance? => t.schedules.paydayTwiceDays(
+                                  advance: advance,
+                                  day: salary.day,
+                                ),
+                                null => t.schedules.paydayDay(day: salary.day),
+                              },
                               style: styles.bodyStrong.copyWith(
                                 color: colors.text,
                               ),
@@ -221,20 +229,23 @@ class _Sum extends StatelessWidget {
     final colors = BirkaColors.of(context);
     final styles = BirkaTextStyles.of(context);
     final free = plan.free;
+    final short = plan.short;
     final payday = plan.until == SpendUntil.payday;
     final count = plan.payments.length;
+    final advance = plan.advances.firstOrNull?.on;
+    final near = plan.near;
     return TintedBox(
       color: colors.accent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AmountText(
-            free.isPositive
+            short == null
                 ? t.schedules.perDay(amount: formatMoney(plan.perDay))
-                : t.schedules.notEnough(amount: formatMoney(free.abs())),
-            value: free.isPositive ? plan.perDay.minorUnits : free.minorUnits,
+                : t.schedules.notEnough(amount: formatMoney(short)),
+            value: short == null ? plan.perDay.minorUnits : -short.minorUnits,
             rise: AmountRise.good,
-            tone: free.isPositive ? AmountTone.neutral : AmountTone.negative,
+            tone: short == null ? AmountTone.neutral : AmountTone.negative,
             style: styles.hero,
           ),
           FadingText(
@@ -243,6 +254,15 @@ class _Sum extends StatelessWidget {
           ),
           const SizedBox(height: BirkaTokens.spaceMd),
           _Line(label: t.schedules.morning, amount: plan.morning),
+          // The advance of the salary comes before the end, in the open.
+          if (advance != null)
+            _Line(
+              label: t.schedules.advanceOn(
+                date: fullDate(advance, plan.today),
+              ),
+              amount: plan.advanced,
+              income: true,
+            ),
           _Line(
             label: payday
                 ? t.schedules.paymentsUntilPayday(n: count)
@@ -258,6 +278,29 @@ class _Sum extends StatelessWidget {
             amount: free,
             strong: true,
           ),
+          if (near != null && advance != null) ...[
+            const SizedBox(height: BirkaTokens.spaceXs),
+            FadingText(
+              HiddenAmounts.mask(
+                context,
+                near.money.isNegative
+                    ? t.schedules.nearShort(
+                        date: fullDate(advance, plan.today),
+                        amount: formatMoney(-near.money),
+                      )
+                    : t.schedules.nearEnough(
+                        date: fullDate(advance, plan.today),
+                        amount: formatMoney(near.money),
+                        days: t.schedules.days(n: near.days),
+                      ),
+              ),
+              style: styles.caption.copyWith(
+                color: near.money.isNegative
+                    ? colors.negative
+                    : colors.textMuted,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -267,11 +310,19 @@ class _Sum extends StatelessWidget {
 /// A line of the sum: what it is, and its amount, which rolls when it
 /// changes.
 class _Line extends StatelessWidget {
-  const _Line({required this.label, required this.amount, this.strong = false});
+  const _Line({
+    required this.label,
+    required this.amount,
+    this.strong = false,
+    this.income = false,
+  });
 
   final String label;
   final Money amount;
   final bool strong;
+
+  /// Whether the line brings money in, with a plus in the color of a gain.
+  final bool income;
 
   @override
   Widget build(BuildContext context) {
@@ -291,10 +342,12 @@ class _Line extends StatelessWidget {
             ),
           ),
           AmountText(
-            formatMoney(amount),
+            income ? '+${formatMoney(amount)}' : formatMoney(amount),
             value: amount.minorUnits,
             rise: AmountRise.good,
-            tone: strong && amount.isNegative
+            tone: income
+                ? AmountTone.positive
+                : strong && amount.isNegative
                 ? AmountTone.negative
                 : AmountTone.neutral,
             style: styles.bodyStrong,
