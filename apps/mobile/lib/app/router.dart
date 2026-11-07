@@ -28,6 +28,9 @@ import 'package:overview_common/overview_common.dart' show OverviewCubit;
 import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart' show ReportsCubit;
 import 'package:reports_flutter/reports_flutter.dart';
+import 'package:schedules_common/schedules_common.dart'
+    show ScheduleFormCubit, SchedulesCubit;
+import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_common/settings_common.dart' show SettingsCubit;
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
@@ -91,6 +94,20 @@ abstract final class Paths {
 
   /// The form of category [id].
   static String category(String id) => '/categories/$id';
+
+  /// The regular payments.
+  static const schedules = '/schedules';
+
+  /// The form of a new regular payment, which starts as the salary with
+  /// [salary].
+  static String newSchedule({bool salary = false}) =>
+      salary ? '/schedules/new?salary=1' : '/schedules/new';
+
+  /// The form of regular payment [id].
+  static String schedule(String id) => '/schedules/$id';
+
+  /// The money until the salary.
+  static const payday = '/payday';
 }
 
 /// Says that an account opens from its card, which grows into the page of the
@@ -131,13 +148,23 @@ GoRouter buildRouter(
                   providers: [
                     BlocProvider(create: (_) => getIt<OverviewCubit>()),
                     BlocProvider(create: (_) => getIt<InboxSummaryCubit>()),
+                    BlocProvider(create: (_) => getIt<SchedulesCubit>()),
                   ],
                   child: OverviewPage(
                     onAddAccount: () => context.push(Paths.newAccount),
                     onAccounts: () => context.push(Paths.accounts),
                     onOpenAccount: (id) =>
                         context.push(Paths.account(id), extra: _fromCard),
-                    notice: InboxCard(onOpen: () => context.push(Paths.inbox)),
+                    notice: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SpendingCard(
+                          onOpenPlan: () => context.push(Paths.payday),
+                          onOpenList: () => context.push(Paths.schedules),
+                        ),
+                        InboxCard(onOpen: () => context.push(Paths.inbox)),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -318,6 +345,46 @@ GoRouter buildRouter(
         ),
       ),
       GoRoute(
+        path: Paths.schedules,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<SchedulesCubit>(),
+          child: SchedulesPage(
+            onBack: () => context.pop(),
+            onAdd: () => context.push(Paths.newSchedule()),
+            onOpen: (id) => context.push(Paths.schedule(id)),
+          ),
+        ),
+        routes: [
+          GoRoute(
+            path: 'new',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) => _scheduleFormPage(
+              getIt,
+              salary: state.uri.queryParameters['salary'] == '1',
+            ),
+          ),
+          GoRoute(
+            path: ':id',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) =>
+                _scheduleFormPage(getIt, id: state.pathParameters['id']),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: Paths.payday,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<SchedulesCubit>(),
+          child: PaydayPage(
+            onBack: () => context.pop(),
+            onOpenSalary: (id) => context.push(Paths.schedule(id)),
+            onAddSalary: () => context.push(Paths.newSchedule(salary: true)),
+          ),
+        ),
+      ),
+      GoRoute(
         path: Paths.inbox,
         parentNavigatorKey: rootKey,
         builder: (context, state) => BlocProvider(
@@ -397,3 +464,15 @@ Page<Category> _categoryFormPage(
     ),
   ),
 );
+
+/// The form of a regular payment, as a sheet (ADR 0023): payment [id], or a
+/// new one, which starts as the salary with [salary].
+Page<void> _scheduleFormPage(GetIt getIt, {String? id, bool salary = false}) =>
+    BirkaSheetPage(
+      child: BlocProvider(
+        create: (_) => getIt<ScheduleFormCubit>(param1: id, param2: salary),
+        child: Builder(
+          builder: (context) => ScheduleFormPage(onClose: () => context.pop()),
+        ),
+      ),
+    );

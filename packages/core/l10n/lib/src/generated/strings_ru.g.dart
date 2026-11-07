@@ -87,6 +87,9 @@ class TranslationsRu extends Translations
     _root,
   );
   @override
+  late final _Translations$schedules$ru schedules =
+      _Translations$schedules$ru._(_root);
+  @override
   late final _Translations$settings$ru settings = _Translations$settings$ru._(
     _root,
   );
@@ -1696,6 +1699,306 @@ class _Translations$reports$ru extends Translations$reports$en {
   ];
 }
 
+// Path: schedules
+class _Translations$schedules$ru extends Translations$schedules$en {
+  _Translations$schedules$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Регулярные платежи';
+  @override
+  String get back => 'Назад';
+  @override
+  String get add => 'Новый платёж';
+  @override
+  String get close => 'Закрыть';
+  @override
+  String get waitingTitle => 'Ждёт подтверждения';
+  @override
+  String get post => 'Провести';
+  @override
+  String get skip => 'Пропустить';
+  @override
+  String get waitingNote => 'Придёт в выписке банка — Birka не задвоит его.';
+  @override
+  String waitingDay({required Object name, required Object day}) =>
+      '${name} · ${day}';
+  @override
+  String get ahead => 'Ближайшие 30 дней';
+  @override
+  String aheadTotal({required Object date, required Object amount}) =>
+      'до ${date} ${amount}';
+  @override
+  String leftAfterPayday({required Object date, required Object amount}) =>
+      'К зарплате ${date} на счетах останется ≈ ${amount}, если не считать ежедневных трат.';
+  @override
+  String leftAfterMonth({required Object amount}) =>
+      'К концу месяца на счетах останется ≈ ${amount}, если не считать ежедневных трат.';
+  @override
+  String section({required Object title, required Object count}) =>
+      '${title} · ${count}';
+  @override
+  String get all => 'Все регулярные';
+  @override
+  String get emptyTitle => 'Регулярных платежей пока нет';
+  @override
+  String get emptyText =>
+      'Аренда, подписки, зарплата: добавьте их один раз, и Birka покажет месяц вперёд и сколько можно тратить в день.';
+  @override
+  String get emptyAdd => 'Добавить платёж';
+  @override
+  String everyMonth({required Object day}) => 'каждый месяц ${day}-го';
+  @override
+  String everyWeek({required Object weekday}) => 'каждую неделю, ${weekday}';
+  @override
+  String everyYear({required Object date}) => 'раз в год, ${date}';
+  @override
+  String get asks => 'спросить';
+  @override
+  String get posts => 'проводится сам';
+  @override
+  String get today => 'сегодня';
+  @override
+  String get tomorrow => 'завтра';
+  @override
+  String posted({required Object name, required Object amount}) =>
+      'Провели «${name}» · ${amount}';
+  @override
+  String skippedAsk({required Object name, required Object date}) =>
+      'Пропустили «${name}» · спросим ${date}';
+  @override
+  String skippedPost({required Object name, required Object date}) =>
+      'Пропустили «${name}» · следующий раз ${date}';
+  @override
+  String deleted({required Object name}) => 'Удалили «${name}»';
+  @override
+  Map<String, String> get on => {
+    'mon': 'по понедельникам',
+    'tue': 'по вторникам',
+    'wed': 'по средам',
+    'thu': 'по четвергам',
+    'fri': 'по пятницам',
+    'sat': 'по субботам',
+    'sun': 'по воскресеньям',
+  };
+  @override
+  Map<String, String> get weekday => {
+    'mon': 'пн',
+    'tue': 'вт',
+    'wed': 'ср',
+    'thu': 'чт',
+    'fri': 'пт',
+    'sat': 'сб',
+    'sun': 'вс',
+  };
+  @override
+  String get newTitle => 'Новый платёж';
+  @override
+  Map<String, String> get kinds => {
+    'expense': 'Расход',
+    'income': 'Поступление',
+    'transfer': 'Перевод',
+  };
+  @override
+  String get kindLabel => 'Что за платёж';
+  @override
+  String get amount => 'Сумма';
+  @override
+  String get name => 'Название';
+  @override
+  String get namePlaceholder => 'Например, Аренда';
+  @override
+  String get category => 'Категория';
+  @override
+  String get noCategory => 'Без категории';
+  @override
+  String get categoryLater => 'решу во «Входящих»';
+  @override
+  String get account => 'Счёт';
+  @override
+  String get toAccount => 'Куда';
+  @override
+  String get fromAccount => 'Откуда';
+  @override
+  String get incomeAccount => 'На счёт';
+  @override
+  String get pickAccount => 'Выберите счёт';
+  @override
+  String get every => 'Повторять каждый';
+  @override
+  Map<String, String> get everyOptions => {
+    'month': 'Месяц',
+    'week': 'Неделю',
+    'year': 'Год',
+  };
+  @override
+  String get dayOfMonth => 'Какого числа';
+  @override
+  String get dayOfWeek => 'Какой день недели';
+  @override
+  String get dayOfYear => 'Какого дня';
+  @override
+  String dayNumber({required Object day}) => '${day}-го';
+  @override
+  String get next => 'Следующий раз';
+  @override
+  String get onDayTitle => 'В день платежа';
+  @override
+  Map<String, String> get onDay => {
+    'ask': 'Спросить меня',
+    'post': 'Провести само',
+  };
+  @override
+  String get askNote =>
+      'Подойдёт, если сумма меняется, как у ЖКХ: в этот день платёж подождёт вашего «Провести».';
+  @override
+  String get postNote =>
+      'Для подписок с одной суммой. Придёт в выписке банка — копии не будет.';
+  @override
+  String get save => 'Сохранить';
+  @override
+  String get saveNote =>
+      'Появится в «Ближайших платежах» и в «Можно тратить сегодня»';
+  @override
+  String changeNote({required Object date}) =>
+      'Изменится со следующего раза: ${date}';
+  @override
+  String get done => 'Готово';
+  @override
+  String get delete => 'Удалить платёж';
+  @override
+  String get deleteNote => 'Прошлые операции останутся';
+  @override
+  String deleteTitle({required Object name}) => 'Удалить «${name}»?';
+  @override
+  String get canSpend => 'Можно тратить сегодня';
+  @override
+  String get overToday => 'Сегодня больше дневного';
+  @override
+  String ofPerDay({required Object amount}) => 'из ${amount} на день';
+  @override
+  String spentUntilPayday({required Object amount, required Object days}) =>
+      'Потратили ${amount} · до зарплаты ${days}';
+  @override
+  String spentUntilMonth({required Object amount, required Object days}) =>
+      'Потратили ${amount} · до конца месяца ${days}';
+  @override
+  String spentOver({required Object amount, required Object tomorrow}) =>
+      'Потратили ${amount} · завтра можно ${tomorrow} в день';
+  @override
+  String short({required Object amount, required Object date}) =>
+      'Не хватает ${amount} до ${date}';
+  @override
+  String get upcoming => 'Ближайшие платежи';
+  @override
+  String get noPaydayLabel => 'До зарплаты';
+  @override
+  String get noPaydayTitle => 'Сколько можно тратить в день?';
+  @override
+  String get noPaydayText =>
+      'Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.';
+  @override
+  String get noPaydayAction => 'Указать день зарплаты';
+  @override
+  String days({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} день',
+        few: '${n} дня',
+        many: '${n} дней',
+        other: '${n} дней',
+      );
+  @override
+  String get paydayTitle => 'Деньги до зарплаты';
+  @override
+  String perDay({required Object amount}) => '${amount} в день';
+  @override
+  String notEnough({required Object amount}) => 'Не хватает ${amount}';
+  @override
+  String untilPayday({required Object date, required Object days}) =>
+      'до зарплаты ${date} · ${days}';
+  @override
+  String untilDate({required Object date, required Object days}) =>
+      'до ${date} · ${days}';
+  @override
+  String get morning => 'Утром на счетах';
+  @override
+  String paymentsUntilPayday({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} платёж до зарплаты',
+        few: '${n} платежа до зарплаты',
+        many: '${n} платежей до зарплаты',
+        other: '${n} платежей до зарплаты',
+      );
+  @override
+  String paymentsUntilMonth({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} платёж до конца месяца',
+        few: '${n} платежа до конца месяца',
+        many: '${n} платежей до конца месяца',
+        other: '${n} платежей до конца месяца',
+      );
+  @override
+  String get aside => 'Отложить';
+  @override
+  String leftFor({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Остаётся на ${n} день',
+        few: 'Остаётся на ${n} дня',
+        many: 'Остаётся на ${n} дней',
+        other: 'Остаётся на ${n} дней',
+      );
+  @override
+  String get countUntil => 'Считать до';
+  @override
+  Map<String, String> get until => {
+    'payday': 'Дня зарплаты',
+    'monthEnd': 'Конца месяца',
+  };
+  @override
+  String get payday => 'День зарплаты';
+  @override
+  String paydayFrom({required Object name}) => 'из платежа «${name}»';
+  @override
+  String get paydayNone => 'добавьте регулярное поступление';
+  @override
+  String paydayDay({required Object day}) => '${day}-е число';
+  @override
+  String get accountsTitle => 'Какие счета считать';
+  @override
+  String count({required Object name}) => 'Считать «${name}»';
+  @override
+  String get otherCurrency => 'другая валюта, пока не считаем';
+  @override
+  String get asideRow => 'Отложить до зарплаты';
+  @override
+  String get asideNote => 'не тратим, даже если «можно»';
+  @override
+  String get salaryName => 'Зарплата';
+  @override
+  List<String> get monthsShort => [
+    'янв',
+    'фев',
+    'мар',
+    'апр',
+    'мая',
+    'июн',
+    'июл',
+    'авг',
+    'сен',
+    'окт',
+    'ноя',
+    'дек',
+  ];
+}
+
 // Path: settings
 class _Translations$settings$ru extends Translations$settings$en {
   _Translations$settings$ru._(TranslationsRu root)
@@ -3282,6 +3585,213 @@ extension on TranslationsRu {
           'reports.monthsShort.9' => 'Окт',
           'reports.monthsShort.10' => 'Ноя',
           'reports.monthsShort.11' => 'Дек',
+          'schedules.title' => 'Регулярные платежи',
+          'schedules.back' => 'Назад',
+          'schedules.add' => 'Новый платёж',
+          'schedules.close' => 'Закрыть',
+          'schedules.waitingTitle' => 'Ждёт подтверждения',
+          'schedules.post' => 'Провести',
+          'schedules.skip' => 'Пропустить',
+          'schedules.waitingNote' =>
+            'Придёт в выписке банка — Birka не задвоит его.',
+          'schedules.waitingDay' =>
+            ({required Object name, required Object day}) => '${name} · ${day}',
+          'schedules.ahead' => 'Ближайшие 30 дней',
+          'schedules.aheadTotal' =>
+            ({required Object date, required Object amount}) =>
+                'до ${date} ${amount}',
+          'schedules.leftAfterPayday' =>
+            ({required Object date, required Object amount}) =>
+                'К зарплате ${date} на счетах останется ≈ ${amount}, если не считать ежедневных трат.',
+          'schedules.leftAfterMonth' =>
+            ({required Object amount}) =>
+                'К концу месяца на счетах останется ≈ ${amount}, если не считать ежедневных трат.',
+          'schedules.section' =>
+            ({required Object title, required Object count}) =>
+                '${title} · ${count}',
+          'schedules.all' => 'Все регулярные',
+          'schedules.emptyTitle' => 'Регулярных платежей пока нет',
+          'schedules.emptyText' =>
+            'Аренда, подписки, зарплата: добавьте их один раз, и Birka покажет месяц вперёд и сколько можно тратить в день.',
+          'schedules.emptyAdd' => 'Добавить платёж',
+          'schedules.everyMonth' =>
+            ({required Object day}) => 'каждый месяц ${day}-го',
+          'schedules.everyWeek' =>
+            ({required Object weekday}) => 'каждую неделю, ${weekday}',
+          'schedules.everyYear' =>
+            ({required Object date}) => 'раз в год, ${date}',
+          'schedules.asks' => 'спросить',
+          'schedules.posts' => 'проводится сам',
+          'schedules.today' => 'сегодня',
+          'schedules.tomorrow' => 'завтра',
+          'schedules.posted' =>
+            ({required Object name, required Object amount}) =>
+                'Провели «${name}» · ${amount}',
+          'schedules.skippedAsk' =>
+            ({required Object name, required Object date}) =>
+                'Пропустили «${name}» · спросим ${date}',
+          'schedules.skippedPost' =>
+            ({required Object name, required Object date}) =>
+                'Пропустили «${name}» · следующий раз ${date}',
+          'schedules.deleted' =>
+            ({required Object name}) => 'Удалили «${name}»',
+          'schedules.on.mon' => 'по понедельникам',
+          'schedules.on.tue' => 'по вторникам',
+          'schedules.on.wed' => 'по средам',
+          'schedules.on.thu' => 'по четвергам',
+          'schedules.on.fri' => 'по пятницам',
+          'schedules.on.sat' => 'по субботам',
+          'schedules.on.sun' => 'по воскресеньям',
+          'schedules.weekday.mon' => 'пн',
+          'schedules.weekday.tue' => 'вт',
+          'schedules.weekday.wed' => 'ср',
+          'schedules.weekday.thu' => 'чт',
+          'schedules.weekday.fri' => 'пт',
+          'schedules.weekday.sat' => 'сб',
+          'schedules.weekday.sun' => 'вс',
+          'schedules.newTitle' => 'Новый платёж',
+          'schedules.kinds.expense' => 'Расход',
+          'schedules.kinds.income' => 'Поступление',
+          'schedules.kinds.transfer' => 'Перевод',
+          'schedules.kindLabel' => 'Что за платёж',
+          'schedules.amount' => 'Сумма',
+          'schedules.name' => 'Название',
+          'schedules.namePlaceholder' => 'Например, Аренда',
+          'schedules.category' => 'Категория',
+          'schedules.noCategory' => 'Без категории',
+          'schedules.categoryLater' => 'решу во «Входящих»',
+          'schedules.account' => 'Счёт',
+          'schedules.toAccount' => 'Куда',
+          'schedules.fromAccount' => 'Откуда',
+          'schedules.incomeAccount' => 'На счёт',
+          'schedules.pickAccount' => 'Выберите счёт',
+          'schedules.every' => 'Повторять каждый',
+          'schedules.everyOptions.month' => 'Месяц',
+          'schedules.everyOptions.week' => 'Неделю',
+          'schedules.everyOptions.year' => 'Год',
+          'schedules.dayOfMonth' => 'Какого числа',
+          'schedules.dayOfWeek' => 'Какой день недели',
+          'schedules.dayOfYear' => 'Какого дня',
+          'schedules.dayNumber' => ({required Object day}) => '${day}-го',
+          'schedules.next' => 'Следующий раз',
+          'schedules.onDayTitle' => 'В день платежа',
+          'schedules.onDay.ask' => 'Спросить меня',
+          'schedules.onDay.post' => 'Провести само',
+          'schedules.askNote' =>
+            'Подойдёт, если сумма меняется, как у ЖКХ: в этот день платёж подождёт вашего «Провести».',
+          'schedules.postNote' =>
+            'Для подписок с одной суммой. Придёт в выписке банка — копии не будет.',
+          'schedules.save' => 'Сохранить',
+          'schedules.saveNote' =>
+            'Появится в «Ближайших платежах» и в «Можно тратить сегодня»',
+          'schedules.changeNote' =>
+            ({required Object date}) => 'Изменится со следующего раза: ${date}',
+          'schedules.done' => 'Готово',
+          'schedules.delete' => 'Удалить платёж',
+          'schedules.deleteNote' => 'Прошлые операции останутся',
+          'schedules.deleteTitle' =>
+            ({required Object name}) => 'Удалить «${name}»?',
+          'schedules.canSpend' => 'Можно тратить сегодня',
+          'schedules.overToday' => 'Сегодня больше дневного',
+          'schedules.ofPerDay' =>
+            ({required Object amount}) => 'из ${amount} на день',
+          'schedules.spentUntilPayday' =>
+            ({required Object amount, required Object days}) =>
+                'Потратили ${amount} · до зарплаты ${days}',
+          'schedules.spentUntilMonth' =>
+            ({required Object amount, required Object days}) =>
+                'Потратили ${amount} · до конца месяца ${days}',
+          'schedules.spentOver' =>
+            ({required Object amount, required Object tomorrow}) =>
+                'Потратили ${amount} · завтра можно ${tomorrow} в день',
+          'schedules.short' =>
+            ({required Object amount, required Object date}) =>
+                'Не хватает ${amount} до ${date}',
+          'schedules.upcoming' => 'Ближайшие платежи',
+          'schedules.noPaydayLabel' => 'До зарплаты',
+          'schedules.noPaydayTitle' => 'Сколько можно тратить в день?',
+          'schedules.noPaydayText' =>
+            'Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.',
+          'schedules.noPaydayAction' => 'Указать день зарплаты',
+          'schedules.days' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} день',
+                  few: '${n} дня',
+                  many: '${n} дней',
+                  other: '${n} дней',
+                ),
+          'schedules.paydayTitle' => 'Деньги до зарплаты',
+          'schedules.perDay' =>
+            ({required Object amount}) => '${amount} в день',
+          'schedules.notEnough' =>
+            ({required Object amount}) => 'Не хватает ${amount}',
+          'schedules.untilPayday' =>
+            ({required Object date, required Object days}) =>
+                'до зарплаты ${date} · ${days}',
+          'schedules.untilDate' =>
+            ({required Object date, required Object days}) =>
+                'до ${date} · ${days}',
+          'schedules.morning' => 'Утром на счетах',
+          'schedules.paymentsUntilPayday' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} платёж до зарплаты',
+                  few: '${n} платежа до зарплаты',
+                  many: '${n} платежей до зарплаты',
+                  other: '${n} платежей до зарплаты',
+                ),
+          'schedules.paymentsUntilMonth' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} платёж до конца месяца',
+                  few: '${n} платежа до конца месяца',
+                  many: '${n} платежей до конца месяца',
+                  other: '${n} платежей до конца месяца',
+                ),
+          'schedules.aside' => 'Отложить',
+          'schedules.leftFor' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Остаётся на ${n} день',
+                  few: 'Остаётся на ${n} дня',
+                  many: 'Остаётся на ${n} дней',
+                  other: 'Остаётся на ${n} дней',
+                ),
+          'schedules.countUntil' => 'Считать до',
+          'schedules.until.payday' => 'Дня зарплаты',
+          'schedules.until.monthEnd' => 'Конца месяца',
+          'schedules.payday' => 'День зарплаты',
+          'schedules.paydayFrom' =>
+            ({required Object name}) => 'из платежа «${name}»',
+          'schedules.paydayNone' => 'добавьте регулярное поступление',
+          'schedules.paydayDay' => ({required Object day}) => '${day}-е число',
+          'schedules.accountsTitle' => 'Какие счета считать',
+          'schedules.count' => ({required Object name}) => 'Считать «${name}»',
+          'schedules.otherCurrency' => 'другая валюта, пока не считаем',
+          'schedules.asideRow' => 'Отложить до зарплаты',
+          'schedules.asideNote' => 'не тратим, даже если «можно»',
+          'schedules.salaryName' => 'Зарплата',
+          'schedules.monthsShort.0' => 'янв',
+          'schedules.monthsShort.1' => 'фев',
+          'schedules.monthsShort.2' => 'мар',
+          'schedules.monthsShort.3' => 'апр',
+          'schedules.monthsShort.4' => 'мая',
+          'schedules.monthsShort.5' => 'июн',
+          'schedules.monthsShort.6' => 'июл',
+          'schedules.monthsShort.7' => 'авг',
+          'schedules.monthsShort.8' => 'сен',
+          'schedules.monthsShort.9' => 'окт',
+          'schedules.monthsShort.10' => 'ноя',
+          'schedules.monthsShort.11' => 'дек',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',

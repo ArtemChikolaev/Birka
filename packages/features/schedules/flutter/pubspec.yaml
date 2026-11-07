@@ -1,0 +1,31 @@
+name: schedules_flutter
+description: >-
+  The regular payments in Flutter: their list and their form, the card of
+  the money of the day on the overview and the money until the salary, on
+  phones.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  money:
+    path: ../../../core/money
+  schedules_common:
+    path: ../common
+
+dev_dependencies:
+  device_settings:
+    path: ../../../core/device_settings
+  flutter_test:
+    sdk: flutter

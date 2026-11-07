@@ -52,16 +52,8 @@ class TintedNotice extends StatelessWidget {
         ),
       ],
     );
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(BirkaTokens.spaceMd),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
-        border: Border.all(color: color.withValues(alpha: 0.28)),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(BirkaTokens.radiusMd),
-        ),
-      ),
+    return TintedBox(
+      color: color,
       child: glyph == null
           ? words
           : Row(
@@ -74,6 +66,35 @@ class TintedNotice extends StatelessWidget {
                 Expanded(child: words),
               ],
             ),
+    );
+  }
+}
+
+/// A box tinted with [color], as a [TintedNotice] is, around [child], such as
+/// a payment that waits for the person with its buttons.
+class TintedBox extends StatelessWidget {
+  /// Creates a box.
+  const TintedBox({required this.color, required this.child, super.key});
+
+  /// The color of the tint.
+  final Color color;
+
+  /// What the box holds.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(BirkaTokens.spaceMd),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(BirkaTokens.radiusMd),
+        ),
+      ),
+      child: child,
     );
   }
 }

@@ -1,0 +1,151 @@
+title: Регулярные платежи
+back: Назад
+add: Новый платёж
+close: Закрыть
+waitingTitle: Ждёт подтверждения
+post: Провести
+skip: Пропустить
+waitingNote: Придёт в выписке банка — Birka не задвоит его.
+waitingDay: "$name · $day"
+ahead: Ближайшие 30 дней
+aheadTotal: до $date $amount
+leftAfterPayday: К зарплате $date на счетах останется ≈ $amount, если не считать ежедневных трат.
+leftAfterMonth: К концу месяца на счетах останется ≈ $amount, если не считать ежедневных трат.
+section: "$title · $count"
+all: Все регулярные
+emptyTitle: Регулярных платежей пока нет
+emptyText: "Аренда, подписки, зарплата: добавьте их один раз, и Birka покажет месяц вперёд и сколько можно тратить в день."
+emptyAdd: Добавить платёж
+everyMonth: каждый месяц $day-го
+everyWeek: каждую неделю, $weekday
+everyYear: раз в год, $date
+asks: спросить
+posts: проводится сам
+today: сегодня
+tomorrow: завтра
+posted: Провели «$name» · $amount
+skippedAsk: Пропустили «$name» · спросим $date
+skippedPost: Пропустили «$name» · следующий раз $date
+deleted: Удалили «$name»
+on(map):
+  mon: по понедельникам
+  tue: по вторникам
+  wed: по средам
+  thu: по четвергам
+  fri: по пятницам
+  sat: по субботам
+  sun: по воскресеньям
+weekday(map):
+  mon: пн
+  tue: вт
+  wed: ср
+  thu: чт
+  fri: пт
+  sat: сб
+  sun: вс
+newTitle: Новый платёж
+kinds(map):
+  expense: Расход
+  income: Поступление
+  transfer: Перевод
+kindLabel: Что за платёж
+amount: Сумма
+name: Название
+namePlaceholder: Например, Аренда
+category: Категория
+noCategory: Без категории
+categoryLater: решу во «Входящих»
+account: Счёт
+toAccount: Куда
+fromAccount: Откуда
+incomeAccount: На счёт
+pickAccount: Выберите счёт
+every: Повторять каждый
+everyOptions(map):
+  month: Месяц
+  week: Неделю
+  year: Год
+dayOfMonth: Какого числа
+dayOfWeek: Какой день недели
+dayOfYear: Какого дня
+dayNumber: $day-го
+next: Следующий раз
+onDayTitle: В день платежа
+onDay(map):
+  ask: Спросить меня
+  post: Провести само
+askNote: "Подойдёт, если сумма меняется, как у ЖКХ: в этот день платёж подождёт вашего «Провести»."
+postNote: Для подписок с одной суммой. Придёт в выписке банка — копии не будет.
+save: Сохранить
+saveNote: Появится в «Ближайших платежах» и в «Можно тратить сегодня»
+changeNote: "Изменится со следующего раза: $date"
+done: Готово
+delete: Удалить платёж
+deleteNote: Прошлые операции останутся
+deleteTitle: Удалить «$name»?
+canSpend: Можно тратить сегодня
+overToday: Сегодня больше дневного
+ofPerDay: из $amount на день
+spentUntilPayday: Потратили $amount · до зарплаты $days
+spentUntilMonth: Потратили $amount · до конца месяца $days
+spentOver: Потратили $amount · завтра можно $tomorrow в день
+short: Не хватает $amount до $date
+upcoming: Ближайшие платежи
+noPaydayLabel: До зарплаты
+noPaydayTitle: Сколько можно тратить в день?
+noPaydayText: Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.
+noPaydayAction: Указать день зарплаты
+days(n):
+  one: $n день
+  few: $n дня
+  many: $n дней
+  other: $n дней
+paydayTitle: Деньги до зарплаты
+perDay: $amount в день
+notEnough: Не хватает $amount
+untilPayday: до зарплаты $date · $days
+untilDate: до $date · $days
+morning: Утром на счетах
+paymentsUntilPayday(n):
+  one: $n платёж до зарплаты
+  few: $n платежа до зарплаты
+  many: $n платежей до зарплаты
+  other: $n платежей до зарплаты
+paymentsUntilMonth(n):
+  one: $n платёж до конца месяца
+  few: $n платежа до конца месяца
+  many: $n платежей до конца месяца
+  other: $n платежей до конца месяца
+aside: Отложить
+leftFor(n):
+  one: Остаётся на $n день
+  few: Остаётся на $n дня
+  many: Остаётся на $n дней
+  other: Остаётся на $n дней
+countUntil: Считать до
+until(map):
+  payday: Дня зарплаты
+  monthEnd: Конца месяца
+payday: День зарплаты
+paydayFrom: из платежа «$name»
+paydayNone: добавьте регулярное поступление
+paydayDay: $day-е число
+accountsTitle: Какие счета считать
+count: Считать «$name»
+otherCurrency: другая валюта, пока не считаем
+asideRow: Отложить до зарплаты
+asideNote: не тратим, даже если «можно»
+salaryName: Зарплата
+monthsShort:
+  - янв
+  - фев
+  - мар
+  - апр
+  - мая
+  - июн
+  - июл
+  - авг
+  - сен
+  - окт
+  - ноя
+  - дек

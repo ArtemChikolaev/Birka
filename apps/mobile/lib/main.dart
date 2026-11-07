@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rates/rates.dart';
+import 'package:schedules_common/schedules_common.dart';
 import 'package:settings_common/settings_common.dart';
 
 Future<void> main() async {
@@ -25,8 +26,14 @@ Future<void> main() async {
       onboarding: onboarding,
     ),
   );
-  // The rates of whichever ledger stands open.
+  // The regular payments that post themselves and whose day came while the
+  // app was closed (ADR 0023).
+  unawaited(GetIt.instance<SchedulesRepository>().postDue());
+  // The rates and the regular payments of whichever ledger stands open.
   AppLifecycleListener(
-    onResume: () => unawaited(GetIt.instance<RatesUpdater>().refresh()),
+    onResume: () {
+      unawaited(GetIt.instance<RatesUpdater>().refresh());
+      unawaited(GetIt.instance<SchedulesRepository>().postDue());
+    },
   );
 }

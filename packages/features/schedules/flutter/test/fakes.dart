@@ -1,0 +1,271 @@
+import 'dart:async';
+
+import 'package:design_flutter/design_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ledger/ledger.dart';
+import 'package:money/money.dart';
+import 'package:schedules_common/schedules_common.dart';
+
+Money rub(int rubles) => Money(rubles * 100, Currency.rub);
+
+/// [text] with the spaces of formatted amounts.
+String nb(String text) => text.replaceAll(' ', String.fromCharCode(0xA0));
+
+/// Wednesday, November 18, 2026, as on the boards.
+final boardToday = CivilDate(2026, 11, 18);
+
+Account account(
+  String id,
+  String name, {
+  AccountType type = AccountType.debit,
+  Currency currency = Currency.rub,
+  int sortOrder = 0,
+  String? lastDigits,
+}) => Account(
+  id: id,
+  name: name,
+  type: type,
+  openingBalance: Money(0, currency),
+  includeInTotals: true,
+  archived: false,
+  sortOrder: sortOrder,
+  lastDigits: lastDigits,
+);
+
+Schedule schedule(
+  String id,
+  String name,
+  int rubles,
+  CivilDate next, {
+  TransactionKind kind = TransactionKind.expense,
+  String? categoryId,
+  ScheduleEvery every = ScheduleEvery.month,
+  ScheduleOnDay onDay = ScheduleOnDay.ask,
+}) => Schedule(
+  id: id,
+  kind: kind,
+  name: name,
+  accountId: 'card',
+  categoryId: categoryId,
+  amount: rub(rubles),
+  every: every,
+  day: next.day,
+  next: next,
+  onDay: onDay,
+  reminder: ScheduleReminder.onDay,
+);
+
+/// The payments of the boards.
+List<Schedule> boardSchedules() => [
+  schedule(
+    'rent',
+    'Аренда',
+    45000,
+    CivilDate(2026, 11, 25),
+    categoryId: 'home',
+  ),
+  schedule(
+    'net',
+    'Интернет',
+    650,
+    CivilDate(2026, 11, 28),
+    categoryId: 'home',
+  ),
+  schedule(
+    'tv',
+    'Netflix',
+    799,
+    CivilDate(2026, 12, 1),
+    onDay: ScheduleOnDay.post,
+  ),
+  schedule('gym', 'Спортзал', 3500, CivilDate(2026, 12, 3)),
+  schedule(
+    'pay',
+    'Зарплата',
+    120000,
+    CivilDate(2026, 12, 5),
+    kind: TransactionKind.income,
+  ),
+  schedule(
+    'car',
+    'Страховка авто',
+    24000,
+    CivilDate(2027, 3, 12),
+    every: ScheduleEvery.year,
+  ),
+];
+
+/// What was spent today on the card.
+Transaction spent(int rubles) => Transaction(
+  id: 'spent',
+  kind: TransactionKind.expense,
+  occurredOn: boardToday,
+  note: '',
+  status: TransactionStatus.cleared,
+  source: TransactionSource.manual,
+  entries: [Entry(accountId: 'card', amount: -rub(rubles))],
+  allocations: [Allocation(categoryId: null, amount: rub(rubles))],
+);
+
+/// Keeps the regular payments in memory, and what was done to them.
+final class FakeSchedulesRepository implements SchedulesRepository {
+  /// Creates a repository of the boards, with [spentToday] spent on the card.
+  FakeSchedulesRepository({int spentToday = 620, List<Schedule>? schedules})
+    : schedules = schedules ?? boardSchedules(),
+      accounts = [
+        AccountBalance(
+          account('card', 'Зарплатная карта', lastDigits: '4821'),
+          rub(86400 - spentToday),
+        ),
+        AccountBalance(
+          account('cash', 'Наличные', type: AccountType.cash, sortOrder: 1),
+          rub(3200),
+        ),
+        AccountBalance(
+          account(
+            'savings',
+            'Накопительный',
+            type: AccountType.savings,
+            sortOrder: 2,
+          ),
+          rub(250000),
+        ),
+        AccountBalance(
+          account('wise', 'Wise', currency: Currency.usd, sortOrder: 3),
+          Money(120000, Currency.usd),
+        ),
+      ],
+      todays = [if (spentToday > 0) spent(spentToday)];
+
+  List<Schedule> schedules;
+  List<AccountBalance> accounts;
+  List<Transaction> todays;
+  PaydaySettings settings = const PaydaySettings(asideMinor: 1000000);
+  final categories = [
+    const Category(
+      id: 'home',
+      kind: CategoryKind.expense,
+      name: 'Дом',
+      color: '#22D3EE',
+      archived: false,
+      sortOrder: 0,
+    ),
+  ];
+
+  final posted = <String>[];
+  final skipped = <String>[];
+  final added = <ScheduleDraft>[];
+  final updated = <Schedule>[];
+  final deleted = <String>[];
+  final _changes = StreamController<void>.broadcast();
+
+  /// Tells the watchers that something changed.
+  void changed() => _changes.add(null);
+
+  // A stream that a test can cancel at once, as the cubit does on close.
+  Stream<T> _watch<T>(T Function() read) => Stream.multi((controller) {
+    controller.add(read());
+    final subscription = _changes.stream.listen((_) => controller.add(read()));
+    // Nothing to wait for, so that `first` comes at once under fake time.
+    controller.onCancel = () => unawaited(subscription.cancel());
+  });
+
+  /// The day the repository says it is.
+  CivilDate day = boardToday;
+
+  @override
+  CivilDate today() => day;
+
+  @override
+  Stream<List<Schedule>> watchSchedules() => _watch(() => schedules);
+
+  @override
+  Stream<List<AccountBalance>> watchAccounts() => _watch(() => accounts);
+
+  @override
+  Stream<List<Category>> watchCategories(CategoryKind kind) => _watch(
+    () => [
+      for (final it in categories)
+        if (it.kind == kind) it,
+    ],
+  );
+
+  @override
+  Stream<List<Transaction>> watchDay(CivilDate day) => _watch(
+    () => [
+      for (final it in todays)
+        if (it.occurredOn == day) it,
+    ],
+  );
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => Stream.value(null);
+
+  @override
+  Stream<PaydaySettings> watchSettings() => _watch(() => settings);
+
+  @override
+  Future<void> saveSettings(PaydaySettings settings) async {
+    this.settings = settings;
+    changed();
+  }
+
+  @override
+  Future<Schedule> add(ScheduleDraft draft) async {
+    added.add(draft);
+    return Schedule(
+      id: 'new',
+      kind: draft.kind,
+      name: draft.name,
+      accountId: draft.accountId,
+      toAccountId: draft.toAccountId,
+      categoryId: draft.categoryId,
+      amount: draft.amount,
+      every: draft.every,
+      day: draft.next.day,
+      next: draft.next,
+      onDay: draft.onDay,
+      reminder: draft.reminder,
+    );
+  }
+
+  @override
+  Future<void> update(Schedule schedule) async => updated.add(schedule);
+
+  @override
+  Future<void> delete(String id) async => deleted.add(id);
+
+  @override
+  Future<String> post(String id, {Money? amount, CivilDate? on}) async {
+    posted.add(id);
+    schedules = [
+      for (final it in schedules)
+        it.id == id ? it.movedTo(it.after(it.next)) : it,
+    ];
+    changed();
+    return 'transaction';
+  }
+
+  @override
+  Future<void> skip(String id) async {
+    skipped.add(id);
+    schedules = [
+      for (final it in schedules)
+        it.id == id ? it.movedTo(it.after(it.next)) : it,
+    ];
+    changed();
+  }
+
+  @override
+  Future<List<String>> postDue() async => const [];
+}
+
+/// [child] in the theme of Birka on a phone, with [cubit] above it.
+Widget phone<C extends StateStreamableSource<Object?>>(
+  C cubit,
+  Widget child,
+) => MaterialApp(
+  theme: BirkaTheme.dark(),
+  home: BlocProvider<C>.value(value: cubit, child: child),
+);

@@ -31,10 +31,13 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart'
     show
         Account,
+        AccountBalance,
         AccountType,
+        CivilDate,
         DayChange,
         Entry,
         LedgerImport,
+        Schedule,
         Transaction,
         TransactionDraft,
         TransactionSource,
@@ -48,6 +51,13 @@ import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart'
     show ReportsCubit, ReportsRepository;
 import 'package:reports_flutter/reports_flutter.dart';
+import 'package:schedules_common/schedules_common.dart'
+    show
+        PaydaySettings,
+        ScheduleDraft,
+        ScheduleFormCubit,
+        SchedulesCubit,
+        SchedulesRepository;
 import 'package:settings_common/settings_common.dart'
     show BaseCurrency, Settings, SettingsCubit, SettingsStore;
 import 'package:transactions_common/transactions_common.dart';
@@ -102,6 +112,55 @@ final class _NewDevice implements OnboardingRepository {
     required FirstAccount? account,
     required List<ReadyCategory> categories,
   }) async {}
+}
+
+/// No regular payments and no accounts for them, so the card of the money of
+/// the day stays away from the overview.
+final class _NoSchedules implements SchedulesRepository {
+  @override
+  CivilDate today() => CivilDate(2026, 10, 31);
+
+  @override
+  Stream<List<Schedule>> watchSchedules() => Stream.value(const []);
+
+  @override
+  Stream<List<AccountBalance>> watchAccounts() => Stream.value(const []);
+
+  @override
+  Stream<List<Category>> watchCategories(CategoryKind kind) =>
+      Stream.value(const []);
+
+  @override
+  Stream<List<Transaction>> watchDay(CivilDate day) => Stream.value(const []);
+
+  @override
+  Stream<Currency?> watchBaseCurrency() => Stream.value(null);
+
+  @override
+  Stream<PaydaySettings> watchSettings() =>
+      Stream.value(const PaydaySettings());
+
+  @override
+  Future<void> saveSettings(PaydaySettings settings) async {}
+
+  @override
+  Future<Schedule> add(ScheduleDraft draft) =>
+      throw UnsupportedError('No regular payments here');
+
+  @override
+  Future<void> update(Schedule schedule) async {}
+
+  @override
+  Future<void> delete(String id) async {}
+
+  @override
+  Future<String> post(String id, {Money? amount, CivilDate? on}) async => id;
+
+  @override
+  Future<void> skip(String id) async {}
+
+  @override
+  Future<List<String>> postDue() async => const [];
 }
 
 /// A ledger with nothing in the inbox.
@@ -390,6 +449,14 @@ void main() {
       )
       ..registerFactory(() => InboxCubit(_NoInbox(), DismissedPairs(settings)))
       ..registerFactory(() => ReportsCubit(_NoReports()))
+      ..registerFactory(() => SchedulesCubit(_NoSchedules()))
+      ..registerFactoryParam<ScheduleFormCubit, String?, bool?>(
+        (id, salary) => ScheduleFormCubit(
+          _NoSchedules(),
+          id: id,
+          salary: salary ?? false,
+        ),
+      )
       ..registerFactory(() => BackupCubit(_EmptyLedger(), _NoFiles(), settings))
       ..registerFactory(
         () => HelpCubit(

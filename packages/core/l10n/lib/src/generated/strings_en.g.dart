@@ -70,6 +70,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$reports$en reports = Translations$reports$en.internal(
     _root,
   );
+  late final Translations$schedules$en schedules =
+      Translations$schedules$en.internal(_root);
   late final Translations$settings$en settings =
       Translations$settings$en.internal(_root);
   late final Translations$transactions$en transactions =
@@ -2002,6 +2004,388 @@ class Translations$reports$en {
   ];
 }
 
+// Path: schedules
+class Translations$schedules$en {
+  Translations$schedules$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Regular payments'
+  String get title => 'Regular payments';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'New payment'
+  String get add => 'New payment';
+
+  /// en: 'Close'
+  String get close => 'Close';
+
+  /// en: 'Waits for you'
+  String get waitingTitle => 'Waits for you';
+
+  /// en: 'Post'
+  String get post => 'Post';
+
+  /// en: 'Skip'
+  String get skip => 'Skip';
+
+  /// en: 'When it comes in a bank statement, Birka will not count it twice.'
+  String get waitingNote =>
+      'When it comes in a bank statement, Birka will not count it twice.';
+
+  /// en: '$name · $day'
+  String waitingDay({required Object name, required Object day}) =>
+      '${name} · ${day}';
+
+  /// en: 'The next 30 days'
+  String get ahead => 'The next 30 days';
+
+  /// en: 'until $date $amount'
+  String aheadTotal({required Object date, required Object amount}) =>
+      'until ${date} ${amount}';
+
+  /// en: 'By the salary on $date your accounts will hold ≈ $amount, before everyday spending.'
+  String leftAfterPayday({required Object date, required Object amount}) =>
+      'By the salary on ${date} your accounts will hold ≈ ${amount}, before everyday spending.';
+
+  /// en: 'By the end of the month your accounts will hold ≈ $amount, before everyday spending.'
+  String leftAfterMonth({required Object amount}) =>
+      'By the end of the month your accounts will hold ≈ ${amount}, before everyday spending.';
+
+  /// en: '$title · $count'
+  String section({required Object title, required Object count}) =>
+      '${title} · ${count}';
+
+  /// en: 'All regular payments'
+  String get all => 'All regular payments';
+
+  /// en: 'No regular payments yet'
+  String get emptyTitle => 'No regular payments yet';
+
+  /// en: 'Rent, subscriptions, salary: add them once, and Birka shows the month ahead and how much you can spend a day.'
+  String get emptyText =>
+      'Rent, subscriptions, salary: add them once, and Birka shows the month ahead and how much you can spend a day.';
+
+  /// en: 'Add a payment'
+  String get emptyAdd => 'Add a payment';
+
+  /// en: 'every month on day $day'
+  String everyMonth({required Object day}) => 'every month on day ${day}';
+
+  /// en: 'every week, $weekday'
+  String everyWeek({required Object weekday}) => 'every week, ${weekday}';
+
+  /// en: 'once a year, $date'
+  String everyYear({required Object date}) => 'once a year, ${date}';
+
+  /// en: 'ask'
+  String get asks => 'ask';
+
+  /// en: 'posts itself'
+  String get posts => 'posts itself';
+
+  /// en: 'today'
+  String get today => 'today';
+
+  /// en: 'tomorrow'
+  String get tomorrow => 'tomorrow';
+
+  /// en: 'Posted «$name» · $amount'
+  String posted({required Object name, required Object amount}) =>
+      'Posted «${name}» · ${amount}';
+
+  /// en: 'Skipped «$name» · we will ask on $date'
+  String skippedAsk({required Object name, required Object date}) =>
+      'Skipped «${name}» · we will ask on ${date}';
+
+  /// en: 'Skipped «$name» · next on $date'
+  String skippedPost({required Object name, required Object date}) =>
+      'Skipped «${name}» · next on ${date}';
+
+  /// en: 'Deleted «$name»'
+  String deleted({required Object name}) => 'Deleted «${name}»';
+
+  Map<String, String> get on => {
+    'mon': 'on Mondays',
+    'tue': 'on Tuesdays',
+    'wed': 'on Wednesdays',
+    'thu': 'on Thursdays',
+    'fri': 'on Fridays',
+    'sat': 'on Saturdays',
+    'sun': 'on Sundays',
+  };
+  Map<String, String> get weekday => {
+    'mon': 'Mon',
+    'tue': 'Tue',
+    'wed': 'Wed',
+    'thu': 'Thu',
+    'fri': 'Fri',
+    'sat': 'Sat',
+    'sun': 'Sun',
+  };
+
+  /// en: 'New payment'
+  String get newTitle => 'New payment';
+
+  Map<String, String> get kinds => {
+    'expense': 'Expense',
+    'income': 'Income',
+    'transfer': 'Transfer',
+  };
+
+  /// en: 'What kind of payment'
+  String get kindLabel => 'What kind of payment';
+
+  /// en: 'Amount'
+  String get amount => 'Amount';
+
+  /// en: 'Name'
+  String get name => 'Name';
+
+  /// en: 'Rent, for example'
+  String get namePlaceholder => 'Rent, for example';
+
+  /// en: 'Category'
+  String get category => 'Category';
+
+  /// en: 'No category'
+  String get noCategory => 'No category';
+
+  /// en: 'to sort in the inbox'
+  String get categoryLater => 'to sort in the inbox';
+
+  /// en: 'Account'
+  String get account => 'Account';
+
+  /// en: 'To'
+  String get toAccount => 'To';
+
+  /// en: 'From'
+  String get fromAccount => 'From';
+
+  /// en: 'To the account'
+  String get incomeAccount => 'To the account';
+
+  /// en: 'Pick an account'
+  String get pickAccount => 'Pick an account';
+
+  /// en: 'Repeat every'
+  String get every => 'Repeat every';
+
+  Map<String, String> get everyOptions => {
+    'month': 'Month',
+    'week': 'Week',
+    'year': 'Year',
+  };
+
+  /// en: 'Day of the month'
+  String get dayOfMonth => 'Day of the month';
+
+  /// en: 'Day of the week'
+  String get dayOfWeek => 'Day of the week';
+
+  /// en: 'Day of the year'
+  String get dayOfYear => 'Day of the year';
+
+  /// en: 'day $day'
+  String dayNumber({required Object day}) => 'day ${day}';
+
+  /// en: 'Next time'
+  String get next => 'Next time';
+
+  /// en: 'On its day'
+  String get onDayTitle => 'On its day';
+
+  Map<String, String> get onDay => {
+    'ask': 'Ask me',
+    'post': 'Post itself',
+  };
+
+  /// en: 'Good for an amount that changes, like utility bills: on its day the payment waits for your «Post».'
+  String get askNote =>
+      'Good for an amount that changes, like utility bills: on its day the payment waits for your «Post».';
+
+  /// en: 'For subscriptions of one amount. When it comes in a bank statement, there will be no copy.'
+  String get postNote =>
+      'For subscriptions of one amount. When it comes in a bank statement, there will be no copy.';
+
+  /// en: 'Save'
+  String get save => 'Save';
+
+  /// en: 'Shows up in «The next payments» and in «You can spend today»'
+  String get saveNote =>
+      'Shows up in «The next payments» and in «You can spend today»';
+
+  /// en: 'Changes from the next time: $date'
+  String changeNote({required Object date}) =>
+      'Changes from the next time: ${date}';
+
+  /// en: 'Done'
+  String get done => 'Done';
+
+  /// en: 'Delete the payment'
+  String get delete => 'Delete the payment';
+
+  /// en: 'Past operations stay'
+  String get deleteNote => 'Past operations stay';
+
+  /// en: 'Delete «$name»?'
+  String deleteTitle({required Object name}) => 'Delete «${name}»?';
+
+  /// en: 'You can spend today'
+  String get canSpend => 'You can spend today';
+
+  /// en: 'Today is over the daily amount'
+  String get overToday => 'Today is over the daily amount';
+
+  /// en: 'of $amount a day'
+  String ofPerDay({required Object amount}) => 'of ${amount} a day';
+
+  /// en: 'Spent $amount · $days to the salary'
+  String spentUntilPayday({required Object amount, required Object days}) =>
+      'Spent ${amount} · ${days} to the salary';
+
+  /// en: 'Spent $amount · $days to the end of the month'
+  String spentUntilMonth({required Object amount, required Object days}) =>
+      'Spent ${amount} · ${days} to the end of the month';
+
+  /// en: 'Spent $amount · tomorrow you can spend $tomorrow a day'
+  String spentOver({required Object amount, required Object tomorrow}) =>
+      'Spent ${amount} · tomorrow you can spend ${tomorrow} a day';
+
+  /// en: '$amount short until $date'
+  String short({required Object amount, required Object date}) =>
+      '${amount} short until ${date}';
+
+  /// en: 'The next payments'
+  String get upcoming => 'The next payments';
+
+  /// en: 'Until the salary'
+  String get noPaydayLabel => 'Until the salary';
+
+  /// en: 'How much can you spend a day?'
+  String get noPaydayTitle => 'How much can you spend a day?';
+
+  /// en: 'Tell Birka your payday. It takes the regular payments until then away and splits the rest between the days.'
+  String get noPaydayText =>
+      'Tell Birka your payday. It takes the regular payments until then away and splits the rest between the days.';
+
+  /// en: 'Set the payday'
+  String get noPaydayAction => 'Set the payday';
+
+  /// en: '(one) {$n day} (other) {$n days}'
+  String days({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} day',
+        other: '${n} days',
+      );
+
+  /// en: 'Money until the salary'
+  String get paydayTitle => 'Money until the salary';
+
+  /// en: '$amount a day'
+  String perDay({required Object amount}) => '${amount} a day';
+
+  /// en: '$amount short'
+  String notEnough({required Object amount}) => '${amount} short';
+
+  /// en: 'until the salary on $date · $days'
+  String untilPayday({required Object date, required Object days}) =>
+      'until the salary on ${date} · ${days}';
+
+  /// en: 'until $date · $days'
+  String untilDate({required Object date, required Object days}) =>
+      'until ${date} · ${days}';
+
+  /// en: 'In the accounts this morning'
+  String get morning => 'In the accounts this morning';
+
+  /// en: '(one) {$n payment until the salary} (other) {$n payments until the salary}'
+  String paymentsUntilPayday({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} payment until the salary',
+        other: '${n} payments until the salary',
+      );
+
+  /// en: '(one) {$n payment until the end of the month} (other) {$n payments until the end of the month}'
+  String paymentsUntilMonth({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} payment until the end of the month',
+        other: '${n} payments until the end of the month',
+      );
+
+  /// en: 'Keep aside'
+  String get aside => 'Keep aside';
+
+  /// en: '(one) {Left for $n day} (other) {Left for $n days}'
+  String leftFor({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Left for ${n} day',
+        other: 'Left for ${n} days',
+      );
+
+  /// en: 'Count until'
+  String get countUntil => 'Count until';
+
+  Map<String, String> get until => {
+    'payday': 'The payday',
+    'monthEnd': 'The end of the month',
+  };
+
+  /// en: 'Payday'
+  String get payday => 'Payday';
+
+  /// en: 'from the payment «$name»'
+  String paydayFrom({required Object name}) => 'from the payment «${name}»';
+
+  /// en: 'add a regular income'
+  String get paydayNone => 'add a regular income';
+
+  /// en: 'day $day'
+  String paydayDay({required Object day}) => 'day ${day}';
+
+  /// en: 'Which accounts to count'
+  String get accountsTitle => 'Which accounts to count';
+
+  /// en: 'Count «$name»'
+  String count({required Object name}) => 'Count «${name}»';
+
+  /// en: 'another currency, not counted yet'
+  String get otherCurrency => 'another currency, not counted yet';
+
+  /// en: 'Keep aside until the salary'
+  String get asideRow => 'Keep aside until the salary';
+
+  /// en: 'not to spend, even if «you can»'
+  String get asideNote => 'not to spend, even if «you can»';
+
+  /// en: 'Salary'
+  String get salaryName => 'Salary';
+
+  List<String> get monthsShort => [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+}
+
 // Path: settings
 class Translations$settings$en {
   Translations$settings$en.internal(this._root);
@@ -3625,6 +4009,204 @@ extension on Translations {
           'reports.monthsShort.9' => 'Oct',
           'reports.monthsShort.10' => 'Nov',
           'reports.monthsShort.11' => 'Dec',
+          'schedules.title' => 'Regular payments',
+          'schedules.back' => 'Back',
+          'schedules.add' => 'New payment',
+          'schedules.close' => 'Close',
+          'schedules.waitingTitle' => 'Waits for you',
+          'schedules.post' => 'Post',
+          'schedules.skip' => 'Skip',
+          'schedules.waitingNote' =>
+            'When it comes in a bank statement, Birka will not count it twice.',
+          'schedules.waitingDay' =>
+            ({required Object name, required Object day}) => '${name} · ${day}',
+          'schedules.ahead' => 'The next 30 days',
+          'schedules.aheadTotal' =>
+            ({required Object date, required Object amount}) =>
+                'until ${date} ${amount}',
+          'schedules.leftAfterPayday' =>
+            ({required Object date, required Object amount}) =>
+                'By the salary on ${date} your accounts will hold ≈ ${amount}, before everyday spending.',
+          'schedules.leftAfterMonth' =>
+            ({required Object amount}) =>
+                'By the end of the month your accounts will hold ≈ ${amount}, before everyday spending.',
+          'schedules.section' =>
+            ({required Object title, required Object count}) =>
+                '${title} · ${count}',
+          'schedules.all' => 'All regular payments',
+          'schedules.emptyTitle' => 'No regular payments yet',
+          'schedules.emptyText' =>
+            'Rent, subscriptions, salary: add them once, and Birka shows the month ahead and how much you can spend a day.',
+          'schedules.emptyAdd' => 'Add a payment',
+          'schedules.everyMonth' =>
+            ({required Object day}) => 'every month on day ${day}',
+          'schedules.everyWeek' =>
+            ({required Object weekday}) => 'every week, ${weekday}',
+          'schedules.everyYear' =>
+            ({required Object date}) => 'once a year, ${date}',
+          'schedules.asks' => 'ask',
+          'schedules.posts' => 'posts itself',
+          'schedules.today' => 'today',
+          'schedules.tomorrow' => 'tomorrow',
+          'schedules.posted' =>
+            ({required Object name, required Object amount}) =>
+                'Posted «${name}» · ${amount}',
+          'schedules.skippedAsk' =>
+            ({required Object name, required Object date}) =>
+                'Skipped «${name}» · we will ask on ${date}',
+          'schedules.skippedPost' =>
+            ({required Object name, required Object date}) =>
+                'Skipped «${name}» · next on ${date}',
+          'schedules.deleted' =>
+            ({required Object name}) => 'Deleted «${name}»',
+          'schedules.on.mon' => 'on Mondays',
+          'schedules.on.tue' => 'on Tuesdays',
+          'schedules.on.wed' => 'on Wednesdays',
+          'schedules.on.thu' => 'on Thursdays',
+          'schedules.on.fri' => 'on Fridays',
+          'schedules.on.sat' => 'on Saturdays',
+          'schedules.on.sun' => 'on Sundays',
+          'schedules.weekday.mon' => 'Mon',
+          'schedules.weekday.tue' => 'Tue',
+          'schedules.weekday.wed' => 'Wed',
+          'schedules.weekday.thu' => 'Thu',
+          'schedules.weekday.fri' => 'Fri',
+          'schedules.weekday.sat' => 'Sat',
+          'schedules.weekday.sun' => 'Sun',
+          'schedules.newTitle' => 'New payment',
+          'schedules.kinds.expense' => 'Expense',
+          'schedules.kinds.income' => 'Income',
+          'schedules.kinds.transfer' => 'Transfer',
+          'schedules.kindLabel' => 'What kind of payment',
+          'schedules.amount' => 'Amount',
+          'schedules.name' => 'Name',
+          'schedules.namePlaceholder' => 'Rent, for example',
+          'schedules.category' => 'Category',
+          'schedules.noCategory' => 'No category',
+          'schedules.categoryLater' => 'to sort in the inbox',
+          'schedules.account' => 'Account',
+          'schedules.toAccount' => 'To',
+          'schedules.fromAccount' => 'From',
+          'schedules.incomeAccount' => 'To the account',
+          'schedules.pickAccount' => 'Pick an account',
+          'schedules.every' => 'Repeat every',
+          'schedules.everyOptions.month' => 'Month',
+          'schedules.everyOptions.week' => 'Week',
+          'schedules.everyOptions.year' => 'Year',
+          'schedules.dayOfMonth' => 'Day of the month',
+          'schedules.dayOfWeek' => 'Day of the week',
+          'schedules.dayOfYear' => 'Day of the year',
+          'schedules.dayNumber' => ({required Object day}) => 'day ${day}',
+          'schedules.next' => 'Next time',
+          'schedules.onDayTitle' => 'On its day',
+          'schedules.onDay.ask' => 'Ask me',
+          'schedules.onDay.post' => 'Post itself',
+          'schedules.askNote' =>
+            'Good for an amount that changes, like utility bills: on its day the payment waits for your «Post».',
+          'schedules.postNote' =>
+            'For subscriptions of one amount. When it comes in a bank statement, there will be no copy.',
+          'schedules.save' => 'Save',
+          'schedules.saveNote' =>
+            'Shows up in «The next payments» and in «You can spend today»',
+          'schedules.changeNote' =>
+            ({required Object date}) => 'Changes from the next time: ${date}',
+          'schedules.done' => 'Done',
+          'schedules.delete' => 'Delete the payment',
+          'schedules.deleteNote' => 'Past operations stay',
+          'schedules.deleteTitle' =>
+            ({required Object name}) => 'Delete «${name}»?',
+          'schedules.canSpend' => 'You can spend today',
+          'schedules.overToday' => 'Today is over the daily amount',
+          'schedules.ofPerDay' =>
+            ({required Object amount}) => 'of ${amount} a day',
+          'schedules.spentUntilPayday' =>
+            ({required Object amount, required Object days}) =>
+                'Spent ${amount} · ${days} to the salary',
+          'schedules.spentUntilMonth' =>
+            ({required Object amount, required Object days}) =>
+                'Spent ${amount} · ${days} to the end of the month',
+          'schedules.spentOver' =>
+            ({required Object amount, required Object tomorrow}) =>
+                'Spent ${amount} · tomorrow you can spend ${tomorrow} a day',
+          'schedules.short' =>
+            ({required Object amount, required Object date}) =>
+                '${amount} short until ${date}',
+          'schedules.upcoming' => 'The next payments',
+          'schedules.noPaydayLabel' => 'Until the salary',
+          'schedules.noPaydayTitle' => 'How much can you spend a day?',
+          'schedules.noPaydayText' =>
+            'Tell Birka your payday. It takes the regular payments until then away and splits the rest between the days.',
+          'schedules.noPaydayAction' => 'Set the payday',
+          'schedules.days' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} day',
+                  other: '${n} days',
+                ),
+          'schedules.paydayTitle' => 'Money until the salary',
+          'schedules.perDay' => ({required Object amount}) => '${amount} a day',
+          'schedules.notEnough' =>
+            ({required Object amount}) => '${amount} short',
+          'schedules.untilPayday' =>
+            ({required Object date, required Object days}) =>
+                'until the salary on ${date} · ${days}',
+          'schedules.untilDate' =>
+            ({required Object date, required Object days}) =>
+                'until ${date} · ${days}',
+          'schedules.morning' => 'In the accounts this morning',
+          'schedules.paymentsUntilPayday' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} payment until the salary',
+                  other: '${n} payments until the salary',
+                ),
+          'schedules.paymentsUntilMonth' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} payment until the end of the month',
+                  other: '${n} payments until the end of the month',
+                ),
+          'schedules.aside' => 'Keep aside',
+          'schedules.leftFor' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Left for ${n} day',
+                  other: 'Left for ${n} days',
+                ),
+          'schedules.countUntil' => 'Count until',
+          'schedules.until.payday' => 'The payday',
+          'schedules.until.monthEnd' => 'The end of the month',
+          'schedules.payday' => 'Payday',
+          'schedules.paydayFrom' =>
+            ({required Object name}) => 'from the payment «${name}»',
+          'schedules.paydayNone' => 'add a regular income',
+          'schedules.paydayDay' => ({required Object day}) => 'day ${day}',
+          'schedules.accountsTitle' => 'Which accounts to count',
+          'schedules.count' => ({required Object name}) => 'Count «${name}»',
+          'schedules.otherCurrency' => 'another currency, not counted yet',
+          'schedules.asideRow' => 'Keep aside until the salary',
+          'schedules.asideNote' => 'not to spend, even if «you can»',
+          'schedules.salaryName' => 'Salary',
+          'schedules.monthsShort.0' => 'Jan',
+          'schedules.monthsShort.1' => 'Feb',
+          'schedules.monthsShort.2' => 'Mar',
+          'schedules.monthsShort.3' => 'Apr',
+          'schedules.monthsShort.4' => 'May',
+          'schedules.monthsShort.5' => 'Jun',
+          'schedules.monthsShort.6' => 'Jul',
+          'schedules.monthsShort.7' => 'Aug',
+          'schedules.monthsShort.8' => 'Sep',
+          'schedules.monthsShort.9' => 'Oct',
+          'schedules.monthsShort.10' => 'Nov',
+          'schedules.monthsShort.11' => 'Dec',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
