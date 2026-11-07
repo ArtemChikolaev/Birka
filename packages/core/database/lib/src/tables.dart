@@ -208,6 +208,27 @@ class Schedules extends Table with SyncedRow {
 
   /// One of the names of `ScheduleReminder` in the ledger.
   TextColumn get reminder => text()();
+
+  /// How its last times were done, one of the names of `ScheduleDone` in the
+  /// ledger, or `null` while none is done.
+  TextColumn get lastDone => text().nullable()();
+
+  /// The first of the times that [lastDone] did, as `YYYY-MM-DD`.
+  TextColumn get lastFrom => text().nullable()();
+
+  /// The last of the times that [lastDone] did, as `YYYY-MM-DD`.
+  TextColumn get lastOn => text().nullable()();
+
+  /// The transaction of the last of those times: the one a post gave or the
+  /// one a statement brought. It names no row by a key, as it may be gone.
+  TextColumn get lastTransactionId => text().nullable()();
+
+  /// The import whose statement brought those times, which takes them back
+  /// when it goes out.
+  TextColumn get lastImportId => text().nullable()();
+
+  /// When they were done.
+  DateTimeColumn get lastAt => dateTime().nullable()();
 }
 
 /// What one unit of a currency cost in rubles on a day (ADR 0012). Any device

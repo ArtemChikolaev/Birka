@@ -12,6 +12,9 @@ Money eur(int minorUnits) => Money(minorUnits, Currency.eur);
 
 Matcher throwsLedger() => throwsA(isA<LedgerException>());
 
+/// The clock of the ledger.
+final now = DateTime.utc(2026, 11, 18, 12);
+
 void main() {
   late BirkaDatabase database;
   late LedgerRepository ledger;
@@ -23,10 +26,7 @@ void main() {
 
   setUp(() async {
     database = BirkaDatabase(NativeDatabase.memory());
-    ledger = LedgerRepository(
-      database,
-      now: () => DateTime.utc(2026, 11, 18, 12),
-    );
+    ledger = LedgerRepository(database, now: () => now);
     card = await ledger.addAccount(
       name: 'Card',
       type: AccountType.debit,
@@ -196,6 +196,33 @@ void main() {
       await expectLater(ledger.updateSchedule(changed), throwsLedger());
     });
 
+    test('keeps what was done to it through a change, unless its next time '
+        'moves', () async {
+      final rent = await addRent();
+      await ledger.skipSchedule(rent.id);
+      final skipped = (await ledger.schedule(rent.id))!;
+
+      await ledger.updateSchedule(
+        Schedule(
+          id: rent.id,
+          kind: rent.kind,
+          name: 'Flat',
+          accountId: rent.accountId,
+          categoryId: rent.categoryId,
+          amount: rub(4700000),
+          every: rent.every,
+          day: rent.day,
+          next: skipped.next,
+          onDay: rent.onDay,
+          reminder: rent.reminder,
+        ),
+      );
+      expect((await ledger.schedule(rent.id))!.last, skipped.last);
+
+      await ledger.updateSchedule(skipped.movedTo(CivilDate(2026, 12, 28)));
+      expect((await ledger.schedule(rent.id))!.last, isNull);
+    });
+
     test('goes and leaves the transactions it gave', () async {
       final rent = await addRent();
       await ledger.postSchedule(rent.id);
@@ -319,6 +346,33 @@ void main() {
       expect((await ledger.schedule(save.id))!.next, CivilDate(2026, 11, 27));
     });
 
+    test('keeps what it did to the last time, as skipping does', () async {
+      final rent = await addRent();
+
+      final id = await ledger.postSchedule(rent.id);
+
+      expect(
+        (await ledger.schedule(rent.id))!.last,
+        ScheduleLast(
+          done: ScheduleDone.posted,
+          from: CivilDate(2026, 11, 25),
+          on: CivilDate(2026, 11, 25),
+          at: now,
+          transactionId: id,
+        ),
+      );
+      await ledger.skipSchedule(rent.id);
+      expect(
+        (await ledger.schedule(rent.id))!.last,
+        ScheduleLast(
+          done: ScheduleDone.skipped,
+          from: CivilDate(2026, 12, 25),
+          on: CivilDate(2026, 12, 25),
+          at: now,
+        ),
+      );
+    });
+
     test('skips a time without a transaction', () async {
       final rent = await addRent();
 
@@ -363,9 +417,108 @@ void main() {
         ('Netflix', CivilDate(2026, 10, 1)),
       ]);
       expect((await ledger.schedule(tv.id))!.next, CivilDate(2026, 12, 1));
+      expect(
+        (await ledger.schedule(tv.id))!.last,
+        ScheduleLast(
+          done: ScheduleDone.posted,
+          from: CivilDate(2026, 10, 1),
+          on: CivilDate(2026, 11, 1),
+          at: now,
+          transactionId: posted.last,
+        ),
+      );
       expect(await ledger.schedule(later.id), later);
       expect(await ledger.schedule(rent.id), rent);
       expect(await ledger.postDueSchedules(CivilDate(2026, 11, 18)), isEmpty);
+    });
+  });
+
+  group('a statement', () {
+    Future<(String, String)> imported(CivilDate on) async {
+      final importId = await ledger.addImport(
+        fileName: 'alfa.csv',
+        format: 'alfa',
+        firstDay: CivilDate(2026, 10, 1),
+        lastDay: CivilDate(2026, 11, 30),
+      );
+      final transactionId = await ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: home.id, amount: rub(4500000))],
+          occurredOn: on,
+          note: 'Перевод по номеру телефона',
+          source: TransactionSource.import,
+        ),
+        importId: importId,
+      );
+      return (importId, transactionId);
+    }
+
+    test('that brings the times of a payment moves it on with no '
+        'transaction of its own', () async {
+      final rent = await addRent(next: CivilDate(2026, 10, 25));
+      final (importId, transactionId) = await imported(CivilDate(2026, 11, 25));
+
+      await ledger.findSchedule(
+        rent.id,
+        through: CivilDate(2026, 11, 25),
+        transactionId: transactionId,
+        importId: importId,
+      );
+
+      final found = (await ledger.schedule(rent.id))!;
+      expect(found.next, CivilDate(2026, 12, 25));
+      expect(
+        found.last,
+        ScheduleLast(
+          done: ScheduleDone.found,
+          from: CivilDate(2026, 10, 25),
+          on: CivilDate(2026, 11, 25),
+          at: now,
+          transactionId: transactionId,
+          importId: importId,
+        ),
+      );
+      expect(
+        (await ledger.watchTransactions().first).map((it) => it.source),
+        [TransactionSource.import],
+      );
+      await expectLater(
+        ledger.findSchedule(
+          rent.id,
+          through: CivilDate(2026, 11, 25),
+          transactionId: transactionId,
+          importId: importId,
+        ),
+        throwsLedger(),
+      );
+    });
+
+    test('that goes out leaves the payment waiting for those times again, '
+        'and the others as they are', () async {
+      final rent = await addRent();
+      final (importId, transactionId) = await imported(CivilDate(2026, 11, 24));
+      await ledger.findSchedule(
+        rent.id,
+        through: CivilDate(2026, 11, 25),
+        transactionId: transactionId,
+        importId: importId,
+      );
+      final tv = await ledger.addSchedule(
+        kind: TransactionKind.expense,
+        name: 'Netflix',
+        accountId: card.id,
+        amount: rub(79900),
+        every: ScheduleEvery.month,
+        next: CivilDate(2026, 11, 1),
+      );
+      await ledger.postSchedule(tv.id);
+      final posted = await ledger.schedule(tv.id);
+
+      await ledger.undoImport(importId);
+
+      expect(await ledger.schedule(rent.id), rent);
+      expect(await ledger.schedule(tv.id), posted);
     });
   });
 

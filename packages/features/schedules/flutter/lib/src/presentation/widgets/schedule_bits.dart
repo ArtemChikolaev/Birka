@@ -116,11 +116,16 @@ class DateColumn extends StatelessWidget {
             '${day.day}',
             style: styles.heading.copyWith(color: colors.text, height: 1.1),
           ),
-          Text(
-            '${shortDate(day).split(' ').last} · ${weekdayLabel(day)}',
-            maxLines: 1,
-            softWrap: false,
-            style: styles.label.copyWith(color: colors.textSubtle),
+          // The month and the weekday shrink to the column rather than lose
+          // their last letters.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              '${shortDate(day).split(' ').last} · ${weekdayLabel(day)}',
+              maxLines: 1,
+              softWrap: false,
+              style: styles.caption.copyWith(color: colors.textSubtle),
+            ),
           ),
         ],
       ),

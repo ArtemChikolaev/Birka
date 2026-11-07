@@ -463,6 +463,124 @@ void main() {
     );
   });
 
+  group('the regular payments', () {
+    Future<Schedule> regular(
+      String name,
+      int minorUnits,
+      CivilDate next, {
+      TransactionKind kind = TransactionKind.expense,
+      ScheduleEvery every = ScheduleEvery.month,
+    }) => ledger.addSchedule(
+      kind: kind,
+      name: name,
+      accountId: card.id,
+      amount: rub(minorUnits),
+      every: every,
+      next: next,
+    );
+
+    test('that a statement brings are done, through a copy too, and wait '
+        'again once it goes out', () async {
+      final pay = await regular(
+        'Зарплата',
+        18500000,
+        CivilDate(2026, 10, 2),
+        kind: TransactionKind.income,
+      );
+      final gym = await regular('Спортзал', 350000, CivilDate(2026, 10, 5));
+      final bills = await regular('ЖКХ', 684530, CivilDate(2026, 10, 7));
+      final rent = await regular('Аренда', 300000, CivilDate(2026, 10, 9));
+
+      final plan = await prepareImport(repository, _card(), cardChoices());
+
+      expect(
+        [
+          for (final it in plan.found)
+            for (final at in it.times)
+              (it.schedule.name, at.time, at.operation.row.description),
+        ],
+        [
+          ('Зарплата', CivilDate(2026, 10, 2), 'TOPUP WISE EUROPE'),
+          ('ЖКХ', CivilDate(2026, 10, 7), 'ZHKU MOSKVA'),
+          ('Аренда', CivilDate(2026, 10, 9), 'PEREVOD PO NOMERU'),
+        ],
+      );
+      final id = await repository.write(
+        plan,
+        fileName: 'alfa.xlsx',
+        format: 'alfa',
+      );
+
+      final transactions = await ledger.watchTransactions(limit: null).first;
+      expect(
+        transactions.where((it) => it.source == TransactionSource.recurring),
+        isEmpty,
+      );
+      final transfer = transactions.singleWhere(
+        (it) => it.note == 'PEREVOD PO NOMERU',
+      );
+      final paid = (await ledger.schedule(rent.id))!;
+      expect(paid.next, CivilDate(2026, 11, 9));
+      expect(
+        paid.last,
+        ScheduleLast(
+          done: ScheduleDone.found,
+          from: CivilDate(2026, 10, 9),
+          on: CivilDate(2026, 10, 9),
+          at: paid.last!.at,
+          transactionId: transfer.id,
+          importId: id,
+        ),
+      );
+      // The bills went in by hand, and the statement says they went through.
+      expect(
+        (await ledger.schedule(bills.id))!.last?.transactionId,
+        transactions
+            .singleWhere((it) => it.note == 'Коммуналка за сентябрь')
+            .id,
+      );
+      expect((await ledger.schedule(pay.id))!.next, CivilDate(2026, 11, 2));
+      expect(await ledger.schedule(gym.id), gym);
+
+      await repository.undo(id);
+
+      expect(await ledger.schedule(rent.id), rent);
+      expect(await ledger.schedule(bills.id), bills);
+      expect(await ledger.schedule(pay.id), pay);
+    });
+
+    test('come one after another from the next, each with an operation of '
+        'its own', () async {
+      await regular('Маме', 300000, CivilDate(2026, 9, 9));
+      final early = await regular(
+        'Кофе утром',
+        42000,
+        CivilDate(2026, 10, 3),
+        every: ScheduleEvery.week,
+      );
+      final late = await regular(
+        'Кофе',
+        42000,
+        CivilDate(2026, 10, 4),
+        every: ScheduleEvery.week,
+      );
+
+      final plan = await prepareImport(repository, _card(), cardChoices());
+
+      expect(
+        [
+          for (final it in plan.found)
+            for (final at in it.times)
+              (it.schedule.id, at.time, at.operation.row.date.day),
+        ],
+        [
+          (early.id, CivilDate(2026, 10, 3), CivilDate(2026, 10, 3)),
+          (late.id, CivilDate(2026, 10, 4), CivilDate(2026, 10, 4)),
+        ],
+      );
+    });
+  });
+
   test('a balance on a day leaves out what came after it', () async {
     expect(
       await repository.balanceOn(card.id, CivilDate(2026, 10, 31)),

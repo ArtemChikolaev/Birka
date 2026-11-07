@@ -86,9 +86,21 @@ class SchedulesPage extends StatelessWidget {
     final plan = view.plan;
     const mask = HiddenAmounts.mask;
     return [
-      // A payment that was posted or skipped closes, and the list moves up.
+      // A payment that was posted or skipped closes, and the list moves up;
+      // one that a statement brought today says so in its place.
       AnimatedColumn(
         children: [
+          for (final it in view.found)
+            Padding(
+              key: ValueKey('found ${it.schedule.id}'),
+              padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
+              child: TintedNotice(
+                color: colors.positive,
+                glyph: BirkaGlyph.check,
+                title: foundTitle(it.schedule, it.import),
+                text: mask(context, foundText(it.schedule, view.today)),
+              ),
+            ),
           for (final schedule in view.waiting)
             Padding(
               key: ValueKey(schedule.id),
@@ -177,7 +189,13 @@ class SchedulesPage extends StatelessWidget {
               key: ValueKey(schedule.id),
               leading: ScheduleDot(view, schedule),
               title: schedule.name,
-              subtitle: scheduleLine(schedule, view.today),
+              subtitle:
+                  doneLine(schedule, view.today) ??
+                  scheduleLine(schedule, view.today),
+              // The next time of a payment that went through today must
+              // not be cut off by its amount.
+              subtitleLines: 2,
+              subtitleColor: _doneInk(context, view, schedule),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -202,6 +220,13 @@ class SchedulesPage extends StatelessWidget {
     ];
   }
 }
+
+/// The color of the line of [schedule] on the day it went through: posted
+/// or brought by a statement, but not skipped.
+Color? _doneInk(BuildContext context, SchedulesView view, Schedule schedule) =>
+    view.doneToday(schedule) && schedule.last?.done != ScheduleDone.skipped
+    ? BirkaColors.of(context).positive
+    : null;
 
 /// A payment whose day came and that asks the person to post or skip it.
 class _Waiting extends StatefulWidget {

@@ -4619,6 +4619,69 @@ class $SchedulesTable extends Schedules
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _lastDoneMeta = const VerificationMeta(
+    'lastDone',
+  );
+  @override
+  late final GeneratedColumn<String> lastDone = GeneratedColumn<String>(
+    'last_done',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastFromMeta = const VerificationMeta(
+    'lastFrom',
+  );
+  @override
+  late final GeneratedColumn<String> lastFrom = GeneratedColumn<String>(
+    'last_from',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastOnMeta = const VerificationMeta('lastOn');
+  @override
+  late final GeneratedColumn<String> lastOn = GeneratedColumn<String>(
+    'last_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastTransactionIdMeta = const VerificationMeta(
+    'lastTransactionId',
+  );
+  @override
+  late final GeneratedColumn<String> lastTransactionId =
+      GeneratedColumn<String>(
+        'last_transaction_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _lastImportIdMeta = const VerificationMeta(
+    'lastImportId',
+  );
+  @override
+  late final GeneratedColumn<String> lastImportId = GeneratedColumn<String>(
+    'last_import_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastAtMeta = const VerificationMeta('lastAt');
+  @override
+  late final GeneratedColumn<DateTime> lastAt = GeneratedColumn<DateTime>(
+    'last_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4636,6 +4699,12 @@ class $SchedulesTable extends Schedules
     nextOn,
     onDay,
     reminder,
+    lastDone,
+    lastFrom,
+    lastOn,
+    lastTransactionId,
+    lastImportId,
+    lastAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4766,6 +4835,48 @@ class $SchedulesTable extends Schedules
     } else if (isInserting) {
       context.missing(_reminderMeta);
     }
+    if (data.containsKey('last_done')) {
+      context.handle(
+        _lastDoneMeta,
+        lastDone.isAcceptableOrUnknown(data['last_done']!, _lastDoneMeta),
+      );
+    }
+    if (data.containsKey('last_from')) {
+      context.handle(
+        _lastFromMeta,
+        lastFrom.isAcceptableOrUnknown(data['last_from']!, _lastFromMeta),
+      );
+    }
+    if (data.containsKey('last_on')) {
+      context.handle(
+        _lastOnMeta,
+        lastOn.isAcceptableOrUnknown(data['last_on']!, _lastOnMeta),
+      );
+    }
+    if (data.containsKey('last_transaction_id')) {
+      context.handle(
+        _lastTransactionIdMeta,
+        lastTransactionId.isAcceptableOrUnknown(
+          data['last_transaction_id']!,
+          _lastTransactionIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_import_id')) {
+      context.handle(
+        _lastImportIdMeta,
+        lastImportId.isAcceptableOrUnknown(
+          data['last_import_id']!,
+          _lastImportIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_at')) {
+      context.handle(
+        _lastAtMeta,
+        lastAt.isAcceptableOrUnknown(data['last_at']!, _lastAtMeta),
+      );
+    }
     return context;
   }
 
@@ -4835,6 +4946,30 @@ class $SchedulesTable extends Schedules
         DriftSqlType.string,
         data['${effectivePrefix}reminder'],
       )!,
+      lastDone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_done'],
+      ),
+      lastFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_from'],
+      ),
+      lastOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_on'],
+      ),
+      lastTransactionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_transaction_id'],
+      ),
+      lastImportId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_import_id'],
+      ),
+      lastAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_at'],
+      ),
     );
   }
 
@@ -4891,6 +5026,27 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
 
   /// One of the names of `ScheduleReminder` in the ledger.
   final String reminder;
+
+  /// How its last times were done, one of the names of `ScheduleDone` in the
+  /// ledger, or `null` while none is done.
+  final String? lastDone;
+
+  /// The first of the times that [lastDone] did, as `YYYY-MM-DD`.
+  final String? lastFrom;
+
+  /// The last of the times that [lastDone] did, as `YYYY-MM-DD`.
+  final String? lastOn;
+
+  /// The transaction of the last of those times: the one a post gave or the
+  /// one a statement brought. It names no row by a key, as it may be gone.
+  final String? lastTransactionId;
+
+  /// The import whose statement brought those times, which takes them back
+  /// when it goes out.
+  final String? lastImportId;
+
+  /// When they were done.
+  final DateTime? lastAt;
   const ScheduleRow({
     required this.id,
     required this.createdAt,
@@ -4907,6 +5063,12 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     required this.nextOn,
     required this.onDay,
     required this.reminder,
+    this.lastDone,
+    this.lastFrom,
+    this.lastOn,
+    this.lastTransactionId,
+    this.lastImportId,
+    this.lastAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4932,6 +5094,24 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     map['next_on'] = Variable<String>(nextOn);
     map['on_day'] = Variable<String>(onDay);
     map['reminder'] = Variable<String>(reminder);
+    if (!nullToAbsent || lastDone != null) {
+      map['last_done'] = Variable<String>(lastDone);
+    }
+    if (!nullToAbsent || lastFrom != null) {
+      map['last_from'] = Variable<String>(lastFrom);
+    }
+    if (!nullToAbsent || lastOn != null) {
+      map['last_on'] = Variable<String>(lastOn);
+    }
+    if (!nullToAbsent || lastTransactionId != null) {
+      map['last_transaction_id'] = Variable<String>(lastTransactionId);
+    }
+    if (!nullToAbsent || lastImportId != null) {
+      map['last_import_id'] = Variable<String>(lastImportId);
+    }
+    if (!nullToAbsent || lastAt != null) {
+      map['last_at'] = Variable<DateTime>(lastAt);
+    }
     return map;
   }
 
@@ -4958,6 +5138,24 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       nextOn: Value(nextOn),
       onDay: Value(onDay),
       reminder: Value(reminder),
+      lastDone: lastDone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastDone),
+      lastFrom: lastFrom == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastFrom),
+      lastOn: lastOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastOn),
+      lastTransactionId: lastTransactionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastTransactionId),
+      lastImportId: lastImportId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastImportId),
+      lastAt: lastAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastAt),
     );
   }
 
@@ -4982,6 +5180,14 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       nextOn: serializer.fromJson<String>(json['nextOn']),
       onDay: serializer.fromJson<String>(json['onDay']),
       reminder: serializer.fromJson<String>(json['reminder']),
+      lastDone: serializer.fromJson<String?>(json['lastDone']),
+      lastFrom: serializer.fromJson<String?>(json['lastFrom']),
+      lastOn: serializer.fromJson<String?>(json['lastOn']),
+      lastTransactionId: serializer.fromJson<String?>(
+        json['lastTransactionId'],
+      ),
+      lastImportId: serializer.fromJson<String?>(json['lastImportId']),
+      lastAt: serializer.fromJson<DateTime?>(json['lastAt']),
     );
   }
   @override
@@ -5003,6 +5209,12 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       'nextOn': serializer.toJson<String>(nextOn),
       'onDay': serializer.toJson<String>(onDay),
       'reminder': serializer.toJson<String>(reminder),
+      'lastDone': serializer.toJson<String?>(lastDone),
+      'lastFrom': serializer.toJson<String?>(lastFrom),
+      'lastOn': serializer.toJson<String?>(lastOn),
+      'lastTransactionId': serializer.toJson<String?>(lastTransactionId),
+      'lastImportId': serializer.toJson<String?>(lastImportId),
+      'lastAt': serializer.toJson<DateTime?>(lastAt),
     };
   }
 
@@ -5022,6 +5234,12 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     String? nextOn,
     String? onDay,
     String? reminder,
+    Value<String?> lastDone = const Value.absent(),
+    Value<String?> lastFrom = const Value.absent(),
+    Value<String?> lastOn = const Value.absent(),
+    Value<String?> lastTransactionId = const Value.absent(),
+    Value<String?> lastImportId = const Value.absent(),
+    Value<DateTime?> lastAt = const Value.absent(),
   }) => ScheduleRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -5038,6 +5256,14 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     nextOn: nextOn ?? this.nextOn,
     onDay: onDay ?? this.onDay,
     reminder: reminder ?? this.reminder,
+    lastDone: lastDone.present ? lastDone.value : this.lastDone,
+    lastFrom: lastFrom.present ? lastFrom.value : this.lastFrom,
+    lastOn: lastOn.present ? lastOn.value : this.lastOn,
+    lastTransactionId: lastTransactionId.present
+        ? lastTransactionId.value
+        : this.lastTransactionId,
+    lastImportId: lastImportId.present ? lastImportId.value : this.lastImportId,
+    lastAt: lastAt.present ? lastAt.value : this.lastAt,
   );
   ScheduleRow copyWithCompanion(SchedulesCompanion data) {
     return ScheduleRow(
@@ -5062,6 +5288,16 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       nextOn: data.nextOn.present ? data.nextOn.value : this.nextOn,
       onDay: data.onDay.present ? data.onDay.value : this.onDay,
       reminder: data.reminder.present ? data.reminder.value : this.reminder,
+      lastDone: data.lastDone.present ? data.lastDone.value : this.lastDone,
+      lastFrom: data.lastFrom.present ? data.lastFrom.value : this.lastFrom,
+      lastOn: data.lastOn.present ? data.lastOn.value : this.lastOn,
+      lastTransactionId: data.lastTransactionId.present
+          ? data.lastTransactionId.value
+          : this.lastTransactionId,
+      lastImportId: data.lastImportId.present
+          ? data.lastImportId.value
+          : this.lastImportId,
+      lastAt: data.lastAt.present ? data.lastAt.value : this.lastAt,
     );
   }
 
@@ -5082,13 +5318,19 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           ..write('day: $day, ')
           ..write('nextOn: $nextOn, ')
           ..write('onDay: $onDay, ')
-          ..write('reminder: $reminder')
+          ..write('reminder: $reminder, ')
+          ..write('lastDone: $lastDone, ')
+          ..write('lastFrom: $lastFrom, ')
+          ..write('lastOn: $lastOn, ')
+          ..write('lastTransactionId: $lastTransactionId, ')
+          ..write('lastImportId: $lastImportId, ')
+          ..write('lastAt: $lastAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     createdAt,
     updatedAt,
@@ -5104,7 +5346,13 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     nextOn,
     onDay,
     reminder,
-  );
+    lastDone,
+    lastFrom,
+    lastOn,
+    lastTransactionId,
+    lastImportId,
+    lastAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -5123,7 +5371,13 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           other.day == this.day &&
           other.nextOn == this.nextOn &&
           other.onDay == this.onDay &&
-          other.reminder == this.reminder);
+          other.reminder == this.reminder &&
+          other.lastDone == this.lastDone &&
+          other.lastFrom == this.lastFrom &&
+          other.lastOn == this.lastOn &&
+          other.lastTransactionId == this.lastTransactionId &&
+          other.lastImportId == this.lastImportId &&
+          other.lastAt == this.lastAt);
 }
 
 class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
@@ -5142,6 +5396,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
   final Value<String> nextOn;
   final Value<String> onDay;
   final Value<String> reminder;
+  final Value<String?> lastDone;
+  final Value<String?> lastFrom;
+  final Value<String?> lastOn;
+  final Value<String?> lastTransactionId;
+  final Value<String?> lastImportId;
+  final Value<DateTime?> lastAt;
   final Value<int> rowid;
   const SchedulesCompanion({
     this.id = const Value.absent(),
@@ -5159,6 +5419,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     this.nextOn = const Value.absent(),
     this.onDay = const Value.absent(),
     this.reminder = const Value.absent(),
+    this.lastDone = const Value.absent(),
+    this.lastFrom = const Value.absent(),
+    this.lastOn = const Value.absent(),
+    this.lastTransactionId = const Value.absent(),
+    this.lastImportId = const Value.absent(),
+    this.lastAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SchedulesCompanion.insert({
@@ -5177,6 +5443,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     required String nextOn,
     required String onDay,
     required String reminder,
+    this.lastDone = const Value.absent(),
+    this.lastFrom = const Value.absent(),
+    this.lastOn = const Value.absent(),
+    this.lastTransactionId = const Value.absent(),
+    this.lastImportId = const Value.absent(),
+    this.lastAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -5206,6 +5478,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     Expression<String>? nextOn,
     Expression<String>? onDay,
     Expression<String>? reminder,
+    Expression<String>? lastDone,
+    Expression<String>? lastFrom,
+    Expression<String>? lastOn,
+    Expression<String>? lastTransactionId,
+    Expression<String>? lastImportId,
+    Expression<DateTime>? lastAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -5224,6 +5502,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
       if (nextOn != null) 'next_on': nextOn,
       if (onDay != null) 'on_day': onDay,
       if (reminder != null) 'reminder': reminder,
+      if (lastDone != null) 'last_done': lastDone,
+      if (lastFrom != null) 'last_from': lastFrom,
+      if (lastOn != null) 'last_on': lastOn,
+      if (lastTransactionId != null) 'last_transaction_id': lastTransactionId,
+      if (lastImportId != null) 'last_import_id': lastImportId,
+      if (lastAt != null) 'last_at': lastAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -5244,6 +5528,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     Value<String>? nextOn,
     Value<String>? onDay,
     Value<String>? reminder,
+    Value<String?>? lastDone,
+    Value<String?>? lastFrom,
+    Value<String?>? lastOn,
+    Value<String?>? lastTransactionId,
+    Value<String?>? lastImportId,
+    Value<DateTime?>? lastAt,
     Value<int>? rowid,
   }) {
     return SchedulesCompanion(
@@ -5262,6 +5552,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
       nextOn: nextOn ?? this.nextOn,
       onDay: onDay ?? this.onDay,
       reminder: reminder ?? this.reminder,
+      lastDone: lastDone ?? this.lastDone,
+      lastFrom: lastFrom ?? this.lastFrom,
+      lastOn: lastOn ?? this.lastOn,
+      lastTransactionId: lastTransactionId ?? this.lastTransactionId,
+      lastImportId: lastImportId ?? this.lastImportId,
+      lastAt: lastAt ?? this.lastAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -5314,6 +5610,24 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     if (reminder.present) {
       map['reminder'] = Variable<String>(reminder.value);
     }
+    if (lastDone.present) {
+      map['last_done'] = Variable<String>(lastDone.value);
+    }
+    if (lastFrom.present) {
+      map['last_from'] = Variable<String>(lastFrom.value);
+    }
+    if (lastOn.present) {
+      map['last_on'] = Variable<String>(lastOn.value);
+    }
+    if (lastTransactionId.present) {
+      map['last_transaction_id'] = Variable<String>(lastTransactionId.value);
+    }
+    if (lastImportId.present) {
+      map['last_import_id'] = Variable<String>(lastImportId.value);
+    }
+    if (lastAt.present) {
+      map['last_at'] = Variable<DateTime>(lastAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -5338,6 +5652,12 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
           ..write('nextOn: $nextOn, ')
           ..write('onDay: $onDay, ')
           ..write('reminder: $reminder, ')
+          ..write('lastDone: $lastDone, ')
+          ..write('lastFrom: $lastFrom, ')
+          ..write('lastOn: $lastOn, ')
+          ..write('lastTransactionId: $lastTransactionId, ')
+          ..write('lastImportId: $lastImportId, ')
+          ..write('lastAt: $lastAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9217,6 +9537,12 @@ typedef $$SchedulesTableCreateCompanionBuilder =
       required String nextOn,
       required String onDay,
       required String reminder,
+      Value<String?> lastDone,
+      Value<String?> lastFrom,
+      Value<String?> lastOn,
+      Value<String?> lastTransactionId,
+      Value<String?> lastImportId,
+      Value<DateTime?> lastAt,
       Value<int> rowid,
     });
 typedef $$SchedulesTableUpdateCompanionBuilder =
@@ -9236,6 +9562,12 @@ typedef $$SchedulesTableUpdateCompanionBuilder =
       Value<String> nextOn,
       Value<String> onDay,
       Value<String> reminder,
+      Value<String?> lastDone,
+      Value<String?> lastFrom,
+      Value<String?> lastOn,
+      Value<String?> lastTransactionId,
+      Value<String?> lastImportId,
+      Value<DateTime?> lastAt,
       Value<int> rowid,
     });
 
@@ -9367,6 +9699,36 @@ class $$SchedulesTableFilterComposer
 
   ColumnFilters<String> get reminder => $composableBuilder(
     column: $table.reminder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastDone => $composableBuilder(
+    column: $table.lastDone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastFrom => $composableBuilder(
+    column: $table.lastFrom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastOn => $composableBuilder(
+    column: $table.lastOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastTransactionId => $composableBuilder(
+    column: $table.lastTransactionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastImportId => $composableBuilder(
+    column: $table.lastImportId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastAt => $composableBuilder(
+    column: $table.lastAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9509,6 +9871,36 @@ class $$SchedulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get lastDone => $composableBuilder(
+    column: $table.lastDone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastFrom => $composableBuilder(
+    column: $table.lastFrom,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastOn => $composableBuilder(
+    column: $table.lastOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastTransactionId => $composableBuilder(
+    column: $table.lastTransactionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastImportId => $composableBuilder(
+    column: $table.lastImportId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastAt => $composableBuilder(
+    column: $table.lastAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableOrderingComposer get accountId {
     final $$AccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -9625,6 +10017,28 @@ class $$SchedulesTableAnnotationComposer
 
   GeneratedColumn<String> get reminder =>
       $composableBuilder(column: $table.reminder, builder: (column) => column);
+
+  GeneratedColumn<String> get lastDone =>
+      $composableBuilder(column: $table.lastDone, builder: (column) => column);
+
+  GeneratedColumn<String> get lastFrom =>
+      $composableBuilder(column: $table.lastFrom, builder: (column) => column);
+
+  GeneratedColumn<String> get lastOn =>
+      $composableBuilder(column: $table.lastOn, builder: (column) => column);
+
+  GeneratedColumn<String> get lastTransactionId => $composableBuilder(
+    column: $table.lastTransactionId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastImportId => $composableBuilder(
+    column: $table.lastImportId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastAt =>
+      $composableBuilder(column: $table.lastAt, builder: (column) => column);
 
   $$AccountsTableAnnotationComposer get accountId {
     final $$AccountsTableAnnotationComposer composer = $composerBuilder(
@@ -9743,6 +10157,12 @@ class $$SchedulesTableTableManager
                 Value<String> nextOn = const Value.absent(),
                 Value<String> onDay = const Value.absent(),
                 Value<String> reminder = const Value.absent(),
+                Value<String?> lastDone = const Value.absent(),
+                Value<String?> lastFrom = const Value.absent(),
+                Value<String?> lastOn = const Value.absent(),
+                Value<String?> lastTransactionId = const Value.absent(),
+                Value<String?> lastImportId = const Value.absent(),
+                Value<DateTime?> lastAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SchedulesCompanion(
                 id: id,
@@ -9760,6 +10180,12 @@ class $$SchedulesTableTableManager
                 nextOn: nextOn,
                 onDay: onDay,
                 reminder: reminder,
+                lastDone: lastDone,
+                lastFrom: lastFrom,
+                lastOn: lastOn,
+                lastTransactionId: lastTransactionId,
+                lastImportId: lastImportId,
+                lastAt: lastAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -9779,6 +10205,12 @@ class $$SchedulesTableTableManager
                 required String nextOn,
                 required String onDay,
                 required String reminder,
+                Value<String?> lastDone = const Value.absent(),
+                Value<String?> lastFrom = const Value.absent(),
+                Value<String?> lastOn = const Value.absent(),
+                Value<String?> lastTransactionId = const Value.absent(),
+                Value<String?> lastImportId = const Value.absent(),
+                Value<DateTime?> lastAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SchedulesCompanion.insert(
                 id: id,
@@ -9796,6 +10228,12 @@ class $$SchedulesTableTableManager
                 nextOn: nextOn,
                 onDay: onDay,
                 reminder: reminder,
+                lastDone: lastDone,
+                lastFrom: lastFrom,
+                lastOn: lastOn,
+                lastTransactionId: lastTransactionId,
+                lastImportId: lastImportId,
+                lastAt: lastAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

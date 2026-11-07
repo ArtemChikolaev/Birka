@@ -1,5 +1,6 @@
 import 'package:design_flutter/src/components/animated_column.dart';
 import 'package:design_flutter/src/components/birka_icon.dart';
+import 'package:design_flutter/src/components/fading_text.dart';
 import 'package:design_flutter/src/components/glass_surface.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
@@ -59,13 +60,15 @@ class GlassListGroup extends StatelessWidget {
 }
 
 /// A row of a [GlassListGroup]: an optional [leading] widget, a [title] with
-/// a [subtitle] under it and an optional [trailing] widget.
+/// a [subtitle] under it, which cross-fades into a new one, and an optional
+/// [trailing] widget.
 class GlassListRow extends StatelessWidget {
   /// Creates a row.
   const GlassListRow({
     required this.title,
     this.subtitle,
     this.subtitleLines = 1,
+    this.subtitleColor,
     this.leading,
     this.trailing,
     this.danger = false,
@@ -82,6 +85,10 @@ class GlassListRow extends StatelessWidget {
 
   /// How many lines [subtitle] takes before it is cut.
   final int subtitleLines;
+
+  /// The color of [subtitle], when it says something better than quietly,
+  /// such as a payment that went through today.
+  final Color? subtitleColor;
 
   /// What stands before the text, such as a small picture.
   final Widget? leading;
@@ -133,11 +140,13 @@ class GlassListRow extends StatelessWidget {
                     ),
                   ),
                   if (subtitle != null)
-                    Text(
+                    FadingText(
                       subtitle,
                       maxLines: subtitleLines,
                       overflow: TextOverflow.ellipsis,
-                      style: styles.caption.copyWith(color: colors.textMuted),
+                      style: styles.caption.copyWith(
+                        color: subtitleColor ?? colors.textMuted,
+                      ),
                     ),
                 ],
               ),

@@ -255,6 +255,30 @@ final class PlannedOperation {
   }
 }
 
+/// A time of a regular payment, and the operation of a statement that
+/// brings it.
+typedef FoundTime = ({CivilDate time, PlannedOperation operation});
+
+/// A regular payment whose times a statement brings, from its next one on
+/// (ADR 0023). They are done once the statement is in, with no transactions
+/// of their own.
+@immutable
+final class FoundSchedule {
+  /// Creates the payment [schedule] with the [times] that a statement
+  /// brings.
+  const FoundSchedule(this.schedule, this.times);
+
+  /// The payment.
+  final Schedule schedule;
+
+  /// Its times that the statement brings, the earliest first, with no time
+  /// missing between them.
+  final List<FoundTime> times;
+
+  /// The last of its times that the statement brings.
+  FoundTime get last => times.last;
+}
+
 /// What an import will do, before it does it.
 @immutable
 final class ImportPlan {
@@ -266,6 +290,7 @@ final class ImportPlan {
     required this.problems,
     required this.left,
     required this.balances,
+    this.found = const [],
   });
 
   /// The statement.
@@ -288,6 +313,9 @@ final class ImportPlan {
   /// last operation, by [SourceAccount.key], for the accounts the import
   /// goes into.
   final Map<String, Money> balances;
+
+  /// The regular payments whose times the statement brings.
+  final List<FoundSchedule> found;
 
   /// Whether [operation] stays out as a copy of a transaction the ledger has.
   bool skips(PlannedOperation operation) =>
@@ -337,12 +365,20 @@ final class ImportPlan {
 ///
 /// [memory] gives a category to what would wait in the inbox, from the past
 /// choices of the person.
+///
+/// An operation brings a time of one of the regular payments [schedules] in
+/// the same way: it moves the amount of the payment on its account within a
+/// day of that time, and a name that shares a word makes it likelier. The
+/// times of a payment come from its next one on, one after another, and
+/// each operation brings one time at most, a copy included, since the bank
+/// says that the payment went through (ADR 0023).
 ImportPlan planImport(
   Statement statement,
   ImportChoices choices, {
   Map<String, List<Transaction>> existing = const {},
   Map<String, Money> balances = const {},
   CategoryMemory? memory,
+  List<Schedule> schedules = const [],
 }) {
   final operations = <PlannedOperation>[];
   final problems = <PlanProblem>[];
@@ -456,7 +492,63 @@ ImportPlan planImport(
     problems: List.unmodifiable(problems),
     left: left,
     balances: Map.unmodifiable(after),
+    found: List.unmodifiable(
+      _found(operations, choices, schedules, statement.to),
+    ),
   );
+}
+
+/// The regular payments of [schedules] whose times [operations] bring, up to
+/// a day after [last], the last day of the statement.
+List<FoundSchedule> _found(
+  List<PlannedOperation> operations,
+  ImportChoices choices,
+  List<Schedule> schedules,
+  CivilDate? last,
+) {
+  if (last == null) return const [];
+  String? accountOf(String? key) => switch (choices.accounts[key]) {
+    IntoAccount(:final account) => account.id,
+    _ => null,
+  };
+  bool fits(PlannedOperation operation, Schedule schedule) =>
+      operation.kind == schedule.kind &&
+      operation.amount == schedule.amount &&
+      switch (schedule.kind) {
+        TransactionKind.expense =>
+          accountOf(operation.from) == schedule.accountId,
+        TransactionKind.income => accountOf(operation.to) == schedule.accountId,
+        TransactionKind.transfer =>
+          accountOf(operation.from) == schedule.accountId &&
+              accountOf(operation.to) == schedule.toAccountId &&
+              operation.received == schedule.amount,
+        TransactionKind.adjustment => false,
+      };
+  final taken = <PlannedOperation>{};
+  final found = <FoundSchedule>[];
+  for (final schedule in schedules) {
+    final times = <FoundTime>[];
+    for (final time in schedule.timesUntil(last.addDays(1))) {
+      PlannedOperation? best;
+      var bestScore = -1;
+      for (final operation in operations) {
+        if (taken.contains(operation) || !fits(operation, schedule)) continue;
+        final days = _daysBetween(operation.row.date.day, time);
+        if (days.abs() > 1) continue;
+        final similar = _similar(noteOf(operation.row), schedule.name);
+        final score = (days == 0 ? 4 : 0) + (similar ? 2 : 0);
+        if (score > bestScore) {
+          best = operation;
+          bestScore = score;
+        }
+      }
+      if (best == null) break;
+      taken.add(best);
+      times.add((time: time, operation: best));
+    }
+    if (times.isNotEmpty) found.add(FoundSchedule(schedule, times));
+  }
+  return found;
 }
 
 /// The problem of [row] with the currencies of its [legs], or `null` when it

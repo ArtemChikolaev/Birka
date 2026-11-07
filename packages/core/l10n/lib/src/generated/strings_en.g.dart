@@ -2109,6 +2109,27 @@ class Translations$schedules$en {
   /// en: 'Deleted «$name»'
   String deleted({required Object name}) => 'Deleted «${name}»';
 
+  /// en: 'Found «$name» in a statement'
+  String found({required Object name}) => 'Found «${name}» in a statement';
+
+  /// en: 'Found «$name» in the statement of $bank'
+  String foundOf({required Object name, required Object bank}) =>
+      'Found «${name}» in the statement of ${bank}';
+
+  /// en: '$date · $amount · marked as posted, no copy will come'
+  String foundText({required Object date, required Object amount}) =>
+      '${date} · ${amount} · marked as posted, no copy will come';
+
+  /// en: 'posted today · next on $date'
+  String donePosted({required Object date}) => 'posted today · next on ${date}';
+
+  /// en: 'skipped · next on $date'
+  String doneSkipped({required Object date}) => 'skipped · next on ${date}';
+
+  /// en: 'found in a statement · next on $date'
+  String doneFound({required Object date}) =>
+      'found in a statement · next on ${date}';
+
   Map<String, String> get on => {
     'mon': 'on Mondays',
     'tue': 'on Tuesdays',
@@ -4059,6 +4080,21 @@ extension on Translations {
                 'Skipped «${name}» · next on ${date}',
           'schedules.deleted' =>
             ({required Object name}) => 'Deleted «${name}»',
+          'schedules.found' =>
+            ({required Object name}) => 'Found «${name}» in a statement',
+          'schedules.foundOf' =>
+            ({required Object name, required Object bank}) =>
+                'Found «${name}» in the statement of ${bank}',
+          'schedules.foundText' =>
+            ({required Object date, required Object amount}) =>
+                '${date} · ${amount} · marked as posted, no copy will come',
+          'schedules.donePosted' =>
+            ({required Object date}) => 'posted today · next on ${date}',
+          'schedules.doneSkipped' =>
+            ({required Object date}) => 'skipped · next on ${date}',
+          'schedules.doneFound' =>
+            ({required Object date}) =>
+                'found in a statement · next on ${date}',
           'schedules.on.mon' => 'on Mondays',
           'schedules.on.tue' => 'on Tuesdays',
           'schedules.on.wed' => 'on Wednesdays',

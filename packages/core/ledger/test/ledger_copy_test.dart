@@ -398,6 +398,30 @@ void main() {
       expect(copy.encode(), contains('"schedules"'));
     });
 
+    test('travel with what was done to their last times since version 4', () {
+      final json = withSchedules()..['version'] = 4;
+      rowsOf(json, 'schedules').first.addAll({
+        'lastDone': 'found',
+        'lastFrom': '2026-10-25',
+        'lastOn': '2026-11-25',
+        'lastTransactionId': 'rent-paid',
+        'lastImportId': 'alfa',
+        'lastAt': '2026-11-26T08:00:00.000Z',
+      });
+
+      final copy = LedgerCopy.parse(jsonEncode(json));
+
+      final rent = copy.scheduleRows.first;
+      expect(rent.lastDone, 'found');
+      expect(rent.lastFrom, '2026-10-25');
+      expect(rent.lastOn, '2026-11-25');
+      expect(rent.lastTransactionId, 'rent-paid');
+      expect(rent.lastImportId, 'alfa');
+      expect(rent.lastAt, DateTime.utc(2026, 11, 26, 8));
+      expect(copy.scheduleRows[1].lastDone, isNull);
+      expect(LedgerCopy.parse(copy.encode()).encode(), copy.encode());
+    });
+
     test('are none in a copy of an older version', () {
       for (final version in [1, 2]) {
         final json = sample()..['version'] = version;
@@ -457,6 +481,39 @@ void main() {
 
       test('comes twice', () {
         expectDamaged('tv', (it) => it['id'] = 'rent');
+      });
+
+      test('was done in a way or on times that the ledger does not know', () {
+        expectDamaged('rent', (it) => it['lastDone'] = 'lost');
+        expectDamaged('rent', (it) => it['lastDone'] = 'posted');
+        expectDamaged('rent', (it) => it['lastFrom'] = '2026-10-25');
+        expectDamaged('rent', (it) => it['lastAt'] = '2026-10-25T08:00:00Z');
+        expectDamaged(
+          'rent',
+          (it) => it.addAll({
+            'lastDone': 'posted',
+            'lastFrom': '2026-11-25',
+            'lastOn': '2026-10-25',
+            'lastAt': '2026-11-26T08:00:00Z',
+          }),
+        );
+        expectDamaged(
+          'rent',
+          (it) => it.addAll({
+            'lastDone': 'skipped',
+            'lastFrom': '2026-11-31',
+            'lastOn': '2026-11-31',
+            'lastAt': '2026-11-26T08:00:00Z',
+          }),
+        );
+        expectDamaged(
+          'rent',
+          (it) => it.addAll({
+            'lastDone': 'skipped',
+            'lastFrom': '2026-11-25',
+            'lastOn': '2026-11-25',
+          }),
+        );
       });
     });
   });

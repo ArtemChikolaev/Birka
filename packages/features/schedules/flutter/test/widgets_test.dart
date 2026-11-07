@@ -192,6 +192,60 @@ void main() {
       );
       await tester.pumpAndSettle(const Duration(seconds: 5));
       expect(find.text('ЖДЁТ ПОДТВЕРЖДЕНИЯ'), findsNothing);
+      expect(
+        find.text('проведён сегодня · следующий 18 декабря'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('a payment that a statement brought today says so at the '
+        'top and in its row', (tester) async {
+      final repository = FakeSchedulesRepository()
+        ..imports = [
+          LedgerImport(
+            id: 'alfa',
+            fileName: 'alfa.xlsx',
+            firstDay: CivilDate(2026, 11, 1),
+            lastDay: boardToday,
+            importedAt: DateTime(2026, 11, 18, 9),
+            transactions: 40,
+            accountIds: const {'card'},
+            format: 'alfa',
+          ),
+        ]
+        ..schedules = [
+          ...boardSchedules().where((it) => it.id != 'rent'),
+          doneAs(
+            schedule(
+              'rent',
+              'Аренда',
+              45000,
+              CivilDate(2026, 11, 17),
+              categoryId: 'home',
+            ),
+            ScheduleDone.found,
+            at: boardToday,
+            importId: 'alfa',
+          ),
+        ];
+      await pump(tester, repository, page());
+
+      expect(find.text('ЖДЁТ ПОДТВЕРЖДЕНИЯ'), findsNothing);
+      expect(
+        find.text('Нашли «Аренда» в выписке Альфа-Банка'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          '17 ноября · ${nb('−45 000 ₽')} · '
+          'отметили платёж проведённым, копии не будет',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text('нашли в выписке · следующий 17 декабря'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('a payment that waits can be skipped', (tester) async {

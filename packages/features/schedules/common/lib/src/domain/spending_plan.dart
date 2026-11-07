@@ -42,7 +42,8 @@ final class SpendingPlan {
   /// Regular incomes before the salary do not count, so that the plan never
   /// promises money that may not come. Today's spending is what the person
   /// recorded on those accounts today: the transactions of regular payments
-  /// are part of the payments instead.
+  /// are part of the payments instead, and so is the operation of a
+  /// statement that brought a time of one.
   static SpendingPlan? of({
     required CivilDate today,
     required SpendUntil until,
@@ -68,11 +69,21 @@ final class SpendingPlan {
           for (final on in schedule.timesUntil(end))
             (schedule: schedule, on: on),
     ]..sort((a, b) => a.on.compareTo(b.on));
+    // A statement that brought a time of a payment stands for it.
+    final found = {
+      for (final schedule in schedules)
+        if (schedule.last case ScheduleLast(
+          done: ScheduleDone.found,
+          :final transactionId?,
+        ))
+          transactionId,
+    };
     var spent = 0;
     for (final transaction in todays) {
       if (transaction.kind != TransactionKind.expense ||
           transaction.source == TransactionSource.recurring ||
-          transaction.status == TransactionStatus.planned) {
+          transaction.status == TransactionStatus.planned ||
+          found.contains(transaction.id)) {
         continue;
       }
       for (final entry in transaction.entries) {

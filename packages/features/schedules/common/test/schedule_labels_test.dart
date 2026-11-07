@@ -52,6 +52,71 @@ void main() {
     );
   });
 
+  test('says what was done to a payment on the day it was', () {
+    final moved = rent(next: CivilDate(2026, 12, 25));
+    Schedule done(ScheduleDone how, DateTime at) => moved.movedTo(
+      moved.next,
+      last: ScheduleLast(
+        done: how,
+        from: CivilDate(2026, 11, 25),
+        on: CivilDate(2026, 11, 25),
+        at: at,
+      ),
+    );
+    final day = CivilDate(2026, 11, 25);
+    final morning = DateTime(2026, 11, 25, 9);
+
+    expect(
+      doneLine(done(ScheduleDone.posted, morning), day),
+      'проведён сегодня · следующий 25 декабря',
+    );
+    expect(
+      doneLine(done(ScheduleDone.skipped, morning), day),
+      'пропущен · следующий 25 декабря',
+    );
+    expect(
+      doneLine(done(ScheduleDone.found, morning), day),
+      'нашли в выписке · следующий 25 декабря',
+    );
+    expect(doneLine(done(ScheduleDone.posted, morning), day.addDays(1)), null);
+    expect(doneLine(moved, day), null);
+  });
+
+  test('says which statement brought a payment', () {
+    final found = rent(next: CivilDate(2026, 12, 25)).movedTo(
+      CivilDate(2026, 12, 25),
+      last: ScheduleLast(
+        done: ScheduleDone.found,
+        from: CivilDate(2026, 11, 25),
+        on: CivilDate(2026, 11, 25),
+        at: DateTime(2026, 11, 27, 20),
+        importId: 'alfa',
+      ),
+    );
+    LedgerImport statement(String? format) => LedgerImport(
+      id: 'alfa',
+      fileName: 'alfa.xlsx',
+      firstDay: CivilDate(2026, 11, 1),
+      lastDay: CivilDate(2026, 11, 27),
+      importedAt: DateTime(2026, 11, 27, 20),
+      transactions: 40,
+      accountIds: const {'card'},
+      format: format,
+    );
+
+    expect(
+      foundTitle(found, statement('alfa')),
+      'Нашли «Аренда» в выписке Альфа-Банка',
+    );
+    expect(foundTitle(found, statement(null)), 'Нашли «Аренда» в выписке');
+    expect(foundTitle(found, null), 'Нашли «Аренда» в выписке');
+    expect(
+      foundText(found, CivilDate(2026, 11, 27)),
+      '25 ноября · ${nb('−45 000 ₽')} · '
+      'отметили платёж проведённым, копии не будет',
+    );
+  });
+
   test('names days and dates', () {
     expect(dayLabel(today, today), 'сегодня');
     expect(dayLabel(CivilDate(2026, 11, 19), today), 'завтра');

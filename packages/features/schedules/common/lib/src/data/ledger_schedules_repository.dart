@@ -49,6 +49,9 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
   Stream<Currency?> watchBaseCurrency() => _baseCurrency.watch();
 
   @override
+  Stream<List<LedgerImport>> watchImports() => _ledger.watchImports();
+
+  @override
   Stream<PaydaySettings> watchSettings() => Stream.multi((controller) {
     controller.add(_settings);
     final subscription = _changes.stream.listen(controller.add);

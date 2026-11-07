@@ -28,6 +28,7 @@ final class SchedulesView {
     required this.base,
     required this.settings,
     required this.todays,
+    this.imports = const [],
   });
 
   /// The day it shows.
@@ -52,9 +53,33 @@ final class SchedulesView {
   /// The transactions of today.
   final List<Transaction> todays;
 
+  /// The imports whose transactions the ledger holds.
+  final List<LedgerImport> imports;
+
   /// The accounts by their ids.
   late final Map<String, Account> accountsById = {
     for (final row in accounts) row.account.id: row.account,
+  };
+
+  /// The payments that a statement brought today, with the import of the
+  /// statement when the ledger still lists it.
+  late final List<({Schedule schedule, LedgerImport? import})> found = () {
+    final byId = {for (final import in imports) import.id: import};
+    return [
+      for (final schedule in schedules)
+        if (schedule.last case ScheduleLast(
+          done: ScheduleDone.found,
+          :final importId,
+        ) when doneToday(schedule))
+          (schedule: schedule, import: byId[importId]),
+    ];
+  }();
+
+  /// Whether something was done to [schedule] today, so that its line says
+  /// what rather than how often it comes.
+  bool doneToday(Schedule schedule) => switch (schedule.last) {
+    final last? => CivilDate.of(last.at.toLocal()) == today,
+    null => false,
   };
 
   /// The payments that wait for the person: those that ask, whose day has
@@ -200,6 +225,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
   (Currency?,)? _base;
   PaydaySettings? _settings;
   List<Transaction>? _todays;
+  List<LedgerImport>? _imports;
 
   /// Reads everything again after a failure.
   Future<void> retry() async {
@@ -266,6 +292,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
     _base = null;
     _settings = null;
     _todays = null;
+    _imports = null;
     _subscriptions = [
       _repository.watchSchedules().listen((schedules) {
         _schedules = schedules;
@@ -295,6 +322,10 @@ class SchedulesCubit extends Cubit<SchedulesState> {
         _todays = todays;
         _show();
       }, onError: failed),
+      _repository.watchImports().listen((imports) {
+        _imports = imports;
+        _show();
+      }, onError: failed),
     ];
   }
 
@@ -313,6 +344,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           _base,
           _settings,
           _todays,
+          _imports,
         )
         case (
           final today?,
@@ -323,6 +355,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           (final picked,)?,
           final settings?,
           final todays?,
+          final imports?,
         )) {
       final first = accounts.where((row) => !row.account.archived).firstOrNull;
       emit(
@@ -338,6 +371,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
             base: picked ?? first?.account.currency,
             settings: settings,
             todays: todays,
+            imports: imports,
           ),
         ),
       );

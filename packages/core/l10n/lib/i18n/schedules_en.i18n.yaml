@@ -27,6 +27,12 @@ posted: Posted «$name» · $amount
 skippedAsk: Skipped «$name» · we will ask on $date
 skippedPost: Skipped «$name» · next on $date
 deleted: Deleted «$name»
+found: Found «$name» in a statement
+foundOf: Found «$name» in the statement of $bank
+foundText: $date · $amount · marked as posted, no copy will come
+donePosted: posted today · next on $date
+doneSkipped: skipped · next on $date
+doneFound: found in a statement · next on $date
 on(map):
   mon: on Mondays
   tue: on Tuesdays

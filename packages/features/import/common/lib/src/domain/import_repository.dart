@@ -25,8 +25,12 @@ abstract interface class ImportRepository {
   /// person teach the import.
   Future<List<Transaction>> history();
 
+  /// The regular payments, whose times a statement can bring (ADR 0023).
+  Future<List<Schedule>> schedules();
+
   /// Puts what [plan] adds into the ledger at once and returns the id of the
-  /// import, which can take all of it out again. [progress] hears how many of
+  /// import, which can take all of it out again, and marks the times of the
+  /// regular payments that it brings as done. [progress] hears how many of
   /// the operations are in.
   Future<String> write(
     ImportPlan plan, {
@@ -44,8 +48,9 @@ abstract interface class ImportRepository {
 
 /// The plan of importing [statement] by [choices], with what [repository]
 /// holds: the transactions of the accounts it goes into around its days,
-/// their balances on the day of its last operation, and the past choices of
-/// the person, which [memory] gives when they are already read.
+/// their balances on the day of its last operation, the regular payments,
+/// and the past choices of the person, which [memory] gives when they are
+/// already read.
 Future<ImportPlan> prepareImport(
   ImportRepository repository,
   Statement statement,
@@ -76,6 +81,7 @@ Future<ImportPlan> prepareImport(
     existing: existing,
     balances: balances,
     memory: learned,
+    schedules: existing.isEmpty ? const [] : await repository.schedules(),
   );
 }
 

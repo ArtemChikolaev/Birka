@@ -73,6 +73,9 @@ final class FakeImportRepository implements ImportRepository {
   Future<List<Transaction>> history() async => const [];
 
   @override
+  Future<List<Schedule>> schedules() async => const [];
+
+  @override
   Future<String> write(
     ImportPlan plan, {
     required String fileName,

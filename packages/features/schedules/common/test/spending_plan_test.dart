@@ -238,6 +238,43 @@ void main() {
     expect(it.spentToday, rub(620));
   });
 
+  test('takes the operation of a statement that brought a payment as the '
+      'payment, not as spending', () {
+    final rent = schedules.first;
+    final found = rent.movedTo(
+      rent.after(rent.next),
+      last: ScheduleLast(
+        done: ScheduleDone.found,
+        from: rent.next,
+        on: rent.next,
+        at: DateTime(2026, 11, 18, 9),
+        transactionId: 'spent-45000',
+      ),
+    );
+
+    final it = SpendingPlan.of(
+      today: today,
+      until: SpendUntil.payday,
+      currency: Currency.rub,
+      schedules: [found, ...schedules.skip(1)],
+      counted: [
+        account('card', 86400 - 620 - 45000),
+        account('cash', 3200, type: AccountType.cash),
+      ],
+      todays: [
+        spending(620),
+        spending(45000, source: TransactionSource.import),
+      ],
+      aside: rub(10000),
+    )!;
+
+    // The same money of the day as before the rent left.
+    expect(it.spentToday, rub(620));
+    expect(it.paid, rub(4949));
+    expect(it.perDay, rub(1744));
+    expect(it.leftToday, rub(1124));
+  });
+
   test('gives no money to the days when the payments take it all', () {
     final it = plan(aside: 50000)!;
 
