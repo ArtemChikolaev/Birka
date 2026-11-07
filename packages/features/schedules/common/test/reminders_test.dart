@@ -243,6 +243,47 @@ void main() {
       );
     });
 
+    test('leave out the day that the notices no longer keep', () {
+      // August 20 was 90 days before November 18, and August 21 was 89: a
+      // notice of the 20th is forgotten, and none comes back as new.
+      final edge = schedule('Аренда', 45000, CivilDate(2026, 8, 20));
+      final inside = schedule('Спортзал', 3500, CivilDate(2026, 8, 21));
+
+      final came = remindersCame([edge, inside], now: now, minutes: 9 * 60);
+
+      expect(
+        [for (final it in came) (it.schedule.name, it.on)],
+        [
+          ('Спортзал', CivilDate(2026, 8, 21)),
+          ('Аренда', CivilDate(2026, 9, 20)),
+          ('Спортзал', CivilDate(2026, 9, 21)),
+          ('Аренда', CivilDate(2026, 10, 20)),
+          ('Спортзал', CivilDate(2026, 10, 21)),
+        ],
+      );
+    });
+
+    test('come at their time on the clock on every day of a year', () {
+      // A day when the clocks change keeps 9:00 at 9:00 where they change.
+      for (
+        var day = CivilDate(2026, 1, 1);
+        day.year == 2026;
+        day = day.addDays(1)
+      ) {
+        final at = PlannedReminder(
+          schedule: schedule('Аренда', 45000, day),
+          on: day,
+          day: day,
+          minutes: 9 * 60,
+        ).at;
+        expect(
+          (at.year, at.month, at.day, at.hour, at.minute),
+          (day.year, day.month, day.day, 9, 0),
+          reason: '$day',
+        );
+      }
+    });
+
     test('keep the times that wait since long ago, for 90 days', () {
       final rent = schedule('Аренда', 45000, CivilDate(2026, 7, 18));
 

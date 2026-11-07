@@ -34,6 +34,9 @@ enum NoticeOutcome {
 sealed class Notice {
   const Notice({required this.id, required this.at, this.readAt});
 
+  /// How many days the device keeps a notice.
+  static const keepDays = 90;
+
   /// The id.
   final String id;
 

@@ -128,9 +128,9 @@ final class PlannedReminder {
   /// Whether it comes the day before the payment.
   bool get early => day != on;
 
-  /// The moment it comes, on the clock of this device.
-  DateTime get at =>
-      DateTime(day.year, day.month, day.day).add(Duration(minutes: minutes));
+  /// The moment it comes, on the clock of this device. The minutes count on
+  /// the clock, so a day when the clocks change keeps 9:00 at 9:00.
+  DateTime get at => DateTime(day.year, day.month, day.day, 0, minutes);
 }
 
 /// What the phone shows as a reminder: at [minutes] after midnight of [day],
@@ -336,18 +336,20 @@ List<PlannedReminder> planReminders(
 }
 
 /// The reminders of [schedules] that came by [now], at [minutes] after
-/// midnight, in the last [days] days, the earliest first (ADR 0026): the ones
-/// of the times from the next one of each payment on, to which nothing was
-/// done yet. The feed of notices takes them in at their moments, the ones
-/// that came while the app was closed included.
+/// midnight, the earliest first (ADR 0026): the ones of the times from the
+/// next one of each payment on, to which nothing was done yet. The feed of
+/// notices takes them in at their moments, the ones that came while the app
+/// was closed included. They come from the last [days] days, today included,
+/// so that none is as old as a notice that the device forgets, which would
+/// come back as new.
 List<PlannedReminder> remindersCame(
   List<Schedule> schedules, {
   required DateTime now,
   required int minutes,
-  int days = 90,
+  int days = Notice.keepDays,
 }) {
   final today = CivilDate.of(now);
-  final first = today.addDays(-days);
+  final first = today.addDays(1 - days);
   final passed = now.hour * 60 + now.minute;
   return [
     for (final schedule in schedules)

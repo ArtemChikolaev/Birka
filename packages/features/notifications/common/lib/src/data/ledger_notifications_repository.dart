@@ -9,7 +9,7 @@ final class LedgerNotificationsRepository implements NotificationsRepository {
     : _now = now ?? DateTime.now;
 
   /// How long the device keeps a notice.
-  static const keep = Duration(days: 90);
+  static const keep = Duration(days: Notice.keepDays);
 
   final LedgerRepository _ledger;
   final DateTime Function() _now;
