@@ -29,6 +29,16 @@ void main() {
     expect(CivilDate.of(moment), CivilDate(2026, 10, 31));
   });
 
+  test('starts a month on a day of the calendar', () {
+    expect(CivilDate(2026, 11, 18).monthStart(), CivilDate(2026, 11, 1));
+    expect(CivilDate(2026, 11, 18).monthStart(5), CivilDate(2026, 11, 5));
+    expect(CivilDate(2026, 11, 4).monthStart(5), CivilDate(2026, 10, 5));
+    expect(CivilDate(2027, 1, 3).monthStart(25), CivilDate(2026, 12, 25));
+    expect(CivilDate(2026, 11, 5).addMonths(1), CivilDate(2026, 12, 5));
+    expect(CivilDate(2026, 1, 25).addMonths(-1), CivilDate(2025, 12, 25));
+    expect(CivilDate(2026, 1, 31).addMonths(1), CivilDate(2026, 2, 28));
+  });
+
   test('accepts February 29 only in a leap year', () {
     expect(CivilDate(2028, 2, 29).toString(), '2028-02-29');
     expect(() => CivilDate(2026, 2, 29), throwsArgumentError);

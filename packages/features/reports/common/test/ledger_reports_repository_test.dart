@@ -3,6 +3,7 @@ library;
 
 import 'package:database/database.dart';
 import 'package:decimal/decimal.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:drift/native.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
@@ -26,7 +27,12 @@ void main() {
     ledger = LedgerRepository(database);
     rates = RatesRepository(database);
     baseCurrency = BaseCurrency(Currency.usd);
-    repository = LedgerReportsRepository(ledger, rates, baseCurrency);
+    repository = LedgerReportsRepository(
+      ledger,
+      rates,
+      baseCurrency,
+      MonthStart(1),
+    );
   });
   tearDown(() => database.close());
 

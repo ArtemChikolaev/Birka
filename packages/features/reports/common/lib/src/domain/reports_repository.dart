@@ -10,6 +10,12 @@ abstract interface class ReportsRepository {
   /// The currency picked for totals, if one was.
   Stream<Currency?> watchBaseCurrency();
 
+  /// The day of the calendar that a month starts on now (ADR 0024).
+  int monthStart();
+
+  /// The day that a month starts on, now and after every change.
+  Stream<int> watchMonthStart();
+
   /// The kept exchange rates.
   Stream<RateBook> watchRates();
 
@@ -21,6 +27,7 @@ abstract interface class ReportsRepository {
     required CivilDate to,
   });
 
-  /// The first days of the months with operations, the latest first.
-  Future<List<CivilDate>> months();
+  /// The first days of the months with operations, the latest first, when
+  /// months start on day [start].
+  Future<List<CivilDate>> months({int start = 1});
 }

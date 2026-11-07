@@ -12,6 +12,7 @@ final class Settings {
     this.hideAmountsOnLaunch = false,
     this.baseCurrency,
     this.onboarded = false,
+    this.monthStart = 1,
   });
 
   /// Reads the settings from [store]. What is missing or unknown stays at its
@@ -19,6 +20,7 @@ final class Settings {
   factory Settings.readFrom(SettingsStore store) {
     final language = store.read(_languageKey);
     final baseCurrency = store.read(_baseCurrencyKey);
+    final monthStart = int.tryParse(store.read(_monthStartKey) ?? '');
     return Settings(
       language: AppLocale.values
           .where((locale) => locale.languageCode == language)
@@ -28,6 +30,9 @@ final class Settings {
           .where((currency) => currency.code == baseCurrency)
           .firstOrNull,
       onboarded: store.read(_onboardedKey) == _on,
+      monthStart: monthStart != null && monthStart >= 1 && monthStart <= 28
+          ? monthStart
+          : 1,
     );
   }
 
@@ -35,6 +40,7 @@ final class Settings {
   static const _hideAmountsKey = 'hide-amounts-on-launch';
   static const _baseCurrencyKey = 'base-currency';
   static const _onboardedKey = 'onboarded';
+  static const _monthStartKey = 'month-start';
   static const _sameAsDevice = 'device';
   static const _firstAccount = 'first-account';
   static const _on = 'on';
@@ -54,6 +60,10 @@ final class Settings {
   /// Whether this device has been through the onboarding or has skipped it.
   final bool onboarded;
 
+  /// The day of the calendar that a month of the overview and the reports
+  /// starts on, from 1 to 28 (ADR 0024).
+  final int monthStart;
+
   /// A copy with the given fields changed. [language] and [baseCurrency] are
   /// in records, because `null` is a choice for them.
   Settings copyWith({
@@ -61,12 +71,14 @@ final class Settings {
     bool? hideAmountsOnLaunch,
     (Currency?,)? baseCurrency,
     bool? onboarded,
+    int? monthStart,
   }) {
     return Settings(
       language: language == null ? this.language : language.$1,
       hideAmountsOnLaunch: hideAmountsOnLaunch ?? this.hideAmountsOnLaunch,
       baseCurrency: baseCurrency == null ? this.baseCurrency : baseCurrency.$1,
       onboarded: onboarded ?? this.onboarded,
+      monthStart: monthStart ?? this.monthStart,
     );
   }
 
@@ -76,6 +88,7 @@ final class Settings {
     await store.write(_hideAmountsKey, hideAmountsOnLaunch ? _on : _off);
     await store.write(_baseCurrencyKey, baseCurrency?.code ?? _firstAccount);
     await store.write(_onboardedKey, onboarded ? _on : _off);
+    await store.write(_monthStartKey, '$monthStart');
   }
 
   /// Turns the strings to [language], or to [device] when none is picked.

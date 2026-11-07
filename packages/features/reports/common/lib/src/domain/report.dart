@@ -184,9 +184,7 @@ final class Report {
 }
 
 /// The first day of the month [count] months before the one of [month].
-CivilDate monthsBefore(CivilDate month, int count) =>
-    CivilDate.of(DateTime.utc(month.year, month.month - count));
+CivilDate monthsBefore(CivilDate month, int count) => month.addMonths(-count);
 
 /// The last day of the month of [month].
-CivilDate lastDayOf(CivilDate month) =>
-    CivilDate.of(DateTime.utc(month.year, month.month + 1, 0));
+CivilDate lastDayOf(CivilDate month) => month.addMonths(1).addDays(-1);

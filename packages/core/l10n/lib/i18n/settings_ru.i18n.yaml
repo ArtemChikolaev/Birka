@@ -9,3 +9,7 @@ ratesCredit: Курсы ЦБ РФ в XML и JSON, API
 security: Безопасность
 hideAmounts: Скрывать суммы
 onLaunch: При запуске
+monthStart: Начало месяца
+monthStartDay: $day число
+monthStartNote: для обзора и отчётов
+monthStartCalendar: как в календаре

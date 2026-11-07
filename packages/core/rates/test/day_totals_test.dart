@@ -167,6 +167,25 @@ void main() {
       expect(totals.map((total) => total.total), [rub(70), rub(9100)]);
     });
 
+    test('take the days of a month that starts on another day', () {
+      final totals = monthTotalsIn(
+        Currency.rub,
+        [
+          row('Food', rub(50), CivilDate(2026, 10, 4)),
+          row('Food', rub(70), CivilDate(2026, 10, 5)),
+          row('Food', rub(30), CivilDate(2026, 11, 4)),
+        ],
+        rates,
+        monthStart: 5,
+      );
+
+      expect(totals.map((total) => total.month), [
+        CivilDate(2026, 9, 5),
+        CivilDate(2026, 10, 5),
+      ]);
+      expect(totals.map((total) => total.total), [rub(50), rub(100)]);
+    });
+
     test('are the sum of the categories of the month', () {
       final rows = [
         row('Food', eur(1234), friday),

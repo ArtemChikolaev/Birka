@@ -75,7 +75,7 @@ class _OverviewPageState extends State<OverviewPage> {
               GlassNavBar.clearance + MediaQuery.viewPaddingOf(context).bottom,
             ),
             children: [
-              _Header(today: state.today),
+              _Header(today: state.month),
               gap,
               ...switch (state.status) {
                 OverviewStatus.loading => const <Widget>[],
@@ -107,7 +107,7 @@ class _OverviewPageState extends State<OverviewPage> {
                   gap,
                   _SpendingCard(
                     spending: state.spending,
-                    today: state.today,
+                    today: state.month,
                   ),
                 ],
               },
@@ -203,7 +203,7 @@ class _Capital extends StatelessWidget {
               ),
               const SizedBox(width: BirkaTokens.spaceXs),
               FadingText(
-                chartPeriodCaption(state.period.name, month: state.today.month),
+                chartPeriodCaption(state.period.name, month: state.month.month),
                 style: styles.body.copyWith(color: colors.textMuted),
               ),
             ],

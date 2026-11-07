@@ -253,6 +253,12 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
+  /// The day the months start on.
+  int monthStart = 1;
+
+  @override
+  Stream<int> watchMonthStart() => _watch(() => monthStart);
+
   @override
   Stream<List<LedgerImport>> watchImports() => _watch(() => imports);
 

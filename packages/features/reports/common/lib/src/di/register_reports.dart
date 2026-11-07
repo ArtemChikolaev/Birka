@@ -9,7 +9,7 @@ import 'package:reports_common/src/presentation/reports_cubit.dart';
 void registerReports(GetIt getIt) {
   getIt
     ..registerLazySingleton<ReportsRepository>(
-      () => LedgerReportsRepository(getIt(), getIt(), getIt()),
+      () => LedgerReportsRepository(getIt(), getIt(), getIt(), getIt()),
     )
     ..registerFactory(() => ReportsCubit(getIt()));
 }

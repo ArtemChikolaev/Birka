@@ -83,6 +83,22 @@ void main() {
     expect(repository.spendingTo, CivilDate(2026, 10, 31));
   });
 
+  test('counts the month from the day the months start on', () async {
+    repository.start = 5;
+    final overview = await open();
+
+    // Today is the 31st of October, so its month started on the 5th.
+    expect(overview.state.month, CivilDate(2026, 10, 5));
+    expect(repository.spendingFrom.single, CivilDate(2026, 10, 5));
+
+    repository.startOn(1);
+    await settle();
+
+    expect(overview.state.monthStart, 1);
+    expect(overview.state.month, CivilDate(2026, 10, 1));
+    expect(repository.spendingFrom.last, CivilDate(2026, 10, 1));
+  });
+
   test('stays loading until everything has spoken', () async {
     final cubit = OverviewCubit(repository, now: () => now);
     addTearDown(cubit.close);

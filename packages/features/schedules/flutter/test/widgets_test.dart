@@ -302,15 +302,18 @@ void main() {
   group('the money until the salary', () {
     final salaries = <String>[];
     var newSalaries = 0;
+    var monthStarts = 0;
     Widget page() => PaydayPage(
       onBack: () {},
       onOpenSalary: salaries.add,
       onAddSalary: () => newSalaries++,
+      onMonthStart: () => monthStarts++,
     );
 
     setUp(() {
       salaries.clear();
       newSalaries = 0;
+      monthStarts = 0;
     });
 
     testWidgets('shows the sum in the open', (tester) async {
@@ -372,6 +375,36 @@ void main() {
       await tester.pumpAndSettle();
       expect(repository.settings.until, SpendUntil.monthEnd);
       expect(find.text('День зарплаты'), findsNothing);
+    });
+
+    testWidgets('asks when the months start, and offers the payday', (
+      tester,
+    ) async {
+      const hint =
+          'Зарплата приходит 5-го: месяц можно начинать с этого дня, тогда '
+          'ноябрь — с 5 ноября по 4 декабря.';
+      final repository = FakeSchedulesRepository();
+      await pump(tester, repository, page());
+      await tester.scrollUntilVisible(
+        find.text(hint),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Начало месяца'), findsOneWidget);
+      expect(find.text('для обзора и отчётов'), findsOneWidget);
+      expect(find.text('1 число'), findsOneWidget);
+      await tester.tap(find.text('Начало месяца'));
+      expect(monthStarts, 1);
+
+      // Once the months start on the payday, the hint has nothing to offer.
+      repository
+        ..monthStart = 5
+        ..changed();
+      await tester.pumpAndSettle();
+      expect(find.text('5 число'), findsOneWidget);
+      expect(find.text(hint), findsNothing);
     });
 
     testWidgets('offers to add a salary when no income brings one', (

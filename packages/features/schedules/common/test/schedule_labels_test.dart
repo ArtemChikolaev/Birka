@@ -176,6 +176,47 @@ void main() {
     );
   });
 
+  test('suggests starting the months on the day of the salary', () {
+    final salary = rent(
+      kind: TransactionKind.income,
+      next: CivilDate(2026, 12, 5),
+    );
+
+    expect(
+      monthStartHint(salary, today: today, monthStart: 1),
+      'Зарплата приходит 5-го: месяц можно начинать с этого дня, тогда '
+      'ноябрь — с 5 ноября по 4 декабря.',
+    );
+    // Before the 5th, the month of today began in October.
+    expect(
+      monthStartHint(salary, today: CivilDate(2026, 11, 3), monthStart: 1),
+      'Зарплата приходит 5-го: месяц можно начинать с этого дня, тогда '
+      'октябрь — с 5 октября по 4 ноября.',
+    );
+    expect(monthStartHint(salary, today: today, monthStart: 5), isNull);
+    expect(monthStartHint(null, today: today, monthStart: 1), isNull);
+    expect(
+      monthStartHint(
+        rent(kind: TransactionKind.income, next: CivilDate(2026, 11, 30)),
+        today: today,
+        monthStart: 1,
+      ),
+      isNull,
+    );
+    expect(
+      monthStartHint(
+        rent(
+          kind: TransactionKind.income,
+          every: ScheduleEvery.week,
+          next: CivilDate(2026, 11, 20),
+        ),
+        today: today,
+        monthStart: 1,
+      ),
+      isNull,
+    );
+  });
+
   test('names days and dates', () {
     expect(dayLabel(today, today), 'сегодня');
     expect(dayLabel(CivilDate(2026, 11, 19), today), 'завтра');

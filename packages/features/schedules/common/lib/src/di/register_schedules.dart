@@ -5,12 +5,12 @@ import 'package:schedules_common/src/domain/schedules_repository.dart';
 import 'package:schedules_common/src/presentation/schedule_form_cubit.dart';
 import 'package:schedules_common/src/presentation/schedules_cubit.dart';
 
-/// Registers the feature in [getIt], which has to know the `LedgerRepository`
-/// and the `BaseCurrency`, on the [store] of the host.
+/// Registers the feature in [getIt], which has to know the `LedgerRepository`,
+/// the `BaseCurrency` and the `MonthStart`, on the [store] of the host.
 void registerSchedules(GetIt getIt, SettingsStore store) {
   getIt
     ..registerLazySingleton<SchedulesRepository>(
-      () => LedgerSchedulesRepository(getIt(), getIt(), store),
+      () => LedgerSchedulesRepository(getIt(), getIt(), getIt(), store),
     )
     ..registerFactory(() => SchedulesCubit(getIt()))
     ..registerFactoryParam<ScheduleFormCubit, String?, bool?>(

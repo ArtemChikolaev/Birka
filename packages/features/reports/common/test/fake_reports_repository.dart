@@ -65,6 +65,15 @@ final class FakeReportsRepository implements ReportsRepository {
   @override
   Stream<Currency?> watchBaseCurrency() => _follow(_main, () => base);
 
+  /// The day the months start on.
+  int start = 1;
+
+  @override
+  int monthStart() => start;
+
+  @override
+  Stream<int> watchMonthStart() => Stream.value(start);
+
   @override
   Stream<RateBook> watchRates() => _follow(_main, () => rates);
 
@@ -79,7 +88,7 @@ final class FakeReportsRepository implements ReportsRepository {
   }
 
   @override
-  Future<List<CivilDate>> months() async {
+  Future<List<CivilDate>> months({int start = 1}) async {
     if (readFailure case final failure?) throw failure;
     return monthList;
   }

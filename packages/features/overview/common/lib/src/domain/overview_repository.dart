@@ -13,6 +13,12 @@ abstract interface class OverviewRepository {
   /// The currency picked for totals, if one was.
   Stream<Currency?> watchBaseCurrency();
 
+  /// The day of the calendar that a month starts on now (ADR 0024).
+  int monthStart();
+
+  /// The day that a month starts on, now and after every change.
+  Stream<int> watchMonthStart();
+
   /// What each day since [from] changed the accounts that count.
   Stream<List<DayChange>> watchDayChanges({required CivilDate from});
 

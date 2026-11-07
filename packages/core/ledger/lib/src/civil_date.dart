@@ -58,6 +58,17 @@ final class CivilDate implements Comparable<CivilDate> {
     return CivilDate(moved.year, moved.month, moved.day);
   }
 
+  /// The first day of the month that this date falls in, when months start
+  /// on day [start] of the calendar, from 1 to 28 (ADR 0024): with the 5th,
+  /// November runs from the 5th of November to the 4th of December.
+  CivilDate monthStart([int start = 1]) => day >= start
+      ? CivilDate(year, month, start)
+      : CivilDate.onDay(year, month - 1, start);
+
+  /// The same day [count] months later, or earlier when [count] is negative,
+  /// or the last day of a shorter month.
+  CivilDate addMonths(int count) => CivilDate.onDay(year, month + count, day);
+
   /// The day of the week, from 1 for Monday to 7 for Sunday.
   int get weekday => DateTime.utc(year, month, day).weekday;
 

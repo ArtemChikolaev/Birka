@@ -33,6 +33,7 @@ final class ReportsState {
     this.base,
     this.rates = const RateBook.empty(),
     this.days = const [],
+    this.monthStart = 1,
   });
 
   /// Where the reports stand.
@@ -59,6 +60,12 @@ final class ReportsState {
   /// What went through each category on each day of the last months.
   final List<CategoryDayTotal> days;
 
+  /// The day of the calendar that a month starts on (ADR 0024).
+  final int monthStart;
+
+  /// The first day of the month of today.
+  CivilDate get current => today.monthStart(monthStart);
+
   /// The currency that the report follows.
   Currency? get _target => base ?? preferred;
 
@@ -72,7 +79,7 @@ final class ReportsState {
       _daysFrom(monthsBefore(month, 1), _endOfComparison),
       rates,
     ),
-    monthTotals: monthTotalsIn(_target, days, rates),
+    monthTotals: monthTotalsIn(_target, days, rates, monthStart: monthStart),
     preferred: _target,
   );
 
@@ -98,10 +105,9 @@ final class ReportsState {
   CivilDate get _endOfComparison {
     final before = monthsBefore(month, 1);
     final last = lastDayOf(before);
-    final underWay = month == CivilDate(today.year, today.month, 1);
-    return underWay && today.day < last.day
-        ? CivilDate(before.year, before.month, today.day)
-        : last;
+    if (month != current) return last;
+    final same = before.addDays(month.daysUntil(today));
+    return same.compareTo(last) < 0 ? same : last;
   }
 
   /// A copy with the given fields changed. [preferred] and [base] take a
@@ -115,6 +121,7 @@ final class ReportsState {
     Currency? Function()? base,
     RateBook? rates,
     List<CategoryDayTotal>? days,
+    int? monthStart,
   }) {
     return ReportsState(
       status: status ?? this.status,
@@ -125,6 +132,7 @@ final class ReportsState {
       base: base == null ? this.base : base(),
       rates: rates ?? this.rates,
       days: days ?? this.days,
+      monthStart: monthStart ?? this.monthStart,
     );
   }
 }
@@ -134,7 +142,7 @@ class ReportsCubit extends Cubit<ReportsState> {
   /// Creates the cubit on the current month. [now] tells the time in tests.
   ReportsCubit(this._repository, {DateTime Function()? now})
     : _now = now ?? DateTime.now,
-      super(_initial((now ?? DateTime.now)())) {
+      super(_initial((now ?? DateTime.now)(), _repository.monthStart())) {
     _follow();
   }
 
@@ -146,16 +154,15 @@ class ReportsCubit extends Cubit<ReportsState> {
   /// How many sources the reports wait for.
   static const _sources = 4;
 
-  static ReportsState _initial(DateTime now) {
+  static ReportsState _initial(DateTime now, int monthStart) {
     final today = CivilDate.of(now);
     return ReportsState(
       status: ReportsStatus.loading,
       today: today,
-      month: _monthOf(today),
+      month: today.monthStart(monthStart),
+      monthStart: monthStart,
     );
   }
-
-  static CivilDate _monthOf(CivilDate day) => CivilDate(day.year, day.month, 1);
 
   /// Shows the month that starts on [month].
   Future<void> monthChanged(CivilDate month) async {
@@ -188,9 +195,9 @@ class ReportsCubit extends Cubit<ReportsState> {
   /// the ones with operations, the latest first. When those cannot be read, the
   /// current one and the one on the screen still can be chosen.
   Future<List<CivilDate>> months() async {
-    final current = _monthOf(state.today);
+    final current = state.current;
     try {
-      final months = await _repository.months();
+      final months = await _repository.months(start: state.monthStart);
       return {current, ...months}.toList()..sort((a, b) => b.compareTo(a));
     } on Exception {
       return {current, state.month}.toList();
@@ -205,8 +212,11 @@ class ReportsCubit extends Cubit<ReportsState> {
   Future<void> calendarChecked() async {
     final today = CivilDate.of(_now());
     if (today == state.today) return;
-    final onCurrent = state.month == _monthOf(state.today);
-    await _restart(today: today, month: onCurrent ? _monthOf(today) : null);
+    final onCurrent = state.month == state.current;
+    await _restart(
+      today: today,
+      month: onCurrent ? today.monthStart(state.monthStart) : null,
+    );
   }
 
   Future<void> _restart({
@@ -232,6 +242,12 @@ class ReportsCubit extends Cubit<ReportsState> {
     final ReportsState(:kind, :month) = state;
     _arrived.clear();
     _subscriptions = [
+      // A new day for the months opens the month of today from that day.
+      _repository.watchMonthStart().listen((day) {
+        if (day == state.monthStart) return;
+        emit(state.copyWith(monthStart: day));
+        unawaited(_restart(month: state.current));
+      }),
       _listen(
         _repository.watchMainCurrency(),
         (currency) => state.copyWith(preferred: () => currency),

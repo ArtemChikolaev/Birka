@@ -15,6 +15,7 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
   LedgerSchedulesRepository(
     this._ledger,
     this._baseCurrency,
+    this._monthStart,
     this._store, {
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now,
@@ -22,6 +23,7 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
 
   final LedgerRepository _ledger;
   final BaseCurrency _baseCurrency;
+  final MonthStart _monthStart;
   final SettingsStore _store;
   final DateTime Function() _now;
   PaydaySettings _settings;
@@ -47,6 +49,9 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
 
   @override
   Stream<Currency?> watchBaseCurrency() => _baseCurrency.watch();
+
+  @override
+  Stream<int> watchMonthStart() => _monthStart.watch();
 
   @override
   Stream<List<LedgerImport>> watchImports() => _ledger.watchImports();

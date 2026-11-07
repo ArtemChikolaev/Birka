@@ -2,6 +2,7 @@
 library;
 
 import 'package:database/database.dart';
+import 'package:device_settings/device_settings.dart';
 import 'package:drift/native.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
@@ -40,6 +41,7 @@ void main() {
     repository = LedgerSchedulesRepository(
       ledger,
       BaseCurrency(null),
+      MonthStart(1),
       MemorySettingsStore(),
       now: () => DateTime(2026, 11, 18, 12),
     );

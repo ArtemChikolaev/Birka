@@ -59,7 +59,7 @@ import 'package:schedules_common/schedules_common.dart'
         SchedulesCubit,
         SchedulesRepository;
 import 'package:settings_common/settings_common.dart'
-    show BaseCurrency, Settings, SettingsCubit, SettingsStore;
+    show BaseCurrency, MonthStart, Settings, SettingsCubit, SettingsStore;
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -135,6 +135,9 @@ final class _NoSchedules implements SchedulesRepository {
 
   @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);
+
+  @override
+  Stream<int> watchMonthStart() => Stream.value(1);
 
   @override
   Stream<List<LedgerImport>> watchImports() => Stream.value(const []);
@@ -272,6 +275,12 @@ final class _Overview implements OverviewRepository {
   List<AccountBalance> accounts = const [];
 
   @override
+  int monthStart() => 1;
+
+  @override
+  Stream<int> watchMonthStart() => Stream.value(1);
+
+  @override
   Stream<RateBook> watchRates() => Stream.value(const RateBook.empty());
 
   @override
@@ -364,6 +373,12 @@ final class _Links implements HelpLinks {
 
 final class _NoReports implements ReportsRepository {
   @override
+  int monthStart() => 1;
+
+  @override
+  Stream<int> watchMonthStart() => Stream.value(1);
+
+  @override
   Stream<Currency?> watchMainCurrency() => Stream.value(null);
 
   @override
@@ -380,7 +395,7 @@ final class _NoReports implements ReportsRepository {
   }) => Stream.value(const []);
 
   @override
-  Future<List<CivilDate>> months() async => const [];
+  Future<List<CivilDate>> months({int start = 1}) async => const [];
 }
 
 /// A coffee of today on an account of its own.
@@ -482,6 +497,7 @@ void main() {
           settings,
           deviceLanguage: 'en',
           baseCurrency: BaseCurrency(null),
+          monthStart: MonthStart(1),
         ),
       )
       ..registerFactory(() => OperationsCubit(transactions))

@@ -18,3 +18,10 @@ String languageLabel(AppLocale? language) => switch (language) {
   AppLocale.en => t.settings.english,
   AppLocale.ru => t.settings.russian,
 };
+
+/// The days that a month can start on: those that every month has
+/// (`Settings.monthStart`).
+final List<int> monthStartChoices = [for (var day = 1; day <= 28; day++) day];
+
+/// What [day] reads as when a month starts on it: `5 число`.
+String monthStartLabel(int day) => t.settings.monthStartDay(day: day);

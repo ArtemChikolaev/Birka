@@ -7,15 +7,18 @@ import 'fake_settings_store.dart';
 void main() {
   late FakeSettingsStore store;
   late BaseCurrency baseCurrency;
+  late MonthStart monthStart;
   late SettingsCubit cubit;
 
   setUp(() {
     store = FakeSettingsStore();
     baseCurrency = BaseCurrency(null);
+    monthStart = MonthStart(1);
     cubit = SettingsCubit(
       store,
       deviceLanguage: 'en',
       baseCurrency: baseCurrency,
+      monthStart: monthStart,
     );
   });
   tearDown(() async {
@@ -28,16 +31,19 @@ void main() {
     await const Settings(
       language: AppLocale.ru,
       hideAmountsOnLaunch: true,
+      monthStart: 25,
     ).writeTo(store);
 
     cubit = SettingsCubit(
       store,
       deviceLanguage: 'en',
       baseCurrency: baseCurrency,
+      monthStart: MonthStart(25),
     );
 
     expect(cubit.state.language, AppLocale.ru);
     expect(cubit.state.hideAmountsOnLaunch, isTrue);
+    expect(cubit.state.monthStart, 25);
   });
 
   test('a new language turns the strings and stays', () async {
@@ -143,5 +149,35 @@ void main() {
 
     expect(cubit.state.hideAmountsOnLaunch, isTrue);
     expect(Settings.readFrom(store).hideAmountsOnLaunch, isTrue);
+  });
+
+  test('a new month start stays and reaches the screens', () async {
+    final seen = <int>[];
+    final subscription = monthStart.watch().listen(seen.add);
+
+    await cubit.monthStartChanged(25);
+    await pumpEventQueue();
+    await subscription.cancel();
+
+    expect(cubit.state.monthStart, 25);
+    expect(Settings.readFrom(store).monthStart, 25);
+    expect(seen, [1, 25]);
+  });
+
+  test('a month start picked elsewhere shows here', () async {
+    monthStart.choose(5);
+    await pumpEventQueue();
+
+    expect(cubit.state.monthStart, 5);
+  });
+
+  test('a new month start keeps the other settings', () async {
+    await cubit.languageChanged(AppLocale.ru);
+    await cubit.baseCurrencyChanged(Currency.usd);
+
+    await cubit.monthStartChanged(10);
+
+    expect(Settings.readFrom(store).language, AppLocale.ru);
+    expect(Settings.readFrom(store).baseCurrency, Currency.usd);
   });
 }

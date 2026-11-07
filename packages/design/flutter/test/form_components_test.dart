@@ -359,6 +359,53 @@ void main() {
       expect(picked, isNull);
     });
 
+    testWidgets('stops at the status bar and opens on the choice in use', (
+      tester,
+    ) async {
+      // A phone of 390 by 800 with 60 of status bar above.
+      tester.view
+        ..physicalSize = const Size(780, 1600)
+        ..devicePixelRatio = 2
+        ..padding = const FakeViewPadding(top: 120)
+        ..viewPadding = const FakeViewPadding(top: 120);
+      addTearDown(tester.view.reset);
+      int? picked;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: BirkaTheme.dark(),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => BirkaButton(
+                label: 'Open',
+                onPressed: () async {
+                  final choice = await showChoiceSheet<int>(
+                    context,
+                    title: 'Day',
+                    choices: [for (var day = 1; day <= 28; day++) day],
+                    selected: 25,
+                    labelOf: (day) => 'Day $day',
+                  );
+                  picked = choice?.$1;
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.bySemanticsLabel('Open'));
+      await tester.pumpAndSettle();
+
+      // The title stays over the list, which opens on the choice in use.
+      final title = tester.getRect(find.text('Day'));
+      expect(title.top, greaterThan(60));
+      final inUse = tester.getRect(find.text('Day 25'));
+      expect(inUse.top, greaterThan(title.bottom));
+      expect(inUse.bottom, lessThan(800));
+      await tester.tap(find.text('Day 25'));
+      await tester.pumpAndSettle();
+      expect(picked, 25);
+    });
+
     testWidgets('ends with an action that closes the sheet first', (
       tester,
     ) async {

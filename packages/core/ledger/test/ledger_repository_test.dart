@@ -968,6 +968,24 @@ void main() {
       ]);
     });
 
+    test('name their months from the day the months start on', () async {
+      for (final day in [CivilDate(2026, 10, 4), CivilDate(2026, 10, 5)]) {
+        await ledger.record(
+          TransactionDraft.adjustment(
+            accountId: card.id,
+            change: rub(1),
+            occurredOn: day,
+          ),
+        );
+      }
+
+      expect(await ledger.months(start: 5), [
+        CivilDate(2026, 10, 5),
+        CivilDate(2026, 9, 5),
+      ]);
+      expect(await ledger.months(), [CivilDate(2026, 10, 1)]);
+    });
+
     test('an amendment replaces the entries and allocations', () async {
       final id = await ledger.record(coffee(rub(25000)));
 

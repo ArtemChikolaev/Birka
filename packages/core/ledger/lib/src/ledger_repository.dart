@@ -1298,22 +1298,29 @@ final class LedgerRepository {
     );
   }
 
-  /// The first days of the months that have transactions, the latest first.
-  Future<List<CivilDate>> months() async {
+  /// The first days of the months that have transactions, the latest first,
+  /// when months start on day [start] of the calendar (ADR 0024).
+  Future<List<CivilDate>> months({int start = 1}) async {
     final rows = await _db
         .customSelect(
           '''
-          SELECT DISTINCT substr(occurred_on, 1, 7) AS month
+          SELECT DISTINCT CASE
+              WHEN CAST(substr(occurred_on, 9, 2) AS INTEGER) >= ?1
+              THEN substr(occurred_on, 1, 7)
+              ELSE substr(date(occurred_on, 'start of month', '-1 month'), 1, 7)
+            END AS month
           FROM transactions
           WHERE deleted_at IS NULL
           ORDER BY month DESC
           ''',
+          variables: [Variable.withInt(start)],
           readsFrom: {_db.transactions},
         )
         .get();
+    final day = '$start'.padLeft(2, '0');
     return [
       for (final row in rows)
-        CivilDate.parse('${row.read<String>('month')}-01'),
+        CivilDate.parse('${row.read<String>('month')}-$day'),
     ];
   }
 

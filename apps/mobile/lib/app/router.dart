@@ -32,6 +32,8 @@ import 'package:schedules_common/schedules_common.dart'
     show ScheduleFormCubit, SchedulesCubit;
 import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_common/settings_common.dart' show SettingsCubit;
+import 'package:settings_flutter/settings_flutter.dart'
+    show showMonthStartSheet;
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -381,6 +383,7 @@ GoRouter buildRouter(
             onBack: () => context.pop(),
             onOpenSalary: (id) => context.push(Paths.schedule(id)),
             onAddSalary: () => context.push(Paths.newSchedule(salary: true)),
+            onMonthStart: () => unawaited(_pickMonthStart(context, getIt)),
           ),
         ),
       ),
@@ -476,3 +479,18 @@ Page<void> _scheduleFormPage(GetIt getIt, {String? id, bool salary = false}) =>
         ),
       ),
     );
+
+/// Asks which day the months start on, from the page of the money until the
+/// salary, and keeps it as the settings do: it is one setting (ADR 0024).
+Future<void> _pickMonthStart(BuildContext context, GetIt getIt) async {
+  final settings = getIt<SettingsCubit>();
+  try {
+    final day = await showMonthStartSheet(
+      context,
+      selected: settings.state.monthStart,
+    );
+    if (day != null) await settings.monthStartChanged(day);
+  } finally {
+    await settings.close();
+  }
+}

@@ -39,6 +39,15 @@ final class _FakeRepository implements OverviewRepository {
   @override
   Stream<Currency?> watchBaseCurrency() => _read(base);
 
+  /// The day the months start on.
+  int start = 1;
+
+  @override
+  int monthStart() => start;
+
+  @override
+  Stream<int> watchMonthStart() => Stream.value(start);
+
   @override
   Stream<List<AccountBalance>> watchAccounts() => _read(accounts);
 

@@ -146,6 +146,9 @@
     20 ноября хватает: 19 600 ₽ на 2 дня»); when those days lack money, the
     sum says what they lack. The row of the payday reads «Аванс и зарплата ·
     20-го и 5-го».
+21. The month that the money of the days may count until starts on the day
+    the months start on ([ADR 0024](0024-month-start.md)). With the 5th, it
+    runs until the 4th of the next month.
 
 ## Consequences
 

@@ -26,6 +26,7 @@ void main() {
           store,
           deviceLanguage: 'en',
           baseCurrency: BaseCurrency(null),
+          monthStart: MonthStart(Settings.readFrom(store).monthStart),
         ),
         child: const SettingsSection(),
       ),
