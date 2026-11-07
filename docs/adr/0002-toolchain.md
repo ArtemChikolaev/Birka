@@ -30,6 +30,7 @@
 | Files | file_picker | 13.3.2 |
 | Statements | archive, xml | 4.5.2, 6.6.1 |
 | Help | url_launcher, package_info_plus, device_info_plus | 6.3.2, 10.2.2, 13.3.0 |
+| Reminders | flutter_local_notifications, timezone, flutter_timezone, device_calendar_plus, device_calendar_plus_platform_interface | 22.3.3, 0.11.2, 5.1.1, 0.8.1, 0.7.0 |
 | Ids | uuid | 4.6.0 |
 | Exchange rates | decimal, rational, http | 3.2.6, 2.2.3, 1.6.0 |
 | State | bloc, flutter_bloc, bloc_test, bloc_concurrency | 9.2.1, 9.1.1, 10.0.0, 0.3.0 |

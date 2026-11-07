@@ -12,14 +12,14 @@ environment:
 dependencies:
   design_flutter:
     path: ../../../design/flutter
-  device_calendar_plus: 0.8.1
+  device_calendar_plus: ^0.8.1
   device_settings:
     path: ../../../core/device_settings
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
   flutter_local_notifications: ^22.3.3
-  flutter_timezone: ^5.1.0
+  flutter_timezone: ^5.1.1
   l10n:
     path: ../../../core/l10n
   ledger:
@@ -31,6 +31,6 @@ dependencies:
   timezone: ^0.11.2
 
 dev_dependencies:
-  device_calendar_plus_platform_interface: 0.7.0
+  device_calendar_plus_platform_interface: ^0.7.0
   flutter_test:
     sdk: flutter
