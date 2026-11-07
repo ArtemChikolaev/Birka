@@ -3,6 +3,7 @@
 /// (ADR 0023).
 library;
 
+export 'src/data/device_reminder_calendar.dart';
 export 'src/data/local_reminder_channel.dart';
 export 'src/presentation/pages/payday_page.dart';
 export 'src/presentation/pages/schedule_form_page.dart';

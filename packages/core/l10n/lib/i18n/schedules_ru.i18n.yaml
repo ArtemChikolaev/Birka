@@ -192,23 +192,57 @@ remindNotifyOn(n):
   many: $n платежей · в $time
   other: $n платежей · в $time
 remindNotifyDenied: нет доступа к уведомлениям
+remindCalendar: События в календаре
+remindCalendarOn(n):
+  one: календарь «Birka» · $n событие
+  few: календарь «Birka» · $n события
+  many: календарь «Birka» · $n событий
+  other: календарь «Birka» · $n событий
+remindCalendarOff: напомнит и без Birka
+remindCalendarDenied: нет доступа к календарю
 remindTime: Время
 remindSums: Суммы в напоминаниях
-remindSumsNote: на экране блокировки
+remindSumsNote: на экране блокировки и в календаре
 remindNoteOff: "Напомнить можно в день платежа или накануне: это выбирается у каждого платежа."
-remindNoteOn: Удалите Birka — напоминания исчезнут вместе с ней.
+remindNoteOn: Удалите Birka — напоминания исчезнут вместе с ней. Календарь напомнит и без неё.
 remindNoteDenied: Чтобы Birka напоминала, разрешите ей уведомления в настройках телефона.
+remindNoteCalendar: Если календарь синхронизируется с iCloud или Google, названия и суммы платежей попадут туда.
+remindNoteBoth: "О платеже напомнят дважды: Birka и календарь."
+remindNoteCalendarDenied: Чтобы календарь напоминал, откройте ему доступ в настройках телефона.
 remindAskTitle: Напоминания от Birka
 remindAskText: Birka напомнит о платеже в $time — в день платежа или накануне, как выбрано у платежа. Напоминания ставятся на этом телефоне, сервер для них не нужен.
 remindAskExample: $date, $time · нажмёте — откроется платёж
 remindAskLocalTitle: Живут вместе с Birka
-remindAskLocalText: Удалите приложение — исчезнут и напоминания.
+remindAskLocalText: Удалите приложение — исчезнут и напоминания. Календарь напомнит и без него.
 remindAllow: Разрешить уведомления
 remindNotNow: Не сейчас
+remindCalendarAskText: Birka заведёт календарь «Birka» и добавит в него регулярные платежи. Напоминать будет сам календарь — даже если удалить Birka.
+remindCalendarAskOwnTitle: Календарь «Birka»
+remindCalendarAskOwn(n):
+  one: $n платёж · напомнит в $time
+  few: $n платежа · напомнит в $time
+  many: $n платежей · напомнит в $time
+  other: $n платежей · напомнит в $time
+remindCalendarAskSyncTitle: Если календарь синхронизируется
+remindCalendarAskSyncText: Названия и суммы платежей попадут в iCloud или Google. Суммы можно убрать в настройках.
+remindCalendarAskOthersTitle: Чужие события Birka не читает
+remindCalendarAskOthersText: "Телефон спросит полный доступ: без него Birka не сможет менять и удалять свои события."
+remindCalendarAllow: Разрешить доступ к календарю
+remindCalendarRemoveTitle: Убрать календарь «Birka»?
+remindCalendarRemoveText(n):
+  one: Календарь «Birka» и $n событие в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
+  few: Календарь «Birka» и $n события в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
+  many: Календарь «Birka» и $n событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
+  other: Календарь «Birka» и $n событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
+remindCalendarRemove: Убрать календарь
+remindCalendarDeniedTitle: Нет доступа к календарю
+remindCalendarDeniedText: Доступ выключен в настройках телефона. Откройте «Настройки» → «Birka» → «Календари» и выберите «Полный доступ».
+remindCalendarOnToast: Платежи в календаре «Birka»
+remindCalendarOffToast: Календарь «Birka» убран
 remindDeniedTitle: Нет доступа к уведомлениям
 remindDeniedText: Уведомления Birka выключены в настройках телефона. Откройте «Настройки» → «Birka» → «Уведомления» и включите их.
 remindOpenSettings: Открыть настройки
-remindUnderstood: Понятно
+remindCancel: Отмена
 remindOnTitle: Напоминания включены
 remindOnText(n):
   one: Birka напомнит о $n платеже
@@ -226,7 +260,10 @@ reminder(map):
   onDay: В день
   dayBefore: За день
   none: Не напоминать
-remindLine: $date в $time · напомнит Birka
+remindLine: $date в $time · $who
+remindByBirka: напомнит Birka
+remindByCalendar: напомнит календарь «Birka»
+remindByBoth: напомнят Birka и календарь
 remindLineNone: Без напоминания
 remindLineOff: Напоминания выключены в «Ещё»
 remindEnable: Включить напоминания

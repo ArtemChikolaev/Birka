@@ -13,6 +13,7 @@ final class RemindersState {
   const RemindersState({
     this.settings,
     this.access = ReminderAccess.unknown,
+    this.calendarAccess = ReminderAccess.unknown,
     this.schedules = const [],
   });
 
@@ -21,6 +22,9 @@ final class RemindersState {
 
   /// Whether the phone lets Birka show notifications.
   final ReminderAccess access;
+
+  /// Whether the phone lets Birka keep its calendar.
+  final ReminderAccess calendarAccess;
 
   /// The regular payments.
   final List<Schedule> schedules;
@@ -31,18 +35,32 @@ final class RemindersState {
   /// Whether the phone keeps the notifications of Birka off.
   bool get denied => access == ReminderAccess.denied;
 
+  /// Whether the events of the calendar «Birka» are on.
+  bool get calendar => settings?.calendar ?? false;
+
+  /// Whether the phone keeps the calendar from Birka.
+  bool get calendarDenied => calendarAccess == ReminderAccess.denied;
+
   /// How many payments remind of their times.
   int get reminding =>
       schedules.where((it) => it.reminder != ScheduleReminder.none).length;
+
+  /// How many events the calendar «Birka» holds for them: two for a salary
+  /// in halves.
+  int get events => schedules
+      .where((it) => it.reminder != ScheduleReminder.none)
+      .fold(0, (sum, it) => sum + (it.advanceDay == null ? 1 : 2));
 
   /// A copy with the given fields changed.
   RemindersState copyWith({
     ReminderSettings? settings,
     ReminderAccess? access,
+    ReminderAccess? calendarAccess,
     List<Schedule>? schedules,
   }) => RemindersState(
     settings: settings ?? this.settings,
     access: access ?? this.access,
+    calendarAccess: calendarAccess ?? this.calendarAccess,
     schedules: schedules ?? this.schedules,
   );
 }
@@ -55,7 +73,8 @@ class RemindersCubit extends Cubit<RemindersState> {
   /// time in tests.
   RemindersCubit(
     this._repository,
-    this._channel, {
+    this._channel,
+    this._calendar, {
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now,
        super(const RemindersState()) {
@@ -72,6 +91,7 @@ class RemindersCubit extends Cubit<RemindersState> {
 
   final SchedulesRepository _repository;
   final ReminderChannel _channel;
+  final ReminderCalendar _calendar;
   final DateTime Function() _now;
   late final List<StreamSubscription<void>> _subscriptions;
 
@@ -84,11 +104,13 @@ class RemindersCubit extends Cubit<RemindersState> {
     limit: 1,
   ).firstOrNull;
 
-  /// Reads again whether the phone lets Birka show notifications, as when the
-  /// person comes back from its settings.
+  /// Reads again whether the phone lets Birka show notifications and keep
+  /// its calendar, as when the person comes back from its settings.
   Future<void> accessChecked() async {
     final access = await _channel.access();
-    if (!isClosed) emit(state.copyWith(access: access));
+    final calendarAccess = await _calendar.access();
+    if (isClosed) return;
+    emit(state.copyWith(access: access, calendarAccess: calendarAccess));
   }
 
   /// Turns the notifications of Birka on once the phone allows them, and
@@ -105,6 +127,35 @@ class RemindersCubit extends Cubit<RemindersState> {
   /// Turns the notifications of Birka off; the phone forgets them.
   Future<void> disable() =>
       _save((settings) => settings.copyWith(notify: false));
+
+  /// Turns the events of the calendar «Birka» on once the phone gives full
+  /// access to the calendar, and says whether it did.
+  Future<bool> enableCalendar() async {
+    final access = await _calendar.requestAccess();
+    if (isClosed) return false;
+    emit(state.copyWith(calendarAccess: access));
+    if (access != ReminderAccess.granted) return false;
+    await _save((settings) => settings.copyWith(calendar: true));
+    return true;
+  }
+
+  /// Turns the events of the calendar off and removes the calendar «Birka»,
+  /// and says whether it went: without access the phone keeps it.
+  Future<bool> disableCalendar() async {
+    var removed = true;
+    try {
+      await _calendar.remove();
+    } on Exception {
+      removed = false;
+    }
+    await _save((settings) => settings.copyWith(calendar: false));
+    if (!removed) await accessChecked();
+    return removed;
+  }
+
+  /// Opens the settings of Birka on the phone, where the person allows its
+  /// notifications and its calendar.
+  Future<void> openSettings() => _calendar.openSettings();
 
   /// Makes reminders come at [minutes] after midnight.
   Future<void> timeChanged(int minutes) =>

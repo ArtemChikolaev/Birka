@@ -329,7 +329,7 @@ class _Form extends StatelessWidget {
                   children: [
                     if (onEnableReminders case final enable?
                         when state.reminder != ScheduleReminder.none &&
-                            !(state.reminders?.notify ?? true))
+                            !(state.reminders?.any ?? true))
                       Align(
                         key: const ValueKey('enable'),
                         alignment: Alignment.centerLeft,

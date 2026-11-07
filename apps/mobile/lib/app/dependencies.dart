@@ -21,7 +21,7 @@ import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart';
 import 'package:schedules_common/schedules_common.dart';
 import 'package:schedules_flutter/schedules_flutter.dart'
-    show LocalReminderChannel;
+    show DeviceReminderCalendar, LocalReminderChannel;
 import 'package:settings_common/settings_common.dart';
 import 'package:transactions_common/transactions_common.dart';
 
@@ -75,7 +75,8 @@ void registerDependencies(
     ..registerSingleton<BackupFiles>(const FilePickerBackupFiles())
     ..registerSingleton<StatementFiles>(const FilePickerStatementFiles())
     ..registerSingleton<HelpLinks>(const UrlLauncherHelpLinks())
-    ..registerSingleton<ReminderChannel>(_reminders);
+    ..registerSingleton<ReminderChannel>(_reminders)
+    ..registerSingleton<ReminderCalendar>(DeviceReminderCalendar(settings));
   registerAccounts(getIt);
   registerBackup(getIt, settings);
   registerCategories(getIt);

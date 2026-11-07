@@ -60,6 +60,35 @@ final class FakeChannel implements ReminderChannel {
   Stream<ReminderTap> get opened => const Stream.empty();
 }
 
+/// A calendar that answers as told and keeps what it was asked to write.
+final class FakeCalendar implements ReminderCalendar {
+  ReminderAccess answer = ReminderAccess.granted;
+  ReminderAccess current = ReminderAccess.unknown;
+  final written = <List<CalendarReminder>>[];
+  int removed = 0;
+  int settings = 0;
+  bool failRemove = false;
+
+  @override
+  Future<ReminderAccess> access() async => current;
+
+  @override
+  Future<ReminderAccess> requestAccess() async => current = answer;
+
+  @override
+  Future<void> write(List<CalendarReminder> events) async =>
+      written.add(events);
+
+  @override
+  Future<void> remove() async {
+    if (failRemove) throw Exception('no access');
+    removed++;
+  }
+
+  @override
+  Future<void> openSettings() async => settings++;
+}
+
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.ru));
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
@@ -279,11 +308,104 @@ void main() {
       );
     });
 
+    test('the line says who reminds', () {
+      final rent = schedule('Аренда', 45000, CivilDate(2026, 11, 25));
+      String line(ReminderSettings settings) =>
+          reminderLine(schedule: rent, settings: settings, now: now);
+
+      expect(
+        line(const ReminderSettings(notify: true, calendar: true)),
+        '25 ноября в 9:00 · напомнят Birka и календарь',
+      );
+      expect(
+        line(const ReminderSettings(calendar: true)),
+        '25 ноября в 9:00 · напомнит календарь «Birka»',
+      );
+    });
+
     test('a time goes by the clock', () {
       expect(clockLabel(9 * 60), '9:00');
       expect(clockLabel(23 * 60 + 30), '23:30');
       expect(reminderTimes.first, 6 * 60);
       expect(reminderTimes.last, 23 * 60);
+    });
+  });
+
+  group('the events of the calendar', () {
+    test('one for each payment that reminds, from its next time', () {
+      final events = calendarReminders(
+        [
+          schedule('Аренда', 45000, CivilDate(2026, 11, 25)),
+          schedule(
+            'Интернет',
+            650,
+            CivilDate(2026, 11, 28),
+            reminder: ScheduleReminder.dayBefore,
+          ),
+          schedule(
+            'Спортзал',
+            3500,
+            CivilDate(2026, 12, 3),
+            reminder: ScheduleReminder.none,
+          ),
+          schedule('Связь', 500, CivilDate(2026, 11, 30), day: 31),
+        ],
+        minutes: 9 * 60,
+        sums: true,
+      );
+
+      expect(events, [
+        CalendarReminder(
+          title: 'Аренда · ${nb('45 000 ₽')}',
+          first: CivilDate(2026, 11, 25),
+          minutes: 9 * 60,
+          every: ScheduleEvery.month,
+          day: 25,
+          early: false,
+        ),
+        CalendarReminder(
+          title: 'Интернет · ${nb('650 ₽')}',
+          first: CivilDate(2026, 11, 28),
+          minutes: 9 * 60,
+          every: ScheduleEvery.month,
+          day: 28,
+          early: true,
+        ),
+        CalendarReminder(
+          title: 'Связь · ${nb('500 ₽')}',
+          first: CivilDate(2026, 11, 30),
+          minutes: 9 * 60,
+          every: ScheduleEvery.month,
+          day: 31,
+          early: false,
+        ),
+      ]);
+    });
+
+    test('two for a salary in halves, each on its own day', () {
+      final salary = schedule(
+        'Зарплата',
+        60000,
+        CivilDate(2026, 11, 20),
+        kind: TransactionKind.income,
+        day: 5,
+        advanceDay: 20,
+      );
+
+      expect(
+        [
+          for (final it in calendarReminders(
+            [salary],
+            minutes: 540,
+            sums: false,
+          ))
+            (it.title, it.first, it.day),
+        ],
+        [
+          ('Аванс', CivilDate(2026, 11, 20), 20),
+          ('Зарплата', CivilDate(2026, 12, 5), 5),
+        ],
+      );
     });
   });
 
@@ -293,12 +415,18 @@ void main() {
 
     await const ReminderSettings(
       notify: true,
+      calendar: true,
       minutes: 20 * 60,
       sums: false,
     ).write(store);
     expect(
       ReminderSettings.read(store),
-      const ReminderSettings(notify: true, minutes: 20 * 60, sums: false),
+      const ReminderSettings(
+        notify: true,
+        calendar: true,
+        minutes: 20 * 60,
+        sums: false,
+      ),
     );
 
     store.values['remind-time'] = '2000';
@@ -311,6 +439,7 @@ void main() {
     late MemorySettingsStore store;
     late LedgerSchedulesRepository repository;
     late FakeChannel channel;
+    late FakeCalendar calendar;
     late Account card;
 
     setUp(() async {
@@ -328,6 +457,7 @@ void main() {
         now: () => now,
       );
       channel = FakeChannel();
+      calendar = FakeCalendar();
       card = await ledger.addAccount(
         name: 'Карта',
         type: AccountType.debit,
@@ -345,8 +475,12 @@ void main() {
     tearDown(() => database.close());
 
     test('the phone gets the plan once the reminders are on', () async {
-      final scheduler = ReminderScheduler(repository, channel, now: () => now)
-        ..start();
+      final scheduler = ReminderScheduler(
+        repository,
+        channel,
+        calendar,
+        now: () => now,
+      )..start();
       addTearDown(scheduler.stop);
       await pumpEventQueue();
       expect(channel.shown, [isEmpty]);
@@ -386,7 +520,12 @@ void main() {
     });
 
     test('the cubit turns them on once the phone allows them', () async {
-      final cubit = RemindersCubit(repository, channel, now: () => now);
+      final cubit = RemindersCubit(
+        repository,
+        channel,
+        calendar,
+        now: () => now,
+      );
       addTearDown(cubit.close);
       await pumpEventQueue();
       expect(cubit.state.notify, isFalse);
@@ -411,6 +550,77 @@ void main() {
         ReminderSettings.read(store),
         const ReminderSettings(minutes: 20 * 60, sums: false),
       );
+    });
+
+    test('the calendar gets its events once it is on, and only then', () async {
+      final scheduler = ReminderScheduler(
+        repository,
+        channel,
+        calendar,
+        now: () => now,
+      )..start();
+      addTearDown(scheduler.stop);
+      await pumpEventQueue();
+      expect(calendar.written, isEmpty);
+
+      await repository.saveReminders(const ReminderSettings(calendar: true));
+      await pumpEventQueue();
+      expect(
+        calendar.written.single.single.title,
+        'Аренда · ${nb('45 000 ₽')}',
+      );
+      expect(channel.shown.last, isEmpty);
+
+      // The same events leave the calendar alone.
+      await scheduler.refresh();
+      expect(calendar.written, hasLength(1));
+
+      await repository.saveReminders(
+        const ReminderSettings(calendar: true, sums: false),
+      );
+      await pumpEventQueue();
+      expect(calendar.written.last.single.title, 'Аренда');
+    });
+
+    test('the cubit turns the calendar on and removes it', () async {
+      final cubit = RemindersCubit(
+        repository,
+        channel,
+        calendar,
+        now: () => now,
+      );
+      addTearDown(cubit.close);
+      await pumpEventQueue();
+      expect(cubit.state.calendar, isFalse);
+      expect(cubit.state.events, 1);
+
+      calendar.answer = ReminderAccess.denied;
+      expect(await cubit.enableCalendar(), isFalse);
+      expect(cubit.state.calendarDenied, isTrue);
+      expect(ReminderSettings.read(store).calendar, isFalse);
+
+      calendar.answer = ReminderAccess.granted;
+      expect(await cubit.enableCalendar(), isTrue);
+      await pumpEventQueue();
+      expect(cubit.state.calendar, isTrue);
+
+      expect(await cubit.disableCalendar(), isTrue);
+      await pumpEventQueue();
+      expect(calendar.removed, 1);
+      expect(cubit.state.calendar, isFalse);
+
+      // Without access the calendar stays, and the setting goes off anyway.
+      await cubit.enableCalendar();
+      calendar
+        ..failRemove = true
+        ..current = ReminderAccess.denied;
+      expect(await cubit.disableCalendar(), isFalse);
+      await pumpEventQueue();
+      expect(cubit.state.calendar, isFalse);
+      expect(cubit.state.calendarDenied, isTrue);
+
+      await cubit.openSettings();
+      expect(calendar.settings, 1);
     });
 
     test('the form follows the settings of the reminders', () async {

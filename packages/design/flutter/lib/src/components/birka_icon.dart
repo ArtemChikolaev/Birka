@@ -120,6 +120,9 @@ enum BirkaGlyph {
   /// A bell, for a reminder.
   bell,
 
+  /// A cloud, for what syncs elsewhere.
+  cloud,
+
   /// A mark of attention in a circle.
   alert
   ;

@@ -8,8 +8,8 @@ import 'package:schedules_common/src/presentation/schedule_form_cubit.dart';
 import 'package:schedules_common/src/presentation/schedules_cubit.dart';
 
 /// Registers the feature in [getIt], which has to know the `LedgerRepository`,
-/// the `BaseCurrency`, the `MonthStart` and the `ReminderChannel` of the
-/// host, on the [store] of the host.
+/// the `BaseCurrency`, the `MonthStart`, the `ReminderChannel` and the
+/// `ReminderCalendar` of the host, on the [store] of the host.
 void registerSchedules(GetIt getIt, SettingsStore store) {
   getIt
     ..registerLazySingleton<SchedulesRepository>(
@@ -17,10 +17,10 @@ void registerSchedules(GetIt getIt, SettingsStore store) {
     )
     ..registerFactory(() => SchedulesCubit(getIt()))
     ..registerLazySingleton(
-      () => ReminderScheduler(getIt(), getIt()),
+      () => ReminderScheduler(getIt(), getIt(), getIt()),
       dispose: (scheduler) => scheduler.stop(),
     )
-    ..registerFactory(() => RemindersCubit(getIt(), getIt()))
+    ..registerFactory(() => RemindersCubit(getIt(), getIt(), getIt()))
     ..registerFactoryParam<ScheduleFormCubit, String?, bool?>(
       (id, salary) =>
           ScheduleFormCubit(getIt(), id: id, salary: salary ?? false),

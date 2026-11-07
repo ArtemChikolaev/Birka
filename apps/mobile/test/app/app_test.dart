@@ -54,8 +54,10 @@ import 'package:reports_common/reports_common.dart'
 import 'package:reports_flutter/reports_flutter.dart';
 import 'package:schedules_common/schedules_common.dart'
     show
+        CalendarReminder,
         PaydaySettings,
         ReminderAccess,
+        ReminderCalendar,
         ReminderChannel,
         ReminderNote,
         ReminderSettings,
@@ -139,6 +141,24 @@ final class _NoReminders implements ReminderChannel {
 
   @override
   Stream<ReminderTap> get opened => taps.stream;
+}
+
+/// A calendar that the phone never gives.
+final class _NoCalendar implements ReminderCalendar {
+  @override
+  Future<ReminderAccess> access() async => ReminderAccess.unknown;
+
+  @override
+  Future<ReminderAccess> requestAccess() async => ReminderAccess.denied;
+
+  @override
+  Future<void> write(List<CalendarReminder> events) async {}
+
+  @override
+  Future<void> remove() async {}
+
+  @override
+  Future<void> openSettings() async {}
 }
 
 /// No regular payments and no accounts for them, so the card of the money of
@@ -507,7 +527,9 @@ void main() {
       ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerFactory(() => SchedulesCubit(_NoSchedules()))
       ..registerSingleton<ReminderChannel>(reminders)
-      ..registerFactory(() => RemindersCubit(_NoSchedules(), reminders))
+      ..registerFactory(
+        () => RemindersCubit(_NoSchedules(), reminders, _NoCalendar()),
+      )
       ..registerFactoryParam<ScheduleFormCubit, String?, bool?>((id, salary) {
         forms.add(id);
         return ScheduleFormCubit(
