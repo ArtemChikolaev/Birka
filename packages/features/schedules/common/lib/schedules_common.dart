@@ -7,6 +7,7 @@ export 'src/data/ledger_schedules_repository.dart';
 export 'src/di/register_schedules.dart';
 export 'src/domain/payday_settings.dart';
 export 'src/domain/reminders.dart';
+export 'src/domain/repeat_finds.dart';
 export 'src/domain/schedule_draft.dart';
 export 'src/domain/schedules_repository.dart';
 export 'src/domain/spending_plan.dart';

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:device_settings/device_settings.dart';
 import 'package:ledger/ledger.dart';
@@ -10,7 +11,8 @@ import 'package:schedules_common/src/domain/schedule_draft.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
 
 /// Keeps the regular payments in the ledger, which holds their rules, and the
-/// settings of the money until the salary on the [_store] of the device.
+/// settings of the money until the salary and the dismissed finds on the
+/// [_store] of the device.
 final class LedgerSchedulesRepository implements SchedulesRepository {
   /// Creates a repository. [now] tells the time in tests.
   LedgerSchedulesRepository(
@@ -21,7 +23,8 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now,
        _settings = PaydaySettings.read(_store),
-       _reminders = ReminderSettings.read(_store);
+       _reminders = ReminderSettings.read(_store),
+       _dismissed = _readDismissed(_store);
 
   final LedgerRepository _ledger;
   final BaseCurrency _baseCurrency;
@@ -32,6 +35,22 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
   final _changes = StreamController<PaydaySettings>.broadcast();
   ReminderSettings _reminders;
   final _reminderChanges = StreamController<ReminderSettings>.broadcast();
+  Set<String> _dismissed;
+  final _dismissedChanges = StreamController<Set<String>>.broadcast();
+
+  /// Where the keys of the dismissed finds stay, as a list in JSON. They
+  /// belong to this device and leave it in no copy.
+  static const _dismissedKey = 'schedule-finds-dismissed';
+
+  static Set<String> _readDismissed(SettingsStore store) {
+    final raw = store.read(_dismissedKey);
+    if (raw == null) return const {};
+    try {
+      return {for (final key in jsonDecode(raw) as List<Object?>) '$key'};
+    } on Object {
+      return const {};
+    }
+  }
 
   @override
   CivilDate today() => CivilDate.of(_now());
@@ -54,6 +73,26 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
   @override
   Stream<Transaction?> watchTransaction(String id) =>
       _ledger.watchTransaction(id);
+
+  @override
+  Stream<List<Transaction>> watchHistory(CivilDate from) =>
+      _ledger.watchTransactions(from: from, limit: null);
+
+  @override
+  Stream<Set<String>> watchDismissedFinds() => Stream.multi((controller) {
+    controller.add(_dismissed);
+    final subscription = _dismissedChanges.stream.listen(controller.add);
+    controller.onCancel = subscription.cancel;
+  });
+
+  @override
+  Future<void> dismissFind(String key, {bool dismissed = true}) async {
+    final keys = {..._dismissed};
+    dismissed ? keys.add(key) : keys.remove(key);
+    _dismissed = keys;
+    _dismissedChanges.add(keys);
+    await _store.write(_dismissedKey, jsonEncode(keys.toList()..sort()));
+  }
 
   @override
   Stream<Currency?> watchBaseCurrency() => _baseCurrency.watch();

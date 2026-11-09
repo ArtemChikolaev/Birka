@@ -2450,6 +2450,56 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   @override
   String madeRegular({required Object name}) =>
       'Добавили в регулярные: «${name}»';
+  @override
+  String get findsTitle => 'Похоже на регулярные';
+  @override
+  String get findsTitleEmpty => 'Нашли в ваших операциях';
+  @override
+  String get findsNote =>
+      'Повторялись каждый месяц. Нажмите, чтобы добавить, или ✕, если повтор случайный.';
+  @override
+  String findLine({
+    required num n,
+    required Object day,
+    required Object count,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one: '${day}-го · ${count} раз подряд',
+    few: '${day}-го · ${count} раза подряд',
+    many: '${day}-го · ${count} раз подряд',
+    other: '${day}-го · ${count} раза подряд',
+  );
+  @override
+  String findLineVaries({
+    required num n,
+    required Object day,
+    required Object count,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one: 'около ${day}-го · ${count} раз',
+    few: 'около ${day}-го · ${count} раза',
+    many: 'около ${day}-го · ${count} раз',
+    other: 'около ${day}-го · ${count} раза',
+  );
+  @override
+  String findDismiss({required Object name}) => 'Не регулярный: ${name}';
+  @override
+  String findDismissed({required Object name}) =>
+      'Не будем предлагать «${name}»';
+  @override
+  String get findRestore => 'Вернуть';
+  @override
+  String foundIn({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Нашли в операциях · ${count} раз',
+        few: 'Нашли в операциях · ${count} раза',
+        many: 'Нашли в операциях · ${count} раз',
+        other: 'Нашли в операциях · ${count} раза',
+      );
+  @override
+  String amountRange({required Object min, required Object max}) =>
+      'последняя сумма · бывало от ${min} до ${max}';
 }
 
 // Path: settings
@@ -4604,6 +4654,48 @@ extension on TranslationsRu {
             ({required Object date}) => 'Из операции ${date}',
           'schedules.madeRegular' =>
             ({required Object name}) => 'Добавили в регулярные: «${name}»',
+          'schedules.findsTitle' => 'Похоже на регулярные',
+          'schedules.findsTitleEmpty' => 'Нашли в ваших операциях',
+          'schedules.findsNote' =>
+            'Повторялись каждый месяц. Нажмите, чтобы добавить, или ✕, если повтор случайный.',
+          'schedules.findLine' =>
+            ({required num n, required Object day, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${day}-го · ${count} раз подряд',
+                  few: '${day}-го · ${count} раза подряд',
+                  many: '${day}-го · ${count} раз подряд',
+                  other: '${day}-го · ${count} раза подряд',
+                ),
+          'schedules.findLineVaries' =>
+            ({required num n, required Object day, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'около ${day}-го · ${count} раз',
+                  few: 'около ${day}-го · ${count} раза',
+                  many: 'около ${day}-го · ${count} раз',
+                  other: 'около ${day}-го · ${count} раза',
+                ),
+          'schedules.findDismiss' =>
+            ({required Object name}) => 'Не регулярный: ${name}',
+          'schedules.findDismissed' =>
+            ({required Object name}) => 'Не будем предлагать «${name}»',
+          'schedules.findRestore' => 'Вернуть',
+          'schedules.foundIn' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Нашли в операциях · ${count} раз',
+                  few: 'Нашли в операциях · ${count} раза',
+                  many: 'Нашли в операциях · ${count} раз',
+                  other: 'Нашли в операциях · ${count} раза',
+                ),
+          'schedules.amountRange' =>
+            ({required Object min, required Object max}) =>
+                'последняя сумма · бывало от ${min} до ${max}',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -4668,6 +4760,9 @@ extension on TranslationsRu {
           'transactions.failedToDelete' =>
             'Не удалось удалить. Попробуйте ещё раз.',
           'transactions.operation' => 'Операция',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.edit' => 'Изменить',
           'transactions.editOperation' => 'Изменить операцию',
           'transactions.repeat' => 'Повторить',
@@ -4678,9 +4773,6 @@ extension on TranslationsRu {
           'transactions.category' => 'Категория',
           'transactions.from' => 'Откуда',
           'transactions.date' => 'Дата',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.sources.manual' => 'Вручную',
           'transactions.sources.import' => 'Из выписки',
           'transactions.sources.notification' => 'Из уведомления',

@@ -11,11 +11,16 @@ import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/widgets.dart';
 
+/// What a toast offers to do about what it says, such as «Вернуть» after
+/// something was taken away.
+typedef ToastAction = ({String label, VoidCallback onPressed});
+
 /// A short message on glass: what came of an action, after a check mark, or
-/// what went wrong, after a cross.
+/// what went wrong, after a cross, with an [action] at its end when there is
+/// one.
 class GlassToast extends StatelessWidget {
   /// Creates a message that says [text].
-  const GlassToast(this.text, {this.trouble = false, super.key});
+  const GlassToast(this.text, {this.trouble = false, this.action, super.key});
 
   /// What it says.
   final String text;
@@ -23,10 +28,24 @@ class GlassToast extends StatelessWidget {
   /// Whether it says that something went wrong.
   final bool trouble;
 
+  /// What it offers to do.
+  final ToastAction? action;
+
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
+    final styles = BirkaTextStyles.of(context);
+    final action = this.action;
     return GlassSurface(
+      // The button keeps the toast as tall as its text would.
+      padding: action == null
+          ? const EdgeInsets.all(BirkaTokens.spaceMd)
+          : const EdgeInsets.fromLTRB(
+              BirkaTokens.spaceMd,
+              BirkaTokens.spaceXs,
+              BirkaTokens.spaceXs,
+              BirkaTokens.spaceXs,
+            ),
       child: Row(
         children: [
           BirkaIcon(
@@ -36,13 +55,46 @@ class GlassToast extends StatelessWidget {
           ),
           const SizedBox(width: BirkaTokens.spaceSm),
           Expanded(
-            child: Text(
-              text,
-              style: BirkaTextStyles.of(
-                context,
-              ).body.copyWith(color: colors.text),
-            ),
+            child: Text(text, style: styles.body.copyWith(color: colors.text)),
           ),
+          if (action != null) ...[
+            const SizedBox(width: BirkaTokens.spaceXs),
+            Semantics(
+              container: true,
+              button: true,
+              label: action.label,
+              excludeSemantics: true,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: action.onPressed,
+                child: SizedBox(
+                  height: BirkaTokens.sizeTouchTarget,
+                  child: Center(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: colors.accent.withValues(alpha: 0.14),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(BirkaTokens.radiusPill),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: BirkaTokens.spaceSm,
+                          vertical: BirkaTokens.spaceXs,
+                        ),
+                        child: Text(
+                          action.label,
+                          style: styles.bodyStrong.copyWith(
+                            color: colors.accent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -58,8 +110,14 @@ OverlayEntry? _shown;
 /// ([GlassNavBarSpace]). It comes up from below with a little bounce over
 /// `duration.spring` and goes a little down as it fades over
 /// `duration.base`; when the system asks for less motion, it only fades.
-/// It needs an [Overlay], such as that of a navigator.
-void showGlassToast(BuildContext context, String text, {bool trouble = false}) {
+/// An [action] goes away with the toast once it is pressed. It needs an
+/// [Overlay], such as that of a navigator.
+void showGlassToast(
+  BuildContext context,
+  String text, {
+  bool trouble = false,
+  ToastAction? action,
+}) {
   _shown?.remove();
   final bar = GlassNavBarSpace.of(context);
   late final OverlayEntry entry;
@@ -67,6 +125,7 @@ void showGlassToast(BuildContext context, String text, {bool trouble = false}) {
     builder: (context) => _Toast(
       text: text,
       trouble: trouble,
+      action: action,
       bar: bar,
       onGone: () {
         if (!identical(_shown, entry)) return;
@@ -90,12 +149,14 @@ class _Toast extends StatefulWidget {
   const _Toast({
     required this.text,
     required this.trouble,
+    required this.action,
     required this.bar,
     required this.onGone,
   });
 
   final String text;
   final bool trouble;
+  final ToastAction? action;
 
   /// How far the bar of the tabs reaches up, or 0 without one.
   final double bar;
@@ -188,7 +249,24 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
                 child: Opacity(opacity: opacity, child: child),
               );
             },
-            child: GlassToast(widget.text, trouble: widget.trouble),
+            child: GlassToast(
+              widget.text,
+              trouble: widget.trouble,
+              action: switch (widget.action) {
+                final action? => (
+                  label: action.label,
+                  onPressed: () {
+                    // The toast goes as the action happens.
+                    _stayed?.cancel();
+                    if (_shown.status != AnimationStatus.reverse) {
+                      unawaited(_shown.reverse());
+                    }
+                    action.onPressed();
+                  },
+                ),
+                null => null,
+              },
+            ),
           ),
         ),
       ),

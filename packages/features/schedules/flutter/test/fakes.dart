@@ -158,6 +158,32 @@ Transaction spent(int rubles) => Transaction(
   allocations: [Allocation(categoryId: null, amount: rub(rubles))],
 );
 
+/// An expense on the card on [day], named [note], as a statement brings it.
+Transaction paid(String id, CivilDate day, String note, int rubles) =>
+    Transaction(
+      id: id,
+      kind: TransactionKind.expense,
+      occurredOn: day,
+      note: note,
+      status: TransactionStatus.cleared,
+      source: TransactionSource.import,
+      entries: [Entry(accountId: 'card', amount: -rub(rubles))],
+      allocations: [Allocation(categoryId: 'subs', amount: rub(rubles))],
+    );
+
+/// The operations of the boards that came every month: Яндекс Плюс on the
+/// 12th since August, ЖКУ Москва about the 10th since September for 6 410 to
+/// 7 120 ₽, and Облако Mail.ru on the 21st from August to October.
+List<Transaction> boardFinds() => [
+  for (final month in [8, 9, 10, 11])
+    paid('plus-$month', CivilDate(2026, month, 12), 'Яндекс Плюс', 449),
+  paid('zhku-9', CivilDate(2026, 9, 10), 'ЖКУ Москва', 6410),
+  paid('zhku-10', CivilDate(2026, 10, 9), 'ЖКУ Москва', 6845),
+  paid('zhku-11', CivilDate(2026, 11, 10), 'ЖКУ Москва', 7120),
+  for (final month in [8, 9, 10])
+    paid('cloud-$month', CivilDate(2026, month, 21), 'Облако Mail.ru', 149),
+];
+
 /// Keeps the regular payments in memory, and what was done to them.
 final class FakeSchedulesRepository implements SchedulesRepository {
   /// Creates a repository of the boards, with [spentToday] spent on the card.
@@ -257,6 +283,33 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   Stream<Transaction?> watchTransaction(String id) => _watch(
     () => [...todays, ...operations].where((it) => it.id == id).firstOrNull,
   );
+
+  /// What happened before today, for the operations that came every month.
+  List<Transaction> history = const [];
+
+  @override
+  Stream<List<Transaction>> watchHistory(CivilDate from) => _watch(
+    () => [
+      for (final it in [...history, ...operations])
+        if (it.occurredOn.compareTo(from) >= 0) it,
+    ],
+  );
+
+  /// The finds that the person dismissed.
+  Set<String> dismissed = const {};
+
+  @override
+  Stream<Set<String>> watchDismissedFinds() => _watch(() => dismissed);
+
+  @override
+  Future<void> dismissFind(String key, {bool dismissed = true}) async {
+    this.dismissed = {
+      for (final it in this.dismissed)
+        if (it != key) it,
+      if (dismissed) key,
+    };
+    changed();
+  }
 
   @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);

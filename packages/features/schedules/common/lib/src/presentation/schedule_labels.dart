@@ -2,6 +2,7 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:schedules_common/src/domain/payday_settings.dart';
+import 'package:schedules_common/src/domain/repeat_finds.dart';
 import 'package:schedules_common/src/domain/spending_plan.dart';
 
 const _weekdays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -63,10 +64,15 @@ String scheduleLine(Schedule schedule, CivilDate today) {
 
 /// The line under a regular payment in its list on the day something was
 /// done to it: `проведён сегодня · следующий 25 декабря`, or `null` when
-/// nothing was.
+/// nothing was, as on the day it was made from an operation.
 String? doneLine(Schedule schedule, CivilDate today) {
   final last = schedule.last;
   if (last == null || CivilDate.of(last.at.toLocal()) != today) return null;
+  // The operation that the payment was made from is no post of today: the
+  // new payment says how it comes instead.
+  if (last.transactionId case final id? when id == schedule.madeFrom) {
+    return null;
+  }
   final date = fullDate(schedule.next, today);
   // A salary in halves names the half that went and the one that comes.
   if (schedule.advanceDay != null) {
@@ -167,6 +173,40 @@ String madeFromLine(Transaction made, {String? category}) {
   };
   final note = made.note.trim();
   return [if (note.isNotEmpty) note, money, ?category].join(' · ');
+}
+
+/// When [find] comes and how many months it came: `12-го · 4 раза подряд`,
+/// or `около 10-го · 3 раза` when its amount changes.
+String findLine(RepeatFind find) {
+  final count = find.times.length;
+  return find.varies
+      ? t.schedules.findLineVaries(
+          n: count,
+          day: find.day,
+          count: formatCount(count),
+        )
+      : t.schedules.findLine(
+          n: count,
+          day: find.day,
+          count: formatCount(count),
+        );
+}
+
+/// The days of [find] on the card of the form made from it, with the name of
+/// its [category]: `12 авг, 12 сен, 12 окт, 12 ноя · Подписки`.
+String findDaysLine(RepeatFind find, {String? category}) => [
+  [for (final time in find.times) shortDate(time.occurredOn)].join(', '),
+  ?category,
+].join(' · ');
+
+/// What [find] takes or brings: `−449 ₽`, `+40 000 ₽`, or `≈ −6 800 ₽` when
+/// its amount changes.
+String findAmount(RepeatFind find) {
+  final amount = switch (find.kind) {
+    TransactionKind.income => '+${formatMoney(find.amount)}',
+    _ => formatMoney(-find.amount),
+  };
+  return find.varies ? '≈\u00A0$amount' : amount;
 }
 
 /// What the list of every payment shows as the amount of [schedule]: what

@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:design_flutter/design_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:l10n/l10n.dart';
@@ -132,15 +136,18 @@ void main() {
 
   group('the list of payments', () {
     final opened = <String>[];
+    final made = <String>[];
     var added = 0;
     Widget page() => SchedulesPage(
       onBack: () {},
       onAdd: () => added++,
       onOpen: opened.add,
+      onFind: made.add,
     );
 
     setUp(() {
       opened.clear();
+      made.clear();
       added = 0;
     });
 
@@ -299,6 +306,119 @@ void main() {
         findsOneWidget,
       );
       await tester.pumpAndSettle(const Duration(seconds: 5));
+    });
+
+    testWidgets('shows what came every month, and a tap makes it a payment', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        FakeSchedulesRepository()..history = boardFinds(),
+        page(),
+      );
+
+      expect(find.text('ПОХОЖЕ НА РЕГУЛЯРНЫЕ · 3'), findsOneWidget);
+      expect(find.text('12-го · 4 раза подряд'), findsOneWidget);
+      expect(find.text(nb('−449 ₽')), findsOneWidget);
+      // A bill whose amount changes comes at about what it costs.
+      expect(find.text('около 10-го · 3 раза'), findsOneWidget);
+      expect(find.text(nb('≈ −6 800 ₽')), findsOneWidget);
+      expect(find.text('21-го · 3 раза подряд'), findsOneWidget);
+      expect(
+        find.text(
+          'Повторялись каждый месяц. Нажмите, чтобы добавить, или ✕, если '
+          'повтор случайный.',
+        ),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('ЖКУ Москва'));
+      expect(made, ['zhku-11']);
+    });
+
+    testWidgets('✕ keeps a find away until «Вернуть» brings it back', (
+      tester,
+    ) async {
+      final repository = FakeSchedulesRepository()..history = boardFinds();
+      await pump(tester, repository, page());
+
+      await tester.tap(find.bySemanticsLabel('Не регулярный: Облако Mail.ru'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Облако Mail.ru'), findsNothing);
+      expect(find.text('ПОХОЖЕ НА РЕГУЛЯРНЫЕ · 2'), findsOneWidget);
+      expect(find.text('Не будем предлагать «Облако Mail.ru»'), findsOneWidget);
+      expect(repository.dismissed, hasLength(1));
+
+      await tester.tap(find.text('Вернуть'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Облако Mail.ru'), findsOneWidget);
+      expect(find.text('ПОХОЖЕ НА РЕГУЛЯРНЫЕ · 3'), findsOneWidget);
+      expect(repository.dismissed, isEmpty);
+    });
+
+    testWidgets('a find leaves once the form that made it a payment has gone '
+        'down, and a toast says so', (tester) async {
+      final repository = FakeSchedulesRepository()..history = boardFinds();
+      await pump(tester, repository, page());
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      unawaited(
+        navigator.push(
+          CupertinoSheetRoute<void>(builder: (_) => const SizedBox.expand()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The form saves the payment made of the latest time.
+      repository
+        ..schedules = [
+          ...repository.schedules,
+          Schedule(
+            id: 'plus',
+            kind: TransactionKind.expense,
+            name: 'Яндекс Плюс',
+            accountId: 'card',
+            amount: rub(449),
+            every: ScheduleEvery.month,
+            day: 12,
+            next: CivilDate(2026, 12, 12),
+            onDay: ScheduleOnDay.post,
+            reminder: ScheduleReminder.none,
+            madeFrom: 'plus-11',
+          ),
+        ]
+        ..changed();
+      await tester.pump();
+      navigator.pop();
+      await tester.pump();
+      await tester.pump(BirkaMotion.slow);
+
+      // The find stays while the sheet goes down.
+      expect(find.text('ПОХОЖЕ НА РЕГУЛЯРНЫЕ · 3'), findsOneWidget);
+      expect(find.text('ВСЕ РЕГУЛЯРНЫЕ · 6'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('ПОХОЖЕ НА РЕГУЛЯРНЫЕ · 2'), findsOneWidget);
+      expect(find.text('ВСЕ РЕГУЛЯРНЫЕ · 7'), findsOneWidget);
+      expect(find.text('Добавили в регулярные: «Яндекс Плюс»'), findsOneWidget);
+      await tester.pumpAndSettle(const Duration(seconds: 5));
+    });
+
+    testWidgets('without payments the finds stand over the empty page', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        FakeSchedulesRepository()
+          ..schedules = const []
+          ..history = boardFinds(),
+        page(),
+      );
+
+      expect(find.text('НАШЛИ В ВАШИХ ОПЕРАЦИЯХ · 3'), findsOneWidget);
+      expect(find.text('Регулярных платежей пока нет'), findsOneWidget);
     });
 
     testWidgets('without payments it offers to add one', (tester) async {

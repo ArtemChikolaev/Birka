@@ -48,4 +48,43 @@ void main() {
     expect(gapBelow(tester), 98 + BirkaTokens.spaceSm);
     await letItGo(tester);
   });
+
+  testWidgets('an action at the end of a toast happens and takes it away', (
+    tester,
+  ) async {
+    var undone = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: BirkaTheme.dark(),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => Center(
+              child: GestureDetector(
+                onTap: () => showGlassToast(
+                  context,
+                  'Dropped',
+                  action: (label: 'Undo', onPressed: () => undone++),
+                ),
+                child: const Text('Drop'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Drop'));
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Undo'), findsOneWidget);
+    // The button keeps the toast as tall as one without it.
+    expect(
+      tester.getSize(find.byType(GlassToast)).height,
+      BirkaTokens.sizeTouchTarget + 2 * BirkaTokens.spaceXs,
+    );
+    await tester.tap(find.text('Undo'));
+    await tester.pumpAndSettle();
+
+    expect(undone, 1);
+    expect(find.byType(GlassToast), findsNothing);
+  });
 }

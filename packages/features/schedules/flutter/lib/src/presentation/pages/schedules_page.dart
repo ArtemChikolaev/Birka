@@ -9,7 +9,8 @@ import 'package:schedules_common/schedules_common.dart';
 import 'package:schedules_flutter/src/presentation/widgets/schedule_bits.dart';
 
 /// The list of regular payments (ADR 0023): the ones that wait for the
-/// person, the next 30 days and every payment.
+/// person, the operations that look like payments, the next 30 days and
+/// every payment.
 ///
 /// It needs a [SchedulesCubit] above it.
 class SchedulesPage extends StatelessWidget {
@@ -18,6 +19,7 @@ class SchedulesPage extends StatelessWidget {
     required this.onBack,
     required this.onAdd,
     required this.onOpen,
+    required this.onFind,
     super.key,
   });
 
@@ -30,6 +32,10 @@ class SchedulesPage extends StatelessWidget {
   /// Opens the form of a payment, by its id.
   final ValueChanged<String> onOpen;
 
+  /// Opens the form of a new payment made from an operation, by its id: the
+  /// latest of an operation that came every month.
+  final ValueChanged<String> onFind;
+
   @override
   Widget build(BuildContext context) {
     return CalendarCatchUp(
@@ -39,39 +45,65 @@ class SchedulesPage extends StatelessWidget {
           child: SafeArea(
             bottom: false,
             child: BlocBuilder<SchedulesCubit, SchedulesState>(
-              builder: (context, state) => ListView(
-                padding: const EdgeInsets.fromLTRB(
-                  BirkaTokens.spaceLg,
-                  BirkaTokens.spaceXs,
-                  BirkaTokens.spaceLg,
-                  BirkaTokens.spaceXxl,
-                ),
-                children: [
-                  BackHeader(
-                    label: t.schedules.title,
-                    backLabel: t.schedules.back,
-                    onBack: onBack,
-                    trailing: GlassIconButton(
-                      glyph: BirkaGlyph.plus,
-                      label: t.schedules.add,
-                      onPressed: onAdd,
-                    ),
+              // What the form changes comes in once it has gone down.
+              builder: (context, state) => HeldOutOfSight(
+                value: state,
+                onShown: (before, now) => _sayMade(context, before, now),
+                builder: (context, state) => ListView(
+                  padding: const EdgeInsets.fromLTRB(
+                    BirkaTokens.spaceLg,
+                    BirkaTokens.spaceXs,
+                    BirkaTokens.spaceLg,
+                    BirkaTokens.spaceXxl,
                   ),
-                  const SizedBox(height: BirkaTokens.spaceLg),
-                  ...switch (state) {
-                    SchedulesLoading() => const <Widget>[],
-                    SchedulesFailed() => [
-                      BirkaButton(
-                        label: t.app.retry,
-                        onPressed: () =>
-                            unawaited(context.read<SchedulesCubit>().retry()),
+                  children: [
+                    BackHeader(
+                      label: t.schedules.title,
+                      backLabel: t.schedules.back,
+                      onBack: onBack,
+                      trailing: GlassIconButton(
+                        glyph: BirkaGlyph.plus,
+                        label: t.schedules.add,
+                        onPressed: onAdd,
                       ),
-                    ],
-                    SchedulesLoaded(:final view) when view.schedules.isEmpty =>
-                      [_Empty(onAdd: onAdd)],
-                    SchedulesLoaded(:final view) => _content(context, view),
-                  },
-                ],
+                    ),
+                    const SizedBox(height: BirkaTokens.spaceLg),
+                    ...switch (state) {
+                      SchedulesLoading() => const <Widget>[],
+                      SchedulesFailed() => [
+                        BirkaButton(
+                          label: t.app.retry,
+                          onPressed: () =>
+                              unawaited(context.read<SchedulesCubit>().retry()),
+                        ),
+                      ],
+                      SchedulesLoaded(:final view)
+                          when view.schedules.isEmpty =>
+                        [
+                          // Before the first payment, what came every month
+                          // stands over the empty page.
+                          AnimatedColumn(
+                            children: [
+                              if (view.finds.isNotEmpty)
+                                Padding(
+                                  key: const ValueKey('finds'),
+                                  padding: const EdgeInsets.only(
+                                    bottom: BirkaTokens.spaceXs,
+                                  ),
+                                  child: _Finds(
+                                    finds: view.finds,
+                                    onFind: onFind,
+                                    empty: true,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          _Empty(onAdd: onAdd),
+                        ],
+                      SchedulesLoaded(:final view) => _content(context, view),
+                    },
+                  ],
+                ),
               ),
             ),
           ),
@@ -106,6 +138,12 @@ class SchedulesPage extends StatelessWidget {
               key: ValueKey(schedule.id),
               padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
               child: _Waiting(view: view, schedule: schedule),
+            ),
+          if (view.finds.isNotEmpty)
+            Padding(
+              key: const ValueKey('finds'),
+              padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
+              child: _Finds(finds: view.finds, onFind: onFind),
             ),
           // The next 30 days go while no time comes in them and no salary is
           // counted, as when the only payment waits today.
@@ -231,6 +269,30 @@ class SchedulesPage extends StatelessWidget {
         ],
       ),
     ];
+  }
+}
+
+/// Says which payment the form that went down made of an operation that came
+/// every month, once its find has left the list (ADR 0023, point 23).
+void _sayMade(BuildContext context, SchedulesState before, SchedulesState now) {
+  if ((before, now) case (
+    SchedulesLoaded(view: final was),
+    SchedulesLoaded(:final view),
+  )) {
+    final left = {for (final find in view.finds) find.key};
+    for (final find in was.finds) {
+      if (left.contains(find.key)) continue;
+      final ids = {for (final time in find.times) time.id};
+      final made = view.schedules
+          .where((schedule) => ids.contains(schedule.madeFrom))
+          .firstOrNull;
+      if (made != null) {
+        return showGlassToast(
+          context,
+          t.schedules.madeRegular(name: made.name),
+        );
+      }
+    }
   }
 }
 
@@ -373,6 +435,95 @@ class _WaitingState extends State<_Waiting> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// The operations that came every month and have no payment yet: a tap
+/// makes one of the latest, ✕ keeps a find away, and «Вернуть» on the toast
+/// brings it back (ADR 0023, point 23).
+class _Finds extends StatelessWidget {
+  const _Finds({required this.finds, required this.onFind, this.empty = false});
+
+  final List<RepeatFind> finds;
+  final ValueChanged<String> onFind;
+
+  /// Whether no payment is there yet, which the title says.
+  final bool empty;
+
+  void _dismiss(BuildContext context, RepeatFind find) {
+    final cubit = context.read<SchedulesCubit>();
+    showGlassToast(
+      context,
+      t.schedules.findDismissed(name: find.name),
+      action: (
+        label: t.schedules.findRestore,
+        onPressed: () => unawaited(cubit.restore(find.key)),
+      ),
+    );
+    unawaited(cubit.dismiss(find));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BirkaColors.of(context);
+    final styles = BirkaTextStyles.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SectionLabel(
+          t.schedules.section(
+            title: empty ? t.schedules.findsTitleEmpty : t.schedules.findsTitle,
+            count: formatCount(finds.length),
+          ),
+          color: colors.textMuted,
+        ),
+        const SizedBox(height: BirkaTokens.spaceXs),
+        GlassListGroup(
+          children: [
+            for (final find in finds)
+              GlassListRow(
+                key: ValueKey(find.key),
+                leading: ExcludeSemantics(
+                  child: GlyphBadge(
+                    glyph: BirkaGlyph.repeat,
+                    color: colors.accent,
+                  ),
+                ),
+                title: find.name,
+                subtitle: findLine(find),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      HiddenAmounts.mask(context, findAmount(find)),
+                      style: styles.bodyStrong.copyWith(
+                        color: find.kind == TransactionKind.income
+                            ? colors.positive
+                            : colors.text,
+                      ),
+                    ),
+                    IconTheme.merge(
+                      data: IconThemeData(color: colors.textSubtle),
+                      child: GlassIconButton(
+                        glyph: BirkaGlyph.close,
+                        label: t.schedules.findDismiss(name: find.name),
+                        glass: false,
+                        onPressed: () => _dismiss(context, find),
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () => onFind(find.latest.id),
+              ),
+          ],
+        ),
+        const SizedBox(height: BirkaTokens.spaceXs),
+        Text(
+          t.schedules.findsNote,
+          style: styles.caption.copyWith(color: colors.textMuted),
+        ),
+      ],
     );
   }
 }

@@ -392,4 +392,50 @@ void main() {
     expect(view.plan, isNull);
     expect(view.salary, isNull);
   });
+
+  test('finds what came every month, which a dismissal keeps away until it '
+      'comes back, and a payment made of it ends', () async {
+    final ids = <String>[];
+    for (final month in [8, 9, 10, 11]) {
+      ids.add(
+        await ledger.record(
+          TransactionDraft.expense(
+            accountId: card.id,
+            allocations: [Allocation(categoryId: home.id, amount: rub(449))],
+            occurredOn: CivilDate(2026, month, 12),
+            note: 'Яндекс Плюс',
+            source: TransactionSource.import,
+          ),
+        ),
+      );
+    }
+    final cubit = SchedulesCubit(repository);
+    addTearDown(cubit.close);
+
+    final view = await viewOf(cubit, (view) => view.finds.isNotEmpty);
+    final find = view.finds.single;
+    expect(find.name, 'Яндекс Плюс');
+    expect(find.times.map((it) => it.id), ids);
+
+    await cubit.dismiss(find);
+    await viewOf(cubit, (view) => view.finds.isEmpty);
+    expect(
+      store.values['schedule-finds-dismissed'],
+      contains('Яндекс'.toLowerCase()),
+    );
+
+    await cubit.restore(find.key);
+    await viewOf(cubit, (view) => view.finds.length == 1);
+
+    await ledger.addSchedule(
+      kind: TransactionKind.expense,
+      name: 'Яндекс Плюс',
+      accountId: card.id,
+      amount: rub(449),
+      every: ScheduleEvery.month,
+      next: CivilDate(2026, 12, 12),
+      madeFrom: ids.last,
+    );
+    await viewOf(cubit, (view) => view.finds.isEmpty);
+  });
 }

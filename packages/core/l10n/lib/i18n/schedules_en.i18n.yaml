@@ -260,3 +260,19 @@ makeRegularLine: Repeat $every
 regularPayment: Regular payment
 fromOperation: From the operation of $date
 madeRegular: "Added to regular payments: «$name»"
+findsTitle: Looks regular
+findsTitleEmpty: Found in your operations
+findsNote: These came every month. Tap one to add it, or ✕ if it repeated by chance.
+findLine(n):
+  one: day $day · $count time in a row
+  other: day $day · $count times in a row
+findLineVaries(n):
+  one: about day $day · $count time
+  other: about day $day · $count times
+findDismiss: "Not regular: $name"
+findDismissed: We won't suggest «$name» again
+findRestore: Undo
+foundIn(n):
+  one: Found in the operations · $count time
+  other: Found in the operations · $count times
+amountRange: the last amount · it went from $min to $max

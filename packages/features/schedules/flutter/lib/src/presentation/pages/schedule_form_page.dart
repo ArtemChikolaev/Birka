@@ -608,6 +608,17 @@ class _Amount extends StatelessWidget {
                       ),
                     ),
                   ),
+                if (_range(state) case final range?)
+                  Center(
+                    key: const ValueKey('range'),
+                    child: Text(
+                      HiddenAmounts.mask(context, range),
+                      textAlign: TextAlign.center,
+                      style: styles.caption.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],
@@ -631,8 +642,23 @@ class _Amount extends StatelessWidget {
   }
 }
 
+/// What the amount of a payment made from the operations that came every
+/// month says while it is the last of their amounts, which changed:
+/// `последняя сумма · бывало от 6 410 ₽ до 7 120 ₽`.
+String? _range(ScheduleFormState state) {
+  final found = state.found;
+  if (found == null || !found.varies) return null;
+  if (state.amountMinor != found.amounts.last.minorUnits) return null;
+  final range = found.range;
+  return t.schedules.amountRange(
+    min: formatMoney(range.min),
+    max: formatMoney(range.max),
+  );
+}
+
 /// The operation that a new payment is made from, over the form, as the
-/// board draws it: its day, what it was called, its amount and category.
+/// board draws it: its day, what it was called, its amount and category. The
+/// latest of the operations that came every month gives their days instead.
 class _MadeFrom extends StatelessWidget {
   const _MadeFrom({required this.made, required this.state});
 
@@ -648,6 +674,7 @@ class _MadeFrom extends StatelessWidget {
       ...state.expenses,
       ...state.incomes,
     ].where((it) => it.id == categoryId).firstOrNull;
+    final found = state.found;
     return GlassSurface(
       child: Row(
         children: [
@@ -658,17 +685,29 @@ class _MadeFrom extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  t.schedules.fromOperation(
-                    date: fullDate(made.occurredOn, state.today),
-                  ),
+                  switch (found) {
+                    final found? => t.schedules.foundIn(
+                      n: found.times.length,
+                      count: formatCount(found.times.length),
+                    ),
+                    null => t.schedules.fromOperation(
+                      date: fullDate(made.occurredOn, state.today),
+                    ),
+                  },
                   style: styles.bodyStrong.copyWith(color: colors.text),
                 ),
                 Text(
-                  HiddenAmounts.mask(
-                    context,
-                    madeFromLine(made, category: category?.name),
-                  ),
-                  maxLines: 1,
+                  switch (found) {
+                    final found? => findDaysLine(
+                      found,
+                      category: category?.name,
+                    ),
+                    null => HiddenAmounts.mask(
+                      context,
+                      madeFromLine(made, category: category?.name),
+                    ),
+                  },
+                  maxLines: found == null ? 1 : 2,
                   overflow: TextOverflow.ellipsis,
                   style: styles.caption.copyWith(color: colors.textMuted),
                 ),

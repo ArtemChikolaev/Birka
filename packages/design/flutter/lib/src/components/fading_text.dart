@@ -12,6 +12,7 @@ class FadingText extends StatelessWidget {
     this.maxLines,
     this.overflow,
     this.textAlign,
+    this.semanticsLabel,
     super.key,
   });
 
@@ -30,6 +31,9 @@ class FadingText extends StatelessWidget {
   /// How its lines align.
   final TextAlign? textAlign;
 
+  /// What screen readers say in place of [text].
+  final String? semanticsLabel;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
@@ -45,6 +49,7 @@ class FadingText extends StatelessWidget {
         maxLines: maxLines,
         overflow: overflow,
         textAlign: textAlign,
+        semanticsLabel: semanticsLabel,
       ),
     );
   }

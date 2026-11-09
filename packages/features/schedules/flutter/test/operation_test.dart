@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:design_flutter/design_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -90,8 +91,10 @@ void main() {
           madeFrom: 'plus',
         ),
       );
+      // The toast comes in the frame after the one that shows the payment.
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump();
 
       expect(find.text('Регулярный платёж'), findsOneWidget);
       expect(
@@ -108,7 +111,8 @@ void main() {
       expect(opened, ['new']);
     });
 
-    testWidgets('waits with its toast until the form leaves the card', (
+    testWidgets('waits with its payment and toast until the form leaves the '
+        'card', (
       tester,
     ) async {
       final repository = FakeSchedulesRepository()..operations = [plus()];
@@ -134,9 +138,7 @@ void main() {
       await tester.pumpAndSettle();
       unawaited(
         navigator.currentState!.push(
-          MaterialPageRoute<void>(
-            builder: (_) => const Scaffold(body: Text('Форма')),
-          ),
+          CupertinoSheetRoute<void>(builder: (_) => const SizedBox.expand()),
         ),
       );
       await tester.pumpAndSettle();
@@ -158,11 +160,13 @@ void main() {
 
       navigator.currentState!.pop();
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(BirkaMotion.slow);
       expect(find.text(toast), findsNothing);
+      expect(find.text('Сделать регулярным'), findsOneWidget);
 
-      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
       expect(find.text(toast), findsOneWidget);
+      expect(find.text('Регулярный платёж'), findsOneWidget);
       await tester.pumpAndSettle(const Duration(seconds: 5));
     });
 
@@ -208,5 +212,47 @@ void main() {
     expect(draft.madeFrom, 'plus');
     expect(draft.next, CivilDate(2026, 12, 12));
     expect(draft.onDay, ScheduleOnDay.post);
+  });
+
+  testWidgets('the form made from what came every month gives its days, and '
+      'a bill whose amount changes gives its amounts', (tester) async {
+    tester.view.physicalSize = const Size(780, 2400);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final repository = FakeSchedulesRepository()..operations = boardFinds();
+    repository.categories.add(
+      const Category(
+        id: 'subs',
+        kind: CategoryKind.expense,
+        name: 'Подписки',
+        color: '#A78BFA',
+        archived: false,
+        sortOrder: 1,
+      ),
+    );
+    final cubit = ScheduleFormCubit(repository, from: 'zhku-11');
+    addTearDown(cubit.close);
+    await tester.pumpWidget(phone(cubit, ScheduleFormPage(onClose: () {})));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Нашли в операциях · 3 раза'), findsOneWidget);
+    expect(find.text('10 сен, 9 окт, 10 ноя · Подписки'), findsOneWidget);
+    expect(find.text(nb('7 120 ₽')), findsOneWidget);
+    expect(
+      find.text(
+        'последняя сумма · бывало от ${nb('6 410 ₽')} до ${nb('7 120 ₽')}',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('10-го'), findsOneWidget);
+    expect(find.text('10 декабря, чт'), findsOneWidget);
+
+    await tester.tap(find.text('СОХРАНИТЬ'));
+    await tester.pumpAndSettle();
+
+    final draft = repository.added.single;
+    expect(draft.madeFrom, 'zhku-11');
+    expect(draft.next, CivilDate(2026, 12, 10));
+    expect(draft.onDay, ScheduleOnDay.ask);
   });
 }

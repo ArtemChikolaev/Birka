@@ -14,6 +14,7 @@ Schedule rent({
   ScheduleOnDay onDay = ScheduleOnDay.ask,
   TransactionKind kind = TransactionKind.expense,
   CivilDate? next,
+  String? madeFrom,
 }) => Schedule(
   id: 'rent',
   kind: kind,
@@ -25,6 +26,7 @@ Schedule rent({
   next: next ?? CivilDate(2026, 11, 25),
   onDay: onDay,
   reminder: ScheduleReminder.onDay,
+  madeFrom: madeFrom,
 );
 
 void main() {
@@ -80,6 +82,25 @@ void main() {
     );
     expect(doneLine(done(ScheduleDone.posted, morning), day.addDays(1)), null);
     expect(doneLine(moved, day), null);
+
+    // The operation that a new payment was made from is no post of today.
+    final made = rent(next: CivilDate(2026, 12, 25), madeFrom: 'op');
+    expect(
+      doneLine(
+        made.movedTo(
+          made.next,
+          last: ScheduleLast(
+            done: ScheduleDone.posted,
+            from: CivilDate(2026, 10, 25),
+            on: CivilDate(2026, 10, 25),
+            at: morning,
+            transactionId: 'op',
+          ),
+        ),
+        day,
+      ),
+      null,
+    );
   });
 
   test('says which statement brought a payment', () {

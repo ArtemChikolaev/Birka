@@ -180,6 +180,22 @@
     post of a payment leads to it as well: by its last time, or by the name
     and the account of the payment. Corrections, splits between categories
     and posts whose payment is gone get no row.
+23. Birka finds the operations that came every month and offers to make
+    them payments, above «Ближайшие 30 дней» as «Похоже на регулярные». A
+    find is an expense or an income on one account whose notes share a name
+    (`nameKey`), once a month in 3 months in a row or more over the last
+    half year, the last of them at most 45 days ago, on days within 3 of the
+    middle one and with amounts within 30% of each other. A name that comes
+    twice in a month is everyday spending, and posts of payments are theirs
+    already. A find leaves once a payment stands for it: one made from one
+    of its operations, one that one of them was the last time of, or one of
+    its name on its account. A tap opens the form from its latest operation
+    (point 22) on the day of the find, with «Нашли в операциях · 4 раза»
+    and its days in place of «Из операции»; an amount that stayed the same
+    posts itself, and one that changed asks and shows how it changed. ✕
+    keeps a find away on this device, outside the copy, and «Вернуть» on the
+    toast brings it back. What the form changes comes into the page once
+    the sheet has gone down, so the find leaves in front of the person.
 
 ## Consequences
 
@@ -192,6 +208,9 @@
   ([ADR 0021](0021-statements.md)), and one that brings a payment that
   waits marks it done; only the last done times and the operation a payment
   was made from point at a transaction.
+- Finds are counted from the ledger each time, with no table of their own;
+  only the dismissals are kept, by kind, account and name, so a new bill
+  of the same name stays away too.
 - A bill whose amount changes is found only when the statement brings the
   amount of the rule. Otherwise the person posts it with its own amount,
   and the check for copies then keeps the operation of the statement out.
