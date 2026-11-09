@@ -1513,6 +1513,29 @@ class Translations$imports$en {
   String categoriesKept({required Object source}) =>
       'Birka keeps the choice for statements of ${source}';
 
+  /// en: 'Regular payments'
+  String get foundHeading => 'Regular payments';
+
+  /// en: 'found $count: $names'
+  String foundLine({required Object count, required Object names}) =>
+      'found ${count}: ${names}';
+
+  /// en: '(one) {Posted $count payment} (other) {Posted $count payments}'
+  String foundDone({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Posted ${count} payment',
+        other: 'Posted ${count} payments',
+      );
+
+  /// en: '$names, from the statement'
+  String foundDoneText({required Object names}) =>
+      '${names}, from the statement';
+
+  /// en: '$names and $last'
+  String namesAnd({required Object names, required Object last}) =>
+      '${names} and ${last}';
+
   /// en: '(one) {$count row stays out of the ledger} (other) {$count rows stay out of the ledger}'
   String rowsLeft({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
@@ -4222,6 +4245,23 @@ extension on Translations {
           'imports.categoriesKept' =>
             ({required Object source}) =>
                 'Birka keeps the choice for statements of ${source}',
+          'imports.foundHeading' => 'Regular payments',
+          'imports.foundLine' =>
+            ({required Object count, required Object names}) =>
+                'found ${count}: ${names}',
+          'imports.foundDone' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Posted ${count} payment',
+                  other: 'Posted ${count} payments',
+                ),
+          'imports.foundDoneText' =>
+            ({required Object names}) => '${names}, from the statement',
+          'imports.namesAnd' =>
+            ({required Object names, required Object last}) =>
+                '${names} and ${last}',
           'imports.rowsLeft' =>
             ({required num n, required Object count}) =>
                 (_root.$meta.cardinalResolver ??
@@ -5098,15 +5138,15 @@ extension on Translations {
           'transactions.keys.multiply' => 'Times',
           'transactions.keys.divide' => 'Divided by',
           'transactions.keys.backspace' => 'Erase',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.dayOfMonth' =>
             ({required Object month, required Object day}) => '${month} ${day}',
           'transactions.months.0' => 'January',
           'transactions.months.1' => 'February',
           'transactions.months.2' => 'March',
           'transactions.months.3' => 'April',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.months.4' => 'May',
           'transactions.months.5' => 'June',
           'transactions.months.6' => 'July',

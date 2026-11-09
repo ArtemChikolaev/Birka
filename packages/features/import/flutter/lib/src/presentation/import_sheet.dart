@@ -15,20 +15,22 @@ import 'package:ledger/ledger.dart';
 /// Lets the person choose a statement through [files] and imports it in a
 /// sheet from the bottom of the screen, as the board of the phone draws it
 /// (ADR 0021). [cubit] makes the import, which closes with the sheet; what
-/// waits in the inbox after it leads to [onInbox], when the host has one.
+/// waits in the inbox after it leads to [onInbox], and the regular payments
+/// it brought to [onSchedules], when the host has them.
 Future<void> showImportSheet(
   BuildContext context, {
   required ImportCubit Function() cubit,
   required StatementFiles files,
   VoidCallback? onInbox,
+  VoidCallback? onSchedules,
 }) async {
   final file = await files.choose();
   if (file == null || !context.mounted) return;
   final importing = cubit();
   unawaited(_read(importing, file));
-  bool? toInbox;
+  _Next? next;
   try {
-    toInbox = await showModalBottomSheet<bool>(
+    next = await showModalBottomSheet<_Next>(
       context: context,
       useRootNavigator: true,
       isScrollControlled: true,
@@ -39,6 +41,7 @@ Future<void> showImportSheet(
           fileName: file.name,
           files: files,
           toInbox: onInbox != null,
+          toSchedules: onSchedules != null,
         ),
       ),
     );
@@ -46,7 +49,21 @@ Future<void> showImportSheet(
     // The way on does not wait for the import to let go of the ledger.
     unawaited(importing.close());
   }
-  if (toInbox ?? false) onInbox?.call();
+  final then = switch (next) {
+    _Next.inbox => onInbox,
+    _Next.schedules => onSchedules,
+    null => null,
+  };
+  then?.call();
+}
+
+/// Where the sheet leads once it closes.
+enum _Next {
+  /// To the inbox.
+  inbox,
+
+  /// To the regular payments.
+  schedules,
 }
 
 /// Reads what the ledger offers to choose from, then [file].
@@ -115,6 +132,7 @@ class ImportSheet extends StatefulWidget {
     required this.fileName,
     required this.files,
     this.toInbox = false,
+    this.toSchedules = false,
     super.key,
   });
 
@@ -124,9 +142,12 @@ class ImportSheet extends StatefulWidget {
   /// The window that chooses another file.
   final StatementFiles files;
 
-  /// Whether what waits in the inbox leads there, which closes the sheet
-  /// with `true`.
+  /// Whether what waits in the inbox leads there, which closes the sheet.
   final bool toInbox;
+
+  /// Whether the regular payments that the statement brought lead to their
+  /// list, which closes the sheet.
+  final bool toSchedules;
 
   @override
   State<ImportSheet> createState() => _ImportSheetState();
@@ -415,6 +436,25 @@ class _ImportSheetState extends State<ImportSheet> {
           ],
         ),
       ],
+      if (plan.found.isNotEmpty) ...[
+        const SizedBox(height: BirkaTokens.spaceSm),
+        GlassListGroup(
+          children: [
+            GlassListRow(
+              title: t.imports.foundHeading,
+              subtitle: t.imports.foundLine(
+                count: formatCount(plan.found.length),
+                names: foundNames(plan.found),
+              ),
+              subtitleLines: 2,
+              leading: const GlyphBadge(
+                glyph: BirkaGlyph.calendar,
+                color: amber,
+              ),
+            ),
+          ],
+        ),
+      ],
       if (left > 0) ...[
         const SizedBox(height: BirkaTokens.spaceSm),
         GlassListGroup(
@@ -618,6 +658,32 @@ class _ImportSheetState extends State<ImportSheet> {
     final names = {
       for (final choice in plan.choices.accounts.values) ?_nameOf(choice),
     };
+    final found = plan.found.length;
+    final next = [
+      if (plan.unsorted > 0)
+        _NextCard(
+          glyph: BirkaGlyph.list,
+          color: const Color(BirkaTokens.colorPaletteAmber),
+          title: t.imports.unsortedTitle(
+            n: plan.unsorted,
+            count: formatCount(plan.unsorted),
+          ),
+          text: t.imports.unsortedText,
+          onTap: widget.toInbox
+              ? () => Navigator.of(context).pop(_Next.inbox)
+              : null,
+        ),
+      if (found > 0)
+        _NextCard(
+          glyph: BirkaGlyph.calendarCheck,
+          color: colors.accent,
+          title: t.imports.foundDone(n: found, count: formatCount(found)),
+          text: t.imports.foundDoneText(names: foundNames(plan.found)),
+          onTap: widget.toSchedules
+              ? () => Navigator.of(context).pop(_Next.schedules)
+              : null,
+        ),
+    ];
     return [
       Row(
         children: [
@@ -647,56 +713,11 @@ class _ImportSheetState extends State<ImportSheet> {
           ),
         ],
       ),
-      if (plan.unsorted > 0) ...[
-        const SizedBox(height: BirkaTokens.spaceMd),
-        Semantics(
-          button: widget.toInbox,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: widget.toInbox
-                ? () => Navigator.of(context).pop(true)
-                : null,
-            child: GlassSurface(
-              child: Row(
-                children: [
-                  const GlyphBadge(
-                    glyph: BirkaGlyph.list,
-                    color: Color(BirkaTokens.colorPaletteAmber),
-                  ),
-                  const SizedBox(width: BirkaTokens.spaceSm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          t.imports.unsortedTitle(
-                            n: plan.unsorted,
-                            count: formatCount(plan.unsorted),
-                          ),
-                          style: styles.bodyStrong.copyWith(
-                            color: colors.text,
-                          ),
-                        ),
-                        Text(
-                          t.imports.unsortedText,
-                          style: styles.caption.copyWith(
-                            color: colors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (widget.toInbox)
-                    BirkaIcon(
-                      BirkaGlyph.chevron,
-                      size: 18,
-                      color: colors.textSubtle,
-                    ),
-                ],
-              ),
-            ),
-          ),
+      for (final (index, card) in next.indexed) ...[
+        SizedBox(
+          height: index == 0 ? BirkaTokens.spaceMd : BirkaTokens.spaceSm,
         ),
+        card,
       ],
       const SizedBox(height: BirkaTokens.spaceLg),
       BirkaButton(label: t.imports.finish, onPressed: _close),
@@ -797,6 +818,66 @@ class _Line extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// A card of an import that came in that says what else it did, and leads
+/// there when [onTap] is given: to the inbox, or to the regular payments.
+class _NextCard extends StatelessWidget {
+  const _NextCard({
+    required this.glyph,
+    required this.color,
+    required this.title,
+    required this.text,
+    this.onTap,
+  });
+
+  final BirkaGlyph glyph;
+  final Color color;
+  final String title;
+  final String text;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BirkaColors.of(context);
+    final styles = BirkaTextStyles.of(context);
+    return Semantics(
+      button: onTap != null,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: GlassSurface(
+          child: Row(
+            children: [
+              GlyphBadge(glyph: glyph, color: color),
+              const SizedBox(width: BirkaTokens.spaceSm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: styles.bodyStrong.copyWith(color: colors.text),
+                    ),
+                    Text(
+                      text,
+                      style: styles.caption.copyWith(color: colors.textMuted),
+                    ),
+                  ],
+                ),
+              ),
+              if (onTap != null)
+                BirkaIcon(
+                  BirkaGlyph.chevron,
+                  size: 18,
+                  color: colors.textSubtle,
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

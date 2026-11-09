@@ -322,3 +322,19 @@ String leftLine({
     t.imports.declinedCount(n: declined, count: formatCount(declined)),
   if (unfit > 0) t.imports.unfitCount(n: unfit, count: formatCount(unfit)),
 ].join(', ');
+
+/// The names of the regular payments whose times a statement brings, as the
+/// import says them, such as «Аренда и Интернет», or «Аренда, Интернет и
+/// ещё 2» for more than three.
+String foundNames(List<FoundSchedule> found) {
+  final names = [for (final payment in found) payment.schedule.name];
+  if (names.length > 3) {
+    final more = t.imports.andMore(count: formatCount(names.length - 2));
+    return '${names.take(2).join(', ')} $more';
+  }
+  if (names.length < 2) return names.join();
+  return t.imports.namesAnd(
+    names: names.take(names.length - 1).join(', '),
+    last: names.last,
+  );
+}
