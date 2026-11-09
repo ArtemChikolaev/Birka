@@ -191,6 +191,16 @@ final class _NoSchedules implements SchedulesRepository {
   Stream<Transaction?> watchTransaction(String id) => Stream.value(null);
 
   @override
+  Stream<List<Transaction>> watchHistory(CivilDate from) =>
+      Stream.value(const []);
+
+  @override
+  Stream<Set<String>> watchDismissedFinds() => Stream.value(const {});
+
+  @override
+  Future<void> dismissFind(String key, {bool dismissed = true}) async {}
+
+  @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
   @override

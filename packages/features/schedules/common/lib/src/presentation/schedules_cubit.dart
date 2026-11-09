@@ -5,6 +5,7 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 import 'package:schedules_common/src/domain/payday_settings.dart';
+import 'package:schedules_common/src/domain/repeat_finds.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
 import 'package:schedules_common/src/domain/spending_plan.dart';
 
@@ -30,6 +31,8 @@ final class SchedulesView {
     required this.todays,
     this.imports = const [],
     this.monthStart = 1,
+    this.history = const [],
+    this.dismissed = const {},
   });
 
   /// The day it shows.
@@ -59,6 +62,22 @@ final class SchedulesView {
 
   /// The day of the calendar that the months start on (ADR 0024).
   final int monthStart;
+
+  /// The transactions of the last half year, for the operations that came
+  /// every month.
+  final List<Transaction> history;
+
+  /// The keys of the finds that the person dismissed.
+  final Set<String> dismissed;
+
+  /// The operations that came every month and have no payment yet, the most
+  /// months first (ADR 0023, point 23).
+  late final List<RepeatFind> finds = findRepeats(
+    history,
+    today: today,
+    schedules: schedules,
+    dismissed: dismissed,
+  );
 
   /// The accounts by their ids.
   late final Map<String, Account> accountsById = {
@@ -233,6 +252,8 @@ class SchedulesCubit extends Cubit<SchedulesState> {
   List<Transaction>? _todays;
   List<LedgerImport>? _imports;
   int? _monthStart;
+  List<Transaction>? _history;
+  Set<String>? _dismissed;
 
   /// Reads everything again after a failure.
   Future<void> retry() async {
@@ -275,6 +296,13 @@ class SchedulesCubit extends Cubit<SchedulesState> {
     return _saveSettings((settings) => settings.copyWith(accounts: ids));
   }
 
+  /// Keeps [find] from coming back.
+  Future<void> dismiss(RepeatFind find) => _repository.dismissFind(find.key);
+
+  /// Lets the find of [key] come back, as «Вернуть» does after a dismissal.
+  Future<void> restore(String key) =>
+      _repository.dismissFind(key, dismissed: false);
+
   /// Keeps [amount] aside from the money of the days.
   Future<void> keepAside(Money amount) => _saveSettings(
     (settings) => settings.copyWith(asideMinor: amount.minorUnits),
@@ -301,6 +329,8 @@ class SchedulesCubit extends Cubit<SchedulesState> {
     _todays = null;
     _imports = null;
     _monthStart = null;
+    _history = null;
+    _dismissed = null;
     _subscriptions = [
       _repository.watchSchedules().listen((schedules) {
         _schedules = schedules;
@@ -338,6 +368,16 @@ class SchedulesCubit extends Cubit<SchedulesState> {
         _monthStart = day;
         _show();
       }, onError: failed),
+      _repository.watchHistory(today.addMonths(-repeatHistoryMonths)).listen((
+        history,
+      ) {
+        _history = history;
+        _show();
+      }, onError: failed),
+      _repository.watchDismissedFinds().listen((keys) {
+        _dismissed = keys;
+        _show();
+      }, onError: failed),
     ];
   }
 
@@ -358,6 +398,8 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           _todays,
           _imports,
           _monthStart,
+          _history,
+          _dismissed,
         )
         case (
           final today?,
@@ -370,6 +412,8 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           final todays?,
           final imports?,
           final monthStart?,
+          final history?,
+          final dismissed?,
         )) {
       final first = accounts.where((row) => !row.account.archived).firstOrNull;
       emit(
@@ -387,6 +431,8 @@ class SchedulesCubit extends Cubit<SchedulesState> {
             todays: todays,
             imports: imports,
             monthStart: monthStart,
+            history: history,
+            dismissed: dismissed,
           ),
         ),
       );

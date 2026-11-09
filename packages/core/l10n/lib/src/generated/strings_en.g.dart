@@ -2954,6 +2954,60 @@ class Translations$schedules$en {
   /// en: 'Added to regular payments: «$name»'
   String madeRegular({required Object name}) =>
       'Added to regular payments: «${name}»';
+
+  /// en: 'Looks regular'
+  String get findsTitle => 'Looks regular';
+
+  /// en: 'Found in your operations'
+  String get findsTitleEmpty => 'Found in your operations';
+
+  /// en: 'These came every month. Tap one to add it, or ✕ if it repeated by chance.'
+  String get findsNote =>
+      'These came every month. Tap one to add it, or ✕ if it repeated by chance.';
+
+  /// en: '(one) {day $day · $count time in a row} (other) {day $day · $count times in a row}'
+  String findLine({
+    required num n,
+    required Object day,
+    required Object count,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one: 'day ${day} · ${count} time in a row',
+    other: 'day ${day} · ${count} times in a row',
+  );
+
+  /// en: '(one) {about day $day · $count time} (other) {about day $day · $count times}'
+  String findLineVaries({
+    required num n,
+    required Object day,
+    required Object count,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one: 'about day ${day} · ${count} time',
+    other: 'about day ${day} · ${count} times',
+  );
+
+  /// en: 'Not regular: $name'
+  String findDismiss({required Object name}) => 'Not regular: ${name}';
+
+  /// en: 'We won't suggest «$name» again'
+  String findDismissed({required Object name}) =>
+      'We won\'t suggest «${name}» again';
+
+  /// en: 'Undo'
+  String get findRestore => 'Undo';
+
+  /// en: '(one) {Found in the operations · $count time} (other) {Found in the operations · $count times}'
+  String foundIn({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Found in the operations · ${count} time',
+        other: 'Found in the operations · ${count} times',
+      );
+
+  /// en: 'the last amount · it went from $min to $max'
+  String amountRange({required Object min, required Object max}) =>
+      'the last amount · it went from ${min} to ${max}';
 }
 
 // Path: settings
@@ -5123,6 +5177,42 @@ extension on Translations {
             ({required Object date}) => 'From the operation of ${date}',
           'schedules.madeRegular' =>
             ({required Object name}) => 'Added to regular payments: «${name}»',
+          'schedules.findsTitle' => 'Looks regular',
+          'schedules.findsTitleEmpty' => 'Found in your operations',
+          'schedules.findsNote' =>
+            'These came every month. Tap one to add it, or ✕ if it repeated by chance.',
+          'schedules.findLine' =>
+            ({required num n, required Object day, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'day ${day} · ${count} time in a row',
+                  other: 'day ${day} · ${count} times in a row',
+                ),
+          'schedules.findLineVaries' =>
+            ({required num n, required Object day, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'about day ${day} · ${count} time',
+                  other: 'about day ${day} · ${count} times',
+                ),
+          'schedules.findDismiss' =>
+            ({required Object name}) => 'Not regular: ${name}',
+          'schedules.findDismissed' =>
+            ({required Object name}) => 'We won\'t suggest «${name}» again',
+          'schedules.findRestore' => 'Undo',
+          'schedules.foundIn' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Found in the operations · ${count} time',
+                  other: 'Found in the operations · ${count} times',
+                ),
+          'schedules.amountRange' =>
+            ({required Object min, required Object max}) =>
+                'the last amount · it went from ${min} to ${max}',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -5186,6 +5276,9 @@ extension on Translations {
             'Could not read the operations.',
           'transactions.failedToDelete' => 'Could not delete. Try again.',
           'transactions.operation' => 'Operation',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.edit' => 'Edit',
           'transactions.editOperation' => 'Edit operation',
           'transactions.repeat' => 'Repeat',
@@ -5196,9 +5289,6 @@ extension on Translations {
           'transactions.category' => 'Category',
           'transactions.from' => 'From',
           'transactions.date' => 'Date',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.sources.manual' => 'Manually',
           'transactions.sources.import' => 'Imported',
           'transactions.sources.notification' => 'From a notification',

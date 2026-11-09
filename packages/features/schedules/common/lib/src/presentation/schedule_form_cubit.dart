@@ -6,6 +6,7 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 import 'package:schedules_common/src/domain/reminders.dart';
+import 'package:schedules_common/src/domain/repeat_finds.dart';
 import 'package:schedules_common/src/domain/schedule_draft.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
 
@@ -57,6 +58,7 @@ final class ScheduleFormState {
     this.incomes = const [],
     this.failed = false,
     this.madeFrom,
+    this.found,
   }) : next = next ?? today,
        day = day ?? (next ?? today).day;
 
@@ -129,6 +131,10 @@ final class ScheduleFormState {
   /// The operation that a new payment is made from (ADR 0023, point 22),
   /// which becomes its time on that day.
   final Transaction? madeFrom;
+
+  /// The operations that came every month, when [madeFrom] is the latest of
+  /// them (ADR 0023, point 23).
+  final RepeatFind? found;
 
   /// Whether the form changes a payment rather than adding one.
   bool get editing => id != null;
@@ -259,6 +265,7 @@ final class ScheduleFormState {
     List<Category>? incomes,
     bool? failed,
     Transaction? madeFrom,
+    RepeatFind? found,
   }) => ScheduleFormState(
     today: today,
     status: status ?? this.status,
@@ -282,6 +289,7 @@ final class ScheduleFormState {
     incomes: incomes ?? this.incomes,
     failed: failed ?? this.failed,
     madeFrom: madeFrom ?? this.madeFrom,
+    found: found ?? this.found,
   );
 }
 
@@ -506,6 +514,23 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
     return super.close();
   }
 
+  /// The operations that came every month whose latest is [made], if it is
+  /// one of them (ADR 0023, point 23).
+  Future<RepeatFind?> _findOf(
+    Transaction made, {
+    required CivilDate today,
+  }) async {
+    final history = await _repository
+        .watchHistory(today.addMonths(-repeatHistoryMonths))
+        .first;
+    final schedules = await _repository.watchSchedules().first;
+    return findRepeats(
+      history,
+      today: today,
+      schedules: schedules,
+    ).where((find) => find.latest.id == made.id).firstOrNull;
+  }
+
   Future<void> _load({required bool salary, String? from}) async {
     final rows = await _repository.watchAccounts().first;
     final expenses = await _repository
@@ -536,7 +561,9 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
       final made = await _repository.watchTransaction(from).first;
       if (isClosed) return;
       if (made != null && made.kind != TransactionKind.adjustment) {
-        return emit(_madeFrom(loaded, made));
+        final found = await _findOf(made, today: loaded.today);
+        if (isClosed) return;
+        return emit(_madeFrom(loaded, made, found: found));
       }
     }
     if (id == null) {
@@ -591,7 +618,15 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
 /// day from the next time after it. One that a statement brought is charged
 /// by the bank, so it posts itself; one the person wrote asks first
 /// (ADR 0023, point 22).
-ScheduleFormState _madeFrom(ScheduleFormState loaded, Transaction made) {
+///
+/// The latest operation of a [found] one comes on the day of the find, and
+/// asks first only when its amount changed from month to month (ADR 0023,
+/// point 23).
+ScheduleFormState _madeFrom(
+  ScheduleFormState loaded,
+  Transaction made, {
+  RepeatFind? found,
+}) {
   final transfer = made.kind == TransactionKind.transfer;
   final from = made.entries.first;
   final open = {for (final account in loaded.accounts) account.id};
@@ -604,7 +639,10 @@ ScheduleFormState _madeFrom(ScheduleFormState loaded, Transaction made) {
     ...loaded.incomes,
   ].where((it) => it.id == categoryId).firstOrNull;
   final note = made.note.trim();
-  final day = made.occurredOn;
+  final on = made.occurredOn;
+  final day = found == null
+      ? on
+      : CivilDate.onDay(on.year, on.month, found.day);
   final to = transfer ? made.entries.last.accountId : null;
   return loaded.copyWith(
     status: ScheduleFormStatus.editing,
@@ -619,10 +657,13 @@ ScheduleFormState _madeFrom(ScheduleFormState loaded, Transaction made) {
     every: ScheduleEvery.month,
     next: nextAfterOperation(day, today: loaded.today),
     day: day.day,
-    onDay: made.source == TransactionSource.import
-        ? ScheduleOnDay.post
-        : ScheduleOnDay.ask,
+    onDay: switch (found) {
+      final found? => found.varies ? ScheduleOnDay.ask : ScheduleOnDay.post,
+      null when made.source == TransactionSource.import => ScheduleOnDay.post,
+      null => ScheduleOnDay.ask,
+    },
     madeFrom: made,
+    found: found,
   );
 }
 

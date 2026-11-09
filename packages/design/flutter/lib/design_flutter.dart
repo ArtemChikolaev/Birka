@@ -41,6 +41,7 @@ export 'src/components/glass_surface.dart';
 export 'src/components/glass_swipe_row.dart';
 export 'src/components/glass_toast.dart';
 export 'src/components/glyph_badge.dart';
+export 'src/components/held_out_of_sight.dart';
 export 'src/components/hidden_amounts.dart';
 export 'src/components/scroll_edge_fade.dart';
 export 'src/components/section_label.dart';

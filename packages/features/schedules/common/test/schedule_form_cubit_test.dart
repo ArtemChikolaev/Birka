@@ -147,6 +147,57 @@ void main() {
       expect(form.onDay, ScheduleOnDay.ask);
     });
 
+    test(
+      'the latest of what came every month says so and keeps its day',
+      () async {
+        // Яндекс Плюс on the 12th since August, the latest on 12 November.
+        for (final month in [8, 9, 10]) {
+          await operation(on: CivilDate(2026, month, 12));
+        }
+        final made = await operation(on: CivilDate(2026, 11, 12));
+        final cubit = ScheduleFormCubit(repository, from: made);
+        addTearDown(cubit.close);
+
+        final form = await at(cubit, ScheduleFormStatus.editing);
+
+        expect(form.found?.times, hasLength(4));
+        expect(form.found?.latest.id, made);
+        expect(form.day, 12);
+        expect(form.next, CivilDate(2026, 12, 12));
+        expect(form.onDay, ScheduleOnDay.post);
+      },
+    );
+
+    test(
+      'of a bill whose amount changes asks on the day of the bill',
+      () async {
+        Future<String> bill(CivilDate on, int rubles) => ledger.record(
+          TransactionDraft.expense(
+            accountId: card.id,
+            allocations: [Allocation(categoryId: home.id, amount: rub(rubles))],
+            occurredOn: on,
+            note: 'ЖКУ Москва',
+            source: TransactionSource.import,
+          ),
+        );
+        await bill(CivilDate(2026, 9, 10), 6410);
+        await bill(CivilDate(2026, 10, 10), 6845);
+        final made = await bill(CivilDate(2026, 11, 9), 7120);
+        final cubit = ScheduleFormCubit(repository, from: made);
+        addTearDown(cubit.close);
+
+        final form = await at(cubit, ScheduleFormStatus.editing);
+
+        expect(form.found?.varies, isTrue);
+        // The bill comes on the 10th, though the latest came a day early.
+        expect(form.day, 10);
+        expect(form.next, CivilDate(2026, 12, 10));
+        // Its last amount, which its day asks to confirm.
+        expect(form.amount, rub(7120));
+        expect(form.onDay, ScheduleOnDay.ask);
+      },
+    );
+
     test('starts empty when the operation is gone', () async {
       final cubit = ScheduleFormCubit(repository, from: 'none');
       addTearDown(cubit.close);

@@ -25,6 +25,18 @@ abstract interface class SchedulesRepository {
   /// there, such as an operation that a regular payment is made from.
   Stream<Transaction?> watchTransaction(String id);
 
+  /// The transactions from [from] on, now and after every change, for the
+  /// operations that came every month (ADR 0023, point 23).
+  Stream<List<Transaction>> watchHistory(CivilDate from);
+
+  /// The keys of the finds that the person dismissed on this device, now and
+  /// after every change.
+  Stream<Set<String>> watchDismissedFinds();
+
+  /// Keeps the find of [key] away, or lets it come back when [dismissed] is
+  /// false.
+  Future<void> dismissFind(String key, {bool dismissed = true});
+
   /// The currency that totals are in, or `null` to follow the first account.
   Stream<Currency?> watchBaseCurrency();
 

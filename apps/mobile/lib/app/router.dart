@@ -389,6 +389,7 @@ GoRouter buildRouter(
             onBack: () => context.pop(),
             onAdd: () => context.push(Paths.newSchedule()),
             onOpen: (id) => context.push(Paths.schedule(id)),
+            onFind: (id) => context.push(Paths.newSchedule(from: id)),
           ),
         ),
         routes: [

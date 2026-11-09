@@ -278,3 +278,25 @@ makeRegularLine: Повторять $every
 regularPayment: Регулярный платёж
 fromOperation: Из операции $date
 madeRegular: "Добавили в регулярные: «$name»"
+findsTitle: Похоже на регулярные
+findsTitleEmpty: Нашли в ваших операциях
+findsNote: Повторялись каждый месяц. Нажмите, чтобы добавить, или ✕, если повтор случайный.
+findLine(n):
+  one: $day-го · $count раз подряд
+  few: $day-го · $count раза подряд
+  many: $day-го · $count раз подряд
+  other: $day-го · $count раза подряд
+findLineVaries(n):
+  one: около $day-го · $count раз
+  few: около $day-го · $count раза
+  many: около $day-го · $count раз
+  other: около $day-го · $count раза
+findDismiss: "Не регулярный: $name"
+findDismissed: Не будем предлагать «$name»
+findRestore: Вернуть
+foundIn(n):
+  one: Нашли в операциях · $count раз
+  few: Нашли в операциях · $count раза
+  many: Нашли в операциях · $count раз
+  other: Нашли в операциях · $count раза
+amountRange: последняя сумма · бывало от $min до $max
