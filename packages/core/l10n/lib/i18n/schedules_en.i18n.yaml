@@ -276,3 +276,21 @@ foundIn(n):
   one: Found in the operations · $count time
   other: Found in the operations · $count times
 amountRange: the last amount · it went from $min to $max
+forecast: If you spend as usual
+forecastRunsOut: The money runs out on $date
+forecastLastsPayday: It lasts until payday
+forecastLastsMonth: It lasts until the month ends
+forecastNone: The money is short already
+forecastNonePayday: The payments before payday take more than the accounts hold.
+forecastNoneMonth: The payments before the month ends take more than the accounts hold.
+forecastShortText: You usually spend ≈ $usual a day, and the plan allows $perDay. By $date ≈ $amount is missing.
+forecastLeftText: "You usually spend ≈ $usual a day: by $date ≈ $amount is left."
+forecastToday: today
+forecastPayday: $date · payday
+forecastUsual: as usual
+forecastPlan: "plan: $amount a day"
+forecastPlanBare: plan
+forecastNote: Usual spending is the average of 3 months on these accounts, without regular payments and transfers.
+forecastLineRunsOut: As usual, the money runs out on $date
+forecastLinePayday: As usual, it lasts until payday
+forecastLineMonth: As usual, it lasts until the month ends

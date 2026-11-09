@@ -3011,6 +3011,75 @@ class Translations$schedules$en {
   /// en: 'the last amount · it went from $min to $max'
   String amountRange({required Object min, required Object max}) =>
       'the last amount · it went from ${min} to ${max}';
+
+  /// en: 'If you spend as usual'
+  String get forecast => 'If you spend as usual';
+
+  /// en: 'The money runs out on $date'
+  String forecastRunsOut({required Object date}) =>
+      'The money runs out on ${date}';
+
+  /// en: 'It lasts until payday'
+  String get forecastLastsPayday => 'It lasts until payday';
+
+  /// en: 'It lasts until the month ends'
+  String get forecastLastsMonth => 'It lasts until the month ends';
+
+  /// en: 'The money is short already'
+  String get forecastNone => 'The money is short already';
+
+  /// en: 'The payments before payday take more than the accounts hold.'
+  String get forecastNonePayday =>
+      'The payments before payday take more than the accounts hold.';
+
+  /// en: 'The payments before the month ends take more than the accounts hold.'
+  String get forecastNoneMonth =>
+      'The payments before the month ends take more than the accounts hold.';
+
+  /// en: 'You usually spend ≈ $usual a day, and the plan allows $perDay. By $date ≈ $amount is missing.'
+  String forecastShortText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object amount,
+  }) =>
+      'You usually spend ≈ ${usual} a day, and the plan allows ${perDay}. By ${date} ≈ ${amount} is missing.';
+
+  /// en: 'You usually spend ≈ $usual a day: by $date ≈ $amount is left.'
+  String forecastLeftText({
+    required Object usual,
+    required Object date,
+    required Object amount,
+  }) => 'You usually spend ≈ ${usual} a day: by ${date} ≈ ${amount} is left.';
+
+  /// en: 'today'
+  String get forecastToday => 'today';
+
+  /// en: '$date · payday'
+  String forecastPayday({required Object date}) => '${date} · payday';
+
+  /// en: 'as usual'
+  String get forecastUsual => 'as usual';
+
+  /// en: 'plan: $amount a day'
+  String forecastPlan({required Object amount}) => 'plan: ${amount} a day';
+
+  /// en: 'plan'
+  String get forecastPlanBare => 'plan';
+
+  /// en: 'Usual spending is the average of 3 months on these accounts, without regular payments and transfers.'
+  String get forecastNote =>
+      'Usual spending is the average of 3 months on these accounts, without regular payments and transfers.';
+
+  /// en: 'As usual, the money runs out on $date'
+  String forecastLineRunsOut({required Object date}) =>
+      'As usual, the money runs out on ${date}';
+
+  /// en: 'As usual, it lasts until payday'
+  String get forecastLinePayday => 'As usual, it lasts until payday';
+
+  /// en: 'As usual, it lasts until the month ends'
+  String get forecastLineMonth => 'As usual, it lasts until the month ends';
 }
 
 // Path: settings
@@ -5218,6 +5287,46 @@ extension on Translations {
           'schedules.amountRange' =>
             ({required Object min, required Object max}) =>
                 'the last amount · it went from ${min} to ${max}',
+          'schedules.forecast' => 'If you spend as usual',
+          'schedules.forecastRunsOut' =>
+            ({required Object date}) => 'The money runs out on ${date}',
+          'schedules.forecastLastsPayday' => 'It lasts until payday',
+          'schedules.forecastLastsMonth' => 'It lasts until the month ends',
+          'schedules.forecastNone' => 'The money is short already',
+          'schedules.forecastNonePayday' =>
+            'The payments before payday take more than the accounts hold.',
+          'schedules.forecastNoneMonth' =>
+            'The payments before the month ends take more than the accounts hold.',
+          'schedules.forecastShortText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object amount,
+            }) =>
+                'You usually spend ≈ ${usual} a day, and the plan allows ${perDay}. By ${date} ≈ ${amount} is missing.',
+          'schedules.forecastLeftText' =>
+            ({
+              required Object usual,
+              required Object date,
+              required Object amount,
+            }) =>
+                'You usually spend ≈ ${usual} a day: by ${date} ≈ ${amount} is left.',
+          'schedules.forecastToday' => 'today',
+          'schedules.forecastPayday' =>
+            ({required Object date}) => '${date} · payday',
+          'schedules.forecastUsual' => 'as usual',
+          'schedules.forecastPlan' =>
+            ({required Object amount}) => 'plan: ${amount} a day',
+          'schedules.forecastPlanBare' => 'plan',
+          'schedules.forecastNote' =>
+            'Usual spending is the average of 3 months on these accounts, without regular payments and transfers.',
+          'schedules.forecastLineRunsOut' =>
+            ({required Object date}) =>
+                'As usual, the money runs out on ${date}',
+          'schedules.forecastLinePayday' => 'As usual, it lasts until payday',
+          'schedules.forecastLineMonth' =>
+            'As usual, it lasts until the month ends',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -5258,6 +5367,9 @@ extension on Translations {
             'Add an account to record where the money goes.',
           'transactions.addAccount' => 'Add account',
           'transactions.oneAccountHint' => 'A transfer needs a second account.',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.noCategoriesHint' =>
             'Add categories to sort your money.',
           'transactions.addCategories' => 'Add categories',
@@ -5280,9 +5392,6 @@ extension on Translations {
           'transactions.failedToReadOperations' =>
             'Could not read the operations.',
           'transactions.failedToDelete' => 'Could not delete. Try again.',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.operation' => 'Operation',
           'transactions.edit' => 'Edit',
           'transactions.editOperation' => 'Edit operation',

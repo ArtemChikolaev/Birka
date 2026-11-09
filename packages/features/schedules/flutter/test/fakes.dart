@@ -184,6 +184,13 @@ List<Transaction> boardFinds() => [
     paid('cloud-$month', CivilDate(2026, month, 21), 'Облако Mail.ru', 149),
 ];
 
+/// What the card spent each of the [days] days before the boards' today: the
+/// usual pace of [rubles] a day.
+List<Transaction> usualDays(int rubles, {int days = 92}) => [
+  for (var i = 1; i <= days; i++)
+    paid('usual-$i', boardToday.addDays(-i), '', rubles),
+];
+
 /// Keeps the regular payments in memory, and what was done to them.
 final class FakeSchedulesRepository implements SchedulesRepository {
   /// Creates a repository of the boards, with [spentToday] spent on the card.

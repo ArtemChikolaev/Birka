@@ -3,7 +3,9 @@ import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:schedules_common/src/domain/payday_settings.dart';
 import 'package:schedules_common/src/domain/repeat_finds.dart';
+import 'package:schedules_common/src/domain/rough_money.dart';
 import 'package:schedules_common/src/domain/spending_plan.dart';
+import 'package:schedules_common/src/domain/usual_pace.dart';
 
 const _weekdays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
@@ -257,3 +259,74 @@ String spentLabel(SpendingPlan plan) {
       ? t.schedules.spentUntilPayday(amount: spent, days: days)
       : t.schedules.spentUntilMonth(amount: spent, days: days);
 }
+
+/// The day that [plan] counts to in a forecast: the payday, or the last day
+/// of the month.
+CivilDate _forecastDay(SpendingPlan plan) => switch (plan.payday) {
+  final payday? when plan.until == SpendUntil.payday => payday,
+  _ => plan.end,
+};
+
+/// Whether [plan] counts until the salary.
+bool _untilPayday(SpendingPlan plan) =>
+    plan.until == SpendUntil.payday && plan.payday != null;
+
+/// What [forecast] says first: `Деньги кончатся 2 декабря`, `Хватит до
+/// зарплаты` or `Денег не хватает уже сейчас`.
+String forecastTitle(SpendingForecast forecast) {
+  final plan = forecast.plan;
+  if (forecast.none) return t.schedules.forecastNone;
+  if (forecast.runsOut case final day?) {
+    return t.schedules.forecastRunsOut(date: fullDate(day, plan.today));
+  }
+  return _untilPayday(plan)
+      ? t.schedules.forecastLastsPayday
+      : t.schedules.forecastLastsMonth;
+}
+
+/// The figures of [forecast]: `Обычно вы тратите ≈ 2 100 ₽ в день, а можно
+/// 1 744 ₽. К 5 декабря не хватит ≈ 6 000 ₽.`
+String forecastText(SpendingForecast forecast) {
+  final plan = forecast.plan;
+  if (forecast.none) {
+    return _untilPayday(plan)
+        ? t.schedules.forecastNonePayday
+        : t.schedules.forecastNoneMonth;
+  }
+  final usual = formatMoney(roughly(forecast.usual));
+  final date = fullDate(_forecastDay(plan), plan.today);
+  final amount = formatMoney(roughly(forecast.left.abs()));
+  return forecast.short
+      ? t.schedules.forecastShortText(
+          usual: usual,
+          perDay: formatMoney(plan.perDay),
+          date: date,
+          amount: amount,
+        )
+      : t.schedules.forecastLeftText(usual: usual, date: date, amount: amount);
+}
+
+/// [forecast] in one line of the card of the overview: `Как обычно —
+/// деньги кончатся 2 декабря`, or `null` when the payments take all the
+/// money already, which the card says itself.
+String? forecastLine(SpendingForecast forecast) {
+  final plan = forecast.plan;
+  if (forecast.none) return null;
+  if (forecast.runsOut case final day?) {
+    return t.schedules.forecastLineRunsOut(date: fullDate(day, plan.today));
+  }
+  return _untilPayday(plan)
+      ? t.schedules.forecastLinePayday
+      : t.schedules.forecastLineMonth;
+}
+
+/// The last day of the chart of a forecast: `5 дек · зарплата` or `30 ноя`.
+String forecastEnd(SpendingPlan plan) => _untilPayday(plan)
+    ? t.schedules.forecastPayday(date: shortDate(plan.payday!))
+    : shortDate(plan.end);
+
+/// What the line of the plan on the chart stands for: `по плану: 1 744 ₽ в
+/// день`.
+String forecastPlan(SpendingPlan plan) => plan.free.isPositive
+    ? t.schedules.forecastPlan(amount: formatMoney(plan.perDay))
+    : t.schedules.forecastPlanBare;

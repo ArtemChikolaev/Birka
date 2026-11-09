@@ -153,6 +153,23 @@ class _Plan extends StatelessWidget {
                     mask(context, spentLabel(plan)),
                     style: styles.caption.copyWith(color: colors.textSecondary),
                   ),
+                  // The usual pace in one line, once the ledger knows it.
+                  AnimatedColumn(
+                    children: [
+                      if (view.forecast case final forecast?)
+                        if (forecastLine(forecast) case final line?)
+                          Padding(
+                            key: const ValueKey('forecast'),
+                            padding: const EdgeInsets.only(
+                              top: BirkaTokens.spaceXxs,
+                            ),
+                            child: _ForecastLine(
+                              short: forecast.short,
+                              text: line,
+                            ),
+                          ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -183,6 +200,48 @@ class _Plan extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// What becomes of the money of the days at the usual pace, in one line: a
+/// warning in amber when it runs out before the end, or a quiet check when
+/// it lasts, as the board «Можно тратить сегодня · как обычно» draws it.
+class _ForecastLine extends StatelessWidget {
+  const _ForecastLine({required this.short, required this.text});
+
+  final bool short;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BirkaColors.of(context);
+    const amber = Color(BirkaTokens.colorPaletteAmber);
+    return Row(
+      children: [
+        AnimatedSwitcher(
+          duration: BirkaMotion.reduced(context)
+              ? Duration.zero
+              : BirkaMotion.base,
+          child: BirkaIcon(
+            short ? BirkaGlyph.alert : BirkaGlyph.check,
+            key: ValueKey(short),
+            size: 16,
+            color: short ? amber : colors.positive,
+          ),
+        ),
+        const SizedBox(width: BirkaTokens.spaceXs),
+        Expanded(
+          child: FadingText(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: BirkaTextStyles.of(
+              context,
+            ).caption.copyWith(color: short ? amber : colors.textMuted),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
+import 'package:schedules_common/src/domain/rough_money.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
 
 /// An operation that came every month on about the same day and has no
@@ -50,25 +51,13 @@ final class RepeatFind {
   Money get amount {
     if (!varies) return amounts.last;
     final sum = amounts.fold(0, (all, it) => all + it.minorUnits);
-    final average = sum ~/ amounts.length;
-    final step = _roundStep(average, amounts.last.currency);
-    // Half a step rounds up, in whole minor units.
-    return Money((average + step ~/ 2) ~/ step * step, amounts.last.currency);
+    return roughly(Money(sum ~/ amounts.length, amounts.last.currency));
   }
 
   /// The smallest and the largest amount of its times.
   ({Money min, Money max}) get range {
     final sorted = [...amounts]..sort((a, b) => a.compareTo(b));
     return (min: sorted.first, max: sorted.last);
-  }
-
-  // A hundred units for the amounts of a thousand and more, ten below.
-  static int _roundStep(int minorUnits, Currency currency) {
-    var unit = 1;
-    for (var i = 0; i < currency.decimalDigits; i++) {
-      unit *= 10;
-    }
-    return minorUnits >= 1000 * unit ? 100 * unit : 10 * unit;
   }
 }
 

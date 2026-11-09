@@ -10,9 +10,9 @@ import 'package:schedules_common/schedules_common.dart';
 import 'package:schedules_flutter/src/presentation/widgets/schedule_bits.dart';
 
 /// The money until the salary (ADR 0023): how much each day may take, with
-/// the sum that gives it in the open, until when it counts, on which
-/// accounts and with how much aside, and the day the months start on
-/// (ADR 0024).
+/// the sum that gives it in the open, what becomes of it at the usual pace,
+/// until when it counts, on which accounts and with how much aside, and the
+/// day the months start on (ADR 0024).
 ///
 /// It needs a [SchedulesCubit] above it.
 class PaydayPage extends StatelessWidget {
@@ -104,6 +104,17 @@ class PaydayPage extends StatelessWidget {
         ),
       },
       const SizedBox(height: BirkaTokens.spaceLg),
+      // The usual pace comes once the ledger knows it.
+      AnimatedColumn(
+        children: [
+          if (view.forecast case final forecast?)
+            Padding(
+              key: const ValueKey('forecast'),
+              padding: const EdgeInsets.only(bottom: BirkaTokens.spaceLg),
+              child: _Forecast(forecast: forecast),
+            ),
+        ],
+      ),
       GlassSurface(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -259,6 +270,64 @@ class PaydayPage extends StatelessWidget {
 }
 
 /// How much each day may take, and the sum that gives it.
+/// What becomes of the money of the days at the usual pace, in words and on
+/// a chart, as the board «Деньги до зарплаты · как обычно» draws it (ADR
+/// 0023, point 24).
+class _Forecast extends StatelessWidget {
+  const _Forecast({required this.forecast});
+
+  final SpendingForecast forecast;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BirkaColors.of(context);
+    final styles = BirkaTextStyles.of(context);
+    final plan = forecast.plan;
+    final title = forecastTitle(forecast);
+    final text = HiddenAmounts.mask(context, forecastText(forecast));
+    final bad = forecast.none || forecast.short;
+    return GlassSurface(
+      child: Semantics(
+        liveRegion: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SectionLabel(t.schedules.forecast, color: colors.textMuted),
+            const SizedBox(height: BirkaTokens.spaceXs),
+            FadingText(
+              title,
+              style: styles.heading.copyWith(
+                color: bad ? colors.negative : colors.positive,
+              ),
+            ),
+            const SizedBox(height: BirkaTokens.spaceXxs),
+            FadingText(
+              text,
+              style: styles.caption.copyWith(color: colors.textSecondary),
+            ),
+            const SizedBox(height: BirkaTokens.spaceSm),
+            ForecastChart(
+              start: plan.free.minorUnits.toDouble(),
+              pace: forecast.usual.minorUnits.toDouble(),
+              days: plan.days,
+              label: '$title. $text',
+              from: t.schedules.forecastToday,
+              to: forecastEnd(plan),
+              usual: t.schedules.forecastUsual,
+              planned: HiddenAmounts.mask(context, forecastPlan(plan)),
+            ),
+            const SizedBox(height: BirkaTokens.spaceSm),
+            Text(
+              t.schedules.forecastNote,
+              style: styles.caption.copyWith(color: colors.textSubtle),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _Sum extends StatelessWidget {
   const _Sum({required this.plan});
 

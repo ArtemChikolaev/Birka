@@ -70,6 +70,21 @@ void main() {
       expect((plans, lists), (1, 1));
     });
 
+    testWidgets('says in a line what becomes of the money as usual', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        FakeSchedulesRepository()..history = usualDays(2100),
+        card(),
+      );
+
+      expect(
+        find.text('Как обычно — деньги кончатся 2 декабря'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('turns red and says what tomorrow allows after too much', (
       tester,
     ) async {
@@ -467,6 +482,57 @@ void main() {
 
       await tester.tap(find.text('День зарплаты'));
       expect(salaries, ['pay']);
+    });
+
+    testWidgets('says what becomes of the money at the usual pace', (
+      tester,
+    ) async {
+      final repository = FakeSchedulesRepository()..history = usualDays(2100);
+      await pump(tester, repository, page());
+
+      expect(find.text('ЕСЛИ ТРАТИТЬ КАК ОБЫЧНО'), findsOneWidget);
+      expect(find.text('Деньги кончатся 2 декабря'), findsOneWidget);
+      expect(
+        find.text(
+          'Обычно вы тратите ≈ ${nb('2 100 ₽')} в день, а можно '
+          '${nb('1 744 ₽')}. К 5 декабря не хватит ≈ ${nb('6 000 ₽')}.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel(RegExp(r'^Деньги кончатся 2 декабря\. ')),
+        findsOneWidget,
+      );
+      expect(find.text('сегодня'), findsOneWidget);
+      expect(find.text('5 дек · зарплата'), findsOneWidget);
+      expect(find.text('по плану: ${nb('1 744 ₽')} в день'), findsOneWidget);
+
+      // A slower pace lasts until the salary.
+      repository
+        ..history = usualDays(1500)
+        ..changed();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Хватит до зарплаты'), findsOneWidget);
+      expect(
+        find.text(
+          'Обычно вы тратите ≈ ${nb('1 500 ₽')} в день: к 5 декабря '
+          'останется ≈ ${nb('4 200 ₽')}.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('says nothing of the usual pace on a young ledger', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        FakeSchedulesRepository()..history = usualDays(2100, days: 10),
+        page(),
+      );
+
+      expect(find.text('ЕСЛИ ТРАТИТЬ КАК ОБЫЧНО'), findsNothing);
     });
 
     testWidgets('takes the advance of the salary in the open', (

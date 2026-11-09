@@ -30,6 +30,7 @@ export 'src/components/choice_sheet.dart';
 export 'src/components/dot_badge.dart';
 export 'src/components/fading_text.dart';
 export 'src/components/field_sheet.dart';
+export 'src/components/forecast_chart.dart';
 export 'src/components/glass_file_card.dart';
 export 'src/components/glass_icon_button.dart';
 export 'src/components/glass_keypad.dart';
