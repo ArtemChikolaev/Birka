@@ -23,6 +23,8 @@ import 'package:birka_web/pages/import_island.dart' as _import_island;
 import 'package:birka_web/pages/inbox_island.dart' as _inbox_island;
 import 'package:birka_web/pages/more_island.dart' as _more_island;
 import 'package:birka_web/pages/more_page.dart' as _more_page;
+import 'package:birka_web/pages/notifications_island.dart'
+    as _notifications_island;
 import 'package:birka_web/pages/operations_island.dart' as _operations_island;
 import 'package:birka_web/pages/overview_island.dart' as _overview_island;
 import 'package:birka_web/pages/page_frame.dart' as _page_frame;
@@ -102,6 +104,8 @@ import 'package:inbox_jaspr/src/presentation/components/pair_card.dart'
     as _pair_card;
 import 'package:inbox_jaspr/src/presentation/pages/inbox_page.dart'
     as _inbox_page;
+import 'package:notifications_jaspr/src/presentation/pages/notifications_page.dart'
+    as _notifications_page;
 import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
     as _onboarding_page;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
@@ -165,6 +169,10 @@ ServerOptions get defaultServerOptions => ServerOptions(
     _more_island.MoreIsland: ClientTarget<_more_island.MoreIsland>(
       'more_island',
     ),
+    _notifications_island.NotificationsIsland:
+        ClientTarget<_notifications_island.NotificationsIsland>(
+          'notifications_island',
+        ),
     _operations_island.OperationsIsland:
         ClientTarget<_operations_island.OperationsIsland>('operations_island'),
     _overview_island.OverviewIsland:
@@ -244,6 +252,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._inbox_row.InboxRow.styles,
     ..._pair_card.PairCard.styles,
     ..._inbox_page.InboxPage.styles,
+    ..._notifications_page.NotificationsPage.styles,
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,

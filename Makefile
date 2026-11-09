@@ -116,6 +116,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/inbox/flutter && flutter test
 	cd packages/features/inbox/jaspr && dart test
 	cd packages/features/notifications/flutter && flutter test
+	cd packages/features/notifications/jaspr && dart test
 	cd packages/features/onboarding/flutter && flutter test
 	cd packages/features/onboarding/jaspr && dart test
 	cd packages/features/overview/flutter && flutter test

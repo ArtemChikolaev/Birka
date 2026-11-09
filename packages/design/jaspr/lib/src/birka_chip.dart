@@ -49,8 +49,16 @@ class BirkaChip extends StatelessComponent {
     final content = [
       if (glyph != null) BirkaIcon(glyph),
       span(classes: 'birka-chip__label', [.text(label)]),
-      if (count != null)
-        span(classes: 'text-caption birka-chip__count', [.text('$count')]),
+      // A count that comes or goes opens or closes its room.
+      span(
+        classes: count == null
+            ? 'birka-chip__room'
+            : 'birka-chip__room birka-chip__room--open',
+        [
+          if (count != null)
+            span(classes: 'text-caption birka-chip__count', [.text('$count')]),
+        ],
+      ),
     ];
     if (href case final href?) {
       return a(classes: classes, href: href, content);
@@ -95,6 +103,28 @@ class BirkaChip extends StatelessComponent {
       },
     ),
     css('.birka-chip--compact').styles(raw: {'padding': '0 var(--space-sm)'}),
+    // A closed room takes back the gap before it, so a chip with no count
+    // looks as it did without one.
+    css('.birka-chip__room').styles(
+      raw: {
+        'display': 'flex',
+        'flex': 'none',
+        'margin-left': 'calc(-1 * var(--space-xs))',
+        'max-width': '0',
+        'opacity': '0',
+        'overflow': 'hidden',
+        'transition':
+            'max-width var(--duration-slow) var(--easing-standard), '
+            'margin-left var(--duration-slow) var(--easing-standard), '
+            'opacity var(--duration-base) var(--easing-fade)',
+      },
+    ),
+    css('.birka-chip__room--open').styles(
+      raw: {'margin-left': '0', 'max-width': '64px', 'opacity': '1'},
+    ),
+    css.media(const MediaQuery.raw('(prefers-reduced-motion: reduce)'), [
+      css('.birka-chip__room').styles(raw: {'transition': 'none'}),
+    ]),
     css('.birka-chip__count').styles(
       raw: {
         'background': 'var(--color-surface)',

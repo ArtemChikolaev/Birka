@@ -1852,6 +1852,17 @@ class Translations$notifications$en {
   /// en: 'Mark all read'
   String get readAll => 'Mark all read';
 
+  /// en: '(one) {$count new · 90 days of history} (other) {$count new · 90 days of history}'
+  String subtitleNew({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${count} new · 90 days of history',
+        other: '${count} new · 90 days of history',
+      );
+
+  /// en: 'All read · 90 days of history'
+  String get subtitleRead => 'All read · 90 days of history';
+
   Map<String, String> get filters => {
     'all': 'All',
     'payment': 'Payments',
@@ -1867,6 +1878,12 @@ class Translations$notifications$en {
   /// en: 'Reminders of your payments and the results of imports come here.'
   String get emptyText =>
       'Reminders of your payments and the results of imports come here.';
+
+  /// en: 'The results of your statement imports come here.'
+  String get emptyImports => 'The results of your statement imports come here.';
+
+  /// en: 'Could not read the notifications.'
+  String get failed => 'Could not read the notifications.';
 
   /// en: 'Birka keeps notifications for 90 days'
   String get keeps => 'Birka keeps notifications for 90 days';
@@ -4412,6 +4429,15 @@ extension on Translations {
           'notifications.fresh' =>
             ({required Object count}) => 'New · ${count}',
           'notifications.readAll' => 'Mark all read',
+          'notifications.subtitleNew' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${count} new · 90 days of history',
+                  other: '${count} new · 90 days of history',
+                ),
+          'notifications.subtitleRead' => 'All read · 90 days of history',
           'notifications.filters.all' => 'All',
           'notifications.filters.payment' => 'Payments',
           'notifications.filters.import' => 'Imports',
@@ -4419,6 +4445,9 @@ extension on Translations {
           'notifications.emptyTitle' => 'All quiet',
           'notifications.emptyText' =>
             'Reminders of your payments and the results of imports come here.',
+          'notifications.emptyImports' =>
+            'The results of your statement imports come here.',
+          'notifications.failed' => 'Could not read the notifications.',
           'notifications.keeps' => 'Birka keeps notifications for 90 days',
           'notifications.yesterday' => 'yesterday',
           'notifications.tomorrow' =>
@@ -5075,13 +5104,13 @@ extension on Translations {
           'transactions.months.1' => 'February',
           'transactions.months.2' => 'March',
           'transactions.months.3' => 'April',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.months.4' => 'May',
           'transactions.months.5' => 'June',
           'transactions.months.6' => 'July',
           'transactions.months.7' => 'August',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.months.8' => 'September',
           'transactions.months.9' => 'October',
           'transactions.months.10' => 'November',

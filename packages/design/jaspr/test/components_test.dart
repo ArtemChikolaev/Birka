@@ -18,6 +18,34 @@ Map<String, String> attributesOf(Finder finder) =>
 input<String> fieldInput() =>
     find.byType(input<String>).evaluate().single.component as input<String>;
 
+/// A bell whose count the test changes through the setter it gets.
+class _Counting extends StatefulComponent {
+  const _Counting(this.onSetter);
+
+  final void Function(void Function(int count)) onSetter;
+
+  @override
+  State<_Counting> createState() => _CountingState();
+}
+
+class _CountingState extends State<_Counting> {
+  var _count = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    component.onSetter((count) => setState(() => _count = count));
+  }
+
+  @override
+  Component build(BuildContext context) => GlassIconButton(
+    glyph: BirkaGlyph.bell,
+    label: 'Notifications',
+    onPressed: () {},
+    badge: _count,
+  );
+}
+
 void main() {
   testComponents('BirkaArrowButton is a button with an arrow', (tester) async {
     var taps = 0;
@@ -1284,6 +1312,67 @@ void main() {
       expect(attributes['href'], 'accounts/#new');
       expect(attributes['aria-label'], 'Add');
     });
+
+    testComponents('counts what is new on its corner', (tester) async {
+      tester.pumpComponent(
+        const GlassIconButton(
+          glyph: BirkaGlyph.bell,
+          label: 'Notifications, 2 new',
+          href: 'notifications/',
+          badge: 2,
+        ),
+      );
+
+      final badge = withClasses('text-label glass-icon-button__badge');
+      expect(badge, findsOneComponent);
+      expect(find.text('2'), findsOneComponent);
+      // The label says the count, so the figure is not read twice.
+      expect(attributesOf(badge)['aria-hidden'], 'true');
+      expect(attributesOf(find.tag('a'))['aria-label'], 'Notifications, 2 new');
+    });
+
+    testComponents('its count jumps as it grows and shrinks away at nought', (
+      tester,
+    ) async {
+      fakeAsync((time) {
+        late void Function(int count) count;
+        tester.pumpComponent(_Counting((setter) => count = setter));
+        time.flushMicrotasks();
+        expect(
+          withClasses('text-label glass-icon-button__badge'),
+          findsOneComponent,
+        );
+
+        count(3);
+        time.flushMicrotasks();
+        expect(
+          withClasses(
+            'text-label glass-icon-button__badge '
+            'glass-icon-button__badge--jump',
+          ),
+          findsOneComponent,
+        );
+        expect(find.text('3'), findsOneComponent);
+
+        time.elapse(const Duration(milliseconds: 150));
+        expect(
+          withClasses('text-label glass-icon-button__badge'),
+          findsOneComponent,
+        );
+
+        count(0);
+        time.flushMicrotasks();
+        // The figure stays while the count shrinks away.
+        expect(
+          withClasses(
+            'text-label glass-icon-button__badge '
+            'glass-icon-button__badge--off',
+          ),
+          findsOneComponent,
+        );
+        expect(find.text('3'), findsOneComponent);
+      });
+    });
   });
 
   group('GlassListRow', () {
@@ -1329,6 +1418,34 @@ void main() {
       tester.pumpComponent(const GlassListRow(title: 'Cafe', indented: true));
 
       expect(withClasses('glass-row glass-row--indented'), findsOneComponent);
+    });
+
+    testComponents('that has just come opens from nothing', (tester) async {
+      tester.pumpComponent(const GlassListRow(title: 'Rent', entering: true));
+
+      expect(withClasses('glass-row glass-row--entering'), findsOneComponent);
+    });
+
+    testComponents('can say its second line in a color of its own', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const GlassListRow(
+          title: 'Rent',
+          subtitle: 'Posted at 9:14',
+          subtitleLines: 2,
+          subtitleColor: 'var(--color-positive)',
+        ),
+      );
+
+      final subtitle = withClasses(
+        'text-caption glass-row__lines glass-row__subtitle',
+      );
+      final styles = (subtitle.evaluate().single.component as DomComponent)
+          .styles!
+          .properties;
+      expect(styles['color'], 'var(--color-positive)');
+      expect(styles['-webkit-line-clamp'], '2');
     });
   });
 
@@ -1612,6 +1729,21 @@ void main() {
 
     expect(find.text('15'), findsOneComponent);
     expect(withClasses('text-caption birka-chip__count'), findsOneComponent);
+    expect(
+      withClasses('birka-chip__room birka-chip__room--open'),
+      findsOneComponent,
+    );
+  });
+
+  testComponents('BirkaChip keeps the room of a count shut without one', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      BirkaChip(label: 'Imports', selected: false, onTap: () {}),
+    );
+
+    expect(withClasses('birka-chip__room'), findsOneComponent);
+    expect(withClasses('text-caption birka-chip__count'), findsNothing);
   });
 
   testComponents('BirkaCheckbox ticks and says so', (tester) async {

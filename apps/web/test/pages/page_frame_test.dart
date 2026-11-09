@@ -3,6 +3,7 @@ import 'package:birka_web/pages/categories_island.dart';
 import 'package:birka_web/pages/import_island.dart';
 import 'package:birka_web/pages/inbox_island.dart';
 import 'package:birka_web/pages/more_island.dart';
+import 'package:birka_web/pages/notifications_island.dart';
 import 'package:birka_web/pages/operations_island.dart';
 import 'package:birka_web/pages/overview_island.dart';
 import 'package:birka_web/pages/page_frame.dart';
@@ -22,6 +23,7 @@ void main() {
     ('categories', CategoriesIsland()),
     ('import', ImportIsland()),
     ('inbox', InboxIsland()),
+    ('notifications', NotificationsIsland()),
   ]) {
     testComponents('the build leaves a frame without words for $name', (
       tester,

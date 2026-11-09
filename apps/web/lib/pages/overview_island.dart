@@ -11,6 +11,9 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
+import 'package:notifications_common/notifications_common.dart'
+    show NotificationsSummaryCubit;
+import 'package:notifications_jaspr/notifications_jaspr.dart';
 import 'package:onboarding_common/onboarding_common.dart';
 import 'package:onboarding_jaspr/onboarding_jaspr.dart';
 import 'package:overview_common/overview_common.dart';
@@ -104,6 +107,7 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
       providers: [
         BlocProvider<OverviewCubit>(create: (_) => _overview = getIt()),
         BlocProvider<InboxSummaryCubit>(create: (_) => getIt()),
+        BlocProvider<NotificationsSummaryCubit>(create: (_) => getIt()),
       ],
       child: OverviewPage(
         addAccountHref: 'accounts/#new',
@@ -111,6 +115,7 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         hrefOfAccount: (id) => 'accounts/#$id',
         note: storageNote,
         notice: const InboxCard(href: 'inbox/'),
+        bell: const NotificationsBell(href: 'notifications/'),
       ),
     );
   }

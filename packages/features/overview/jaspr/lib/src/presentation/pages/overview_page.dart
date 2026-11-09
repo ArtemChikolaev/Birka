@@ -19,6 +19,7 @@ class OverviewPage extends StatelessComponent {
     required this.hrefOfAccount,
     this.note,
     this.notice,
+    this.bell,
     super.key,
   });
 
@@ -37,6 +38,10 @@ class OverviewPage extends StatelessComponent {
   /// What waits for the person, such as the way to the inbox, between the
   /// capital and the accounts.
   final Component? notice;
+
+  /// What stands in the header before the eye, such as the bell of the
+  /// notices.
+  final Component? bell;
 
   @override
   Component build(BuildContext context) {
@@ -84,13 +89,17 @@ class OverviewPage extends StatelessComponent {
 
   Component _header(BuildContext context, OverviewState state) {
     final hidden = HiddenAmounts.of(context);
+    final eye = GlassIconButton(
+      glyph: hidden ? BirkaGlyph.hidden : BirkaGlyph.eye,
+      label: hidden ? t.overview.showAmounts : t.overview.hideAmounts,
+      onPressed: () => HiddenAmounts.toggle(context),
+    );
+    final bell = this.bell;
     return GlassPageHeader(
       title: monthTitle(state.month),
-      trailing: GlassIconButton(
-        glyph: hidden ? BirkaGlyph.hidden : BirkaGlyph.eye,
-        label: hidden ? t.overview.showAmounts : t.overview.hideAmounts,
-        onPressed: () => HiddenAmounts.toggle(context),
-      ),
+      trailing: bell == null
+          ? eye
+          : div(classes: 'overview__actions', [bell, eye]),
     );
   }
 
@@ -243,6 +252,9 @@ class OverviewPage extends StatelessComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
+    css('.overview__actions').styles(
+      raw: {'display': 'flex', 'flex': 'none', 'gap': 'var(--space-xs)'},
+    ),
     css('.overview__capital').styles(
       raw: {
         'display': 'flex',

@@ -71,6 +71,14 @@
 7. The bell stands in the header of the overview before the eye, a
    `GlassIconButton` with the count of the new notices on its corner. The
    count jumps when it grows and shrinks away at nought.
+8. The site has the same bell, and the feed is a page of its own,
+   `notifications/` (`notifications_jaspr`), in the column of a plain page,
+   since the site has no side panels; «Прочитать все» stands in its header.
+   A notice leads only where the site has a page: an import whose operations
+   wait leads to the inbox, and a notice of a payment leads nowhere while the
+   site has no regular payments. A new one is read before the page leaves,
+   so that the write does not race the next page. The site forgets the
+   notices older than 90 days each time a page opens the database.
 
 ## Options considered
 
@@ -85,7 +93,7 @@
 ## Consequences
 
 - The site has no reminders and no regular payments yet, so its feed holds
-  the imports; its bell and page come in a change of their own.
+  only the imports.
 - A notice keeps the amount of its time, so a payment whose amount changes
   shows the old amount on its old notices.
 - The notices of Birka about itself, such as what is new in a version, need
