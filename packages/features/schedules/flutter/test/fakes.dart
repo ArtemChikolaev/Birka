@@ -311,6 +311,7 @@ final class FakeSchedulesRepository implements SchedulesRepository {
       next: draft.next,
       onDay: draft.onDay,
       reminder: draft.reminder,
+      madeFrom: draft.madeFrom,
       last: made == null
           ? null
           : ScheduleLast(

@@ -837,8 +837,9 @@ final class LedgerRepository {
   /// for one; a transfer goes to [toAccountId] in the same currency.
   ///
   /// A payment [madeFrom] a transaction takes it as its time on its day, done
-  /// before [next], so that the transaction leads to the payment and no time
-  /// asks for it again (ADR 0023, point 22).
+  /// before [next], so that no time asks for it again, and keeps its id, so
+  /// that the transaction leads to the payment after later times too (ADR
+  /// 0023, point 22).
   Future<Schedule> addSchedule({
     required TransactionKind kind,
     required String name,
@@ -869,6 +870,7 @@ final class LedgerRepository {
         next: next,
         onDay: onDay,
         reminder: reminder,
+        madeFrom: madeFrom,
       );
       await _checkSchedule(schedule);
       final at = _timestamp();
@@ -888,6 +890,7 @@ final class LedgerRepository {
         every: every.name,
         day: schedule.day,
         advanceDay: Value(advanceDay),
+        madeFrom: Value(madeFrom),
         nextOn: next.toString(),
         onDay: onDay.name,
         reminder: reminder.name,
@@ -896,22 +899,7 @@ final class LedgerRepository {
           .into(_db.schedules)
           .insert(last == null ? values : _withLast(values, last));
       await _log(_db.schedules, schedule.id, 'insert', at);
-      return Schedule(
-        id: schedule.id,
-        kind: kind,
-        name: name,
-        accountId: accountId,
-        toAccountId: toAccountId,
-        categoryId: categoryId,
-        amount: amount,
-        every: every,
-        day: schedule.day,
-        advanceDay: advanceDay,
-        next: next,
-        onDay: onDay,
-        reminder: reminder,
-        last: last,
-      );
+      return last == null ? schedule : schedule.movedTo(next, last: last);
     });
   }
 
@@ -1549,6 +1537,7 @@ final class LedgerRepository {
       every: ScheduleEvery.values.byName(schedule.every),
       day: schedule.day,
       advanceDay: schedule.advanceDay,
+      madeFrom: schedule.madeFrom,
       next: CivilDate.parse(schedule.nextOn),
       onDay: ScheduleOnDay.values.byName(schedule.onDay),
       reminder: ScheduleReminder.values.byName(schedule.reminder),

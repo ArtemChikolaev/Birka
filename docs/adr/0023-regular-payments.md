@@ -159,11 +159,13 @@
     every month on its day. Its first time is that day from today on, after
     the operation. One that a statement brought posts itself, since the bank
     charges it; one the person wrote asks. The ledger takes the operation as
-    the last time of the new payment (`addSchedule(madeFrom:)`), so the row
-    leads to the payment from then on and no time asks for it again. A post
-    of a payment leads to it as well: by its last time, or by the name and
-    the account of the payment. Corrections, splits between categories and
-    posts whose payment is gone get no row.
+    the last time of the new payment (`addSchedule(madeFrom:)`), so no time
+    asks for it again, and the payment keeps its id (`madeFrom`, from
+    version 9 of the schema and version 6 of the copy), so the row leads to
+    the payment after its later times too and never offers a second one. A
+    post of a payment leads to it as well: by its last time, or by the name
+    and the account of the payment. Corrections, splits between categories
+    and posts whose payment is gone get no row.
 
 ## Consequences
 
@@ -174,7 +176,8 @@
 - No transaction names the rule that gave it. An import that brings a
   payment the person posted is caught by the check for copies
   ([ADR 0021](0021-statements.md)), and one that brings a payment that
-  waits marks it done; only the last done times point at a transaction.
+  waits marks it done; only the last done times and the operation a payment
+  was made from point at a transaction.
 - A bill whose amount changes is found only when the statement brings the
   amount of the rule. Otherwise the person posts it with its own amount,
   and the check for copies then keeps the operation of the statement out.
