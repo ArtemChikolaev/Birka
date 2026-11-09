@@ -3,7 +3,7 @@ description: >-
   The Jaspr host of Birka for the browser: a static site with interactive
   islands on GitHub Pages.
 publish_to: none
-version: 0.1.0
+version: 0.2.0
 resolution: workspace
 
 environment:

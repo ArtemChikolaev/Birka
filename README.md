@@ -2,16 +2,16 @@
 
 Local-first expense tracker for money across currencies, banks and countries.
 
-**Status:** early development. Version 0.1.0 is out: a test build for Android
+**Status:** early development. Version 0.2.0 is out: a test build for Android
 on the [Releases](https://github.com/ArtemChikolaev/Birka/releases) page, and
 the [site](https://artemchikolaev.github.io/Birka/) in any browser. Both keep
 your capital, accounts, categories and operations on the device, add your
 currencies up at the rates of the Bank of Russia, report on your months and
-save a copy of everything to a file. This first milestone is manual tracking
-with several currencies and reports. The site also imports statements: CSV and
-Excel of banks and Zenmoney, and the PDF of Sberbank, and sorts what they bring
-in an inbox, with hints from past choices; the app imports statements too and
-sorts them in an inbox of its own.
+save a copy of everything to a file. Both import statements, CSV and Excel of
+banks and Zenmoney and the PDF of Sberbank, and sort what they bring in an
+inbox with hints from past choices. The app also keeps regular payments, says
+how much you can spend today and reminds of the payments in notifications and
+in a calendar of its own.
 
 ## Why
 

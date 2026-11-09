@@ -3,7 +3,7 @@ description: >-
   The Flutter host of Birka for Android and iOS, which also runs on macOS
   during development.
 publish_to: none
-version: 0.1.0+1
+version: 0.2.0+1
 resolution: workspace
 
 environment:
