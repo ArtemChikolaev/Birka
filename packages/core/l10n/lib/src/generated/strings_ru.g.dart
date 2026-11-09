@@ -1269,6 +1269,25 @@ class _Translations$imports$ru extends Translations$imports$en {
   String categoriesKept({required Object source}) =>
       'Выбор запомним для выписок ${source}';
   @override
+  String get foundHeading => 'Регулярные платежи';
+  @override
+  String foundLine({required Object count, required Object names}) =>
+      'нашли ${count}: ${names}';
+  @override
+  String foundDone({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Провели ${count} платёж',
+        few: 'Провели ${count} платежа',
+        many: 'Провели ${count} платежей',
+        other: 'Провели ${count} платежа',
+      );
+  @override
+  String foundDoneText({required Object names}) => '${names} — из выписки';
+  @override
+  String namesAnd({required Object names, required Object last}) =>
+      '${names} и ${last}';
+  @override
   String rowsLeft({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
@@ -3695,6 +3714,25 @@ extension on TranslationsRu {
           'imports.categoriesKept' =>
             ({required Object source}) =>
                 'Выбор запомним для выписок ${source}',
+          'imports.foundHeading' => 'Регулярные платежи',
+          'imports.foundLine' =>
+            ({required Object count, required Object names}) =>
+                'нашли ${count}: ${names}',
+          'imports.foundDone' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Провели ${count} платёж',
+                  few: 'Провели ${count} платежа',
+                  many: 'Провели ${count} платежей',
+                  other: 'Провели ${count} платежа',
+                ),
+          'imports.foundDoneText' =>
+            ({required Object names}) => '${names} — из выписки',
+          'imports.namesAnd' =>
+            ({required Object names, required Object last}) =>
+                '${names} и ${last}',
           'imports.rowsLeft' =>
             ({required num n, required Object count}) =>
                 (_root.$meta.cardinalResolver ??
@@ -4640,14 +4678,14 @@ extension on TranslationsRu {
           'transactions.category' => 'Категория',
           'transactions.from' => 'Откуда',
           'transactions.date' => 'Дата',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.sources.manual' => 'Вручную',
           'transactions.sources.import' => 'Из выписки',
           'transactions.sources.notification' => 'Из уведомления',
           'transactions.sources.recurring' => 'Регулярная',
           'transactions.sources.bank' => 'Из банка',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.keys.point' => 'Запятая',
           'transactions.keys.add' => 'Плюс',
           'transactions.keys.subtract' => 'Минус',

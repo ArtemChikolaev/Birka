@@ -357,6 +357,15 @@ newCategoryNote: появится при импорте
 newCategoryMark: новая категория
 categoriesDone: "Готово · $count во «Входящих»"
 categoriesKept: "Выбор запомним для выписок $source"
+foundHeading: Регулярные платежи
+foundLine: "нашли $count: $names"
+foundDone(n):
+  one: Провели $count платёж
+  few: Провели $count платежа
+  many: Провели $count платежей
+  other: Провели $count платежа
+foundDoneText: $names — из выписки
+namesAnd: $names и $last
 rowsLeft(n):
   one: $count строка не попадёт в учёт
   few: $count строки не попадут в учёт

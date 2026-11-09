@@ -329,6 +329,13 @@ newCategoryNote: made with the import
 newCategoryMark: new category
 categoriesDone: "Done · $count in the inbox"
 categoriesKept: "Birka keeps the choice for statements of $source"
+foundHeading: Regular payments
+foundLine: "found $count: $names"
+foundDone(n):
+  one: Posted $count payment
+  other: Posted $count payments
+foundDoneText: $names, from the statement
+namesAnd: $names and $last
 rowsLeft(n):
   one: $count row stays out of the ledger
   other: $count rows stay out of the ledger

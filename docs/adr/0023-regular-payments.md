@@ -125,7 +125,10 @@
     with its next time, in the color of a gain unless it was skipped; on
     other days it says how often the payment comes. On the day of an import,
     a payment that the statement brought says so at the top of the list, in
-    a notice that names the bank when Birka knows the format.
+    a notice that names the bank when Birka knows the format. The sheet of
+    the import on the phone names those payments before the write
+    («Регулярные платежи · нашли 2: Аренда и Интернет») and after it, where
+    «Провели 2 платежа» leads to «Регулярные платежи».
 18. A regular payment can come twice a month (`advanceDay`, from version 7
     of the schema): a salary paid in halves, its advance on that day and the
     rest on its own day, each time with the amount of the rule. The times
