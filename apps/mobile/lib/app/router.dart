@@ -32,7 +32,11 @@ import 'package:overview_flutter/overview_flutter.dart';
 import 'package:reports_common/reports_common.dart' show ReportsCubit;
 import 'package:reports_flutter/reports_flutter.dart';
 import 'package:schedules_common/schedules_common.dart'
-    show RemindersCubit, ScheduleFormCubit, SchedulesCubit;
+    show
+        OperationScheduleCubit,
+        RemindersCubit,
+        ScheduleFormCubit,
+        SchedulesCubit;
 import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_common/settings_common.dart' show SettingsCubit;
 import 'package:settings_flutter/settings_flutter.dart'
@@ -108,8 +112,14 @@ abstract final class Paths {
 
   /// The form of a new regular payment, which starts as the salary with
   /// [salary].
-  static String newSchedule({bool salary = false}) =>
-      salary ? '/schedules/new?salary=1' : '/schedules/new';
+  static String newSchedule({bool salary = false, String? from}) => switch ((
+    salary,
+    from,
+  )) {
+    (true, _) => '/schedules/new?salary=1',
+    (_, final from?) => '/schedules/new?from=$from',
+    _ => '/schedules/new',
+  };
 
   /// The form of regular payment [id].
   static String schedule(String id) => '/schedules/$id';
@@ -208,6 +218,16 @@ GoRouter buildRouter(
                           onEdit: () => context.push(Paths.editOperation(id)),
                           onRepeat: () =>
                               context.push(Paths.repeatOperation(id)),
+                          schedule: BlocProvider(
+                            create: (_) =>
+                                getIt<OperationScheduleCubit>(param1: id),
+                            child: OperationScheduleRow(
+                              onMake: () =>
+                                  context.push(Paths.newSchedule(from: id)),
+                              onOpen: (schedule) =>
+                                  context.push(Paths.schedule(schedule)),
+                            ),
+                          ),
                         ),
                       );
                     },
@@ -377,6 +397,7 @@ GoRouter buildRouter(
             pageBuilder: (context, state) => _scheduleFormPage(
               getIt,
               salary: state.uri.queryParameters['salary'] == '1',
+              from: state.uri.queryParameters['from'],
             ),
           ),
           GoRoute(
@@ -499,19 +520,25 @@ Page<Category> _categoryFormPage(
 
 /// The form of a regular payment, as a sheet (ADR 0023): payment [id], or a
 /// new one, which starts as the salary with [salary].
-Page<void> _scheduleFormPage(GetIt getIt, {String? id, bool salary = false}) =>
-    BirkaSheetPage(
-      child: BlocProvider(
-        create: (_) => getIt<ScheduleFormCubit>(param1: id, param2: salary),
-        child: Builder(
-          builder: (context) => ScheduleFormPage(
-            onClose: () => context.pop(),
-            onEnableReminders: () =>
-                unawaited(_enableReminders(context, getIt)),
-          ),
-        ),
+Page<void> _scheduleFormPage(
+  GetIt getIt, {
+  String? id,
+  bool salary = false,
+  String? from,
+}) => BirkaSheetPage(
+  child: BlocProvider(
+    create: (_) => getIt<ScheduleFormCubit>(
+      param1: id,
+      param2: (salary: salary, from: from),
+    ),
+    child: Builder(
+      builder: (context) => ScheduleFormPage(
+        onClose: () => context.pop(),
+        onEnableReminders: () => unawaited(_enableReminders(context, getIt)),
       ),
-    );
+    ),
+  ),
+);
 
 /// Asks which day the months start on, from the page of the money until the
 /// salary, and keeps it as the settings do: it is one setting (ADR 0024).

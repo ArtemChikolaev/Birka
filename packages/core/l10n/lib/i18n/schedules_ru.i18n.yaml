@@ -267,3 +267,8 @@ remindByBoth: напомнят Birka и календарь
 remindLineNone: Без напоминания
 remindLineOff: Напоминания выключены в «Ещё»
 remindEnable: Включить напоминания
+makeRegular: Сделать регулярным
+makeRegularLine: Повторять $every
+regularPayment: Регулярный платёж
+fromOperation: Из операции $date
+madeRegular: "Добавили в регулярные: «$name»"

@@ -52,6 +52,10 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
       _ledger.watchTransactions(from: day, to: day, limit: null);
 
   @override
+  Stream<Transaction?> watchTransaction(String id) =>
+      _ledger.watchTransaction(id);
+
+  @override
   Stream<Currency?> watchBaseCurrency() => _baseCurrency.watch();
 
   @override
@@ -102,6 +106,7 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
     advanceDay: draft.advanceDay,
     onDay: draft.onDay,
     reminder: draft.reminder,
+    madeFrom: draft.madeFrom,
   );
 
   @override

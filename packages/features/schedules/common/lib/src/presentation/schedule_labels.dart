@@ -149,6 +149,21 @@ String scheduleAmount(Schedule schedule, {Money? amount}) {
   };
 }
 
+/// What the form of a payment made from operation [made] says of it under its
+/// day: `Яндекс Плюс · −449 ₽ · Подписки`, with the name of its [category].
+String madeFromLine(Transaction made, {String? category}) {
+  final amount = made.entries.first.amount.abs();
+  final money = switch (made.kind) {
+    TransactionKind.expense => formatMoney(-amount),
+    TransactionKind.income => '+${formatMoney(amount)}',
+    TransactionKind.transfer || TransactionKind.adjustment => formatMoney(
+      amount,
+    ),
+  };
+  final note = made.note.trim();
+  return [if (note.isNotEmpty) note, money, ?category].join(' · ');
+}
+
 /// What the list of every payment shows as the amount of [schedule]: what
 /// it brings or takes in a month when it comes in halves.
 String scheduleTotal(Schedule schedule) => scheduleAmount(

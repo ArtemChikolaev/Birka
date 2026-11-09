@@ -87,6 +87,97 @@ void main() {
     expect(form.valid, isFalse);
   });
 
+  group('a payment made from an operation', () {
+    Future<String> operation({
+      required CivilDate on,
+      String note = 'Яндекс Плюс',
+      TransactionSource source = TransactionSource.import,
+    }) => ledger.record(
+      TransactionDraft.expense(
+        accountId: card.id,
+        allocations: [Allocation(categoryId: home.id, amount: rub(449))],
+        occurredOn: on,
+        note: note,
+        source: source,
+      ),
+    );
+
+    test('starts as the operation, every month from its next day', () async {
+      final made = await operation(on: CivilDate(2026, 11, 12));
+      final cubit = ScheduleFormCubit(repository, from: made);
+      addTearDown(cubit.close);
+
+      final form = await at(cubit, ScheduleFormStatus.editing);
+
+      expect(form.madeFrom?.id, made);
+      expect(form.kind, TransactionKind.expense);
+      expect(form.name, 'Яндекс Плюс');
+      expect(form.amount, rub(449));
+      expect(form.account?.id, card.id);
+      expect(form.category?.id, home.id);
+      expect(form.every, ScheduleEvery.month);
+      expect(form.day, 12);
+      expect(form.next, CivilDate(2026, 12, 12));
+      // The bank charges what a statement brought.
+      expect(form.onDay, ScheduleOnDay.post);
+      expect(form.valid, isTrue);
+
+      await cubit.save();
+
+      final saved = (await ledger.watchSchedules().first).single;
+      expect(saved.next, CivilDate(2026, 12, 12));
+      expect(saved.last?.transactionId, made);
+      expect(saved.last?.on, CivilDate(2026, 11, 12));
+    });
+
+    test('of today comes next month, and one the person wrote asks', () async {
+      final made = await operation(
+        on: today,
+        note: '',
+        source: TransactionSource.manual,
+      );
+      final cubit = ScheduleFormCubit(repository, from: made);
+      addTearDown(cubit.close);
+
+      final form = await at(cubit, ScheduleFormStatus.editing);
+
+      // With no note it takes the name of its category.
+      expect(form.name, 'Дом');
+      expect(form.next, CivilDate(2026, 12, 18));
+      expect(form.onDay, ScheduleOnDay.ask);
+    });
+
+    test('starts empty when the operation is gone', () async {
+      final cubit = ScheduleFormCubit(repository, from: 'none');
+      addTearDown(cubit.close);
+
+      final form = await at(cubit, ScheduleFormStatus.editing);
+
+      expect(form.madeFrom, isNull);
+      expect(form.name, isEmpty);
+      expect(form.next, today);
+    });
+
+    test('comes on its day from today on, after the operation', () {
+      expect(
+        nextAfterOperation(CivilDate(2026, 10, 25), today: today),
+        CivilDate(2026, 11, 25),
+      );
+      expect(
+        nextAfterOperation(CivilDate(2026, 10, 31), today: today),
+        CivilDate(2026, 11, 30),
+      );
+      expect(
+        nextAfterOperation(CivilDate(2026, 11, 25), today: today),
+        CivilDate(2026, 12, 25),
+      );
+      expect(
+        nextAfterOperation(CivilDate(2026, 11, 2), today: today),
+        CivilDate(2026, 12, 2),
+      );
+    });
+  });
+
   test('saves a new expense with its day of the month', () async {
     final cubit = ScheduleFormCubit(repository);
     addTearDown(cubit.close);

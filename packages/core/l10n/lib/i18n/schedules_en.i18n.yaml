@@ -249,3 +249,8 @@ remindByBoth: Birka and the calendar remind
 remindLineNone: No reminder
 remindLineOff: Reminders are off in More
 remindEnable: Turn reminders on
+makeRegular: Make it regular
+makeRegularLine: Repeat $every
+regularPayment: Regular payment
+fromOperation: From the operation of $date
+madeRegular: "Added to regular payments: «$name»"

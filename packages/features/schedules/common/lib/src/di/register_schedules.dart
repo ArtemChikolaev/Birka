@@ -2,6 +2,7 @@ import 'package:device_settings/device_settings.dart';
 import 'package:get_it/get_it.dart';
 import 'package:schedules_common/src/data/ledger_schedules_repository.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
+import 'package:schedules_common/src/presentation/operation_schedule_cubit.dart';
 import 'package:schedules_common/src/presentation/reminder_notices.dart';
 import 'package:schedules_common/src/presentation/reminder_scheduler.dart';
 import 'package:schedules_common/src/presentation/reminders_cubit.dart';
@@ -26,8 +27,20 @@ void registerSchedules(GetIt getIt, SettingsStore store) {
       dispose: (notices) => notices.stop(),
     )
     ..registerFactory(() => RemindersCubit(getIt(), getIt(), getIt()))
-    ..registerFactoryParam<ScheduleFormCubit, String?, bool?>(
-      (id, salary) =>
-          ScheduleFormCubit(getIt(), id: id, salary: salary ?? false),
+    // A new payment starts empty, as a salary, or from an operation.
+    ..registerFactoryParam<
+      ScheduleFormCubit,
+      String?,
+      ({bool salary, String? from})?
+    >(
+      (id, start) => ScheduleFormCubit(
+        getIt(),
+        id: id,
+        salary: start?.salary ?? false,
+        from: start?.from,
+      ),
+    )
+    ..registerFactoryParam<OperationScheduleCubit, String, void>(
+      (id, _) => OperationScheduleCubit(getIt(), id),
     );
 }

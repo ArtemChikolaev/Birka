@@ -60,6 +60,7 @@ import 'package:reports_flutter/reports_flutter.dart';
 import 'package:schedules_common/schedules_common.dart'
     show
         CalendarReminder,
+        OperationScheduleCubit,
         PaydaySettings,
         PlannedReminder,
         ReminderAccess,
@@ -185,6 +186,9 @@ final class _NoSchedules implements SchedulesRepository {
 
   @override
   Stream<List<Transaction>> watchDay(CivilDate day) => Stream.value(const []);
+
+  @override
+  Stream<Transaction?> watchTransaction(String id) => Stream.value(null);
 
   @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);
@@ -559,14 +563,22 @@ void main() {
       ..registerFactory(
         () => RemindersCubit(_NoSchedules(), reminders, _NoCalendar()),
       )
-      ..registerFactoryParam<ScheduleFormCubit, String?, bool?>((id, salary) {
+      ..registerFactoryParam<
+        ScheduleFormCubit,
+        String?,
+        ({bool salary, String? from})?
+      >((id, start) {
         forms.add(id);
         return ScheduleFormCubit(
           _NoSchedules(),
           id: id,
-          salary: salary ?? false,
+          salary: start?.salary ?? false,
+          from: start?.from,
         );
       })
+      ..registerFactoryParam<OperationScheduleCubit, String, void>(
+        (id, _) => OperationScheduleCubit(_NoSchedules(), id),
+      )
       ..registerFactory(() => BackupCubit(_EmptyLedger(), _NoFiles(), settings))
       ..registerFactory(
         () => HelpCubit(

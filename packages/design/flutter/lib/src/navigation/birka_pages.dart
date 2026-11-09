@@ -20,6 +20,11 @@ class BirkaSheetPage<T> extends MaterialPage<T> {
     super.restorationId,
   }) : super(fullscreenDialog: true);
 
+  /// How long the page takes to go: the sheet of iOS goes down in 500 ms,
+  /// longer than a dialog closes elsewhere, so whatever waits for the screen
+  /// below to be seen again waits this long.
+  static const Duration closing = Duration(milliseconds: 500);
+
   @override
   Route<T> createRoute(BuildContext context) {
     return switch (Theme.of(context).platform) {

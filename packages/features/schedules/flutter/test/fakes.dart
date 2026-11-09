@@ -191,6 +191,9 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   List<Schedule> schedules;
   List<AccountBalance> accounts;
   List<Transaction> todays;
+
+  /// Other operations of the ledger, such as one to make a payment of.
+  List<Transaction> operations = const [];
   List<LedgerImport> imports = const [];
   PaydaySettings settings = const PaydaySettings(asideMinor: 1000000);
   final categories = [
@@ -251,6 +254,11 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   );
 
   @override
+  Stream<Transaction?> watchTransaction(String id) => _watch(
+    () => [...todays, ...operations].where((it) => it.id == id).firstOrNull,
+  );
+
+  @override
   Stream<Currency?> watchBaseCurrency() => Stream.value(null);
 
   /// The day the months start on.
@@ -286,7 +294,11 @@ final class FakeSchedulesRepository implements SchedulesRepository {
   @override
   Future<Schedule> add(ScheduleDraft draft) async {
     added.add(draft);
-    return Schedule(
+    final made = [
+      ...todays,
+      ...operations,
+    ].where((it) => it.id == draft.madeFrom).firstOrNull;
+    final schedule = Schedule(
       id: 'new',
       kind: draft.kind,
       name: draft.name,
@@ -299,7 +311,22 @@ final class FakeSchedulesRepository implements SchedulesRepository {
       next: draft.next,
       onDay: draft.onDay,
       reminder: draft.reminder,
+      last: made == null
+          ? null
+          : ScheduleLast(
+              done: ScheduleDone.posted,
+              from: made.occurredOn,
+              on: made.occurredOn,
+              at: DateTime(2026, 11, 18, 10),
+              transactionId: made.id,
+            ),
     );
+    // One made from an operation joins the list, which its operation sees.
+    if (made != null) {
+      schedules = [...schedules, schedule];
+      changed();
+    }
+    return schedule;
   }
 
   @override

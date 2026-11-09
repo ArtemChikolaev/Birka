@@ -19,6 +19,7 @@ final class ScheduleDraft {
     this.categoryId,
     this.onDay = ScheduleOnDay.ask,
     this.reminder = ScheduleReminder.onDay,
+    this.madeFrom,
   });
 
   /// An expense, an income or a transfer.
@@ -57,4 +58,7 @@ final class ScheduleDraft {
 
   /// When to remind of it.
   final ScheduleReminder reminder;
+
+  /// The transaction it is made from, which becomes its time on that day.
+  final String? madeFrom;
 }
