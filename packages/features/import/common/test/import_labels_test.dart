@@ -323,6 +323,38 @@ void main() {
     });
   });
 
+  test('the regular payments that a statement brings go by their names', () {
+    List<FoundSchedule> found(List<String> names) => [
+      for (final name in names)
+        FoundSchedule(
+          Schedule(
+            id: name,
+            kind: TransactionKind.expense,
+            name: name,
+            accountId: 'card',
+            amount: Money(4500000, Currency.rub),
+            every: ScheduleEvery.month,
+            day: 25,
+            next: CivilDate(2026, 11, 25),
+            onDay: ScheduleOnDay.ask,
+            reminder: ScheduleReminder.onDay,
+          ),
+          const [],
+        ),
+    ];
+
+    expect(foundNames(found(['Аренда'])), 'Аренда');
+    expect(foundNames(found(['Аренда', 'Интернет'])), 'Аренда и Интернет');
+    expect(
+      foundNames(found(['Аренда', 'Интернет', 'Спортзал'])),
+      'Аренда, Интернет и Спортзал',
+    );
+    expect(
+      foundNames(found(['Аренда', 'Интернет', 'Спортзал', 'Музыка'])),
+      'Аренда, Интернет и ещё 2',
+    );
+  });
+
   group('an amount of a file', () {
     test('is money of its currency, or of the fallback', () {
       expect(
