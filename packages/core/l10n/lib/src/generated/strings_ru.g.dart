@@ -1285,6 +1285,9 @@ class _Translations$imports$ru extends Translations$imports$en {
   @override
   String foundDoneText({required Object names}) => '${names} — из выписки';
   @override
+  String repeatsTitle({required Object count}) =>
+      'Похоже на регулярные · ${count}';
+  @override
   String namesAnd({required Object names, required Object last}) =>
       '${names} и ${last}';
   @override
@@ -3780,6 +3783,8 @@ extension on TranslationsRu {
                 ),
           'imports.foundDoneText' =>
             ({required Object names}) => '${names} — из выписки',
+          'imports.repeatsTitle' =>
+            ({required Object count}) => 'Похоже на регулярные · ${count}',
           'imports.namesAnd' =>
             ({required Object names, required Object last}) =>
                 '${names} и ${last}',
@@ -4759,10 +4764,10 @@ extension on TranslationsRu {
             'Не удалось прочитать операции.',
           'transactions.failedToDelete' =>
             'Не удалось удалить. Попробуйте ещё раз.',
-          'transactions.operation' => 'Операция',
           _ => null,
         } ??
         switch (path) {
+          'transactions.operation' => 'Операция',
           'transactions.edit' => 'Изменить',
           'transactions.editOperation' => 'Изменить операцию',
           'transactions.repeat' => 'Повторить',

@@ -35,6 +35,7 @@ void main() {
     List<ChosenStatement?> files, {
     VoidCallback? onInbox,
     VoidCallback? onSchedules,
+    Future<List<String>> Function()? repeats,
     ImportMemory? remembered,
   }) async {
     tester.view.physicalSize = const Size(780, 1688);
@@ -59,6 +60,7 @@ void main() {
                 files: window,
                 onInbox: onInbox,
                 onSchedules: onSchedules,
+                repeats: repeats,
               ),
             ),
           ),
@@ -68,6 +70,16 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Импорт'));
     await settle(tester);
   }
+
+  /// How visible [text] is through the fades around it.
+  double opacityOf(WidgetTester tester, String text) => tester
+      .widgetList<FadeTransition>(
+        find.ancestor(
+          of: find.text(text),
+          matching: find.byType(FadeTransition),
+        ),
+      )
+      .fold(1, (opacity, fade) => opacity * fade.opacity.value);
 
   Future<void> tapText(WidgetTester tester, String text) async {
     await tester.ensureVisible(find.text(text));
@@ -180,6 +192,59 @@ void main() {
     await tapText(tester, 'ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ');
 
     expect(find.textContaining('Провели'), findsNothing);
+  });
+
+  testWidgets('names what came every month a moment after the result and '
+      'leads to it', (tester) async {
+    var asked = 0;
+    var opened = 0;
+    await open(
+      tester,
+      [october()],
+      onSchedules: () => opened++,
+      repeats: () async {
+        asked++;
+        return ['Яндекс Плюс', 'ЖКУ Москва', 'Облако Mail.ru'];
+      },
+    );
+    expect(asked, 0);
+
+    await tester.tap(find.text('ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ'));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+
+    expect(find.text('Добавили 4 операции'), findsOneWidget);
+    expect(asked, 1);
+    // The card takes its place at once and shows once the sheet settled.
+    expect(opacityOf(tester, 'Похоже на регулярные · 3'), 0);
+
+    await tester.pump(BirkaMotion.fast + BirkaMotion.base);
+    await tester.pumpAndSettle();
+
+    expect(opacityOf(tester, 'Похоже на регулярные · 3'), 1);
+    expect(
+      find.text('Яндекс Плюс, ЖКУ Москва и Облако Mail.ru'),
+      findsOneWidget,
+    );
+    expect(asked, 1);
+
+    await tapText(tester, 'Похоже на регулярные · 3');
+
+    expect(find.byType(ImportSheet), findsNothing);
+    expect(opened, 1);
+  });
+
+  testWidgets('says nothing of what came every month when nothing did', (
+    tester,
+  ) async {
+    await open(tester, [october()], repeats: () async => const []);
+
+    await tapText(tester, 'ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ');
+    await tester.pump(BirkaMotion.fast + BirkaMotion.base);
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Похоже на регулярные'), findsNothing);
   });
 
   testWidgets('leads from what waits to the inbox of the host', (

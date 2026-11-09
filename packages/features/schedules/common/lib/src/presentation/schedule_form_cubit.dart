@@ -515,20 +515,10 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
   }
 
   /// The operations that came every month whose latest is [made], if it is
-  /// one of them (ADR 0023, point 23).
-  Future<RepeatFind?> _findOf(
-    Transaction made, {
-    required CivilDate today,
-  }) async {
-    final history = await _repository
-        .watchHistory(today.addMonths(-repeatHistoryMonths))
-        .first;
-    final schedules = await _repository.watchSchedules().first;
-    return findRepeats(
-      history,
-      today: today,
-      schedules: schedules,
-    ).where((find) => find.latest.id == made.id).firstOrNull;
+  /// one of them (ADR 0023, point 23), dismissed or not.
+  Future<RepeatFind?> _findOf(Transaction made) async {
+    final finds = await currentRepeats(_repository, includeDismissed: true);
+    return finds.where((find) => find.latest.id == made.id).firstOrNull;
   }
 
   Future<void> _load({required bool salary, String? from}) async {
@@ -561,7 +551,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
       final made = await _repository.watchTransaction(from).first;
       if (isClosed) return;
       if (made != null && made.kind != TransactionKind.adjustment) {
-        final found = await _findOf(made, today: loaded.today);
+        final found = await _findOf(made);
         if (isClosed) return;
         return emit(_madeFrom(loaded, made, found: found));
       }

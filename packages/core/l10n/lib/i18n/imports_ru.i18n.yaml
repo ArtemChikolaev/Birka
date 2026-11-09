@@ -365,6 +365,7 @@ foundDone(n):
   many: Провели $count платежей
   other: Провели $count платежа
 foundDoneText: $names — из выписки
+repeatsTitle: Похоже на регулярные · $count
 namesAnd: $names и $last
 rowsLeft(n):
   one: $count строка не попадёт в учёт
