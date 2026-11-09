@@ -237,6 +237,11 @@ class Schedules extends Table with SyncedRow {
 
   /// When they were done.
   DateTimeColumn get lastAt => dateTime().nullable()();
+
+  /// The transaction that the payment was made from (ADR 0023, point 22),
+  /// which stays its time after later ones. It names no row by a key, as it
+  /// may be gone.
+  TextColumn get madeFrom => text().nullable()();
 }
 
 /// What one unit of a currency cost in rubles on a day (ADR 0012). Any device

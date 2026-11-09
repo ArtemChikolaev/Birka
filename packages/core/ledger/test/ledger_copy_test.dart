@@ -433,9 +433,20 @@ void main() {
       expect(LedgerCopy.parse(copy.encode()).encode(), copy.encode());
     });
 
-    test('travel with the amount of an advance of their own since version '
-        '6', () {
+    test('travel with the transaction they were made from since version 6', () {
       final json = withSchedules()..['version'] = 6;
+      rowsOf(json, 'schedules')[1]['madeFrom'] = 'coffee';
+
+      final copy = LedgerCopy.parse(jsonEncode(json));
+
+      expect(copy.scheduleRows[1].madeFrom, 'coffee');
+      expect(copy.scheduleRows.first.madeFrom, isNull);
+      expect(LedgerCopy.parse(copy.encode()).encode(), copy.encode());
+    });
+
+    test('travel with the amount of an advance of their own since version '
+        '7', () {
+      final json = withSchedules()..['version'] = 7;
       rowsOf(json, 'schedules')[1]
         ..['advanceDay'] = 20
         ..['advanceAmountMinor'] = 4000000;

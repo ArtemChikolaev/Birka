@@ -3692,14 +3692,6 @@ class Schedules extends Table with TableInfo<Schedules, SchedulesData> {
     requiredDuringInsert: false,
     $customConstraints: 'NULL',
   );
-  late final GeneratedColumn<int> advanceAmountMinor = GeneratedColumn<int>(
-    'advance_amount_minor',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'NULL',
-  );
   late final GeneratedColumn<String> nextOn = GeneratedColumn<String>(
     'next_on',
     aliasedName,
@@ -3773,6 +3765,14 @@ class Schedules extends Table with TableInfo<Schedules, SchedulesData> {
     requiredDuringInsert: false,
     $customConstraints: 'NULL',
   );
+  late final GeneratedColumn<String> madeFrom = GeneratedColumn<String>(
+    'made_from',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3788,7 +3788,6 @@ class Schedules extends Table with TableInfo<Schedules, SchedulesData> {
     every,
     day,
     advanceDay,
-    advanceAmountMinor,
     nextOn,
     onDay,
     reminder,
@@ -3798,6 +3797,7 @@ class Schedules extends Table with TableInfo<Schedules, SchedulesData> {
     lastTransactionId,
     lastImportId,
     lastAt,
+    madeFrom,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3862,10 +3862,6 @@ class Schedules extends Table with TableInfo<Schedules, SchedulesData> {
         DriftSqlType.int,
         data['${effectivePrefix}advance_day'],
       ),
-      advanceAmountMinor: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}advance_amount_minor'],
-      ),
       nextOn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}next_on'],
@@ -3902,6 +3898,10 @@ class Schedules extends Table with TableInfo<Schedules, SchedulesData> {
         DriftSqlType.string,
         data['${effectivePrefix}last_at'],
       ),
+      madeFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}made_from'],
+      ),
     );
   }
 
@@ -3930,7 +3930,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
   final String every;
   final int day;
   final int? advanceDay;
-  final int? advanceAmountMinor;
   final String nextOn;
   final String onDay;
   final String reminder;
@@ -3940,6 +3939,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
   final String? lastTransactionId;
   final String? lastImportId;
   final String? lastAt;
+  final String? madeFrom;
   const SchedulesData({
     required this.id,
     required this.createdAt,
@@ -3954,7 +3954,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     required this.every,
     required this.day,
     this.advanceDay,
-    this.advanceAmountMinor,
     required this.nextOn,
     required this.onDay,
     required this.reminder,
@@ -3964,6 +3963,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     this.lastTransactionId,
     this.lastImportId,
     this.lastAt,
+    this.madeFrom,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3989,9 +3989,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     if (!nullToAbsent || advanceDay != null) {
       map['advance_day'] = Variable<int>(advanceDay);
     }
-    if (!nullToAbsent || advanceAmountMinor != null) {
-      map['advance_amount_minor'] = Variable<int>(advanceAmountMinor);
-    }
     map['next_on'] = Variable<String>(nextOn);
     map['on_day'] = Variable<String>(onDay);
     map['reminder'] = Variable<String>(reminder);
@@ -4012,6 +4009,9 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     }
     if (!nullToAbsent || lastAt != null) {
       map['last_at'] = Variable<String>(lastAt);
+    }
+    if (!nullToAbsent || madeFrom != null) {
+      map['made_from'] = Variable<String>(madeFrom);
     }
     return map;
   }
@@ -4039,9 +4039,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
       advanceDay: advanceDay == null && nullToAbsent
           ? const Value.absent()
           : Value(advanceDay),
-      advanceAmountMinor: advanceAmountMinor == null && nullToAbsent
-          ? const Value.absent()
-          : Value(advanceAmountMinor),
       nextOn: Value(nextOn),
       onDay: Value(onDay),
       reminder: Value(reminder),
@@ -4063,6 +4060,9 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
       lastAt: lastAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastAt),
+      madeFrom: madeFrom == null && nullToAbsent
+          ? const Value.absent()
+          : Value(madeFrom),
     );
   }
 
@@ -4085,7 +4085,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
       every: serializer.fromJson<String>(json['every']),
       day: serializer.fromJson<int>(json['day']),
       advanceDay: serializer.fromJson<int?>(json['advanceDay']),
-      advanceAmountMinor: serializer.fromJson<int?>(json['advanceAmountMinor']),
       nextOn: serializer.fromJson<String>(json['nextOn']),
       onDay: serializer.fromJson<String>(json['onDay']),
       reminder: serializer.fromJson<String>(json['reminder']),
@@ -4097,6 +4096,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
       ),
       lastImportId: serializer.fromJson<String?>(json['lastImportId']),
       lastAt: serializer.fromJson<String?>(json['lastAt']),
+      madeFrom: serializer.fromJson<String?>(json['madeFrom']),
     );
   }
   @override
@@ -4116,7 +4116,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
       'every': serializer.toJson<String>(every),
       'day': serializer.toJson<int>(day),
       'advanceDay': serializer.toJson<int?>(advanceDay),
-      'advanceAmountMinor': serializer.toJson<int?>(advanceAmountMinor),
       'nextOn': serializer.toJson<String>(nextOn),
       'onDay': serializer.toJson<String>(onDay),
       'reminder': serializer.toJson<String>(reminder),
@@ -4126,6 +4125,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
       'lastTransactionId': serializer.toJson<String?>(lastTransactionId),
       'lastImportId': serializer.toJson<String?>(lastImportId),
       'lastAt': serializer.toJson<String?>(lastAt),
+      'madeFrom': serializer.toJson<String?>(madeFrom),
     };
   }
 
@@ -4143,7 +4143,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     String? every,
     int? day,
     Value<int?> advanceDay = const Value.absent(),
-    Value<int?> advanceAmountMinor = const Value.absent(),
     String? nextOn,
     String? onDay,
     String? reminder,
@@ -4153,6 +4152,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     Value<String?> lastTransactionId = const Value.absent(),
     Value<String?> lastImportId = const Value.absent(),
     Value<String?> lastAt = const Value.absent(),
+    Value<String?> madeFrom = const Value.absent(),
   }) => SchedulesData(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -4167,9 +4167,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     every: every ?? this.every,
     day: day ?? this.day,
     advanceDay: advanceDay.present ? advanceDay.value : this.advanceDay,
-    advanceAmountMinor: advanceAmountMinor.present
-        ? advanceAmountMinor.value
-        : this.advanceAmountMinor,
     nextOn: nextOn ?? this.nextOn,
     onDay: onDay ?? this.onDay,
     reminder: reminder ?? this.reminder,
@@ -4181,6 +4178,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
         : this.lastTransactionId,
     lastImportId: lastImportId.present ? lastImportId.value : this.lastImportId,
     lastAt: lastAt.present ? lastAt.value : this.lastAt,
+    madeFrom: madeFrom.present ? madeFrom.value : this.madeFrom,
   );
   SchedulesData copyWithCompanion(SchedulesCompanion data) {
     return SchedulesData(
@@ -4205,9 +4203,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
       advanceDay: data.advanceDay.present
           ? data.advanceDay.value
           : this.advanceDay,
-      advanceAmountMinor: data.advanceAmountMinor.present
-          ? data.advanceAmountMinor.value
-          : this.advanceAmountMinor,
       nextOn: data.nextOn.present ? data.nextOn.value : this.nextOn,
       onDay: data.onDay.present ? data.onDay.value : this.onDay,
       reminder: data.reminder.present ? data.reminder.value : this.reminder,
@@ -4221,6 +4216,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
           ? data.lastImportId.value
           : this.lastImportId,
       lastAt: data.lastAt.present ? data.lastAt.value : this.lastAt,
+      madeFrom: data.madeFrom.present ? data.madeFrom.value : this.madeFrom,
     );
   }
 
@@ -4240,7 +4236,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
           ..write('every: $every, ')
           ..write('day: $day, ')
           ..write('advanceDay: $advanceDay, ')
-          ..write('advanceAmountMinor: $advanceAmountMinor, ')
           ..write('nextOn: $nextOn, ')
           ..write('onDay: $onDay, ')
           ..write('reminder: $reminder, ')
@@ -4249,7 +4244,8 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
           ..write('lastOn: $lastOn, ')
           ..write('lastTransactionId: $lastTransactionId, ')
           ..write('lastImportId: $lastImportId, ')
-          ..write('lastAt: $lastAt')
+          ..write('lastAt: $lastAt, ')
+          ..write('madeFrom: $madeFrom')
           ..write(')'))
         .toString();
   }
@@ -4269,7 +4265,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     every,
     day,
     advanceDay,
-    advanceAmountMinor,
     nextOn,
     onDay,
     reminder,
@@ -4279,6 +4274,7 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
     lastTransactionId,
     lastImportId,
     lastAt,
+    madeFrom,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -4297,7 +4293,6 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
           other.every == this.every &&
           other.day == this.day &&
           other.advanceDay == this.advanceDay &&
-          other.advanceAmountMinor == this.advanceAmountMinor &&
           other.nextOn == this.nextOn &&
           other.onDay == this.onDay &&
           other.reminder == this.reminder &&
@@ -4306,7 +4301,8 @@ class SchedulesData extends DataClass implements Insertable<SchedulesData> {
           other.lastOn == this.lastOn &&
           other.lastTransactionId == this.lastTransactionId &&
           other.lastImportId == this.lastImportId &&
-          other.lastAt == this.lastAt);
+          other.lastAt == this.lastAt &&
+          other.madeFrom == this.madeFrom);
 }
 
 class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
@@ -4323,7 +4319,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
   final Value<String> every;
   final Value<int> day;
   final Value<int?> advanceDay;
-  final Value<int?> advanceAmountMinor;
   final Value<String> nextOn;
   final Value<String> onDay;
   final Value<String> reminder;
@@ -4333,6 +4328,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
   final Value<String?> lastTransactionId;
   final Value<String?> lastImportId;
   final Value<String?> lastAt;
+  final Value<String?> madeFrom;
   final Value<int> rowid;
   const SchedulesCompanion({
     this.id = const Value.absent(),
@@ -4348,7 +4344,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     this.every = const Value.absent(),
     this.day = const Value.absent(),
     this.advanceDay = const Value.absent(),
-    this.advanceAmountMinor = const Value.absent(),
     this.nextOn = const Value.absent(),
     this.onDay = const Value.absent(),
     this.reminder = const Value.absent(),
@@ -4358,6 +4353,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     this.lastTransactionId = const Value.absent(),
     this.lastImportId = const Value.absent(),
     this.lastAt = const Value.absent(),
+    this.madeFrom = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SchedulesCompanion.insert({
@@ -4374,7 +4370,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     required String every,
     required int day,
     this.advanceDay = const Value.absent(),
-    this.advanceAmountMinor = const Value.absent(),
     required String nextOn,
     required String onDay,
     required String reminder,
@@ -4384,6 +4379,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     this.lastTransactionId = const Value.absent(),
     this.lastImportId = const Value.absent(),
     this.lastAt = const Value.absent(),
+    this.madeFrom = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -4411,7 +4407,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     Expression<String>? every,
     Expression<int>? day,
     Expression<int>? advanceDay,
-    Expression<int>? advanceAmountMinor,
     Expression<String>? nextOn,
     Expression<String>? onDay,
     Expression<String>? reminder,
@@ -4421,6 +4416,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     Expression<String>? lastTransactionId,
     Expression<String>? lastImportId,
     Expression<String>? lastAt,
+    Expression<String>? madeFrom,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4437,8 +4433,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
       if (every != null) 'every': every,
       if (day != null) 'day': day,
       if (advanceDay != null) 'advance_day': advanceDay,
-      if (advanceAmountMinor != null)
-        'advance_amount_minor': advanceAmountMinor,
       if (nextOn != null) 'next_on': nextOn,
       if (onDay != null) 'on_day': onDay,
       if (reminder != null) 'reminder': reminder,
@@ -4448,6 +4442,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
       if (lastTransactionId != null) 'last_transaction_id': lastTransactionId,
       if (lastImportId != null) 'last_import_id': lastImportId,
       if (lastAt != null) 'last_at': lastAt,
+      if (madeFrom != null) 'made_from': madeFrom,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4466,7 +4461,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     Value<String>? every,
     Value<int>? day,
     Value<int?>? advanceDay,
-    Value<int?>? advanceAmountMinor,
     Value<String>? nextOn,
     Value<String>? onDay,
     Value<String>? reminder,
@@ -4476,6 +4470,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     Value<String?>? lastTransactionId,
     Value<String?>? lastImportId,
     Value<String?>? lastAt,
+    Value<String?>? madeFrom,
     Value<int>? rowid,
   }) {
     return SchedulesCompanion(
@@ -4492,7 +4487,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
       every: every ?? this.every,
       day: day ?? this.day,
       advanceDay: advanceDay ?? this.advanceDay,
-      advanceAmountMinor: advanceAmountMinor ?? this.advanceAmountMinor,
       nextOn: nextOn ?? this.nextOn,
       onDay: onDay ?? this.onDay,
       reminder: reminder ?? this.reminder,
@@ -4502,6 +4496,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
       lastTransactionId: lastTransactionId ?? this.lastTransactionId,
       lastImportId: lastImportId ?? this.lastImportId,
       lastAt: lastAt ?? this.lastAt,
+      madeFrom: madeFrom ?? this.madeFrom,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4548,9 +4543,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     if (advanceDay.present) {
       map['advance_day'] = Variable<int>(advanceDay.value);
     }
-    if (advanceAmountMinor.present) {
-      map['advance_amount_minor'] = Variable<int>(advanceAmountMinor.value);
-    }
     if (nextOn.present) {
       map['next_on'] = Variable<String>(nextOn.value);
     }
@@ -4578,6 +4570,9 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
     if (lastAt.present) {
       map['last_at'] = Variable<String>(lastAt.value);
     }
+    if (madeFrom.present) {
+      map['made_from'] = Variable<String>(madeFrom.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4600,7 +4595,6 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
           ..write('every: $every, ')
           ..write('day: $day, ')
           ..write('advanceDay: $advanceDay, ')
-          ..write('advanceAmountMinor: $advanceAmountMinor, ')
           ..write('nextOn: $nextOn, ')
           ..write('onDay: $onDay, ')
           ..write('reminder: $reminder, ')
@@ -4610,6 +4604,7 @@ class SchedulesCompanion extends UpdateCompanion<SchedulesData> {
           ..write('lastTransactionId: $lastTransactionId, ')
           ..write('lastImportId: $lastImportId, ')
           ..write('lastAt: $lastAt, ')
+          ..write('madeFrom: $madeFrom, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();

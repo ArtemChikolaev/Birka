@@ -1169,16 +1169,6 @@
             "dsl_features": []
           },
           {
-            "name": "advance_amount_minor",
-            "getter_name": "advanceAmountMinor",
-            "moor_type": "int",
-            "nullable": true,
-            "customConstraints": null,
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
             "name": "next_on",
             "getter_name": "nextOn",
             "moor_type": "string",
@@ -1262,6 +1252,16 @@
             "name": "last_at",
             "getter_name": "lastAt",
             "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "made_from",
+            "getter_name": "madeFrom",
+            "moor_type": "string",
             "nullable": true,
             "customConstraints": null,
             "default_dart": null,
@@ -1719,7 +1719,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"schedules\" (\"id\" TEXT NOT NULL, \"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"deleted_at\" TEXT NULL, \"kind\" TEXT NOT NULL, \"name\" TEXT NOT NULL, \"account_id\" TEXT NOT NULL REFERENCES accounts (id), \"to_account_id\" TEXT NULL REFERENCES accounts (id), \"category_id\" TEXT NULL REFERENCES categories (id), \"amount_minor\" INTEGER NOT NULL, \"every\" TEXT NOT NULL, \"day\" INTEGER NOT NULL, \"advance_day\" INTEGER NULL, \"advance_amount_minor\" INTEGER NULL, \"next_on\" TEXT NOT NULL, \"on_day\" TEXT NOT NULL, \"reminder\" TEXT NOT NULL, \"last_done\" TEXT NULL, \"last_from\" TEXT NULL, \"last_on\" TEXT NULL, \"last_transaction_id\" TEXT NULL, \"last_import_id\" TEXT NULL, \"last_at\" TEXT NULL, PRIMARY KEY (\"id\"));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"schedules\" (\"id\" TEXT NOT NULL, \"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"deleted_at\" TEXT NULL, \"kind\" TEXT NOT NULL, \"name\" TEXT NOT NULL, \"account_id\" TEXT NOT NULL REFERENCES accounts (id), \"to_account_id\" TEXT NULL REFERENCES accounts (id), \"category_id\" TEXT NULL REFERENCES categories (id), \"amount_minor\" INTEGER NOT NULL, \"every\" TEXT NOT NULL, \"day\" INTEGER NOT NULL, \"advance_day\" INTEGER NULL, \"next_on\" TEXT NOT NULL, \"on_day\" TEXT NOT NULL, \"reminder\" TEXT NOT NULL, \"last_done\" TEXT NULL, \"last_from\" TEXT NULL, \"last_on\" TEXT NULL, \"last_transaction_id\" TEXT NULL, \"last_import_id\" TEXT NULL, \"last_at\" TEXT NULL, \"made_from\" TEXT NULL, PRIMARY KEY (\"id\"));"
         }
       ]
     },

@@ -92,6 +92,13 @@ void main() {
 
     expect(state.offers, isFalse);
     expect(state.schedule?.id, plus.id);
+
+    // Its later times do not take it away, so no second payment is offered.
+    await ledger.postSchedule(plus.id);
+    await ledger.skipSchedule(plus.id);
+    final later = await card0(made);
+    expect(later.offers, isFalse);
+    expect(later.schedule?.id, plus.id);
   });
 
   test('one that a payment posted leads to it by its name', () async {

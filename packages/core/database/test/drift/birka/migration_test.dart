@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 
 import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
+import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -400,7 +401,7 @@ void main() {
   });
 
   test(
-    'a payment keeps its halves and has no advance of its own in v9',
+    'a payment keeps its rows and was made from no operation in v9',
     () async {
       const at = '2026-11-09T12:00:00.000Z';
       await verifier.testWithDataIntegrity(
@@ -426,6 +427,64 @@ void main() {
             ..insert(
               old.schedules,
               v8.SchedulesCompanion.insert(
+                id: 'cafe',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'expense',
+                name: 'Cafe',
+                accountId: 'card',
+                amountMinor: 35000,
+                every: 'month',
+                day: 2,
+                nextOn: '2026-12-02',
+                onDay: 'ask',
+                reminder: 'onDay',
+                lastDone: const Value('posted'),
+                lastFrom: const Value('2026-11-02'),
+                lastOn: const Value('2026-11-02'),
+                lastTransactionId: const Value('coffee'),
+                lastAt: const Value('2026-11-09T12:00:00.000Z'),
+              ),
+            );
+        },
+        validateItems: (migrated) async {
+          final schedule = await migrated
+              .select(migrated.schedules)
+              .getSingle();
+          expect(schedule.lastTransactionId, 'coffee');
+          expect(schedule.madeFrom, isNull);
+        },
+      );
+    },
+  );
+
+  test(
+    'a payment keeps its halves and has no advance of its own in v10',
+    () async {
+      const at = '2026-11-09T12:00:00.000Z';
+      await verifier.testWithDataIntegrity(
+        oldVersion: 9,
+        newVersion: 10,
+        createOld: v9.DatabaseAtV9.new,
+        createNew: v10.DatabaseAtV10.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch
+            ..insert(
+              old.accounts,
+              v9.AccountsCompanion.insert(
+                id: 'card',
+                createdAt: at,
+                updatedAt: at,
+                name: 'Card',
+                type: 'debit',
+                currency: 'RUB',
+                decimalDigits: 2,
+              ),
+            )
+            ..insert(
+              old.schedules,
+              v9.SchedulesCompanion.insert(
                 id: 'salary',
                 createdAt: at,
                 updatedAt: at,
@@ -439,6 +498,7 @@ void main() {
                 nextOn: '2026-11-20',
                 onDay: 'ask',
                 reminder: 'onDay',
+                madeFrom: const Value('pay'),
               ),
             );
         },
@@ -448,6 +508,7 @@ void main() {
               .getSingle();
           expect(schedule.amountMinor, 6000000);
           expect(schedule.advanceDay, 20);
+          expect(schedule.madeFrom, 'pay');
           expect(schedule.advanceAmountMinor, isNull);
         },
       );

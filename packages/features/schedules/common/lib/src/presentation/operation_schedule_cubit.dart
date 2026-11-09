@@ -38,12 +38,15 @@ final class OperationScheduleState {
 }
 
 /// The regular payment that operation [made] belongs to among [schedules]:
-/// the one whose last time it is, or, for one that a payment posted, the
-/// payment of its name on its account. Older posts of a renamed payment
-/// have none.
+/// the one made from it, the one whose last time it is, or, for one that a
+/// payment posted, the payment of its name on its account. Older posts of a
+/// renamed payment have none.
 Schedule? scheduleOf(Transaction made, List<Schedule> schedules) {
   for (final schedule in schedules) {
-    if (schedule.last?.transactionId == made.id) return schedule;
+    if (schedule.madeFrom == made.id ||
+        schedule.last?.transactionId == made.id) {
+      return schedule;
+    }
   }
   if (made.source != TransactionSource.recurring) return null;
   final account = made.entries.first.accountId;

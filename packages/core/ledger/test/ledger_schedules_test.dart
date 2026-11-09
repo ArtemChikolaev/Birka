@@ -132,9 +132,18 @@ void main() {
         transactionId: made,
       );
       expect(plus.last, last);
+      expect(plus.madeFrom, made);
       expect((await ledger.schedule(plus.id))?.last, last);
       // Nothing is due before its next time, and nothing posts twice.
       expect(await ledger.postDueSchedules(CivilDate(2026, 11, 18)), isEmpty);
+
+      // Later times and a change of the next one keep the transaction.
+      await ledger.postSchedule(plus.id);
+      final posted = (await ledger.schedule(plus.id))!;
+      expect(posted.last?.transactionId, isNot(made));
+      expect(posted.madeFrom, made);
+      await ledger.updateSchedule(posted.movedTo(CivilDate(2027, 1, 20)));
+      expect((await ledger.schedule(plus.id))?.madeFrom, made);
     });
 
     test('refuses to be made from a transaction that is not there or that '
