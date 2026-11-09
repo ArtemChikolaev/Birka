@@ -85,6 +85,79 @@ void main() {
     expect(saved.next, CivilDate(2026, 11, 20));
   });
 
+  testWidgets('a salary gives its advance a sum of its own in a sheet that '
+      'says what the salary brings, and takes the half back', (tester) async {
+    final repository = halvesRepository();
+    await pump(tester, repository, id: 'pay');
+
+    expect(find.text('Сумма аванса'), findsOneWidget);
+    expect(find.text('половина'), findsOneWidget);
+
+    await tester.tap(find.text('Сумма аванса'));
+    await tester.pumpAndSettle();
+    expect(find.text('₽'), findsOneWidget);
+    expect(
+      find.text('Зарплатой придёт остальное: ${nb('60 000 ₽')} 5-го.'),
+      findsOneWidget,
+    );
+    expect(find.text('Пополам · ${nb('60 000 ₽')}'), findsOneWidget);
+
+    await tester.enterText(find.byType(EditableText), '40 000');
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Зарплатой придёт остальное: ${nb('80 000 ₽')} 5-го.'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('ГОТОВО'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(nb('40 000 ₽')), findsOneWidget);
+    expect(
+      find.text('аванс ${nb('40 000 ₽')} и зарплата ${nb('80 000 ₽')}'),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        'Аванс ${nb('40 000 ₽')} 20-го, зарплата ${nb('80 000 ₽')} 5-го.',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('СОХРАНИТЬ'));
+    await tester.pump();
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    final saved = repository.updated.single;
+    expect(saved.amount, rub(80000));
+    expect(saved.advanceAmount, rub(40000));
+  });
+
+  testWidgets('the chip of the sheet gives the advance back its half', (
+    tester,
+  ) async {
+    final repository = halvesRepository();
+    await pump(tester, repository, id: 'pay');
+    await tester.tap(find.text('Сумма аванса'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(EditableText), '40 000');
+    await tester.tap(find.text('ГОТОВО'));
+    await tester.pumpAndSettle();
+    expect(find.text(nb('40 000 ₽')), findsOneWidget);
+
+    await tester.tap(find.text('Сумма аванса'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Пополам · ${nb('60 000 ₽')}'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('ГОТОВО'));
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+
+    expect(
+      find.text('по ${nb('60 000 ₽')} авансом и зарплатой'),
+      findsOneWidget,
+    );
+    expect(find.text('Пополам: аванс 20-го, зарплата 5-го.'), findsOneWidget);
+  });
+
   testWidgets('a new payment takes a name and an amount and saves', (
     tester,
   ) async {

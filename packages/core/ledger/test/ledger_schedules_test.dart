@@ -312,6 +312,59 @@ void main() {
       );
     });
 
+    test('with an advance of its own posts it on the day of the advance and '
+        'the rest on its own day', () async {
+      final pay = await ledger.addSchedule(
+        kind: TransactionKind.income,
+        name: 'Salary',
+        accountId: card.id,
+        amount: rub(8000000),
+        advanceAmount: rub(4000000),
+        every: ScheduleEvery.month,
+        next: CivilDate(2026, 11, 20),
+        day: 5,
+        advanceDay: 20,
+      );
+
+      expect(pay.amountOn(CivilDate(2026, 11, 20)), rub(4000000));
+      expect(pay.amountOn(CivilDate(2026, 12, 5)), rub(8000000));
+      expect(pay.monthAmount, rub(12000000));
+      expect(await ledger.schedule(pay.id), pay);
+      final before = await ledger.balance(card.id);
+      await ledger.postSchedule(pay.id);
+      expect(await ledger.balance(card.id), before + rub(4000000));
+      await ledger.postSchedule(pay.id);
+      expect(await ledger.balance(card.id), before + rub(12000000));
+    });
+
+    test(
+      'refuses an advance of its own without its day or of nothing',
+      () async {
+        Future<Schedule> add({required Money advance, int? advanceDay = 20}) =>
+            ledger.addSchedule(
+              kind: TransactionKind.income,
+              name: 'Salary',
+              accountId: card.id,
+              amount: rub(8000000),
+              advanceAmount: advance,
+              every: ScheduleEvery.month,
+              next: CivilDate(2026, 12, 5),
+              advanceDay: advanceDay,
+            );
+
+        await expectLater(
+          add(advanceDay: null, advance: rub(4000000)),
+          throwsLedger(),
+        );
+        await expectLater(add(advance: rub(0)), throwsLedger());
+        await expectLater(
+          add(advance: Money(400000, Currency.usd)),
+          throwsLedger(),
+        );
+        expect(await ledger.watchSchedules().first, isEmpty);
+      },
+    );
+
     test('with an advance late in the month keeps to the last day of a short '
         'one', () async {
       final salary = await ledger.addSchedule(

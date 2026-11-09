@@ -21,6 +21,7 @@ class BirkaTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.inputFormatters,
     this.textStyle,
+    this.suffix,
     super.key,
   });
 
@@ -61,11 +62,15 @@ class BirkaTextField extends StatelessWidget {
   /// amount.
   final TextStyle? textStyle;
 
+  /// What stands at the end of the field, such as the sign of a currency.
+  final String? suffix;
+
   @override
   Widget build(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
     final error = this.error;
+    final suffix = this.suffix;
     final style = textStyle ?? styles.body;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -84,21 +89,31 @@ class BirkaTextField extends StatelessWidget {
             horizontal: BirkaTokens.spaceMd,
             vertical: BirkaTokens.spaceSm,
           ),
-          child: TextField(
-            controller: controller,
-            onChanged: onChanged,
-            onSubmitted: onSubmitted,
-            autofocus: autofocus,
-            keyboardType: keyboardType,
-            textInputAction: textInputAction,
-            textCapitalization: textCapitalization,
-            inputFormatters: inputFormatters,
-            style: style.copyWith(color: colors.text),
-            cursorColor: colors.accent,
-            decoration: InputDecoration.collapsed(
-              hintText: hint,
-              hintStyle: style.copyWith(color: colors.textSubtle),
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  onChanged: onChanged,
+                  onSubmitted: onSubmitted,
+                  autofocus: autofocus,
+                  keyboardType: keyboardType,
+                  textInputAction: textInputAction,
+                  textCapitalization: textCapitalization,
+                  inputFormatters: inputFormatters,
+                  style: style.copyWith(color: colors.text),
+                  cursorColor: colors.accent,
+                  decoration: InputDecoration.collapsed(
+                    hintText: hint,
+                    hintStyle: style.copyWith(color: colors.textSubtle),
+                  ),
+                ),
+              ),
+              if (suffix != null) ...[
+                const SizedBox(width: BirkaTokens.spaceXs),
+                Text(suffix, style: style.copyWith(color: colors.textSubtle)),
+              ],
+            ],
           ),
         ),
         if (error != null) ...[

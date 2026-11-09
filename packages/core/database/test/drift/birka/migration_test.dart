@@ -15,6 +15,7 @@ import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
 import 'generated/schema_v8.dart' as v8;
+import 'generated/schema_v9.dart' as v9;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -397,4 +398,59 @@ void main() {
       },
     );
   });
+
+  test(
+    'a payment keeps its halves and has no advance of its own in v9',
+    () async {
+      const at = '2026-11-09T12:00:00.000Z';
+      await verifier.testWithDataIntegrity(
+        oldVersion: 8,
+        newVersion: 9,
+        createOld: v8.DatabaseAtV8.new,
+        createNew: v9.DatabaseAtV9.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch
+            ..insert(
+              old.accounts,
+              v8.AccountsCompanion.insert(
+                id: 'card',
+                createdAt: at,
+                updatedAt: at,
+                name: 'Card',
+                type: 'debit',
+                currency: 'RUB',
+                decimalDigits: 2,
+              ),
+            )
+            ..insert(
+              old.schedules,
+              v8.SchedulesCompanion.insert(
+                id: 'salary',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'income',
+                name: 'Salary',
+                accountId: 'card',
+                amountMinor: 6000000,
+                every: 'month',
+                day: 5,
+                advanceDay: const Value(20),
+                nextOn: '2026-11-20',
+                onDay: 'ask',
+                reminder: 'onDay',
+              ),
+            );
+        },
+        validateItems: (migrated) async {
+          final schedule = await migrated
+              .select(migrated.schedules)
+              .getSingle();
+          expect(schedule.amountMinor, 6000000);
+          expect(schedule.advanceDay, 20);
+          expect(schedule.advanceAmountMinor, isNull);
+        },
+      );
+    },
+  );
 }

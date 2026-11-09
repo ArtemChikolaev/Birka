@@ -2625,12 +2625,25 @@ class Translations$schedules$en {
   String partsTwo({required Object advance, required Object day}) =>
       'Half and half: the advance on day ${advance}, the salary on day ${day}.';
 
+  /// en: 'The advance of $advanceAmount on day $advance, the salary of $restAmount on day $day.'
+  String partsOwn({
+    required Object advanceAmount,
+    required Object advance,
+    required Object restAmount,
+    required Object day,
+  }) =>
+      'The advance of ${advanceAmount} on day ${advance}, the salary of ${restAmount} on day ${day}.';
+
   /// en: 'Amount a month'
   String get amountMonthly => 'Amount a month';
 
   /// en: '$amount as the advance and as the salary'
   String halves({required Object amount}) =>
       '${amount} as the advance and as the salary';
+
+  /// en: 'the advance of $advance and the salary of $rest'
+  String halvesOwn({required Object advance, required Object rest}) =>
+      'the advance of ${advance} and the salary of ${rest}';
 
   /// en: 'The sum does not split into equal halves: change the cents'
   String get halvesUneven =>
@@ -2641,6 +2654,19 @@ class Translations$schedules$en {
 
   /// en: 'Salary'
   String get restDay => 'Salary';
+
+  /// en: 'Advance amount'
+  String get advanceAmount => 'Advance amount';
+
+  /// en: 'half'
+  String get advanceHalf => 'half';
+
+  /// en: 'The rest comes with the salary: $amount on day $day.'
+  String advanceRest({required Object amount, required Object day}) =>
+      'The rest comes with the salary: ${amount} on day ${day}.';
+
+  /// en: 'Half · $amount'
+  String advanceHalfChip({required Object amount}) => 'Half · ${amount}';
 
   /// en: 'advance, $date'
   String nextAdvance({required Object date}) => 'advance, ${date}';
@@ -4884,14 +4910,32 @@ extension on Translations {
           'schedules.partsTwo' =>
             ({required Object advance, required Object day}) =>
                 'Half and half: the advance on day ${advance}, the salary on day ${day}.',
+          'schedules.partsOwn' =>
+            ({
+              required Object advanceAmount,
+              required Object advance,
+              required Object restAmount,
+              required Object day,
+            }) =>
+                'The advance of ${advanceAmount} on day ${advance}, the salary of ${restAmount} on day ${day}.',
           'schedules.amountMonthly' => 'Amount a month',
           'schedules.halves' =>
             ({required Object amount}) =>
                 '${amount} as the advance and as the salary',
+          'schedules.halvesOwn' =>
+            ({required Object advance, required Object rest}) =>
+                'the advance of ${advance} and the salary of ${rest}',
           'schedules.halvesUneven' =>
             'The sum does not split into equal halves: change the cents',
           'schedules.advanceDay' => 'Advance',
           'schedules.restDay' => 'Salary',
+          'schedules.advanceAmount' => 'Advance amount',
+          'schedules.advanceHalf' => 'half',
+          'schedules.advanceRest' =>
+            ({required Object amount, required Object day}) =>
+                'The rest comes with the salary: ${amount} on day ${day}.',
+          'schedules.advanceHalfChip' =>
+            ({required Object amount}) => 'Half · ${amount}',
           'schedules.nextAdvance' =>
             ({required Object date}) => 'advance, ${date}',
           'schedules.monthStartHint' =>
@@ -5117,15 +5161,15 @@ extension on Translations {
           'transactions.sources.notification' => 'From a notification',
           'transactions.sources.recurring' => 'Recurring',
           'transactions.sources.bank' => 'From the bank',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.keys.point' => 'Point',
           'transactions.keys.add' => 'Plus',
           'transactions.keys.subtract' => 'Minus',
           'transactions.keys.multiply' => 'Times',
           'transactions.keys.divide' => 'Divided by',
           'transactions.keys.backspace' => 'Erase',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.dayOfMonth' =>
             ({required Object month, required Object day}) => '${month} ${day}',
           'transactions.months.0' => 'January',

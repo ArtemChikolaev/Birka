@@ -511,9 +511,10 @@ List<FoundSchedule> _found(
     IntoAccount(:final account) => account.id,
     _ => null,
   };
-  bool fits(PlannedOperation operation, Schedule schedule) =>
+  // The amount of the time, which is its own for an advance of its own.
+  bool fits(PlannedOperation operation, Schedule schedule, CivilDate time) =>
       operation.kind == schedule.kind &&
-      operation.amount == schedule.amount &&
+      operation.amount == schedule.amountOn(time) &&
       switch (schedule.kind) {
         TransactionKind.expense =>
           accountOf(operation.from) == schedule.accountId,
@@ -521,7 +522,7 @@ List<FoundSchedule> _found(
         TransactionKind.transfer =>
           accountOf(operation.from) == schedule.accountId &&
               accountOf(operation.to) == schedule.toAccountId &&
-              operation.received == schedule.amount,
+              operation.received == schedule.amountOn(time),
         TransactionKind.adjustment => false,
       };
   final taken = <PlannedOperation>{};
@@ -532,7 +533,9 @@ List<FoundSchedule> _found(
       PlannedOperation? best;
       var bestScore = -1;
       for (final operation in operations) {
-        if (taken.contains(operation) || !fits(operation, schedule)) continue;
+        if (taken.contains(operation) || !fits(operation, schedule, time)) {
+          continue;
+        }
         final days = _daysBetween(operation.row.date.day, time);
         if (days.abs() > 1) continue;
         final similar = _similar(noteOf(operation.row), schedule.name);

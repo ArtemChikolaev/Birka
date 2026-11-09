@@ -245,6 +245,11 @@ class _Form extends StatelessWidget {
                                 _pickDay(context, advance: true),
                               ),
                             ),
+                          if (state.halves)
+                            _AdvanceAmount(
+                              key: const ValueKey('advanceAmount'),
+                              state: state,
+                            ),
                         ],
                       ),
                       _Line(
@@ -545,6 +550,7 @@ class _Amount extends StatelessWidget {
     final colors = BirkaColors.of(context);
     final amount = state.amount;
     final part = state.part;
+    final advance = state.advanceAmount;
     final text = amount == null
         ? '0'
         : switch (state.kind) {
@@ -579,12 +585,21 @@ class _Amount extends StatelessWidget {
                   Center(
                     key: const ValueKey('halves'),
                     child: FadingText(
-                      part == null
-                          ? t.schedules.halvesUneven
-                          : HiddenAmounts.mask(
-                              context,
-                              t.schedules.halves(amount: formatMoney(part)),
+                      switch ((part, advance)) {
+                        (final part?, final advance?) when state.ownAdvance =>
+                          HiddenAmounts.mask(
+                            context,
+                            t.schedules.halvesOwn(
+                              advance: formatMoney(advance),
+                              rest: formatMoney(part),
                             ),
+                          ),
+                        (final part?, _) => HiddenAmounts.mask(
+                          context,
+                          t.schedules.halves(amount: formatMoney(part)),
+                        ),
+                        _ => t.schedules.halvesUneven,
+                      },
                       textAlign: TextAlign.center,
                       style: styles.caption.copyWith(
                         color: part == null
@@ -693,9 +708,23 @@ class _Parts extends StatelessWidget {
           ),
           const SizedBox(height: BirkaTokens.spaceSm),
           FadingText(
-            advance != null && state.halves
-                ? t.schedules.partsTwo(advance: advance, day: state.day)
-                : t.schedules.partsOne,
+            switch ((advance, state.advanceAmount, state.part)) {
+              (final advance?, final own?, final rest?) when state.ownAdvance =>
+                HiddenAmounts.mask(
+                  context,
+                  t.schedules.partsOwn(
+                    advanceAmount: formatMoney(own),
+                    advance: advance,
+                    restAmount: formatMoney(rest),
+                    day: state.day,
+                  ),
+                ),
+              (final advance?, _, _) when state.halves => t.schedules.partsTwo(
+                advance: advance,
+                day: state.day,
+              ),
+              _ => t.schedules.partsOne,
+            },
             style: styles.caption.copyWith(color: colors.textSecondary),
           ),
         ],
@@ -764,12 +793,17 @@ class _Line extends StatelessWidget {
     required this.label,
     required this.value,
     this.onTap,
+    this.quiet = false,
     super.key,
   });
 
   final String label;
   final String value;
   final VoidCallback? onTap;
+
+  /// Whether the value is a default rather than what the person set, such
+  /// as «половина» of an advance.
+  final bool quiet;
 
   @override
   Widget build(BuildContext context) {
@@ -798,7 +832,9 @@ class _Line extends StatelessWidget {
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: styles.bodyStrong.copyWith(color: colors.text),
+                  style: styles.bodyStrong.copyWith(
+                    color: quiet ? colors.textMuted : colors.text,
+                  ),
                 ),
               ),
               if (onTap != null) ...[
@@ -813,6 +849,125 @@ class _Line extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The sum of the advance of a salary in halves, as the board of the advance
+/// draws it: «половина» until the person gives it a sum of its own in a
+/// sheet, which says what the salary brings then and offers the half back.
+class _AdvanceAmount extends StatelessWidget {
+  const _AdvanceAmount({required this.state, super.key});
+
+  final ScheduleFormState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final advance = state.advanceAmount;
+    final value = state.ownAdvance && advance != null
+        ? HiddenAmounts.mask(context, formatMoney(advance))
+        : t.schedules.advanceHalf;
+    return _Lit(
+      value: value,
+      child: _Line(
+        label: t.schedules.advanceAmount,
+        value: value,
+        quiet: !state.ownAdvance,
+        onTap: state.amount == null ? null : () => unawaited(_edit(context)),
+      ),
+    );
+  }
+
+  Future<void> _edit(BuildContext context) async {
+    final cubit = context.read<ScheduleFormCubit>();
+    final month = state.amount;
+    if (month == null) return;
+    final half = state.half;
+    final own = state.ownAdvance ? state.advanceAmount : null;
+    String mask(String text) => HiddenAmounts.mask(context, text);
+    final typed = await showFieldSheet(
+      context,
+      label: t.schedules.advanceAmount,
+      done: t.schedules.done,
+      initial: own == null ? '' : typedAmount(own),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      suffix: currencySign(month.currency),
+      // What the salary brings after the advance that is typed, or after half.
+      note: (text) {
+        final typed = amountTyped(text, month.currency);
+        final advance = typed == null || typed.isZero ? half : typed;
+        final rest = advance == null ? null : month - advance;
+        return rest == null || !rest.isPositive
+            ? ''
+            : mask(
+                t.schedules.advanceRest(
+                  amount: formatMoney(rest),
+                  day: state.day,
+                ),
+              );
+      },
+      suggestion: half == null
+          ? null
+          : (
+              label: mask(
+                t.schedules.advanceHalfChip(amount: formatMoney(half)),
+              ),
+              value: typedAmount(half),
+            ),
+    );
+    if (typed == null) return;
+    final money = amountTyped(typed, month.currency);
+    if (money == null) return;
+    cubit.advanceAmountChanged(money.isZero ? null : money.minorUnits);
+  }
+}
+
+/// Lights its row up for a moment when [value] changes, as an edited row of
+/// a list does, so that the row says the sheet changed it.
+class _Lit extends StatefulWidget {
+  const _Lit({required this.value, required this.child});
+
+  final String value;
+  final Widget child;
+
+  @override
+  State<_Lit> createState() => _LitState();
+}
+
+class _LitState extends State<_Lit> {
+  bool _lit = false;
+  Timer? _timer;
+
+  @override
+  void didUpdateWidget(_Lit old) {
+    super.didUpdateWidget(old);
+    if (old.value == widget.value || BirkaMotion.reduced(context)) return;
+    _timer?.cancel();
+    setState(() => _lit = true);
+    _timer = Timer(BirkaMotion.slow * 2, () {
+      if (mounted) setState(() => _lit = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = BirkaColors.of(context).accent;
+    return AnimatedContainer(
+      duration: BirkaMotion.slow,
+      curve: BirkaMotion.fadeCurve,
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: _lit ? 0.10 : 0),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(BirkaTokens.radiusSm),
+        ),
+      ),
+      child: widget.child,
     );
   }
 }

@@ -832,7 +832,8 @@ final class LedgerRepository {
   /// Adds a regular payment that first comes on [next] and then again every
   /// [every], on [day] of the month, which is the day of [next] unless said
   /// otherwise (ADR 0023). A monthly one with [advanceDay] comes twice a
-  /// month: its advance on that day and the rest on [day]. An expense or an
+  /// month: its advance on that day and the rest on [day], each with
+  /// [amount] unless the advance has [advanceAmount]. An expense or an
   /// income without [categoryId] gives transactions that wait in the inbox
   /// for one; a transfer goes to [toAccountId] in the same currency.
   ///
@@ -848,6 +849,7 @@ final class LedgerRepository {
     required CivilDate next,
     int? day,
     int? advanceDay,
+    Money? advanceAmount,
     String? toAccountId,
     String? categoryId,
     ScheduleOnDay onDay = ScheduleOnDay.ask,
@@ -866,6 +868,7 @@ final class LedgerRepository {
         every: every,
         day: day ?? next.day,
         advanceDay: advanceDay,
+        advanceAmount: advanceAmount,
         next: next,
         onDay: onDay,
         reminder: reminder,
@@ -888,6 +891,7 @@ final class LedgerRepository {
         every: every.name,
         day: schedule.day,
         advanceDay: Value(advanceDay),
+        advanceAmountMinor: Value(advanceAmount?.minorUnits),
         nextOn: next.toString(),
         onDay: onDay.name,
         reminder: reminder.name,
@@ -896,22 +900,7 @@ final class LedgerRepository {
           .into(_db.schedules)
           .insert(last == null ? values : _withLast(values, last));
       await _log(_db.schedules, schedule.id, 'insert', at);
-      return Schedule(
-        id: schedule.id,
-        kind: kind,
-        name: name,
-        accountId: accountId,
-        toAccountId: toAccountId,
-        categoryId: categoryId,
-        amount: amount,
-        every: every,
-        day: schedule.day,
-        advanceDay: advanceDay,
-        next: next,
-        onDay: onDay,
-        reminder: reminder,
-        last: last,
-      );
+      return last == null ? schedule : schedule.movedTo(next, last: last);
     });
   }
 
@@ -964,6 +953,7 @@ final class LedgerRepository {
         every: Value(schedule.every.name),
         day: Value(schedule.day),
         advanceDay: Value(schedule.advanceDay),
+        advanceAmountMinor: Value(schedule.advanceAmount?.minorUnits),
         nextOn: Value(schedule.next.toString()),
         onDay: Value(schedule.onDay.name),
         reminder: Value(schedule.reminder.name),
@@ -1022,7 +1012,11 @@ final class LedgerRepository {
     return _db.transaction(() async {
       final schedule = await _scheduleOrThrow(id);
       final transactionId = await record(
-        _draftOf(schedule, amount ?? schedule.amount, on ?? schedule.next),
+        _draftOf(
+          schedule,
+          amount ?? schedule.amountOn(schedule.next),
+          on ?? schedule.next,
+        ),
       );
       await _done(
         schedule,
@@ -1086,7 +1080,7 @@ final class LedgerRepository {
         String? transactionId;
         for (final time in schedule.timesUntil(today)) {
           transactionId = await record(
-            _draftOf(schedule, schedule.amount, time),
+            _draftOf(schedule, schedule.amountOn(time), time),
           );
           posted.add(transactionId);
           through = time;
@@ -1342,7 +1336,7 @@ final class LedgerRepository {
     timeOn: Value(time.toString()),
     name: Value(schedule.name),
     kind: Value(schedule.kind.name),
-    amountMinor: Value(schedule.amount.minorUnits),
+    amountMinor: Value(schedule.amountOn(time).minorUnits),
     currency: Value(schedule.amount.currency.code),
     decimalDigits: Value(schedule.amount.currency.decimalDigits),
     advance: Value(schedule.isAdvance(time)),
@@ -1481,6 +1475,22 @@ final class LedgerRepository {
         throw const LedgerException('Only a monthly payment has an advance');
       }
     }
+    if (schedule.advanceAmount case final advance?) {
+      if (schedule.advanceDay == null) {
+        throw const LedgerException(
+          'An amount of an advance needs the day of the advance',
+        );
+      }
+      if (!advance.isPositive) {
+        throw const LedgerException('An advance moves a positive amount');
+      }
+      if (advance.currency != schedule.amount.currency) {
+        throw LedgerException(
+          'An advance in ${advance.currency} of a payment in '
+          '${schedule.amount.currency}',
+        );
+      }
+    }
     final account = await this.account(schedule.accountId);
     if (account == null) {
       throw LedgerException('No account ${schedule.accountId}');
@@ -1549,6 +1559,13 @@ final class LedgerRepository {
       every: ScheduleEvery.values.byName(schedule.every),
       day: schedule.day,
       advanceDay: schedule.advanceDay,
+      advanceAmount: switch (schedule.advanceAmountMinor) {
+        final minor? => Money(
+          minor,
+          _currency(account.currency, account.decimalDigits),
+        ),
+        null => null,
+      },
       next: CivilDate.parse(schedule.nextOn),
       onDay: ScheduleOnDay.values.byName(schedule.onDay),
       reminder: ScheduleReminder.values.byName(schedule.reminder),

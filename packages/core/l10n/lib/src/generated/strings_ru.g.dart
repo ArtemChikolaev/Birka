@@ -2197,15 +2197,35 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String partsTwo({required Object advance, required Object day}) =>
       'Пополам: аванс ${advance}-го, зарплата ${day}-го.';
   @override
+  String partsOwn({
+    required Object advanceAmount,
+    required Object advance,
+    required Object restAmount,
+    required Object day,
+  }) =>
+      'Аванс ${advanceAmount} ${advance}-го, зарплата ${restAmount} ${day}-го.';
+  @override
   String get amountMonthly => 'Сумма в месяц';
   @override
   String halves({required Object amount}) => 'по ${amount} авансом и зарплатой';
+  @override
+  String halvesOwn({required Object advance, required Object rest}) =>
+      'аванс ${advance} и зарплата ${rest}';
   @override
   String get halvesUneven => 'Сумма не делится пополам — поправьте копейки';
   @override
   String get advanceDay => 'Аванс';
   @override
   String get restDay => 'Зарплата';
+  @override
+  String get advanceAmount => 'Сумма аванса';
+  @override
+  String get advanceHalf => 'половина';
+  @override
+  String advanceRest({required Object amount, required Object day}) =>
+      'Зарплатой придёт остальное: ${amount} ${day}-го.';
+  @override
+  String advanceHalfChip({required Object amount}) => 'Пополам · ${amount}';
   @override
   String nextAdvance({required Object date}) => 'аванс, ${date}';
   @override
@@ -4364,13 +4384,31 @@ extension on TranslationsRu {
           'schedules.partsTwo' =>
             ({required Object advance, required Object day}) =>
                 'Пополам: аванс ${advance}-го, зарплата ${day}-го.',
+          'schedules.partsOwn' =>
+            ({
+              required Object advanceAmount,
+              required Object advance,
+              required Object restAmount,
+              required Object day,
+            }) =>
+                'Аванс ${advanceAmount} ${advance}-го, зарплата ${restAmount} ${day}-го.',
           'schedules.amountMonthly' => 'Сумма в месяц',
           'schedules.halves' =>
             ({required Object amount}) => 'по ${amount} авансом и зарплатой',
+          'schedules.halvesOwn' =>
+            ({required Object advance, required Object rest}) =>
+                'аванс ${advance} и зарплата ${rest}',
           'schedules.halvesUneven' =>
             'Сумма не делится пополам — поправьте копейки',
           'schedules.advanceDay' => 'Аванс',
           'schedules.restDay' => 'Зарплата',
+          'schedules.advanceAmount' => 'Сумма аванса',
+          'schedules.advanceHalf' => 'половина',
+          'schedules.advanceRest' =>
+            ({required Object amount, required Object day}) =>
+                'Зарплатой придёт остальное: ${amount} ${day}-го.',
+          'schedules.advanceHalfChip' =>
+            ({required Object amount}) => 'Пополам · ${amount}',
           'schedules.nextAdvance' =>
             ({required Object date}) => 'аванс, ${date}',
           'schedules.monthStartHint' =>
@@ -4607,15 +4645,15 @@ extension on TranslationsRu {
           'transactions.sources.notification' => 'Из уведомления',
           'transactions.sources.recurring' => 'Регулярная',
           'transactions.sources.bank' => 'Из банка',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.keys.point' => 'Запятая',
           'transactions.keys.add' => 'Плюс',
           'transactions.keys.subtract' => 'Минус',
           'transactions.keys.multiply' => 'Умножить',
           'transactions.keys.divide' => 'Разделить',
           'transactions.keys.backspace' => 'Стереть',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.dayOfMonth' =>
             ({required Object day, required Object month}) => '${day} ${month}',
           'transactions.months.0' => 'января',

@@ -8,6 +8,11 @@ const _minus = '\u2212';
 /// system can draw. The rest show their code.
 const _symbols = {'RUB': '₽', 'USD': r'$', 'EUR': '€', 'GBP': '£', 'JPY': '¥'};
 
+/// The sign of [currency], such as `₽`, or its code when it has no sign of
+/// its own, as at the end of a field that takes an amount.
+String currencySign(Currency currency) =>
+    _symbols[currency.code] ?? currency.code;
+
 /// The mark between the whole part and the fraction in the current language.
 String get decimalSeparator =>
     LocaleSettings.currentLocale == AppLocale.ru ? ',' : '.';

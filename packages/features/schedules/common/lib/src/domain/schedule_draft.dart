@@ -15,6 +15,7 @@ final class ScheduleDraft {
     required this.next,
     this.day,
     this.advanceDay,
+    this.advanceAmount,
     this.toAccountId,
     this.categoryId,
     this.onDay = ScheduleOnDay.ask,
@@ -37,7 +38,8 @@ final class ScheduleDraft {
   /// The category, or `null` to let each transaction wait in the inbox.
   final String? categoryId;
 
-  /// The positive amount in the currency of [accountId].
+  /// The positive amount in the currency of [accountId]: of each time, or of
+  /// the rest of a salary whose advance has [advanceAmount].
   final Money amount;
 
   /// How often it comes.
@@ -50,8 +52,11 @@ final class ScheduleDraft {
   /// Its day of the month, when its first time is its advance.
   final int? day;
 
-  /// The day of the month of its advance, for a salary paid in halves.
+  /// The day of the month of its advance, for a salary paid twice a month.
   final int? advanceDay;
+
+  /// The amount of its advance, when it is not half of the month.
+  final Money? advanceAmount;
 
   /// What its day does.
   final ScheduleOnDay onDay;

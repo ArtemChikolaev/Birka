@@ -165,6 +165,12 @@ void main() {
     });
   });
 
+  test('a currency has its sign, or else its code', () {
+    expect(currencySign(Currency.rub), '₽');
+    expect(currencySign(Currency.usd), r'$');
+    expect(currencySign(Currency.iso('AED')), 'AED');
+  });
+
   test('a count groups its digits as the language does', () {
     expect(formatCount(1248), '1,248');
     expect(formatCount(24), '24');

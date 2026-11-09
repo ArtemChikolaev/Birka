@@ -110,8 +110,10 @@ final class SpendingPlan {
       0,
       (sum, row) => sum + row.balance.minorUnits,
     );
-    int sumOf(Iterable<Occurrence> times) =>
-        times.fold(0, (sum, it) => sum + it.schedule.amount.minorUnits);
+    int sumOf(Iterable<Occurrence> times) => times.fold(
+      0,
+      (sum, it) => sum + it.schedule.amountOn(it.on).minorUnits,
+    );
     // The days before the first advance live on what the accounts hold.
     final first = advances.firstOrNull?.on;
     final before = first != null && first.compareTo(today) > 0

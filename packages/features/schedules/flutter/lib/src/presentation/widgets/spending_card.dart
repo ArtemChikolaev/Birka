@@ -280,7 +280,10 @@ class _Upcoming extends StatelessWidget {
             ),
           ),
           Text(
-            HiddenAmounts.mask(context, scheduleAmount(schedule)),
+            HiddenAmounts.mask(
+              context,
+              occurrenceAmount(schedule, occurrence.on),
+            ),
             style: styles.bodyStrong.copyWith(
               color: scheduleInk(context, schedule),
             ),

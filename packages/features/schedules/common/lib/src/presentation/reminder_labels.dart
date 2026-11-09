@@ -34,7 +34,7 @@ ReminderNote reminderNote(PlannedReminder reminder, {required bool sums}) {
 /// [sums], its amount, as a reminder and an event of the calendar say it.
 String reminderTitle(Schedule schedule, CivilDate on, {required bool sums}) {
   final name = occurrenceName(schedule, on);
-  return sums ? '$name · ${reminderAmount(schedule)}' : name;
+  return sums ? '$name · ${reminderAmount(schedule, on)}' : name;
 }
 
 /// The events of the calendar «Birka» for [schedules] (ADR 0025): one for each
@@ -74,10 +74,10 @@ List<(CivilDate, int)> _series(Schedule schedule) {
   return [(advanceOn, advance), (restOn, schedule.day)];
 }
 
-/// `45 000 ₽` or `+60 000 ₽`: the amount of a time of [schedule] in a
-/// reminder, with a sign only for what comes in.
-String reminderAmount(Schedule schedule) => paymentAmount(
-  schedule.amount,
+/// `45 000 ₽` or `+60 000 ₽`: the amount of the time [on] of [schedule] in
+/// a reminder, with a sign only for what comes in.
+String reminderAmount(Schedule schedule, CivilDate on) => paymentAmount(
+  schedule.amountOn(on),
   income: schedule.kind == TransactionKind.income,
 );
 
