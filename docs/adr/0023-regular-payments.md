@@ -196,6 +196,10 @@
     keeps a find away on this device, outside the copy, and «Вернуть» on the
     toast brings it back. What the form changes comes into the page once
     the sheet has gone down, so the find leaves in front of the person.
+    The result of an import on the phone asks the host for the finds once
+    the statement came in and shows «Похоже на регулярные · 3» with their
+    names a moment after the result, leading to the page; the import knows
+    nothing of the rules of a find (`showImportSheet(repeats:)`).
 
 ## Consequences
 

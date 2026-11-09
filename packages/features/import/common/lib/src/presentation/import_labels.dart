@@ -326,8 +326,12 @@ String leftLine({
 /// The names of the regular payments whose times a statement brings, as the
 /// import says them, such as «Аренда и Интернет», or «Аренда, Интернет и
 /// ещё 2» for more than three.
-String foundNames(List<FoundSchedule> found) {
-  final names = [for (final payment in found) payment.schedule.name];
+String foundNames(List<FoundSchedule> found) =>
+    namesLine([for (final payment in found) payment.schedule.name]);
+
+/// [names] as the import says them: «Яндекс Плюс, ЖКУ Москва и Облако
+/// Mail.ru», or the first two «и ещё 2» for more than three.
+String namesLine(List<String> names) {
   if (names.length > 3) {
     final more = t.imports.andMore(count: formatCount(names.length - 2));
     return '${names.take(2).join(', ')} $more';

@@ -1532,6 +1532,9 @@ class Translations$imports$en {
   String foundDoneText({required Object names}) =>
       '${names}, from the statement';
 
+  /// en: 'Looks regular · $count'
+  String repeatsTitle({required Object count}) => 'Looks regular · ${count}';
+
   /// en: '$names and $last'
   String namesAnd({required Object names, required Object last}) =>
       '${names} and ${last}';
@@ -4356,6 +4359,8 @@ extension on Translations {
                 ),
           'imports.foundDoneText' =>
             ({required Object names}) => '${names}, from the statement',
+          'imports.repeatsTitle' =>
+            ({required Object count}) => 'Looks regular · ${count}',
           'imports.namesAnd' =>
             ({required Object names, required Object last}) =>
                 '${names} and ${last}',
@@ -5275,10 +5280,10 @@ extension on Translations {
           'transactions.failedToReadOperations' =>
             'Could not read the operations.',
           'transactions.failedToDelete' => 'Could not delete. Try again.',
-          'transactions.operation' => 'Operation',
           _ => null,
         } ??
         switch (path) {
+          'transactions.operation' => 'Operation',
           'transactions.edit' => 'Edit',
           'transactions.editOperation' => 'Edit operation',
           'transactions.repeat' => 'Repeat',

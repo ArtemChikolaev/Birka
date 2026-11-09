@@ -16,13 +16,17 @@ import 'package:ledger/ledger.dart';
 /// sheet from the bottom of the screen, as the board of the phone draws it
 /// (ADR 0021). [cubit] makes the import, which closes with the sheet; what
 /// waits in the inbox after it leads to [onInbox], and the regular payments
-/// it brought to [onSchedules], when the host has them.
+/// it brought to [onSchedules], when the host has them. Once the import came
+/// in, [repeats] gives the names of the operations that came every month
+/// and have no payment yet, which lead to [onSchedules] too (ADR 0023, point
+/// 23).
 Future<void> showImportSheet(
   BuildContext context, {
   required ImportCubit Function() cubit,
   required StatementFiles files,
   VoidCallback? onInbox,
   VoidCallback? onSchedules,
+  Future<List<String>> Function()? repeats,
 }) async {
   final file = await files.choose();
   if (file == null || !context.mounted) return;
@@ -42,6 +46,7 @@ Future<void> showImportSheet(
           files: files,
           toInbox: onInbox != null,
           toSchedules: onSchedules != null,
+          repeats: repeats,
         ),
       ),
     );
@@ -133,6 +138,7 @@ class ImportSheet extends StatefulWidget {
     required this.files,
     this.toInbox = false,
     this.toSchedules = false,
+    this.repeats,
     super.key,
   });
 
@@ -149,6 +155,10 @@ class ImportSheet extends StatefulWidget {
   /// list, which closes the sheet.
   final bool toSchedules;
 
+  /// The names of the operations that came every month and have no payment
+  /// yet, asked once the import came in.
+  final Future<List<String>> Function()? repeats;
+
   @override
   State<ImportSheet> createState() => _ImportSheetState();
 }
@@ -158,6 +168,46 @@ class _ImportSheetState extends State<ImportSheet> {
 
   /// Whether the person set the columns of a format of their own.
   bool _columnsSet = false;
+
+  /// The names of what came every month, once the import came in, and
+  /// whether their card shows yet.
+  List<String> _repeats = const [];
+  bool _repeatsShown = false;
+  bool _askedRepeats = false;
+  Timer? _settling;
+
+  /// Asks for what came every month once the ledger holds the statement. The
+  /// card takes its place as soon as the names come, so that the sheet moves
+  /// once, and shows once the sheet has turned into the result, rising a
+  /// little, as on the board.
+  void _askRepeats() {
+    final repeats = widget.repeats;
+    if (repeats == null || _askedRepeats) return;
+    _askedRepeats = true;
+    _settling = Timer(
+      BirkaMotion.reduced(context)
+          ? Duration.zero
+          : BirkaMotion.fast + BirkaMotion.base,
+      () {
+        if (mounted) setState(() => _repeatsShown = true);
+      },
+    );
+    unawaited(
+      repeats().then(
+        (names) {
+          if (mounted) setState(() => _repeats = names);
+        },
+        // Without the names the result says nothing of them.
+        onError: (Object _) {},
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _settling?.cancel();
+    super.dispose();
+  }
 
   Future<void> _chooseAnother(ImportCubit cubit) async {
     final file = await widget.files.choose();
@@ -201,6 +251,7 @@ class _ImportSheetState extends State<ImportSheet> {
         final colors = BirkaColors.of(context);
         final styles = BirkaTextStyles.of(context);
         final stage = _Stage.of(state, set: _columnsSet);
+        if (stage == _Stage.done) _askRepeats();
         return PopScope(
           canPop: !state.writing,
           child: AnimatedSize(
@@ -649,6 +700,7 @@ class _ImportSheetState extends State<ImportSheet> {
   ) {
     final colors = BirkaColors.of(context);
     final styles = BirkaTextStyles.of(context);
+    final reduced = BirkaMotion.reduced(context);
     final plan = state.plan!;
     final statement = state.statement!;
     final format = state.layout?.format;
@@ -719,6 +771,43 @@ class _ImportSheetState extends State<ImportSheet> {
         ),
         card,
       ],
+      // What came every month opens a moment after the result.
+      AnimatedColumn(
+        children: [
+          if (_repeats.isNotEmpty)
+            Padding(
+              key: const ValueKey('repeats'),
+              padding: EdgeInsets.only(
+                top: next.isEmpty ? BirkaTokens.spaceMd : BirkaTokens.spaceSm,
+              ),
+              child: AnimatedOpacity(
+                opacity: _repeatsShown ? 1 : 0,
+                duration: BirkaMotion.base,
+                curve: BirkaMotion.fadeCurve,
+                child: AnimatedContainer(
+                  duration: reduced ? Duration.zero : BirkaMotion.slow,
+                  curve: BirkaMotion.standardCurve,
+                  transform: Matrix4.translationValues(
+                    0,
+                    _repeatsShown || reduced ? 0 : BirkaTokens.spaceXs,
+                    0,
+                  ),
+                  child: _NextCard(
+                    glyph: BirkaGlyph.repeat,
+                    color: colors.accent,
+                    title: t.imports.repeatsTitle(
+                      count: formatCount(_repeats.length),
+                    ),
+                    text: namesLine(_repeats),
+                    onTap: widget.toSchedules
+                        ? () => Navigator.of(context).pop(_Next.schedules)
+                        : null,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
       const SizedBox(height: BirkaTokens.spaceLg),
       BirkaButton(label: t.imports.finish, onPressed: _close),
       const SizedBox(height: BirkaTokens.spaceXs),

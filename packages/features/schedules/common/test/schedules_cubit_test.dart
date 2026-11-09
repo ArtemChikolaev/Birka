@@ -438,4 +438,28 @@ void main() {
     );
     await viewOf(cubit, (view) => view.finds.isEmpty);
   });
+
+  test('tells the finds of now, with the dismissed ones when asked', () async {
+    for (final month in [8, 9, 10, 11]) {
+      await ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: home.id, amount: rub(449))],
+          occurredOn: CivilDate(2026, month, 12),
+          note: 'Яндекс Плюс',
+          source: TransactionSource.import,
+        ),
+      );
+    }
+
+    final [find] = await currentRepeats(repository);
+    expect(find.name, 'Яндекс Плюс');
+
+    await repository.dismissFind(find.key);
+    expect(await currentRepeats(repository), isEmpty);
+    expect(
+      await currentRepeats(repository, includeDismissed: true),
+      hasLength(1),
+    );
+  });
 }

@@ -335,6 +335,7 @@ foundDone(n):
   one: Posted $count payment
   other: Posted $count payments
 foundDoneText: $names, from the statement
+repeatsTitle: Looks regular · $count
 namesAnd: $names and $last
 rowsLeft(n):
   one: $count row stays out of the ledger

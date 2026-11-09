@@ -1,6 +1,7 @@
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
+import 'package:schedules_common/src/domain/schedules_repository.dart';
 
 /// An operation that came every month on about the same day and has no
 /// regular payment yet, such as a subscription or a bill that the person
@@ -150,6 +151,29 @@ List<RepeatFind> findRepeats(
     return byMonths != 0 ? byMonths : a.name.compareTo(b.name);
   });
   return finds;
+}
+
+/// The finds of the ledger behind [repository] now, apart from the
+/// dismissed ones unless [includeDismissed]: for the result of an import
+/// and for the form of a payment made from an operation.
+Future<List<RepeatFind>> currentRepeats(
+  SchedulesRepository repository, {
+  bool includeDismissed = false,
+}) async {
+  final today = repository.today();
+  final history = await repository
+      .watchHistory(today.addMonths(-repeatHistoryMonths))
+      .first;
+  final schedules = await repository.watchSchedules().first;
+  final dismissed = includeDismissed
+      ? const <String>{}
+      : await repository.watchDismissedFinds().first;
+  return findRepeats(
+    history,
+    today: today,
+    schedules: schedules,
+    dismissed: dismissed,
+  );
 }
 
 /// The key of a find of an operation of [kind] on [accountId] called [note]:
