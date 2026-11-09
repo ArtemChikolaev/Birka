@@ -55,6 +55,7 @@ final class ScheduleFormState {
     this.expenses = const [],
     this.incomes = const [],
     this.failed = false,
+    this.madeFrom,
   }) : next = next ?? today,
        day = day ?? (next ?? today).day;
 
@@ -119,6 +120,10 @@ final class ScheduleFormState {
 
   /// Whether the last save failed.
   final bool failed;
+
+  /// The operation that a new payment is made from (ADR 0023, point 22),
+  /// which becomes its time on that day.
+  final Transaction? madeFrom;
 
   /// Whether the form changes a payment rather than adding one.
   bool get editing => id != null;
@@ -222,6 +227,7 @@ final class ScheduleFormState {
     List<Category>? expenses,
     List<Category>? incomes,
     bool? failed,
+    Transaction? madeFrom,
   }) => ScheduleFormState(
     today: today,
     status: status ?? this.status,
@@ -243,6 +249,7 @@ final class ScheduleFormState {
     expenses: expenses ?? this.expenses,
     incomes: incomes ?? this.incomes,
     failed: failed ?? this.failed,
+    madeFrom: madeFrom ?? this.madeFrom,
   );
 }
 
@@ -250,15 +257,20 @@ final class ScheduleFormState {
 /// start as the regular income «Зарплата», which sets the payday of the money
 /// of the days.
 class ScheduleFormCubit extends Cubit<ScheduleFormState> {
-  /// Creates the form of payment [id], or of a new one, a salary with
-  /// [salary], and reads what it needs.
-  ScheduleFormCubit(this._repository, {String? id, bool salary = false})
-    : _id = id,
-      super(ScheduleFormState(today: _repository.today())) {
+  /// Creates the form of payment [id], or of a new one: a salary with
+  /// [salary], or one made [from] an operation, which it starts as. It reads
+  /// what it needs.
+  ScheduleFormCubit(
+    this._repository, {
+    String? id,
+    bool salary = false,
+    String? from,
+  }) : _id = id,
+       super(ScheduleFormState(today: _repository.today())) {
     _reminders = _repository.watchReminders().listen(
       (reminders) => emit(state.copyWith(reminders: reminders)),
     );
-    unawaited(_load(salary: salary));
+    unawaited(_load(salary: salary, from: from));
   }
 
   final SchedulesRepository _repository;
@@ -408,6 +420,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
             advanceDay: advance,
             onDay: form.onDay,
             reminder: form.reminder,
+            madeFrom: form.madeFrom?.id,
           ),
         );
       }
@@ -432,7 +445,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
     return super.close();
   }
 
-  Future<void> _load({required bool salary}) async {
+  Future<void> _load({required bool salary, String? from}) async {
     final rows = await _repository.watchAccounts().first;
     final expenses = await _repository
         .watchCategories(CategoryKind.expense)
@@ -458,6 +471,13 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
       ],
     );
     final id = _id;
+    if (id == null && from != null) {
+      final made = await _repository.watchTransaction(from).first;
+      if (isClosed) return;
+      if (made != null && made.kind != TransactionKind.adjustment) {
+        return emit(_madeFrom(loaded, made));
+      }
+    }
     if (id == null) {
       final first =
           accounts.where((it) => it.currency == base).firstOrNull ??
@@ -503,6 +523,61 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
       ),
     );
   }
+}
+
+/// The form of a new payment [loaded] as operation [made] gives it: its kind,
+/// what it is called, its amount, accounts and category, every month on its
+/// day from the next time after it. One that a statement brought is charged
+/// by the bank, so it posts itself; one the person wrote asks first
+/// (ADR 0023, point 22).
+ScheduleFormState _madeFrom(ScheduleFormState loaded, Transaction made) {
+  final transfer = made.kind == TransactionKind.transfer;
+  final from = made.entries.first;
+  final open = {for (final account in loaded.accounts) account.id};
+  final categories = {for (final it in made.allocations) it.categoryId};
+  final categoryId = transfer || categories.length != 1
+      ? null
+      : categories.single;
+  final category = [
+    ...loaded.expenses,
+    ...loaded.incomes,
+  ].where((it) => it.id == categoryId).firstOrNull;
+  final note = made.note.trim();
+  final day = made.occurredOn;
+  final to = transfer ? made.entries.last.accountId : null;
+  return loaded.copyWith(
+    status: ScheduleFormStatus.editing,
+    kind: made.kind,
+    name: note.isNotEmpty ? note : category?.name ?? '',
+    amountMinor: from.amount.minorUnits.abs(),
+    accountId: open.contains(from.accountId)
+        ? from.accountId
+        : loaded.accounts.firstOrNull?.id,
+    toAccountId: (open.contains(to) ? to : null,),
+    categoryId: (category?.id,),
+    every: ScheduleEvery.month,
+    next: nextAfterOperation(day, today: loaded.today),
+    day: day.day,
+    onDay: made.source == TransactionSource.import
+        ? ScheduleOnDay.post
+        : ScheduleOnDay.ask,
+    madeFrom: made,
+  );
+}
+
+/// The first time of a monthly payment made from an operation of [made]: on
+/// its day of the month, from [today] on, and after the operation, which is
+/// a time of its own.
+CivilDate nextAfterOperation(CivilDate made, {required CivilDate today}) {
+  final day = made.day;
+  var next = CivilDate.onDay(today.year, today.month, day);
+  if (next.compareTo(today) < 0) {
+    next = CivilDate.onDay(today.year, today.month + 1, day);
+  }
+  if (next.compareTo(made) <= 0) {
+    next = CivilDate.onDay(made.year, made.month + 1, day);
+  }
+  return next;
 }
 
 /// The nearest time from [today] on of a salary with its advance on day

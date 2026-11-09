@@ -835,6 +835,11 @@ final class LedgerRepository {
   /// month: its advance on that day and the rest on [day]. An expense or an
   /// income without [categoryId] gives transactions that wait in the inbox
   /// for one; a transfer goes to [toAccountId] in the same currency.
+  ///
+  /// A payment [madeFrom] a transaction takes it as its time on its day, done
+  /// before [next], so that no time asks for it again, and keeps its id, so
+  /// that the transaction leads to the payment after later times too (ADR
+  /// 0023, point 22).
   Future<Schedule> addSchedule({
     required TransactionKind kind,
     required String name,
@@ -848,6 +853,7 @@ final class LedgerRepository {
     String? categoryId,
     ScheduleOnDay onDay = ScheduleOnDay.ask,
     ScheduleReminder reminder = ScheduleReminder.onDay,
+    String? madeFrom,
   }) {
     return _db.transaction(() async {
       final schedule = Schedule(
@@ -864,33 +870,66 @@ final class LedgerRepository {
         next: next,
         onDay: onDay,
         reminder: reminder,
+        madeFrom: madeFrom,
       );
       await _checkSchedule(schedule);
       final at = _timestamp();
+      final last = madeFrom == null
+          ? null
+          : await _madeFrom(madeFrom, next: next, at: at);
+      final values = SchedulesCompanion.insert(
+        id: schedule.id,
+        createdAt: at,
+        updatedAt: at,
+        kind: kind.name,
+        name: name,
+        accountId: accountId,
+        toAccountId: Value(toAccountId),
+        categoryId: Value(categoryId),
+        amountMinor: amount.minorUnits,
+        every: every.name,
+        day: schedule.day,
+        advanceDay: Value(advanceDay),
+        madeFrom: Value(madeFrom),
+        nextOn: next.toString(),
+        onDay: onDay.name,
+        reminder: reminder.name,
+      );
       await _db
           .into(_db.schedules)
-          .insert(
-            SchedulesCompanion.insert(
-              id: schedule.id,
-              createdAt: at,
-              updatedAt: at,
-              kind: kind.name,
-              name: name,
-              accountId: accountId,
-              toAccountId: Value(toAccountId),
-              categoryId: Value(categoryId),
-              amountMinor: amount.minorUnits,
-              every: every.name,
-              day: schedule.day,
-              advanceDay: Value(advanceDay),
-              nextOn: next.toString(),
-              onDay: onDay.name,
-              reminder: reminder.name,
-            ),
-          );
+          .insert(last == null ? values : _withLast(values, last));
       await _log(_db.schedules, schedule.id, 'insert', at);
-      return schedule;
+      return last == null ? schedule : schedule.movedTo(next, last: last);
     });
+  }
+
+  /// The time that transaction [id] was of a payment made from it, posted at
+  /// [at]: its day, which has to come before the [next] time of the payment.
+  Future<ScheduleLast> _madeFrom(
+    String id, {
+    required CivilDate next,
+    required DateTime at,
+  }) async {
+    final row =
+        await (_db.select(_db.transactions)
+              ..where((row) => row.id.equals(id) & row.deletedAt.isNull()))
+            .getSingleOrNull();
+    if (row == null) {
+      throw LedgerException('No transaction $id to make a payment of');
+    }
+    final day = CivilDate.parse(row.occurredOn);
+    if (day.compareTo(next) >= 0) {
+      throw const LedgerException(
+        'A payment made from a transaction comes after it',
+      );
+    }
+    return ScheduleLast(
+      done: ScheduleDone.posted,
+      from: day,
+      on: day,
+      at: at,
+      transactionId: id,
+    );
   }
 
   /// Puts [schedule] in place of the regular payment with its id. The
@@ -1498,6 +1537,7 @@ final class LedgerRepository {
       every: ScheduleEvery.values.byName(schedule.every),
       day: schedule.day,
       advanceDay: schedule.advanceDay,
+      madeFrom: schedule.madeFrom,
       next: CivilDate.parse(schedule.nextOn),
       onDay: ScheduleOnDay.values.byName(schedule.onDay),
       reminder: ScheduleReminder.values.byName(schedule.reminder),

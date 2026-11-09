@@ -119,6 +119,7 @@ final class Schedule {
     this.categoryId,
     this.advanceDay,
     this.last,
+    this.madeFrom,
   });
 
   /// The id.
@@ -165,6 +166,10 @@ final class Schedule {
 
   /// Its last times that were done, or `null` while none is.
   final ScheduleLast? last;
+
+  /// The id of the transaction it was made from (ADR 0023, point 22), which
+  /// stays its time after later ones, or `null`.
+  final String? madeFrom;
 
   /// The time of the rule that comes after [time].
   CivilDate after(CivilDate time) => switch (every) {
@@ -223,6 +228,7 @@ final class Schedule {
     onDay: onDay,
     reminder: reminder,
     last: last ?? this.last,
+    madeFrom: madeFrom,
   );
 
   @override
@@ -241,7 +247,8 @@ final class Schedule {
       other.next == next &&
       other.onDay == onDay &&
       other.reminder == reminder &&
-      other.last == last;
+      other.last == last &&
+      other.madeFrom == madeFrom;
 
   @override
   int get hashCode => Object.hash(
@@ -259,6 +266,7 @@ final class Schedule {
     onDay,
     reminder,
     last,
+    madeFrom,
   );
 
   @override

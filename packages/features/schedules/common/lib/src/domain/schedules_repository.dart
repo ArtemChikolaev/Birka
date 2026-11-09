@@ -21,6 +21,10 @@ abstract interface class SchedulesRepository {
   /// The transactions of [day].
   Stream<List<Transaction>> watchDay(CivilDate day);
 
+  /// Transaction [id], now and after every change, or `null` while it is not
+  /// there, such as an operation that a regular payment is made from.
+  Stream<Transaction?> watchTransaction(String id);
+
   /// The currency that totals are in, or `null` to follow the first account.
   Stream<Currency?> watchBaseCurrency();
 

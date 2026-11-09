@@ -8,5 +8,6 @@ export 'src/data/local_reminder_channel.dart';
 export 'src/presentation/pages/payday_page.dart';
 export 'src/presentation/pages/schedule_form_page.dart';
 export 'src/presentation/pages/schedules_page.dart';
+export 'src/presentation/widgets/operation_schedule_row.dart';
 export 'src/presentation/widgets/reminders_section.dart';
 export 'src/presentation/widgets/spending_card.dart';

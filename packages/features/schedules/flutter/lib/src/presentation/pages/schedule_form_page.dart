@@ -124,6 +124,10 @@ class _Form extends StatelessWidget {
                 vertical: BirkaTokens.spaceXs,
               ),
               children: [
+                if (state.madeFrom case final made?) ...[
+                  _MadeFrom(made: made, state: state),
+                  const SizedBox(height: BirkaTokens.spaceLg),
+                ],
                 Semantics(
                   label: t.schedules.kindLabel,
                   child: GlassSegmented<TransactionKind>(
@@ -609,6 +613,56 @@ class _Amount extends StatelessWidget {
     if (typed == null) return;
     final money = amountTyped(typed, amount.currency);
     if (money != null) cubit.amountChanged(money.minorUnits);
+  }
+}
+
+/// The operation that a new payment is made from, over the form, as the
+/// board draws it: its day, what it was called, its amount and category.
+class _MadeFrom extends StatelessWidget {
+  const _MadeFrom({required this.made, required this.state});
+
+  final Transaction made;
+  final ScheduleFormState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    final categoryId = made.allocations.firstOrNull?.categoryId;
+    final category = [
+      ...state.expenses,
+      ...state.incomes,
+    ].where((it) => it.id == categoryId).firstOrNull;
+    return GlassSurface(
+      child: Row(
+        children: [
+          GlyphBadge(glyph: BirkaGlyph.repeat, color: colors.accent),
+          const SizedBox(width: BirkaTokens.spaceSm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t.schedules.fromOperation(
+                    date: fullDate(made.occurredOn, state.today),
+                  ),
+                  style: styles.bodyStrong.copyWith(color: colors.text),
+                ),
+                Text(
+                  HiddenAmounts.mask(
+                    context,
+                    madeFromLine(made, category: category?.name),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: styles.caption.copyWith(color: colors.textMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

@@ -2419,6 +2419,17 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String get remindLineOff => 'Напоминания выключены в «Ещё»';
   @override
   String get remindEnable => 'Включить напоминания';
+  @override
+  String get makeRegular => 'Сделать регулярным';
+  @override
+  String makeRegularLine({required Object every}) => 'Повторять ${every}';
+  @override
+  String get regularPayment => 'Регулярный платёж';
+  @override
+  String fromOperation({required Object date}) => 'Из операции ${date}';
+  @override
+  String madeRegular({required Object name}) =>
+      'Добавили в регулярные: «${name}»';
 }
 
 // Path: settings
@@ -4547,6 +4558,14 @@ extension on TranslationsRu {
           'schedules.remindLineNone' => 'Без напоминания',
           'schedules.remindLineOff' => 'Напоминания выключены в «Ещё»',
           'schedules.remindEnable' => 'Включить напоминания',
+          'schedules.makeRegular' => 'Сделать регулярным',
+          'schedules.makeRegularLine' =>
+            ({required Object every}) => 'Повторять ${every}',
+          'schedules.regularPayment' => 'Регулярный платёж',
+          'schedules.fromOperation' =>
+            ({required Object date}) => 'Из операции ${date}',
+          'schedules.madeRegular' =>
+            ({required Object name}) => 'Добавили в регулярные: «${name}»',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -4627,14 +4646,14 @@ extension on TranslationsRu {
           'transactions.sources.recurring' => 'Регулярная',
           'transactions.sources.bank' => 'Из банка',
           'transactions.keys.point' => 'Запятая',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.keys.add' => 'Плюс',
           'transactions.keys.subtract' => 'Минус',
           'transactions.keys.multiply' => 'Умножить',
           'transactions.keys.divide' => 'Разделить',
           'transactions.keys.backspace' => 'Стереть',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.dayOfMonth' =>
             ({required Object day, required Object month}) => '${day} ${month}',
           'transactions.months.0' => 'января',

@@ -101,6 +101,75 @@ void main() {
       expect(await ledger.schedule('none'), isNull);
     });
 
+    test('made from a transaction takes it as its time on its day', () async {
+      final made = await ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: home.id, amount: rub(44900))],
+          occurredOn: CivilDate(2026, 11, 12),
+          note: 'Яндекс Плюс',
+          source: TransactionSource.import,
+        ),
+      );
+
+      final plus = await ledger.addSchedule(
+        kind: TransactionKind.expense,
+        name: 'Яндекс Плюс',
+        accountId: card.id,
+        categoryId: home.id,
+        amount: rub(44900),
+        every: ScheduleEvery.month,
+        next: CivilDate(2026, 12, 12),
+        onDay: ScheduleOnDay.post,
+        madeFrom: made,
+      );
+
+      final last = ScheduleLast(
+        done: ScheduleDone.posted,
+        from: CivilDate(2026, 11, 12),
+        on: CivilDate(2026, 11, 12),
+        at: now,
+        transactionId: made,
+      );
+      expect(plus.last, last);
+      expect(plus.madeFrom, made);
+      expect((await ledger.schedule(plus.id))?.last, last);
+      // Nothing is due before its next time, and nothing posts twice.
+      expect(await ledger.postDueSchedules(CivilDate(2026, 11, 18)), isEmpty);
+
+      // Later times and a change of the next one keep the transaction.
+      await ledger.postSchedule(plus.id);
+      final posted = (await ledger.schedule(plus.id))!;
+      expect(posted.last?.transactionId, isNot(made));
+      expect(posted.madeFrom, made);
+      await ledger.updateSchedule(posted.movedTo(CivilDate(2027, 1, 20)));
+      expect((await ledger.schedule(plus.id))?.madeFrom, made);
+    });
+
+    test('refuses to be made from a transaction that is not there or that '
+        'does not come before it', () async {
+      final made = await ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: home.id, amount: rub(44900))],
+          occurredOn: CivilDate(2026, 11, 12),
+        ),
+      );
+      Future<Schedule> plus(String from, CivilDate next) => ledger.addSchedule(
+        kind: TransactionKind.expense,
+        name: 'Plus',
+        accountId: card.id,
+        amount: rub(44900),
+        every: ScheduleEvery.month,
+        next: next,
+        madeFrom: from,
+      );
+
+      await expectLater(plus('none', CivilDate(2026, 12, 12)), throwsLedger());
+      await expectLater(plus(made, CivilDate(2026, 11, 12)), throwsLedger());
+      expect(await ledger.watchSchedules().first, isEmpty);
+    });
+
     test('keeps its day for the months that have it', () async {
       final schedule = await ledger.addSchedule(
         kind: TransactionKind.expense,

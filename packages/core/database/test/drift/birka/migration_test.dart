@@ -15,6 +15,7 @@ import 'generated/schema_v5.dart' as v5;
 import 'generated/schema_v6.dart' as v6;
 import 'generated/schema_v7.dart' as v7;
 import 'generated/schema_v8.dart' as v8;
+import 'generated/schema_v9.dart' as v9;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -397,4 +398,62 @@ void main() {
       },
     );
   });
+
+  test(
+    'a payment keeps its rows and was made from no operation in v9',
+    () async {
+      const at = '2026-11-09T12:00:00.000Z';
+      await verifier.testWithDataIntegrity(
+        oldVersion: 8,
+        newVersion: 9,
+        createOld: v8.DatabaseAtV8.new,
+        createNew: v9.DatabaseAtV9.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch
+            ..insert(
+              old.accounts,
+              v8.AccountsCompanion.insert(
+                id: 'card',
+                createdAt: at,
+                updatedAt: at,
+                name: 'Card',
+                type: 'debit',
+                currency: 'RUB',
+                decimalDigits: 2,
+              ),
+            )
+            ..insert(
+              old.schedules,
+              v8.SchedulesCompanion.insert(
+                id: 'cafe',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'expense',
+                name: 'Cafe',
+                accountId: 'card',
+                amountMinor: 35000,
+                every: 'month',
+                day: 2,
+                nextOn: '2026-12-02',
+                onDay: 'ask',
+                reminder: 'onDay',
+                lastDone: const Value('posted'),
+                lastFrom: const Value('2026-11-02'),
+                lastOn: const Value('2026-11-02'),
+                lastTransactionId: const Value('coffee'),
+                lastAt: const Value('2026-11-09T12:00:00.000Z'),
+              ),
+            );
+        },
+        validateItems: (migrated) async {
+          final schedule = await migrated
+              .select(migrated.schedules)
+              .getSingle();
+          expect(schedule.lastTransactionId, 'coffee');
+          expect(schedule.madeFrom, isNull);
+        },
+      );
+    },
+  );
 }

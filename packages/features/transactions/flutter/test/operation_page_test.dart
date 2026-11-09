@@ -23,7 +23,11 @@ void main() {
   var edited = 0;
   var repeated = 0;
 
-  Future<void> pump(WidgetTester tester, [String id = 'coffee']) async {
+  Future<void> pump(
+    WidgetTester tester, [
+    String id = 'coffee',
+    Widget? schedule,
+  ]) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -36,6 +40,7 @@ void main() {
             onClose: () => closed++,
             onEdit: () => edited++,
             onRepeat: () => repeated++,
+            schedule: schedule,
           ),
         ),
       ),
@@ -67,6 +72,16 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.ru);
   });
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
+
+  testWidgets('puts what the regular payments say over its actions', (
+    tester,
+  ) async {
+    await pump(tester, 'coffee', const Text('Сделать регулярным'));
+
+    final row = tester.getRect(find.text('Сделать регулярным'));
+    expect(row.top, greaterThan(tester.getRect(find.text('Кафе')).bottom));
+    expect(row.bottom, lessThan(tester.getRect(find.text('Повторить')).top));
+  });
 
   testWidgets('shows what happened', (tester) async {
     await pump(tester);

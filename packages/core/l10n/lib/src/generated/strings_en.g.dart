@@ -2911,6 +2911,23 @@ class Translations$schedules$en {
 
   /// en: 'Turn reminders on'
   String get remindEnable => 'Turn reminders on';
+
+  /// en: 'Make it regular'
+  String get makeRegular => 'Make it regular';
+
+  /// en: 'Repeat $every'
+  String makeRegularLine({required Object every}) => 'Repeat ${every}';
+
+  /// en: 'Regular payment'
+  String get regularPayment => 'Regular payment';
+
+  /// en: 'From the operation of $date'
+  String fromOperation({required Object date}) =>
+      'From the operation of ${date}';
+
+  /// en: 'Added to regular payments: «$name»'
+  String madeRegular({required Object name}) =>
+      'Added to regular payments: «${name}»';
 }
 
 // Path: settings
@@ -5054,6 +5071,14 @@ extension on Translations {
           'schedules.remindLineNone' => 'No reminder',
           'schedules.remindLineOff' => 'Reminders are off in More',
           'schedules.remindEnable' => 'Turn reminders on',
+          'schedules.makeRegular' => 'Make it regular',
+          'schedules.makeRegularLine' =>
+            ({required Object every}) => 'Repeat ${every}',
+          'schedules.regularPayment' => 'Regular payment',
+          'schedules.fromOperation' =>
+            ({required Object date}) => 'From the operation of ${date}',
+          'schedules.madeRegular' =>
+            ({required Object name}) => 'Added to regular payments: «${name}»',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -5133,14 +5158,14 @@ extension on Translations {
           'transactions.sources.recurring' => 'Recurring',
           'transactions.sources.bank' => 'From the bank',
           'transactions.keys.point' => 'Point',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.keys.add' => 'Plus',
           'transactions.keys.subtract' => 'Minus',
           'transactions.keys.multiply' => 'Times',
           'transactions.keys.divide' => 'Divided by',
           'transactions.keys.backspace' => 'Erase',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.dayOfMonth' =>
             ({required Object month, required Object day}) => '${month} ${day}',
           'transactions.months.0' => 'January',

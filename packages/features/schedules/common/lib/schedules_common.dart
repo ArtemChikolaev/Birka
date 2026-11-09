@@ -10,6 +10,7 @@ export 'src/domain/reminders.dart';
 export 'src/domain/schedule_draft.dart';
 export 'src/domain/schedules_repository.dart';
 export 'src/domain/spending_plan.dart';
+export 'src/presentation/operation_schedule_cubit.dart';
 export 'src/presentation/reminder_labels.dart';
 export 'src/presentation/reminder_notices.dart';
 export 'src/presentation/reminder_scheduler.dart';

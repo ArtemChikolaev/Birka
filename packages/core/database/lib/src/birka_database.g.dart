@@ -4693,6 +4693,17 @@ class $SchedulesTable extends Schedules
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _madeFromMeta = const VerificationMeta(
+    'madeFrom',
+  );
+  @override
+  late final GeneratedColumn<String> madeFrom = GeneratedColumn<String>(
+    'made_from',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4717,6 +4728,7 @@ class $SchedulesTable extends Schedules
     lastTransactionId,
     lastImportId,
     lastAt,
+    madeFrom,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4895,6 +4907,12 @@ class $SchedulesTable extends Schedules
         lastAt.isAcceptableOrUnknown(data['last_at']!, _lastAtMeta),
       );
     }
+    if (data.containsKey('made_from')) {
+      context.handle(
+        _madeFromMeta,
+        madeFrom.isAcceptableOrUnknown(data['made_from']!, _madeFromMeta),
+      );
+    }
     return context;
   }
 
@@ -4992,6 +5010,10 @@ class $SchedulesTable extends Schedules
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_at'],
       ),
+      madeFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}made_from'],
+      ),
     );
   }
 
@@ -5073,6 +5095,11 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
 
   /// When they were done.
   final DateTime? lastAt;
+
+  /// The transaction that the payment was made from (ADR 0023, point 22),
+  /// which stays its time after later ones. It names no row by a key, as it
+  /// may be gone.
+  final String? madeFrom;
   const ScheduleRow({
     required this.id,
     required this.createdAt,
@@ -5096,6 +5123,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     this.lastTransactionId,
     this.lastImportId,
     this.lastAt,
+    this.madeFrom,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -5141,6 +5169,9 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     }
     if (!nullToAbsent || lastAt != null) {
       map['last_at'] = Variable<DateTime>(lastAt);
+    }
+    if (!nullToAbsent || madeFrom != null) {
+      map['made_from'] = Variable<String>(madeFrom);
     }
     return map;
   }
@@ -5189,6 +5220,9 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       lastAt: lastAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastAt),
+      madeFrom: madeFrom == null && nullToAbsent
+          ? const Value.absent()
+          : Value(madeFrom),
     );
   }
 
@@ -5222,6 +5256,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       ),
       lastImportId: serializer.fromJson<String?>(json['lastImportId']),
       lastAt: serializer.fromJson<DateTime?>(json['lastAt']),
+      madeFrom: serializer.fromJson<String?>(json['madeFrom']),
     );
   }
   @override
@@ -5250,6 +5285,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
       'lastTransactionId': serializer.toJson<String?>(lastTransactionId),
       'lastImportId': serializer.toJson<String?>(lastImportId),
       'lastAt': serializer.toJson<DateTime?>(lastAt),
+      'madeFrom': serializer.toJson<String?>(madeFrom),
     };
   }
 
@@ -5276,6 +5312,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     Value<String?> lastTransactionId = const Value.absent(),
     Value<String?> lastImportId = const Value.absent(),
     Value<DateTime?> lastAt = const Value.absent(),
+    Value<String?> madeFrom = const Value.absent(),
   }) => ScheduleRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -5301,6 +5338,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
         : this.lastTransactionId,
     lastImportId: lastImportId.present ? lastImportId.value : this.lastImportId,
     lastAt: lastAt.present ? lastAt.value : this.lastAt,
+    madeFrom: madeFrom.present ? madeFrom.value : this.madeFrom,
   );
   ScheduleRow copyWithCompanion(SchedulesCompanion data) {
     return ScheduleRow(
@@ -5338,6 +5376,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           ? data.lastImportId.value
           : this.lastImportId,
       lastAt: data.lastAt.present ? data.lastAt.value : this.lastAt,
+      madeFrom: data.madeFrom.present ? data.madeFrom.value : this.madeFrom,
     );
   }
 
@@ -5365,7 +5404,8 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           ..write('lastOn: $lastOn, ')
           ..write('lastTransactionId: $lastTransactionId, ')
           ..write('lastImportId: $lastImportId, ')
-          ..write('lastAt: $lastAt')
+          ..write('lastAt: $lastAt, ')
+          ..write('madeFrom: $madeFrom')
           ..write(')'))
         .toString();
   }
@@ -5394,6 +5434,7 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
     lastTransactionId,
     lastImportId,
     lastAt,
+    madeFrom,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -5420,7 +5461,8 @@ class ScheduleRow extends DataClass implements Insertable<ScheduleRow> {
           other.lastOn == this.lastOn &&
           other.lastTransactionId == this.lastTransactionId &&
           other.lastImportId == this.lastImportId &&
-          other.lastAt == this.lastAt);
+          other.lastAt == this.lastAt &&
+          other.madeFrom == this.madeFrom);
 }
 
 class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
@@ -5446,6 +5488,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
   final Value<String?> lastTransactionId;
   final Value<String?> lastImportId;
   final Value<DateTime?> lastAt;
+  final Value<String?> madeFrom;
   final Value<int> rowid;
   const SchedulesCompanion({
     this.id = const Value.absent(),
@@ -5470,6 +5513,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     this.lastTransactionId = const Value.absent(),
     this.lastImportId = const Value.absent(),
     this.lastAt = const Value.absent(),
+    this.madeFrom = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SchedulesCompanion.insert({
@@ -5495,6 +5539,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     this.lastTransactionId = const Value.absent(),
     this.lastImportId = const Value.absent(),
     this.lastAt = const Value.absent(),
+    this.madeFrom = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -5531,6 +5576,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     Expression<String>? lastTransactionId,
     Expression<String>? lastImportId,
     Expression<DateTime>? lastAt,
+    Expression<String>? madeFrom,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -5556,6 +5602,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
       if (lastTransactionId != null) 'last_transaction_id': lastTransactionId,
       if (lastImportId != null) 'last_import_id': lastImportId,
       if (lastAt != null) 'last_at': lastAt,
+      if (madeFrom != null) 'made_from': madeFrom,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -5583,6 +5630,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     Value<String?>? lastTransactionId,
     Value<String?>? lastImportId,
     Value<DateTime?>? lastAt,
+    Value<String?>? madeFrom,
     Value<int>? rowid,
   }) {
     return SchedulesCompanion(
@@ -5608,6 +5656,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
       lastTransactionId: lastTransactionId ?? this.lastTransactionId,
       lastImportId: lastImportId ?? this.lastImportId,
       lastAt: lastAt ?? this.lastAt,
+      madeFrom: madeFrom ?? this.madeFrom,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -5681,6 +5730,9 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
     if (lastAt.present) {
       map['last_at'] = Variable<DateTime>(lastAt.value);
     }
+    if (madeFrom.present) {
+      map['made_from'] = Variable<String>(madeFrom.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -5712,6 +5764,7 @@ class SchedulesCompanion extends UpdateCompanion<ScheduleRow> {
           ..write('lastTransactionId: $lastTransactionId, ')
           ..write('lastImportId: $lastImportId, ')
           ..write('lastAt: $lastAt, ')
+          ..write('madeFrom: $madeFrom, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -10658,6 +10711,7 @@ typedef $$SchedulesTableCreateCompanionBuilder =
       Value<String?> lastTransactionId,
       Value<String?> lastImportId,
       Value<DateTime?> lastAt,
+      Value<String?> madeFrom,
       Value<int> rowid,
     });
 typedef $$SchedulesTableUpdateCompanionBuilder =
@@ -10684,6 +10738,7 @@ typedef $$SchedulesTableUpdateCompanionBuilder =
       Value<String?> lastTransactionId,
       Value<String?> lastImportId,
       Value<DateTime?> lastAt,
+      Value<String?> madeFrom,
       Value<int> rowid,
     });
 
@@ -10850,6 +10905,11 @@ class $$SchedulesTableFilterComposer
 
   ColumnFilters<DateTime> get lastAt => $composableBuilder(
     column: $table.lastAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get madeFrom => $composableBuilder(
+    column: $table.madeFrom,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11027,6 +11087,11 @@ class $$SchedulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get madeFrom => $composableBuilder(
+    column: $table.madeFrom,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableOrderingComposer get accountId {
     final $$AccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -11171,6 +11236,9 @@ class $$SchedulesTableAnnotationComposer
   GeneratedColumn<DateTime> get lastAt =>
       $composableBuilder(column: $table.lastAt, builder: (column) => column);
 
+  GeneratedColumn<String> get madeFrom =>
+      $composableBuilder(column: $table.madeFrom, builder: (column) => column);
+
   $$AccountsTableAnnotationComposer get accountId {
     final $$AccountsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -11295,6 +11363,7 @@ class $$SchedulesTableTableManager
                 Value<String?> lastTransactionId = const Value.absent(),
                 Value<String?> lastImportId = const Value.absent(),
                 Value<DateTime?> lastAt = const Value.absent(),
+                Value<String?> madeFrom = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SchedulesCompanion(
                 id: id,
@@ -11319,6 +11388,7 @@ class $$SchedulesTableTableManager
                 lastTransactionId: lastTransactionId,
                 lastImportId: lastImportId,
                 lastAt: lastAt,
+                madeFrom: madeFrom,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -11345,6 +11415,7 @@ class $$SchedulesTableTableManager
                 Value<String?> lastTransactionId = const Value.absent(),
                 Value<String?> lastImportId = const Value.absent(),
                 Value<DateTime?> lastAt = const Value.absent(),
+                Value<String?> madeFrom = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SchedulesCompanion.insert(
                 id: id,
@@ -11369,6 +11440,7 @@ class $$SchedulesTableTableManager
                 lastTransactionId: lastTransactionId,
                 lastImportId: lastImportId,
                 lastAt: lastAt,
+                madeFrom: madeFrom,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
