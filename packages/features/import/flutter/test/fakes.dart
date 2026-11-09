@@ -31,17 +31,25 @@ final class FakeStatementFiles implements StatementFiles {
       files.isEmpty ? null : files.removeAt(0);
 }
 
-/// The ledger of the import in memory: its accounts and categories, without
-/// transactions, and the imports written into it.
+/// The ledger of the import in memory: its accounts, categories and regular
+/// payments, without transactions, and the imports written into it.
 final class FakeImportRepository implements ImportRepository {
-  /// Creates the ledger of [ledgerAccounts] and [ledgerCategories].
-  FakeImportRepository(this.ledgerAccounts, {this.ledgerCategories = const []});
+  /// Creates the ledger of [ledgerAccounts], [ledgerCategories] and
+  /// [ledgerSchedules].
+  FakeImportRepository(
+    this.ledgerAccounts, {
+    this.ledgerCategories = const [],
+    this.ledgerSchedules = const [],
+  });
 
   /// The accounts of the ledger.
   final List<Account> ledgerAccounts;
 
   /// The categories of the ledger.
   final List<Category> ledgerCategories;
+
+  /// The regular payments of the ledger.
+  final List<Schedule> ledgerSchedules;
 
   /// The plans written, in turn.
   final written = <ImportPlan>[];
@@ -73,7 +81,7 @@ final class FakeImportRepository implements ImportRepository {
   Future<List<Transaction>> history() async => const [];
 
   @override
-  Future<List<Schedule>> schedules() async => const [];
+  Future<List<Schedule>> schedules() async => ledgerSchedules;
 
   @override
   Future<String> write(
@@ -94,6 +102,21 @@ final class FakeImportRepository implements ImportRepository {
   @override
   Stream<List<LedgerImport>> watchImports() => Stream.value(const []);
 }
+
+/// A monthly expense of the [card] of [minorUnits] roubles in kopecks, whose
+/// next time is [next].
+Schedule monthly(String name, int minorUnits, CivilDate next) => Schedule(
+  id: name,
+  kind: TransactionKind.expense,
+  name: name,
+  accountId: 'card',
+  amount: Money(minorUnits, Currency.rub),
+  every: ScheduleEvery.month,
+  day: next.day,
+  next: next,
+  onDay: ScheduleOnDay.ask,
+  reminder: ScheduleReminder.onDay,
+);
 
 /// The card of the ledger that the statement of [october] belongs to.
 final card = Account(

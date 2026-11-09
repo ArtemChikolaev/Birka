@@ -75,6 +75,9 @@ enum BirkaGlyph {
   /// A calendar.
   calendar,
 
+  /// A calendar with a check, for a payment that went through.
+  calendarCheck,
+
   /// Three dots.
   dots,
 

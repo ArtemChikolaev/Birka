@@ -5,6 +5,7 @@ import 'package:import_common/import_common.dart';
 import 'package:import_flutter/import_flutter.dart';
 import 'package:import_flutter/src/presentation/import_columns_page.dart';
 import 'package:l10n/l10n.dart';
+import 'package:ledger/ledger.dart';
 
 import 'fakes.dart';
 
@@ -33,6 +34,7 @@ void main() {
     WidgetTester tester,
     List<ChosenStatement?> files, {
     VoidCallback? onInbox,
+    VoidCallback? onSchedules,
     ImportMemory? remembered,
   }) async {
     tester.view.physicalSize = const Size(780, 1688);
@@ -56,6 +58,7 @@ void main() {
                 ),
                 files: window,
                 onInbox: onInbox,
+                onSchedules: onSchedules,
               ),
             ),
           ),
@@ -135,6 +138,48 @@ void main() {
     await tapText(tester, 'ГОТОВО');
 
     expect(find.byType(ImportSheet), findsNothing);
+  });
+
+  testWidgets('names the regular payments that the statement brings and '
+      'leads to them once they are done', (tester) async {
+    repository = FakeImportRepository(
+      [card],
+      ledgerSchedules: [
+        monthly('Коммуналка', 684530, CivilDate(2026, 10, 7)),
+        monthly('Кофе', 42000, CivilDate(2026, 10, 3)),
+      ],
+    );
+    var opened = 0;
+    await open(tester, [october()], onSchedules: () => opened++);
+
+    expect(find.text('Регулярные платежи'), findsOneWidget);
+    expect(find.text('нашли 2: Коммуналка и Кофе'), findsOneWidget);
+
+    await tapText(tester, 'ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ');
+
+    expect(repository.written.single.found, hasLength(2));
+    expect(find.text('Провели 2 платежа'), findsOneWidget);
+    expect(find.text('Коммуналка и Кофе — из выписки'), findsOneWidget);
+
+    await tapText(tester, 'Провели 2 платежа');
+
+    expect(find.byType(ImportSheet), findsNothing);
+    expect(opened, 1);
+  });
+
+  testWidgets('says nothing of regular payments that the statement does '
+      'not bring', (tester) async {
+    repository = FakeImportRepository(
+      [card],
+      ledgerSchedules: [monthly('Аренда', 4500000, CivilDate(2026, 10, 25))],
+    );
+    await open(tester, [october()]);
+
+    expect(find.text('Регулярные платежи'), findsNothing);
+
+    await tapText(tester, 'ИМПОРТИРОВАТЬ 4 ОПЕРАЦИИ');
+
+    expect(find.textContaining('Провели'), findsNothing);
   });
 
   testWidgets('leads from what waits to the inbox of the host', (
