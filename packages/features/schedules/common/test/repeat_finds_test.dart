@@ -84,6 +84,16 @@ void main() {
     expect(found.name, 'ЖКУ Москва');
   });
 
+  test('rounds what a changing amount costs half up, in whole kopecks', () {
+    final [found] = find([
+      op('net-9', CivilDate(2026, 9, 5), 'Интернет', 1000),
+      op('net-10', CivilDate(2026, 10, 5), 'Интернет', 1050),
+      op('net-11', CivilDate(2026, 11, 5), 'Интернет', 1100),
+    ]);
+
+    expect(found.amount, rub(1100));
+  });
+
   test('wants three months in a row, the last of them recent', () {
     expect(find(plus(months: [10, 11])), isEmpty);
     // A month went without it: only October and November are in a row.

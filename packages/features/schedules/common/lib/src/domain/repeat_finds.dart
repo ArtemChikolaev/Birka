@@ -51,7 +51,8 @@ final class RepeatFind {
     final sum = amounts.fold(0, (all, it) => all + it.minorUnits);
     final average = sum ~/ amounts.length;
     final step = _roundStep(average, amounts.last.currency);
-    return Money((average / step).round() * step, amounts.last.currency);
+    // Half a step rounds up, in whole minor units.
+    return Money((average + step ~/ 2) ~/ step * step, amounts.last.currency);
   }
 
   /// The smallest and the largest amount of its times.
