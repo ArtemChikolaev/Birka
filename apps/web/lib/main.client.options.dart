@@ -17,6 +17,8 @@ import 'package:birka_web/pages/help_island.dart' deferred as _help_island;
 import 'package:birka_web/pages/import_island.dart' deferred as _import_island;
 import 'package:birka_web/pages/inbox_island.dart' deferred as _inbox_island;
 import 'package:birka_web/pages/more_island.dart' deferred as _more_island;
+import 'package:birka_web/pages/notifications_island.dart'
+    deferred as _notifications_island;
 import 'package:birka_web/pages/operations_island.dart'
     deferred as _operations_island;
 import 'package:birka_web/pages/overview_island.dart'
@@ -73,6 +75,10 @@ ClientOptions get defaultClientOptions => ClientOptions(
     'more_island': ClientLoader(
       (p) => _more_island.MoreIsland(),
       loader: _more_island.loadLibrary,
+    ),
+    'notifications_island': ClientLoader(
+      (p) => _notifications_island.NotificationsIsland(),
+      loader: _notifications_island.loadLibrary,
     ),
     'operations_island': ClientLoader(
       (p) => _operations_island.OperationsIsland(),

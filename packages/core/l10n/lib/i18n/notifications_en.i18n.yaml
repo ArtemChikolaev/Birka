@@ -6,6 +6,10 @@ bellNew(n):
   other: Notifications, $count new
 fresh: "New · $count"
 readAll: Mark all read
+subtitleNew(n):
+  one: $count new · 90 days of history
+  other: $count new · 90 days of history
+subtitleRead: All read · 90 days of history
 filters(map):
   all: All
   payment: Payments
@@ -13,6 +17,8 @@ filters(map):
 filtersLabel: Whose notifications
 emptyTitle: All quiet
 emptyText: Reminders of your payments and the results of imports come here.
+emptyImports: The results of your statement imports come here.
+failed: Could not read the notifications.
 keeps: Birka keeps notifications for 90 days
 yesterday: yesterday
 tomorrow: Tomorrow, $date

@@ -14,13 +14,16 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart' show LedgerRepository;
+import 'package:notifications_common/notifications_common.dart'
+    show NotificationsRepository;
 import 'package:rates/rates.dart' show RatesUpdater;
 import 'package:settings_common/settings_common.dart';
 
 enum _Stage { opening, ready, busy, failed }
 
 /// Opens the database of this browser, that of the ledger or of the demo,
-/// and registers the objects of the app in [getIt] on it. It throws
+/// and registers the objects of the app in [getIt] on it. The notices older
+/// than the 90 days that a device keeps go (ADR 0026). It throws
 /// [OpenInAnotherTab] while another tab holds the database.
 Future<OpenedDatabase> openData(GetIt getIt) async {
   const settings = BrowserSettingsStore();
@@ -36,6 +39,7 @@ Future<OpenedDatabase> openData(GetIt getIt) async {
     opened: name,
     now: DateTime.now(),
   );
+  await getIt<NotificationsRepository>().forgetOld();
   return opened;
 }
 

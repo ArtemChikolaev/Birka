@@ -8,6 +8,12 @@ bellNew(n):
   other: Уведомления, $count нового
 fresh: "Новые · $count"
 readAll: Прочитать все
+subtitleNew(n):
+  one: $count новое · история за 90 дней
+  few: $count новых · история за 90 дней
+  many: $count новых · история за 90 дней
+  other: $count нового · история за 90 дней
+subtitleRead: Всё прочитано · история за 90 дней
 filters(map):
   all: Все
   payment: Платежи
@@ -15,6 +21,8 @@ filters(map):
 filtersLabel: Чьи уведомления
 emptyTitle: Пока тихо
 emptyText: Здесь появятся напоминания о платежах и итоги импорта.
+emptyImports: Здесь появятся итоги импорта выписок.
+failed: Не удалось прочитать уведомления.
 keeps: Birka хранит уведомления 90 дней
 yesterday: вчера
 tomorrow: Завтра, $date

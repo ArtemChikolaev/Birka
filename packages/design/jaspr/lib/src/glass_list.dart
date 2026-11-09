@@ -31,12 +31,14 @@ class GlassListRow extends StatelessComponent {
     required this.title,
     this.subtitle,
     this.subtitleLines = 1,
+    this.subtitleColor,
     this.leading,
     this.trailing,
     this.href,
     this.onTap,
     this.indented = false,
     this.danger = false,
+    this.entering = false,
     super.key,
   });
 
@@ -48,6 +50,10 @@ class GlassListRow extends StatelessComponent {
 
   /// How many lines [subtitle] takes before it is cut.
   final int subtitleLines;
+
+  /// The color of [subtitle] as CSS, such as what became of a notice in the
+  /// color of the news; the quiet color of the kit without it.
+  final String? subtitleColor;
 
   /// What stands before the text, such as a small picture.
   final Component? leading;
@@ -68,29 +74,39 @@ class GlassListRow extends StatelessComponent {
   /// color of a loss.
   final bool danger;
 
+  /// Whether the row has just come into its group, which it opens into from
+  /// nothing.
+  final bool entering;
+
   @override
   Component build(BuildContext context) {
     final subtitle = this.subtitle;
     final indent =
         '${indented ? ' glass-row--indented' : ''}'
-        '${danger ? ' glass-row--danger' : ''}';
+        '${danger ? ' glass-row--danger' : ''}'
+        '${entering ? ' glass-row--entering' : ''}';
+    final color = subtitleColor;
+    final lines = subtitleLines > 1;
+    final subtitleStyles = lines || color != null
+        ? Styles(
+            raw: {
+              if (lines) '-webkit-line-clamp': '$subtitleLines',
+              'color': ?color,
+            },
+          )
+        : null;
     final content = [
       ?leading,
       span(classes: 'glass-row__text', [
         span(classes: 'text-body-strong glass-row__line', [.text(title)]),
         if (subtitle != null)
-          subtitleLines > 1
-              ? span(
-                  classes: 'text-caption glass-row__lines glass-row__subtitle',
-                  styles: Styles(
-                    raw: {'-webkit-line-clamp': '$subtitleLines'},
-                  ),
-                  [.text(subtitle)],
-                )
-              : span(
-                  classes: 'text-caption glass-row__line glass-row__subtitle',
-                  [.text(subtitle)],
-                ),
+          span(
+            classes: lines
+                ? 'text-caption glass-row__lines glass-row__subtitle'
+                : 'text-caption glass-row__line glass-row__subtitle',
+            styles: subtitleStyles,
+            [.text(subtitle)],
+          ),
       ]),
       ?trailing,
     ];
@@ -186,5 +202,37 @@ class GlassListRow extends StatelessComponent {
       },
     ),
     css('.glass-row--danger').styles(raw: {'color': 'var(--color-negative)'}),
+    // A row that has just come opens from nothing and pushes the rows after
+    // it down.
+    css('.glass-row--entering').styles(
+      raw: {
+        'animation':
+            'glass-row-open var(--duration-slow) var(--easing-standard) both',
+        'overflow': 'hidden',
+      },
+    ),
+    css.keyframes('glass-row-open', {
+      'from': const Styles(
+        raw: {
+          'max-height': '0',
+          'min-height': '0',
+          'opacity': '0',
+          'padding-bottom': '0',
+          'padding-top': '0',
+        },
+      ),
+      'to': const Styles(
+        raw: {
+          'max-height': '160px',
+          'min-height': 'var(--size-touch-target)',
+          'opacity': '1',
+          'padding-bottom': 'var(--space-md)',
+          'padding-top': 'var(--space-md)',
+        },
+      ),
+    }),
+    css.media(const MediaQuery.raw('(prefers-reduced-motion: reduce)'), [
+      css('.glass-row--entering').styles(raw: {'animation': 'none'}),
+    ]),
   ];
 }

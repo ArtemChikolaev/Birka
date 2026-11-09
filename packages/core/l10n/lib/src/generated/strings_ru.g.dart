@@ -1564,6 +1564,17 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   @override
   String get readAll => 'Прочитать все';
   @override
+  String subtitleNew({required num n, required Object count}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${count} новое · история за 90 дней',
+        few: '${count} новых · история за 90 дней',
+        many: '${count} новых · история за 90 дней',
+        other: '${count} нового · история за 90 дней',
+      );
+  @override
+  String get subtitleRead => 'Всё прочитано · история за 90 дней';
+  @override
   Map<String, String> get filters => {
     'all': 'Все',
     'payment': 'Платежи',
@@ -1576,6 +1587,10 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   @override
   String get emptyText =>
       'Здесь появятся напоминания о платежах и итоги импорта.';
+  @override
+  String get emptyImports => 'Здесь появятся итоги импорта выписок.';
+  @override
+  String get failed => 'Не удалось прочитать уведомления.';
   @override
   String get keeps => 'Birka хранит уведомления 90 дней';
   @override
@@ -3884,6 +3899,17 @@ extension on TranslationsRu {
           'notifications.fresh' =>
             ({required Object count}) => 'Новые · ${count}',
           'notifications.readAll' => 'Прочитать все',
+          'notifications.subtitleNew' =>
+            ({required num n, required Object count}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${count} новое · история за 90 дней',
+                  few: '${count} новых · история за 90 дней',
+                  many: '${count} новых · история за 90 дней',
+                  other: '${count} нового · история за 90 дней',
+                ),
+          'notifications.subtitleRead' => 'Всё прочитано · история за 90 дней',
           'notifications.filters.all' => 'Все',
           'notifications.filters.payment' => 'Платежи',
           'notifications.filters.import' => 'Импорт',
@@ -3891,6 +3917,9 @@ extension on TranslationsRu {
           'notifications.emptyTitle' => 'Пока тихо',
           'notifications.emptyText' =>
             'Здесь появятся напоминания о платежах и итоги импорта.',
+          'notifications.emptyImports' =>
+            'Здесь появятся итоги импорта выписок.',
+          'notifications.failed' => 'Не удалось прочитать уведомления.',
           'notifications.keeps' => 'Birka хранит уведомления 90 дней',
           'notifications.yesterday' => 'вчера',
           'notifications.tomorrow' =>
@@ -4571,13 +4600,13 @@ extension on TranslationsRu {
           'transactions.months.1' => 'февраля',
           'transactions.months.2' => 'марта',
           'transactions.months.3' => 'апреля',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.months.4' => 'мая',
           'transactions.months.5' => 'июня',
           'transactions.months.6' => 'июля',
           'transactions.months.7' => 'августа',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.months.8' => 'сентября',
           'transactions.months.9' => 'октября',
           'transactions.months.10' => 'ноября',

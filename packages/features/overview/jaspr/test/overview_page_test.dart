@@ -125,6 +125,7 @@ void main() {
     ComponentTester tester, {
     String? note,
     Component? notice,
+    Component? bell,
   }) async {
     tester.pumpComponent(
       _Host(
@@ -139,6 +140,7 @@ void main() {
             hrefOfAccount: (id) => 'open/$id',
             note: note,
             notice: notice,
+            bell: bell,
           ),
         ),
       ),
@@ -329,6 +331,30 @@ void main() {
       'open/Наличные',
       'open/Доллары',
     ]);
+  });
+
+  testComponents('the bell stands in the header before the eye', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      bell: const a(href: 'notifications/', [.text('Колокольчик')]),
+    );
+
+    final actions = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent && component.classes == 'overview__actions',
+    );
+    final children =
+        (actions.evaluate().single.component as DomComponent).children;
+    expect(children, hasLength(2));
+    expect(children!.first, isA<a>());
+    expect(children.last, isA<GlassIconButton>());
+    expect(
+      find.descendant(of: actions, matching: named('Скрыть суммы')),
+      findsOneComponent,
+    );
+    expect(links().first, 'notifications/');
   });
 
   testComponents('one account takes the whole row', (tester) async {
