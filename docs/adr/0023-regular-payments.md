@@ -136,13 +136,24 @@
     monthly payment has an advance, on another day than its own. The lists,
     the toasts and the line of what was done call the advance «Аванс»; its
     transactions keep the name of the payment. The copy of the ledger is
-    version 5 with `advanceDay`.
+    version 5 with `advanceDay`. An advance can bring a sum of its own
+    (`advanceAmount`, from version 10 of the schema and version 7 of the
+    copy), such as 40 000 ₽ of a salary of 120 000 ₽: then `amount` is the
+    rest, and each time posts, reminds, plans and is found in a statement
+    with its own amount (`Schedule.amountOn`). Without it both times carry
+    `amount`, so the payments saved before keep their halves.
 19. The form of an income asks how it comes, «Одной суммой» or «С
     авансом». With the advance, its amount is what comes in a month, split
     into two equal halves with `Money.split`; both times carry the one amount
     of the rule, so a sum that does not split evenly is not saved, and the
-    form says so under it. Its two days take the place of «Повторять
-    каждый». The next time is the nearest of the two
+    form says so under it. «Сумма аванса» under the day of the advance says
+    «половина» until the person types a sum of its own in a sheet that says
+    what the salary brings then («Зарплатой придёт остальное: 80 000 ₽
+    5-го.») and offers the half back («Пополам · 60 000 ₽»); the lines
+    under the month and under «Как приходит» name both sums. An advance
+    that leaves nothing for the rest changes nothing, and a new month that
+    it no longer fits takes the half back. Its two days take the place of
+    «Повторять каждый». The next time is the nearest of the two
     days, and it moves only when a day does, so an advance that waits for the
     person stays through a change.
 20. The money of the days counts until the salary, not until its advance:

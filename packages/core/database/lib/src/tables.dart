@@ -204,6 +204,10 @@ class Schedules extends Table with SyncedRow {
   /// month, such as a salary: its advance on this day and the rest on [day].
   IntColumn get advanceDay => integer().nullable()();
 
+  /// The amount of its advance in the minor units of its account, when the
+  /// advance is not the same amount as the rest; `null` for halves.
+  IntColumn get advanceAmountMinor => integer().nullable()();
+
   /// The civil date of its next time as `YYYY-MM-DD`.
   TextColumn get nextOn => text()();
 

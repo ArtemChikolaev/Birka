@@ -301,6 +301,93 @@ void main() {
     expect(cubit.state.valid, isTrue);
   });
 
+  test('a salary gives its advance a sum of its own, and the rest comes '
+      'with the salary', () async {
+    final cubit = ScheduleFormCubit(repository, salary: true);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit
+      ..amountChanged(12000000)
+      ..categoryChanged(pay.id)
+      ..halvesChanged(halves: true)
+      ..nextChanged(CivilDate(2026, 12, 5))
+      ..advanceDayChanged(20);
+    expect(cubit.state.ownAdvance, isFalse);
+    expect(cubit.state.half, rub(60000));
+    expect(cubit.state.advanceAmount, rub(60000));
+
+    cubit.advanceAmountChanged(4000000);
+    expect(cubit.state.ownAdvance, isTrue);
+    expect(cubit.state.advanceAmount, rub(40000));
+    expect(cubit.state.part, rub(80000));
+    expect(cubit.state.valid, isTrue);
+    // An advance that leaves nothing for the rest changes nothing.
+    cubit.advanceAmountChanged(12000000);
+    expect(cubit.state.advanceAmount, rub(40000));
+    await cubit.save();
+
+    final saved = (await ledger.watchSchedules().first).single;
+    expect(saved.amount, rub(80000));
+    expect(saved.advanceAmount, rub(40000));
+    expect(saved.monthAmount, rub(120000));
+  });
+
+  test('an advance of its own goes back to half by the half itself, by a '
+      'month it no longer fits, and with one sum', () async {
+    final cubit = ScheduleFormCubit(repository, salary: true);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit
+      ..amountChanged(12000000)
+      ..halvesChanged(halves: true)
+      ..advanceAmountChanged(4000000)
+      ..advanceAmountChanged(6000000);
+    expect(cubit.state.ownAdvance, isFalse);
+
+    cubit
+      ..advanceAmountChanged(4000000)
+      ..amountChanged(3000000);
+    expect(cubit.state.ownAdvance, isFalse);
+    expect(cubit.state.part, rub(15000));
+
+    cubit
+      ..advanceAmountChanged(1000000)
+      ..halvesChanged(halves: false);
+    expect(cubit.state.advanceMinor, isNull);
+    expect(cubit.state.part, rub(30000));
+  });
+
+  test('a salary with an advance of its own opens with its month and keeps '
+      'the advance through a change', () async {
+    final salary = await ledger.addSchedule(
+      kind: TransactionKind.income,
+      name: 'Зарплата',
+      accountId: card.id,
+      categoryId: pay.id,
+      amount: rub(80000),
+      advanceAmount: rub(40000),
+      every: ScheduleEvery.month,
+      next: CivilDate(2026, 11, 20),
+      day: 5,
+      advanceDay: 20,
+    );
+    final cubit = ScheduleFormCubit(repository, id: salary.id);
+    addTearDown(cubit.close);
+
+    final form = await at(cubit, ScheduleFormStatus.editing);
+    expect(form.amountMinor, 12000000);
+    expect(form.advanceAmount, rub(40000));
+    expect(form.part, rub(80000));
+    cubit.nameChanged('Зарплата в «Ромашке»');
+    await cubit.save();
+
+    final saved = (await ledger.schedule(salary.id))!;
+    expect(saved.amount, rub(80000));
+    expect(saved.advanceAmount, rub(40000));
+  });
+
   test('only an income comes in halves', () async {
     final cubit = ScheduleFormCubit(repository, salary: true);
     addTearDown(cubit.close);

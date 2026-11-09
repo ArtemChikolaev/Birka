@@ -168,11 +168,17 @@ parts(map):
   two: With an advance
 partsOne: The whole sum comes on one day.
 partsTwo: "Half and half: the advance on day $advance, the salary on day $day."
+partsOwn: The advance of $advanceAmount on day $advance, the salary of $restAmount on day $day.
 amountMonthly: Amount a month
 halves: $amount as the advance and as the salary
+halvesOwn: the advance of $advance and the salary of $rest
 halvesUneven: "The sum does not split into equal halves: change the cents"
 advanceDay: Advance
 restDay: Salary
+advanceAmount: Advance amount
+advanceHalf: half
+advanceRest: "The rest comes with the salary: $amount on day $day."
+advanceHalfChip: Half · $amount
 nextAdvance: advance, $date
 monthStartHint: "The salary comes on day $day: a month can start on it, and then $month runs from $from to $to."
 remindTitle: Reminders

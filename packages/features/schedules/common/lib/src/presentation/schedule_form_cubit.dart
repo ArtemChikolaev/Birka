@@ -48,6 +48,7 @@ final class ScheduleFormState {
     CivilDate? next,
     int? day,
     this.advanceDay,
+    this.advanceMinor,
     this.onDay = ScheduleOnDay.ask,
     this.reminder = ScheduleReminder.onDay,
     this.reminders,
@@ -98,6 +99,10 @@ final class ScheduleFormState {
 
   /// The day of the month of its advance, for a salary in halves.
   final int? advanceDay;
+
+  /// The amount of the advance in minor units of the currency of the
+  /// account, when it is not half of the month; `null` for halves.
+  final int? advanceMinor;
 
   /// What its day does.
   final ScheduleOnDay onDay;
@@ -151,19 +156,43 @@ final class ScheduleFormState {
   /// Whether it is an income that comes in halves: an advance and the rest.
   bool get halves => kind == TransactionKind.income && advanceDay != null;
 
-  /// What each time brings: half of [amount] for a salary in halves, or
-  /// `null` when the sum of a month does not split into equal halves, since
-  /// both times carry the one amount of the rule.
+  /// What each time brings, or the rest of a salary in halves: the month
+  /// less an advance of its own, or half of [amount]. It is `null` when the
+  /// month does not split into equal halves, or leaves nothing after the
+  /// advance.
   Money? get part {
     final amount = this.amount;
     if (amount == null || !halves) return amount;
+    if (advanceMinor case final advance?) {
+      final rest = Money(amount.minorUnits - advance, amount.currency);
+      return rest.isPositive ? rest : null;
+    }
+    return half;
+  }
+
+  /// Half of the month of a salary in halves, or `null` when it does not
+  /// split into equal halves.
+  Money? get half {
+    final amount = this.amount;
+    if (amount == null || !halves) return null;
     final [advance, rest] = amount.split(2);
     return advance == rest ? advance : null;
   }
 
+  /// What the advance of a salary in halves brings: its own amount, or half
+  /// of the month.
+  Money? get advanceAmount => switch ((account, advanceMinor)) {
+    _ when !halves => null,
+    (final account?, final minor?) => Money(minor, account.currency),
+    _ => half,
+  };
+
+  /// Whether the advance of a salary in halves has an amount of its own.
+  bool get ownAdvance => halves && advanceMinor != null;
+
   /// Whether the sum of a month of a salary in halves does not split into
-  /// two equal halves.
-  bool get uneven => halves && amount != null && part == null;
+  /// two equal halves, with no advance of its own.
+  bool get uneven => halves && !ownAdvance && amount != null && part == null;
 
   /// The payment as the form holds it, for what its rule gives before it is
   /// saved, such as its first reminder. Its amount and its accounts play no
@@ -200,6 +229,7 @@ final class ScheduleFormState {
   bool get valid =>
       name.trim().isNotEmpty &&
       (part?.isPositive ?? false) &&
+      (!halves || (advanceAmount?.isPositive ?? false)) &&
       account != null &&
       (kind != TransactionKind.transfer || toAccount != null);
 
@@ -220,6 +250,7 @@ final class ScheduleFormState {
     CivilDate? next,
     int? day,
     (int?,)? advanceDay,
+    (int?,)? advanceMinor,
     ScheduleOnDay? onDay,
     ScheduleReminder? reminder,
     ReminderSettings? reminders,
@@ -242,6 +273,7 @@ final class ScheduleFormState {
     next: next ?? this.next,
     day: day ?? this.day,
     advanceDay: advanceDay == null ? this.advanceDay : advanceDay.$1,
+    advanceMinor: advanceMinor == null ? this.advanceMinor : advanceMinor.$1,
     onDay: onDay ?? this.onDay,
     reminder: reminder ?? this.reminder,
     reminders: reminders ?? this.reminders,
@@ -281,9 +313,11 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
   /// kind goes, a transfer gets an account to reach, and only an income keeps
   /// its advance.
   void kindChanged(TransactionKind kind) {
+    final income = kind == TransactionKind.income;
     final next = state.copyWith(
       kind: kind,
-      advanceDay: kind == TransactionKind.income ? null : (null,),
+      advanceDay: income ? null : (null,),
+      advanceMinor: income ? null : (null,),
     );
     final category = next.category;
     final target = kind == TransactionKind.transfer
@@ -300,9 +334,18 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
   /// Names the payment.
   void nameChanged(String name) => emit(state.copyWith(name: name));
 
-  /// Sets the amount, in minor units of the currency of the account.
-  void amountChanged(int minorUnits) =>
-      emit(state.copyWith(amountMinor: minorUnits));
+  /// Sets the amount, in minor units of the currency of the account. An
+  /// advance of its own that leaves nothing of the new month goes back to
+  /// half of it.
+  void amountChanged(int minorUnits) {
+    final advance = state.advanceMinor;
+    emit(
+      state.copyWith(
+        amountMinor: minorUnits,
+        advanceMinor: advance != null && advance >= minorUnits ? (null,) : null,
+      ),
+    );
+  }
 
   /// Moves the payment to account [id]. A transfer keeps an account to reach
   /// in the same currency.
@@ -346,7 +389,9 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
   /// Makes an income come in [halves], an advance and the rest, every month,
   /// or in one sum.
   void halvesChanged({required bool halves}) {
-    if (!halves) return emit(state.copyWith(advanceDay: (null,)));
+    if (!halves) {
+      return emit(state.copyWith(advanceDay: (null,), advanceMinor: (null,)));
+    }
     final day = state.day;
     final advance = state.advanceDay ?? (day <= 15 ? day + 15 : day - 15);
     emit(
@@ -369,6 +414,19 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
     );
   }
 
+  /// Gives the advance of a salary in halves an amount of its own, in minor
+  /// units of the currency of the account, or half of the month with `null`
+  /// or with that half itself. An advance that leaves nothing for the rest
+  /// changes nothing.
+  void advanceAmountChanged(int? minorUnits) {
+    if (!state.halves) return;
+    if (minorUnits == null || minorUnits == state.half?.minorUnits) {
+      return emit(state.copyWith(advanceMinor: (null,)));
+    }
+    if (minorUnits <= 0 || minorUnits >= state.amountMinor) return;
+    emit(state.copyWith(advanceMinor: (minorUnits,)));
+  }
+
   /// Says what its day does.
   void onDayChanged(ScheduleOnDay onDay) => emit(state.copyWith(onDay: onDay));
 
@@ -386,6 +444,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
     final amount = form.part!;
     final transfer = form.kind == TransactionKind.transfer;
     final advance = form.halves ? form.advanceDay : null;
+    final advanceAmount = form.ownAdvance ? form.advanceAmount : null;
     try {
       if (form.id case final id?) {
         await _repository.update(
@@ -400,6 +459,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
             every: form.every,
             day: form.day,
             advanceDay: advance,
+            advanceAmount: advanceAmount,
             next: form.next,
             onDay: form.onDay,
             reminder: form.reminder,
@@ -418,6 +478,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
             next: form.next,
             day: advance == null ? null : form.day,
             advanceDay: advance,
+            advanceAmount: advanceAmount,
             onDay: form.onDay,
             reminder: form.reminder,
             madeFrom: form.madeFrom?.id,
@@ -505,8 +566,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
         kind: schedule.kind,
         name: schedule.name,
         // A salary in halves shows what it brings in a month.
-        amountMinor:
-            schedule.amount.minorUnits * (schedule.advanceDay == null ? 1 : 2),
+        amountMinor: schedule.monthAmount.minorUnits,
         accountId: schedule.accountId,
         toAccountId: schedule.toAccountId,
         categoryId: schedule.categoryId,
@@ -514,6 +574,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
         next: schedule.next,
         day: schedule.day,
         advanceDay: schedule.advanceDay,
+        advanceMinor: schedule.advanceAmount?.minorUnits,
         onDay: schedule.onDay,
         reminder: schedule.reminder,
         reminders: state.reminders,

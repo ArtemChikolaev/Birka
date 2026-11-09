@@ -381,6 +381,43 @@ void main() {
       expect(thin.short, isNull);
     });
 
+    test('takes an advance of its own in with its own amount', () {
+      // 40 000 ₽ on the 20th, and the rest of the 120 000 ₽ on the 5th.
+      final own = Schedule(
+        id: 'salary',
+        kind: TransactionKind.income,
+        name: 'salary',
+        accountId: 'card',
+        amount: rub(80000),
+        advanceAmount: rub(40000),
+        every: ScheduleEvery.month,
+        day: 5,
+        advanceDay: 20,
+        next: CivilDate(2026, 11, 20),
+        onDay: ScheduleOnDay.ask,
+        reminder: ScheduleReminder.onDay,
+      );
+      final it = SpendingPlan.of(
+        today: today,
+        until: SpendUntil.payday,
+        currency: Currency.rub,
+        schedules: [
+          for (final it in payments)
+            if (it.id != 'salary') it,
+          own,
+        ],
+        counted: [
+          account('card', 26400 - 620),
+          account('cash', 3200, type: AccountType.cash),
+        ],
+        todays: [spending(620)],
+        aside: rub(10000),
+      )!;
+
+      expect(it.advanced, rub(40000));
+      expect(it.free, rub(29651 - 20000));
+    });
+
     test('waits for the advance of today without a limit before it', () {
       final it = halves(on: CivilDate(2026, 11, 20))!;
 

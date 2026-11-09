@@ -549,6 +549,27 @@ void main() {
       expect(await ledger.schedule(pay.id), pay);
     });
 
+    test('bring the advance of a salary by its own amount', () async {
+      final pay = await ledger.addSchedule(
+        kind: TransactionKind.income,
+        name: 'Зарплата',
+        accountId: card.id,
+        amount: rub(20000000),
+        advanceAmount: rub(18500000),
+        every: ScheduleEvery.month,
+        next: CivilDate(2026, 10, 2),
+        day: 17,
+        advanceDay: 2,
+      );
+
+      final plan = await prepareImport(repository, _card(), cardChoices());
+
+      final found = plan.found.single;
+      expect(found.schedule.id, pay.id);
+      expect(found.times.map((it) => it.time), [CivilDate(2026, 10, 2)]);
+      expect(found.last.operation.row.description, 'TOPUP WISE EUROPE');
+    });
+
     test('come one after another from the next, each with an operation of '
         'its own', () async {
       await regular('Маме', 300000, CivilDate(2026, 9, 9));

@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 
 import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
+import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -452,6 +453,63 @@ void main() {
               .getSingle();
           expect(schedule.lastTransactionId, 'coffee');
           expect(schedule.madeFrom, isNull);
+        },
+      );
+    },
+  );
+
+  test(
+    'a payment keeps its halves and has no advance of its own in v10',
+    () async {
+      const at = '2026-11-09T12:00:00.000Z';
+      await verifier.testWithDataIntegrity(
+        oldVersion: 9,
+        newVersion: 10,
+        createOld: v9.DatabaseAtV9.new,
+        createNew: v10.DatabaseAtV10.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch
+            ..insert(
+              old.accounts,
+              v9.AccountsCompanion.insert(
+                id: 'card',
+                createdAt: at,
+                updatedAt: at,
+                name: 'Card',
+                type: 'debit',
+                currency: 'RUB',
+                decimalDigits: 2,
+              ),
+            )
+            ..insert(
+              old.schedules,
+              v9.SchedulesCompanion.insert(
+                id: 'salary',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'income',
+                name: 'Salary',
+                accountId: 'card',
+                amountMinor: 6000000,
+                every: 'month',
+                day: 5,
+                advanceDay: const Value(20),
+                nextOn: '2026-11-20',
+                onDay: 'ask',
+                reminder: 'onDay',
+                madeFrom: const Value('pay'),
+              ),
+            );
+        },
+        validateItems: (migrated) async {
+          final schedule = await migrated
+              .select(migrated.schedules)
+              .getSingle();
+          expect(schedule.amountMinor, 6000000);
+          expect(schedule.advanceDay, 20);
+          expect(schedule.madeFrom, 'pay');
+          expect(schedule.advanceAmountMinor, isNull);
         },
       );
     },

@@ -176,11 +176,17 @@ parts(map):
   two: С авансом
 partsOne: Вся сумма приходит в один день.
 partsTwo: "Пополам: аванс $advance-го, зарплата $day-го."
+partsOwn: Аванс $advanceAmount $advance-го, зарплата $restAmount $day-го.
 amountMonthly: Сумма в месяц
 halves: по $amount авансом и зарплатой
+halvesOwn: аванс $advance и зарплата $rest
 halvesUneven: Сумма не делится пополам — поправьте копейки
 advanceDay: Аванс
 restDay: Зарплата
+advanceAmount: Сумма аванса
+advanceHalf: половина
+advanceRest: "Зарплатой придёт остальное: $amount $day-го."
+advanceHalfChip: Пополам · $amount
 nextAdvance: аванс, $date
 monthStartHint: "Зарплата приходит $day-го: месяц можно начинать с этого дня, тогда $month — с $from по $to."
 remindTitle: Напоминания

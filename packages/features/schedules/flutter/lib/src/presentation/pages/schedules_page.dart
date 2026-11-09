@@ -161,7 +161,10 @@ class SchedulesPage extends StatelessWidget {
                             title: occurrenceName(it.schedule, it.on),
                             subtitle: scheduleWhere(view, it.schedule),
                             trailing: Text(
-                              mask(context, scheduleAmount(it.schedule)),
+                              mask(
+                                context,
+                                occurrenceAmount(it.schedule, it.on),
+                              ),
                               style: styles.bodyStrong.copyWith(
                                 color: scheduleInk(context, it.schedule),
                               ),
@@ -285,7 +288,7 @@ class _WaitingState extends State<_Waiting> {
     showGlassToast(
       context,
       post
-          ? postedLabel(schedule, schedule.amount)
+          ? postedLabel(schedule, schedule.amountOn(schedule.next))
           : skippedLabel(schedule, today),
     );
     await (post ? cubit.post(schedule) : cubit.skip(schedule));
@@ -334,7 +337,10 @@ class _WaitingState extends State<_Waiting> {
               ),
               const SizedBox(width: BirkaTokens.spaceSm),
               Text(
-                HiddenAmounts.mask(context, scheduleAmount(schedule)),
+                HiddenAmounts.mask(
+                  context,
+                  occurrenceAmount(schedule, schedule.next),
+                ),
                 style: styles.bodyStrong.copyWith(
                   color: scheduleInk(context, schedule),
                 ),

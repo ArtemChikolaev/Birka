@@ -118,6 +118,7 @@ final class Schedule {
     this.toAccountId,
     this.categoryId,
     this.advanceDay,
+    this.advanceAmount,
     this.last,
     this.madeFrom,
   });
@@ -141,7 +142,8 @@ final class Schedule {
   /// transactions wait in the inbox for one.
   final String? categoryId;
 
-  /// The positive amount in the currency of [accountId].
+  /// The positive amount in the currency of [accountId]: of each time, or of
+  /// the rest of a payment with an advance of its own ([advanceAmount]).
   final Money amount;
 
   /// How often it comes.
@@ -151,9 +153,13 @@ final class Schedule {
   final int day;
 
   /// The day of the month of its advance, for a payment that comes twice a
-  /// month, such as a salary paid in halves: its advance on this day and the
-  /// rest on [day], each time with [amount].
+  /// month, such as a salary: its advance on this day and the rest on [day],
+  /// each time with [amount] unless the advance has [advanceAmount].
   final int? advanceDay;
+
+  /// The positive amount of its advance, when the advance does not bring
+  /// the same as the rest, such as 40 000 ₽ of a salary of 120 000 ₽.
+  final Money? advanceAmount;
 
   /// When it comes next.
   final CivilDate next;
@@ -180,6 +186,16 @@ final class Schedule {
     },
     ScheduleEvery.year => CivilDate.onDay(time.year + 1, time.month, day),
   };
+
+  /// What its [time] brings or takes: [advanceAmount] on the day of an
+  /// advance of its own, [amount] otherwise.
+  Money amountOn(CivilDate time) =>
+      isAdvance(time) ? advanceAmount ?? amount : amount;
+
+  /// What it brings or takes in a month when it comes twice a month, the
+  /// advance and the rest together; [amount] otherwise.
+  Money get monthAmount =>
+      advanceDay == null ? amount : (advanceAmount ?? amount) + amount;
 
   /// Whether [time] is the time of its advance rather than of the rest.
   bool isAdvance(CivilDate time) => switch (advanceDay) {
@@ -224,6 +240,7 @@ final class Schedule {
     every: every,
     day: day,
     advanceDay: advanceDay,
+    advanceAmount: advanceAmount,
     next: next,
     onDay: onDay,
     reminder: reminder,
@@ -244,6 +261,7 @@ final class Schedule {
       other.every == every &&
       other.day == day &&
       other.advanceDay == advanceDay &&
+      other.advanceAmount == advanceAmount &&
       other.next == next &&
       other.onDay == onDay &&
       other.reminder == reminder &&
@@ -262,6 +280,7 @@ final class Schedule {
     every,
     day,
     advanceDay,
+    advanceAmount,
     next,
     onDay,
     reminder,

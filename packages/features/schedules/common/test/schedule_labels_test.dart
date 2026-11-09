@@ -117,6 +117,36 @@ void main() {
     );
   });
 
+  test('says the amount of each time of a salary with an advance of its '
+      'own', () {
+    final salary = Schedule(
+      id: 'salary',
+      kind: TransactionKind.income,
+      name: 'Зарплата',
+      accountId: 'card',
+      amount: rub(80000),
+      advanceAmount: rub(40000),
+      every: ScheduleEvery.month,
+      day: 5,
+      advanceDay: 20,
+      next: CivilDate(2026, 11, 20),
+      onDay: ScheduleOnDay.ask,
+      reminder: ScheduleReminder.onDay,
+    );
+
+    expect(occurrenceAmount(salary, CivilDate(2026, 11, 20)), nb('+40 000 ₽'));
+    expect(occurrenceAmount(salary, CivilDate(2026, 12, 5)), nb('+80 000 ₽'));
+    expect(scheduleTotal(salary), nb('+120 000 ₽'));
+    expect(
+      reminderTitle(salary, CivilDate(2026, 11, 20), sums: true),
+      'Аванс · ${nb('+40 000 ₽')}',
+    );
+    expect(
+      reminderTitle(salary, CivilDate(2026, 12, 5), sums: true),
+      'Зарплата · ${nb('+80 000 ₽')}',
+    );
+  });
+
   test('names the advance and the halves of a salary', () {
     final salary = Schedule(
       id: 'salary',

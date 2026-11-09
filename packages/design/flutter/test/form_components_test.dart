@@ -906,6 +906,58 @@ void main() {
       expect(typed, ['Card']);
       expect(controller.text, 'Card');
     });
+
+    testWidgets('ends with its suffix', (tester) async {
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        app(BirkaTextField(label: 'Sum', controller: controller, suffix: '₽')),
+      );
+
+      expect(find.text('₽'), findsOneWidget);
+    });
+  });
+
+  group('showFieldSheet', () {
+    testWidgets('says what the typed value means and fills in a suggestion', (
+      tester,
+    ) async {
+      String? typed;
+      await tester.pumpWidget(
+        app(
+          Builder(
+            builder: (context) => BirkaButton(
+              label: 'Open',
+              onPressed: () async => typed = await showFieldSheet(
+                context,
+                label: 'Advance',
+                done: 'Done',
+                suffix: '₽',
+                note: (text) => 'Rest: ${120 - (int.tryParse(text) ?? 0)}',
+                suggestion: (label: 'Half · 60', value: '60'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.bySemanticsLabel('Open'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('₽'), findsOneWidget);
+      expect(find.text('Rest: 120'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), '40');
+      await tester.pumpAndSettle();
+      expect(find.text('Rest: 80'), findsOneWidget);
+
+      await tester.tap(find.text('Half · 60'));
+      await tester.pumpAndSettle();
+      expect(find.text('Rest: 60'), findsOneWidget);
+
+      await tester.tap(find.bySemanticsLabel('Done'));
+      await tester.pumpAndSettle();
+      expect(typed, '60');
+    });
   });
 
   group('CardArt', () {

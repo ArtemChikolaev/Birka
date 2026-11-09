@@ -119,6 +119,11 @@ String? monthStartHint(
 String occurrenceName(Schedule schedule, CivilDate on) =>
     schedule.isAdvance(on) ? t.schedules.advance : schedule.name;
 
+/// `−45 000 ₽` or `+40 000 ₽`: what the time [on] of [schedule] brings or
+/// takes, the advance of its own included.
+String occurrenceAmount(Schedule schedule, CivilDate on) =>
+    scheduleAmount(schedule, amount: schedule.amountOn(on));
+
 /// `Нашли «Аренда» в выписке Альфа-Банка`: the statement of [import], or of
 /// no bank that Birka knows, brought the last times of [schedule].
 String foundTitle(Schedule schedule, LedgerImport? import) {
@@ -133,7 +138,7 @@ String foundTitle(Schedule schedule, LedgerImport? import) {
 /// the last time of [schedule] that a statement brought.
 String foundText(Schedule schedule, CivilDate today) => t.schedules.foundText(
   date: fullDate(schedule.last?.on ?? schedule.next, today),
-  amount: scheduleAmount(schedule),
+  amount: occurrenceAmount(schedule, schedule.last?.on ?? schedule.next),
 );
 
 /// The amount of [schedule] as its transactions show it: `−45 000 ₽`,
@@ -165,11 +170,9 @@ String madeFromLine(Transaction made, {String? category}) {
 }
 
 /// What the list of every payment shows as the amount of [schedule]: what
-/// it brings or takes in a month when it comes in halves.
-String scheduleTotal(Schedule schedule) => scheduleAmount(
-  schedule,
-  amount: schedule.advanceDay == null ? null : schedule.amount * 2,
-);
+/// it brings or takes in a month when it comes twice a month.
+String scheduleTotal(Schedule schedule) =>
+    scheduleAmount(schedule, amount: schedule.monthAmount);
 
 /// What a toast says once the next time of [schedule] was posted with
 /// [amount].

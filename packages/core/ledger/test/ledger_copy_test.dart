@@ -444,6 +444,20 @@ void main() {
       expect(LedgerCopy.parse(copy.encode()).encode(), copy.encode());
     });
 
+    test('travel with the amount of an advance of their own since version '
+        '7', () {
+      final json = withSchedules()..['version'] = 7;
+      rowsOf(json, 'schedules')[1]
+        ..['advanceDay'] = 20
+        ..['advanceAmountMinor'] = 4000000;
+
+      final copy = LedgerCopy.parse(jsonEncode(json));
+
+      expect(copy.scheduleRows[1].advanceAmountMinor, 4000000);
+      expect(copy.scheduleRows.first.advanceAmountMinor, isNull);
+      expect(LedgerCopy.parse(copy.encode()).encode(), copy.encode());
+    });
+
     test('are none in a copy of an older version', () {
       for (final version in [1, 2]) {
         final json = sample()..['version'] = version;
@@ -511,6 +525,15 @@ void main() {
         expectDamaged(
           'pay',
           (it) => it.addAll({'advanceDay': 10, 'every': 'week'}),
+        );
+      });
+
+      test('has an advance of its own on no day of an advance or of '
+          'nothing', () {
+        expectDamaged('pay', (it) => it['advanceAmountMinor'] = 4000000);
+        expectDamaged(
+          'pay',
+          (it) => it.addAll({'advanceDay': 20, 'advanceAmountMinor': 0}),
         );
       });
 
