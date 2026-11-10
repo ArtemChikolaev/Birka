@@ -17,6 +17,7 @@ import 'package:onboarding_common/onboarding_common.dart'
 import 'package:overview_common/overview_common.dart';
 import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart';
+import 'package:schedules_common/schedules_common.dart' show registerSchedules;
 import 'package:settings_common/settings_common.dart' show MonthStart, Settings;
 import 'package:transactions_common/transactions_common.dart';
 
@@ -57,5 +58,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   registerNotifications(getIt);
   registerOverview(getIt);
   registerReports(getIt);
+  // The site has no reminders: what needs them is never asked for here.
+  registerSchedules(getIt, const BrowserSettingsStore());
   registerTransactions(getIt);
 }

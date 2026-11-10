@@ -67,6 +67,10 @@ dependencies:
     path: ../../packages/features/reports/common
   reports_jaspr:
     path: ../../packages/features/reports/jaspr
+  schedules_common:
+    path: ../../packages/features/schedules/common
+  schedules_jaspr:
+    path: ../../packages/features/schedules/jaspr
   settings_common:
     path: ../../packages/features/settings/common
   settings_jaspr:

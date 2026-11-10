@@ -217,6 +217,14 @@
     and moves to new numbers over `duration.roll` as accounts or «Считать
     до» change. The pace takes the money of the period as a whole, the
     advance of a salary included.
+25. The site has the list of payments, `schedules/` (`schedules_jaspr`), as
+    its boards «Будущие деньги на сайте» draw it: what waits, what came
+    every month, the next 30 days and every payment, as on the phone. On a
+    wide screen the page is wide (`BirkaSplit`), with a side that says what
+    a day may spend and how a payment works; at 900 px or less the side goes
+    away and the page is the list alone. The site has no reminders, since it
+    cannot notify. Its form, the money until the salary and the card of the
+    overview come in their own changes.
 
 ## Consequences
 

@@ -49,6 +49,7 @@ workspace:
   - packages/features/reports/jaspr
   - packages/features/schedules/common
   - packages/features/schedules/flutter
+  - packages/features/schedules/jaspr
   - packages/features/settings/common
   - packages/features/settings/flutter
   - packages/features/settings/jaspr

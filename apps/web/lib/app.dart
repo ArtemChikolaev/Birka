@@ -11,6 +11,7 @@ import 'package:birka_web/pages/operations_island.dart';
 import 'package:birka_web/pages/overview_island.dart';
 import 'package:birka_web/pages/page_frame.dart';
 import 'package:birka_web/pages/reports_island.dart';
+import 'package:birka_web/pages/schedules_island.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 
@@ -64,6 +65,12 @@ class App extends StatelessComponent {
           path: '/inbox',
           title: 'Inbox · Birka',
           builder: (_, _) => const PageFrame(wide: true, child: InboxIsland()),
+        ),
+        Route(
+          path: '/schedules',
+          title: 'Payments · Birka',
+          builder: (_, _) =>
+              const PageFrame(wide: true, child: SchedulesIsland()),
         ),
         Route(
           path: '/notifications',

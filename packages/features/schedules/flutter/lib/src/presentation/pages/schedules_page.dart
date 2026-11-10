@@ -215,7 +215,7 @@ class SchedulesPage extends StatelessWidget {
                     Text(
                       mask(
                         context,
-                        _leftAfter(plan, view.today),
+                        leftAfterLabel(plan, view.today),
                       ),
                       style: styles.caption.copyWith(color: colors.textMuted),
                     ),
@@ -294,29 +294,6 @@ void _sayMade(BuildContext context, SchedulesState before, SchedulesState now) {
       }
     }
   }
-}
-
-/// What the accounts hold at the end of [plan], before everyday spending:
-/// with the advances that come before it, which the line says.
-String _leftAfter(SpendingPlan plan, CivilDate today) {
-  final amount = formatMoney(plan.morning + plan.advanced - plan.paid);
-  final advance = plan.advances.isNotEmpty;
-  return switch (plan.payday) {
-    final payday? when plan.until == SpendUntil.payday =>
-      advance
-          ? t.schedules.leftAfterPaydayAdvance(
-              date: fullDate(payday, today),
-              amount: amount,
-            )
-          : t.schedules.leftAfterPayday(
-              date: fullDate(payday, today),
-              amount: amount,
-            ),
-    _ =>
-      advance
-          ? t.schedules.leftAfterMonthAdvance(amount: amount)
-          : t.schedules.leftAfterMonth(amount: amount),
-  };
 }
 
 /// The color of the line of [schedule] on the day it went through: posted

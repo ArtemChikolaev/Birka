@@ -74,18 +74,6 @@ class ScheduleDot extends StatelessWidget {
   }
 }
 
-/// `Дом · Зарплатная карта`: the category of [schedule] and its account, or
-/// both accounts of a transfer.
-String scheduleWhere(SchedulesView view, Schedule schedule) {
-  final from = view.accountsById[schedule.accountId]?.name ?? '';
-  if (schedule.kind == TransactionKind.transfer) {
-    final to = view.accountsById[schedule.toAccountId]?.name ?? '';
-    return '$from → $to';
-  }
-  final category = view.categories[schedule.categoryId]?.name;
-  return category == null ? from : '$category · $from';
-}
-
 /// The color of the amount of [schedule]: the positive one for an income.
 Color scheduleInk(BuildContext context, Schedule schedule) {
   final colors = BirkaColors.of(context);

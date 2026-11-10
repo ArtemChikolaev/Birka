@@ -14,6 +14,7 @@ class GlassIconButton extends StatelessComponent {
     this.href,
     this.onPressed,
     this.badge,
+    this.glass = true,
     super.key,
   });
 
@@ -35,9 +36,15 @@ class GlassIconButton extends StatelessComponent {
   /// [label] says the count itself.
   final int? badge;
 
+  /// Whether the button stands on glass. A plain one, such as the cross on a
+  /// row of a list, is only its mark.
+  final bool glass;
+
   @override
   Component build(BuildContext context) {
-    const classes = 'glass glass-icon-button';
+    final classes = glass
+        ? 'glass glass-icon-button'
+        : 'glass-icon-button glass-icon-button--plain';
     final attributes = {'aria-label': label};
     final badge = this.badge;
     final content = [BirkaIcon(glyph), if (badge != null) _Count(badge)];
@@ -70,6 +77,29 @@ class GlassIconButton extends StatelessComponent {
         'position': 'relative',
         'width': 'var(--size-touch-target)',
       },
+    ),
+    css('.glass-icon-button--plain').styles(
+      raw: {
+        'align-items': 'center',
+        'background': 'none',
+        'border': '0',
+        'border-radius': 'var(--radius-pill)',
+        'color': 'var(--color-text-subtle)',
+        'cursor': 'pointer',
+        'display': 'flex',
+        'flex': 'none',
+        'height': 'var(--size-touch-target)',
+        'justify-content': 'center',
+        'padding': '0',
+        'transition': 'color var(--duration-fast)',
+        'width': 'var(--size-touch-target)',
+      },
+    ),
+    css('.glass-icon-button--plain:hover').styles(
+      raw: {'color': 'var(--color-text)'},
+    ),
+    css('.glass-icon-button--plain .birka-icon').styles(
+      raw: {'height': '18px', 'width': '18px'},
     ),
     // A ring of the background keeps the count off the glass.
     css('.glass-icon-button__badge').styles(
