@@ -26,6 +26,7 @@ void main() {
       ...BirkaPlaceholder.styles,
       ...BirkaRing.styles,
       ...BirkaSelect.styles,
+      ...BirkaSplit.styles,
       ...BirkaStepBars.styles,
       ...BirkaSwitch.styles,
       ...BirkaTextField.styles,
@@ -48,6 +49,8 @@ void main() {
       ...GlassToast.styles,
       ...GlyphBadge.styles,
       ...SectionLabel.styles,
+      ...TintedBox.styles,
+      ...TintedNotice.styles,
       ...WelcomeArt.styles,
     ].map((rule) => rule.toCss()).join();
 

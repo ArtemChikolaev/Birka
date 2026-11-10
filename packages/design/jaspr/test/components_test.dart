@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:jaspr/dom.dart';
@@ -1233,6 +1235,124 @@ void main() {
 
       expect(fieldInput().classes, 'text-amount birka-field__input');
     });
+
+    testComponents('ends with a suffix', (tester) async {
+      tester.pumpComponent(
+        BirkaTextField(
+          label: 'Amount',
+          value: '449',
+          onChanged: (_) {},
+          suffix: '₽',
+        ),
+      );
+
+      expect(
+        find.descendant(
+          of: withClasses('text-body birka-field__suffix'),
+          matching: find.text('₽'),
+        ),
+        findsOneComponent,
+      );
+    });
+  });
+
+  group('BirkaSplit', () {
+    testComponents('puts the side beside the main column', (tester) async {
+      tester.pumpComponent(
+        const BirkaSplit(
+          main: [Component.text('List')],
+          aside: [Component.text('Sum')],
+          asideWidth: 340,
+        ),
+      );
+
+      expect(
+        find.descendant(
+          of: withClasses('birka-split__main'),
+          matching: find.text('List'),
+        ),
+        findsOneComponent,
+      );
+      expect(
+        find.descendant(
+          of: withClasses('birka-split__aside'),
+          matching: find.text('Sum'),
+        ),
+        findsOneComponent,
+      );
+      expect(find.tag('aside'), findsOneComponent);
+      final split =
+          withClasses('birka-split').evaluate().single.component
+              as DomComponent;
+      expect(split.styles!.properties['--birka-split-aside'], '340px');
+    });
+
+    testComponents('splits the width in halves', (tester) async {
+      tester.pumpComponent(
+        const BirkaSplit(
+          main: [Component.text('Ring')],
+          aside: [Component.text('Lines')],
+          halves: true,
+        ),
+      );
+
+      expect(withClasses('birka-split birka-split--halves'), findsOneComponent);
+      expect(withClasses('birka-split__main'), findsNComponents(2));
+      expect(find.tag('aside'), findsNothing);
+    });
+
+    testComponents('can keep the side to a wide screen', (tester) async {
+      tester.pumpComponent(
+        const BirkaSplit(
+          main: [Component.text('List')],
+          aside: [Component.text('Hints')],
+          asideWhenNarrow: false,
+        ),
+      );
+
+      expect(
+        withClasses('birka-split birka-split--wide-aside'),
+        findsOneComponent,
+      );
+      final css = BirkaSplit.styles.map((rule) => rule.toCss()).join();
+      expect(css, contains('.birka-split--wide-aside > .birka-split__aside'));
+    });
+  });
+
+  group('TintedBox', () {
+    testComponents('tints what it holds', (tester) async {
+      tester.pumpComponent(
+        const TintedBox(color: '#fbbf24', children: [Component.text('Rent')]),
+      );
+
+      final box =
+          withClasses('tinted-box').evaluate().single.component as DomComponent;
+      expect(box.styles!.properties['--tint'], '#fbbf24');
+      expect(find.text('Rent'), findsOneComponent);
+    });
+
+    testComponents('a notice has a mark, a title and quieter words', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const TintedNotice(
+          color: '#3ddc97',
+          title: 'Found in the statement',
+          text: 'Marked as posted',
+          glyph: BirkaGlyph.check,
+        ),
+      );
+
+      expect(find.byType(GlyphBadge), findsOneComponent);
+      expect(
+        withClasses('text-body-strong tinted-notice__title'),
+        findsOneComponent,
+      );
+      expect(
+        withClasses('text-body tinted-notice__text tinted-notice__text--quiet'),
+        findsOneComponent,
+      );
+    });
   });
 
   group('card art', () {
@@ -1467,6 +1587,37 @@ void main() {
       expect(gone, 0);
 
       time.elapse(GlassToast.leave);
+      expect(gone, 1);
+    });
+  });
+
+  testComponents('GlassToast offers an action and goes as it happens', (
+    tester,
+  ) async {
+    fakeAsync((time) {
+      var gone = 0;
+      var undone = 0;
+      tester.pumpComponent(
+        GlassToast(
+          'Hid it',
+          onGone: () => gone++,
+          action: (label: 'Undo', onPressed: () => undone++),
+        ),
+      );
+      expect(withClasses('glass-toast glass-toast--action'), findsOneComponent);
+
+      unawaited(tester.click(find.tag('button')));
+      time.flushMicrotasks();
+      expect(undone, 1);
+      expect(
+        withClasses('glass-toast glass-toast--action glass-toast--leaving'),
+        findsOneComponent,
+      );
+
+      time.elapse(GlassToast.leave);
+      expect(gone, 1);
+      // Its stay no longer runs out.
+      time.elapse(GlassToast.stay);
       expect(gone, 1);
     });
   });
