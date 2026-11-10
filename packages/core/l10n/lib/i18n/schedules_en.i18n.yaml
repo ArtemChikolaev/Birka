@@ -312,3 +312,6 @@ how:
   - When it comes in a bank statement, Birka will not count it twice.
   - Birka finds what repeats in your operations and offers to add it.
 failed: Could not read the payments.
+previewTitle: In the list of payments
+previewNext: The next times
+cancel: Cancel

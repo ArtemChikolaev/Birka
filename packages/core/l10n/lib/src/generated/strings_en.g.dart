@@ -3127,6 +3127,15 @@ class Translations$schedules$en {
 
   /// en: 'Could not read the payments.'
   String get failed => 'Could not read the payments.';
+
+  /// en: 'In the list of payments'
+  String get previewTitle => 'In the list of payments';
+
+  /// en: 'The next times'
+  String get previewNext => 'The next times';
+
+  /// en: 'Cancel'
+  String get cancel => 'Cancel';
 }
 
 // Path: settings
@@ -5411,6 +5420,9 @@ extension on Translations {
           'schedules.how.3' =>
             'Birka finds what repeats in your operations and offers to add it.',
           'schedules.failed' => 'Could not read the payments.',
+          'schedules.previewTitle' => 'In the list of payments',
+          'schedules.previewNext' => 'The next times',
+          'schedules.cancel' => 'Cancel',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -5433,12 +5445,12 @@ extension on Translations {
           'transactions.today' => 'Today',
           'transactions.yesterday' => 'Yesterday',
           'transactions.pickDay' => 'Pick a day',
-          'transactions.note' => 'Note',
-          'transactions.addNote' => 'Note',
-          'transactions.done' => 'Done',
           _ => null,
         } ??
         switch (path) {
+          'transactions.note' => 'Note',
+          'transactions.addNote' => 'Note',
+          'transactions.done' => 'Done',
           'transactions.account' => 'Account',
           'transactions.to' => 'To',
           'transactions.sent' => 'Leaves',

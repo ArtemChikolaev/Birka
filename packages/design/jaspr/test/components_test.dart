@@ -2009,4 +2009,72 @@ void main() {
       findsOneComponent,
     );
   });
+
+  group('BirkaFold', () {
+    testComponents('is out of reach while closed', (tester) async {
+      tester.pumpComponent(
+        const BirkaFold(open: false, children: [Component.text('Advance')]),
+      );
+
+      final fold =
+          withClasses('birka-fold').evaluate().single.component as DomComponent;
+      expect(fold.attributes, containsPair('aria-hidden', 'true'));
+      expect(fold.attributes, contains('inert'));
+      expect(find.text('Advance'), findsOneComponent);
+    });
+
+    testComponents('opens with the gap of its column', (tester) async {
+      tester.pumpComponent(
+        const BirkaFold(
+          open: true,
+          gap: 'var(--space-md)',
+          children: [Component.text('Advance')],
+        ),
+      );
+
+      final fold =
+          withClasses('birka-fold birka-fold--open').evaluate().single.component
+              as DomComponent;
+      expect(fold.attributes, isNull);
+      expect(fold.styles!.properties['--birka-fold-gap'], 'var(--space-md)');
+    });
+  });
+
+  testComponents('BirkaForm puts its aside and its button beside the fields', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      BirkaForm(
+        title: 'New payment',
+        closeLabel: 'Close',
+        onClose: () {},
+        submitLabel: 'Save',
+        onSubmit: () {},
+        aside: const [Component.text('Preview')],
+        children: const [Component.text('Name')],
+      ),
+    );
+
+    expect(
+      find.descendant(
+        of: withClasses('birka-split__aside'),
+        matching: find.text('Preview'),
+      ),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(
+        of: withClasses('birka-split__aside'),
+        matching: withClasses('birka-form__actions'),
+      ),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(
+        of: withClasses('birka-split__main'),
+        matching: find.text('Name'),
+      ),
+      findsOneComponent,
+    );
+  });
 }

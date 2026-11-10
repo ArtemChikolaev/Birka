@@ -92,7 +92,13 @@ class BirkaSplit extends StatelessComponent {
         'top': 'var(--space-lg)',
       },
     ),
+    // What only a wide page or only a narrow one shows, such as the same card
+    // that stands at the side of one and on top of the other.
+    css.media(const MediaQuery.raw('(min-width: 901px)'), [
+      css('.birka-narrow-only').styles(raw: {'display': 'none'}),
+    ]),
     css.media(const MediaQuery.raw('(max-width: 900px)'), [
+      css('.birka-wide-only').styles(raw: {'display': 'none'}),
       css('.birka-split, .birka-split--halves').styles(
         raw: {'grid-template-columns': 'minmax(0, 1fr)'},
       ),

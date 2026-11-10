@@ -8,9 +8,10 @@ import 'package:schedules_common/schedules_common.dart';
 import 'package:schedules_jaspr/schedules_jaspr.dart';
 
 /// The regular payments of this browser (ADR 0023): the ones that wait, what
-/// came every month, the next 30 days and every payment. The card of the
-/// overview leads here, and the page has a way back of its own, so it stands
-/// without the tabs of the site.
+/// came every month, the next 30 days and every payment, and the form of a
+/// payment at `#new`, `#salary`, `#from-<operation>` and `#<payment>`. The
+/// card of the overview leads here, and the page has a way back of its own,
+/// so it stands without the tabs of the site.
 @client
 class SchedulesIsland extends StatefulComponent {
   /// Creates the island.
@@ -21,7 +22,15 @@ class SchedulesIsland extends StatefulComponent {
 }
 
 class _SchedulesIslandState extends DataIslandState<SchedulesIsland> {
+  static const _address = 'schedules/';
+  static const _new = 'new';
+  static const _salary = 'salary';
+  static const _from = 'from-';
+
   SchedulesCubit? _schedules;
+
+  /// What the list says once a form is done, such as a payment deleted.
+  String? _said;
 
   @override
   SitePage get page => SitePage.overview;
@@ -43,14 +52,41 @@ class _SchedulesIslandState extends DataIslandState<SchedulesIsland> {
 
   @override
   Component buildPage(BuildContext context) {
-    return BlocProvider<SchedulesCubit>(
-      create: (_) => _schedules = getIt(),
-      child: SchedulesPage(
-        backHref: 'overview/',
-        addHref: 'schedules/#new',
-        paydayHref: 'payday/',
-        hrefOf: (id) => 'schedules/#$id',
-        findHref: (id) => 'schedules/#from-$id',
+    return switch (fragment) {
+      '' => BlocProvider<SchedulesCubit>(
+        create: (_) => _schedules = getIt(),
+        child: SchedulesPage(
+          said: _said,
+          backHref: 'overview/',
+          addHref: '$_address#$_new',
+          paydayHref: 'payday/',
+          hrefOf: (id) => '$_address#$id',
+          findHref: (id) => '$_address#$_from$id',
+        ),
+      ),
+      _new => _form(null, null),
+      _salary => _form(null, (salary: true, from: null)),
+      final path when path.startsWith(_from) => _form(null, (
+        salary: false,
+        from: path.substring(_from.length),
+      )),
+      final id => _form(id, null),
+    };
+  }
+
+  Component _form(String? id, ({bool salary, String? from})? start) {
+    return BlocProvider<ScheduleFormCubit>(
+      key: ValueKey(fragment),
+      create: (_) => getIt(param1: id, param2: start),
+      child: ScheduleFormPage(
+        onClose: () {
+          _said = null;
+          closeForm();
+        },
+        onDone: (said) {
+          _said = said;
+          closeForm();
+        },
       ),
     );
   }

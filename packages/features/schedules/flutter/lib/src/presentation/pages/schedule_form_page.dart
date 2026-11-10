@@ -7,7 +7,6 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 import 'package:schedules_common/schedules_common.dart';
-import 'package:schedules_flutter/src/presentation/widgets/schedule_bits.dart';
 
 /// The form of a new or an existing regular payment, as a sheet (ADR 0023).
 ///
@@ -608,7 +607,7 @@ class _Amount extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (_range(state) case final range?)
+                if (foundRangeLabel(state) case final range?)
                   Center(
                     key: const ValueKey('range'),
                     child: Text(
@@ -640,20 +639,6 @@ class _Amount extends StatelessWidget {
     final money = amountTyped(typed, amount.currency);
     if (money != null) cubit.amountChanged(money.minorUnits);
   }
-}
-
-/// What the amount of a payment made from the operations that came every
-/// month says while it is the last of their amounts, which changed:
-/// `последняя сумма · бывало от 6 410 ₽ до 7 120 ₽`.
-String? _range(ScheduleFormState state) {
-  final found = state.found;
-  if (found == null || !found.varies) return null;
-  if (state.amountMinor != found.amounts.last.minorUnits) return null;
-  final range = found.range;
-  return t.schedules.amountRange(
-    min: formatMoney(range.min),
-    max: formatMoney(range.max),
-  );
 }
 
 /// The operation that a new payment is made from, over the form, as the
