@@ -47,10 +47,10 @@ class _NotificationsIslandState extends DataIslandState<NotificationsIsland> {
       create: (_) => _feed = getIt(),
       child: NotificationsPage(
         backHref: 'overview/',
-        hrefOf: (place, _) => switch (place) {
+        hrefOf: (place, id) => switch (place) {
           NoticePlace.inbox => 'inbox/',
-          // The site has no regular payments yet (ADR 0026).
-          NoticePlace.schedules || NoticePlace.schedule => null,
+          NoticePlace.schedule when id != null => 'schedules/#$id',
+          NoticePlace.schedules || NoticePlace.schedule => 'schedules/',
         },
         onOpen: openSitePage,
       ),

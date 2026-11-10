@@ -3080,6 +3080,53 @@ class Translations$schedules$en {
 
   /// en: 'As usual, it lasts until the month ends'
   String get forecastLineMonth => 'As usual, it lasts until the month ends';
+
+  /// en: 'Next on $date · $count'
+  String subtitleNext({required Object date, required Object count}) =>
+      'Next on ${date} · ${count}';
+
+  /// en: '(one) {Today, $date · $n waits for you} (other) {Today, $date · $n wait for you}'
+  String subtitleToday({required num n, required Object date}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Today, ${date} · ${n} waits for you',
+        other: 'Today, ${date} · ${n} wait for you',
+      );
+
+  /// en: 'None yet'
+  String get subtitleNone => 'None yet';
+
+  /// en: '(one) {$n payment} (other) {$n payments}'
+  String paymentsCount({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} payment',
+        other: '${n} payments',
+      );
+
+  /// en: 'You can spend a day'
+  String get perDayTitle => 'You can spend a day';
+
+  /// en: 'The payments until payday are already taken off: $amount.'
+  String paidAheadPayday({required Object amount}) =>
+      'The payments until payday are already taken off: ${amount}.';
+
+  /// en: 'The payments until the month ends are already taken off: $amount.'
+  String paidAheadMonth({required Object amount}) =>
+      'The payments until the month ends are already taken off: ${amount}.';
+
+  /// en: 'How it works'
+  String get howTitle => 'How it works';
+
+  List<String> get how => [
+    'A payment stands in the plan on its day and is already out of what you can spend today.',
+    'On its day it waits for your «Post», or posts itself, as the payment says.',
+    'When it comes in a bank statement, Birka will not count it twice.',
+    'Birka finds what repeats in your operations and offers to add it.',
+  ];
+
+  /// en: 'Could not read the payments.'
+  String get failed => 'Could not read the payments.';
 }
 
 // Path: settings
@@ -5327,6 +5374,43 @@ extension on Translations {
           'schedules.forecastLinePayday' => 'As usual, it lasts until payday',
           'schedules.forecastLineMonth' =>
             'As usual, it lasts until the month ends',
+          'schedules.subtitleNext' =>
+            ({required Object date, required Object count}) =>
+                'Next on ${date} · ${count}',
+          'schedules.subtitleToday' =>
+            ({required num n, required Object date}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Today, ${date} · ${n} waits for you',
+                  other: 'Today, ${date} · ${n} wait for you',
+                ),
+          'schedules.subtitleNone' => 'None yet',
+          'schedules.paymentsCount' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} payment',
+                  other: '${n} payments',
+                ),
+          'schedules.perDayTitle' => 'You can spend a day',
+          'schedules.paidAheadPayday' =>
+            ({required Object amount}) =>
+                'The payments until payday are already taken off: ${amount}.',
+          'schedules.paidAheadMonth' =>
+            ({required Object amount}) =>
+                'The payments until the month ends are already taken off: ${amount}.',
+          'schedules.howTitle' => 'How it works',
+          'schedules.how.0' =>
+            'A payment stands in the plan on its day and is already out of what you can spend today.',
+          'schedules.how.1' =>
+            'On its day it waits for your «Post», or posts itself, as the payment says.',
+          'schedules.how.2' =>
+            'When it comes in a bank statement, Birka will not count it twice.',
+          'schedules.how.3' =>
+            'Birka finds what repeats in your operations and offers to add it.',
+          'schedules.failed' => 'Could not read the payments.',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -5352,6 +5436,9 @@ extension on Translations {
           'transactions.note' => 'Note',
           'transactions.addNote' => 'Note',
           'transactions.done' => 'Done',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.account' => 'Account',
           'transactions.to' => 'To',
           'transactions.sent' => 'Leaves',
@@ -5367,9 +5454,6 @@ extension on Translations {
             'Add an account to record where the money goes.',
           'transactions.addAccount' => 'Add account',
           'transactions.oneAccountHint' => 'A transfer needs a second account.',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.noCategoriesHint' =>
             'Add categories to sort your money.',
           'transactions.addCategories' => 'Add categories',

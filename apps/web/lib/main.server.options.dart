@@ -29,6 +29,7 @@ import 'package:birka_web/pages/operations_island.dart' as _operations_island;
 import 'package:birka_web/pages/overview_island.dart' as _overview_island;
 import 'package:birka_web/pages/page_frame.dart' as _page_frame;
 import 'package:birka_web/pages/reports_island.dart' as _reports_island;
+import 'package:birka_web/pages/schedules_island.dart' as _schedules_island;
 import 'package:categories_jaspr/src/presentation/pages/categories_page.dart'
     as _categories_page;
 import 'package:categories_jaspr/src/presentation/pages/category_form_page.dart'
@@ -73,6 +74,7 @@ import 'package:design_jaspr/src/glass_search_field.dart'
     as _glass_search_field;
 import 'package:design_jaspr/src/glass_segmented.dart' as _glass_segmented;
 import 'package:design_jaspr/src/glass_step_pills.dart' as _glass_step_pills;
+import 'package:design_jaspr/src/glass_steps.dart' as _glass_steps;
 import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/glass_toast.dart' as _glass_toast;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
@@ -114,6 +116,10 @@ import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
     as _overview_page;
 import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
     as _reports_page;
+import 'package:schedules_jaspr/src/presentation/components/schedule_bits.dart'
+    as _schedule_bits;
+import 'package:schedules_jaspr/src/presentation/pages/schedules_page.dart'
+    as _schedules_page;
 import 'package:settings_jaspr/src/presentation/components/settings_section.dart'
     as _settings_section;
 import 'package:transactions_jaspr/src/presentation/components/back_header.dart'
@@ -182,6 +188,8 @@ ServerOptions get defaultServerOptions => ServerOptions(
     _reports_island.ReportsIsland: ClientTarget<_reports_island.ReportsIsland>(
       'reports_island',
     ),
+    _schedules_island.SchedulesIsland:
+        ClientTarget<_schedules_island.SchedulesIsland>('schedules_island'),
   },
   styles: () => [
     ..._account_row.AccountRow.styles,
@@ -233,6 +241,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glass_search_field.GlassSearchField.styles,
     ..._glass_segmented.GlassSegmented.styles,
     ..._glass_step_pills.GlassStepPills.styles,
+    ..._glass_steps.GlassSteps.styles,
     ..._glass_surface.GlassSurface.styles,
     ..._glass_toast.GlassToast.styles,
     ..._glyph_badge.GlyphBadge.styles,
@@ -261,6 +270,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
     ..._reports_page.ReportsPage.styles,
+    ..._schedule_bits.DateColumn.styles,
+    ..._schedule_bits.ScheduleDot.styles,
+    ..._schedules_page.SchedulesPage.styles,
     ..._settings_section.SettingsSection.styles,
     ..._back_header.BackHeader.styles,
     ..._operation_day_group.OperationDayGroup.styles,

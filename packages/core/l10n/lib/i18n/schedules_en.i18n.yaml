@@ -294,3 +294,21 @@ forecastNote: Usual spending is the average of 3 months on these accounts, witho
 forecastLineRunsOut: As usual, the money runs out on $date
 forecastLinePayday: As usual, it lasts until payday
 forecastLineMonth: As usual, it lasts until the month ends
+subtitleNext: Next on $date · $count
+subtitleToday(n):
+  one: Today, $date · $n waits for you
+  other: Today, $date · $n wait for you
+subtitleNone: None yet
+paymentsCount(n):
+  one: $n payment
+  other: $n payments
+perDayTitle: You can spend a day
+paidAheadPayday: "The payments until payday are already taken off: $amount."
+paidAheadMonth: "The payments until the month ends are already taken off: $amount."
+howTitle: How it works
+how:
+  - A payment stands in the plan on its day and is already out of what you can spend today.
+  - On its day it waits for your «Post», or posts itself, as the payment says.
+  - When it comes in a bank statement, Birka will not count it twice.
+  - Birka finds what repeats in your operations and offers to add it.
+failed: Could not read the payments.

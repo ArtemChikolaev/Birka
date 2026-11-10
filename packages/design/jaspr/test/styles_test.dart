@@ -44,6 +44,7 @@ void main() {
       ...GlassPageHeader.styles,
       ...GlassSearchField.styles,
       ...GlassSegmented.styles,
+      ...GlassSteps.styles,
       ...GlassStepPills.styles,
       ...GlassSurface.styles,
       ...GlassToast.styles,

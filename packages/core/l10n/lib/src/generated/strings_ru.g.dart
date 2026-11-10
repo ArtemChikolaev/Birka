@@ -2552,6 +2552,48 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String get forecastLinePayday => 'Как обычно — хватит до зарплаты';
   @override
   String get forecastLineMonth => 'Как обычно — хватит до конца месяца';
+  @override
+  String subtitleNext({required Object date, required Object count}) =>
+      'Ближайший ${date} · ${count}';
+  @override
+  String subtitleToday({required num n, required Object date}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Сегодня ${date} · ${n} ждёт подтверждения',
+        few: 'Сегодня ${date} · ${n} ждут подтверждения',
+        many: 'Сегодня ${date} · ${n} ждут подтверждения',
+        other: 'Сегодня ${date} · ${n} ждут подтверждения',
+      );
+  @override
+  String get subtitleNone => 'Пока ни одного';
+  @override
+  String paymentsCount({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} платёж',
+        few: '${n} платежа',
+        many: '${n} платежей',
+        other: '${n} платежей',
+      );
+  @override
+  String get perDayTitle => 'Можно тратить в день';
+  @override
+  String paidAheadPayday({required Object amount}) =>
+      'Платежи до зарплаты уже вычтены: ${amount}.';
+  @override
+  String paidAheadMonth({required Object amount}) =>
+      'Платежи до конца месяца уже вычтены: ${amount}.';
+  @override
+  String get howTitle => 'Как это устроено';
+  @override
+  List<String> get how => [
+    'Платёж стоит в плане на свой день — его уже нет в «Можно тратить сегодня».',
+    'В день платежа он ждёт вашего «Провести» или проводится сам — как выбрано в платеже.',
+    'Придёт в выписке банка — Birka не задвоит его.',
+    'Повторы в операциях Birka находит сама и предлагает добавить.',
+  ];
+  @override
+  String get failed => 'Не удалось прочитать платежи.';
 }
 
 // Path: settings
@@ -4789,6 +4831,46 @@ extension on TranslationsRu {
           'schedules.forecastLinePayday' => 'Как обычно — хватит до зарплаты',
           'schedules.forecastLineMonth' =>
             'Как обычно — хватит до конца месяца',
+          'schedules.subtitleNext' =>
+            ({required Object date, required Object count}) =>
+                'Ближайший ${date} · ${count}',
+          'schedules.subtitleToday' =>
+            ({required num n, required Object date}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Сегодня ${date} · ${n} ждёт подтверждения',
+                  few: 'Сегодня ${date} · ${n} ждут подтверждения',
+                  many: 'Сегодня ${date} · ${n} ждут подтверждения',
+                  other: 'Сегодня ${date} · ${n} ждут подтверждения',
+                ),
+          'schedules.subtitleNone' => 'Пока ни одного',
+          'schedules.paymentsCount' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} платёж',
+                  few: '${n} платежа',
+                  many: '${n} платежей',
+                  other: '${n} платежей',
+                ),
+          'schedules.perDayTitle' => 'Можно тратить в день',
+          'schedules.paidAheadPayday' =>
+            ({required Object amount}) =>
+                'Платежи до зарплаты уже вычтены: ${amount}.',
+          'schedules.paidAheadMonth' =>
+            ({required Object amount}) =>
+                'Платежи до конца месяца уже вычтены: ${amount}.',
+          'schedules.howTitle' => 'Как это устроено',
+          'schedules.how.0' =>
+            'Платёж стоит в плане на свой день — его уже нет в «Можно тратить сегодня».',
+          'schedules.how.1' =>
+            'В день платежа он ждёт вашего «Провести» или проводится сам — как выбрано в платеже.',
+          'schedules.how.2' => 'Придёт в выписке банка — Birka не задвоит его.',
+          'schedules.how.3' =>
+            'Повторы в операциях Birka находит сама и предлагает добавить.',
+          'schedules.failed' => 'Не удалось прочитать платежи.',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -4814,6 +4896,9 @@ extension on TranslationsRu {
           'transactions.note' => 'Заметка',
           'transactions.addNote' => 'Заметка',
           'transactions.done' => 'Готово',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.account' => 'Счёт',
           'transactions.to' => 'Куда',
           'transactions.sent' => 'Списать',
@@ -4829,9 +4914,6 @@ extension on TranslationsRu {
             'Добавьте счёт, чтобы записывать, куда уходят деньги.',
           'transactions.addAccount' => 'Добавить счёт',
           'transactions.oneAccountHint' => 'Для перевода нужен второй счёт.',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.noCategoriesHint' =>
             'Добавьте категории, чтобы разбирать траты.',
           'transactions.addCategories' => 'Добавить категории',

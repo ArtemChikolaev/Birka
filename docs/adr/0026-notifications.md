@@ -75,8 +75,8 @@
    `notifications/` (`notifications_jaspr`), in the column of a plain page,
    since the site has no side panels; «Прочитать все» stands in its header.
    A notice leads only where the site has a page: an import whose operations
-   wait leads to the inbox, and a notice of a payment leads nowhere while the
-   site has no regular payments. A new one is read before the page leaves,
+   wait leads to the inbox, and a notice of a payment to the payments,
+   `schedules/`, though the site makes none, having no reminders. A new one is read before the page leaves,
    so that the write does not race the next page. The site forgets the
    notices older than 90 days each time a page opens the database.
 
@@ -92,8 +92,7 @@
 
 ## Consequences
 
-- The site has no reminders and no regular payments yet, so its feed holds
-  only the imports.
+- The site has no reminders, so its feed holds only the imports.
 - A notice keeps the amount of its time, so a payment whose amount changes
   shows the old amount on its old notices.
 - The notices of Birka about itself, such as what is new in a version, need

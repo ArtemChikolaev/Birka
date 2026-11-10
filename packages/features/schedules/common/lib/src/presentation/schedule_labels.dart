@@ -6,6 +6,7 @@ import 'package:schedules_common/src/domain/repeat_finds.dart';
 import 'package:schedules_common/src/domain/rough_money.dart';
 import 'package:schedules_common/src/domain/spending_plan.dart';
 import 'package:schedules_common/src/domain/usual_pace.dart';
+import 'package:schedules_common/src/presentation/schedules_cubit.dart';
 
 const _weekdays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
@@ -122,6 +123,18 @@ String? monthStartHint(
   );
 }
 
+/// `Дом · Зарплатная карта`: the category of [schedule] and its account, or
+/// both accounts of a transfer.
+String scheduleWhere(SchedulesView view, Schedule schedule) {
+  final from = view.accountsById[schedule.accountId]?.name ?? '';
+  if (schedule.kind == TransactionKind.transfer) {
+    final to = view.accountsById[schedule.toAccountId]?.name ?? '';
+    return '$from → $to';
+  }
+  final category = view.categories[schedule.categoryId]?.name;
+  return category == null ? from : '$category · $from';
+}
+
 /// What a time [on] of [schedule] is called: «Аванс» for the advance of a
 /// salary in halves, else the name of the payment.
 String occurrenceName(Schedule schedule, CivilDate on) =>
@@ -231,6 +244,29 @@ String skippedLabel(Schedule schedule, CivilDate today) {
   return schedule.onDay == ScheduleOnDay.post
       ? t.schedules.skippedPost(name: name, date: next)
       : t.schedules.skippedAsk(name: name, date: next);
+}
+
+/// What the accounts hold at the end of [plan], before everyday spending:
+/// with the advances that come before it, which the line says.
+String leftAfterLabel(SpendingPlan plan, CivilDate today) {
+  final amount = formatMoney(plan.morning + plan.advanced - plan.paid);
+  final advance = plan.advances.isNotEmpty;
+  return switch (plan.payday) {
+    final payday? when plan.until == SpendUntil.payday =>
+      advance
+          ? t.schedules.leftAfterPaydayAdvance(
+              date: fullDate(payday, today),
+              amount: amount,
+            )
+          : t.schedules.leftAfterPayday(
+              date: fullDate(payday, today),
+              amount: amount,
+            ),
+    _ =>
+      advance
+          ? t.schedules.leftAfterMonthAdvance(amount: amount)
+          : t.schedules.leftAfterMonth(amount: amount),
+  };
 }
 
 /// The days of [plan] for people: `до зарплаты 5 декабря · 17 дней` or

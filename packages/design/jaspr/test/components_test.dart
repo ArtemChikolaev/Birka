@@ -1924,4 +1924,89 @@ void main() {
     );
     expect(find.byType(BirkaIcon), findsOneComponent);
   });
+
+  group('GlassPageHeader', () {
+    testComponents('can have a way back and a line under the heading', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const GlassPageHeader(
+          title: 'Payments',
+          subtitle: 'Next on 25 November',
+          leading: Component.text('Back'),
+          trailing: Component.text('Add'),
+        ),
+      );
+
+      expect(
+        withClasses('glass-page-header glass-page-header--full'),
+        findsOneComponent,
+      );
+      expect(
+        find.descendant(
+          of: withClasses('glass-page-header__heading'),
+          matching: find.text('Next on 25 November'),
+        ),
+        findsOneComponent,
+      );
+      expect(find.tag('h1'), findsOneComponent);
+    });
+
+    testComponents('stays as it was without them', (tester) async {
+      tester.pumpComponent(const GlassPageHeader(title: 'Accounts'));
+
+      expect(withClasses('glass-page-header'), findsOneComponent);
+      expect(withClasses('glass-page-header__heading'), findsNothing);
+    });
+  });
+
+  group('GlassListRow with an action', () {
+    testComponents('keeps the button out of its link', (tester) async {
+      var dropped = 0;
+      tester.pumpComponent(
+        GlassListRow(
+          title: 'Plus',
+          href: 'new',
+          action: GlassIconButton(
+            glyph: BirkaGlyph.close,
+            label: 'Not regular',
+            glass: false,
+            onPressed: () => dropped++,
+          ),
+        ),
+      );
+
+      expect(withClasses('glass-row glass-row--split'), findsOneComponent);
+      expect(attributesOf(find.tag('a'))['href'], 'new');
+      expect(
+        find.descendant(of: find.tag('a'), matching: find.tag('button')),
+        findsNothing,
+      );
+      expect(
+        withClasses('glass-icon-button glass-icon-button--plain'),
+        findsOneComponent,
+      );
+
+      await tester.click(find.tag('button'));
+      expect(dropped, 1);
+    });
+  });
+
+  testComponents('GlassSteps numbers its points under its title', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      const GlassSteps(title: 'How it works', points: ['Read', 'Check']),
+    );
+
+    expect(find.text('How it works'), findsOneComponent);
+    expect(find.tag('li'), findsNComponents(2));
+    expect(
+      find.descendant(
+        of: withClasses('text-caption glass-steps__number'),
+        matching: find.text('2'),
+      ),
+      findsOneComponent,
+    );
+  });
 }

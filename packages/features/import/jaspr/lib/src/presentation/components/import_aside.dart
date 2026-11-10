@@ -96,22 +96,8 @@ class ImportAside extends StatelessComponent {
     };
   }
 
-  Component _howItWorks() {
-    return div(classes: 'glass import-how', [
-      span(classes: 'text-label import-summary__title', [
-        .text(t.imports.howTitle),
-      ]),
-      ol(classes: 'import-how__list', [
-        for (final (index, point) in t.imports.how.indexed)
-          li(classes: 'import-how__point', [
-            span(classes: 'text-caption import-how__number', [
-              .text('${index + 1}'),
-            ]),
-            span(classes: 'text-body import-how__text', [.text(point)]),
-          ]),
-      ]),
-    ]);
-  }
+  Component _howItWorks() =>
+      GlassSteps(title: t.imports.howTitle, points: t.imports.how);
 
   /// The names of the accounts that the operations go into.
   String? _into() {
@@ -264,7 +250,7 @@ class ImportAside extends StatelessComponent {
         'gap': 'var(--space-md)',
       },
     ),
-    css('.import-summary, .import-how').styles(
+    css('.import-summary').styles(
       raw: {
         'display': 'flex',
         'flex-direction': 'column',
@@ -281,38 +267,6 @@ class ImportAside extends StatelessComponent {
         'gap': 'var(--space-sm)',
       },
     ),
-    css('.import-how__list').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-md)',
-        'list-style': 'none',
-        'margin': '0',
-        'padding': '0',
-      },
-    ),
-    css('.import-how__point').styles(
-      raw: {
-        'align-items': 'flex-start',
-        'display': 'flex',
-        'gap': 'var(--space-sm)',
-      },
-    ),
-    css('.import-how__number').styles(
-      raw: {
-        'align-items': 'center',
-        'background': 'var(--color-accent-soft)',
-        'border-radius': '50%',
-        'color': 'var(--color-accent)',
-        'display': 'flex',
-        'flex': 'none',
-        'font-weight': 'var(--font-weight-bold)',
-        'height': '24px',
-        'justify-content': 'center',
-        'width': '24px',
-      },
-    ),
-    css('.import-how__text').styles(raw: {'color': 'var(--color-text)'}),
     css('.import-private').styles(
       raw: {
         'align-items': 'flex-start',

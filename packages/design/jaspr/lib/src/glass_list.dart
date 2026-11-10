@@ -24,7 +24,9 @@ class GlassListGroup extends StatelessComponent {
 }
 
 /// A row of a [GlassListGroup]: an optional [leading] component, a [title]
-/// with a [subtitle] under it and an optional [trailing] component.
+/// with a [subtitle] under it and an optional [trailing] component. An
+/// [action] stands after a row that leads somewhere, outside its link, such
+/// as the cross that takes the row away.
 class GlassListRow extends StatelessComponent {
   /// Creates a row. With [href] it is a link and with [onTap] a button.
   const GlassListRow({
@@ -39,6 +41,7 @@ class GlassListRow extends StatelessComponent {
     this.indented = false,
     this.danger = false,
     this.entering = false,
+    this.action,
     super.key,
   });
 
@@ -78,6 +81,9 @@ class GlassListRow extends StatelessComponent {
   /// nothing.
   final bool entering;
 
+  /// A button of its own after a row with [href] or [onTap].
+  final Component? action;
+
   @override
   Component build(BuildContext context) {
     final subtitle = this.subtitle;
@@ -110,6 +116,21 @@ class GlassListRow extends StatelessComponent {
       ]),
       ?trailing,
     ];
+    final action = this.action;
+    if (action != null && (href != null || onTap != null)) {
+      return div(classes: 'glass-row glass-row--split$indent', [
+        if (href case final href?)
+          a(classes: 'glass-row__link', href: href, content)
+        else
+          button(
+            classes: 'glass-row__link',
+            type: ButtonType.button,
+            onClick: onTap,
+            content,
+          ),
+        action,
+      ]);
+    }
     if (href case final href?) {
       return a(
         classes: 'glass-row glass-row--action$indent',
@@ -161,6 +182,30 @@ class GlassListRow extends StatelessComponent {
         'top': '0',
       },
     ),
+    // A row with a button of its own: the link takes the row but the button.
+    css('.glass-row--split').styles(
+      raw: {'gap': '0', 'padding': '0 var(--space-xs) 0 0'},
+    ),
+    css('.glass-row__link').styles(
+      raw: {
+        'align-items': 'center',
+        'align-self': 'stretch',
+        'background': 'none',
+        'border': '0',
+        'color': 'inherit',
+        'cursor': 'pointer',
+        'display': 'flex',
+        'flex': '1',
+        'font': 'inherit',
+        'gap': 'var(--space-sm)',
+        'min-width': '0',
+        'padding':
+            'var(--space-md) var(--space-xs) var(--space-md) var(--space-md)',
+        'text-align': 'left',
+        'text-decoration': 'none',
+        'transition': 'background var(--duration-fast)',
+      },
+    ),
     css('.glass-row--indented').styles(
       raw: {'padding-left': 'calc(var(--space-md) + var(--space-xl))'},
     ),
@@ -172,7 +217,7 @@ class GlassListRow extends StatelessComponent {
     ),
     // Only where a pointer can hover: on a touch screen it would stay on.
     css.media(const MediaQuery.raw('(hover: hover)'), [
-      css('.glass-row--action:hover').styles(
+      css('.glass-row--action:hover, .glass-row__link:hover').styles(
         raw: {'background': 'var(--color-glass-fill-bottom)'},
       ),
     ]),
