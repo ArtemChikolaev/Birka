@@ -437,8 +437,7 @@ class _ScheduleFormPageState extends State<ScheduleFormPage> {
         label: t.schedules.restDay,
         options: _days,
         selected: state.day,
-        onChanged: (day) =>
-            cubit.nextChanged(CivilDate.onDay(today.year, today.month, day)),
+        onChanged: cubit.dayChanged,
       );
     }
     return switch (state.every) {
@@ -446,7 +445,7 @@ class _ScheduleFormPageState extends State<ScheduleFormPage> {
         label: t.schedules.dayOfMonth,
         options: _days,
         selected: state.day,
-        onChanged: (day) => cubit.nextChanged(_nextOnDay(today, day)),
+        onChanged: cubit.dayChanged,
       ),
       ScheduleEvery.week => _select<int>(
         label: t.schedules.dayOfWeek,
@@ -702,14 +701,6 @@ Component _select<T>({
 final Map<int, String> _days = {
   for (var day = 1; day <= 31; day++) day: t.schedules.dayNumber(day: day),
 };
-
-/// The next [day] of a month from [today], today itself included.
-CivilDate _nextOnDay(CivilDate today, int day) {
-  final here = CivilDate.onDay(today.year, today.month, day);
-  return here.compareTo(today) >= 0
-      ? here
-      : CivilDate.onDay(today.year, today.month + 1, day);
-}
 
 /// `аванс, 20 ноября, пт` or `5 декабря, сб`.
 String _nextLabel(ScheduleFormState state) {

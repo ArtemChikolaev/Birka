@@ -1,3 +1,4 @@
+import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -92,6 +93,29 @@ void main() {
     expect(draft.kind, TransactionKind.expense);
     expect(draft.next, boardToday);
     expect(done, [null]);
+  });
+
+  testComponents('a day the month lacks stays the day of the payment', (
+    tester,
+  ) async {
+    final cubit = ScheduleFormCubit(FakeSchedulesRepository());
+    await pump(tester, cubit);
+    BirkaSelect<int> day() =>
+        find
+                .byComponentPredicate(
+                  (it) => it is BirkaSelect<int> && it.label == 'Какого числа',
+                )
+                .evaluate()
+                .single
+                .component
+            as BirkaSelect<int>;
+
+    // November has no 31st: the payment comes on the 30th and stays the 31st.
+    day().onChanged(31);
+    await tester.pump();
+
+    expect(day().selected, 31);
+    expect(cubit.state.next, CivilDate(2026, 11, 30));
   });
 
   testComponents('a wide page shows the payment as the list will', (

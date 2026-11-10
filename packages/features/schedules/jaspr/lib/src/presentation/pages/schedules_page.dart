@@ -210,7 +210,10 @@ class SchedulesPage extends StatefulComponent {
       raw: {'height': '16px', 'width': '16px'},
     ),
     css('.schedules-day__amount').styles(
-      raw: {'font-variant-numeric': 'tabular-nums', 'margin-top': '4px'},
+      raw: {
+        'font-variant-numeric': 'tabular-nums',
+        'margin-top': 'var(--space-xxs)',
+      },
     ),
     css('.schedules-day__period').styles(
       raw: {'color': 'var(--color-text-muted)'},
