@@ -269,7 +269,6 @@ class PaydayPage extends StatelessWidget {
   }
 }
 
-/// How much each day may take, and the sum that gives it.
 /// What becomes of the money of the days at the usual pace, in words and on
 /// a chart, as the board «Деньги до зарплаты · как обычно» draws it (ADR
 /// 0023, point 24).
@@ -328,6 +327,7 @@ class _Forecast extends StatelessWidget {
   }
 }
 
+/// How much each day may take, and the sum that gives it.
 class _Sum extends StatelessWidget {
   const _Sum({required this.plan});
 
