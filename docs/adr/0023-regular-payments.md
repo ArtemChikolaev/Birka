@@ -200,6 +200,23 @@
     the statement came in and shows «Похоже на регулярные · 3» with their
     names a moment after the result, leading to the page; the import knows
     nothing of the rules of a find (`showImportSheet(repeats:)`).
+24. «Деньги до зарплаты» says what becomes of the money of the days if the
+    person spends as usual, and the card of the overview says it in one
+    line. The usual pace is what the counted accounts spent a day over the
+    3 months before today: their expenses without the times of regular
+    payments, which the plan counts on their days (posts of payments, the
+    operations they were made from or that a statement brought, and
+    operations of the name of a payment on its account), and without
+    transfers, incomes and planned operations, split between the days. A
+    younger ledger counts from its first operation and says nothing before
+    28 days. At that pace the money of the days runs out on the first day
+    it no longer covers («Деньги кончатся 2 декабря»), or some is left
+    after the last day («Хватит до зарплаты», with how much); when the
+    payments take all of it, it is short already. The chart shows the
+    usual pace against the plan, which spends the money by the last day,
+    and moves to new numbers over `duration.roll` as accounts or «Считать
+    до» change. The pace takes the money of the period as a whole, the
+    advance of a salary included.
 
 ## Consequences
 

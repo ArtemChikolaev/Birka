@@ -2503,6 +2503,55 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   @override
   String amountRange({required Object min, required Object max}) =>
       'последняя сумма · бывало от ${min} до ${max}';
+  @override
+  String get forecast => 'Если тратить как обычно';
+  @override
+  String forecastRunsOut({required Object date}) => 'Деньги кончатся ${date}';
+  @override
+  String get forecastLastsPayday => 'Хватит до зарплаты';
+  @override
+  String get forecastLastsMonth => 'Хватит до конца месяца';
+  @override
+  String get forecastNone => 'Денег не хватает уже сейчас';
+  @override
+  String get forecastNonePayday => 'Платежи до зарплаты больше, чем на счетах.';
+  @override
+  String get forecastNoneMonth =>
+      'Платежи до конца месяца больше, чем на счетах.';
+  @override
+  String forecastShortText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object amount,
+  }) =>
+      'Обычно вы тратите ≈ ${usual} в день, а можно ${perDay}. К ${date} не хватит ≈ ${amount}.';
+  @override
+  String forecastLeftText({
+    required Object usual,
+    required Object date,
+    required Object amount,
+  }) => 'Обычно вы тратите ≈ ${usual} в день: к ${date} останется ≈ ${amount}.';
+  @override
+  String get forecastToday => 'сегодня';
+  @override
+  String forecastPayday({required Object date}) => '${date} · зарплата';
+  @override
+  String get forecastUsual => 'как обычно';
+  @override
+  String forecastPlan({required Object amount}) => 'по плану: ${amount} в день';
+  @override
+  String get forecastPlanBare => 'по плану';
+  @override
+  String get forecastNote =>
+      'Обычные траты — среднее за 3 месяца по этим счетам, без регулярных платежей и переводов.';
+  @override
+  String forecastLineRunsOut({required Object date}) =>
+      'Как обычно — деньги кончатся ${date}';
+  @override
+  String get forecastLinePayday => 'Как обычно — хватит до зарплаты';
+  @override
+  String get forecastLineMonth => 'Как обычно — хватит до конца месяца';
 }
 
 // Path: settings
@@ -4701,6 +4750,45 @@ extension on TranslationsRu {
           'schedules.amountRange' =>
             ({required Object min, required Object max}) =>
                 'последняя сумма · бывало от ${min} до ${max}',
+          'schedules.forecast' => 'Если тратить как обычно',
+          'schedules.forecastRunsOut' =>
+            ({required Object date}) => 'Деньги кончатся ${date}',
+          'schedules.forecastLastsPayday' => 'Хватит до зарплаты',
+          'schedules.forecastLastsMonth' => 'Хватит до конца месяца',
+          'schedules.forecastNone' => 'Денег не хватает уже сейчас',
+          'schedules.forecastNonePayday' =>
+            'Платежи до зарплаты больше, чем на счетах.',
+          'schedules.forecastNoneMonth' =>
+            'Платежи до конца месяца больше, чем на счетах.',
+          'schedules.forecastShortText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object amount,
+            }) =>
+                'Обычно вы тратите ≈ ${usual} в день, а можно ${perDay}. К ${date} не хватит ≈ ${amount}.',
+          'schedules.forecastLeftText' =>
+            ({
+              required Object usual,
+              required Object date,
+              required Object amount,
+            }) =>
+                'Обычно вы тратите ≈ ${usual} в день: к ${date} останется ≈ ${amount}.',
+          'schedules.forecastToday' => 'сегодня',
+          'schedules.forecastPayday' =>
+            ({required Object date}) => '${date} · зарплата',
+          'schedules.forecastUsual' => 'как обычно',
+          'schedules.forecastPlan' =>
+            ({required Object amount}) => 'по плану: ${amount} в день',
+          'schedules.forecastPlanBare' => 'по плану',
+          'schedules.forecastNote' =>
+            'Обычные траты — среднее за 3 месяца по этим счетам, без регулярных платежей и переводов.',
+          'schedules.forecastLineRunsOut' =>
+            ({required Object date}) => 'Как обычно — деньги кончатся ${date}',
+          'schedules.forecastLinePayday' => 'Как обычно — хватит до зарплаты',
+          'schedules.forecastLineMonth' =>
+            'Как обычно — хватит до конца месяца',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -4741,6 +4829,9 @@ extension on TranslationsRu {
             'Добавьте счёт, чтобы записывать, куда уходят деньги.',
           'transactions.addAccount' => 'Добавить счёт',
           'transactions.oneAccountHint' => 'Для перевода нужен второй счёт.',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.noCategoriesHint' =>
             'Добавьте категории, чтобы разбирать траты.',
           'transactions.addCategories' => 'Добавить категории',
@@ -4764,9 +4855,6 @@ extension on TranslationsRu {
             'Не удалось прочитать операции.',
           'transactions.failedToDelete' =>
             'Не удалось удалить. Попробуйте ещё раз.',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.operation' => 'Операция',
           'transactions.edit' => 'Изменить',
           'transactions.editOperation' => 'Изменить операцию',

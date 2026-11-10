@@ -300,3 +300,21 @@ foundIn(n):
   many: Нашли в операциях · $count раз
   other: Нашли в операциях · $count раза
 amountRange: последняя сумма · бывало от $min до $max
+forecast: Если тратить как обычно
+forecastRunsOut: Деньги кончатся $date
+forecastLastsPayday: Хватит до зарплаты
+forecastLastsMonth: Хватит до конца месяца
+forecastNone: Денег не хватает уже сейчас
+forecastNonePayday: Платежи до зарплаты больше, чем на счетах.
+forecastNoneMonth: Платежи до конца месяца больше, чем на счетах.
+forecastShortText: Обычно вы тратите ≈ $usual в день, а можно $perDay. К $date не хватит ≈ $amount.
+forecastLeftText: "Обычно вы тратите ≈ $usual в день: к $date останется ≈ $amount."
+forecastToday: сегодня
+forecastPayday: $date · зарплата
+forecastUsual: как обычно
+forecastPlan: "по плану: $amount в день"
+forecastPlanBare: по плану
+forecastNote: Обычные траты — среднее за 3 месяца по этим счетам, без регулярных платежей и переводов.
+forecastLineRunsOut: Как обычно — деньги кончатся $date
+forecastLinePayday: Как обычно — хватит до зарплаты
+forecastLineMonth: Как обычно — хватит до конца месяца

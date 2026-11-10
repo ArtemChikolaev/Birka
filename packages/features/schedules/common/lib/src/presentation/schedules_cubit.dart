@@ -8,6 +8,7 @@ import 'package:schedules_common/src/domain/payday_settings.dart';
 import 'package:schedules_common/src/domain/repeat_finds.dart';
 import 'package:schedules_common/src/domain/schedules_repository.dart';
 import 'package:schedules_common/src/domain/spending_plan.dart';
+import 'package:schedules_common/src/domain/usual_pace.dart';
 
 /// An account that the money of the days can count. It is locked when it is
 /// in another currency than the totals, which the plan cannot add up yet.
@@ -171,6 +172,26 @@ final class SchedulesView {
       monthStart: monthStart,
     ),
     null => null,
+  };
+
+  /// What the counted accounts spend a day as usual, or `null` while the
+  /// ledger is too young to tell (ADR 0023, point 24).
+  late final Money? usual = switch (base) {
+    final base? => usualPace(
+      history,
+      today: today,
+      counted: {for (final row in counted) row.account.id},
+      schedules: schedules,
+      currency: base,
+    ),
+    null => null,
+  };
+
+  /// What becomes of the money of the days at the [usual] pace, or `null`
+  /// without a plan or a pace.
+  late final SpendingForecast? forecast = switch ((plan, usual)) {
+    (final plan?, final usual?) => SpendingForecast(plan, usual),
+    _ => null,
   };
 
   /// The regular income that brings the next salary to a counted account, its
