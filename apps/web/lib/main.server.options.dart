@@ -121,6 +121,8 @@ import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
     as _reports_page;
 import 'package:schedules_jaspr/src/presentation/components/schedule_bits.dart'
     as _schedule_bits;
+import 'package:schedules_jaspr/src/presentation/components/spending_card.dart'
+    as _spending_card;
 import 'package:schedules_jaspr/src/presentation/pages/payday_page.dart'
     as _payday_page;
 import 'package:schedules_jaspr/src/presentation/pages/schedule_form_page.dart'
@@ -284,6 +286,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._reports_page.ReportsPage.styles,
     ..._schedule_bits.DateColumn.styles,
     ..._schedule_bits.ScheduleDot.styles,
+    ..._spending_card.SpendingCard.styles,
     ..._payday_page.PaydayPage.styles,
     ..._schedule_form_page.ScheduleFormPage.styles,
     ..._schedules_page.SchedulesPage.styles,

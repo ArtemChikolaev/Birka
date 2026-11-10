@@ -126,6 +126,7 @@ void main() {
     String? note,
     Component? notice,
     Component? bell,
+    Component? side,
   }) async {
     tester.pumpComponent(
       _Host(
@@ -141,6 +142,7 @@ void main() {
             note: note,
             notice: notice,
             bell: bell,
+            side: side,
           ),
         ),
       ),
@@ -317,6 +319,38 @@ void main() {
     ]);
     expect(find.text('Все 3'), findsOneComponent);
     expect(find.text('Рубли · •• 4568'), findsOneComponent);
+  });
+
+  testComponents('the side stands beside a wide page, under the capital of '
+      'a narrow one', (tester) async {
+    await pump(
+      tester,
+      side: const a(href: 'payday/', [.text('Можно тратить')]),
+    );
+
+    expect(
+      find.descendant(
+        of: find.byComponentPredicate(
+          (component) =>
+              component is DomComponent &&
+              component.classes == 'birka-split__aside',
+        ),
+        matching: find.text('Можно тратить'),
+      ),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(
+        of: find.byComponentPredicate(
+          (component) =>
+              component is DomComponent &&
+              component.classes == 'birka-narrow-only',
+        ),
+        matching: find.text('Можно тратить'),
+      ),
+      findsOneComponent,
+    );
+    expect(links().first, 'payday/');
   });
 
   testComponents('what waits stands between the capital and the accounts', (

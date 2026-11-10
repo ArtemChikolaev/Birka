@@ -20,6 +20,7 @@ class OverviewPage extends StatelessComponent {
     this.note,
     this.notice,
     this.bell,
+    this.side,
     super.key,
   });
 
@@ -43,13 +44,17 @@ class OverviewPage extends StatelessComponent {
   /// notices.
   final Component? bell;
 
+  /// What stands beside the page on a wide screen and under the capital on a
+  /// narrow one, such as the card of the money of the day.
+  final Component? side;
+
   @override
   Component build(BuildContext context) {
     final note = this.note;
+    final side = this.side;
     return BlocBuilder<OverviewCubit, OverviewState>(
-      builder: (context, state) => BirkaColumn(
-        children: [
-          _header(context, state),
+      builder: (context, state) {
+        final body = [
           ...switch (state.status) {
             OverviewStatus.loading => const <Component>[],
             OverviewStatus.failed => [
@@ -75,6 +80,7 @@ class OverviewPage extends StatelessComponent {
             ],
             OverviewStatus.ready => [
               if (state.main != null) _capital(context, state),
+              if (side != null) div(classes: 'birka-narrow-only', [side]),
               ?notice,
               _accounts(state.accounts),
               _spending(state.spending, today: state.month),
@@ -82,8 +88,22 @@ class OverviewPage extends StatelessComponent {
           },
           if (note != null && state.status == OverviewStatus.ready)
             p(classes: 'text-caption overview__note', [.text(note)]),
-        ],
-      ),
+        ];
+        return BirkaColumn(
+          children: [
+            _header(context, state),
+            if (side == null)
+              ...body
+            else
+              BirkaSplit(
+                asideWidth: 380,
+                asideWhenNarrow: false,
+                main: body,
+                aside: [side],
+              ),
+          ],
+        );
+      },
     );
   }
 
