@@ -48,4 +48,5 @@ export 'src/glass_toast.dart';
 export 'src/glyph_badge.dart';
 export 'src/hidden_amounts.dart';
 export 'src/section_label.dart';
+export 'src/tinted_box.dart';
 export 'src/welcome_art.dart';

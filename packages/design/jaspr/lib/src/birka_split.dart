@@ -7,7 +7,7 @@ import 'package:jaspr/jaspr.dart';
 /// sight as the page scrolls, such as the steps of an import and what they
 /// mean. With [halves] the two take half the width each, as the parts of
 /// the reports do. On a screen of 900 px or less the side goes under the
-/// main column.
+/// main column, or away when [asideWhenNarrow] is false.
 ///
 /// It stands in a page of `PageFrame(wide: true)`, 1160 px across.
 class BirkaSplit extends StatelessComponent {
@@ -17,6 +17,7 @@ class BirkaSplit extends StatelessComponent {
     required this.aside,
     this.asideWidth = 300,
     this.halves = false,
+    this.asideWhenNarrow = true,
     super.key,
   });
 
@@ -32,10 +33,18 @@ class BirkaSplit extends StatelessComponent {
   /// Whether both columns take half the width.
   final bool halves;
 
+  /// Whether the side stays under the main column on a narrow screen. A side
+  /// that only helps a wide page goes away there.
+  final bool asideWhenNarrow;
+
   @override
   Component build(BuildContext context) {
     return div(
-      classes: halves ? 'birka-split birka-split--halves' : 'birka-split',
+      classes: [
+        'birka-split',
+        if (halves) 'birka-split--halves',
+        if (!asideWhenNarrow) 'birka-split--wide-aside',
+      ].join(' '),
       styles: halves
           ? null
           : Styles(raw: {'--birka-split-aside': '${asideWidth}px'}),
@@ -88,6 +97,9 @@ class BirkaSplit extends StatelessComponent {
         raw: {'grid-template-columns': 'minmax(0, 1fr)'},
       ),
       css('.birka-split__aside').styles(raw: {'position': 'static'}),
+      css('.birka-split--wide-aside > .birka-split__aside').styles(
+        raw: {'display': 'none'},
+      ),
     ]),
   ];
 }

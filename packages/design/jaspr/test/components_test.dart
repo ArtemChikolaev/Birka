@@ -1300,6 +1300,59 @@ void main() {
       expect(withClasses('birka-split__main'), findsNComponents(2));
       expect(find.tag('aside'), findsNothing);
     });
+
+    testComponents('can keep the side to a wide screen', (tester) async {
+      tester.pumpComponent(
+        const BirkaSplit(
+          main: [Component.text('List')],
+          aside: [Component.text('Hints')],
+          asideWhenNarrow: false,
+        ),
+      );
+
+      expect(
+        withClasses('birka-split birka-split--wide-aside'),
+        findsOneComponent,
+      );
+      final css = BirkaSplit.styles.map((rule) => rule.toCss()).join();
+      expect(css, contains('.birka-split--wide-aside > .birka-split__aside'));
+    });
+  });
+
+  group('TintedBox', () {
+    testComponents('tints what it holds', (tester) async {
+      tester.pumpComponent(
+        const TintedBox(color: '#fbbf24', children: [Component.text('Rent')]),
+      );
+
+      final box =
+          withClasses('tinted-box').evaluate().single.component as DomComponent;
+      expect(box.styles!.properties['--tint'], '#fbbf24');
+      expect(find.text('Rent'), findsOneComponent);
+    });
+
+    testComponents('a notice has a mark, a title and quieter words', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const TintedNotice(
+          color: '#3ddc97',
+          title: 'Found in the statement',
+          text: 'Marked as posted',
+          glyph: BirkaGlyph.check,
+        ),
+      );
+
+      expect(find.byType(GlyphBadge), findsOneComponent);
+      expect(
+        withClasses('text-body-strong tinted-notice__title'),
+        findsOneComponent,
+      );
+      expect(
+        withClasses('text-body tinted-notice__text tinted-notice__text--quiet'),
+        findsOneComponent,
+      );
+    });
   });
 
   group('card art', () {

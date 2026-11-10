@@ -77,6 +77,7 @@ import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/glass_toast.dart' as _glass_toast;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
+import 'package:design_jaspr/src/tinted_box.dart' as _tinted_box;
 import 'package:design_jaspr/src/welcome_art.dart' as _welcome_art;
 import 'package:help_jaspr/src/presentation/pages/help_page.dart' as _help_page;
 import 'package:import_jaspr/src/presentation/components/account_step.dart'
@@ -236,6 +237,8 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glass_toast.GlassToast.styles,
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
+    ..._tinted_box.TintedBox.styles,
+    ..._tinted_box.TintedNotice.styles,
     ..._welcome_art.WelcomeArt.styles,
     ..._help_page.HelpPage.styles,
     ..._account_step.AccountStep.styles,

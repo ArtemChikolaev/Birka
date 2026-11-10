@@ -49,6 +49,8 @@ void main() {
       ...GlassToast.styles,
       ...GlyphBadge.styles,
       ...SectionLabel.styles,
+      ...TintedBox.styles,
+      ...TintedNotice.styles,
       ...WelcomeArt.styles,
     ].map((rule) => rule.toCss()).join();
 
