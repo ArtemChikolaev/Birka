@@ -394,6 +394,21 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
     );
   }
 
+  /// Moves a monthly payment to [day] of the month, from its first such day
+  /// on. A month without that day brings it on its last day, as the payment
+  /// itself comes: the 31st falls on 30 November and stays the 31st. For a
+  /// salary in halves, [day] gives the day of the rest.
+  void dayChanged(int day) {
+    final advance = state.advanceDay;
+    if (!state.halves || advance == null) {
+      return emit(
+        state.copyWith(day: day, next: _onOrAfter(state.today, day)),
+      );
+    }
+    if (day == advance) return;
+    emit(state.copyWith(day: day, next: _firstOn(state.today, advance, day)));
+  }
+
   /// Makes an income come in [halves], an advance and the rest, every month,
   /// or in one sum.
   void halvesChanged({required bool halves}) {
@@ -484,7 +499,7 @@ class ScheduleFormCubit extends Cubit<ScheduleFormState> {
             amount: amount,
             every: form.every,
             next: form.next,
-            day: advance == null ? null : form.day,
+            day: form.day,
             advanceDay: advance,
             advanceAmount: advanceAmount,
             onDay: form.onDay,
@@ -672,17 +687,19 @@ CivilDate nextAfterOperation(CivilDate made, {required CivilDate today}) {
   return next;
 }
 
+/// The first [day] of a month from [today] on, today itself included; a
+/// month without that day brings it on its last day.
+CivilDate _onOrAfter(CivilDate today, int day) {
+  final same = CivilDate.onDay(today.year, today.month, day);
+  return same.compareTo(today) >= 0
+      ? same
+      : CivilDate.onDay(today.year, today.month + 1, day);
+}
+
 /// The nearest time from [today] on of a salary with its advance on day
 /// [advance] and the rest on day [day] of a month.
 CivilDate _firstOn(CivilDate today, int advance, int day) {
-  CivilDate from(int day) {
-    final same = CivilDate.onDay(today.year, today.month, day);
-    return same.compareTo(today) >= 0
-        ? same
-        : CivilDate.onDay(today.year, today.month + 1, day);
-  }
-
-  final a = from(advance);
-  final b = from(day);
+  final a = _onOrAfter(today, advance);
+  final b = _onOrAfter(today, day);
   return a.compareTo(b) <= 0 ? a : b;
 }

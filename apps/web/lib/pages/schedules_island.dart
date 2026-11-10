@@ -53,17 +53,7 @@ class _SchedulesIslandState extends DataIslandState<SchedulesIsland> {
   @override
   Component buildPage(BuildContext context) {
     return switch (fragment) {
-      '' => BlocProvider<SchedulesCubit>(
-        create: (_) => _schedules = getIt(),
-        child: SchedulesPage(
-          said: _said,
-          backHref: 'overview/',
-          addHref: '$_address#$_new',
-          paydayHref: 'payday/',
-          hrefOf: (id) => '$_address#$id',
-          findHref: (id) => '$_address#$_from$id',
-        ),
-      ),
+      '' => _list(),
       _new => _form(null, null),
       _salary => _form(null, (salary: true, from: null)),
       final path when path.startsWith(_from) => _form(null, (
@@ -72,6 +62,24 @@ class _SchedulesIslandState extends DataIslandState<SchedulesIsland> {
       )),
       final id => _form(id, null),
     };
+  }
+
+  /// The list, which says what a form did once: back from another form by
+  /// the browser, it says nothing.
+  Component _list() {
+    final said = _said;
+    _said = null;
+    return BlocProvider<SchedulesCubit>(
+      create: (_) => _schedules = getIt(),
+      child: SchedulesPage(
+        said: said,
+        backHref: 'overview/',
+        addHref: '$_address#$_new',
+        paydayHref: 'payday/',
+        hrefOf: (id) => '$_address#$id',
+        findHref: (id) => '$_address#$_from$id',
+      ),
+    );
   }
 
   Component _form(String? id, ({bool salary, String? from})? start) {
