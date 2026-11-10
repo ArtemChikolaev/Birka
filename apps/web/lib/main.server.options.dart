@@ -55,6 +55,7 @@ import 'package:design_jaspr/src/birka_line_chart.dart' as _birka_line_chart;
 import 'package:design_jaspr/src/birka_placeholder.dart' as _birka_placeholder;
 import 'package:design_jaspr/src/birka_ring.dart' as _birka_ring;
 import 'package:design_jaspr/src/birka_select.dart' as _birka_select;
+import 'package:design_jaspr/src/birka_split.dart' as _birka_split;
 import 'package:design_jaspr/src/birka_step_bars.dart' as _birka_step_bars;
 import 'package:design_jaspr/src/birka_switch.dart' as _birka_switch;
 import 'package:design_jaspr/src/birka_text_field.dart' as _birka_text_field;
@@ -212,6 +213,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_placeholder.BirkaPlaceholder.styles,
     ..._birka_ring.BirkaRing.styles,
     ..._birka_select.BirkaSelect.styles,
+    ..._birka_split.BirkaSplit.styles,
     ..._birka_step_bars.BirkaStepBars.styles,
     ..._birka_switch.BirkaSwitch.styles,
     ..._birka_text_field.BirkaTextField.styles,

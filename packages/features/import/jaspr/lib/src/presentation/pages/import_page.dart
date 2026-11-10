@@ -79,25 +79,6 @@ class ImportPage extends StatefulComponent {
     css('.import__subtitle').styles(
       raw: {'color': 'var(--color-text-secondary)', 'margin': '0'},
     ),
-    css('.import__layout').styles(
-      raw: {
-        'align-items': 'start',
-        'display': 'grid',
-        'gap': 'var(--space-xl)',
-        'grid-template-columns': 'minmax(0, 1fr) 300px',
-      },
-    ),
-    css('.import__main').styles(raw: {'min-width': '0'}),
-    // The side follows the page down, so that its button stays in reach.
-    css('.import__aside').styles(
-      raw: {'position': 'sticky', 'top': 'var(--space-lg)'},
-    ),
-    css.media(const MediaQuery.raw('(max-width: 900px)'), [
-      css('.import__layout').styles(
-        raw: {'grid-template-columns': 'minmax(0, 1fr)'},
-      ),
-      css('.import__aside').styles(raw: {'position': 'static'}),
-    ]),
     // A new step fades in where the old one was.
     css('.import__step').styles(
       raw: {'animation': 'import-step var(--duration-base) var(--easing-fade)'},
@@ -190,35 +171,37 @@ class _ImportPageState extends State<ImportPage> {
             onStep: (index) => cubit.goTo(ImportStep.values[index]),
           ),
           if (state.failed) GlassNotice(text: t.imports.failed),
-          div(classes: 'import__layout', [
-            div(key: ValueKey(step), classes: 'import__main import__step', [
-              switch (step) {
-                ImportStep.file => FileStep(
-                  state: state,
-                  now: component.clock(),
-                  onUndone: (name) => setState(() {
-                    _undone = name;
-                    _undones++;
-                  }),
-                ),
-                ImportStep.format => FormatStep(state: state),
-                ImportStep.columns => ColumnsStep(state: state),
-                ImportStep.account => AccountStep(state: state),
-                ImportStep.copies => CopiesStep(state: state),
-                ImportStep.done => DoneStep(
-                  state: state,
-                  inboxHref: component.inboxHref,
-                ),
-              },
-            ]),
-            aside(classes: 'import__aside', [
+          BirkaSplit(
+            main: [
+              div(key: ValueKey(step), classes: 'import__step', [
+                switch (step) {
+                  ImportStep.file => FileStep(
+                    state: state,
+                    now: component.clock(),
+                    onUndone: (name) => setState(() {
+                      _undone = name;
+                      _undones++;
+                    }),
+                  ),
+                  ImportStep.format => FormatStep(state: state),
+                  ImportStep.columns => ColumnsStep(state: state),
+                  ImportStep.account => AccountStep(state: state),
+                  ImportStep.copies => CopiesStep(state: state),
+                  ImportStep.done => DoneStep(
+                    state: state,
+                    inboxHref: component.inboxHref,
+                  ),
+                },
+              ]),
+            ],
+            aside: [
               ImportAside(
                 state: state,
                 operationsHref: component.operationsHref,
                 inboxHref: component.inboxHref,
               ),
-            ]),
-          ]),
+            ],
+          ),
           if (undone != null)
             GlassToast(
               t.imports.undone(name: undone),

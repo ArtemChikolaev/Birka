@@ -26,6 +26,7 @@ void main() {
       ...BirkaPlaceholder.styles,
       ...BirkaRing.styles,
       ...BirkaSelect.styles,
+      ...BirkaSplit.styles,
       ...BirkaStepBars.styles,
       ...BirkaSwitch.styles,
       ...BirkaTextField.styles,

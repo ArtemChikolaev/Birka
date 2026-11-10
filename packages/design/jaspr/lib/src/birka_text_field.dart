@@ -16,6 +16,7 @@ class BirkaTextField extends StatelessComponent {
     this.maxLength,
     this.sentence = false,
     this.textClass = 'text-body',
+    this.suffix,
     super.key,
   });
 
@@ -46,6 +47,9 @@ class BirkaTextField extends StatelessComponent {
   /// The text style from the tokens, such as `text-amount`.
   final String textClass;
 
+  /// What stands after the text, such as the sign of a currency.
+  final String? suffix;
+
   @override
   Component build(BuildContext context) {
     final error = this.error;
@@ -68,6 +72,8 @@ class BirkaTextField extends StatelessComponent {
               if (error != null) 'aria-invalid': 'true',
             },
           ),
+          if (suffix case final suffix?)
+            span(classes: '$textClass birka-field__suffix', [.text(suffix)]),
         ]),
         if (error != null)
           span(classes: 'text-caption birka-field__error', [.text(error)]),
@@ -90,7 +96,10 @@ class BirkaTextField extends StatelessComponent {
     ),
     css('.glass.birka-field__box').styles(
       raw: {
+        'align-items': 'center',
         'border-radius': 'var(--radius-md)',
+        'display': 'flex',
+        'gap': 'var(--space-xs)',
         'padding': 'var(--space-sm) var(--space-md)',
         'transition': 'border-color var(--duration-fast)',
       },
@@ -105,11 +114,20 @@ class BirkaTextField extends StatelessComponent {
         'box-sizing': 'border-box',
         'caret-color': 'var(--color-accent)',
         'color': 'var(--color-text)',
+        'flex': '1 1 0',
         // Below 16px Safari on iPhone zooms the page into the field.
         'font-size': 'max(1em, 16px)',
+        'min-width': '0',
         'outline': 'none',
         'padding': '0',
         'width': '100%',
+      },
+    ),
+    css('.birka-field__suffix').styles(
+      raw: {
+        'color': 'var(--color-text-subtle)',
+        'flex': 'none',
+        'font-size': 'max(1em, 16px)',
       },
     ),
     css('.birka-field__input::placeholder').styles(

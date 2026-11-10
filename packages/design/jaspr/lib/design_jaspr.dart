@@ -26,6 +26,7 @@ export 'src/birka_line_chart.dart';
 export 'src/birka_placeholder.dart';
 export 'src/birka_ring.dart';
 export 'src/birka_select.dart';
+export 'src/birka_split.dart';
 export 'src/birka_step_bars.dart';
 export 'src/birka_switch.dart';
 export 'src/birka_text_field.dart';

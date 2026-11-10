@@ -72,37 +72,6 @@ class InboxPage extends StatefulComponent {
     css('.inbox__filters').styles(
       raw: {'display': 'flex', 'flex-wrap': 'wrap', 'gap': 'var(--space-xs)'},
     ),
-    css('.inbox__layout').styles(
-      raw: {
-        'align-items': 'start',
-        'display': 'grid',
-        'gap': 'var(--space-xl)',
-        'grid-template-columns': 'minmax(0, 1fr) 300px',
-      },
-    ),
-    css('.inbox__main').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-lg)',
-        'min-width': '0',
-      },
-    ),
-    css('.inbox__aside').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-md)',
-        'position': 'sticky',
-        'top': 'var(--space-lg)',
-      },
-    ),
-    css.media(const MediaQuery.raw('(max-width: 900px)'), [
-      css('.inbox__layout').styles(
-        raw: {'grid-template-columns': 'minmax(0, 1fr)'},
-      ),
-      css('.inbox__aside').styles(raw: {'position': 'static'}),
-    ]),
     css('.inbox__section').styles(
       raw: {
         'display': 'flex',
@@ -250,9 +219,9 @@ class _InboxPageState extends State<InboxPage> {
             ],
           ),
           if (state.failed) GlassNotice(text: t.inbox.failed),
-          div(classes: 'inbox__layout', [
-            div(classes: 'inbox__main', _main(cubit, state, thisYear)),
-            aside(classes: 'inbox__aside', [
+          BirkaSplit(
+            main: _main(cubit, state, thisYear),
+            aside: [
               div(classes: 'glass inbox__note', [
                 span(classes: 'text-label inbox__note-title', [
                   .text(t.inbox.sourceTitle),
@@ -269,8 +238,8 @@ class _InboxPageState extends State<InboxPage> {
                   .text(t.inbox.stillCounted),
                 ]),
               ),
-            ]),
-          ]),
+            ],
+          ),
           if (made != null)
             GlassToast(
               t.inbox.madeTransfer,
