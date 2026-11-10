@@ -227,8 +227,11 @@
     (`#new`, `#salary`, `#from-<operation>`, `#<payment>`) with its fields in
     the open; on a wide screen its side shows where the payment came from,
     how it will stand in the list with its next three days, and the button.
-    The money until the salary and the card of the overview come in their
-    own changes.
+    The money until the salary is a page of its own, `payday/`: the sum and
+    what becomes of it at the usual pace in the main column, with the chart
+    of the site kit (`ForecastChart`), and what it counts at the side. The
+    site has no first day of a month yet, so the page has no row for it.
+    The card of the overview comes in its own change.
 
 ## Consequences
 

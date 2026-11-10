@@ -2077,4 +2077,37 @@ void main() {
       findsOneComponent,
     );
   });
+
+  group('ForecastChart', () {
+    ForecastChart chart({required double pace}) => ForecastChart(
+      start: 29651,
+      pace: pace,
+      days: 17,
+      label: 'Money runs out on 2 December.',
+      from: 'today',
+      to: '5 Dec · payday',
+      usual: 'as usual',
+      planned: 'by the plan',
+    );
+
+    testComponents('marks where the usual pace runs out', (tester) async {
+      tester.pumpComponent(chart(pace: 2100));
+
+      expect(
+        attributesOf(withClasses('forecast-chart__plot'))['aria-label'],
+        'Money runs out on 2 December.',
+      );
+      expect(withClasses('forecast-chart__under'), findsOneComponent);
+      expect(withClasses('forecast-chart__dot'), findsOneComponent);
+      expect(find.text('5 Dec · payday'), findsOneComponent);
+      expect(find.text('by the plan'), findsOneComponent);
+    });
+
+    testComponents('has no dot while the money lasts', (tester) async {
+      tester.pumpComponent(chart(pace: 1500));
+
+      expect(withClasses('forecast-chart__under'), findsNothing);
+      expect(withClasses('forecast-chart__dot'), findsNothing);
+    });
+  });
 }
