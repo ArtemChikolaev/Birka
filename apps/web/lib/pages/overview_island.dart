@@ -18,6 +18,8 @@ import 'package:onboarding_common/onboarding_common.dart';
 import 'package:onboarding_jaspr/onboarding_jaspr.dart';
 import 'package:overview_common/overview_common.dart';
 import 'package:overview_jaspr/overview_jaspr.dart';
+import 'package:schedules_common/schedules_common.dart' show SchedulesCubit;
+import 'package:schedules_jaspr/schedules_jaspr.dart';
 import 'package:settings_common/settings_common.dart' show Settings;
 
 /// The first screen with data: the capital, the accounts and what the month
@@ -33,6 +35,7 @@ class OverviewIsland extends StatefulComponent {
 
 class _OverviewIslandState extends DataIslandState<OverviewIsland> {
   OverviewCubit? _overview;
+  SchedulesCubit? _schedules;
 
   /// Whether the steps of a new browser stand in place of the overview. A
   /// browser with no mark starts here, so that it never sees the overview
@@ -89,7 +92,10 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
   }
 
   @override
-  void onTabShown() => unawaited(_overview?.calendarChecked());
+  void onTabShown() {
+    unawaited(_overview?.calendarChecked());
+    unawaited(_schedules?.calendarChecked());
+  }
 
   @override
   Component buildPage(BuildContext context) {
@@ -98,9 +104,12 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         create: (_) => getIt(),
         // `t` is not reactive (ADR 0010), so a new language takes new
         // components, and the steps stay in the cubit above them.
-        child: div(key: ValueKey(LocaleSettings.currentLocale), [
-          OnboardingPage(onFinished: _onFinished),
-        ]),
+        // The steps keep the narrow column inside the wide page.
+        child: div(
+          key: ValueKey(LocaleSettings.currentLocale),
+          styles: const Styles(raw: {'margin': '0 auto', 'max-width': '480px'}),
+          [OnboardingPage(onFinished: _onFinished)],
+        ),
       );
     }
     return MultiBlocProvider(
@@ -108,6 +117,7 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         BlocProvider<OverviewCubit>(create: (_) => _overview = getIt()),
         BlocProvider<InboxSummaryCubit>(create: (_) => getIt()),
         BlocProvider<NotificationsSummaryCubit>(create: (_) => getIt()),
+        BlocProvider<SchedulesCubit>(create: (_) => _schedules = getIt()),
       ],
       child: OverviewPage(
         addAccountHref: 'accounts/#new',
@@ -116,6 +126,10 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         note: storageNote,
         notice: const InboxCard(href: 'inbox/'),
         bell: const NotificationsBell(href: 'notifications/'),
+        side: const SpendingCard(
+          paydayHref: 'payday/',
+          listHref: 'schedules/',
+        ),
       ),
     );
   }

@@ -231,7 +231,9 @@
     what becomes of it at the usual pace in the main column, with the chart
     of the site kit (`ForecastChart`), and what it counts at the side. The
     site has no first day of a month yet, so the page has no row for it.
-    The card of the overview comes in its own change.
+    The card of the overview («Можно тратить сегодня», `SpendingCard`)
+    stands beside the overview on a wide screen, which makes the overview a
+    wide page too, and under the capital on a narrow one.
 
 ## Consequences
 
