@@ -57,7 +57,8 @@ class App extends StatelessComponent {
         Route(
           path: '/categories',
           title: 'Categories · Birka',
-          builder: (_, _) => const PageFrame(child: CategoriesIsland()),
+          builder: (_, _) =>
+              const PageFrame(wide: true, child: CategoriesIsland()),
         ),
         Route(
           path: '/import',

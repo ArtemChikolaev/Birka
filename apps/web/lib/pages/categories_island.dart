@@ -8,7 +8,9 @@ import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 
 /// The categories in the browser. The address `categories/#new-income` opens
-/// a new category of that kind and `categories/#<id>` an existing one.
+/// a new category of that kind and `categories/#<id>` an existing one. In a
+/// wide window they open beside the list, which otherwise says how the page
+/// works.
 @client
 class CategoriesIsland extends StatefulComponent {
   /// Creates the island.
@@ -39,18 +41,38 @@ class _CategoriesIslandState extends DataIslandState<CategoriesIsland> {
   @override
   Component get header => GlassPageHeader(title: t.categories.title);
 
+  @override
+  bool get viewsBeside => true;
+
   // The list stays with the page, so that a form does not lose its tab.
   @override
   Component buildPage(BuildContext context) {
     return BlocProvider<CategoriesCubit>(
       create: (_) => getIt(),
-      child: fragment.isEmpty
-          ? CategoriesPage(
-              addHrefOf: _addHrefOf,
-              hrefOf: (id) => '$_list#$id',
-              note: storageNote,
-            )
-          : _form(),
+      child: switch ((wide, fragment)) {
+        (false, '') => _categories(),
+        (false, _) => _form(),
+        (true, '') => _categories(
+          side: GlassSteps(
+            title: t.categories.howTitle,
+            points: t.categories.how,
+          ),
+        ),
+        (true, _) => _categories(
+          picked: _newKinds.containsKey(fragment) ? null : fragment,
+          side: GlassPanel(key: ValueKey(fragment), child: _form()),
+        ),
+      },
+    );
+  }
+
+  Component _categories({String? picked, Component? side}) {
+    return CategoriesPage(
+      addHrefOf: _addHrefOf,
+      hrefOf: (id) => '$_list#$id',
+      note: storageNote,
+      picked: picked,
+      side: side,
     );
   }
 

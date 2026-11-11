@@ -59,13 +59,14 @@
     a page lays out side by side there: `PageFrame(wide: true)` takes
     1160 px, and `BirkaSplit` puts a side beside the main column. A window of
     900 px or less keeps the column of 520 px that the narrow boards draw.
-12. A page whose views come from its list, such as the operations, shows them
-    beside the list in a wide window (`DataIslandState.viewsBeside`): the view
-    stands in a `GlassPanel` and closes with a cross, the list marks its row
-    and keeps its place, and the tabs of the site stay. With no view open the
-    side says something of its own, such as what the month came to. The
-    island watches the width, so a narrow window keeps the views one after
-    another, as before.
+12. A page whose views come from its list, such as the operations and the
+    categories, shows them beside the list in a wide window
+    (`DataIslandState.viewsBeside`): the view stands in a `GlassPanel` and
+    closes with a cross, the list marks its row and keeps its place, and the
+    tabs of the site stay. With no view open the side says something of its
+    own, such as what the month came to or how the page works. The island
+    watches the width, so a narrow window keeps the views one after another,
+    as before.
 
 ## Options considered
 

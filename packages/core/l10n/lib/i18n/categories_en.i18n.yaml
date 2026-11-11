@@ -43,3 +43,8 @@ form:
   restore: Bring back from the archive
   nameMissing: Give the category a name.
   failed: Could not save. Try again.
+howTitle: How it works
+how:
+  - "Click a category, and it opens here, beside the list."
+  - "Expenses and income are separate lists: the switch above them picks one."
+  - "Categories show in operations, reports and regular payments."

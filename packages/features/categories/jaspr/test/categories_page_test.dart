@@ -14,6 +14,8 @@ void main() {
     ComponentTester tester,
     FakeCategoriesRepository repository, {
     String? note,
+    Component? side,
+    String? picked,
   }) async {
     tester.pumpComponent(
       BlocProvider(
@@ -22,6 +24,8 @@ void main() {
           addHrefOf: (kind) => 'add/${kind.name}',
           hrefOf: (id) => 'open/$id',
           note: note,
+          side: side,
+          picked: picked,
         ),
       ),
     );
@@ -111,6 +115,38 @@ void main() {
     expect(find.text('Зарплата'), findsOneComponent);
     expect(find.text('Еда'), findsNothing);
     expect(links(), contains('add/income'));
+  });
+
+  testComponents('a wide page has the list beside its side and the heading '
+      'across them, and marks the picked row', (tester) async {
+    await pump(
+      tester,
+      FakeCategoriesRepository([
+        category('Еда'),
+        category('Кафе', parentId: 'Еда'),
+      ]),
+      side: const Component.text('Форма'),
+      picked: 'Кафе',
+    );
+
+    final split = find.byType(BirkaSplit);
+    expect(
+      find.descendant(of: split, matching: find.text('Форма')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: split, matching: find.text('Еда')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: split, matching: find.text('Категории')),
+      findsNothing,
+    );
+    final picked = find.byComponentPredicate(
+      (component) => component is GlassListRow && component.picked,
+    );
+    expect(picked, findsOneComponent);
+    expect((picked.evaluate().single.component as GlassListRow).title, 'Кафе');
   });
 
   testComponents('the rows are links to their categories', (tester) async {

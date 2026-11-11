@@ -442,6 +442,15 @@ class Translations$categories$en {
   };
   late final Translations$categories$form$en form =
       Translations$categories$form$en.internal(_root);
+
+  /// en: 'How it works'
+  String get howTitle => 'How it works';
+
+  List<String> get how => [
+    'Click a category, and it opens here, beside the list.',
+    'Expenses and income are separate lists: the switch above them picks one.',
+    'Categories show in operations, reports and regular payments.',
+  ];
 }
 
 // Path: demo
@@ -3902,6 +3911,13 @@ extension on Translations {
           'categories.form.restore' => 'Bring back from the archive',
           'categories.form.nameMissing' => 'Give the category a name.',
           'categories.form.failed' => 'Could not save. Try again.',
+          'categories.howTitle' => 'How it works',
+          'categories.how.0' =>
+            'Click a category, and it opens here, beside the list.',
+          'categories.how.1' =>
+            'Expenses and income are separate lists: the switch above them picks one.',
+          'categories.how.2' =>
+            'Categories show in operations, reports and regular payments.',
           'demo.card' => 'Salary card',
           'demo.cash' => 'Cash',
           'demo.savings' => 'Savings',
@@ -4472,13 +4488,13 @@ extension on Translations {
           'imports.categoriesAsBeforeText' =>
             ({required Object source}) =>
                 'Your choice for the last statement of ${source}. Change it if something is different now.',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.ownFormatOf' => 'your format',
           'imports.inboxNote' => 'operations wait without a category',
           'imports.newCategoryNote' => 'made with the import',
           'imports.newCategoryMark' => 'new category',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.categoriesDone' =>
             ({required Object count}) => 'Done · ${count} in the inbox',
           'imports.categoriesKept' =>
@@ -5455,13 +5471,13 @@ extension on Translations {
           'settings.english' => 'English',
           'settings.russian' => 'Русский',
           'settings.baseCurrency' => 'Base currency',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.firstAccountCurrency' => 'First account',
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
           'settings.security' => 'Security',
           'settings.hideAmounts' => 'Hide amounts',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.onLaunch' => 'At launch',
           'settings.monthStart' => 'Month starts on',
           'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
