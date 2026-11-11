@@ -400,6 +400,14 @@ class _Translations$categories$ru extends Translations$categories$en {
   @override
   late final _Translations$categories$form$ru form =
       _Translations$categories$form$ru._(_root);
+  @override
+  String get howTitle => 'Как это устроено';
+  @override
+  List<String> get how => [
+    'Нажмите категорию — она откроется здесь, рядом со списком.',
+    'Расходы и доходы — отдельные списки: переключатель над ними.',
+    'Категории видны в операциях, отчётах и регулярных платежах.',
+  ];
 }
 
 // Path: demo
@@ -3269,6 +3277,13 @@ extension on TranslationsRu {
           'categories.form.nameMissing' => 'Дайте категории название.',
           'categories.form.failed' =>
             'Не удалось сохранить. Попробуйте ещё раз.',
+          'categories.howTitle' => 'Как это устроено',
+          'categories.how.0' =>
+            'Нажмите категорию — она откроется здесь, рядом со списком.',
+          'categories.how.1' =>
+            'Расходы и доходы — отдельные списки: переключатель над ними.',
+          'categories.how.2' =>
+            'Категории видны в операциях, отчётах и регулярных платежах.',
           'demo.card' => 'Зарплатная карта',
           'demo.cash' => 'Наличные',
           'demo.savings' => 'Накопления',
@@ -3867,13 +3882,13 @@ extension on TranslationsRu {
           'imports.categoriesAsBeforeText' =>
             ({required Object source}) =>
                 'Взяли ваш выбор с прошлой выписки ${source}. Поменяйте, если что-то теперь иначе.',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.ownFormatOf' => 'вашего формата',
           'imports.inboxNote' => 'операции подождут без категории',
           'imports.newCategoryNote' => 'появится при импорте',
           'imports.newCategoryMark' => 'новая категория',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.categoriesDone' =>
             ({required Object count}) => 'Готово · ${count} во «Входящих»',
           'imports.categoriesKept' =>
@@ -4913,13 +4928,13 @@ extension on TranslationsRu {
           'settings.english' => 'English',
           'settings.russian' => 'Русский',
           'settings.baseCurrency' => 'Базовая валюта',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.firstAccountCurrency' => 'Первый счёт',
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
           'settings.security' => 'Безопасность',
           'settings.hideAmounts' => 'Скрывать суммы',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.onLaunch' => 'При запуске',
           'settings.monthStart' => 'Начало месяца',
           'settings.monthStartDay' => ({required Object day}) => '${day} число',
