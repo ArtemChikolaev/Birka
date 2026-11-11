@@ -35,6 +35,7 @@ void main() {
       ...CardArtThumbnail.styles,
       ...DotBadge.styles,
       ...FileDropZone.styles,
+      ...ForecastChart.styles,
       ...GlassIconButton.styles,
       ...GlassKeypad.styles,
       ...GlassListGroup.styles,

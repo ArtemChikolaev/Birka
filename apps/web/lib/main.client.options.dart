@@ -23,6 +23,7 @@ import 'package:birka_web/pages/operations_island.dart'
     deferred as _operations_island;
 import 'package:birka_web/pages/overview_island.dart'
     deferred as _overview_island;
+import 'package:birka_web/pages/payday_island.dart' deferred as _payday_island;
 import 'package:birka_web/pages/reports_island.dart'
     deferred as _reports_island;
 import 'package:birka_web/pages/schedules_island.dart'
@@ -89,6 +90,10 @@ ClientOptions get defaultClientOptions => ClientOptions(
     'overview_island': ClientLoader(
       (p) => _overview_island.OverviewIsland(),
       loader: _overview_island.loadLibrary,
+    ),
+    'payday_island': ClientLoader(
+      (p) => _payday_island.PaydayIsland(),
+      loader: _payday_island.loadLibrary,
     ),
     'reports_island': ClientLoader(
       (p) => _reports_island.ReportsIsland(),

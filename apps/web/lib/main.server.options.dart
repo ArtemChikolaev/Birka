@@ -28,6 +28,7 @@ import 'package:birka_web/pages/notifications_island.dart'
 import 'package:birka_web/pages/operations_island.dart' as _operations_island;
 import 'package:birka_web/pages/overview_island.dart' as _overview_island;
 import 'package:birka_web/pages/page_frame.dart' as _page_frame;
+import 'package:birka_web/pages/payday_island.dart' as _payday_island;
 import 'package:birka_web/pages/reports_island.dart' as _reports_island;
 import 'package:birka_web/pages/schedules_island.dart' as _schedules_island;
 import 'package:categories_jaspr/src/presentation/pages/categories_page.dart'
@@ -64,6 +65,7 @@ import 'package:design_jaspr/src/birka_text_field.dart' as _birka_text_field;
 import 'package:design_jaspr/src/card_art.dart' as _card_art;
 import 'package:design_jaspr/src/dot_badge.dart' as _dot_badge;
 import 'package:design_jaspr/src/file_drop_zone.dart' as _file_drop_zone;
+import 'package:design_jaspr/src/forecast_chart.dart' as _forecast_chart;
 import 'package:design_jaspr/src/glass_icon_button.dart' as _glass_icon_button;
 import 'package:design_jaspr/src/glass_keypad.dart' as _glass_keypad;
 import 'package:design_jaspr/src/glass_list.dart' as _glass_list;
@@ -119,6 +121,8 @@ import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
     as _reports_page;
 import 'package:schedules_jaspr/src/presentation/components/schedule_bits.dart'
     as _schedule_bits;
+import 'package:schedules_jaspr/src/presentation/pages/payday_page.dart'
+    as _payday_page;
 import 'package:schedules_jaspr/src/presentation/pages/schedule_form_page.dart'
     as _schedule_form_page;
 import 'package:schedules_jaspr/src/presentation/pages/schedules_page.dart'
@@ -188,6 +192,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
         ClientTarget<_operations_island.OperationsIsland>('operations_island'),
     _overview_island.OverviewIsland:
         ClientTarget<_overview_island.OverviewIsland>('overview_island'),
+    _payday_island.PaydayIsland: ClientTarget<_payday_island.PaydayIsland>(
+      'payday_island',
+    ),
     _reports_island.ReportsIsland: ClientTarget<_reports_island.ReportsIsland>(
       'reports_island',
     ),
@@ -234,6 +241,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._card_art.CardArtThumbnail.styles,
     ..._dot_badge.DotBadge.styles,
     ..._file_drop_zone.FileDropZone.styles,
+    ..._forecast_chart.ForecastChart.styles,
     ..._glass_icon_button.GlassIconButton.styles,
     ..._glass_keypad.GlassKeypad.styles,
     ..._glass_list.GlassListGroup.styles,
@@ -276,6 +284,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._reports_page.ReportsPage.styles,
     ..._schedule_bits.DateColumn.styles,
     ..._schedule_bits.ScheduleDot.styles,
+    ..._payday_page.PaydayPage.styles,
     ..._schedule_form_page.ScheduleFormPage.styles,
     ..._schedules_page.SchedulesPage.styles,
     ..._settings_section.SettingsSection.styles,

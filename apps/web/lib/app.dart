@@ -10,6 +10,7 @@ import 'package:birka_web/pages/notifications_island.dart';
 import 'package:birka_web/pages/operations_island.dart';
 import 'package:birka_web/pages/overview_island.dart';
 import 'package:birka_web/pages/page_frame.dart';
+import 'package:birka_web/pages/payday_island.dart';
 import 'package:birka_web/pages/reports_island.dart';
 import 'package:birka_web/pages/schedules_island.dart';
 import 'package:jaspr/jaspr.dart';
@@ -71,6 +72,11 @@ class App extends StatelessComponent {
           title: 'Payments · Birka',
           builder: (_, _) =>
               const PageFrame(wide: true, child: SchedulesIsland()),
+        ),
+        Route(
+          path: '/payday',
+          title: 'Payday · Birka',
+          builder: (_, _) => const PageFrame(wide: true, child: PaydayIsland()),
         ),
         Route(
           path: '/notifications',

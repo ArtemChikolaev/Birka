@@ -34,6 +34,7 @@ export 'src/birka_text_field.dart';
 export 'src/card_art.dart';
 export 'src/dot_badge.dart';
 export 'src/file_drop_zone.dart';
+export 'src/forecast_chart.dart';
 export 'src/glass_icon_button.dart';
 export 'src/glass_keypad.dart';
 export 'src/glass_list.dart';
