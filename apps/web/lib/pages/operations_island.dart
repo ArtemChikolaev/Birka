@@ -81,14 +81,16 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland>
   /// card of the operation picked in the list, or a form.
   Component _besideList() {
     return BlocProvider<ReportsCubit>(
-      create: (_) => _reports = getIt(),
+      create: (_) => _reports = ReportsCubit(
+        CalendarMonths(getIt<ReportsRepository>()),
+      ),
       child: _list(
         picked: switch (fragment) {
           '' || _new => null,
           final view => operationOf(view),
         },
         side: switch (fragment) {
-          '' => const MonthCard(reportHref: 'reports/'),
+          '' => const MonthCard(),
           _new => GlassPanel(
             key: ValueKey(fragment),
             child: quickAdd(null, closeForm),
