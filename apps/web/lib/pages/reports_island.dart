@@ -41,7 +41,7 @@ class _ReportsIslandState extends DataIslandState<ReportsIsland> {
   Component buildPage(BuildContext context) {
     return BlocProvider<ReportsCubit>(
       create: (_) => _reports = getIt(),
-      child: ReportsPage(note: storageNote),
+      child: ReportsPage(note: storageNote, wide: wide),
     );
   }
 }

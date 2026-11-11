@@ -1683,6 +1683,15 @@ class _Translations$notifications$ru extends Translations$notifications$en {
     'ноябрь',
     'декабрь',
   ];
+  @override
+  String get howTitle => 'Что сюда приходит';
+  @override
+  List<String> get how => [
+    '«Платежи» — регулярный платёж, который ждёт вашего «Провести».',
+    '«Импорт» — итоги выписок: что добавили и что ждёт во «Входящих».',
+    '«Birka» — что нового в самой Birka.',
+    'Новые стоят сверху; прочитанные уходят в историю по дням.',
+  ];
 }
 
 // Path: onboarding
@@ -4223,6 +4232,14 @@ extension on TranslationsRu {
           'notifications.months.9' => 'октябрь',
           'notifications.months.10' => 'ноябрь',
           'notifications.months.11' => 'декабрь',
+          'notifications.howTitle' => 'Что сюда приходит',
+          'notifications.how.0' =>
+            '«Платежи» — регулярный платёж, который ждёт вашего «Провести».',
+          'notifications.how.1' =>
+            '«Импорт» — итоги выписок: что добавили и что ждёт во «Входящих».',
+          'notifications.how.2' => '«Birka» — что нового в самой Birka.',
+          'notifications.how.3' =>
+            'Новые стоят сверху; прочитанные уходят в историю по дням.',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
@@ -4923,14 +4940,14 @@ extension on TranslationsRu {
           'schedules.previewNext' => 'Следующие разы',
           'schedules.cancel' => 'Отмена',
           'settings.general' => 'Основное',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
           'settings.english' => 'English',
           'settings.russian' => 'Русский',
           'settings.baseCurrency' => 'Базовая валюта',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.firstAccountCurrency' => 'Первый счёт',
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
           'settings.security' => 'Безопасность',

@@ -26,17 +26,40 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.en);
   });
 
-  void pump(ComponentTester tester, {Component? inbox}) => tester.pumpComponent(
-    BlocProvider(
-      create: (_) => SettingsCubit(
-        _Store(),
-        deviceLanguage: 'ru',
-        baseCurrency: BaseCurrency(null),
-        monthStart: MonthStart(1),
-      ),
-      child: MorePage(inbox: inbox),
-    ),
-  );
+  void pump(ComponentTester tester, {Component? inbox, bool wide = false}) =>
+      tester.pumpComponent(
+        BlocProvider(
+          create: (_) => SettingsCubit(
+            _Store(),
+            deviceLanguage: 'ru',
+            baseCurrency: BaseCurrency(null),
+            monthStart: MonthStart(1),
+          ),
+          child: MorePage(inbox: inbox, wide: wide),
+        ),
+      );
+
+  testComponents('a wide page has the tiles on one half and the settings on '
+      'the other', (tester) async {
+    pump(tester, wide: true);
+    await tester.pump();
+
+    final halves = find
+        .byComponentPredicate(
+          (component) =>
+              component is DomComponent &&
+              component.classes == 'birka-split__main',
+        )
+        .evaluate()
+        .toList();
+    expect(halves, hasLength(2));
+    Finder inHalf(int index, Finder finder) => find.descendant(
+      of: find.byElementPredicate((element) => element == halves[index]),
+      matching: finder,
+    );
+    expect(inHalf(0, find.text('Счета')), findsOneComponent);
+    expect(inHalf(1, find.text('Помощь и отзыв')), findsOneComponent);
+  });
 
   testComponents('leads to the accounts, the categories, the import, the data '
       'and help', (

@@ -61,7 +61,9 @@
     900 px or less keeps the column of 520 px that the narrow boards draw. A
     view with no wide layout of its own keeps that column in the middle of a
     wide page (`PageColumn`), as an operation over the page of an account
-    does.
+    does. A page whose wide layout puts its parts in another order than the
+    narrow one, such as the reports, takes the width from its island
+    (`WideWindow`), so that the narrow order stays as it was.
 12. A page whose views come from its list, such as the operations and the
     categories, shows them beside the list in a wide window
     (`DataIslandState.viewsBeside`): the view stands in a `GlassPanel` and

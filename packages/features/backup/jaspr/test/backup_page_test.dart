@@ -20,6 +20,7 @@ void main() {
     String? note,
     bool demo = false,
     ValueChanged<bool>? onDemoChanged,
+    bool wide = false,
   }) async {
     final cubit = BackupCubit(repository, files, store, now: () => now);
     addTearDown(cubit.close);
@@ -31,6 +32,7 @@ void main() {
           demo: demo,
           onDemoChanged: onDemoChanged,
           clock: () => now,
+          wide: wide,
         ),
       ),
     );
@@ -79,6 +81,26 @@ void main() {
     expect(
       find.text('Файлы сохраняются туда же, куда браузер кладёт загрузки.'),
       findsOneComponent,
+    );
+  });
+
+  testComponents('a wide page has the ledger itself at the side', (
+    tester,
+  ) async {
+    await pump(tester, wide: true);
+
+    final side = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.classes == 'birka-split__aside',
+    );
+    expect(
+      find.descendant(of: side, matching: find.text('Удалить все данные')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: side, matching: find.text('Сохранить копию')),
+      findsNothing,
     );
   });
 

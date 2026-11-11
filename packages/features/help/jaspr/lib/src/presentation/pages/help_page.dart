@@ -14,7 +14,10 @@ import 'package:l10n/l10n.dart';
 /// before the mail app gets it. It needs a [HelpCubit] above it.
 class HelpPage extends StatefulComponent {
   /// Creates the page.
-  const HelpPage({super.key});
+  const HelpPage({this.wide = false, super.key});
+
+  /// Whether the page is wide, with the ways to write at the side.
+  final bool wide;
 
   @override
   State<HelpPage> createState() => _HelpPageState();
@@ -216,76 +219,86 @@ class _HelpPageState extends State<HelpPage> {
         final letter = state.letter;
         final about = state.about;
         final notice = _notice;
-        return BirkaColumn(
-          children: [
-            GlassPageHeader(title: t.help.title),
-            GlassSearchField(
-              label: t.help.search,
-              clearLabel: t.help.clearSearch,
-              value: state.query,
-              onChanged: cubit.search,
-              hint: t.help.search,
+        final questions = [
+          GlassSearchField(
+            label: t.help.search,
+            clearLabel: t.help.clearSearch,
+            value: state.query,
+            onChanged: cubit.search,
+            hint: t.help.search,
+          ),
+          section(classes: 'help__group', [
+            SectionLabel(t.help.questions),
+            GlassListGroup(
+              children: [
+                for (final (index, question) in shown)
+                  _Question(
+                    key: ValueKey(index),
+                    index: index,
+                    question: question,
+                    open: state.open == index,
+                    onTap: () => cubit.toggle(index),
+                  ),
+                if (shown.isEmpty)
+                  p(classes: 'text-body help__nothing', [
+                    .text(t.help.nothingFound),
+                  ]),
+              ],
             ),
+          ]),
+        ];
+        final contact = [
+          if (letter != null)
+            _letter(cubit, letter)
+          else
             section(classes: 'help__group', [
-              SectionLabel(t.help.questions),
+              SectionLabel(t.help.contact),
               GlassListGroup(
                 children: [
-                  for (final (index, question) in shown)
-                    _Question(
-                      key: ValueKey(index),
-                      index: index,
-                      question: question,
-                      open: state.open == index,
-                      onTap: () => cubit.toggle(index),
+                  for (final (kind, color) in [
+                    (LetterKind.question, 'var(--color-accent)'),
+                    (LetterKind.bug, 'var(--color-negative)'),
+                    (LetterKind.idea, 'var(--color-palette-amber)'),
+                  ])
+                    GlassListRow(
+                      leading: DotBadge(color: color),
+                      title: letterWayLabel(kind),
+                      subtitle: letterWayText(kind),
+                      subtitleLines: 2,
+                      trailing: const span(classes: 'help__end', [
+                        BirkaIcon(BirkaGlyph.chevron),
+                      ]),
+                      onTap: () => unawaited(cubit.compose(kind)),
                     ),
-                  if (shown.isEmpty)
-                    p(classes: 'text-body help__nothing', [
-                      .text(t.help.nothingFound),
+                  GlassListRow(
+                    leading: const DotBadge(
+                      color: 'var(--color-text-secondary)',
+                    ),
+                    title: t.help.github,
+                    subtitle: t.help.githubText,
+                    subtitleLines: 2,
+                    trailing: const span(classes: 'help__end', [
+                      BirkaIcon(BirkaGlyph.rise),
                     ]),
+                    onTap: () => unawaited(cubit.openIssues()),
+                  ),
                 ],
               ),
             ]),
-            if (letter != null)
-              _letter(cubit, letter)
-            else
-              section(classes: 'help__group', [
-                SectionLabel(t.help.contact),
-                GlassListGroup(
-                  children: [
-                    for (final (kind, color) in [
-                      (LetterKind.question, 'var(--color-accent)'),
-                      (LetterKind.bug, 'var(--color-negative)'),
-                      (LetterKind.idea, 'var(--color-palette-amber)'),
-                    ])
-                      GlassListRow(
-                        leading: DotBadge(color: color),
-                        title: letterWayLabel(kind),
-                        subtitle: letterWayText(kind),
-                        subtitleLines: 2,
-                        trailing: const span(classes: 'help__end', [
-                          BirkaIcon(BirkaGlyph.chevron),
-                        ]),
-                        onTap: () => unawaited(cubit.compose(kind)),
-                      ),
-                    GlassListRow(
-                      leading: const DotBadge(
-                        color: 'var(--color-text-secondary)',
-                      ),
-                      title: t.help.github,
-                      subtitle: t.help.githubText,
-                      subtitleLines: 2,
-                      trailing: const span(classes: 'help__end', [
-                        BirkaIcon(BirkaGlyph.rise),
-                      ]),
-                      onTap: () => unawaited(cubit.openIssues()),
-                    ),
-                  ],
-                ),
-              ]),
-            if (about != null)
-              p(classes: 'text-caption help__about', [
-                .text(aboutLine(about)),
-              ]),
+          if (about != null)
+            p(classes: 'text-caption help__about', [
+              .text(aboutLine(about)),
+            ]),
+        ];
+        return BirkaColumn(
+          children: [
+            GlassPageHeader(title: t.help.title),
+            if (component.wide)
+              BirkaSplit(asideWidth: 380, main: questions, aside: contact)
+            else ...[
+              ...questions,
+              ...contact,
+            ],
             if (notice != null)
               GlassToast(
                 helpNoticeLabel(notice),

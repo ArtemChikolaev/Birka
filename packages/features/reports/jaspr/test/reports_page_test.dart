@@ -107,12 +107,16 @@ void main() {
   late _FakeRepository repository;
   late DateTime now;
 
-  Future<void> pump(ComponentTester tester, {String? note}) async {
+  Future<void> pump(
+    ComponentTester tester, {
+    String? note,
+    bool wide = false,
+  }) async {
     tester.pumpComponent(
       _Host(
         child: BlocProvider(
           create: (_) => ReportsCubit(repository, now: () => now),
-          child: ReportsPage(note: note),
+          child: ReportsPage(note: note, wide: wide),
         ),
       ),
     );
@@ -236,6 +240,29 @@ void main() {
     final widths = stylesOf('reports__fill').map((styles) => styles['width']);
     expect(widths.first, '100.0%');
     expect(double.parse(widths.last!.replaceAll('%', '')), closeTo(52.9, 0.1));
+  });
+
+  testComponents('a wide page has the ring on one half and the categories '
+      'on the other', (tester) async {
+    await pump(tester, note: 'Только в этом браузере', wide: true);
+
+    final halves = find
+        .byComponentPredicate(
+          (component) =>
+              component is DomComponent &&
+              component.classes == 'birka-split__main',
+        )
+        .evaluate()
+        .toList();
+    expect(halves, hasLength(2));
+    Finder inHalf(int index, Finder finder) => find.descendant(
+      of: find.byElementPredicate((element) => element == halves[index]),
+      matching: finder,
+    );
+    expect(inHalf(0, find.byType(BirkaRing)), findsOneComponent);
+    expect(inHalf(0, find.text('Продукты')), findsNothing);
+    expect(inHalf(1, find.text('Продукты')), findsOneComponent);
+    expect(inHalf(1, find.text('Только в этом браузере')), findsOneComponent);
   });
 
   testComponents('more expenses read as bad news', (tester) async {

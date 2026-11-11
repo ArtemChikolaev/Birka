@@ -42,12 +42,13 @@ class App extends StatelessComponent {
         Route(
           path: '/reports',
           title: 'Reports · Birka',
-          builder: (_, _) => const PageFrame(child: ReportsIsland()),
+          builder: (_, _) =>
+              const PageFrame(wide: true, child: ReportsIsland()),
         ),
         Route(
           path: '/more',
           title: 'More · Birka',
-          builder: (_, _) => const PageFrame(child: MoreIsland()),
+          builder: (_, _) => const PageFrame(wide: true, child: MoreIsland()),
         ),
         Route(
           path: '/accounts',
@@ -85,17 +86,18 @@ class App extends StatelessComponent {
         Route(
           path: '/notifications',
           title: 'Notifications · Birka',
-          builder: (_, _) => const PageFrame(child: NotificationsIsland()),
+          builder: (_, _) =>
+              const PageFrame(wide: true, child: NotificationsIsland()),
         ),
         Route(
           path: '/data',
           title: 'Data · Birka',
-          builder: (_, _) => const PageFrame(child: BackupIsland()),
+          builder: (_, _) => const PageFrame(wide: true, child: BackupIsland()),
         ),
         Route(
           path: '/help',
           title: 'Help · Birka',
-          builder: (_, _) => const PageFrame(child: HelpIsland()),
+          builder: (_, _) => const PageFrame(wide: true, child: HelpIsland()),
         ),
       ],
     );
