@@ -7,65 +7,74 @@ import 'package:l10n/l10n.dart';
 import 'package:rates/rates.dart' show CbrMirror;
 import 'package:settings_jaspr/settings_jaspr.dart';
 
-/// The tab with everything that has no tab of its own, and the settings.
+/// The tab with everything that has no tab of its own, and the settings. A
+/// [wide] page has the tiles on one half and the settings on the other.
 class MorePage extends StatelessComponent {
   /// Creates the page, with [inbox] as the way to the inbox over the tiles.
-  const MorePage({this.inbox, super.key});
+  const MorePage({this.inbox, this.wide = false, super.key});
 
   /// The way to the inbox, as wide as the tiles.
   final Component? inbox;
 
+  /// Whether the page is wide.
+  final bool wide;
+
   @override
   Component build(BuildContext context) {
     final inbox = this.inbox;
+    final tiles = div(classes: 'more__tiles', [
+      if (inbox != null) div(classes: 'more__wide', [inbox]),
+      _Tile(
+        color: 'var(--color-palette-green)',
+        label: t.accounts.title,
+        href: 'accounts/',
+      ),
+      _Tile(
+        color: 'var(--color-palette-amber)',
+        label: t.categories.title,
+        href: 'categories/',
+      ),
+      _Tile(
+        color: 'var(--color-palette-sky)',
+        label: t.app.import,
+        href: 'import/',
+      ),
+      _Tile(
+        color: 'var(--color-palette-violet)',
+        label: t.app.data,
+        href: 'data/',
+      ),
+    ]);
+    final settings = [
+      const SettingsSection(),
+      section(classes: 'more__group', [
+        div(classes: 'more__label', [SectionLabel(t.app.support)]),
+        GlassListGroup(
+          children: [
+            GlassListRow(
+              title: t.app.help,
+              href: 'help/',
+              trailing: const span(classes: 'more__end', [
+                BirkaIcon(BirkaGlyph.chevron),
+              ]),
+            ),
+          ],
+        ),
+      ]),
+      // The end of the page: the version, where the records live, the
+      // code and where the rates come from.
+      footer(classes: 'text-caption more__footer', [
+        p([.text('Birka $siteVersion · ${t.app.keptInBrowser}')]),
+        p([_away(codePage.toString(), t.app.sourceCode)]),
+        p([_away(CbrMirror.address, t.settings.ratesCredit)]),
+      ]),
+    ];
+    final header = GlassPageHeader(title: t.app.more);
+    if (!wide) return BirkaColumn(children: [header, tiles, ...settings]);
     return BirkaColumn(
       children: [
-        GlassPageHeader(title: t.app.more),
-        div(classes: 'more__tiles', [
-          if (inbox != null) div(classes: 'more__wide', [inbox]),
-          _Tile(
-            color: 'var(--color-palette-green)',
-            label: t.accounts.title,
-            href: 'accounts/',
-          ),
-          _Tile(
-            color: 'var(--color-palette-amber)',
-            label: t.categories.title,
-            href: 'categories/',
-          ),
-          _Tile(
-            color: 'var(--color-palette-sky)',
-            label: t.app.import,
-            href: 'import/',
-          ),
-          _Tile(
-            color: 'var(--color-palette-violet)',
-            label: t.app.data,
-            href: 'data/',
-          ),
-        ]),
-        const SettingsSection(),
-        section(classes: 'more__group', [
-          div(classes: 'more__label', [SectionLabel(t.app.support)]),
-          GlassListGroup(
-            children: [
-              GlassListRow(
-                title: t.app.help,
-                href: 'help/',
-                trailing: const span(classes: 'more__end', [
-                  BirkaIcon(BirkaGlyph.chevron),
-                ]),
-              ),
-            ],
-          ),
-        ]),
-        // The end of the page: the version, where the records live, the
-        // code and where the rates come from.
-        footer(classes: 'text-caption more__footer', [
-          p([.text('Birka $siteVersion · ${t.app.keptInBrowser}')]),
-          p([_away(codePage.toString(), t.app.sourceCode)]),
-          p([_away(CbrMirror.address, t.settings.ratesCredit)]),
-        ]),
+        header,
+        BirkaSplit(halves: true, main: [tiles], aside: settings),
       ],
     );
   }

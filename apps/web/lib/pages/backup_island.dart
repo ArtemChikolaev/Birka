@@ -40,6 +40,7 @@ class _BackupIslandState extends DataIslandState<BackupIsland> {
     return BlocProvider<BackupCubit>(
       create: (_) => getIt(),
       child: BackupPage(
+        wide: wide,
         note: storageNote,
         demo: demoStateIn(_settings).isOn,
         onDemoChanged: (on) async {

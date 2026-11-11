@@ -1993,6 +1993,16 @@ class Translations$notifications$en {
     'November',
     'December',
   ];
+
+  /// en: 'What comes here'
+  String get howTitle => 'What comes here';
+
+  List<String> get how => [
+    '«Payments»: a regular payment that waits for your «Post».',
+    '«Imports»: what a statement brought, and what waits in the «Inbox».',
+    '«Birka»: what is new in Birka itself.',
+    'New ones stand on top; read ones go to the history, day by day.',
+  ];
 }
 
 // Path: onboarding
@@ -4793,6 +4803,14 @@ extension on Translations {
           'notifications.months.9' => 'October',
           'notifications.months.10' => 'November',
           'notifications.months.11' => 'December',
+          'notifications.howTitle' => 'What comes here',
+          'notifications.how.0' =>
+            '«Payments»: a regular payment that waits for your «Post».',
+          'notifications.how.1' =>
+            '«Imports»: what a statement brought, and what waits in the «Inbox».',
+          'notifications.how.2' => '«Birka»: what is new in Birka itself.',
+          'notifications.how.3' =>
+            'New ones stand on top; read ones go to the history, day by day.',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
           'onboarding.failed' => 'Could not save. Try again.',
@@ -5466,14 +5484,14 @@ extension on Translations {
           'schedules.previewNext' => 'The next times',
           'schedules.cancel' => 'Cancel',
           'settings.general' => 'General',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
           'settings.english' => 'English',
           'settings.russian' => 'Русский',
           'settings.baseCurrency' => 'Base currency',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.firstAccountCurrency' => 'First account',
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
           'settings.security' => 'Security',

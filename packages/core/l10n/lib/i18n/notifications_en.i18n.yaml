@@ -52,3 +52,9 @@ months:
   - October
   - November
   - December
+howTitle: What comes here
+how:
+  - "«Payments»: a regular payment that waits for your «Post»."
+  - "«Imports»: what a statement brought, and what waits in the «Inbox»."
+  - "«Birka»: what is new in Birka itself."
+  - "New ones stand on top; read ones go to the history, day by day."

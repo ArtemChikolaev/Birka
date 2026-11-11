@@ -9,14 +9,19 @@ import 'package:reports_common/reports_common.dart';
 import 'package:reports_jaspr/src/presentation/components/report_line_row.dart';
 
 /// What a month took or brought, by category and against the months before.
+/// A [wide] page has the ring and the months on one half and the categories
+/// on the other.
 ///
 /// It needs a [ReportsCubit] above it.
 class ReportsPage extends StatefulComponent {
   /// Creates the page.
-  const ReportsPage({this.note, super.key});
+  const ReportsPage({this.note, this.wide = false, super.key});
 
   /// A quiet line under the page, such as where the data lives.
   final String? note;
+
+  /// Whether the page is wide.
+  final bool wide;
 
   @override
   State<ReportsPage> createState() => _ReportsPageState();
@@ -122,71 +127,92 @@ class _ReportsPageState extends State<ReportsPage> {
         final cubit = context.read<ReportsCubit>();
         final report = state.report;
         final note = component.note;
-        return BirkaColumn(
-          children: [
-            GlassPageHeader(
-              title: t.app.reports,
-              trailing: BirkaChip(
-                glyph: BirkaGlyph.calendar,
-                label: reportMonthLabel(state.month, today: state.today),
-                selected: _months != null,
-                onTap: () => unawaited(_toggleMonths()),
-              ),
-            ),
-            ?_monthChoice(state),
-            GlassSegmented<CategoryKind>(
-              segments: {
-                for (final kind in CategoryKind.values) kind: kindLabel(kind),
-              },
-              selected: state.kind,
-              onChanged: (kind) => unawaited(cubit.kindChanged(kind)),
-            ),
-            ...switch (state.status) {
-              ReportsStatus.loading => const <Component>[],
-              ReportsStatus.failed => [
-                GlassNotice(
-                  text: t.reports.failed,
-                  actions: [
-                    BirkaButton(
-                      label: t.app.retry,
-                      onPressed: () => unawaited(cubit.retry()),
-                    ),
-                  ],
-                ),
-              ],
-              ReportsStatus.ready => [
-                if (report.isEmpty)
-                  GlassNotice(text: emptyLabel(state.kind))
-                else ...[
-                  _ring(context, state),
-                  GlassListGroup(
-                    children: [
-                      for (final line in report.lines)
-                        ReportLineRow(
-                          line,
-                          kind: state.kind,
-                          key: ValueKey(categoryKey(line.category)),
-                        ),
-                    ],
+        final ready = state.status == ReportsStatus.ready;
+        final header = GlassPageHeader(
+          title: t.app.reports,
+          trailing: BirkaChip(
+            glyph: BirkaGlyph.calendar,
+            label: reportMonthLabel(state.month, today: state.today),
+            selected: _months != null,
+            onTap: () => unawaited(_toggleMonths()),
+          ),
+        );
+        final kinds = GlassSegmented<CategoryKind>(
+          segments: {
+            for (final kind in CategoryKind.values) kind: kindLabel(kind),
+          },
+          selected: state.kind,
+          onChanged: (kind) => unawaited(cubit.kindChanged(kind)),
+        );
+        final failure = state.status == ReportsStatus.failed
+            ? GlassNotice(
+                text: t.reports.failed,
+                actions: [
+                  BirkaButton(
+                    label: t.app.retry,
+                    onPressed: () => unawaited(cubit.retry()),
                   ),
                 ],
-                if (report.others.isNotEmpty)
-                  div(classes: 'reports__others', [
-                    AmountText(
-                      report.others.map(formatMoney).join(' · '),
-                      tone: AmountTone.muted,
-                      textClass: 'text-caption',
+              )
+            : null;
+        final empty = ready && report.isEmpty
+            ? GlassNotice(text: emptyLabel(state.kind))
+            : null;
+        final ring = ready && !report.isEmpty ? _ring(context, state) : null;
+        final lines = ready && !report.isEmpty
+            ? GlassListGroup(
+                children: [
+                  for (final line in report.lines)
+                    ReportLineRow(
+                      line,
+                      kind: state.kind,
+                      key: ValueKey(categoryKey(line.category)),
                     ),
-                  ]),
-                if (state.converted)
-                  p(classes: 'text-caption reports__rate', [
-                    .text(t.reports.dayRates),
-                  ]),
-                if (report.average != null) _byMonth(context, report),
-              ],
-            },
-            if (note != null && state.status == ReportsStatus.ready)
-              p(classes: 'text-caption reports__note', [.text(note)]),
+                ],
+              )
+            : null;
+        final after = [
+          if (ready && report.others.isNotEmpty)
+            div(classes: 'reports__others', [
+              AmountText(
+                report.others.map(formatMoney).join(' · '),
+                tone: AmountTone.muted,
+                textClass: 'text-caption',
+              ),
+            ]),
+          if (ready && state.converted)
+            p(classes: 'text-caption reports__rate', [
+              .text(t.reports.dayRates),
+            ]),
+          if (ready && report.average != null) _byMonth(context, report),
+        ];
+        final quiet = note != null && ready
+            ? p(classes: 'text-caption reports__note', [.text(note)])
+            : null;
+        if (!component.wide) {
+          return BirkaColumn(
+            children: [
+              header,
+              ?_monthChoice(state),
+              kinds,
+              ?failure,
+              ?empty,
+              ?ring,
+              ?lines,
+              ...after,
+              ?quiet,
+            ],
+          );
+        }
+        return BirkaColumn(
+          children: [
+            header,
+            ?_monthChoice(state),
+            BirkaSplit(
+              halves: true,
+              main: [kinds, ?failure, ?empty, ?ring, ...after],
+              aside: [?lines, ?quiet],
+            ),
           ],
         );
       },

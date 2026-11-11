@@ -33,11 +33,15 @@ class NotificationsPage extends StatefulComponent {
     required this.backHref,
     required this.hrefOf,
     required this.onOpen,
+    this.wide = false,
     super.key,
   });
 
   /// Where the way back leads.
   final String backHref;
+
+  /// Whether the page is wide, with what comes here told at the side.
+  final bool wide;
 
   /// Where a notice leads on the site.
   final NoticeHref hrefOf;
@@ -354,17 +358,32 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Component build(BuildContext context) {
     final cubit = context.read<NotificationsCubit>();
     return BlocBuilder<NotificationsCubit, NotificationsState>(
-      builder: (context, state) => div(classes: 'notifications', [
-        _header(cubit, state),
-        ...switch (state.status) {
+      builder: (context, state) {
+        final body = switch (state.status) {
           NotificationsStatus.loading => const [BirkaPlaceholder()],
           NotificationsStatus.failed => [
             GlassNotice(text: t.notifications.failed),
           ],
           _ when state.notices.isEmpty => [_empty()],
           _ => _feed(cubit, state),
-        },
-      ]),
+        };
+        return div(classes: 'notifications', [
+          _header(cubit, state),
+          if (component.wide)
+            BirkaSplit(
+              asideWidth: 340,
+              main: body,
+              aside: [
+                GlassSteps(
+                  title: t.notifications.howTitle,
+                  points: t.notifications.how,
+                ),
+              ],
+            )
+          else
+            ...body,
+        ]);
+      },
     );
   }
 

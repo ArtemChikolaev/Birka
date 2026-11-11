@@ -19,8 +19,12 @@ class BackupPage extends StatefulComponent {
     this.demo = false,
     this.onDemoChanged,
     this.clock = DateTime.now,
+    this.wide = false,
     super.key,
   });
+
+  /// Whether the page is wide, with the ledger itself at the side.
+  final bool wide;
 
   /// A quiet line about where the data lives, such as whether the browser
   /// keeps it.
@@ -200,77 +204,87 @@ class _BackupPageState extends State<BackupPage> {
         final idle = state.task == null;
         final offer = state.offer;
         final notice = _notice;
+        final copies = [
+          _stored(state),
+          if (offer != null)
+            _askToRestore(cubit, offer)
+          else if (_askingToWipe)
+            _askToWipe(cubit)
+          else
+            div(classes: 'backup__actions', [
+              BirkaButton(
+                label: t.backup.save,
+                onPressed: idle ? () => unawaited(cubit.save()) : null,
+              ),
+              BirkaButton(
+                label: t.backup.restore,
+                quiet: true,
+                onPressed: idle ? () => unawaited(cubit.open()) : null,
+              ),
+            ]),
+          section(classes: 'backup__group', [
+            SectionLabel(t.backup.export),
+            GlassListGroup(
+              children: [
+                GlassListRow(
+                  leading: const GlyphBadge(
+                    glyph: BirkaGlyph.file,
+                    color: 'var(--color-palette-sky)',
+                  ),
+                  title: t.backup.exportTitle,
+                  subtitle: t.backup.exportText,
+                  subtitleLines: 2,
+                  trailing: const span(classes: 'backup__row-icon', [
+                    BirkaIcon(BirkaGlyph.download),
+                  ]),
+                  onTap: idle ? () => unawaited(cubit.export()) : null,
+                ),
+              ],
+            ),
+          ]),
+        ];
+        final records = [
+          section(classes: 'backup__group', [
+            SectionLabel(t.backup.records),
+            GlassListGroup(
+              children: [
+                if (component.onDemoChanged case final onDemoChanged?)
+                  GlassListRow(
+                    title: t.backup.demo,
+                    subtitle: t.backup.demoText,
+                    subtitleLines: 2,
+                    trailing: BirkaSwitch(
+                      value: component.demo,
+                      label: t.backup.demo,
+                      // While a task runs, a tap waits for nothing.
+                      onChanged: (on) {
+                        if (idle) onDemoChanged(on);
+                      },
+                    ),
+                  ),
+                GlassListRow(
+                  title: t.backup.wipe,
+                  danger: true,
+                  onTap: idle
+                      ? () => setState(() => _askingToWipe = true)
+                      : null,
+                ),
+              ],
+            ),
+          ]),
+          p(classes: 'text-caption backup__note', [
+            .text(t.backup.filesNoteSite),
+          ]),
+        ];
         return BirkaColumn(
           children: [
             GlassPageHeader(title: t.backup.title),
-            _stored(state),
-            if (offer != null)
-              _askToRestore(cubit, offer)
-            else if (_askingToWipe)
-              _askToWipe(cubit)
-            else
-              div(classes: 'backup__actions', [
-                BirkaButton(
-                  label: t.backup.save,
-                  onPressed: idle ? () => unawaited(cubit.save()) : null,
-                ),
-                BirkaButton(
-                  label: t.backup.restore,
-                  quiet: true,
-                  onPressed: idle ? () => unawaited(cubit.open()) : null,
-                ),
-              ]),
-            section(classes: 'backup__group', [
-              SectionLabel(t.backup.export),
-              GlassListGroup(
-                children: [
-                  GlassListRow(
-                    leading: const GlyphBadge(
-                      glyph: BirkaGlyph.file,
-                      color: 'var(--color-palette-sky)',
-                    ),
-                    title: t.backup.exportTitle,
-                    subtitle: t.backup.exportText,
-                    subtitleLines: 2,
-                    trailing: const span(classes: 'backup__row-icon', [
-                      BirkaIcon(BirkaGlyph.download),
-                    ]),
-                    onTap: idle ? () => unawaited(cubit.export()) : null,
-                  ),
-                ],
-              ),
-            ]),
-            section(classes: 'backup__group', [
-              SectionLabel(t.backup.records),
-              GlassListGroup(
-                children: [
-                  if (component.onDemoChanged case final onDemoChanged?)
-                    GlassListRow(
-                      title: t.backup.demo,
-                      subtitle: t.backup.demoText,
-                      subtitleLines: 2,
-                      trailing: BirkaSwitch(
-                        value: component.demo,
-                        label: t.backup.demo,
-                        // While a task runs, a tap waits for nothing.
-                        onChanged: (on) {
-                          if (idle) onDemoChanged(on);
-                        },
-                      ),
-                    ),
-                  GlassListRow(
-                    title: t.backup.wipe,
-                    danger: true,
-                    onTap: idle
-                        ? () => setState(() => _askingToWipe = true)
-                        : null,
-                  ),
-                ],
-              ),
-            ]),
-            p(classes: 'text-caption backup__note', [
-              .text(t.backup.filesNoteSite),
-            ]),
+            if (component.wide)
+              BirkaSplit(asideWidth: 380, main: copies, aside: records)
+            else ...[
+              ...copies,
+              ...records,
+            ],
             if (notice != null)
               GlassToast(
                 noticeLabel(notice, now: component.clock()),

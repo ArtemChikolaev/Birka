@@ -12,11 +12,14 @@ import 'fakes.dart';
 void main() {
   late FakeHelpLinks links;
 
-  Future<void> pump(ComponentTester tester) async {
+  Future<void> pump(ComponentTester tester, {bool wide = false}) async {
     final cubit = HelpCubit(links, Future.value(sampleAbout));
     addTearDown(cubit.close);
     tester.pumpComponent(
-      BlocProvider.value(value: cubit, child: const HelpPage()),
+      BlocProvider.value(
+        value: cubit,
+        child: HelpPage(wide: wide),
+      ),
     );
     await tester.pump();
   }
@@ -67,6 +70,26 @@ void main() {
       findsOneComponent,
     );
     expect(find.byType(DotBadge), findsNComponents(4));
+  });
+
+  testComponents('a wide page has the ways to write at the side', (
+    tester,
+  ) async {
+    await pump(tester, wide: true);
+
+    final side = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.classes == 'birka-split__aside',
+    );
+    expect(
+      find.descendant(of: side, matching: find.text('Написать разработчику')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: side, matching: find.text('Как скрыть суммы?')),
+      findsNothing,
+    );
   });
 
   testComponents('opens one answer at a time', (tester) async {

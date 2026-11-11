@@ -7,6 +7,7 @@ import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:birka_web/app/dependencies.dart';
 import 'package:birka_web/app/fragment_trail.dart';
 import 'package:birka_web/app/opened_database.dart';
+import 'package:birka_web/app/wide_window.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:get_it/get_it.dart';
@@ -48,7 +49,8 @@ Future<OpenedDatabase> openData(GetIt getIt) async {
 ///
 /// The fragment keeps the page in place and the database open while a form
 /// comes and goes.
-abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
+abstract class DataIslandState<T extends StatefulComponent> extends State<T>
+    with WideWindow<T> {
   /// The objects of the app, once the database is open.
   final GetIt getIt = GetIt.instance;
 
@@ -61,10 +63,8 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   final _scrolls = <String, double>{};
 
   var _amountsHidden = false;
-  var _wide = false;
   void Function()? _stopWatching;
   void Function()? _stopWatchingTab;
-  void Function()? _stopWatchingWidth;
 
   /// The part of the address after `#`.
   String get fragment => _fragment;
@@ -93,15 +93,12 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   /// Whether the page stands without the tabs of the site.
   bool get standsAlone => false;
 
-  /// Whether the window is wide, where a page lays out side by side.
-  bool get wide => _wide;
-
   /// Whether the views of the page stand beside its list in a wide window,
   /// as the card of an operation beside the operations. The tabs of the site
   /// stay then, and the list keeps its place as the views come and go.
   bool get viewsBeside => false;
 
-  bool get _beside => viewsBeside && _wide;
+  bool get _beside => viewsBeside && wide;
 
   /// Called when the tab of the browser comes back into view, which can be
   /// after a night in the background.
@@ -119,12 +116,8 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
     );
     _fragment = addressFragment;
     _amountsHidden = amountsHidden ?? settings.hideAmountsOnLaunch;
-    _wide = wideScreen;
     _stopWatching = watchAddressFragment(_onFragmentChanged);
     _stopWatchingTab = watchTabShown(onTabShown);
-    _stopWatchingWidth = watchWideScreen(
-      ({required wide}) => setState(() => _wide = wide),
-    );
     unawaited(_open());
   }
 
@@ -132,7 +125,6 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   void dispose() {
     _stopWatching?.call();
     _stopWatchingTab?.call();
-    _stopWatchingWidth?.call();
     super.dispose();
   }
 

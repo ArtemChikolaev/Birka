@@ -1,5 +1,6 @@
 import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/browser_settings_store.dart';
+import 'package:birka_web/app/wide_window.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:help_common/help_common.dart';
@@ -21,7 +22,7 @@ class HelpIsland extends StatefulComponent {
   State<HelpIsland> createState() => _HelpIslandState();
 }
 
-class _HelpIslandState extends State<HelpIsland> {
+class _HelpIslandState extends State<HelpIsland> with WideWindow<HelpIsland> {
   @override
   void initState() {
     super.initState();
@@ -43,7 +44,7 @@ class _HelpIslandState extends State<HelpIsland> {
       BlocProvider<HelpCubit>(
         create: (_) =>
             HelpCubit(const BrowserHelpLinks(), Future.value(browserAbout)),
-        child: const HelpPage(),
+        child: HelpPage(wide: wide),
       ),
       const SiteNav(page: SitePage.more),
     ]);

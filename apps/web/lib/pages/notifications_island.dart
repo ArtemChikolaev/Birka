@@ -46,6 +46,7 @@ class _NotificationsIslandState extends DataIslandState<NotificationsIsland> {
     return BlocProvider<NotificationsCubit>(
       create: (_) => _feed = getIt(),
       child: NotificationsPage(
+        wide: wide,
         backHref: 'overview/',
         hrefOf: (place, id) => switch (place) {
           NoticePlace.inbox => 'inbox/',

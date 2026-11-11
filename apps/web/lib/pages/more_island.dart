@@ -4,6 +4,7 @@ import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/app/opened_database.dart';
+import 'package:birka_web/app/wide_window.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:birka_web/pages/more_page.dart';
 import 'package:design_jaspr/design_jaspr.dart';
@@ -30,7 +31,7 @@ class MoreIsland extends StatefulComponent {
   State<MoreIsland> createState() => _MoreIslandState();
 }
 
-class _MoreIslandState extends State<MoreIsland> {
+class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
   StreamSubscription<AppLocale>? _languages;
 
   /// What waits in the inbox, once the database is open.
@@ -48,6 +49,7 @@ class _MoreIslandState extends State<MoreIsland> {
       _describePage();
       setState(() {});
     });
+
     unawaited(_countInbox());
   }
 
@@ -97,6 +99,7 @@ class _MoreIslandState extends State<MoreIsland> {
       ),
       child: div(key: ValueKey(LocaleSettings.currentLocale), [
         MorePage(
+          wide: wide,
           inbox: inbox == null
               ? const InboxTile(href: 'inbox/')
               : BlocBuilder<InboxSummaryCubit, InboxState>(

@@ -196,7 +196,11 @@ void main() {
 
   /// The page on [notices] as the site has it, where only the inbox is a
   /// place to go, and the places it went to.
-  List<String> pump(ComponentTester tester, NotificationsRepository notices) {
+  List<String> pump(
+    ComponentTester tester,
+    NotificationsRepository notices, {
+    bool wide = false,
+  }) {
     final opened = <String>[];
     tester.pumpComponent(
       BlocProvider(
@@ -205,11 +209,34 @@ void main() {
           backHref: 'overview/',
           hrefOf: (place, _) => place == NoticePlace.inbox ? 'inbox/' : null,
           onOpen: opened.add,
+          wide: wide,
         ),
       ),
     );
     return opened;
   }
+
+  testComponents('a wide page tells at the side what comes here', (
+    tester,
+  ) async {
+    pump(tester, _Notices(_boardNotices()), wide: true);
+    await tester.pump();
+
+    final side = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.classes == 'birka-split__aside',
+    );
+    expect(
+      find.descendant(of: side, matching: find.text('Что сюда приходит')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: side, matching: find.text('Новые · 2')),
+      findsNothing,
+    );
+    expect(find.text('Новые · 2'), findsOneComponent);
+  });
 
   testComponents('shows the new on top and the history by days', (
     tester,

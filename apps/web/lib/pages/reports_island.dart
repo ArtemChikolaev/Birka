@@ -66,7 +66,7 @@ class _ReportsIslandState extends DataIslandState<ReportsIsland> {
         }
         return reports;
       },
-      child: ReportsPage(note: storageNote),
+      child: ReportsPage(note: storageNote, wide: wide),
     );
   }
 }
