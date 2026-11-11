@@ -5,6 +5,7 @@ import 'dart:js_interop_unsafe';
 import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/opened_database.dart';
 import 'package:birka_web/app/site_version.dart';
+import 'package:design_jaspr/design_jaspr.dart' show wideScreenQuery;
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 import 'package:help_common/help_common.dart';
@@ -169,6 +170,21 @@ void Function() watchTabShown(void Function() listener) {
   }).toJS;
   web.document.addEventListener('visibilitychange', callback);
   return () => web.document.removeEventListener('visibilitychange', callback);
+}
+
+/// Whether the window is wide, where a page lays out side by side
+/// ([wideScreenQuery]).
+bool get wideScreen => web.window.matchMedia(wideScreenQuery).matches;
+
+/// Calls [listener] with whether the window is wide each time that changes,
+/// until the returned function is called.
+void Function() watchWideScreen(
+  void Function({required bool wide}) listener,
+) {
+  final query = web.window.matchMedia(wideScreenQuery);
+  final callback = ((web.Event _) => listener(wide: query.matches)).toJS;
+  query.addEventListener('change', callback);
+  return () => query.removeEventListener('change', callback);
 }
 
 const _amountsHiddenKey = 'birka-amounts-hidden';

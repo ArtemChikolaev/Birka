@@ -11,6 +11,7 @@ class OperationRow extends StatelessComponent {
     required this.operation,
     required this.href,
     this.accountId,
+    this.picked = false,
     super.key,
   });
 
@@ -22,6 +23,9 @@ class OperationRow extends StatelessComponent {
 
   /// The account that the amount is about.
   final String? accountId;
+
+  /// Whether the card of the operation is open beside the list.
+  final bool picked;
 
   @override
   Component build(BuildContext context) {
@@ -40,6 +44,7 @@ class OperationRow extends StatelessComponent {
         textClass: 'text-body-strong',
       ),
       href: href,
+      picked: picked,
     );
   }
 }

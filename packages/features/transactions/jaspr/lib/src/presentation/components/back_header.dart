@@ -4,13 +4,15 @@ import 'package:jaspr/jaspr.dart';
 import 'package:l10n/l10n.dart';
 
 /// The top line of a page that leads back: the way back, what the page is
-/// about and what can be done to it.
+/// about and what can be done to it. Beside a list on a wide page the way back
+/// [closes] the card, a cross.
 class BackHeader extends StatelessComponent {
   /// Creates a header that says [label].
   const BackHeader({
     required this.label,
     required this.onBack,
     this.trailing,
+    this.closes = false,
     super.key,
   });
 
@@ -23,12 +25,15 @@ class BackHeader extends StatelessComponent {
   /// What stands at the other end of the line.
   final Component? trailing;
 
+  /// Whether the way back closes the card, a cross, rather than an arrow.
+  final bool closes;
+
   @override
   Component build(BuildContext context) {
     return div(classes: 'back-header', [
       GlassIconButton(
-        glyph: BirkaGlyph.back,
-        label: t.transactions.back,
+        glyph: closes ? BirkaGlyph.close : BirkaGlyph.back,
+        label: closes ? t.app.close : t.transactions.back,
         onPressed: onBack,
       ),
       SectionLabel(label),

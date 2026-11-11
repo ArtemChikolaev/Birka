@@ -2169,6 +2169,20 @@ class Translations$reports$en {
     'Nov',
     'Dec',
   ];
+  List<String> get monthReport => [
+    'Report for January',
+    'Report for February',
+    'Report for March',
+    'Report for April',
+    'Report for May',
+    'Report for June',
+    'Report for July',
+    'Report for August',
+    'Report for September',
+    'Report for October',
+    'Report for November',
+    'Report for December',
+  ];
 }
 
 // Path: schedules
@@ -4873,6 +4887,18 @@ extension on Translations {
           'reports.monthsShort.9' => 'Oct',
           'reports.monthsShort.10' => 'Nov',
           'reports.monthsShort.11' => 'Dec',
+          'reports.monthReport.0' => 'Report for January',
+          'reports.monthReport.1' => 'Report for February',
+          'reports.monthReport.2' => 'Report for March',
+          'reports.monthReport.3' => 'Report for April',
+          'reports.monthReport.4' => 'Report for May',
+          'reports.monthReport.5' => 'Report for June',
+          'reports.monthReport.6' => 'Report for July',
+          'reports.monthReport.7' => 'Report for August',
+          'reports.monthReport.8' => 'Report for September',
+          'reports.monthReport.9' => 'Report for October',
+          'reports.monthReport.10' => 'Report for November',
+          'reports.monthReport.11' => 'Report for December',
           'schedules.title' => 'Regular payments',
           'schedules.back' => 'Back',
           'schedules.add' => 'New payment',
@@ -5433,6 +5459,9 @@ extension on Translations {
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
           'settings.security' => 'Security',
           'settings.hideAmounts' => 'Hide amounts',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.onLaunch' => 'At launch',
           'settings.monthStart' => 'Month starts on',
           'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
@@ -5445,9 +5474,6 @@ extension on Translations {
           'transactions.today' => 'Today',
           'transactions.yesterday' => 'Yesterday',
           'transactions.pickDay' => 'Pick a day',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.note' => 'Note',
           'transactions.addNote' => 'Note',
           'transactions.done' => 'Done',

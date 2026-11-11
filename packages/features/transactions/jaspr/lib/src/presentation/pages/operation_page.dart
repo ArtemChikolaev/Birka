@@ -11,7 +11,8 @@ import 'package:transactions_jaspr/src/presentation/components/big_amount.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_badge.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_row.dart';
 
-/// The card of one operation, with what can be done to it.
+/// The card of one operation, with what can be done to it. Beside the list
+/// on a wide page it [closes] with a cross.
 ///
 /// It needs an [OperationCubit] above it.
 class OperationPage extends StatefulComponent {
@@ -20,6 +21,7 @@ class OperationPage extends StatefulComponent {
     required this.onClose,
     required this.editHref,
     required this.repeatHref,
+    this.closes = false,
     super.key,
   });
 
@@ -31,6 +33,9 @@ class OperationPage extends StatefulComponent {
 
   /// Where the operation opens to be recorded once more.
   final String repeatHref;
+
+  /// Whether the way back closes the card, as it does beside the list.
+  final bool closes;
 
   @override
   State<OperationPage> createState() => _OperationPageState();
@@ -160,6 +165,7 @@ class _OperationPageState extends State<OperationPage> {
     return BackHeader(
       label: t.transactions.operation,
       onBack: component.onClose,
+      closes: component.closes,
       trailing: (state.operation?.canChange ?? false)
           ? BirkaChip(
               label: t.transactions.edit,

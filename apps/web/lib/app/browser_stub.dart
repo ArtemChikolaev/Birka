@@ -50,6 +50,14 @@ void scrollPageTo(double top) => _unavailable();
 void Function() watchTabShown(void Function() listener) => _unavailable();
 
 /// See `browser_web.dart`.
+bool get wideScreen => _unavailable();
+
+/// See `browser_web.dart`.
+void Function() watchWideScreen(
+  void Function({required bool wide}) listener,
+) => _unavailable();
+
+/// See `browser_web.dart`.
 bool? get amountsHidden => _unavailable();
 
 /// See `browser_web.dart`.

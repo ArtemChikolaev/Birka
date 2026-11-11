@@ -3,6 +3,14 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/dom.dart' as dom show aside;
 import 'package:jaspr/jaspr.dart';
 
+/// The media query of a wide window, 901 px or more, where a page lays out
+/// side by side.
+const wideScreenQuery = '(min-width: 901px)';
+
+/// The media query of a narrow window, 900 px or less, where a page is one
+/// column.
+const narrowScreenQuery = '(max-width: 900px)';
+
 /// The wide layout of a page: [main] and, beside it, [aside], which stays in
 /// sight as the page scrolls, such as the steps of an import and what they
 /// mean. With [halves] the two take half the width each, as the parts of
@@ -94,10 +102,10 @@ class BirkaSplit extends StatelessComponent {
     ),
     // What only a wide page or only a narrow one shows, such as the same card
     // that stands at the side of one and on top of the other.
-    css.media(const MediaQuery.raw('(min-width: 901px)'), [
+    css.media(const MediaQuery.raw(wideScreenQuery), [
       css('.birka-narrow-only').styles(raw: {'display': 'none'}),
     ]),
-    css.media(const MediaQuery.raw('(max-width: 900px)'), [
+    css.media(const MediaQuery.raw(narrowScreenQuery), [
       css('.birka-wide-only').styles(raw: {'display': 'none'}),
       css('.birka-split, .birka-split--halves').styles(
         raw: {'grid-template-columns': 'minmax(0, 1fr)'},

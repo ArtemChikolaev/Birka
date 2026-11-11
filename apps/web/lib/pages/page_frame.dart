@@ -11,7 +11,8 @@ class PageFrame extends StatelessComponent {
   final Component child;
 
   /// Whether the page has a side of its own beside its main column on a
-  /// wide screen, as the import has.
+  /// wide screen, as the import has. On a narrow one it keeps the column of
+  /// the other pages.
   final bool wide;
 
   @override
@@ -35,6 +36,8 @@ class PageFrame extends StatelessComponent {
             'max(var(--space-xxl), env(safe-area-inset-bottom))',
       },
     ),
-    css('.page--wide').styles(raw: {'max-width': '1160px'}),
+    css.media(const MediaQuery.raw(wideScreenQuery), [
+      css('.page--wide').styles(raw: {'max-width': '1160px'}),
+    ]),
   ];
 }

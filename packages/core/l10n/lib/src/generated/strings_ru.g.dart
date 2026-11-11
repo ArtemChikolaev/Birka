@@ -1842,6 +1842,21 @@ class _Translations$reports$ru extends Translations$reports$en {
     'Ноя',
     'Дек',
   ];
+  @override
+  List<String> get monthReport => [
+    'Отчёт за январь',
+    'Отчёт за февраль',
+    'Отчёт за март',
+    'Отчёт за апрель',
+    'Отчёт за май',
+    'Отчёт за июнь',
+    'Отчёт за июль',
+    'Отчёт за август',
+    'Отчёт за сентябрь',
+    'Отчёт за октябрь',
+    'Отчёт за ноябрь',
+    'Отчёт за декабрь',
+  ];
 }
 
 // Path: schedules
@@ -4306,6 +4321,18 @@ extension on TranslationsRu {
           'reports.monthsShort.9' => 'Окт',
           'reports.monthsShort.10' => 'Ноя',
           'reports.monthsShort.11' => 'Дек',
+          'reports.monthReport.0' => 'Отчёт за январь',
+          'reports.monthReport.1' => 'Отчёт за февраль',
+          'reports.monthReport.2' => 'Отчёт за март',
+          'reports.monthReport.3' => 'Отчёт за апрель',
+          'reports.monthReport.4' => 'Отчёт за май',
+          'reports.monthReport.5' => 'Отчёт за июнь',
+          'reports.monthReport.6' => 'Отчёт за июль',
+          'reports.monthReport.7' => 'Отчёт за август',
+          'reports.monthReport.8' => 'Отчёт за сентябрь',
+          'reports.monthReport.9' => 'Отчёт за октябрь',
+          'reports.monthReport.10' => 'Отчёт за ноябрь',
+          'reports.monthReport.11' => 'Отчёт за декабрь',
           'schedules.title' => 'Регулярные платежи',
           'schedules.back' => 'Назад',
           'schedules.add' => 'Новый платёж',
@@ -4890,6 +4917,9 @@ extension on TranslationsRu {
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
           'settings.security' => 'Безопасность',
           'settings.hideAmounts' => 'Скрывать суммы',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.onLaunch' => 'При запуске',
           'settings.monthStart' => 'Начало месяца',
           'settings.monthStartDay' => ({required Object day}) => '${day} число',
@@ -4902,9 +4932,6 @@ extension on TranslationsRu {
           'transactions.today' => 'Сегодня',
           'transactions.yesterday' => 'Вчера',
           'transactions.pickDay' => 'Выбрать день',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.note' => 'Заметка',
           'transactions.addNote' => 'Заметка',
           'transactions.done' => 'Готово',

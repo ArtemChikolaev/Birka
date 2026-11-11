@@ -61,8 +61,10 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   final _scrolls = <String, double>{};
 
   var _amountsHidden = false;
+  var _wide = false;
   void Function()? _stopWatching;
   void Function()? _stopWatchingTab;
+  void Function()? _stopWatchingWidth;
 
   /// The part of the address after `#`.
   String get fragment => _fragment;
@@ -91,6 +93,16 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   /// Whether the page stands without the tabs of the site.
   bool get standsAlone => false;
 
+  /// Whether the window is wide, where a page lays out side by side.
+  bool get wide => _wide;
+
+  /// Whether the views of the page stand beside its list in a wide window,
+  /// as the card of an operation beside the operations. The tabs of the site
+  /// stay then, and the list keeps its place as the views come and go.
+  bool get viewsBeside => false;
+
+  bool get _beside => viewsBeside && _wide;
+
   /// Called when the tab of the browser comes back into view, which can be
   /// after a night in the background.
   void onTabShown() {}
@@ -107,8 +119,12 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
     );
     _fragment = addressFragment;
     _amountsHidden = amountsHidden ?? settings.hideAmountsOnLaunch;
+    _wide = wideScreen;
     _stopWatching = watchAddressFragment(_onFragmentChanged);
     _stopWatchingTab = watchTabShown(onTabShown);
+    _stopWatchingWidth = watchWideScreen(
+      ({required wide}) => setState(() => _wide = wide),
+    );
     unawaited(_open());
   }
 
@@ -116,6 +132,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
   void dispose() {
     _stopWatching?.call();
     _stopWatchingTab?.call();
+    _stopWatchingWidth?.call();
     super.dispose();
   }
 
@@ -148,7 +165,8 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
     final back = _trail.leadsBackTo(next);
     _trail.moved(from: _fragment, to: next);
     setState(() => _fragment = next);
-    _placePage(top: back ? _scrolls[next] ?? 0 : 0);
+    // A view beside the list leaves the list where it was.
+    if (!_beside) _placePage(top: back ? _scrolls[next] ?? 0 : 0);
   }
 
   /// A new view must not start half way down, and a step back comes back to
@@ -167,7 +185,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
     }
     replaceAddressFragment(parent);
     setState(() => _fragment = parent);
-    _placePage();
+    if (!_beside) _placePage();
   }
 
   /// Back from a view that other pages of the site link to: to [parent] if it
@@ -201,7 +219,8 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T> {
           _Stage.busy => _trouble(t.app.openElsewhere),
           _Stage.failed => _trouble(failure),
         },
-        if (kIsWeb && _fragment.isEmpty && !_alone) SiteNav(page: page),
+        if (kIsWeb && (_fragment.isEmpty || _beside) && !_alone)
+          SiteNav(page: page),
       ]),
     );
   }

@@ -6,6 +6,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:reports_common/reports_common.dart';
+import 'package:reports_jaspr/src/presentation/components/report_line_row.dart';
 
 /// What a month took or brought, by category and against the months before.
 ///
@@ -44,65 +45,6 @@ class ReportsPage extends StatefulComponent {
       raw: {'overflow-wrap': 'anywhere', 'white-space': 'normal'},
     ),
     css('.reports__kind').styles(raw: {'color': 'var(--color-text-muted)'}),
-    css('.reports__line').styles(
-      raw: {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xs)',
-        'padding': 'var(--space-md)',
-        'position': 'relative',
-      },
-    ),
-    // The thin line between rows, which stops short of the edges.
-    css('.reports__line + .reports__line::before').styles(
-      raw: {
-        'background': 'var(--color-hairline)',
-        'content': '""',
-        'height': '1px',
-        'left': 'var(--space-md)',
-        'position': 'absolute',
-        'right': 'var(--space-md)',
-        'top': '0',
-      },
-    ),
-    // An amount too long for the line takes its own.
-    css('.reports__head').styles(
-      raw: {
-        'align-items': 'center',
-        'display': 'flex',
-        'flex-wrap': 'wrap',
-        'gap': 'var(--space-xxs) var(--space-xs)',
-      },
-    ),
-    css('.reports__dot').styles(
-      raw: {
-        'border-radius': '50%',
-        'flex': 'none',
-        'height': '10px',
-        'width': '10px',
-      },
-    ),
-    css('.reports__name').styles(
-      raw: {
-        'flex': '1',
-        'min-width': '0',
-        'overflow': 'hidden',
-        'text-overflow': 'ellipsis',
-        'white-space': 'nowrap',
-      },
-    ),
-    css('.reports__head .text-body-strong.amount').styles(
-      raw: {'margin-left': 'auto'},
-    ),
-    css('.reports__bar').styles(
-      raw: {
-        'background': 'var(--color-surface-raised)',
-        'border-radius': 'var(--radius-xs)',
-        'height': '4px',
-        'overflow': 'hidden',
-      },
-    ),
-    css('.reports__fill').styles(raw: {'height': '100%'}),
     css('.reports__others').styles(
       raw: {'margin-top': 'calc(-1 * var(--space-xs))', 'text-align': 'center'},
     ),
@@ -220,7 +162,11 @@ class _ReportsPageState extends State<ReportsPage> {
                   GlassListGroup(
                     children: [
                       for (final line in report.lines)
-                        _line(line, kind: state.kind),
+                        ReportLineRow(
+                          line,
+                          kind: state.kind,
+                          key: ValueKey(categoryKey(line.category)),
+                        ),
                     ],
                   ),
                 ],
@@ -266,18 +212,6 @@ class _ReportsPageState extends State<ReportsPage> {
     );
   }
 
-  /// The color of a category, whose color is its own choice.
-  static String _colorOf(Category? category) =>
-      category?.color ?? 'var(--color-text-subtle)';
-
-  /// How a change reads: a rise of expenses is bad news, and of income good
-  /// news.
-  static AmountTone _toneOf(int percent, CategoryKind kind) {
-    if (percent == 0) return AmountTone.muted;
-    final good = (percent > 0) == (kind == CategoryKind.income);
-    return good ? AmountTone.positive : AmountTone.negative;
-  }
-
   /// The big ring with the total of the month in the middle.
   Component _ring(BuildContext context, ReportsState state) {
     final report = state.report;
@@ -294,7 +228,7 @@ class _ReportsPageState extends State<ReportsPage> {
           for (final line in report.lines)
             RingSlice(
               line.total.minorUnits.toDouble(),
-              _colorOf(line.category),
+              categoryColor(line.category),
             ),
         ],
         child: div(classes: 'reports__middle', [
@@ -306,52 +240,13 @@ class _ReportsPageState extends State<ReportsPage> {
           if (change != null)
             AmountText(
               changeAgainst(change, month: state.month),
-              tone: _toneOf(change, state.kind),
+              tone: changeTone(change, state.kind),
               textClass: 'text-caption',
               alwaysShown: true,
             ),
         ]),
       ),
     ]);
-  }
-
-  /// A category with its change, its amount and a bar against the biggest one.
-  Component _line(ReportLine line, {required CategoryKind kind}) {
-    final color = _colorOf(line.category);
-    final change = line.change;
-    return div(
-      key: ValueKey(categoryKey(line.category)),
-      classes: 'reports__line',
-      [
-        div(classes: 'reports__head', [
-          span(
-            classes: 'reports__dot',
-            styles: Styles(raw: {'background': color}),
-            const [],
-          ),
-          span(classes: 'text-body-strong reports__name', [
-            .text(line.category?.name ?? t.app.noCategory),
-          ]),
-          if (change != null)
-            AmountText(
-              percentLabel(change),
-              tone: _toneOf(change, kind),
-              textClass: 'text-caption',
-              alwaysShown: true,
-            ),
-          AmountText(formatMoney(line.total), textClass: 'text-body-strong'),
-        ]),
-        div(classes: 'reports__bar', [
-          div(
-            classes: 'reports__fill',
-            styles: Styles(
-              raw: {'background': color, 'width': '${line.share * 100}%'},
-            ),
-            const [],
-          ),
-        ]),
-      ],
-    );
   }
 
   /// The last months as bars.
