@@ -39,5 +39,27 @@ class PageFrame extends StatelessComponent {
     css.media(const MediaQuery.raw(wideScreenQuery), [
       css('.page--wide').styles(raw: {'max-width': '1160px'}),
     ]),
+    css('.page__column').styles(
+      raw: {
+        'margin': '0 auto',
+        'max-width': 'calc(520px - 2 * var(--space-lg))',
+      },
+    ),
   ];
+}
+
+/// A view without a wide layout of its own on a wide page, such as the card
+/// of an operation over the page of an account: it keeps the column of a
+/// narrow page in the middle.
+class PageColumn extends StatelessComponent {
+  /// Creates the column around [child].
+  const PageColumn({required this.child, super.key});
+
+  /// The view.
+  final Component child;
+
+  @override
+  Component build(BuildContext context) {
+    return div(classes: 'page__column', [child]);
+  }
 }

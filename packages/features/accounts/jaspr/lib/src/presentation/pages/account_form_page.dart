@@ -8,16 +8,20 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 
-/// The form of a new or an existing account.
+/// The form of a new or an existing account. A [wide] page shows the card
+/// and the button at the side, and the name and the balance in one row.
 ///
 /// It needs an [AccountFormCubit] above it.
 class AccountFormPage extends StatelessComponent {
   /// Creates the page. [onClose] is called when the form is done or
   /// cancelled.
-  const AccountFormPage({required this.onClose, super.key});
+  const AccountFormPage({required this.onClose, this.wide = false, super.key});
 
   /// Closes the form.
   final VoidCallback onClose;
+
+  /// Whether the page is wide.
+  final bool wide;
 
   @override
   Component build(BuildContext context) {
@@ -39,6 +43,37 @@ class AccountFormPage extends StatelessComponent {
     final cubit = context.read<AccountFormCubit>();
     final form = t.accounts.form;
     final name = state.name.trim();
+    final card = AccountCard(
+      art: cardArtOf(state.art),
+      name: name.isEmpty ? form.namePlaceholder : name,
+      subtitle: accountSubtitle(
+        currency: state.currency,
+        type: state.type,
+        lastDigits: state.lastDigits,
+      ),
+      amount: formatMoney(state.previewBalance),
+    );
+    final nameField = BirkaTextField(
+      label: form.name,
+      value: state.name,
+      hint: form.namePlaceholder,
+      error: state.errors.contains(AccountFormError.nameMissing)
+          ? form.nameMissing
+          : null,
+      onChanged: cubit.nameChanged,
+      sentence: true,
+    );
+    final balanceField = BirkaTextField(
+      label: state.isDebt ? form.debt : form.balance,
+      value: state.amount,
+      hint: '0',
+      error: state.errors.contains(AccountFormError.amountInvalid)
+          ? form.amountInvalid
+          : null,
+      onChanged: cubit.amountChanged,
+      inputMode: 'decimal',
+      textClass: 'text-amount',
+    );
     return BirkaForm(
       title: state.isNew ? form.newTitle : form.editTitle,
       closeLabel: t.app.close,
@@ -47,27 +82,15 @@ class AccountFormPage extends StatelessComponent {
       onSubmit: () => unawaited(cubit.save()),
       submitting: state.status == AccountFormStatus.saving,
       failure: state.status == AccountFormStatus.failed ? form.failed : null,
+      aside: wide ? [card] : null,
+      asideWidth: 380,
       children: [
-        AccountCard(
-          art: cardArtOf(state.art),
-          name: name.isEmpty ? form.namePlaceholder : name,
-          subtitle: accountSubtitle(
-            currency: state.currency,
-            type: state.type,
-            lastDigits: state.lastDigits,
-          ),
-          amount: formatMoney(state.previewBalance),
-        ),
-        BirkaTextField(
-          label: form.name,
-          value: state.name,
-          hint: form.namePlaceholder,
-          error: state.errors.contains(AccountFormError.nameMissing)
-              ? form.nameMissing
-              : null,
-          onChanged: cubit.nameChanged,
-          sentence: true,
-        ),
+        if (wide)
+          BirkaFieldPair(children: [nameField, balanceField])
+        else ...[
+          card,
+          nameField,
+        ],
         BirkaChoice(
           label: form.type,
           children: [
@@ -92,17 +115,7 @@ class AccountFormPage extends StatelessComponent {
               ),
           ],
         ),
-        BirkaTextField(
-          label: state.isDebt ? form.debt : form.balance,
-          value: state.amount,
-          hint: '0',
-          error: state.errors.contains(AccountFormError.amountInvalid)
-              ? form.amountInvalid
-              : null,
-          onChanged: cubit.amountChanged,
-          inputMode: 'decimal',
-          textClass: 'text-amount',
-        ),
+        if (!wide) balanceField,
         if (state.hasCard)
           BirkaTextField(
             label: form.lastDigits,

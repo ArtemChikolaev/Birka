@@ -19,6 +19,7 @@ export 'src/birka_chip_field.dart';
 export 'src/birka_choice.dart';
 export 'src/birka_column.dart';
 export 'src/birka_date_chip.dart';
+export 'src/birka_field_pair.dart';
 export 'src/birka_fold.dart';
 export 'src/birka_form.dart';
 export 'src/birka_head.dart';

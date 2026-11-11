@@ -19,7 +19,11 @@ void main() {
   late FakeRepository repository;
   late List<String> calls;
 
-  Future<void> pump(ComponentTester tester, {String id = 'Card'}) async {
+  Future<void> pump(
+    ComponentTester tester, {
+    String id = 'Card',
+    bool wide = false,
+  }) async {
     tester.pumpComponent(
       HiddenAmounts(
         hidden: false,
@@ -30,6 +34,7 @@ void main() {
             onClose: () => calls.add('close'),
             editHref: 'edit',
             hrefOf: (id) => 'open/$id',
+            wide: wide,
           ),
         ),
       ),
@@ -90,6 +95,31 @@ void main() {
     expect(find.text('₽12,345'), findsOneComponent);
     expect(find.byType(BirkaLineChart), findsOneComponent);
     expect(find.text('Operations'), findsOneComponent);
+    expect(find.text('Coffee'), findsOneComponent);
+  });
+
+  testComponents('a wide page has the card and its change at the side', (
+    tester,
+  ) async {
+    await pump(tester, wide: true);
+
+    final side = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.classes == 'birka-split__aside',
+    );
+    expect(
+      find.descendant(of: side, matching: find.byType(AccountCard)),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: side, matching: find.byType(BirkaChangePill)),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: side, matching: find.byType(BirkaLineChart)),
+      findsNothing,
+    );
     expect(find.text('Coffee'), findsOneComponent);
   });
 

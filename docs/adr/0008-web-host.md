@@ -58,7 +58,10 @@
 11. A window of 901 px or more is wide (`wideScreenQuery` of the kit), and
     a page lays out side by side there: `PageFrame(wide: true)` takes
     1160 px, and `BirkaSplit` puts a side beside the main column. A window of
-    900 px or less keeps the column of 520 px that the narrow boards draw.
+    900 px or less keeps the column of 520 px that the narrow boards draw. A
+    view with no wide layout of its own keeps that column in the middle of a
+    wide page (`PageColumn`), as an operation over the page of an account
+    does.
 12. A page whose views come from its list, such as the operations and the
     categories, shows them beside the list in a wide window
     (`DataIslandState.viewsBeside`): the view stands in a `GlassPanel` and

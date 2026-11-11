@@ -41,20 +41,6 @@ class ScheduleFormPage extends StatefulComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
-    css('.schedule-form__pair').styles(
-      raw: {
-        'align-items': 'start',
-        'display': 'grid',
-        'gap': 'var(--space-sm)',
-        'grid-template-columns': 'repeat(2, minmax(0, 1fr))',
-      },
-    ),
-    // A narrow page keeps the name and the amount one under the other.
-    css.media(const MediaQuery.raw('(max-width: 900px)'), [
-      css('.schedule-form__pair--wide').styles(
-        raw: {'grid-template-columns': 'minmax(0, 1fr)'},
-      ),
-    ]),
     css('.schedule-form__field').styles(
       raw: {
         'display': 'flex',
@@ -213,75 +199,81 @@ class _ScheduleFormPageState extends State<ScheduleFormPage> {
           selected: state.kind,
           onChanged: cubit.kindChanged,
         ),
-        div(classes: 'schedule-form__pair schedule-form__pair--wide', [
-          BirkaTextField(
-            label: t.schedules.name,
-            value: state.name,
-            hint: t.schedules.namePlaceholder,
-            sentence: true,
-            onChanged: cubit.nameChanged,
-          ),
-          div(classes: 'schedule-form__field', [
+        BirkaFieldPair(
+          stacksWhenNarrow: true,
+          children: [
             BirkaTextField(
-              label: state.halves
-                  ? t.schedules.amountMonthly
-                  : t.schedules.amount,
-              value: _amount ?? _typed(state.amount),
-              hint: '0',
-              inputMode: 'decimal',
-              suffix: switch (state.account) {
-                final account? => currencySign(account.currency),
-                null => null,
-              },
-              onChanged: (typed) => _amountTyped(cubit, state, typed),
+              label: t.schedules.name,
+              value: state.name,
+              hint: t.schedules.namePlaceholder,
+              sentence: true,
+              onChanged: cubit.nameChanged,
             ),
-            ..._amountNotes(context, state),
-          ]),
-        ]),
-        div(classes: 'schedule-form__pair', [
-          if (state.kind != TransactionKind.transfer)
+            div(classes: 'schedule-form__field', [
+              BirkaTextField(
+                label: state.halves
+                    ? t.schedules.amountMonthly
+                    : t.schedules.amount,
+                value: _amount ?? _typed(state.amount),
+                hint: '0',
+                inputMode: 'decimal',
+                suffix: switch (state.account) {
+                  final account? => currencySign(account.currency),
+                  null => null,
+                },
+                onChanged: (typed) => _amountTyped(cubit, state, typed),
+              ),
+              ..._amountNotes(context, state),
+            ]),
+          ],
+        ),
+        BirkaFieldPair(
+          children: [
+            if (state.kind != TransactionKind.transfer)
+              _select<String>(
+                label: t.schedules.category,
+                options: {
+                  '': t.schedules.noCategory,
+                  for (final category in state.categories)
+                    category.id: category.name,
+                },
+                selected: state.categoryId ?? '',
+                dot: state.category?.color,
+                quiet: state.category == null,
+                onChanged: (id) =>
+                    cubit.categoryChanged(id.isEmpty ? null : id),
+              ),
             _select<String>(
-              label: t.schedules.category,
-              options: {
-                '': t.schedules.noCategory,
-                for (final category in state.categories)
-                  category.id: category.name,
+              label: switch (state.kind) {
+                TransactionKind.transfer => t.schedules.fromAccount,
+                TransactionKind.income => t.schedules.incomeAccount,
+                _ => t.schedules.account,
               },
-              selected: state.categoryId ?? '',
-              dot: state.category?.color,
-              quiet: state.category == null,
-              onChanged: (id) => cubit.categoryChanged(id.isEmpty ? null : id),
-            ),
-          _select<String>(
-            label: switch (state.kind) {
-              TransactionKind.transfer => t.schedules.fromAccount,
-              TransactionKind.income => t.schedules.incomeAccount,
-              _ => t.schedules.account,
-            },
-            options: {
-              if (state.account == null) '': t.schedules.pickAccount,
-              for (final account in state.accounts) account.id: account.name,
-            },
-            selected: state.accountId ?? '',
-            quiet: state.account == null,
-            onChanged: (id) {
-              if (id.isNotEmpty) cubit.accountChanged(id);
-            },
-          ),
-          if (state.kind == TransactionKind.transfer)
-            _select<String>(
-              label: t.schedules.toAccount,
               options: {
-                if (state.toAccount == null) '': t.schedules.pickAccount,
-                for (final account in state.targets) account.id: account.name,
+                if (state.account == null) '': t.schedules.pickAccount,
+                for (final account in state.accounts) account.id: account.name,
               },
-              selected: state.toAccountId ?? '',
-              quiet: state.toAccount == null,
+              selected: state.accountId ?? '',
+              quiet: state.account == null,
               onChanged: (id) {
-                if (id.isNotEmpty) cubit.toAccountChanged(id);
+                if (id.isNotEmpty) cubit.accountChanged(id);
               },
             ),
-        ]),
+            if (state.kind == TransactionKind.transfer)
+              _select<String>(
+                label: t.schedules.toAccount,
+                options: {
+                  if (state.toAccount == null) '': t.schedules.pickAccount,
+                  for (final account in state.targets) account.id: account.name,
+                },
+                selected: state.toAccountId ?? '',
+                quiet: state.toAccount == null,
+                onChanged: (id) {
+                  if (id.isNotEmpty) cubit.toAccountChanged(id);
+                },
+              ),
+          ],
+        ),
         BirkaFold(
           open: state.kind == TransactionKind.income,
           children: [_parts(context, cubit, state)],
@@ -306,59 +298,65 @@ class _ScheduleFormPageState extends State<ScheduleFormPage> {
         BirkaFold(
           open: state.halves,
           children: [
-            div(classes: 'schedule-form__pair', [
-              _select<int>(
-                label: t.schedules.advanceDay,
-                options: _days,
-                selected: state.advanceDay ?? state.day,
-                onChanged: cubit.advanceDayChanged,
-              ),
-              div(classes: 'schedule-form__field', [
-                BirkaTextField(
-                  label: t.schedules.advanceAmount,
-                  value: _advance ?? _typed(state.advanceAmount, own: state),
-                  hint: t.schedules.advanceHalf,
-                  inputMode: 'decimal',
-                  suffix: switch (state.account) {
-                    final account? => currencySign(account.currency),
-                    null => null,
-                  },
-                  onChanged: (typed) => _advanceTyped(cubit, state, typed),
+            BirkaFieldPair(
+              children: [
+                _select<int>(
+                  label: t.schedules.advanceDay,
+                  options: _days,
+                  selected: state.advanceDay ?? state.day,
+                  onChanged: cubit.advanceDayChanged,
                 ),
-                if (_advanceRest(context, state) case final rest?)
-                  p(classes: 'text-caption schedule-form__note', [.text(rest)]),
+                div(classes: 'schedule-form__field', [
+                  BirkaTextField(
+                    label: t.schedules.advanceAmount,
+                    value: _advance ?? _typed(state.advanceAmount, own: state),
+                    hint: t.schedules.advanceHalf,
+                    inputMode: 'decimal',
+                    suffix: switch (state.account) {
+                      final account? => currencySign(account.currency),
+                      null => null,
+                    },
+                    onChanged: (typed) => _advanceTyped(cubit, state, typed),
+                  ),
+                  if (_advanceRest(context, state) case final rest?)
+                    p(classes: 'text-caption schedule-form__note', [
+                      .text(rest),
+                    ]),
+                ]),
+              ],
+            ),
+          ],
+        ),
+        BirkaFieldPair(
+          children: [
+            _day(cubit, state),
+            div(classes: 'schedule-form__field', [
+              span(classes: 'text-caption schedule-form__label', [
+                .text(t.schedules.next),
               ]),
+              if (state.halves)
+                span(classes: 'text-body schedule-form__value', [
+                  .text(_nextLabel(state)),
+                ])
+              else
+                div([
+                  BirkaDateChip(
+                    fieldLabel: t.schedules.next,
+                    label: _nextLabel(state),
+                    value: _iso(state.next),
+                    first: _iso(state.today),
+                    last: _iso(state.today.addMonths(60)),
+                    onChanged: (typed) {
+                      final day = _parseIso(typed);
+                      if (day != null && day.compareTo(state.today) >= 0) {
+                        cubit.nextChanged(day);
+                      }
+                    },
+                  ),
+                ]),
             ]),
           ],
         ),
-        div(classes: 'schedule-form__pair', [
-          _day(cubit, state),
-          div(classes: 'schedule-form__field', [
-            span(classes: 'text-caption schedule-form__label', [
-              .text(t.schedules.next),
-            ]),
-            if (state.halves)
-              span(classes: 'text-body schedule-form__value', [
-                .text(_nextLabel(state)),
-              ])
-            else
-              div([
-                BirkaDateChip(
-                  fieldLabel: t.schedules.next,
-                  label: _nextLabel(state),
-                  value: _iso(state.next),
-                  first: _iso(state.today),
-                  last: _iso(state.today.addMonths(60)),
-                  onChanged: (typed) {
-                    final day = _parseIso(typed);
-                    if (day != null && day.compareTo(state.today) >= 0) {
-                      cubit.nextChanged(day);
-                    }
-                  },
-                ),
-              ]),
-          ]),
-        ]),
         div(classes: 'schedule-form__field', [
           BirkaChoice(
             label: t.schedules.onDayTitle,

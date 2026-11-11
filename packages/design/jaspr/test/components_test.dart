@@ -2150,4 +2150,21 @@ void main() {
 
     expect(withClasses('birka-rule'), findsOneComponent);
   });
+
+  testComponents('BirkaFieldPair stands two fields side by side', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      const BirkaFieldPair(
+        stacksWhenNarrow: true,
+        children: [Component.text('Name'), Component.text('Amount')],
+      ),
+    );
+
+    expect(
+      withClasses('birka-field-pair birka-field-pair--stacks'),
+      findsOneComponent,
+    );
+    expect(find.text('Amount'), findsOneComponent);
+  });
 }
