@@ -13,6 +13,7 @@ class OperationDayGroup extends StatelessComponent {
     required this.today,
     required this.hrefOf,
     this.accountId,
+    this.picked,
     super.key,
   });
 
@@ -27,6 +28,9 @@ class OperationDayGroup extends StatelessComponent {
 
   /// The account that the amounts are about.
   final String? accountId;
+
+  /// The operation whose card is open beside the list.
+  final String? picked;
 
   @override
   Component build(BuildContext context) {
@@ -48,6 +52,7 @@ class OperationDayGroup extends StatelessComponent {
               operation: operation,
               href: hrefOf(operation.id),
               accountId: accountId,
+              picked: operation.id == picked,
             ),
         ],
       ),

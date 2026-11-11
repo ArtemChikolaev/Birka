@@ -21,6 +21,17 @@ void main() {
     );
   });
 
+  test('the way to a report names its month', () {
+    expect(
+      monthReportLabel(CivilDate(2026, 10, 1), today: today),
+      'Отчёт за октябрь',
+    );
+    expect(
+      monthReportLabel(CivilDate(2025, 12, 1), today: today),
+      'Отчёт за декабрь 2025',
+    );
+  });
+
   test('a percent carries its sign', () {
     expect(percentLabel(35), '+35%');
     expect(percentLabel(-4), '−4%');

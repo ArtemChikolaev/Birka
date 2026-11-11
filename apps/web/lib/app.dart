@@ -36,7 +36,8 @@ class App extends StatelessComponent {
         Route(
           path: '/operations',
           title: 'Operations · Birka',
-          builder: (_, _) => const PageFrame(child: OperationsIsland()),
+          builder: (_, _) =>
+              const PageFrame(wide: true, child: OperationsIsland()),
         ),
         Route(
           path: '/reports',

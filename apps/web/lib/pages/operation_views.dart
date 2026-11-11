@@ -13,10 +13,23 @@ mixin OperationViews<T extends StatefulComponent> on DataIslandState<T> {
   /// The address of the page, such as `operations/`.
   String get address;
 
+  /// The operation that [view] is about: `<id>`, `edit-<id>` or
+  /// `repeat-<id>`.
+  String operationOf(String view) {
+    for (final start in const [_edit, _repeat]) {
+      if (view.startsWith(start)) return view.substring(start.length);
+    }
+    return view;
+  }
+
   /// The card of an operation, `<id>`, or the form on it, `edit-<id>` and
   /// `repeat-<id>`. The card closes to [parent], and the fragments of the views
-  /// start with it.
-  Component operationView(String view, {String parent = ''}) {
+  /// start with it. Beside a list the card [closes] with a cross.
+  Component operationView(
+    String view, {
+    String parent = '',
+    bool closes = false,
+  }) {
     final start = parent.isEmpty ? '' : '$parent/';
     if (view.startsWith(_edit)) {
       final id = view.substring(_edit.length);
@@ -33,6 +46,7 @@ mixin OperationViews<T extends StatefulComponent> on DataIslandState<T> {
         onClose: () => closeForm(parent),
         editHref: '$address#$start$_edit$view',
         repeatHref: '$address#$start$_repeat$view',
+        closes: closes,
       ),
     );
   }

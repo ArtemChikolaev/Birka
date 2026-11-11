@@ -1546,6 +1546,19 @@ void main() {
       expect(withClasses('glass-row glass-row--entering'), findsOneComponent);
     });
 
+    testComponents('whose card is open beside the list is marked', (
+      tester,
+    ) async {
+      tester.pumpComponent(
+        const GlassListRow(title: 'Cafe', href: '#cafe', picked: true),
+      );
+
+      expect(
+        withClasses('glass-row glass-row--action glass-row--picked'),
+        findsOneComponent,
+      );
+    });
+
     testComponents('can say its second line in a color of its own', (
       tester,
     ) async {
@@ -2109,5 +2122,32 @@ void main() {
       expect(withClasses('forecast-chart__under'), findsNothing);
       expect(withClasses('forecast-chart__dot'), findsNothing);
     });
+  });
+
+  testComponents('GlassPanel holds a view on glass that comes in', (
+    tester,
+  ) async {
+    tester.pumpComponent(const GlassPanel(child: Component.text('Card')));
+
+    expect(withClasses('glass glass-panel'), findsOneComponent);
+    expect(find.text('Card'), findsOneComponent);
+  });
+
+  testComponents('BirkaLinkRow leads on with a chevron at its end', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      const BirkaLinkRow(label: 'Report for October', href: 'reports/'),
+    );
+
+    expect(attributesOf(find.tag('a'))['href'], 'reports/');
+    expect(find.text('Report for October'), findsOneComponent);
+    expect(find.byType(BirkaIcon), findsOneComponent);
+  });
+
+  testComponents('BirkaRule is a thin line', (tester) async {
+    tester.pumpComponent(const BirkaRule());
+
+    expect(withClasses('birka-rule'), findsOneComponent);
   });
 }

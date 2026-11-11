@@ -7,8 +7,12 @@ import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart';
+import 'package:transactions_jaspr/src/presentation/components/operations_totals.dart';
 
-/// The operations of a month, day by day, with a search and filters.
+/// The operations of a month, day by day, with a search and filters. On a
+/// wide page a [side] stands beside the list, such as what the month came to
+/// or the card of the [picked] operation, and the totals of the month go to
+/// it.
 ///
 /// It needs an [OperationsCubit] above it.
 class OperationsPage extends StatefulComponent {
@@ -17,6 +21,8 @@ class OperationsPage extends StatefulComponent {
     required this.addHref,
     required this.hrefOf,
     this.note,
+    this.side,
+    this.picked,
     super.key,
   });
 
@@ -28,6 +34,12 @@ class OperationsPage extends StatefulComponent {
 
   /// A quiet line under the list, such as where the data lives.
   final String? note;
+
+  /// What stands beside the list on a wide page.
+  final Component? side;
+
+  /// The operation whose card is open beside the list.
+  final String? picked;
 
   @override
   State<OperationsPage> createState() => _OperationsPageState();
@@ -45,16 +57,6 @@ class OperationsPage extends StatefulComponent {
     css('.operations__filters').styles(
       raw: {'display': 'flex', 'flex-wrap': 'wrap', 'gap': 'var(--space-xs)'},
     ),
-    css('.operations__totals').styles(
-      raw: {
-        'color': 'var(--color-text-muted)',
-        'display': 'flex',
-        'flex-wrap': 'wrap',
-        'gap': 'var(--space-xxs) var(--space-md)',
-      },
-    ),
-    // Amounts in several currencies can take more than a line.
-    css('.operations__totals .amount').styles(raw: {'white-space': 'normal'}),
     css('.operations__check').styles(raw: {'color': 'var(--color-accent)'}),
     css('.operations__note').styles(
       raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
@@ -85,59 +87,66 @@ class _OperationsPageState extends State<OperationsPage> {
     return BlocBuilder<OperationsCubit, OperationsState>(
       builder: (context, state) {
         final note = component.note;
+        final side = component.side;
+        final header = GlassPageHeader(
+          title: t.app.operations,
+          trailing: BirkaChip(
+            glyph: BirkaGlyph.calendar,
+            label: monthLabel(state.month, today: state.today),
+            selected: _months != null,
+            onTap: () => unawaited(_toggleMonths()),
+          ),
+        );
+        final list = [
+          ?_monthChoice(state),
+          _tools(context, state, totals: side == null),
+          ...switch (state.status) {
+            OperationsStatus.loading => const <Component>[],
+            OperationsStatus.failed => [
+              GlassNotice(
+                text: t.transactions.failedToReadOperations,
+                actions: [
+                  BirkaButton(
+                    label: t.app.retry,
+                    onPressed: () =>
+                        unawaited(context.read<OperationsCubit>().retry()),
+                  ),
+                ],
+              ),
+            ],
+            OperationsStatus.ready when state.shown.isNotEmpty => [
+              for (final day in state.days)
+                OperationDayGroup(
+                  day: day,
+                  today: state.today,
+                  hrefOf: component.hrefOf,
+                  picked: component.picked,
+                ),
+            ],
+            OperationsStatus.ready when state.isNarrowed => [
+              GlassNotice(text: t.transactions.nothingFound),
+            ],
+            OperationsStatus.ready => [
+              GlassNotice(
+                title: t.transactions.noOperationsTitle,
+                text: t.transactions.noOperationsHint,
+                actions: [
+                  BirkaButton(
+                    label: t.app.newOperation,
+                    href: component.addHref,
+                  ),
+                ],
+              ),
+            ],
+          },
+          if (note != null && state.status == OperationsStatus.ready)
+            p(classes: 'text-caption operations__note', [.text(note)]),
+        ];
+        if (side == null) return BirkaColumn(children: [header, ...list]);
         return BirkaColumn(
           children: [
-            GlassPageHeader(
-              title: t.app.operations,
-              trailing: BirkaChip(
-                glyph: BirkaGlyph.calendar,
-                label: monthLabel(state.month, today: state.today),
-                selected: _months != null,
-                onTap: () => unawaited(_toggleMonths()),
-              ),
-            ),
-            ?_monthChoice(state),
-            _tools(context, state),
-            ...switch (state.status) {
-              OperationsStatus.loading => const <Component>[],
-              OperationsStatus.failed => [
-                GlassNotice(
-                  text: t.transactions.failedToReadOperations,
-                  actions: [
-                    BirkaButton(
-                      label: t.app.retry,
-                      onPressed: () =>
-                          unawaited(context.read<OperationsCubit>().retry()),
-                    ),
-                  ],
-                ),
-              ],
-              OperationsStatus.ready when state.shown.isNotEmpty => [
-                for (final day in state.days)
-                  OperationDayGroup(
-                    day: day,
-                    today: state.today,
-                    hrefOf: component.hrefOf,
-                  ),
-              ],
-              OperationsStatus.ready when state.isNarrowed => [
-                GlassNotice(text: t.transactions.nothingFound),
-              ],
-              OperationsStatus.ready => [
-                GlassNotice(
-                  title: t.transactions.noOperationsTitle,
-                  text: t.transactions.noOperationsHint,
-                  actions: [
-                    BirkaButton(
-                      label: t.app.newOperation,
-                      href: component.addHref,
-                    ),
-                  ],
-                ),
-              ],
-            },
-            if (note != null && state.status == OperationsStatus.ready)
-              p(classes: 'text-caption operations__note', [.text(note)]),
+            header,
+            BirkaSplit(asideWidth: 420, main: list, aside: [side]),
           ],
         );
       },
@@ -163,7 +172,13 @@ class _OperationsPageState extends State<OperationsPage> {
     );
   }
 
-  Component _tools(BuildContext context, OperationsState state) {
+  /// The search and the filters, and under them the [totals] of the month on a
+  /// page without a side.
+  Component _tools(
+    BuildContext context,
+    OperationsState state, {
+    required bool totals,
+  }) {
     final cubit = context.read<OperationsCubit>();
     return div(classes: 'operations__tools', [
       GlassSearchField(
@@ -182,29 +197,8 @@ class _OperationsPageState extends State<OperationsPage> {
             onTap: () => cubit.filterChanged(filter),
           ),
       ]),
-      if (state.expenses.isNotEmpty || state.income.isNotEmpty)
-        div(classes: 'text-body operations__totals', [
-          if (state.expenses.isNotEmpty)
-            _total(
-              t.transactions.filterExpenses,
-              amountsLabel(state.expenses),
-              AmountTone.neutral,
-            ),
-          if (state.income.isNotEmpty)
-            _total(
-              t.transactions.filterIncome,
-              amountsLabel(state.income),
-              AmountTone.positive,
-            ),
-        ]),
-    ]);
-  }
-
-  /// `Расходы −86 420 ₽`.
-  Component _total(String label, String amounts, AmountTone tone) {
-    return span([
-      .text('$label '),
-      AmountText(amounts, tone: tone, textClass: 'text-body-strong'),
+      if (totals && (state.expenses.isNotEmpty || state.income.isNotEmpty))
+        OperationsTotals(state),
     ]);
   }
 }

@@ -41,6 +41,7 @@ class GlassListRow extends StatelessComponent {
     this.indented = false,
     this.danger = false,
     this.entering = false,
+    this.picked = false,
     this.action,
     super.key,
   });
@@ -81,6 +82,10 @@ class GlassListRow extends StatelessComponent {
   /// nothing.
   final bool entering;
 
+  /// Whether the row is the one whose card stands beside the list on a wide
+  /// page, which marks it with the accent at its edge.
+  final bool picked;
+
   /// A button of its own after a row with [href] or [onTap].
   final Component? action;
 
@@ -90,7 +95,8 @@ class GlassListRow extends StatelessComponent {
     final indent =
         '${indented ? ' glass-row--indented' : ''}'
         '${danger ? ' glass-row--danger' : ''}'
-        '${entering ? ' glass-row--entering' : ''}';
+        '${entering ? ' glass-row--entering' : ''}'
+        '${picked ? ' glass-row--picked' : ''}';
     final color = subtitleColor;
     final lines = subtitleLines > 1;
     final subtitleStyles = lines || color != null
@@ -203,7 +209,9 @@ class GlassListRow extends StatelessComponent {
             'var(--space-md) var(--space-xs) var(--space-md) var(--space-md)',
         'text-align': 'left',
         'text-decoration': 'none',
-        'transition': 'background var(--duration-fast)',
+        'transition':
+            'background var(--duration-fast), '
+            'box-shadow var(--duration-fast)',
       },
     ),
     css('.glass-row--indented').styles(
@@ -212,7 +220,9 @@ class GlassListRow extends StatelessComponent {
     css('.glass-row--action').styles(
       raw: {
         'cursor': 'pointer',
-        'transition': 'background var(--duration-fast)',
+        'transition':
+            'background var(--duration-fast), '
+            'box-shadow var(--duration-fast)',
       },
     ),
     // Only where a pointer can hover: on a touch screen it would stay on.
@@ -221,6 +231,13 @@ class GlassListRow extends StatelessComponent {
         raw: {'background': 'var(--color-glass-fill-bottom)'},
       ),
     ]),
+    // The row whose card is open beside the list, hovered or not.
+    css('.glass-row.glass-row--picked').styles(
+      raw: {
+        'background': 'var(--color-surface-selected)',
+        'box-shadow': 'inset 3px 0 0 var(--color-accent)',
+      },
+    ),
     css('.glass-row__text').styles(
       raw: {
         'display': 'flex',

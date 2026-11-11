@@ -15,6 +15,13 @@ String reportMonthLabel(CivilDate month, {required CivilDate today}) {
   return month.year == today.year ? name : '$name ${month.year}';
 }
 
+/// The way to the report of [month]: `Отчёт за октябрь`, with the year when
+/// it is not the year of [today].
+String monthReportLabel(CivilDate month, {required CivilDate today}) {
+  final label = t.reports.monthReport[month.month - 1];
+  return month.year == today.year ? label : '$label ${month.year}';
+}
+
 /// [percent] with its sign: `+35%`, `−4%` or `0%`.
 String percentLabel(int percent) {
   final sign = percent > 0

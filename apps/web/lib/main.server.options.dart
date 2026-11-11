@@ -14,6 +14,7 @@ import 'package:accounts_jaspr/src/presentation/pages/accounts_page.dart'
 import 'package:backup_jaspr/src/presentation/pages/backup_page.dart'
     as _backup_page;
 import 'package:birka_web/components/capital_preview.dart' as _capital_preview;
+import 'package:birka_web/components/month_card.dart' as _month_card;
 import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
 import 'package:birka_web/pages/backup_island.dart' as _backup_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
@@ -55,8 +56,10 @@ import 'package:design_jaspr/src/birka_form.dart' as _birka_form;
 import 'package:design_jaspr/src/birka_head.dart' as _birka_head;
 import 'package:design_jaspr/src/birka_icon.dart' as _birka_icon;
 import 'package:design_jaspr/src/birka_line_chart.dart' as _birka_line_chart;
+import 'package:design_jaspr/src/birka_link_row.dart' as _birka_link_row;
 import 'package:design_jaspr/src/birka_placeholder.dart' as _birka_placeholder;
 import 'package:design_jaspr/src/birka_ring.dart' as _birka_ring;
+import 'package:design_jaspr/src/birka_rule.dart' as _birka_rule;
 import 'package:design_jaspr/src/birka_select.dart' as _birka_select;
 import 'package:design_jaspr/src/birka_split.dart' as _birka_split;
 import 'package:design_jaspr/src/birka_step_bars.dart' as _birka_step_bars;
@@ -73,6 +76,7 @@ import 'package:design_jaspr/src/glass_nav_bar.dart' as _glass_nav_bar;
 import 'package:design_jaspr/src/glass_notice.dart' as _glass_notice;
 import 'package:design_jaspr/src/glass_option.dart' as _glass_option;
 import 'package:design_jaspr/src/glass_page_header.dart' as _glass_page_header;
+import 'package:design_jaspr/src/glass_panel.dart' as _glass_panel;
 import 'package:design_jaspr/src/glass_search_field.dart'
     as _glass_search_field;
 import 'package:design_jaspr/src/glass_segmented.dart' as _glass_segmented;
@@ -117,6 +121,8 @@ import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
     as _onboarding_page;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
     as _overview_page;
+import 'package:reports_jaspr/src/presentation/components/report_line_row.dart'
+    as _report_line_row;
 import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
     as _reports_page;
 import 'package:schedules_jaspr/src/presentation/components/schedule_bits.dart'
@@ -135,6 +141,8 @@ import 'package:transactions_jaspr/src/presentation/components/back_header.dart'
     as _back_header;
 import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart'
     as _operation_day_group;
+import 'package:transactions_jaspr/src/presentation/components/operations_totals.dart'
+    as _operations_totals;
 import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart'
     as _quick_add_tile;
 import 'package:transactions_jaspr/src/presentation/pages/account_page.dart'
@@ -209,6 +217,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._accounts_page.AccountsPage.styles,
     ..._backup_page.BackupPage.styles,
     ..._capital_preview.CapitalPreview.styles,
+    ..._month_card.MonthCard.styles,
     ..._home_route.HomeRoute.styles,
     ..._more_page.MorePage.styles,
     ..._page_frame.PageFrame.styles,
@@ -232,8 +241,10 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_head.birkaBaseStyles,
     ..._birka_icon.BirkaIcon.styles,
     ..._birka_line_chart.BirkaLineChart.styles,
+    ..._birka_link_row.BirkaLinkRow.styles,
     ..._birka_placeholder.BirkaPlaceholder.styles,
     ..._birka_ring.BirkaRing.styles,
+    ..._birka_rule.BirkaRule.styles,
     ..._birka_select.BirkaSelect.styles,
     ..._birka_split.BirkaSplit.styles,
     ..._birka_step_bars.BirkaStepBars.styles,
@@ -252,6 +263,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glass_notice.GlassNotice.styles,
     ..._glass_option.GlassOption.styles,
     ..._glass_page_header.GlassPageHeader.styles,
+    ..._glass_panel.GlassPanel.styles,
     ..._glass_search_field.GlassSearchField.styles,
     ..._glass_segmented.GlassSegmented.styles,
     ..._glass_step_pills.GlassStepPills.styles,
@@ -283,6 +295,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._notifications_page.NotificationsPage.styles,
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
+    ..._report_line_row.ReportLineRow.styles,
     ..._reports_page.ReportsPage.styles,
     ..._schedule_bits.DateColumn.styles,
     ..._schedule_bits.ScheduleDot.styles,
@@ -293,6 +306,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._settings_section.SettingsSection.styles,
     ..._back_header.BackHeader.styles,
     ..._operation_day_group.OperationDayGroup.styles,
+    ..._operations_totals.OperationsTotals.styles,
     ..._quick_add_tile.QuickAddTile.styles,
     ..._quick_add_tile.QuickAddTiles.styles,
     ..._account_page.AccountPage.styles,

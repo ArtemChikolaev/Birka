@@ -22,7 +22,11 @@ void main() {
   late FakeRepository repository;
   var closed = 0;
 
-  Future<void> pump(ComponentTester tester, [String id = 'coffee']) async {
+  Future<void> pump(
+    ComponentTester tester, {
+    String id = 'coffee',
+    bool closes = false,
+  }) async {
     tester.pumpComponent(
       BlocProvider(
         create: (_) => OperationCubit(repository, id, now: () => now),
@@ -30,6 +34,7 @@ void main() {
           onClose: () => closed++,
           editHref: 'edit',
           repeatHref: 'repeat',
+          closes: closes,
         ),
       ),
     );
@@ -82,6 +87,20 @@ void main() {
     expect(find.text('31 октября'), findsOneComponent);
   });
 
+  testComponents('beside a list it closes with a cross', (tester) async {
+    await pump(tester, closes: true);
+    Finder labelled(String label) => find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.attributes?['aria-label'] == label,
+    );
+
+    expect(labelled('Назад'), findsNothing);
+    await tester.click(labelled('Закрыть'));
+
+    expect(closed, 1);
+  });
+
   testComponents('without a moment there is only the day', (tester) async {
     repository.operations = [
       testOperation(
@@ -110,7 +129,7 @@ void main() {
         kind: TransactionKind.transfer,
       ),
     ];
-    await pump(tester, 'move');
+    await pump(tester, id: 'move');
 
     expect(find.text('9${space}000$space₽ → 100$space€'), findsOneComponent);
     expect(find.text('Откуда'), findsOneComponent);
@@ -154,7 +173,7 @@ void main() {
         kind: TransactionKind.adjustment,
       ),
     ];
-    await pump(tester, 'fix');
+    await pump(tester, id: 'fix');
 
     expect(links(), isEmpty);
     expect(find.text('Удалить'), findsOneComponent);

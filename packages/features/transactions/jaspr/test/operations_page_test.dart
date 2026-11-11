@@ -21,7 +21,12 @@ void main() {
 
   late FakeRepository repository;
 
-  Future<void> pump(ComponentTester tester, {String? note}) async {
+  Future<void> pump(
+    ComponentTester tester, {
+    String? note,
+    Component? side,
+    String? picked,
+  }) async {
     tester.pumpComponent(
       BlocProvider(
         create: (_) => OperationsCubit(
@@ -32,6 +37,8 @@ void main() {
           addHref: 'add',
           hrefOf: (id) => 'open/$id',
           note: note,
+          side: side,
+          picked: picked,
         ),
       ),
     );
@@ -121,6 +128,43 @@ void main() {
     expect(find.text('−380$space₽'), findsNComponents(2));
     expect(find.text('+100${space}000$space₽'), findsNComponents(3));
     expect(find.text('Прошлый месяц'), findsNothing);
+  });
+
+  testComponents('a wide page has the list beside its side, the heading '
+      'across them and the totals in the side', (tester) async {
+    await pump(tester, side: const Component.text('Октябрь сбоку'));
+
+    final split = find.byType(BirkaSplit);
+    expect(
+      find.descendant(of: split, matching: find.text('Октябрь сбоку')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: split, matching: find.text('Кофейня у дома')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: split, matching: find.text('Октябрь')),
+      findsNothing,
+    );
+    expect(find.byType(OperationsTotals), findsNothing);
+  });
+
+  testComponents('marks the row whose card stands beside the list', (
+    tester,
+  ) async {
+    await pump(tester, side: const Component.text('Карточка'), picked: 'bread');
+
+    final picked = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          (component.classes ?? '').split(' ').contains('glass-row--picked'),
+    );
+    expect(picked, findsOneComponent);
+    expect(
+      (picked.evaluate().single.component as DomComponent).attributes?['href'],
+      'open/bread',
+    );
   });
 
   testComponents('leads to every row', (tester) async {

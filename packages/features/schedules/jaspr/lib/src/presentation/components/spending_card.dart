@@ -111,7 +111,7 @@ class SpendingCard extends StatelessComponent {
             ],
           ),
       ]),
-      const div(classes: 'spending__rule', []),
+      const BirkaRule(),
       SectionLabel(t.schedules.upcoming),
       div(classes: 'spending__rows', [
         for (final it in view.upcoming.take(3))
@@ -134,19 +134,15 @@ class SpendingCard extends StatelessComponent {
             ],
           ),
       ]),
-      a(classes: 'text-body-strong spending__all', href: listHref, [
-        span([
-          .text(
-            view.schedules.isEmpty
-                ? t.schedules.emptyAdd
-                : t.schedules.section(
-                    title: t.schedules.all,
-                    count: formatCount(view.schedules.length),
-                  ),
-          ),
-        ]),
-        const BirkaIcon(BirkaGlyph.chevron),
-      ]),
+      BirkaLinkRow(
+        label: view.schedules.isEmpty
+            ? t.schedules.emptyAdd
+            : t.schedules.section(
+                title: t.schedules.all,
+                count: formatCount(view.schedules.length),
+              ),
+        href: listHref,
+      ),
     ]);
   }
 
@@ -193,7 +189,7 @@ class SpendingCard extends StatelessComponent {
         'justify-content': 'space-between',
       },
     ),
-    css('.spending__head .birka-icon, .spending__all .birka-icon').styles(
+    css('.spending__head .birka-icon').styles(
       raw: {'height': '16px', 'width': '16px'},
     ),
     css('.spending__left').styles(
@@ -251,12 +247,8 @@ class SpendingCard extends StatelessComponent {
     css(
       '.spending__forecast--short, .spending__forecast--short .birka-icon',
     ).styles(raw: {'color': 'var(--color-palette-amber)'}),
-    css('.spending__rule').styles(
-      raw: {
-        'background': 'var(--color-hairline)',
-        'height': '1px',
-        'margin': 'var(--space-xs) 0',
-      },
+    css('.spending .birka-rule').styles(
+      raw: {'margin': 'var(--space-xs) 0'},
     ),
     css('.spending__rows').styles(
       raw: {'display': 'flex', 'flex-direction': 'column'},
@@ -283,16 +275,6 @@ class SpendingCard extends StatelessComponent {
         'overflow': 'hidden',
         'text-overflow': 'ellipsis',
         'white-space': 'nowrap',
-      },
-    ),
-    css('.spending__all').styles(
-      raw: {
-        'align-items': 'center',
-        'color': 'var(--color-accent)',
-        'display': 'flex',
-        'justify-content': 'space-between',
-        'min-height': 'var(--size-touch-target)',
-        'text-decoration': 'none',
       },
     ),
     css('.spending__title').styles(
