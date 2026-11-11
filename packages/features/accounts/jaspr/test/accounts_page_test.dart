@@ -19,6 +19,7 @@ void main() {
     ComponentTester tester,
     FakeAccountsRepository repository, {
     String? note,
+    bool wide = false,
   }) async {
     tester.pumpComponent(
       BlocProvider(
@@ -27,6 +28,7 @@ void main() {
           addHref: 'add',
           hrefOf: (id) => 'open/$id',
           note: note,
+          wide: wide,
         ),
       ),
     );
@@ -70,6 +72,40 @@ void main() {
     expect(find.text('412${space}300$space₽'), findsNComponents(2));
     expect(find.text('основной'), findsOneComponent);
     expect(find.text('Рубли · Наличные'), findsOneComponent);
+  });
+
+  testComponents('a wide page shows every account as a card, with the '
+      'capital, the new account and the note at the side', (tester) async {
+    await pump(
+      tester,
+      FakeAccountsRepository([
+        row('Зарплатная', rub(41230000), lastDigits: '4568'),
+        row('Наличные', rub(1850000), type: AccountType.cash),
+      ]),
+      note: 'Только в этом браузере',
+      wide: true,
+    );
+
+    expect(find.byType(AccountCard), findsNComponents(2));
+    expect(find.text('основной'), findsNothing);
+    final side = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.classes == 'birka-split__aside',
+    );
+    expect(
+      find.descendant(of: side, matching: find.text('Новый счёт')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(
+        of: side,
+        matching: find.text('Капитал '),
+      ),
+      findsOneComponent,
+    );
+    expect(find.text('Только в этом браузере'), findsOneComponent);
+    expect(links(), ['add', 'open/Зарплатная', 'open/Наличные', 'add']);
   });
 
   testComponents('adds the capital up per currency with the right ending', (

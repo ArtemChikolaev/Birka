@@ -52,7 +52,8 @@ class App extends StatelessComponent {
         Route(
           path: '/accounts',
           title: 'Accounts · Birka',
-          builder: (_, _) => const PageFrame(child: AccountsIsland()),
+          builder: (_, _) =>
+              const PageFrame(wide: true, child: AccountsIsland()),
         ),
         Route(
           path: '/categories',

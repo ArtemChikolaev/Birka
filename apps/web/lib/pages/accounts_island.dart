@@ -5,6 +5,7 @@ import 'package:accounts_jaspr/accounts_jaspr.dart';
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:birka_web/pages/operation_views.dart';
+import 'package:birka_web/pages/page_frame.dart';
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
@@ -64,6 +65,7 @@ class _AccountsIslandState extends DataIslandState<AccountsIsland>
           addHref: '$address#$_new',
           hrefOf: (id) => '$address#$id',
           note: storageNote,
+          wide: wide,
         ),
       ),
       _new => _form(null, closeForm),
@@ -83,8 +85,12 @@ class _AccountsIslandState extends DataIslandState<AccountsIsland>
           onClose: closeView,
           editHref: '$address#$id/$_edit',
           hrefOf: (operation) => '$address#$id/$operation',
+          wide: wide,
         ),
         [_edit] => _form(id, () => closeForm(id)),
+        [final view, ...] when wide => PageColumn(
+          child: operationView(view, parent: id),
+        ),
         [final view, ...] => operationView(view, parent: id),
       },
     );
@@ -94,7 +100,7 @@ class _AccountsIslandState extends DataIslandState<AccountsIsland>
     return BlocProvider<AccountFormCubit>(
       key: ValueKey(fragment),
       create: (_) => getIt(param1: id),
-      child: AccountFormPage(onClose: onClose),
+      child: AccountFormPage(onClose: onClose, wide: wide),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_jaspr/accounts_jaspr.dart';
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
 import 'package:jaspr_test/jaspr_test.dart';
@@ -16,11 +17,15 @@ void main() {
   late FakeAccountsRepository repository;
   var closed = 0;
 
-  Future<void> pump(ComponentTester tester, {String? accountId}) async {
+  Future<void> pump(
+    ComponentTester tester, {
+    String? accountId,
+    bool wide = false,
+  }) async {
     tester.pumpComponent(
       BlocProvider(
         create: (_) => AccountFormCubit(repository, accountId: accountId),
-        child: AccountFormPage(onClose: () => closed++),
+        child: AccountFormPage(onClose: () => closed++, wide: wide),
       ),
     );
     await tester.pump();
@@ -150,6 +155,26 @@ void main() {
     final draft = repository.added.single;
     expect(draft.art, AccountArt.sapphire);
     expect(draft.includeInTotals, isFalse);
+  });
+
+  testComponents('a wide form has the card at the side and the name and the '
+      'balance in one row', (tester) async {
+    await pump(tester, wide: true);
+
+    final side = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent &&
+          component.classes == 'birka-split__aside',
+    );
+    expect(
+      find.descendant(of: side, matching: find.byType(AccountCard)),
+      findsOneComponent,
+    );
+    final pair = find.byType(BirkaFieldPair);
+    expect(
+      find.descendant(of: pair, matching: find.byType(BirkaTextField)),
+      findsNComponents(2),
+    );
   });
 
   testComponents('the cross closes without saving', (tester) async {

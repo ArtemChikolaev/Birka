@@ -51,6 +51,7 @@ import 'package:design_jaspr/src/birka_chip_field.dart' as _birka_chip_field;
 import 'package:design_jaspr/src/birka_choice.dart' as _birka_choice;
 import 'package:design_jaspr/src/birka_column.dart' as _birka_column;
 import 'package:design_jaspr/src/birka_date_chip.dart' as _birka_date_chip;
+import 'package:design_jaspr/src/birka_field_pair.dart' as _birka_field_pair;
 import 'package:design_jaspr/src/birka_fold.dart' as _birka_fold;
 import 'package:design_jaspr/src/birka_form.dart' as _birka_form;
 import 'package:design_jaspr/src/birka_head.dart' as _birka_head;
@@ -236,6 +237,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_choice.BirkaChoice.styles,
     ..._birka_column.BirkaColumn.styles,
     ..._birka_date_chip.BirkaDateChip.styles,
+    ..._birka_field_pair.BirkaFieldPair.styles,
     ..._birka_fold.BirkaFold.styles,
     ..._birka_form.BirkaForm.styles,
     ..._birka_head.birkaBaseStyles,

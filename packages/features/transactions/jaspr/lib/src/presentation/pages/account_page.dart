@@ -9,7 +9,8 @@ import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_jaspr/src/presentation/components/back_header.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart';
 
-/// One account: what it holds, how that changed and what happened on it.
+/// One account: what it holds, how that changed and what happened on it. A
+/// [wide] page has the card of the account and its change at the side.
 ///
 /// It needs an [AccountCubit] above it.
 class AccountPage extends StatelessComponent {
@@ -18,6 +19,7 @@ class AccountPage extends StatelessComponent {
     required this.onClose,
     required this.editHref,
     required this.hrefOf,
+    this.wide = false,
     super.key,
   });
 
@@ -29,6 +31,9 @@ class AccountPage extends StatelessComponent {
 
   /// Where the operation with this id opens.
   final String Function(String id) hrefOf;
+
+  /// Whether the page is wide.
+  final bool wide;
 
   @override
   Component build(BuildContext context) {
@@ -53,8 +58,24 @@ class AccountPage extends StatelessComponent {
               AccountState(status: AccountStatus.gone) => [
                 GlassNotice(text: t.transactions.accountGone),
               ],
+              AccountState(status: AccountStatus.ready, :final account?)
+                  when wide =>
+                [
+                  BirkaSplit(
+                    asideWidth: 380,
+                    main: [
+                      _chart(context, state),
+                      _operations(state, accountId: account.account.id),
+                    ],
+                    aside: [_card(account), ?_change(state)],
+                  ),
+                ],
               AccountState(status: AccountStatus.ready, :final account?) => [
-                _summary(context, state, account),
+                div(classes: 'account__summary', [
+                  _card(account),
+                  ?_change(state),
+                  _chart(context, state),
+                ]),
                 _operations(state, accountId: account.account.id),
               ],
               _ => const <Component>[],
@@ -80,53 +101,52 @@ class AccountPage extends StatelessComponent {
     );
   }
 
-  /// The card of the account, what the period changed, its chart and the
-  /// switch of periods.
-  Component _summary(
-    BuildContext context,
-    AccountState state,
-    AccountBalance account,
-  ) {
-    final cubit = context.read<AccountCubit>();
+  /// The card of the account.
+  Component _card(AccountBalance account) {
     final AccountBalance(account: details, :balance) = account;
-    final change = state.change;
-    return div(classes: 'account__summary', [
-      AccountCard(
-        art: CardArt.values.byName(details.art.name),
-        name: details.name,
-        subtitle: accountLine(
-          currency: details.currency.code,
-          type: details.type.name,
-          lastDigits: details.lastDigits,
-        ),
-        amount: formatMoney(balance),
+    return AccountCard(
+      art: CardArt.values.byName(details.art.name),
+      name: details.name,
+      subtitle: accountLine(
+        currency: details.currency.code,
+        type: details.type.name,
+        lastDigits: details.lastDigits,
       ),
-      if (change != null && !change.isZero)
-        div(classes: 'account__change', [
-          BirkaChangePill(
-            label: signedAmountLabel(change),
-            rise: change.isPositive,
+      amount: formatMoney(balance),
+    );
+  }
+
+  /// What the period changed, unless nothing.
+  Component? _change(AccountState state) {
+    final change = state.change;
+    if (change == null || change.isZero) return null;
+    return div(classes: 'account__change', [
+      BirkaChangePill(
+        label: signedAmountLabel(change),
+        rise: change.isPositive,
+      ),
+      span(classes: 'text-body account__caption', [
+        .text(chartPeriodCaption(state.period.name, month: state.today.month)),
+      ]),
+    ]);
+  }
+
+  /// The chart of the balance and the switch of periods.
+  Component _chart(BuildContext context, AccountState state) {
+    final cubit = context.read<AccountCubit>();
+    return div(classes: 'account__chart', [
+      BirkaLineChart(
+        values: [for (final value in state.history) value.toDouble()],
+        label: t.transactions.balanceChart,
+      ),
+      div(classes: 'account__periods', [
+        for (final period in ChartPeriod.values)
+          BirkaChip(
+            label: chartPeriodLabel(period.name),
+            selected: period == state.period,
+            compact: true,
+            onTap: () => cubit.periodChanged(period),
           ),
-          span(classes: 'text-body account__caption', [
-            .text(
-              chartPeriodCaption(state.period.name, month: state.today.month),
-            ),
-          ]),
-        ]),
-      div(classes: 'account__chart', [
-        BirkaLineChart(
-          values: [for (final value in state.history) value.toDouble()],
-          label: t.transactions.balanceChart,
-        ),
-        div(classes: 'account__periods', [
-          for (final period in ChartPeriod.values)
-            BirkaChip(
-              label: chartPeriodLabel(period.name),
-              selected: period == state.period,
-              compact: true,
-              onTap: () => cubit.periodChanged(period),
-            ),
-        ]),
       ]),
     ]);
   }
