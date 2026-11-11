@@ -30,8 +30,12 @@ class SchedulesPage extends StatefulComponent {
     required this.paydayHref,
     required this.hrefOf,
     required this.findHref,
+    this.said,
     super.key,
   });
+
+  /// What the page says as it opens, such as a payment that a form deleted.
+  final String? said;
 
   /// Where the way back leads.
   final String backHref;
@@ -229,6 +233,12 @@ class _SchedulesPageState extends State<SchedulesPage> {
 
   /// The payments that wait while their post or skip is on its way.
   final _busy = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    if (component.said case final said?) _toast = (text: said, action: null);
+  }
 
   void _say(String text, {ToastAction? action}) => setState(() {
     _toast = (text: text, action: action);

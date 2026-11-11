@@ -223,8 +223,12 @@
     wide screen the page is wide (`BirkaSplit`), with a side that says what
     a day may spend and how a payment works; at 900 px or less the side goes
     away and the page is the list alone. The site has no reminders, since it
-    cannot notify. Its form, the money until the salary and the card of the
-    overview come in their own changes.
+    cannot notify. The form of a payment is a view of the same page
+    (`#new`, `#salary`, `#from-<operation>`, `#<payment>`) with its fields in
+    the open; on a wide screen its side shows where the payment came from,
+    how it will stand in the list with its next three days, and the button.
+    The money until the salary and the card of the overview come in their
+    own changes.
 
 ## Consequences
 

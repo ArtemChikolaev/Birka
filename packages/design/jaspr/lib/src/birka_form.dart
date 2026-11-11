@@ -1,12 +1,14 @@
 import 'package:design_jaspr/src/birka_button.dart';
 import 'package:design_jaspr/src/birka_icon.dart';
+import 'package:design_jaspr/src/birka_split.dart';
 import 'package:design_jaspr/src/glass_icon_button.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 /// A form that stays on its page: a heading with a cross, the [children] and
 /// a button that saves. That button or the Enter key in a field calls
-/// [onSubmit].
+/// [onSubmit]. With an [aside], a wide page shows it beside the fields, with
+/// the button under it, in a `BirkaSplit`.
 class BirkaForm extends StatelessComponent {
   /// Creates a form.
   const BirkaForm({
@@ -20,6 +22,9 @@ class BirkaForm extends StatelessComponent {
     this.ready = true,
     this.submitting = false,
     this.failure,
+    this.aside,
+    this.asideWidth = 340,
+    this.note,
     super.key,
   });
 
@@ -54,9 +59,25 @@ class BirkaForm extends StatelessComponent {
   /// Why the last save failed.
   final String? failure;
 
+  /// What stands beside the fields on a wide page, over the button.
+  final List<Component>? aside;
+
+  /// How wide [aside] is, in pixels.
+  final int asideWidth;
+
+  /// What the button does, in a quiet line under it.
+  final String? note;
+
   @override
   Component build(BuildContext context) {
     final failure = this.failure;
+    final actions = div(classes: 'birka-form__actions', [
+      if (failure != null)
+        p(classes: 'text-caption birka-form__failure', [.text(failure)]),
+      BirkaButton(label: submitLabel, submits: ready && !submitting),
+      if (note case final note?)
+        p(classes: 'text-caption birka-form__note', [.text(note)]),
+    ]);
     return form(
       classes: 'birka-form',
       events: {
@@ -75,12 +96,16 @@ class BirkaForm extends StatelessComponent {
             onPressed: onClose,
           ),
         ]),
-        ...children,
-        div(classes: 'birka-form__actions', [
-          if (failure != null)
-            p(classes: 'text-caption birka-form__failure', [.text(failure)]),
-          BirkaButton(label: submitLabel, submits: ready && !submitting),
-        ]),
+        ...switch (aside) {
+          final aside? => [
+            BirkaSplit(
+              asideWidth: asideWidth,
+              main: children,
+              aside: [...aside, actions],
+            ),
+          ],
+          null => [...children, actions],
+        },
       ],
     );
   }
@@ -108,6 +133,13 @@ class BirkaForm extends StatelessComponent {
         'display': 'flex',
         'flex-direction': 'column',
         'gap': 'var(--space-xs)',
+      },
+    ),
+    css('.birka-form__note').styles(
+      raw: {
+        'color': 'var(--color-text-muted)',
+        'margin': '0',
+        'text-align': 'center',
       },
     ),
     css('.birka-form__failure').styles(

@@ -6,6 +6,7 @@ import 'package:schedules_common/src/domain/repeat_finds.dart';
 import 'package:schedules_common/src/domain/rough_money.dart';
 import 'package:schedules_common/src/domain/spending_plan.dart';
 import 'package:schedules_common/src/domain/usual_pace.dart';
+import 'package:schedules_common/src/presentation/schedule_form_cubit.dart';
 import 'package:schedules_common/src/presentation/schedules_cubit.dart';
 
 const _weekdays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -267,6 +268,20 @@ String leftAfterLabel(SpendingPlan plan, CivilDate today) {
           ? t.schedules.leftAfterMonthAdvance(amount: amount)
           : t.schedules.leftAfterMonth(amount: amount),
   };
+}
+
+/// What the amount of a payment made from the operations that came every
+/// month says while it is the last of their amounts, which changed:
+/// `последняя сумма · бывало от 6 410 ₽ до 7 120 ₽`.
+String? foundRangeLabel(ScheduleFormState state) {
+  final found = state.found;
+  if (found == null || !found.varies) return null;
+  if (state.amountMinor != found.amounts.last.minorUnits) return null;
+  final range = found.range;
+  return t.schedules.amountRange(
+    min: formatMoney(range.min),
+    max: formatMoney(range.max),
+  );
 }
 
 /// The days of [plan] for people: `до зарплаты 5 декабря · 17 дней` or

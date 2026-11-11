@@ -130,6 +130,19 @@ void main() {
       expect(saved.last?.on, CivilDate(2026, 11, 12));
     });
 
+    test('of the 31st stays the 31st through a shorter month', () async {
+      final made = await operation(on: CivilDate(2026, 10, 31));
+      final cubit = ScheduleFormCubit(repository, from: made);
+      addTearDown(cubit.close);
+      await at(cubit, ScheduleFormStatus.editing);
+
+      await cubit.save();
+
+      final saved = (await ledger.watchSchedules().first).single;
+      expect(saved.next, CivilDate(2026, 11, 30));
+      expect(saved.day, 31);
+    });
+
     test('of today comes next month, and one the person wrote asks', () async {
       final made = await operation(
         on: today,
@@ -251,6 +264,47 @@ void main() {
     expect(saved.day, 25);
     expect(saved.next, CivilDate(2026, 11, 25));
     expect(saved.onDay, ScheduleOnDay.post);
+  });
+
+  test('a day of the month comes from today on, and a day the month lacks '
+      'falls on its last day and stays the day', () async {
+    final cubit = ScheduleFormCubit(repository);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit.dayChanged(5);
+    expect(cubit.state.day, 5);
+    expect(cubit.state.next, CivilDate(2026, 12, 5));
+    cubit.dayChanged(18);
+    expect(cubit.state.next, today);
+    cubit
+      ..nameChanged('Аренда')
+      ..amountChanged(4500000)
+      ..categoryChanged(home.id)
+      ..dayChanged(31);
+    expect(cubit.state.day, 31);
+    expect(cubit.state.next, CivilDate(2026, 11, 30));
+    await cubit.save();
+
+    final saved = (await ledger.watchSchedules().first).single;
+    expect(saved.day, 31);
+    expect(saved.next, CivilDate(2026, 11, 30));
+  });
+
+  test('the rest of a salary in halves keeps a day the month lacks, and '
+      'not the day of the advance', () async {
+    final cubit = ScheduleFormCubit(repository, salary: true);
+    addTearDown(cubit.close);
+    await at(cubit, ScheduleFormStatus.editing);
+
+    cubit
+      ..halvesChanged(halves: true)
+      ..dayChanged(31);
+    expect(cubit.state.advanceDay, 3);
+    expect(cubit.state.day, 31);
+    expect(cubit.state.next, CivilDate(2026, 11, 30));
+    cubit.dayChanged(3);
+    expect(cubit.state.day, 31);
   });
 
   test('a salary starts as an income named so', () async {

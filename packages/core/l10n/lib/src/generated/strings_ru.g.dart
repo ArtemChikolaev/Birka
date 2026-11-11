@@ -2594,6 +2594,12 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   ];
   @override
   String get failed => 'Не удалось прочитать платежи.';
+  @override
+  String get previewTitle => 'В списке платежей';
+  @override
+  String get previewNext => 'Следующие разы';
+  @override
+  String get cancel => 'Отмена';
 }
 
 // Path: settings
@@ -4871,6 +4877,9 @@ extension on TranslationsRu {
           'schedules.how.3' =>
             'Повторы в операциях Birka находит сама и предлагает добавить.',
           'schedules.failed' => 'Не удалось прочитать платежи.',
+          'schedules.previewTitle' => 'В списке платежей',
+          'schedules.previewNext' => 'Следующие разы',
+          'schedules.cancel' => 'Отмена',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -4893,12 +4902,12 @@ extension on TranslationsRu {
           'transactions.today' => 'Сегодня',
           'transactions.yesterday' => 'Вчера',
           'transactions.pickDay' => 'Выбрать день',
-          'transactions.note' => 'Заметка',
-          'transactions.addNote' => 'Заметка',
-          'transactions.done' => 'Готово',
           _ => null,
         } ??
         switch (path) {
+          'transactions.note' => 'Заметка',
+          'transactions.addNote' => 'Заметка',
+          'transactions.done' => 'Готово',
           'transactions.account' => 'Счёт',
           'transactions.to' => 'Куда',
           'transactions.sent' => 'Списать',

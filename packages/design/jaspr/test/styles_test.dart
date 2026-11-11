@@ -20,6 +20,7 @@ void main() {
       ...BirkaChoice.styles,
       ...BirkaColumn.styles,
       ...BirkaDateChip.styles,
+      ...BirkaFold.styles,
       ...BirkaForm.styles,
       ...BirkaIcon.styles,
       ...BirkaLineChart.styles,
