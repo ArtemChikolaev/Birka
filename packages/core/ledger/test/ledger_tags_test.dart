@@ -142,6 +142,48 @@ void main() {
       expect(await ledger.watchTags().first, isEmpty);
       expect(await ledger.watchTags(includeArchived: true).first, hasLength(1));
     });
+
+    test('stays on what it marked once archived', () async {
+      final tag = await trip();
+      final first = await spend(nov(4));
+      final second = await spend(nov(11));
+
+      final archived = await ledger.updateTag(tag.copyWith(archived: true));
+
+      expect(archived.marked, 0);
+      expect(await tagsOf(first), {tag.id: TagMark.days});
+      expect(await tagsOf(second), {tag.id: TagMark.days});
+
+      await ledger.updateTag(archived.tag.copyWith(archived: false));
+
+      expect(await ledger.watchTransactions(tagId: tag.id).first, hasLength(2));
+    });
+
+    test('once archived, stays through a change and a pick', () async {
+      final tag = await trip();
+      final work = (await ledger.addTag(name: 'Работа')).tag;
+      final moved = await spend(nov(4));
+      final picked = await spend(nov(11));
+      final archived = await ledger.updateTag(tag.copyWith(archived: true));
+
+      await ledger.amend(moved, lunch(nov(20)));
+      await ledger.setTags(picked, {work.id});
+
+      expect(await tagsOf(moved), {tag.id: TagMark.days});
+      expect(await tagsOf(picked), {
+        tag.id: TagMark.days,
+        work.id: TagMark.hand,
+      });
+
+      // Back in the lists, the trip follows its days again.
+      await ledger.updateTag(archived.tag.copyWith(archived: false));
+
+      expect(await tagsOf(moved), isEmpty);
+      expect(await tagsOf(picked), {
+        tag.id: TagMark.days,
+        work.id: TagMark.hand,
+      });
+    });
   });
 
   group('a trip added after its days', () {
