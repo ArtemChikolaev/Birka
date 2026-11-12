@@ -1,3 +1,4 @@
+import 'package:design_jaspr/src/birka_icon.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
@@ -42,6 +43,7 @@ class GlassListRow extends StatelessComponent {
     this.danger = false,
     this.entering = false,
     this.picked = false,
+    this.chevron = false,
     this.action,
     super.key,
   });
@@ -86,6 +88,10 @@ class GlassListRow extends StatelessComponent {
   /// page, which marks it with the accent at its edge.
   final bool picked;
 
+  /// Whether the row ends with a chevron, as a row that leads to another
+  /// page does.
+  final bool chevron;
+
   /// A button of its own after a row with [href] or [onTap].
   final Component? action;
 
@@ -121,6 +127,10 @@ class GlassListRow extends StatelessComponent {
           ),
       ]),
       ?trailing,
+      if (chevron)
+        const span(classes: 'glass-row__chevron', [
+          BirkaIcon(BirkaGlyph.chevron),
+        ]),
     ];
     final action = this.action;
     if (action != null && (href != null || onTap != null)) {
@@ -262,6 +272,16 @@ class GlassListRow extends StatelessComponent {
         'display': '-webkit-box',
         'overflow': 'hidden',
       },
+    ),
+    css('.glass-row__chevron').styles(
+      raw: {
+        'color': 'var(--color-text-subtle)',
+        'display': 'flex',
+        'flex': 'none',
+      },
+    ),
+    css('.glass-row__chevron .birka-icon').styles(
+      raw: {'height': '18px', 'width': '18px'},
     ),
     css('.glass-row--danger').styles(raw: {'color': 'var(--color-negative)'}),
     // A row that has just come opens from nothing and pushes the rows after

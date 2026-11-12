@@ -172,6 +172,23 @@ void main() {
     expect(done, ['Добавили в регулярные: «ЖКУ Москва»']);
   });
 
+  testComponents('a payment made of an operation says it was added', (
+    tester,
+  ) async {
+    final repository = FakeSchedulesRepository()
+      ..operations = [paid('cinema', CivilDate(2026, 11, 14), 'Кино', 1315)];
+    final cubit = ScheduleFormCubit(repository, from: 'cinema');
+    final done = await pump(tester, cubit);
+    if (cubit.state.madeFrom == null) {
+      await cubit.stream.firstWhere((state) => state.madeFrom != null);
+      await tester.pump();
+    }
+
+    await cubit.save();
+    await tester.pump();
+    expect(done, ['Добавили в регулярные: «Кино»']);
+  });
+
   testComponents('a salary in halves shows its month and its two days', (
     tester,
   ) async {

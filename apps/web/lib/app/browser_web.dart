@@ -53,7 +53,10 @@ Future<OpenedDatabase> openLocalDatabase(String name) async {
 void _letGoWhenLeaving(QueryExecutor executor) {
   web.window.addEventListener(
     'pagehide',
-    ((web.Event _) => unawaited(executor.close())).toJS,
+    ((web.Event _) {
+      _left = true;
+      unawaited(executor.close());
+    }).toJS,
   );
   web.window.addEventListener(
     'pageshow',
@@ -104,6 +107,19 @@ Future<bool> _holdTheOnlyTab(String name) {
 /// Leaves a failure in the console, the only place to see it in the browser.
 void logError(Object error, StackTrace stack) {
   web.console.error('$error\n$stack'.toJS);
+}
+
+/// Whether the page has left and closed its database, as a page does when
+/// the tab goes to another one.
+var _left = false;
+
+/// Reports an error that nothing caught, unless the page has left: what
+/// fails then is what still asked for the database it closed, such as a
+/// list that a payment just saved changed, and the page loads again if the
+/// back button brings it back.
+void reportError(Object error, StackTrace stack) {
+  if (_left) return;
+  logError(error, stack);
 }
 
 /// The language of the browser, such as `ru`.
@@ -208,6 +224,30 @@ void keepAmountsHidden({required bool hidden}) {
     web.window.sessionStorage.setItem(_amountsHiddenKey, hidden ? '1' : '0');
   } on Object {
     return;
+  }
+}
+
+const _saidKey = 'birka-said';
+
+/// Asks the page that the tab goes back to next to say [text] once, such as
+/// that an operation has become a regular payment. It lasts as long as the
+/// tab; a browser that refuses the storage only loses the words.
+void sayOnNextPage(String text) {
+  try {
+    web.window.sessionStorage.setItem(_saidKey, text);
+  } on Object {
+    return;
+  }
+}
+
+/// What the page before asked this one to say, once: it is gone after this.
+String? takeSaid() {
+  try {
+    final text = web.window.sessionStorage.getItem(_saidKey);
+    if (text != null) web.window.sessionStorage.removeItem(_saidKey);
+    return text;
+  } on Object {
+    return null;
   }
 }
 
