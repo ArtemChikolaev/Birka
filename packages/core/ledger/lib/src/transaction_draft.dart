@@ -20,6 +20,7 @@ final class TransactionDraft {
     required this.note,
     required this.status,
     required this.source,
+    this.tags,
   });
 
   /// Money spent from [accountId], which is the sum of [allocations].
@@ -154,6 +155,25 @@ final class TransactionDraft {
 
   /// Where it came from.
   final TransactionSource source;
+
+  /// The метки that the person picked for it, or `null` to leave them to the
+  /// ledger (ADR 0027): a new transaction then gets the trips whose days put
+  /// them on, and a changed one keeps what it wore.
+  final Set<String>? tags;
+
+  /// The same draft with the метки that the person picked. A trip whose days
+  /// would put it on and that is not among them stays off the transaction.
+  TransactionDraft withTags(Iterable<String> tags) => TransactionDraft._(
+    kind: kind,
+    entries: entries,
+    allocations: allocations,
+    occurredOn: occurredOn,
+    occurredAt: occurredAt,
+    note: note,
+    status: status,
+    source: source,
+    tags: Set.unmodifiable(tags),
+  );
 
   static Money _sumOf(List<Allocation> allocations) {
     if (allocations.isEmpty) {

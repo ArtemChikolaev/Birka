@@ -5,6 +5,7 @@ import 'package:ledger/src/account.dart';
 import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
 import 'package:ledger/src/schedule.dart';
+import 'package:ledger/src/tag.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
 import 'package:meta/meta.dart';
@@ -74,10 +75,10 @@ final class LedgerCopyException implements Exception {
 
 /// Everything the ledger holds, in the form of a file (ADR 0016).
 ///
-/// It keeps every import, account, category and transaction with its entries
-/// and allocations, and every regular payment, with their ids and stamps, so
-/// that a restored ledger is the one that was copied. Tombstones stay out:
-/// what was deleted does not travel.
+/// It keeps every import, account, category and transaction with its entries,
+/// allocations and метки, every regular payment and every метка, with their
+/// ids and stamps, so that a restored ledger is the one that was copied.
+/// Tombstones stay out: what was deleted does not travel.
 final class LedgerCopy {
   /// Creates a copy of rows that the ledger has read.
   @internal
@@ -90,6 +91,8 @@ final class LedgerCopy {
     required this.entryRows,
     required this.allocationRows,
     required this.scheduleRows,
+    required this.tagRows,
+    required this.transactionTagRows,
   }) : madeAt = madeAt.toUtc();
 
   /// Reads a copy from the text of its file.
@@ -125,9 +128,9 @@ final class LedgerCopy {
   /// up to this one: version 2 added imports and operations that wait for a
   /// category (ADR 0021), version 3 regular payments, version 4 what was done
   /// to their last times, version 5 their advances, version 6 the
-  /// transactions they were made from, and version 7 the amounts of advances
-  /// of their own (ADR 0023).
-  static const version = 7;
+  /// transactions they were made from, version 7 the amounts of advances of
+  /// their own (ADR 0023), and version 8 метки and trips (ADR 0027).
+  static const version = 8;
 
   static const _format = 'birka-copy';
 
@@ -162,6 +165,14 @@ final class LedgerCopy {
   @internal
   final List<ScheduleRow> scheduleRows;
 
+  /// The метки, for the ledger to write back.
+  @internal
+  final List<TagRow> tagRows;
+
+  /// The метки on the transactions, for the ledger to write back.
+  @internal
+  final List<TransactionTagRow> transactionTagRows;
+
   /// How much the copy holds.
   LedgerCounts get counts => LedgerCounts(
     accounts: accountRows.length,
@@ -179,6 +190,10 @@ final class LedgerCopy {
     final allocations = <String, List<AllocationRow>>{};
     for (final allocation in allocationRows) {
       (allocations[allocation.transactionId] ??= []).add(allocation);
+    }
+    final marks = <String, List<TransactionTagRow>>{};
+    for (final mark in transactionTagRows) {
+      (marks[mark.transactionId] ??= []).add(mark);
     }
     return jsonEncode({
       'format': _format,
@@ -260,6 +275,25 @@ final class LedgerCopy {
                   'amountMinor': allocation.amountMinor,
                 },
             ],
+            'marks': [
+              for (final mark in marks[row.id] ?? const <TransactionTagRow>[])
+                {
+                  ..._stamps(mark.id, mark.createdAt, mark.updatedAt),
+                  'tagId': mark.tagId,
+                  'mark': mark.mark,
+                },
+            ],
+          },
+      ],
+      'tags': [
+        for (final row in tagRows)
+          {
+            ..._stamps(row.id, row.createdAt, row.updatedAt),
+            'name': row.name,
+            'firstDay': row.firstDay,
+            'lastDay': row.lastDay,
+            'marksDays': row.marksDays,
+            'archived': row.archived,
           },
       ],
       'schedules': [
@@ -303,11 +337,11 @@ final class LedgerCopy {
   static String _text(DateTime moment) => moment.toUtc().toIso8601String();
 }
 
-/// Reads the rows of versions 1 to 7, and checks them as the ledger checks a
+/// Reads the rows of versions 1 to 8, and checks them as the ledger checks a
 /// write. Version 1 has no imports, versions 1 and 2 no regular payments,
 /// version 3 nothing done to their times, version 4 no advances, version 5
-/// no transactions they were made from, and version 6 no advances of their
-/// own.
+/// no transactions they were made from, version 6 no advances of their own,
+/// and versions before 8 no метки.
 LedgerCopy _read(Map<String, Object?> json) {
   final imports = <String, ImportRow>{};
   for (final item
@@ -339,6 +373,13 @@ LedgerCopy _read(Map<String, Object?> json) {
   for (final category in categories.values) {
     _checkParent(category, categories);
   }
+  final tags = <String, TagRow>{};
+  for (final item in json['tags'] == null ? const [] : _list(json, 'tags')) {
+    final row = _tag(_object(item));
+    if (tags.containsKey(row.id)) _damaged('Метка ${row.id} twice');
+    tags[row.id] = row;
+  }
+  final marks = <String, TransactionTagRow>{};
   final transactions = <String, TransactionRow>{};
   final entries = <String, EntryRow>{};
   final allocations = <String, AllocationRow>{};
@@ -368,6 +409,19 @@ LedgerCopy _read(Map<String, Object?> json) {
       }
       allocations[allocation.id] = allocation;
     }
+    final worn = <String>{};
+    for (final item
+        in object['marks'] == null ? const [] : _list(object, 'marks')) {
+      final mark = _mark(_object(item), row.id);
+      if (!tags.containsKey(mark.tagId)) {
+        _damaged('Transaction ${row.id} wears no метка ${mark.tagId}');
+      }
+      if (!worn.add(mark.tagId)) {
+        _damaged('Transaction ${row.id} wears ${mark.tagId} twice');
+      }
+      if (marks.containsKey(mark.id)) _damaged('Mark ${mark.id} twice');
+      marks[mark.id] = mark;
+    }
   }
   final schedules = <String, ScheduleRow>{};
   for (final item
@@ -388,8 +442,49 @@ LedgerCopy _read(Map<String, Object?> json) {
     entryRows: [...entries.values],
     allocationRows: [...allocations.values],
     scheduleRows: [...schedules.values],
+    tagRows: [...tags.values],
+    transactionTagRows: [...marks.values],
   );
 }
+
+TagRow _tag(Map<String, Object?> json) {
+  final id = _id(json);
+  final firstDay = _field<String?>(json, 'firstDay');
+  final lastDay = _field<String?>(json, 'lastDay');
+  if ((firstDay == null) != (lastDay == null)) {
+    _damaged('Метка $id has one end of its days');
+  }
+  if (firstDay != null && lastDay != null) {
+    _obeying(
+      'Метка $id has no days $firstDay..$lastDay',
+      () => TagDays(CivilDate.parse(firstDay), CivilDate.parse(lastDay)),
+    );
+  }
+  final name = _string(json, 'name');
+  if (name.trim().isEmpty) _damaged('Метка $id has no name');
+  final marksDays = _field<bool>(json, 'marksDays');
+  if (marksDays && firstDay == null) _damaged('Метка $id marks no days');
+  return TagRow(
+    id: id,
+    createdAt: _moment(json, 'createdAt'),
+    updatedAt: _moment(json, 'updatedAt'),
+    name: name,
+    firstDay: firstDay,
+    lastDay: lastDay,
+    marksDays: marksDays,
+    archived: _field<bool>(json, 'archived'),
+  );
+}
+
+TransactionTagRow _mark(Map<String, Object?> json, String transactionId) =>
+    TransactionTagRow(
+      id: _id(json),
+      createdAt: _moment(json, 'createdAt'),
+      updatedAt: _moment(json, 'updatedAt'),
+      transactionId: transactionId,
+      tagId: _string(json, 'tagId'),
+      mark: _name(json, 'mark', TagMark.values),
+    );
 
 AccountRow _account(Map<String, Object?> json) {
   final id = _id(json);

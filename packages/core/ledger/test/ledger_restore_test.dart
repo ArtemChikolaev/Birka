@@ -296,6 +296,8 @@ void main() {
         entryRows: copy.entryRows,
         allocationRows: copy.allocationRows,
         scheduleRows: copy.scheduleRows,
+        tagRows: copy.tagRows,
+        transactionTagRows: copy.transactionTagRows,
       );
 
       await expectLater(restored.restore(broken), throwsA(anything));

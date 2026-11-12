@@ -244,6 +244,42 @@ class Schedules extends Table with SyncedRow {
   TextColumn get madeFrom => text().nullable()();
 }
 
+/// A метка that operations wear besides their category: a project, an event
+/// or a trip with its days (ADR 0027).
+@DataClassName('TagRow')
+class Tags extends Table with SyncedRow {
+  /// What the person calls it.
+  TextColumn get name => text()();
+
+  /// The first day of a trip as `YYYY-MM-DD`, or `null` for a метка without
+  /// days.
+  TextColumn get firstDay => text().nullable()();
+
+  /// The last day of a trip as `YYYY-MM-DD`, that day included.
+  TextColumn get lastDay => text().nullable()();
+
+  /// Whether the expenses of its days get it by themselves.
+  BoolColumn get marksDays => boolean().withDefault(const Constant(false))();
+
+  /// Whether the lists leave it out.
+  BoolColumn get archived => boolean().withDefault(const Constant(false))();
+}
+
+/// A метка on a transaction, and how it came there (ADR 0027).
+@DataClassName('TransactionTagRow')
+@TableIndex(name: 'transaction_tags_transaction', columns: {#transactionId})
+@TableIndex(name: 'transaction_tags_tag', columns: {#tagId})
+class TransactionTags extends Table with SyncedRow {
+  /// The transaction that wears it.
+  TextColumn get transactionId => text().references(Transactions, #id)();
+
+  /// The метка.
+  TextColumn get tagId => text().references(Tags, #id)();
+
+  /// One of the names of `TagMark` in the ledger.
+  TextColumn get mark => text()();
+}
+
 /// What one unit of a currency cost in rubles on a day (ADR 0012). Any device
 /// can fetch these again, so sync does not carry them.
 @DataClassName('ExchangeRateRow')
