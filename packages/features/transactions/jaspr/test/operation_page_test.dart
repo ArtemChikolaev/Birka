@@ -26,6 +26,7 @@ void main() {
     ComponentTester tester, {
     String id = 'coffee',
     bool closes = false,
+    Component? schedule,
   }) async {
     tester.pumpComponent(
       BlocProvider(
@@ -35,6 +36,7 @@ void main() {
           editHref: 'edit',
           repeatHref: 'repeat',
           closes: closes,
+          schedule: schedule,
         ),
       ),
     );
@@ -85,6 +87,20 @@ void main() {
     expect(find.text('Карта'), findsOneComponent);
     expect(find.text('Кафе'), findsOneComponent);
     expect(find.text('31 октября'), findsOneComponent);
+  });
+
+  testComponents('puts the row of the payments under the facts', (
+    tester,
+  ) async {
+    await pump(tester, schedule: const Component.text('Payments'));
+
+    final texts = [
+      for (final element in find.byType(Text).evaluate())
+        (element.component as Text).text,
+    ];
+    final row = texts.indexOf('Payments');
+    expect(row, greaterThan(texts.indexOf('31 октября')));
+    expect(row, lessThan(texts.indexOf('Повторить')));
   });
 
   testComponents('beside a list it closes with a cross', (tester) async {

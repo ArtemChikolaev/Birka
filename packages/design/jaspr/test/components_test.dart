@@ -1646,6 +1646,25 @@ void main() {
     expect(icon.glyph, BirkaGlyph.close);
   });
 
+  testComponents('GlassListRow that leads on ends with a chevron', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      const GlassListRow(title: 'Help', href: 'help/', chevron: true),
+    );
+
+    expect(withClasses('glass-row__chevron'), findsOneComponent);
+    final icon =
+        find.byType(BirkaIcon).evaluate().single.component as BirkaIcon;
+    expect(icon.glyph, BirkaGlyph.chevron);
+  });
+
+  testComponents('GlassListRow has no chevron unless asked', (tester) async {
+    tester.pumpComponent(const GlassListRow(title: 'Help', href: 'help/'));
+
+    expect(withClasses('glass-row__chevron'), findsNothing);
+  });
+
   testComponents('GlassListRow that cannot be taken back is red', (
     tester,
   ) async {

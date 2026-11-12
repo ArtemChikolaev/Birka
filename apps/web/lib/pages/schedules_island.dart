@@ -1,3 +1,4 @@
+import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:design_jaspr/design_jaspr.dart';
@@ -11,7 +12,9 @@ import 'package:schedules_jaspr/schedules_jaspr.dart';
 /// came every month, the next 30 days and every payment, and the form of a
 /// payment at `#new`, `#salary`, `#from-<operation>` and `#<payment>`. The
 /// card of the overview leads here, and the page has a way back of its own,
-/// so it stands without the tabs of the site.
+/// so it stands without the tabs of the site. A form that another page
+/// opened, such as the card of an operation, goes back to it, and that page
+/// says what the form did.
 @client
 class SchedulesIsland extends StatefulComponent {
   /// Creates the island.
@@ -89,11 +92,11 @@ class _SchedulesIslandState extends DataIslandState<SchedulesIsland> {
       child: ScheduleFormPage(
         onClose: () {
           _said = null;
-          closeForm();
+          closeView();
         },
         onDone: (said) {
           _said = said;
-          closeForm();
+          if (closeView() && said != null) sayOnNextPage(said);
         },
       ),
     );
