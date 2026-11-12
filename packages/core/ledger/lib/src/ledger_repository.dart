@@ -1799,6 +1799,7 @@ final class LedgerRepository {
       return;
     }
     final worn = await _tagRowsOf(id);
+    final frozen = await _archivedOf(worn.keys);
     final trips = {for (final tag in await _markingTrips()) tag.id: tag};
     bool marks(Tag? tag) =>
         tag != null &&
@@ -1807,9 +1808,12 @@ final class LedgerRepository {
           source: draft.source,
           day: draft.occurredOn,
         );
-    // What the days put on and no longer cover goes.
+    // What the days put on and no longer cover goes, unless its trip is
+    // archived.
     for (final row in worn.values) {
-      if (row.mark == TagMark.days.name && !marks(trips[row.tagId])) {
+      if (row.mark == TagMark.days.name &&
+          !frozen.contains(row.tagId) &&
+          !marks(trips[row.tagId])) {
         await _buryTagRow(row.id, at);
       }
     }
@@ -1824,6 +1828,8 @@ final class LedgerRepository {
   /// Makes transaction [id] wear exactly [picked]: a picked trip whose days
   /// cover it counts as put on by them, another picked метка as put on by
   /// hand, and a trip whose days cover it but that is not picked stays off.
+  /// What it wears of an archived метка stays as it is, since the pickers do
+  /// not show one.
   Future<void> _pickTags(
     String id, {
     required TransactionKind kind,
@@ -1833,8 +1839,10 @@ final class LedgerRepository {
     required DateTime at,
   }) async {
     final worn = await _tagRowsOf(id);
+    final frozen = await _archivedOf(worn.keys);
     final wanted = <String, TagMark>{};
     for (final tagId in picked) {
+      if (frozen.contains(tagId)) continue;
       final tag = await this.tag(tagId);
       if (tag == null) throw LedgerException('No метка $tagId');
       wanted[tagId] = tag.marks(kind: kind, source: source, day: day)
@@ -1864,14 +1872,18 @@ final class LedgerRepository {
       }
     }
     for (final row in worn.values) {
-      if (!wanted.containsKey(row.tagId)) await _buryTagRow(row.id, at);
+      if (!wanted.containsKey(row.tagId) && !frozen.contains(row.tagId)) {
+        await _buryTagRow(row.id, at);
+      }
     }
   }
 
   /// Puts [tag] onto the expenses of its days that do not wear it yet, and
   /// takes it off those that its days put it on and no longer cover. Returns
-  /// how many it was put on.
+  /// how many it was put on. An archived метка stays on what it wears and
+  /// marks nothing more.
   Future<int> _markDays(Tag tag, DateTime at) async {
+    if (tag.archived) return 0;
     final rows =
         await (_db.select(_db.transactionTags)..where(
               (row) => row.tagId.equals(tag.id) & row.deletedAt.isNull(),
@@ -1880,7 +1892,7 @@ final class LedgerRepository {
     final worn = {for (final row in rows) row.transactionId: row};
     final covered = <String>{};
     final days = tag.days;
-    if (tag.marksDays && !tag.archived && days != null) {
+    if (tag.marksDays && days != null) {
       final expenses =
           await (_db.select(_db.transactions)..where(
                 (row) =>
@@ -1922,6 +1934,17 @@ final class LedgerRepository {
             ))
             .get();
     return rows.map(_tagOf).toList();
+  }
+
+  /// Which of метки [ids] are archived: what a transaction wears of them
+  /// stays as it is.
+  Future<Set<String>> _archivedOf(Iterable<String> ids) async {
+    final list = ids.toList();
+    if (list.isEmpty) return const {};
+    final rows = await (_db.select(
+      _db.tags,
+    )..where((row) => row.id.isIn(list) & row.archived)).get();
+    return {for (final row in rows) row.id};
   }
 
   /// The links of transaction [id] to its метки, by the id of the метка.
