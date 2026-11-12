@@ -294,6 +294,12 @@ forecastNote: Usual spending is the average of 3 months on these accounts, witho
 forecastLineRunsOut: As usual, the money runs out on $date
 forecastLinePayday: As usual, it lasts until payday
 forecastLineMonth: As usual, it lasts until the month ends
+forecastAdvanceLastsText: "You usually spend ≈ $usual a day, and until the advance the plan allows $perDay. After the advance on $date it lasts: by $end ≈ $amount is left."
+forecastAdvanceAgainText: "You usually spend ≈ $usual a day, and until the advance the plan allows $perDay. With the advance on $date the money runs out again on $again: by $end ≈ $amount is missing."
+forecastAdvanceShortText: "You usually spend ≈ $usual a day, and until the advance the plan allows $perDay. The advance on $date does not cover these days: by $end ≈ $amount is missing."
+forecastNoneAdvance: Until the advance on $date, the payments and the money set aside take more than the accounts hold.
+forecastPlanAdvance: "plan: $amount a day until the advance"
+forecastAdvance: $date · advance
 subtitleNext: Next on $date · $count
 subtitleToday(n):
   one: Today, $date · $n waits for you

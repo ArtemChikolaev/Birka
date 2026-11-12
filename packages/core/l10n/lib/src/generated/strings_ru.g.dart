@@ -2585,6 +2585,42 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   @override
   String get forecastLineMonth => 'Как обычно — хватит до конца месяца';
   @override
+  String forecastAdvanceLastsText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object end,
+    required Object amount,
+  }) =>
+      'Обычно вы тратите ≈ ${usual} в день, а до аванса можно ${perDay}. После аванса ${date} хватит: к ${end} останется ≈ ${amount}.';
+  @override
+  String forecastAdvanceAgainText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object again,
+    required Object end,
+    required Object amount,
+  }) =>
+      'Обычно вы тратите ≈ ${usual} в день, а до аванса можно ${perDay}. С авансом ${date} деньги кончатся снова ${again}, к ${end} не хватит ≈ ${amount}.';
+  @override
+  String forecastAdvanceShortText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object end,
+    required Object amount,
+  }) =>
+      'Обычно вы тратите ≈ ${usual} в день, а до аванса можно ${perDay}. Аванса ${date} не хватит на эти дни: к ${end} не хватит ≈ ${amount}.';
+  @override
+  String forecastNoneAdvance({required Object date}) =>
+      'До аванса ${date} платежи и отложенное больше, чем на счетах.';
+  @override
+  String forecastPlanAdvance({required Object amount}) =>
+      'по плану: ${amount} в день до аванса';
+  @override
+  String forecastAdvance({required Object date}) => '${date} · аванс';
+  @override
   String subtitleNext({required Object date, required Object count}) =>
       'Ближайший ${date} · ${count}';
   @override
@@ -4896,6 +4932,42 @@ extension on TranslationsRu {
           'schedules.forecastLinePayday' => 'Как обычно — хватит до зарплаты',
           'schedules.forecastLineMonth' =>
             'Как обычно — хватит до конца месяца',
+          'schedules.forecastAdvanceLastsText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object end,
+              required Object amount,
+            }) =>
+                'Обычно вы тратите ≈ ${usual} в день, а до аванса можно ${perDay}. После аванса ${date} хватит: к ${end} останется ≈ ${amount}.',
+          'schedules.forecastAdvanceAgainText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object again,
+              required Object end,
+              required Object amount,
+            }) =>
+                'Обычно вы тратите ≈ ${usual} в день, а до аванса можно ${perDay}. С авансом ${date} деньги кончатся снова ${again}, к ${end} не хватит ≈ ${amount}.',
+          'schedules.forecastAdvanceShortText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object end,
+              required Object amount,
+            }) =>
+                'Обычно вы тратите ≈ ${usual} в день, а до аванса можно ${perDay}. Аванса ${date} не хватит на эти дни: к ${end} не хватит ≈ ${amount}.',
+          'schedules.forecastNoneAdvance' =>
+            ({required Object date}) =>
+                'До аванса ${date} платежи и отложенное больше, чем на счетах.',
+          'schedules.forecastPlanAdvance' =>
+            ({required Object amount}) =>
+                'по плану: ${amount} в день до аванса',
+          'schedules.forecastAdvance' =>
+            ({required Object date}) => '${date} · аванс',
           'schedules.subtitleNext' =>
             ({required Object date, required Object count}) =>
                 'Ближайший ${date} · ${count}',
@@ -4933,6 +5005,9 @@ extension on TranslationsRu {
           'schedules.how.1' =>
             'В день платежа он ждёт вашего «Провести» или проводится сам — как выбрано в платеже.',
           'schedules.how.2' => 'Придёт в выписке банка — Birka не задвоит его.',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.how.3' =>
             'Повторы в операциях Birka находит сама и предлагает добавить.',
           'schedules.failed' => 'Не удалось прочитать платежи.',
@@ -4940,9 +5015,6 @@ extension on TranslationsRu {
           'schedules.previewNext' => 'Следующие разы',
           'schedules.cancel' => 'Отмена',
           'settings.general' => 'Основное',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
           'settings.english' => 'English',

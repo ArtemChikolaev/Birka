@@ -231,4 +231,146 @@ void main() {
       expect(forecastPlan(it.plan), 'по плану');
     });
   });
+
+  group('the forecast with an advance', () {
+    // Friday, 13 November: the salary comes as the advance of 60 000 ₽ on
+    // the 20th and the rest on 5 December, and the rent went on the 10th.
+    // Until the 5th: the internet on the 28th, Netflix on the 1st and the
+    // gym on the 3rd.
+    final on = CivilDate(2026, 11, 13);
+    final salary = Schedule(
+      id: 'salary',
+      kind: TransactionKind.income,
+      name: 'Зарплата',
+      accountId: 'card',
+      amount: rub(60000),
+      every: ScheduleEvery.month,
+      day: 5,
+      advanceDay: 20,
+      next: CivilDate(2026, 11, 20),
+      onDay: ScheduleOnDay.ask,
+      reminder: ScheduleReminder.onDay,
+    );
+    final payments = [
+      schedule('Интернет', 650, CivilDate(2026, 11, 28)),
+      schedule('Netflix', 799, CivilDate(2026, 12, 1)),
+      schedule('Спортзал', 3500, CivilDate(2026, 12, 3)),
+      salary,
+    ];
+
+    SpendingPlan plan({int card = 18400}) => SpendingPlan.of(
+      today: on,
+      until: SpendUntil.payday,
+      currency: Currency.rub,
+      schedules: payments,
+      counted: [account('card', card), account('cash', 3200)],
+      todays: const [],
+      aside: rub(10000),
+    )!;
+
+    test('lasts when the usual pace fits the days before the advance', () {
+      final it = SpendingForecast(plan(), rub(1500));
+
+      expect(it.plan.days, 22);
+      expect(it.plan.perDay, rub(1657));
+      expect(it.advanceDay, 7);
+      expect(it.before, rub(11600));
+      expect(it.lift, rub(55051));
+      expect(it.shortBeforeAdvance, isFalse);
+      expect(it.runsDry, isFalse);
+      expect(it.runsOut, isNull);
+      expect(forecastTitle(it), 'Хватит до зарплаты');
+      expect(
+        forecastText(it),
+        'Обычно вы тратите ≈ ${nb('1 500 ₽')} в день: к 5 декабря '
+        'останется ≈ ${nb('33 700 ₽')}.',
+      );
+      expect(
+        forecastPlan(it.plan),
+        'по плану: ${nb('1 657 ₽')} в день до аванса',
+      );
+      expect(forecastAdvance(it.plan), '20 ноя · аванс');
+    });
+
+    test('runs out before the advance, which brings the money back', () {
+      final it = SpendingForecast(plan(), rub(2100));
+
+      expect(it.shortBeforeAdvance, isTrue);
+      expect(it.short, isFalse);
+      expect(it.runsDry, isTrue);
+      expect(it.runsOut, CivilDate(2026, 11, 18));
+      expect(it.runsOutAgain, isNull);
+      expect(forecastTitle(it), 'Деньги кончатся 18 ноября');
+      expect(
+        forecastText(it),
+        'Обычно вы тратите ≈ ${nb('2 100 ₽')} в день, а до аванса можно '
+        '${nb('1 657 ₽')}. После аванса 20 ноября хватит: к 5 декабря '
+        'останется ≈ ${nb('20 500 ₽')}.',
+      );
+      expect(forecastLine(it), 'Как обычно — деньги кончатся 18 ноября');
+    });
+
+    test('runs out before the advance and again after it', () {
+      final it = SpendingForecast(plan(), rub(3200));
+
+      expect(it.runsOut, CivilDate(2026, 11, 16));
+      expect(it.runsOutAgain, CivilDate(2026, 12, 3));
+      expect(forecastTitle(it), 'Деньги кончатся 16 ноября');
+      expect(
+        forecastText(it),
+        'Обычно вы тратите ≈ ${nb('3 200 ₽')} в день, а до аванса можно '
+        '${nb('1 657 ₽')}. С авансом 20 ноября деньги кончатся снова '
+        '3 декабря, к 5 декабря не хватит ≈ ${nb('3 700 ₽')}.',
+      );
+    });
+
+    test('says so when the days before the advance have nothing', () {
+      final it = SpendingForecast(plan(card: 6800), rub(1500));
+
+      expect(it.none, isTrue);
+      expect(it.runsOut, on);
+      expect(forecastTitle(it), 'Денег не хватает уже сейчас');
+      expect(
+        forecastText(it),
+        'До аванса 20 ноября платежи и отложенное больше, чем на счетах.',
+      );
+    });
+
+    test('names no advance without one ahead', () {
+      final it = SpendingForecast(
+        SpendingPlan.of(
+          today: CivilDate(2026, 11, 21),
+          until: SpendUntil.payday,
+          currency: Currency.rub,
+          schedules: [
+            for (final it in payments)
+              if (it.id != 'salary') it,
+            Schedule(
+              id: 'salary',
+              kind: TransactionKind.income,
+              name: 'Зарплата',
+              accountId: 'card',
+              amount: rub(60000),
+              every: ScheduleEvery.month,
+              day: 5,
+              advanceDay: 20,
+              next: CivilDate(2026, 12, 5),
+              onDay: ScheduleOnDay.ask,
+              reminder: ScheduleReminder.onDay,
+            ),
+          ],
+          counted: [account('card', 78400), account('cash', 3200)],
+          todays: const [],
+          aside: rub(10000),
+        )!,
+        rub(2100),
+      );
+
+      expect(it.advanceDay, isNull);
+      expect(it.lift, rub(0));
+      expect(forecastAdvance(it.plan), isNull);
+      expect(forecastPlan(it.plan), startsWith('по плану: '));
+      expect(forecastPlan(it.plan), isNot(contains('до аванса')));
+    });
+  });
 }

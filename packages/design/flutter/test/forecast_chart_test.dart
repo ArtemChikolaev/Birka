@@ -10,20 +10,32 @@ void main() {
     double start = 29651,
     double pace = 2100,
     bool reduced = false,
+    int days = 17,
+    int? stepDay,
+    double width = 318,
   }) => MaterialApp(
     theme: theme,
     home: MediaQuery(
       data: MediaQueryData(disableAnimations: reduced),
       child: Scaffold(
-        body: ForecastChart(
-          start: start,
-          pace: pace,
-          days: 17,
-          label: 'Деньги кончатся 2 декабря',
-          from: 'сегодня',
-          to: '5 дек · зарплата',
-          usual: 'как обычно',
-          planned: 'по плану: 1 744 ₽ в день',
+        body: Center(
+          child: SizedBox(
+            width: width,
+            child: ForecastChart(
+              start: start,
+              pace: pace,
+              days: days,
+              stepDay: stepDay,
+              stepAmount: 55051,
+              planPace: 1657,
+              stepLabel: stepDay == null ? null : '20 ноя · аванс',
+              label: 'Деньги кончатся 2 декабря',
+              from: 'сегодня',
+              to: '5 дек · зарплата',
+              usual: 'как обычно',
+              planned: 'по плану: 1 744 ₽ в день',
+            ),
+          ),
         ),
       ),
     ),
@@ -65,5 +77,40 @@ void main() {
     await tester.pump();
 
     expect(tester.hasRunningAnimations, isFalse);
+  });
+
+  testWidgets('names the day of an advance under it, between the ends', (
+    tester,
+  ) async {
+    // The test font draws every letter as wide as it is tall.
+    await tester.pumpWidget(
+      chart(start: 11600, days: 22, stepDay: 7, width: 800),
+    );
+
+    final label = tester.getRect(find.text('20 ноя · аванс'));
+    final from = tester.getRect(find.text('сегодня'));
+    final to = tester.getRect(find.text('5 дек · зарплата'));
+    expect(label.left, greaterThan(from.right));
+    expect(label.right, lessThan(to.left));
+    final chartLeft = tester.getTopLeft(find.byType(ForecastChart)).dx;
+    // The step stands on day 7 of 22: 8 + 784 × 7 / 22 from the left.
+    expect(label.center.dx - chartLeft, closeTo(8 + 784 * 7 / 22, 1));
+  });
+
+  testWidgets('leaves the name of the advance out when it has no room', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      chart(start: 11600, days: 22, stepDay: 1, width: 320),
+    );
+
+    expect(find.text('20 ноя · аванс'), findsNothing);
+    expect(find.text('сегодня'), findsOneWidget);
+  });
+
+  testWidgets('has no name of a step without one', (tester) async {
+    await tester.pumpWidget(chart());
+
+    expect(find.text('20 ноя · аванс'), findsNothing);
   });
 }

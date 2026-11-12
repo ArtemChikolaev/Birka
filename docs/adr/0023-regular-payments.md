@@ -215,8 +215,17 @@
     payments take all of it, it is short already. The chart shows the
     usual pace against the plan, which spends the money by the last day,
     and moves to new numbers over `duration.roll` as accounts or «Считать
-    до» change. The pace takes the money of the period as a whole, the
-    advance of a salary included.
+    до» change. Until an advance of the salary comes, the days live on what
+    the accounts hold before it, as the plan does: on its day the advance
+    brings what the payments after it leave, and both lines of the chart
+    rise there, on a day it names («20 ноя · аванс»). So the money can run
+    out before the advance and come back with it («Деньги кончатся 18
+    ноября», «После аванса 20 ноября хватит…»), or run out once more after
+    it («…деньги кончатся снова 3 декабря»): the forecast names the first
+    day, the line below zero turns red, and each crossing gets a dot. The
+    plan line says «в день до аванса» while the days before it hold the plan
+    back. The card of the overview and the title of the page warn whenever
+    the money runs out on some day (`SpendingForecast.runsDry`).
 25. The site has the list of payments, `schedules/` (`schedules_jaspr`), as
     its boards «Будущие деньги на сайте» draw it: what waits, what came
     every month, the next 30 days and every payment, as on the phone. On a

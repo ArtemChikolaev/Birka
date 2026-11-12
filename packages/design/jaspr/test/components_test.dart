@@ -2119,8 +2119,61 @@ void main() {
     testComponents('has no dot while the money lasts', (tester) async {
       tester.pumpComponent(chart(pace: 1500));
 
-      expect(withClasses('forecast-chart__under'), findsNothing);
       expect(withClasses('forecast-chart__dot'), findsNothing);
+      expect(withClasses('forecast-chart__step'), findsNothing);
+      expect(withClasses('forecast-chart__step-label'), findsNothing);
+    });
+
+    testComponents('draws the loss below zero apart from the line above', (
+      tester,
+    ) async {
+      tester.pumpComponent(chart(pace: 2100));
+
+      expect(
+        attributesOf(withClasses('forecast-chart__usual'))['clip-path'],
+        'url(#forecast-chart-above)',
+      );
+      expect(
+        attributesOf(withClasses('forecast-chart__under'))['clip-path'],
+        'url(#forecast-chart-below)',
+      );
+    });
+
+    group('with an advance', () {
+      ForecastChart advance({required double pace}) => ForecastChart(
+        start: 11600,
+        pace: pace,
+        days: 22,
+        stepDay: 7,
+        stepAmount: 55051,
+        planPace: 1657,
+        stepLabel: '20 Nov · advance',
+        label: 'Money runs out on 18 November.',
+        from: 'today',
+        to: '5 Dec · payday',
+        usual: 'as usual',
+        planned: 'plan until the advance',
+      );
+
+      testComponents('marks its day and names it', (tester) async {
+        tester.pumpComponent(advance(pace: 1500));
+
+        expect(withClasses('forecast-chart__step'), findsOneComponent);
+        expect(find.text('20 Nov · advance'), findsOneComponent);
+        expect(withClasses('forecast-chart__dot'), findsNothing);
+      });
+
+      testComponents('marks the money running out before it', (tester) async {
+        tester.pumpComponent(advance(pace: 2100));
+
+        expect(withClasses('forecast-chart__dot'), findsOneComponent);
+      });
+
+      testComponents('marks it running out before and after', (tester) async {
+        tester.pumpComponent(advance(pace: 3200));
+
+        expect(withClasses('forecast-chart__dot'), findsNComponents(2));
+      });
     });
   });
 

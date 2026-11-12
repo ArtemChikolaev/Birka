@@ -15,6 +15,13 @@ import 'package:flutter/widgets.dart';
 /// dotted line. Under the chart [from] and [to] name its first and last days,
 /// and a legend names its two lines, [usual] and [planned].
 ///
+/// On [stepDay], such as the day of an advance of the salary, both lines
+/// rise by [stepAmount], a faint line marks the day, and [stepLabel] names it
+/// under the chart, clear of the first and the last day. Until then the plan
+/// spends [planPace] a day, and after it what is left by the last day. The
+/// usual line can then cross zero twice, before the step and after it, with
+/// a dot at each crossing.
+///
 /// When the numbers change, such as when an account counts no more, the
 /// lines move to their new places over `duration.roll`, and the words
 /// cross-fade; when the system asks for less motion, the lines move at once.
@@ -30,6 +37,10 @@ class ForecastChart extends StatefulWidget {
     required this.to,
     required this.usual,
     required this.planned,
+    this.stepDay,
+    this.stepAmount = 0,
+    this.planPace,
+    this.stepLabel,
     super.key,
   });
 
@@ -57,12 +68,33 @@ class ForecastChart extends StatefulWidget {
   /// What the line of the plan stands for.
   final String planned;
 
+  /// The day, counted from the first, on which both lines rise.
+  final int? stepDay;
+
+  /// What the lines rise by on [stepDay].
+  final double stepAmount;
+
+  /// What the plan spends a day until [stepDay].
+  final double? planPace;
+
+  /// The name of [stepDay] under the chart, such as «20 ноя · аванс».
+  final String? stepLabel;
+
   @override
   State<ForecastChart> createState() => _ForecastChartState();
 }
 
-/// The numbers that the lines are drawn from.
-typedef _Shape = ({double start, double pace, double days});
+/// The numbers that the lines are drawn from: without a step, it stands on
+/// day 0 and lifts nothing, so that a change moves the lines rather than
+/// redraws them.
+typedef _Shape = ({
+  double start,
+  double pace,
+  double days,
+  double step,
+  double lift,
+  double spend,
+});
 
 class _ForecastChartState extends State<ForecastChart>
     with SingleTickerProviderStateMixin {
@@ -81,6 +113,9 @@ class _ForecastChartState extends State<ForecastChart>
     start: chart.start,
     pace: chart.pace,
     days: chart.days.toDouble(),
+    step: math.min(chart.stepDay ?? 0, math.max(chart.days, 1)).toDouble(),
+    lift: chart.stepDay == null ? 0 : chart.stepAmount,
+    spend: chart.stepDay == null ? 0 : chart.planPace ?? 0,
   );
 
   _Shape get _now {
@@ -90,6 +125,9 @@ class _ForecastChartState extends State<ForecastChart>
       start: lerp(_from.start, _to.start),
       pace: lerp(_from.pace, _to.pace),
       days: lerp(_from.days, _to.days),
+      step: lerp(_from.step, _to.step),
+      lift: lerp(_from.lift, _to.lift),
+      spend: lerp(_from.spend, _to.spend),
     );
   }
 
@@ -134,6 +172,7 @@ class _ForecastChartState extends State<ForecastChart>
                 size: Size.infinite,
                 painter: _ForecastPainter(
                   _now,
+                  marked: widget.stepDay != null,
                   line: colors.text,
                   loss: colors.negative,
                   plan: colors.accent,
@@ -145,11 +184,24 @@ class _ForecastChartState extends State<ForecastChart>
         ),
         const SizedBox(height: BirkaTokens.spaceXxs),
         ExcludeSemantics(
-          child: Row(
-            children: [
-              Expanded(child: FadingText(widget.from, style: small)),
-              FadingText(widget.to, style: small),
-            ],
+          child: LayoutBuilder(
+            builder: (context, box) => Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: FadingText(widget.from, style: small)),
+                    FadingText(widget.to, style: small),
+                  ],
+                ),
+                if (widget.stepLabel case final label?)
+                  AnimatedBuilder(
+                    animation: _move,
+                    builder: (context, _) =>
+                        _stepLabel(context, label, box.maxWidth),
+                  ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: BirkaTokens.spaceXs),
@@ -170,6 +222,46 @@ class _ForecastChartState extends State<ForecastChart>
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Where the name of the step stands under the chart: under the step, but
+/// clear of the first and the last day, or nowhere when there is no room
+/// between them.
+extension on _ForecastChartState {
+  Widget _stepLabel(BuildContext context, String label, double width) {
+    final colors = BirkaColors.of(context);
+    final small = BirkaTextStyles.of(
+      context,
+    ).caption.copyWith(color: colors.textSubtle);
+    final muted = small.copyWith(color: colors.textMuted);
+    final scaler = MediaQuery.textScalerOf(context);
+    double widthOf(String text, TextStyle style) {
+      final painter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        textDirection: TextDirection.ltr,
+        textScaler: scaler,
+      )..layout();
+      final width = painter.width;
+      painter.dispose();
+      return width;
+    }
+
+    final shape = _now;
+    final half = widthOf(label, muted) / 2;
+    const gap = BirkaTokens.spaceXs;
+    final lowest = widthOf(widget.from, small) + gap + half;
+    final highest = width - widthOf(widget.to, small) - gap - half;
+    if (lowest > highest) return const SizedBox.shrink();
+    final days = math.max(shape.days, 1);
+    final x =
+        _ForecastPainter.side +
+        (width - 2 * _ForecastPainter.side) * shape.step / days;
+    return Positioned(
+      left: x.clamp(lowest, highest) - half,
+      top: 0,
+      child: Text(label, style: muted),
     );
   }
 }
@@ -248,6 +340,7 @@ class _SamplePainter extends CustomPainter {
 class _ForecastPainter extends CustomPainter {
   _ForecastPainter(
     this.shape, {
+    required this.marked,
     required this.line,
     required this.loss,
     required this.plan,
@@ -255,13 +348,17 @@ class _ForecastPainter extends CustomPainter {
   });
 
   final _Shape shape;
+
+  /// Whether the day of the step is marked with a faint line.
+  final bool marked;
   final Color line;
   final Color loss;
   final Color plan;
   final Color ground;
 
   /// How far the lines keep from the sides, the top and the bottom.
-  static const double _side = 8;
+  static const double side = 8;
+  static const double _side = side;
   static const double _top = 10;
   static const double _bottom = 16;
 
@@ -270,47 +367,83 @@ class _ForecastPainter extends CustomPainter {
     final days = math.max(shape.days, 1);
     final start = shape.start;
     final pace = shape.pace;
-    final end = start - pace * days;
-    final top = math.max(start, 0);
-    final low = math.min(0, end);
+    final step = shape.step;
+    final lift = shape.lift;
+    final dip = start - pace * step;
+    final back = dip + lift;
+    final end = back - pace * (days - step);
+    final first = math.max(start, 0).toDouble();
+    final planDip = first - shape.spend * step;
+    final planEnd = start > 0 ? 0.0 : start + lift;
+    final top = [start, back, planDip + lift, 0.0].reduce(math.max);
+    final low = [0.0, dip, end].reduce(math.min);
     final span = math.max(top - low, 1);
     double x(num day) => _side + (size.width - 2 * _side) * day / days;
     double y(num value) =>
         _top + (size.height - _top - _bottom) * (top - value) / span;
-    Offset at(num day) => Offset(x(day), y(start - pace * day));
+    final zero = y(0);
 
-    // Where the usual pace crosses zero, if it does.
-    final short = end < 0;
-    final cross = start <= 0 ? 0 : (short ? start / pace : days);
-
+    if (marked) {
+      _dash(
+        canvas,
+        Offset(x(step), 2),
+        Offset(x(step), size.height - 2),
+        _stroke(line.withValues(alpha: 0.16), 1),
+        dash: 2,
+        gap: 4,
+      );
+    }
     _dash(
       canvas,
-      Offset(_side, y(0)),
-      Offset(size.width - _side, y(0)),
+      Offset(_side, zero),
+      Offset(size.width - _side, zero),
       _stroke(line.withValues(alpha: 0.22), 1),
       dash: 2,
       gap: 4,
     );
-    _dash(
-      canvas,
-      Offset(x(0), y(top)),
-      Offset(x(days), y(start > 0 ? 0 : start)),
-      _stroke(plan.withValues(alpha: 0.7), 2),
-      dash: 5,
-      gap: 6,
-    );
-    canvas.drawLine(at(0), at(cross), _stroke(line, 2.5));
-    if (short) {
+    final plan = [
+      Offset(x(0), y(first)),
+      Offset(x(step), y(planDip)),
+      Offset(x(step), y(planDip + lift)),
+      Offset(x(days), y(planEnd)),
+    ];
+    final dashes = _stroke(this.plan.withValues(alpha: 0.7), 2);
+    for (var i = 1; i < plan.length; i++) {
+      _dash(canvas, plan[i - 1], plan[i], dashes, dash: 5, gap: 6);
+    }
+
+    // The usual pace: one line, in the color of the text above zero and in
+    // the color of a loss below it.
+    final usual = Path()
+      ..moveTo(x(0), y(start))
+      ..lineTo(x(step), y(dip))
+      ..lineTo(x(step), y(back))
+      ..lineTo(x(days), y(end));
+    final strokes = _stroke(line, 2.5)..strokeJoin = StrokeJoin.round;
+    canvas
+      ..save()
+      ..clipRect(Rect.fromLTRB(-20, -20, size.width + 20, zero))
+      ..drawPath(usual, strokes)
+      ..restore()
+      ..save()
+      ..clipRect(Rect.fromLTRB(-20, zero, size.width + 20, size.height + 20))
+      ..drawPath(usual, strokes..color = loss)
+      ..restore();
+    final crossings = [
+      if (start <= 0) 0.0 else if (dip < 0) start / pace,
+      if (back > 0 && end < 0) (start + lift) / pace,
+    ];
+    for (final day in crossings) {
       canvas
-        ..drawLine(at(cross), at(days), _stroke(loss, 2.5))
-        ..drawCircle(at(cross), 5, Paint()..color = ground)
-        ..drawCircle(at(cross), 5, _stroke(loss, 2.5));
+        ..drawCircle(Offset(x(day), zero), 5, Paint()..color = ground)
+        ..drawCircle(Offset(x(day), zero), 5, _stroke(loss, 2.5));
     }
   }
 
   @override
   bool shouldRepaint(_ForecastPainter old) =>
       old.shape != shape ||
+      old.marked != marked ||
       old.line != line ||
       old.loss != loss ||
       old.plan != plan ||

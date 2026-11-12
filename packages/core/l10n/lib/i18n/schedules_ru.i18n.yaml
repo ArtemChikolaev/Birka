@@ -318,6 +318,12 @@ forecastNote: Обычные траты — среднее за 3 месяца �
 forecastLineRunsOut: Как обычно — деньги кончатся $date
 forecastLinePayday: Как обычно — хватит до зарплаты
 forecastLineMonth: Как обычно — хватит до конца месяца
+forecastAdvanceLastsText: "Обычно вы тратите ≈ $usual в день, а до аванса можно $perDay. После аванса $date хватит: к $end останется ≈ $amount."
+forecastAdvanceAgainText: Обычно вы тратите ≈ $usual в день, а до аванса можно $perDay. С авансом $date деньги кончатся снова $again, к $end не хватит ≈ $amount.
+forecastAdvanceShortText: "Обычно вы тратите ≈ $usual в день, а до аванса можно $perDay. Аванса $date не хватит на эти дни: к $end не хватит ≈ $amount."
+forecastNoneAdvance: До аванса $date платежи и отложенное больше, чем на счетах.
+forecastPlanAdvance: "по плану: $amount в день до аванса"
+forecastAdvance: $date · аванс
 subtitleNext: Ближайший $date · $count
 subtitleToday(n):
   one: Сегодня $date · $n ждёт подтверждения

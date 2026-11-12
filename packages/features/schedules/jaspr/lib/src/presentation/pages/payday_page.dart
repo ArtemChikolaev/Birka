@@ -429,7 +429,7 @@ class _Forecast extends StatelessComponent {
     final plan = forecast.plan;
     final title = forecastTitle(forecast);
     final text = HiddenAmounts.mask(context, forecastText(forecast));
-    final bad = forecast.none || forecast.short;
+    final bad = forecast.runsDry;
     return GlassSurface(
       child: section(
         classes: 'payday__forecast',
@@ -444,9 +444,13 @@ class _Forecast extends StatelessComponent {
           ),
           p(classes: 'text-caption payday__words', [.text(text)]),
           ForecastChart(
-            start: plan.free.minorUnits.toDouble(),
+            start: forecast.before.minorUnits.toDouble(),
             pace: forecast.usual.minorUnits.toDouble(),
             days: plan.days,
+            stepDay: forecast.advanceDay,
+            stepAmount: forecast.lift.minorUnits.toDouble(),
+            planPace: plan.perDay.minorUnits.toDouble(),
+            stepLabel: forecastAdvance(plan),
             label: '$title. $text',
             from: t.schedules.forecastToday,
             to: forecastEnd(plan),
