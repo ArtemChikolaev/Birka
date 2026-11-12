@@ -127,7 +127,10 @@ enum BirkaGlyph {
   cloud,
 
   /// A mark of attention in a circle.
-  alert
+  alert,
+
+  /// A tag on a string, for a метка (ADR 0027).
+  tag
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

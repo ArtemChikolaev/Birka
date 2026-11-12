@@ -43,6 +43,9 @@ import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_common/settings_common.dart' show SettingsCubit;
 import 'package:settings_flutter/settings_flutter.dart'
     show showMonthStartSheet;
+import 'package:tags_common/tags_common.dart'
+    show TagFormCubit, TagReportCubit, TagsCubit;
+import 'package:tags_flutter/tags_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -128,6 +131,18 @@ abstract final class Paths {
 
   /// The money until the salary.
   static const payday = '/payday';
+
+  /// The метки and trips (ADR 0027).
+  static const tags = '/tags';
+
+  /// The form of a new метка.
+  static const newTag = '/tags/new';
+
+  /// The report of метка [id].
+  static String tag(String id) => '/tags/$id';
+
+  /// The form of метка [id].
+  static String editTag(String id) => '/tags/$id/edit';
 }
 
 /// Says that an account opens from its card, which grows into the page of the
@@ -414,6 +429,60 @@ GoRouter buildRouter(
         ],
       ),
       GoRoute(
+        path: Paths.tags,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<TagsCubit>(),
+          child: TagsPage(
+            onBack: () => context.pop(),
+            onAdd: () => context.push(Paths.newTag),
+            onOpen: (id) => context.push(Paths.tag(id)),
+          ),
+        ),
+        routes: [
+          GoRoute(
+            path: 'new',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) => _tagFormPage(getIt),
+          ),
+          GoRoute(
+            path: ':id',
+            parentNavigatorKey: rootKey,
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (_) => getIt<TagReportCubit>(param1: id),
+                  ),
+                  BlocProvider(
+                    create: (_) => getIt<TagOperationsCubit>(param1: id),
+                  ),
+                ],
+                child: TagReportPage(
+                  onBack: () => context.pop(),
+                  onEdit: () => context.push(Paths.editTag(id)),
+                  operations: TagOperations(
+                    onOpen: (operation) =>
+                        context.push(Paths.operation(operation)),
+                    onRepeat: (operation) =>
+                        context.push(Paths.repeatOperation(operation)),
+                  ),
+                ),
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'edit',
+                parentNavigatorKey: rootKey,
+                pageBuilder: (context, state) =>
+                    _tagFormPage(getIt, id: state.pathParameters['id']),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
         path: Paths.payday,
         parentNavigatorKey: rootKey,
         builder: (context, state) => BlocProvider(
@@ -546,6 +615,18 @@ Page<void> _scheduleFormPage(
     ),
   ),
 );
+
+/// The form of a метка, as a sheet (ADR 0027): метка [id], or a new one
+/// named [name].
+Page<void> _tagFormPage(GetIt getIt, {String? id, String? name}) =>
+    BirkaSheetPage(
+      child: BlocProvider(
+        create: (_) => getIt<TagFormCubit>(param1: id, param2: name),
+        child: Builder(
+          builder: (context) => TagFormPage(onClose: context.pop),
+        ),
+      ),
+    );
 
 /// Asks which day the months start on, from the page of the money until the
 /// salary, and keeps it as the settings do: it is one setting (ADR 0024).

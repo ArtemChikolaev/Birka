@@ -53,6 +53,8 @@ workspace:
   - packages/features/settings/common
   - packages/features/settings/flutter
   - packages/features/settings/jaspr
+  - packages/features/tags/common
+  - packages/features/tags/flutter
   - packages/features/transactions/common
   - packages/features/transactions/flutter
   - packages/features/transactions/jaspr

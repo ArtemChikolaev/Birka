@@ -80,6 +80,26 @@ class MorePage extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: BirkaTokens.spaceSm),
+          GlassListGroup(
+            children: [
+              GlassListRow(
+                leading: ExcludeSemantics(
+                  child: GlyphBadge(
+                    glyph: BirkaGlyph.tag,
+                    color: colors.accent,
+                  ),
+                ),
+                title: t.tags.title,
+                trailing: BirkaIcon(
+                  BirkaGlyph.chevron,
+                  size: 18,
+                  color: colors.textSubtle,
+                ),
+                onTap: () => context.push(Paths.tags),
+              ),
+            ],
+          ),
           const SizedBox(height: BirkaTokens.spaceLg),
           const SettingsSection(),
           const SizedBox(height: BirkaTokens.spaceLg),

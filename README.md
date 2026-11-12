@@ -78,7 +78,7 @@ packages/design/jaspr    styles, web fonts and glass components for Jaspr
 packages/design/brand    the app icon and the art of the first screen: SVG and PNG masters
 packages/features        one folder per feature: accounts, backup, categories, help, import,
                          inbox, notifications, onboarding, overview, reports, schedules,
-                         settings, transactions
+                         settings, tags, transactions
 tools                    repository tooling: package boundary checks, dev scripts
 third_party/drift        drift 2.31.0 with fixes of 2.34.2 and 2.35.1, until the Flutter upgrade
 docs/adr                 architecture decision records

@@ -78,6 +78,10 @@ import 'package:schedules_flutter/schedules_flutter.dart'
     show ScheduleFormPage, SchedulesPage;
 import 'package:settings_common/settings_common.dart'
     show BaseCurrency, MonthStart, Settings, SettingsCubit, SettingsStore;
+import 'package:tags_common/tags_common.dart'
+    show TagFormCubit, TagReportCubit, TagsCubit;
+import 'package:tags_common/testing.dart' show FakeTagsRepository;
+import 'package:tags_flutter/tags_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
 
@@ -357,6 +361,10 @@ final class _Transactions implements TransactionsRepository {
       Stream.value(operations);
 
   @override
+  Stream<List<Operation>> watchTagOperations(String id) =>
+      Stream.value(operations);
+
+  @override
   Future<List<CivilDate>> months() async => const [];
 
   @override
@@ -623,6 +631,16 @@ void main() {
       )
       ..registerFactoryParam<QuickAddCubit, QuickAddSource?, void>(
         (source, _) => QuickAddCubit(transactions, source: source),
+      )
+      ..registerFactory(() => TagsCubit(FakeTagsRepository()))
+      ..registerFactoryParam<TagReportCubit, String, void>(
+        (id, _) => TagReportCubit(FakeTagsRepository(), id),
+      )
+      ..registerFactoryParam<TagFormCubit, String?, String?>(
+        (id, name) => TagFormCubit(FakeTagsRepository(), id: id),
+      )
+      ..registerFactoryParam<TagOperationsCubit, String, void>(
+        (id, _) => TagOperationsCubit(transactions, id),
       );
   });
 
@@ -955,6 +973,9 @@ void main() {
 
     await tester.tap(find.text(t.app.more));
     await tester.pumpAndSettle();
+    // The row of the language comes up from under the tabs first.
+    await tester.ensureVisible(find.text(t.settings.language));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(t.settings.language));
     await tester.pumpAndSettle();
     await tester.tap(find.text(t.settings.russian));
@@ -1064,6 +1085,35 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.backup.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  testWidgets('the метки open from the more tab, over the bar', (
+    tester,
+  ) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text(t.tags.title));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.tags.title));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TagsPage), findsOneWidget);
+    expect(find.byType(GlassNavBar), findsNothing);
+
+    await tester.tap(find.text('Тбилиси'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TagReportPage), findsOneWidget);
+    // The operations of the метка stand at the end of the report.
+    await tester.drag(
+      find.byType(Scrollable).last,
+      const Offset(0, -2000),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(TagOperations), findsOneWidget);
   });
 
   testWidgets('help opens from the more tab, over the bar', (tester) async {

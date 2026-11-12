@@ -9,3 +9,4 @@ export 'src/presentation/pages/operation_page.dart';
 export 'src/presentation/pages/operations_page.dart';
 export 'src/presentation/pages/quick_add_page.dart';
 export 'src/presentation/widgets/operation_row.dart' show OperationRow;
+export 'src/presentation/widgets/tag_operations.dart';
