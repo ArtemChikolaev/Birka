@@ -188,4 +188,15 @@ void main() {
       'lunch': {'renovation'},
     });
   });
+
+  test('the card writes nothing for the метки it already wears', () async {
+    final repository = FakeTagsRepository();
+    final cubit = OperationTagsCubit(repository, 'lunch');
+    addTearDown(cubit.close);
+    await cubit.stream.firstWhere((it) => it.read);
+
+    await cubit.pick({'tbilisi'});
+
+    expect(repository.picked, isEmpty);
+  });
 }

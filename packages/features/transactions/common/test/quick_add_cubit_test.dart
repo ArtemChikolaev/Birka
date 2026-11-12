@@ -713,6 +713,25 @@ void main() {
       expect(repository.recorded.single.tags, isNull);
     });
 
+    test(
+      'a picker closed without a change leaves the метки to the day',
+      () async {
+        final form = await open();
+        type(form, '450');
+        form.categoryChanged('cafe');
+
+        await form.tagsChanged({'trip'});
+        form.dayChanged(CivilDate(2026, 10, 28));
+
+        expect(form.state.tagsPicked, isFalse);
+        expect(form.state.tagIds, isEmpty);
+
+        await form.save();
+
+        expect(repository.recorded.single.tags, isNull);
+      },
+    );
+
     test('a save takes the метки that the person picked', () async {
       final form = await open();
       type(form, '450');

@@ -472,12 +472,15 @@ class QuickAddCubit extends Cubit<QuickAddState> {
       emit(state.copyWith(day: value).withTripsOfTheDay());
 
   /// Puts on the метки that the person picked, from then on whatever the day,
-  /// and reads the метки again, since the picker can make a new one.
+  /// and reads the метки again, since the picker can make a new one. A
+  /// picker closed without a change leaves the метки to the day.
   Future<void> tagsChanged(Set<String> ids) async {
-    emit(state.copyWith(tagIds: ids, tagsPicked: true));
+    final same =
+        ids.length == state.tagIds.length && state.tagIds.containsAll(ids);
+    if (!same) emit(state.copyWith(tagIds: ids, tagsPicked: true));
     try {
       final tags = await _repository.tags();
-      if (!isClosed) emit(state.copyWith(tags: tags));
+      if (!isClosed) emit(state.copyWith(tags: tags).withTripsOfTheDay());
     } on Exception {
       // The names come with the next read.
     }

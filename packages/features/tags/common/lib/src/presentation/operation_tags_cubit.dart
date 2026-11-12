@@ -83,8 +83,13 @@ final class OperationTagsCubit extends Cubit<OperationTagsState> {
     );
   }
 
-  /// Puts exactly [tagIds] on the operation.
-  Future<void> pick(Set<String> tagIds) => _repository.setTags(_id, tagIds);
+  /// Puts exactly [tagIds] on the operation. The метки it already wears
+  /// write nothing: a picker closed without a change leaves it as it is.
+  Future<void> pick(Set<String> tagIds) async {
+    final worn = state.picked;
+    if (tagIds.length == worn.length && worn.containsAll(tagIds)) return;
+    await _repository.setTags(_id, tagIds);
+  }
 
   @override
   Future<void> close() async {
