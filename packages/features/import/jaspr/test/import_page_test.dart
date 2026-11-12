@@ -122,6 +122,7 @@ void main() {
   Future<void> pump(
     ComponentTester tester, {
     VoidCallback? onStepChanged,
+    Future<List<String>> Function()? repeats,
   }) async {
     tester.pumpComponent(
       BlocProvider.value(
@@ -130,6 +131,8 @@ void main() {
           backHref: 'more/',
           operationsHref: 'operations/',
           inboxHref: 'inbox/',
+          schedulesHref: 'schedules/',
+          repeats: repeats,
           onStepChanged: onStepChanged,
           clock: () => now,
         ),
@@ -360,6 +363,67 @@ void main() {
     await until(tester, (state) => state.undone);
 
     expect(find.text('Импорт отменён'), findsOneComponent);
+  });
+
+  testComponents('leads to the payments the statement posted and to what '
+      'came every month', (tester) async {
+    final card = (await ledger.watchAccounts().first).single;
+    await ledger.addSchedule(
+      kind: TransactionKind.expense,
+      name: 'ЖКХ',
+      accountId: card.id,
+      amount: Money(684530, Currency.rub),
+      every: ScheduleEvery.month,
+      next: CivilDate(2026, 10, 7),
+    );
+    await pump(
+      tester,
+      repeats: () async => ['Яндекс Плюс', 'ЖКУ Москва', 'Облако Mail.ru'],
+    );
+
+    await imported(tester);
+    await tester.pump();
+
+    String? hrefOf(String text) =>
+        (find
+                    .ancestor(of: find.text(text), matching: find.tag('a'))
+                    .evaluate()
+                    .first
+                    .component
+                as DomComponent)
+            .attributes?['href'];
+    expect(find.text('Провели 1 платёж'), findsOneComponent);
+    expect(find.text('ЖКХ — из выписки'), findsOneComponent);
+    expect(hrefOf('Провели 1 платёж'), 'schedules/');
+    expect(find.text('Похоже на регулярные · 3'), findsOneComponent);
+    expect(
+      find.text('Яндекс Плюс, ЖКУ Москва и Облако Mail.ru'),
+      findsOneComponent,
+    );
+    expect(hrefOf('Похоже на регулярные · 3'), 'schedules/');
+    final rising =
+        find
+                .ancestor(
+                  of: find.text('Похоже на регулярные · 3'),
+                  matching: find.tag('a'),
+                )
+                .evaluate()
+                .first
+                .component
+            as DomComponent;
+    expect(rising.classes, contains('import-note--rising'));
+  });
+
+  testComponents('says nothing of payments when there are none', (
+    tester,
+  ) async {
+    await pump(tester, repeats: () async => const []);
+
+    await imported(tester);
+    await tester.pump();
+
+    expect(find.textContaining('Провели'), findsNothing);
+    expect(find.textContaining('Похоже на регулярные'), findsNothing);
   });
 
   testComponents('takes a past import out after a yes', (tester) async {

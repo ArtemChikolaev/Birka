@@ -38,7 +38,7 @@ import 'package:schedules_common/schedules_common.dart'
         ScheduleFormCubit,
         SchedulesCubit,
         SchedulesRepository,
-        currentRepeats;
+        repeatNames;
 import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_common/settings_common.dart' show SettingsCubit;
 import 'package:settings_flutter/settings_flutter.dart'
@@ -267,7 +267,7 @@ GoRouter buildRouter(
                       files: getIt<StatementFiles>(),
                       onInbox: () => context.push(Paths.inbox),
                       onSchedules: () => context.push(Paths.schedules),
-                      repeats: () => _repeatNames(getIt),
+                      repeats: () => repeatNames(getIt<SchedulesRepository>()),
                     ),
                   ),
                 ),
@@ -443,7 +443,7 @@ GoRouter buildRouter(
                 cubit: getIt.call<ImportCubit>,
                 files: getIt<StatementFiles>(),
                 onSchedules: () => context.push(Paths.schedules),
-                repeats: () => _repeatNames(getIt),
+                repeats: () => repeatNames(getIt<SchedulesRepository>()),
               ),
             ),
           ),
@@ -546,13 +546,6 @@ Page<void> _scheduleFormPage(
     ),
   ),
 );
-
-/// The names of the operations that came every month and have no payment
-/// yet, for the result of an import (ADR 0023, point 23).
-Future<List<String>> _repeatNames(GetIt getIt) async => [
-  for (final find in await currentRepeats(getIt<SchedulesRepository>()))
-    find.name,
-];
 
 /// Asks which day the months start on, from the page of the money until the
 /// salary, and keeps it as the settings do: it is one setting (ADR 0024).

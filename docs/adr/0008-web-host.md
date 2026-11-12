@@ -72,6 +72,13 @@
     own, such as what the month came to or how the page works. The island
     watches the width, so a narrow window keeps the views one after another,
     as before.
+13. A view that other pages link to goes back to the page that led to it
+    when it closes (`DataIslandState.closeView`), as the form of a payment
+    goes back to the card of the operation it was made from. What the view
+    did goes with it in `sessionStorage` (`sayOnNextPage`), and the page it
+    goes back to says it once in a toast. A page that has left has closed its
+    database ([ADR 0015](0015-drift-closed-tabs.md)), so what still asks for it
+    then fails, and those errors stay out of the console (`reportError`).
 
 ## Options considered
 

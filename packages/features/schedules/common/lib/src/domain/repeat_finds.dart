@@ -165,6 +165,12 @@ Future<List<RepeatFind>> currentRepeats(
   );
 }
 
+/// The names of what came every month and has no payment yet, apart from the
+/// dismissed finds, for the result of an import (ADR 0023, point 23).
+Future<List<String>> repeatNames(SchedulesRepository repository) async => [
+  for (final find in await currentRepeats(repository)) find.name,
+];
+
 /// The key of a find of an operation of [kind] on [accountId] called [note]:
 /// what a dismissal remembers.
 String findKey(TransactionKind kind, String accountId, String note) =>

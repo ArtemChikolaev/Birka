@@ -64,6 +64,15 @@ bool? get amountsHidden => _unavailable();
 void keepAmountsHidden({required bool hidden}) => _unavailable();
 
 /// See `browser_web.dart`.
+void reportError(Object error, StackTrace stack) => _unavailable();
+
+/// See `browser_web.dart`.
+void sayOnNextPage(String text) => _unavailable();
+
+/// See `browser_web.dart`.
+String? takeSaid() => _unavailable();
+
+/// See `browser_web.dart`.
 String? keptValue(String key) => _unavailable();
 
 /// See `browser_web.dart`.

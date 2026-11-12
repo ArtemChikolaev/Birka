@@ -179,7 +179,10 @@
     the payment after its later times too and never offers a second one. A
     post of a payment leads to it as well: by its last time, or by the name
     and the account of the payment. Corrections, splits between categories
-    and posts whose payment is gone get no row.
+    and posts whose payment is gone get no row. On the site the row stands
+    on the card of the operation as well, beside the list or as its page,
+    and leads to the form of the payment (`schedules/#from-<id>`), which
+    goes back to the card and says that the payment was added.
 23. Birka finds the operations that came every month and offers to make
     them payments, above «Ближайшие 30 дней» as «Похоже на регулярные». A
     find is an expense or an income on one account whose notes share a name

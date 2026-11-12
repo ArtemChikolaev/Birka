@@ -9,6 +9,8 @@ import 'package:import_jaspr/import_jaspr.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
+import 'package:schedules_common/schedules_common.dart'
+    show SchedulesRepository, repeatNames;
 
 /// The import of statements, step by step (ADR 0021). The steps have a way
 /// back of their own, so the page stands without the tabs of the site.
@@ -49,6 +51,8 @@ class _ImportIslandState extends DataIslandState<ImportIsland> {
         backHref: 'more/',
         operationsHref: 'operations/',
         inboxHref: 'inbox/',
+        schedulesHref: 'schedules/',
+        repeats: () => repeatNames(getIt<SchedulesRepository>()),
         onStepChanged: () => scrollPageTo(0),
       ),
     );
