@@ -90,3 +90,6 @@ monthNames:
   - October
   - November
   - December
+allOperations(n):
+  one: All $n operation
+  other: All $n operations

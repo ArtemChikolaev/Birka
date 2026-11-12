@@ -19,6 +19,8 @@ part 'birka_database.g.dart';
     Imports,
     Schedules,
     Notices,
+    Tags,
+    TransactionTags,
   ],
 )
 class BirkaDatabase extends _$BirkaDatabase {
@@ -26,7 +28,7 @@ class BirkaDatabase extends _$BirkaDatabase {
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -85,6 +87,12 @@ class BirkaDatabase extends _$BirkaDatabase {
           m.addColumn(schema.schedules, schema.schedules.madeFrom),
       from9To10: (m, schema) =>
           m.addColumn(schema.schedules, schema.schedules.advanceAmountMinor),
+      from10To11: (m, schema) async {
+        await m.createTable(schema.tags);
+        await m.createTable(schema.transactionTags);
+        await m.createIndex(schema.transactionTagsTransaction);
+        await m.createIndex(schema.transactionTagsTag);
+      },
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
   );

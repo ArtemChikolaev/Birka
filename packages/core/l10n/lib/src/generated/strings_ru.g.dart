@@ -97,6 +97,8 @@ class TranslationsRu extends Translations
     _root,
   );
   @override
+  late final _Translations$tags$ru tags = _Translations$tags$ru._(_root);
+  @override
   late final _Translations$transactions$ru transactions =
       _Translations$transactions$ru._(_root);
 }
@@ -2711,6 +2713,120 @@ class _Translations$settings$ru extends Translations$settings$en {
   String get monthStartCalendar => 'как в календаре';
 }
 
+// Path: tags
+class _Translations$tags$ru extends Translations$tags$en {
+  _Translations$tags$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Метки';
+  @override
+  String get back => 'Назад';
+  @override
+  String get add => 'Новая метка';
+  @override
+  String get close => 'Закрыть';
+  @override
+  String get edit => 'Изменить';
+  @override
+  String get now => 'Сейчас';
+  @override
+  String get trips => 'Поездки';
+  @override
+  String get plain => 'Метки';
+  @override
+  String get trip => 'Поездка';
+  @override
+  String get tag => 'Метка';
+  @override
+  String get note => 'Суммы — расходы по курсу ЦБ на день каждой операции.';
+  @override
+  String get emptyTitle => 'Меток пока нет';
+  @override
+  String get emptyText =>
+      'Отметьте поездку, ремонт или праздник — и увидите, сколько на них ушло, во всех валютах сразу.';
+  @override
+  String get failed => 'Не удалось прочитать метки.';
+  @override
+  String get lastDay => 'Последний день';
+  @override
+  String dayOf({required Object day, required Object total}) =>
+      'День ${day} из ${total}';
+  @override
+  String days({required Object from, required Object to}) => '${from}–${to}';
+  @override
+  String daysApart({required Object from, required Object to}) =>
+      '${from} — ${to}';
+  @override
+  String inDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'через ${n} день',
+        few: 'через ${n} дня',
+        many: 'через ${n} дней',
+        other: 'через ${n} дня',
+      );
+  @override
+  String operations({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} операция',
+        few: '${n} операции',
+        many: '${n} операций',
+        other: '${n} операции',
+      );
+  @override
+  String since({required Object date}) => 'с ${date}';
+  @override
+  String get howItWorks => 'Как это устроено';
+  @override
+  late final _Translations$tags$steps$ru steps = _Translations$tags$steps$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$tags$report$ru report =
+      _Translations$tags$report$ru._(_root);
+  @override
+  late final _Translations$tags$form$ru form = _Translations$tags$form$ru._(
+    _root,
+  );
+  @override
+  String addedTrip({required Object name}) => 'Добавили поездку «${name}»';
+  @override
+  String addedTag({required Object name}) => 'Добавили метку «${name}»';
+  @override
+  String saved({required Object name}) => 'Сохранили «${name}»';
+  @override
+  String marked({required num n, required Object name}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Отметили ${n} расход: «${name}»',
+        few: 'Отметили ${n} расхода: «${name}»',
+        many: 'Отметили ${n} расходов: «${name}»',
+        other: 'Отметили ${n} расхода: «${name}»',
+      );
+  @override
+  String unmarked({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Сняли метку с ${n} расхода',
+        few: 'Сняли метку с ${n} расходов',
+        many: 'Сняли метку с ${n} расходов',
+        other: 'Сняли метку с ${n} расхода',
+      );
+  @override
+  String get undo => 'Вернуть';
+  @override
+  late final _Translations$tags$picker$ru picker =
+      _Translations$tags$picker$ru._(_root);
+  @override
+  late final _Translations$tags$row$ru row = _Translations$tags$row$ru._(_root);
+}
+
 // Path: transactions
 class _Translations$transactions$ru extends Translations$transactions$en {
   _Translations$transactions$ru._(TranslationsRu root)
@@ -2864,6 +2980,15 @@ class _Translations$transactions$ru extends Translations$transactions$en {
     'Ноябрь',
     'Декабрь',
   ];
+  @override
+  String allOperations({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Все ${n} операция',
+        few: 'Все ${n} операции',
+        many: 'Все ${n} операций',
+        other: 'Все ${n} операции',
+      );
 }
 
 // Path: accounts.form
@@ -3054,6 +3179,205 @@ class _Translations$onboarding$categories$ru
       );
   @override
   String get finish => 'Готово';
+}
+
+// Path: tags.steps
+class _Translations$tags$steps$ru extends Translations$tags$steps$en {
+  _Translations$tags$steps$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get first =>
+      'Метка собирает траты поездки или проекта во всех валютах — по курсу дня.';
+  @override
+  String get second =>
+      'У поездки есть даты: расходы этих дней получают её метку сами, кроме регулярных платежей.';
+  @override
+  String get third =>
+      'Билеты и жильё, купленные заранее, отметьте в карточке операции.';
+}
+
+// Path: tags.report
+class _Translations$tags$report$ru extends Translations$tags$report$en {
+  _Translations$tags$report$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get todayLast => 'сегодня последний день';
+  @override
+  String get perDay => 'На месте в день';
+  @override
+  String get perMonth => 'В месяц';
+  @override
+  String forDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'за ${n} день',
+        few: 'за ${n} дня',
+        many: 'за ${n} дней',
+        other: 'за ${n} дня',
+      );
+  @override
+  String get count => 'Операций';
+  @override
+  String there({required Object n}) => '${n} там';
+  @override
+  String before({required Object n}) => '${n} заранее';
+  @override
+  String after({required Object n}) => '${n} после';
+  @override
+  String last({required Object date}) => 'последняя ${date}';
+  @override
+  String get currencies => 'Валюты';
+  @override
+  String get ratesNote => 'По курсу ЦБ на день каждой операции.';
+  @override
+  String onTheSpot({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} операция на месте',
+        few: '${n} операции на месте',
+        many: '${n} операций на месте',
+        other: '${n} операции на месте',
+      );
+  @override
+  String get noRate => 'Нет курса на день части операций — итог без них.';
+  @override
+  String get categories => 'Категории';
+  @override
+  String get operations => 'Операции';
+  @override
+  String get nothing => 'На эту метку пока нет операций.';
+  @override
+  String get noCategory => 'Без категории';
+}
+
+// Path: tags.form
+class _Translations$tags$form$ru extends Translations$tags$form$en {
+  _Translations$tags$form$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get newTitle => 'Новая метка';
+  @override
+  String get trip => 'Поездка';
+  @override
+  String get plain => 'Метка';
+  @override
+  String get name => 'Название';
+  @override
+  String get namePlaceholder => 'Батуми';
+  @override
+  String get dates => 'Даты';
+  @override
+  String get from => 'С';
+  @override
+  String get to => 'По';
+  @override
+  String get marks => 'Отмечать расходы';
+  @override
+  String get marksOn => 'За эти дни';
+  @override
+  String get marksOff => 'Только вручную';
+  @override
+  String get marksAhead =>
+      'Расходы этих дней получат метку сами. Регулярные платежи не трогаем.';
+  @override
+  String marksPast({
+    required num n,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+    n,
+    one:
+        'За эти дни уже ${n} расход — отметим его сразу. Регулярные платежи не трогаем.',
+    few:
+        'За эти дни уже ${n} расхода — отметим их сразу. Регулярные платежи не трогаем.',
+    many:
+        'За эти дни уже ${n} расходов — отметим их сразу. Регулярные платежи не трогаем.',
+    other:
+        'За эти дни уже ${n} расхода — отметим их сразу. Регулярные платежи не трогаем.',
+  );
+  @override
+  String get manual =>
+      'Метку ставите сами — при вводе операции или в её карточке.';
+  @override
+  String get plainNote =>
+      'Метку ставите сами — при вводе операции или в её карточке. Отчёт соберёт траты во всех валютах.';
+  @override
+  String get footTrip => 'Метку можно поставить и на билеты, купленные заранее';
+  @override
+  String get footPlain => 'Метки живут в «Ещё» → «Метки»';
+  @override
+  String get save => 'Сохранить';
+  @override
+  String get done => 'Готово';
+  @override
+  String get nameMissing => 'Дайте метке название.';
+  @override
+  String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+}
+
+// Path: tags.picker
+class _Translations$tags$picker$ru extends Translations$tags$picker$en {
+  _Translations$tags$picker$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Метки';
+  @override
+  String get search => 'Найти или создать';
+  @override
+  String create({required Object name}) => 'Новая метка «${name}»';
+  @override
+  String get createText => 'Поездка с датами или просто метка';
+  @override
+  String get tripsNote =>
+      'Пока идёт поездка, её метка сама встаёт на расходы этих дней.';
+  @override
+  String get now => 'сейчас';
+  @override
+  String get emptyTitle => 'Меток пока нет';
+  @override
+  String get emptyText =>
+      'Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.';
+}
+
+// Path: tags.row
+class _Translations$tags$row$ru extends Translations$tags$row$en {
+  _Translations$tags$row$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get add => 'Добавить метку';
+  @override
+  String get addText => 'Поездка, ремонт или праздник';
+  @override
+  String trip({required Object days}) => 'Поездка · ${days}';
+  @override
+  String byDays({required Object days}) => 'Поездка · ${days} · по датам';
+  @override
+  String get plain => 'Метка';
+  @override
+  String more({required Object n}) => 'и ещё ${n}';
 }
 
 // Path: transactions.sources
@@ -5029,6 +5353,175 @@ extension on TranslationsRu {
           'settings.monthStartDay' => ({required Object day}) => '${day} число',
           'settings.monthStartNote' => 'для обзора и отчётов',
           'settings.monthStartCalendar' => 'как в календаре',
+          'tags.title' => 'Метки',
+          'tags.back' => 'Назад',
+          'tags.add' => 'Новая метка',
+          'tags.close' => 'Закрыть',
+          'tags.edit' => 'Изменить',
+          'tags.now' => 'Сейчас',
+          'tags.trips' => 'Поездки',
+          'tags.plain' => 'Метки',
+          'tags.trip' => 'Поездка',
+          'tags.tag' => 'Метка',
+          'tags.note' => 'Суммы — расходы по курсу ЦБ на день каждой операции.',
+          'tags.emptyTitle' => 'Меток пока нет',
+          'tags.emptyText' =>
+            'Отметьте поездку, ремонт или праздник — и увидите, сколько на них ушло, во всех валютах сразу.',
+          'tags.failed' => 'Не удалось прочитать метки.',
+          'tags.lastDay' => 'Последний день',
+          'tags.dayOf' =>
+            ({required Object day, required Object total}) =>
+                'День ${day} из ${total}',
+          'tags.days' =>
+            ({required Object from, required Object to}) => '${from}–${to}',
+          'tags.daysApart' =>
+            ({required Object from, required Object to}) => '${from} — ${to}',
+          'tags.inDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'через ${n} день',
+                  few: 'через ${n} дня',
+                  many: 'через ${n} дней',
+                  other: 'через ${n} дня',
+                ),
+          'tags.operations' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} операция',
+                  few: '${n} операции',
+                  many: '${n} операций',
+                  other: '${n} операции',
+                ),
+          'tags.since' => ({required Object date}) => 'с ${date}',
+          'tags.howItWorks' => 'Как это устроено',
+          'tags.steps.first' =>
+            'Метка собирает траты поездки или проекта во всех валютах — по курсу дня.',
+          'tags.steps.second' =>
+            'У поездки есть даты: расходы этих дней получают её метку сами, кроме регулярных платежей.',
+          'tags.steps.third' =>
+            'Билеты и жильё, купленные заранее, отметьте в карточке операции.',
+          'tags.report.todayLast' => 'сегодня последний день',
+          'tags.report.perDay' => 'На месте в день',
+          'tags.report.perMonth' => 'В месяц',
+          'tags.report.forDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'за ${n} день',
+                  few: 'за ${n} дня',
+                  many: 'за ${n} дней',
+                  other: 'за ${n} дня',
+                ),
+          'tags.report.count' => 'Операций',
+          'tags.report.there' => ({required Object n}) => '${n} там',
+          'tags.report.before' => ({required Object n}) => '${n} заранее',
+          'tags.report.after' => ({required Object n}) => '${n} после',
+          'tags.report.last' => ({required Object date}) => 'последняя ${date}',
+          'tags.report.currencies' => 'Валюты',
+          'tags.report.ratesNote' => 'По курсу ЦБ на день каждой операции.',
+          'tags.report.onTheSpot' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} операция на месте',
+                  few: '${n} операции на месте',
+                  many: '${n} операций на месте',
+                  other: '${n} операции на месте',
+                ),
+          'tags.report.noRate' =>
+            'Нет курса на день части операций — итог без них.',
+          'tags.report.categories' => 'Категории',
+          'tags.report.operations' => 'Операции',
+          'tags.report.nothing' => 'На эту метку пока нет операций.',
+          'tags.report.noCategory' => 'Без категории',
+          'tags.form.newTitle' => 'Новая метка',
+          'tags.form.trip' => 'Поездка',
+          'tags.form.plain' => 'Метка',
+          'tags.form.name' => 'Название',
+          'tags.form.namePlaceholder' => 'Батуми',
+          'tags.form.dates' => 'Даты',
+          'tags.form.from' => 'С',
+          'tags.form.to' => 'По',
+          'tags.form.marks' => 'Отмечать расходы',
+          'tags.form.marksOn' => 'За эти дни',
+          'tags.form.marksOff' => 'Только вручную',
+          'tags.form.marksAhead' =>
+            'Расходы этих дней получат метку сами. Регулярные платежи не трогаем.',
+          'tags.form.marksPast' =>
+            ({
+              required num n,
+            }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+              n,
+              one:
+                  'За эти дни уже ${n} расход — отметим его сразу. Регулярные платежи не трогаем.',
+              few:
+                  'За эти дни уже ${n} расхода — отметим их сразу. Регулярные платежи не трогаем.',
+              many:
+                  'За эти дни уже ${n} расходов — отметим их сразу. Регулярные платежи не трогаем.',
+              other:
+                  'За эти дни уже ${n} расхода — отметим их сразу. Регулярные платежи не трогаем.',
+            ),
+          'tags.form.manual' =>
+            'Метку ставите сами — при вводе операции или в её карточке.',
+          'tags.form.plainNote' =>
+            'Метку ставите сами — при вводе операции или в её карточке. Отчёт соберёт траты во всех валютах.',
+          'tags.form.footTrip' =>
+            'Метку можно поставить и на билеты, купленные заранее',
+          'tags.form.footPlain' => 'Метки живут в «Ещё» → «Метки»',
+          'tags.form.save' => 'Сохранить',
+          'tags.form.done' => 'Готово',
+          'tags.form.nameMissing' => 'Дайте метке название.',
+          'tags.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+          'tags.addedTrip' =>
+            ({required Object name}) => 'Добавили поездку «${name}»',
+          'tags.addedTag' =>
+            ({required Object name}) => 'Добавили метку «${name}»',
+          'tags.saved' => ({required Object name}) => 'Сохранили «${name}»',
+          'tags.marked' =>
+            ({required num n, required Object name}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Отметили ${n} расход: «${name}»',
+                  few: 'Отметили ${n} расхода: «${name}»',
+                  many: 'Отметили ${n} расходов: «${name}»',
+                  other: 'Отметили ${n} расхода: «${name}»',
+                ),
+          'tags.unmarked' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Сняли метку с ${n} расхода',
+                  few: 'Сняли метку с ${n} расходов',
+                  many: 'Сняли метку с ${n} расходов',
+                  other: 'Сняли метку с ${n} расхода',
+                ),
+          'tags.undo' => 'Вернуть',
+          'tags.picker.title' => 'Метки',
+          'tags.picker.search' => 'Найти или создать',
+          'tags.picker.create' =>
+            ({required Object name}) => 'Новая метка «${name}»',
+          'tags.picker.createText' => 'Поездка с датами или просто метка',
+          'tags.picker.tripsNote' =>
+            'Пока идёт поездка, её метка сама встаёт на расходы этих дней.',
+          'tags.picker.now' => 'сейчас',
+          'tags.picker.emptyTitle' => 'Меток пока нет',
+          'tags.picker.emptyText' =>
+            'Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.',
+          'tags.row.add' => 'Добавить метку',
+          'tags.row.addText' => 'Поездка, ремонт или праздник',
+          'tags.row.trip' => ({required Object days}) => 'Поездка · ${days}',
+          'tags.row.byDays' =>
+            ({required Object days}) => 'Поездка · ${days} · по датам',
+          'tags.row.plain' => 'Метка',
+          'tags.row.more' => ({required Object n}) => 'и ещё ${n}',
           'transactions.expense' => 'Расход',
           'transactions.income' => 'Доход',
           'transactions.transfer' => 'Перевод',
@@ -5125,6 +5618,16 @@ extension on TranslationsRu {
           'transactions.monthNames.9' => 'Октябрь',
           'transactions.monthNames.10' => 'Ноябрь',
           'transactions.monthNames.11' => 'Декабрь',
+          'transactions.allOperations' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Все ${n} операция',
+                  few: 'Все ${n} операции',
+                  many: 'Все ${n} операций',
+                  other: 'Все ${n} операции',
+                ),
           _ => null,
         };
   }

@@ -24,6 +24,7 @@ import 'package:schedules_common/schedules_common.dart';
 import 'package:schedules_flutter/schedules_flutter.dart'
     show DeviceReminderCalendar, LocalReminderChannel;
 import 'package:settings_common/settings_common.dart';
+import 'package:tags_common/tags_common.dart';
 import 'package:transactions_common/transactions_common.dart';
 
 /// The notifications of the phone. One serves the whole life of the app, as
@@ -90,5 +91,6 @@ void registerDependencies(
   registerReports(getIt);
   registerSchedules(getIt, settings);
   registerSettings(getIt, settings, deviceLanguage: deviceLanguage);
+  registerTags(getIt);
   registerTransactions(getIt);
 }

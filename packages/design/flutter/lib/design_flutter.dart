@@ -46,6 +46,7 @@ export 'src/components/held_out_of_sight.dart';
 export 'src/components/hidden_amounts.dart';
 export 'src/components/scroll_edge_fade.dart';
 export 'src/components/section_label.dart';
+export 'src/components/share_line.dart';
 export 'src/components/slide_switcher.dart';
 export 'src/components/swipe_between.dart';
 export 'src/components/tinted_notice.dart';

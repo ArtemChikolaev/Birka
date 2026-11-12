@@ -10,6 +10,7 @@ import 'package:ledger/src/ledger_import.dart';
 import 'package:ledger/src/ledger_totals.dart';
 import 'package:ledger/src/notice.dart';
 import 'package:ledger/src/schedule.dart';
+import 'package:ledger/src/tag.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:ledger/src/transaction_draft.dart';
 import 'package:money/money.dart';
@@ -255,6 +256,9 @@ final class LedgerRepository {
       final categories = _db.selectOnly(_db.categories)
         ..addColumns([_db.categories.id])
         ..where(_db.categories.deletedAt.isNull());
+      final tags = _db.selectOnly(_db.tags)
+        ..addColumns([_db.tags.id])
+        ..where(_db.tags.deletedAt.isNull());
       return LedgerCopy.of(
         madeAt: _timestamp(),
         importRows:
@@ -334,6 +338,27 @@ final class LedgerRepository {
                     (row) => OrderingTerm(expression: row.id),
                   ]))
                 .get(),
+        tagRows:
+            await (_db.select(_db.tags)
+                  ..where((row) => row.deletedAt.isNull())
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.createdAt),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
+        transactionTagRows:
+            await (_db.select(_db.transactionTags)
+                  ..where(
+                    (row) =>
+                        row.deletedAt.isNull() &
+                        row.transactionId.isInQuery(transactions) &
+                        row.tagId.isInQuery(tags),
+                  )
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.transactionId),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
       );
     });
   }
@@ -354,6 +379,8 @@ final class LedgerRepository {
         (_db.entries, copy.entryRows.map((row) => row.id)),
         (_db.allocations, copy.allocationRows.map((row) => row.id)),
         (_db.schedules, copy.scheduleRows.map((row) => row.id)),
+        (_db.tags, copy.tagRows.map((row) => row.id)),
+        (_db.transactionTags, copy.transactionTagRows.map((row) => row.id)),
       ];
       await _db.batch((batch) {
         batch
@@ -364,6 +391,8 @@ final class LedgerRepository {
           ..insertAll(_db.entries, copy.entryRows)
           ..insertAll(_db.allocations, copy.allocationRows)
           ..insertAll(_db.schedules, copy.scheduleRows)
+          ..insertAll(_db.tags, copy.tagRows)
+          ..insertAll(_db.transactionTags, copy.transactionTagRows)
           ..insertAll(_db.changes, [
             for (final (table, ids) in written)
               for (final id in ids)
@@ -388,6 +417,8 @@ final class LedgerRepository {
   Future<void> _clear() async {
     for (final table in <TableInfo<Table, Object?>>[
       _db.notices,
+      _db.transactionTags,
+      _db.tags,
       _db.schedules,
       _db.allocations,
       _db.entries,
@@ -556,6 +587,7 @@ final class LedgerRepository {
           );
       await _log(_db.transactions, id, 'insert', at);
       await _writeLegs(id, draft, at);
+      await _tagNew(id, draft, at);
       return id;
     });
   }
@@ -584,6 +616,7 @@ final class LedgerRepository {
       await _log(_db.transactions, id, 'update', at);
       await _buryLegs(id, at);
       await _writeLegs(id, draft, at);
+      await _tagChanged(id, draft, at);
     });
   }
 
@@ -600,6 +633,7 @@ final class LedgerRepository {
       if (updated == 0) throw LedgerException('No transaction $id');
       await _log(_db.transactions, id, 'delete', at);
       await _buryLegs(id, at);
+      await _buryTags(id, at);
     });
   }
 
@@ -675,6 +709,7 @@ final class LedgerRepository {
       for (final transaction in transactions) {
         await _log(_db.transactions, transaction.id, 'delete', at);
         await _buryLegs(transaction.id, at);
+        await _buryTags(transaction.id, at);
       }
       // A regular payment that the statement brought waits again for the
       // times it brought (ADR 0023).
@@ -1592,6 +1627,412 @@ final class LedgerRepository {
     );
   }
 
+  /// Adds a метка (ADR 0027). A trip that [marksDays] goes at once onto the
+  /// expenses that its [days] already have, and the result says how many.
+  Future<TagMarking> addTag({
+    required String name,
+    TagDays? days,
+    bool marksDays = false,
+  }) {
+    return _db.transaction(() async {
+      final tag = Tag(
+        id: _newId(),
+        name: _tagName(name),
+        days: days,
+        marksDays: marksDays && days != null,
+      );
+      final at = _timestamp();
+      await _db
+          .into(_db.tags)
+          .insert(
+            TagsCompanion.insert(
+              id: tag.id,
+              createdAt: at,
+              updatedAt: at,
+              name: tag.name,
+              firstDay: Value(days?.first.toString()),
+              lastDay: Value(days?.last.toString()),
+              marksDays: Value(tag.marksDays),
+            ),
+          );
+      await _log(_db.tags, tag.id, 'insert', at);
+      return TagMarking(tag, marked: await _markDays(tag, at));
+    });
+  }
+
+  /// Puts [tag] in place of the метка with its id. The expenses of its days
+  /// follow: those of new days get it, and those of days it no longer has,
+  /// or of a trip that stopped marking them, lose it, unless the person put
+  /// it on by hand.
+  Future<TagMarking> updateTag(Tag tag) {
+    return _db.transaction(() async {
+      final days = tag.days;
+      final kept = tag.copyWith(
+        name: _tagName(tag.name),
+        marksDays: tag.marksDays && days != null,
+      );
+      final at = _timestamp();
+      final updated =
+          await (_db.update(_db.tags)..where(
+                (row) => row.id.equals(tag.id) & row.deletedAt.isNull(),
+              ))
+              .write(
+                TagsCompanion(
+                  updatedAt: Value(at),
+                  name: Value(kept.name),
+                  firstDay: Value(days?.first.toString()),
+                  lastDay: Value(days?.last.toString()),
+                  marksDays: Value(kept.marksDays),
+                  archived: Value(kept.archived),
+                ),
+              );
+      if (updated == 0) throw LedgerException('No метка ${tag.id}');
+      await _log(_db.tags, tag.id, 'update', at);
+      return TagMarking(kept, marked: await _markDays(kept, at));
+    });
+  }
+
+  /// Takes the days of trip [id] back off its expenses: the trip stops
+  /// marking them, and only what the person put on by hand stays. This is
+  /// the way back from what [addTag] or [updateTag] marked.
+  Future<void> unmarkDays(String id) async {
+    final tag = await this.tag(id);
+    if (tag == null) throw LedgerException('No метка $id');
+    await updateTag(tag.copyWith(marksDays: false));
+  }
+
+  /// Метка [id], if it exists.
+  Future<Tag?> tag(String id) async {
+    final row =
+        await (_db.select(_db.tags)
+              ..where((row) => row.id.equals(id) & row.deletedAt.isNull()))
+            .getSingleOrNull();
+    return row == null ? null : _tagOf(row);
+  }
+
+  /// The метки, again after every change: the trips by their first days, the
+  /// latest first, then the others by name. Archived ones stay out unless
+  /// [includeArchived].
+  Stream<List<Tag>> watchTags({bool includeArchived = false}) {
+    final query = _db.select(_db.tags)
+      ..where(
+        (row) =>
+            row.deletedAt.isNull() &
+            (includeArchived ? const Constant(true) : row.archived.not()),
+      )
+      ..orderBy([
+        (row) => OrderingTerm(expression: row.firstDay.isNull()),
+        (row) =>
+            OrderingTerm(expression: row.firstDay, mode: OrderingMode.desc),
+        (row) => OrderingTerm(expression: row.name),
+        (row) => OrderingTerm(expression: row.id),
+      ]);
+    return query.watch().map((rows) => rows.map(_tagOf).toList());
+  }
+
+  /// Puts on transaction [id] exactly the метки [tagIds], as the person
+  /// picked them. A trip whose days had put it on and that is not among them
+  /// stays off the transaction for good.
+  Future<void> setTags(String id, Iterable<String> tagIds) {
+    return _db.transaction(() async {
+      final row =
+          await (_db.select(_db.transactions)
+                ..where((row) => row.id.equals(id) & row.deletedAt.isNull()))
+              .getSingleOrNull();
+      if (row == null) throw LedgerException('No transaction $id');
+      final at = _timestamp();
+      await _pickTags(
+        id,
+        kind: TransactionKind.values.byName(row.kind),
+        source: TransactionSource.values.byName(row.source),
+        day: CivilDate.parse(row.occurredOn),
+        picked: {...tagIds},
+        at: at,
+      );
+      await _touch(id, at);
+    });
+  }
+
+  /// The метки of a new transaction: those the person picked, or the trips
+  /// whose days put them on.
+  Future<void> _tagNew(String id, TransactionDraft draft, DateTime at) async {
+    final picked = draft.tags;
+    if (picked != null) {
+      await _pickTags(
+        id,
+        kind: draft.kind,
+        source: draft.source,
+        day: draft.occurredOn,
+        picked: picked,
+        at: at,
+      );
+      return;
+    }
+    for (final tag in await _markingTrips()) {
+      if (tag.marks(
+        kind: draft.kind,
+        source: draft.source,
+        day: draft.occurredOn,
+      )) {
+        await _putTag(id, tag.id, TagMark.days, at);
+      }
+    }
+  }
+
+  /// The метки of a changed transaction: those the person picked, or what it
+  /// wore, with the trips whose days put them on or take them off now.
+  Future<void> _tagChanged(
+    String id,
+    TransactionDraft draft,
+    DateTime at,
+  ) async {
+    final picked = draft.tags;
+    if (picked != null) {
+      await _pickTags(
+        id,
+        kind: draft.kind,
+        source: draft.source,
+        day: draft.occurredOn,
+        picked: picked,
+        at: at,
+      );
+      return;
+    }
+    final worn = await _tagRowsOf(id);
+    final frozen = await _archivedOf(worn.keys);
+    final trips = {for (final tag in await _markingTrips()) tag.id: tag};
+    bool marks(Tag? tag) =>
+        tag != null &&
+        tag.marks(
+          kind: draft.kind,
+          source: draft.source,
+          day: draft.occurredOn,
+        );
+    // What the days put on and no longer cover goes, unless its trip is
+    // archived.
+    for (final row in worn.values) {
+      if (row.mark == TagMark.days.name &&
+          !frozen.contains(row.tagId) &&
+          !marks(trips[row.tagId])) {
+        await _buryTagRow(row.id, at);
+      }
+    }
+    // A trip whose days cover it now puts itself on, unless it was taken off.
+    for (final tag in trips.values) {
+      if (marks(tag) && !worn.containsKey(tag.id)) {
+        await _putTag(id, tag.id, TagMark.days, at);
+      }
+    }
+  }
+
+  /// Makes transaction [id] wear exactly [picked]: a picked trip whose days
+  /// cover it counts as put on by them, another picked метка as put on by
+  /// hand, and a trip whose days cover it but that is not picked stays off.
+  /// What it wears of an archived метка stays as it is, since the pickers do
+  /// not show one.
+  Future<void> _pickTags(
+    String id, {
+    required TransactionKind kind,
+    required TransactionSource source,
+    required CivilDate day,
+    required Set<String> picked,
+    required DateTime at,
+  }) async {
+    final worn = await _tagRowsOf(id);
+    final frozen = await _archivedOf(worn.keys);
+    final wanted = <String, TagMark>{};
+    for (final tagId in picked) {
+      if (frozen.contains(tagId)) continue;
+      final tag = await this.tag(tagId);
+      if (tag == null) throw LedgerException('No метка $tagId');
+      wanted[tagId] = tag.marks(kind: kind, source: source, day: day)
+          ? TagMark.days
+          : TagMark.hand;
+    }
+    for (final tag in await _markingTrips()) {
+      if (!wanted.containsKey(tag.id) &&
+          tag.marks(kind: kind, source: source, day: day)) {
+        wanted[tag.id] = TagMark.off;
+      }
+    }
+    for (final MapEntry(key: tagId, value: mark) in wanted.entries) {
+      final row = worn[tagId];
+      if (row == null) {
+        await _putTag(id, tagId, mark, at);
+      } else if (row.mark != mark.name) {
+        await (_db.update(
+          _db.transactionTags,
+        )..where((it) => it.id.equals(row.id))).write(
+          TransactionTagsCompanion(
+            updatedAt: Value(at),
+            mark: Value(mark.name),
+          ),
+        );
+        await _log(_db.transactionTags, row.id, 'update', at);
+      }
+    }
+    for (final row in worn.values) {
+      if (!wanted.containsKey(row.tagId) && !frozen.contains(row.tagId)) {
+        await _buryTagRow(row.id, at);
+      }
+    }
+  }
+
+  /// Puts [tag] onto the expenses of its days that do not wear it yet, and
+  /// takes it off those that its days put it on and no longer cover. Returns
+  /// how many it was put on. An archived метка stays on what it wears and
+  /// marks nothing more.
+  Future<int> _markDays(Tag tag, DateTime at) async {
+    if (tag.archived) return 0;
+    final rows =
+        await (_db.select(_db.transactionTags)..where(
+              (row) => row.tagId.equals(tag.id) & row.deletedAt.isNull(),
+            ))
+            .get();
+    final worn = {for (final row in rows) row.transactionId: row};
+    final covered = <String>{};
+    final days = tag.days;
+    if (tag.marksDays && days != null) {
+      final expenses =
+          await (_db.select(_db.transactions)..where(
+                (row) =>
+                    row.deletedAt.isNull() &
+                    row.kind.equals(TransactionKind.expense.name) &
+                    row.source.equals(TransactionSource.recurring.name).not() &
+                    row.occurredOn.isBiggerOrEqualValue(days.first.toString()) &
+                    row.occurredOn.isSmallerOrEqualValue(days.last.toString()),
+              ))
+              .get();
+      covered.addAll(expenses.map((row) => row.id));
+    }
+    var marked = 0;
+    for (final id in covered) {
+      if (worn.containsKey(id)) continue;
+      await _putTag(id, tag.id, TagMark.days, at);
+      await _touch(id, at);
+      marked++;
+    }
+    for (final row in rows) {
+      if (row.mark == TagMark.days.name &&
+          !covered.contains(row.transactionId)) {
+        await _buryTagRow(row.id, at);
+        await _touch(row.transactionId, at);
+      }
+    }
+    return marked;
+  }
+
+  /// The trips whose days put them on expenses by themselves.
+  Future<List<Tag>> _markingTrips() async {
+    final rows =
+        await (_db.select(_db.tags)..where(
+              (row) =>
+                  row.deletedAt.isNull() &
+                  row.archived.not() &
+                  row.marksDays &
+                  row.firstDay.isNotNull(),
+            ))
+            .get();
+    return rows.map(_tagOf).toList();
+  }
+
+  /// Which of метки [ids] are archived: what a transaction wears of them
+  /// stays as it is.
+  Future<Set<String>> _archivedOf(Iterable<String> ids) async {
+    final list = ids.toList();
+    if (list.isEmpty) return const {};
+    final rows = await (_db.select(
+      _db.tags,
+    )..where((row) => row.id.isIn(list) & row.archived)).get();
+    return {for (final row in rows) row.id};
+  }
+
+  /// The links of transaction [id] to its метки, by the id of the метка.
+  Future<Map<String, TransactionTagRow>> _tagRowsOf(String id) async {
+    final rows =
+        await (_db.select(_db.transactionTags)..where(
+              (row) => row.transactionId.equals(id) & row.deletedAt.isNull(),
+            ))
+            .get();
+    return {for (final row in rows) row.tagId: row};
+  }
+
+  Future<void> _putTag(
+    String transactionId,
+    String tagId,
+    TagMark mark,
+    DateTime at,
+  ) async {
+    final id = _newId();
+    await _db
+        .into(_db.transactionTags)
+        .insert(
+          TransactionTagsCompanion.insert(
+            id: id,
+            createdAt: at,
+            updatedAt: at,
+            transactionId: transactionId,
+            tagId: tagId,
+            mark: mark.name,
+          ),
+        );
+    await _log(_db.transactionTags, id, 'insert', at);
+  }
+
+  Future<void> _buryTagRow(String id, DateTime at) async {
+    await (_db.update(
+      _db.transactionTags,
+    )..where((row) => row.id.equals(id))).write(
+      TransactionTagsCompanion(updatedAt: Value(at), deletedAt: Value(at)),
+    );
+    await _log(_db.transactionTags, id, 'delete', at);
+  }
+
+  /// Takes every метка off transaction [id], as it goes.
+  Future<void> _buryTags(String id, DateTime at) async {
+    final rows =
+        await (_db.update(_db.transactionTags)..where(
+              (row) => row.transactionId.equals(id) & row.deletedAt.isNull(),
+            ))
+            .writeReturning(
+              TransactionTagsCompanion(
+                updatedAt: Value(at),
+                deletedAt: Value(at),
+              ),
+            );
+    for (final row in rows) {
+      await _log(_db.transactionTags, row.id, 'delete', at);
+    }
+  }
+
+  /// Stamps transaction [id] as changed, as its метки did, so that whoever
+  /// watches it reads them again.
+  Future<void> _touch(String id, DateTime at) async {
+    await (_db.update(_db.transactions)..where((row) => row.id.equals(id)))
+        .write(TransactionsCompanion(updatedAt: Value(at)));
+    await _log(_db.transactions, id, 'update', at);
+  }
+
+  String _tagName(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) throw const LedgerException('A метка needs a name');
+    return trimmed;
+  }
+
+  Tag _tagOf(TagRow row) {
+    final first = row.firstDay;
+    final last = row.lastDay;
+    return Tag(
+      id: row.id,
+      name: row.name,
+      days: first == null || last == null
+          ? null
+          : TagDays(CivilDate.parse(first), CivilDate.parse(last)),
+      marksDays: row.marksDays,
+      archived: row.archived,
+    );
+  }
+
   /// Whether [table] has a row that [where] picks.
   Future<bool> _exists<T extends HasResultSet, R>(
     ResultSetImplementation<T, R> table,
@@ -1606,12 +2047,15 @@ final class LedgerRepository {
   }
 
   /// The latest [limit] transactions, or all of them without a limit. They can
-  /// be narrowed to [accountId] and to the days from [from] to [to], with both
-  /// ends included.
+  /// be narrowed to [accountId], to the days from [from] to [to], with both
+  /// ends included, to those that wear метка [tagId], and to those that
+  /// wear any метка when [tagged].
   Stream<List<Transaction>> watchTransactions({
     String? accountId,
     CivilDate? from,
     CivilDate? to,
+    String? tagId,
+    bool tagged = false,
     int? limit = 200,
   }) {
     final query = _db.select(_db.transactions)
@@ -1622,6 +2066,17 @@ final class LedgerRepository {
         }
         if (to != null) {
           matches &= row.occurredOn.isSmallerOrEqualValue(to.toString());
+        }
+        if (tagId != null || tagged) {
+          final links = _db.transactionTags;
+          var worn =
+              links.mark.equals(TagMark.off.name).not() &
+              links.deletedAt.isNull();
+          if (tagId != null) worn &= links.tagId.equals(tagId);
+          final wearing = _db.selectOnly(links)
+            ..addColumns([links.transactionId])
+            ..where(worn);
+          matches &= row.id.isInQuery(wearing);
         }
         if (accountId == null) return matches;
         final ofAccount = _db.selectOnly(_db.entries)
@@ -2018,6 +2473,17 @@ final class LedgerRepository {
               )
               ..orderBy([(row) => OrderingTerm(expression: row.id)]))
             .get();
+    final tagRows =
+        await (_db.select(_db.transactionTags)..where(
+              (row) => row.transactionId.isIn(ids) & row.deletedAt.isNull(),
+            ))
+            .get();
+    final tags = <String, Map<String, TagMark>>{};
+    for (final row in tagRows) {
+      (tags[row.transactionId] ??= {})[row.tagId] = TagMark.values.byName(
+        row.mark,
+      );
+    }
     final allocations = <String, List<Allocation>>{};
     for (final allocation in allocationRows) {
       (allocations[allocation.transactionId] ??= []).add(
@@ -2043,6 +2509,7 @@ final class LedgerRepository {
           entries: entries[row.id] ?? const [],
           allocations: allocations[row.id] ?? const [],
           importId: row.importId,
+          tags: tags[row.id] ?? const {},
         ),
     ];
   }

@@ -6,6 +6,7 @@ import 'package:transactions_common/src/presentation/account_cubit.dart';
 import 'package:transactions_common/src/presentation/operation_cubit.dart';
 import 'package:transactions_common/src/presentation/operations_cubit.dart';
 import 'package:transactions_common/src/presentation/quick_add_cubit.dart';
+import 'package:transactions_common/src/presentation/tag_operations_cubit.dart';
 
 /// Registers the feature in [getIt], which has to know the [LedgerRepository].
 void registerTransactions(GetIt getIt) {
@@ -22,5 +23,8 @@ void registerTransactions(GetIt getIt) {
     )
     ..registerFactoryParam<QuickAddCubit, QuickAddSource?, void>(
       (source, _) => QuickAddCubit(getIt(), source: source),
+    )
+    ..registerFactoryParam<TagOperationsCubit, String, void>(
+      (id, _) => TagOperationsCubit(getIt(), id),
     );
 }

@@ -143,6 +143,14 @@ final class FakeTransactionsRepository implements TransactionsRepository {
     ],
   );
 
+  @override
+  Stream<List<Operation>> watchTagOperations(String id) => _follow(
+    () => [
+      for (final operation in operations)
+        if (operation.transaction.tagIds.contains(id)) operation,
+    ],
+  );
+
   /// Tells those who follow that something changed.
   void touch() => _changes.add(null);
 

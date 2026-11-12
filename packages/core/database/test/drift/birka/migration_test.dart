@@ -9,6 +9,7 @@ import 'package:test/test.dart';
 import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v10.dart' as v10;
+import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -514,4 +515,63 @@ void main() {
       );
     },
   );
+
+  test('a transaction keeps its rows and wears no метки in v11', () async {
+    const at = '2026-11-12T12:00:00.000Z';
+    await verifier.testWithDataIntegrity(
+      oldVersion: 10,
+      newVersion: 11,
+      createOld: v10.DatabaseAtV10.new,
+      createNew: v11.DatabaseAtV11.new,
+      openTestedDatabase: BirkaDatabase.new,
+      createItems: (batch, old) {
+        batch
+          ..insert(
+            old.accounts,
+            v10.AccountsCompanion.insert(
+              id: 'lari',
+              createdAt: at,
+              updatedAt: at,
+              name: 'Lari',
+              type: 'debit',
+              currency: 'GEL',
+              decimalDigits: 2,
+            ),
+          )
+          ..insert(
+            old.transactions,
+            v10.TransactionsCompanion.insert(
+              id: 'lunch',
+              createdAt: at,
+              updatedAt: at,
+              kind: 'expense',
+              occurredOn: '2026-11-12',
+              status: 'cleared',
+              source: 'manual',
+            ),
+          )
+          ..insert(
+            old.entries,
+            v10.EntriesCompanion.insert(
+              id: 'leg',
+              createdAt: at,
+              updatedAt: at,
+              transactionId: 'lunch',
+              accountId: 'lari',
+              amountMinor: -3800,
+            ),
+          );
+      },
+      validateItems: (migrated) async {
+        final transaction = await migrated
+            .select(migrated.transactions)
+            .getSingle();
+        expect(transaction.occurredOn, '2026-11-12');
+        final entry = await migrated.select(migrated.entries).getSingle();
+        expect(entry.amountMinor, -3800);
+        expect(await migrated.select(migrated.tags).get(), isEmpty);
+        expect(await migrated.select(migrated.transactionTags).get(), isEmpty);
+      },
+    );
+  });
 }

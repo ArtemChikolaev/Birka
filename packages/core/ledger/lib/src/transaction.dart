@@ -1,4 +1,5 @@
 import 'package:ledger/src/civil_date.dart';
+import 'package:ledger/src/tag.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 
@@ -92,6 +93,7 @@ final class Transaction {
     required this.allocations,
     this.occurredAt,
     this.importId,
+    this.tags = const {},
   });
 
   /// The id.
@@ -123,4 +125,15 @@ final class Transaction {
 
   /// The import that brought it, if one did (ADR 0021).
   final String? importId;
+
+  /// How each метка came onto it, by the id of the метка (ADR 0027). A
+  /// метка that the person took off a transaction of its days stays here as
+  /// [TagMark.off].
+  final Map<String, TagMark> tags;
+
+  /// The метки it wears.
+  Iterable<String> get tagIds => [
+    for (final MapEntry(:key, :value) in tags.entries)
+      if (value != TagMark.off) key,
+  ];
 }

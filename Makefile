@@ -11,7 +11,7 @@ CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/features/notifications/common \
 	packages/features/onboarding/common packages/features/overview/common \
 	packages/features/reports/common \
-	packages/features/settings/common \
+	packages/features/settings/common packages/features/tags/common \
 	packages/features/transactions/common
 
 # Our Dart code. third_party holds code of others as it was published.
@@ -128,6 +128,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/schedules/jaspr && dart test
 	cd packages/features/settings/flutter && flutter test
 	cd packages/features/settings/jaspr && dart test
+	cd packages/features/tags/flutter && flutter test
 	cd packages/features/transactions/flutter && flutter test
 	cd packages/features/transactions/jaspr && dart test
 

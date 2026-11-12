@@ -76,6 +76,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
       Translations$schedules$en.internal(_root);
   late final Translations$settings$en settings =
       Translations$settings$en.internal(_root);
+  late final Translations$tags$en tags = Translations$tags$en.internal(_root);
   late final Translations$transactions$en transactions =
       Translations$transactions$en.internal(_root);
 }
@@ -3267,6 +3268,136 @@ class Translations$settings$en {
   String get monthStartCalendar => 'as on the calendar';
 }
 
+// Path: tags
+class Translations$tags$en {
+  Translations$tags$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Tags'
+  String get title => 'Tags';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'New tag'
+  String get add => 'New tag';
+
+  /// en: 'Close'
+  String get close => 'Close';
+
+  /// en: 'Edit'
+  String get edit => 'Edit';
+
+  /// en: 'Now'
+  String get now => 'Now';
+
+  /// en: 'Trips'
+  String get trips => 'Trips';
+
+  /// en: 'Tags'
+  String get plain => 'Tags';
+
+  /// en: 'Trip'
+  String get trip => 'Trip';
+
+  /// en: 'Tag'
+  String get tag => 'Tag';
+
+  /// en: 'Totals are expenses at the central bank rate of the day of each.'
+  String get note =>
+      'Totals are expenses at the central bank rate of the day of each.';
+
+  /// en: 'No tags yet'
+  String get emptyTitle => 'No tags yet';
+
+  /// en: 'Tag a trip, a renovation or a holiday, and see what it took in every currency at once.'
+  String get emptyText =>
+      'Tag a trip, a renovation or a holiday, and see what it took in every currency at once.';
+
+  /// en: 'Could not read the tags.'
+  String get failed => 'Could not read the tags.';
+
+  /// en: 'Last day'
+  String get lastDay => 'Last day';
+
+  /// en: 'Day $day of $total'
+  String dayOf({required Object day, required Object total}) =>
+      'Day ${day} of ${total}';
+
+  /// en: '$from–$to'
+  String days({required Object from, required Object to}) => '${from}–${to}';
+
+  /// en: '$from — $to'
+  String daysApart({required Object from, required Object to}) =>
+      '${from} — ${to}';
+
+  /// en: '(one) {in $n day} (other) {in $n days}'
+  String inDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'in ${n} day',
+        other: 'in ${n} days',
+      );
+
+  /// en: '(one) {$n operation} (other) {$n operations}'
+  String operations({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} operation',
+        other: '${n} operations',
+      );
+
+  /// en: 'since $date'
+  String since({required Object date}) => 'since ${date}';
+
+  /// en: 'How it works'
+  String get howItWorks => 'How it works';
+
+  late final Translations$tags$steps$en steps =
+      Translations$tags$steps$en.internal(_root);
+  late final Translations$tags$report$en report =
+      Translations$tags$report$en.internal(_root);
+  late final Translations$tags$form$en form =
+      Translations$tags$form$en.internal(_root);
+
+  /// en: 'Added the trip «$name»'
+  String addedTrip({required Object name}) => 'Added the trip «${name}»';
+
+  /// en: 'Added the tag «$name»'
+  String addedTag({required Object name}) => 'Added the tag «${name}»';
+
+  /// en: 'Saved «$name»'
+  String saved({required Object name}) => 'Saved «${name}»';
+
+  /// en: '(one) {Tagged $n expense: «$name»} (other) {Tagged $n expenses: «$name»}'
+  String marked({required num n, required Object name}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Tagged ${n} expense: «${name}»',
+        other: 'Tagged ${n} expenses: «${name}»',
+      );
+
+  /// en: '(one) {Took the tag off $n expense} (other) {Took the tag off $n expenses}'
+  String unmarked({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Took the tag off ${n} expense',
+        other: 'Took the tag off ${n} expenses',
+      );
+
+  /// en: 'Undo'
+  String get undo => 'Undo';
+
+  late final Translations$tags$picker$en picker =
+      Translations$tags$picker$en.internal(_root);
+  late final Translations$tags$row$en row = Translations$tags$row$en.internal(
+    _root,
+  );
+}
+
 // Path: transactions
 class Translations$transactions$en {
   Translations$transactions$en.internal(this._root);
@@ -3468,6 +3599,14 @@ class Translations$transactions$en {
     'November',
     'December',
   ];
+
+  /// en: '(one) {All $n operation} (other) {All $n operations}'
+  String allOperations({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'All ${n} operation',
+        other: 'All ${n} operations',
+      );
 }
 
 // Path: accounts.form
@@ -3697,6 +3836,244 @@ class Translations$onboarding$categories$en {
 
   /// en: 'Done'
   String get finish => 'Done';
+}
+
+// Path: tags.steps
+class Translations$tags$steps$en {
+  Translations$tags$steps$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'A tag gathers what a trip or a project took in every currency, at the rate of the day.'
+  String get first =>
+      'A tag gathers what a trip or a project took in every currency, at the rate of the day.';
+
+  /// en: 'A trip has days: its expenses on those days get its tag by themselves, except regular payments.'
+  String get second =>
+      'A trip has days: its expenses on those days get its tag by themselves, except regular payments.';
+
+  /// en: 'Tag the tickets and the stay that you bought in advance on the card of the operation.'
+  String get third =>
+      'Tag the tickets and the stay that you bought in advance on the card of the operation.';
+}
+
+// Path: tags.report
+class Translations$tags$report$en {
+  Translations$tags$report$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'today is the last day'
+  String get todayLast => 'today is the last day';
+
+  /// en: 'A day on the spot'
+  String get perDay => 'A day on the spot';
+
+  /// en: 'A month'
+  String get perMonth => 'A month';
+
+  /// en: '(one) {over $n day} (other) {over $n days}'
+  String forDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'over ${n} day',
+        other: 'over ${n} days',
+      );
+
+  /// en: 'Operations'
+  String get count => 'Operations';
+
+  /// en: '$n there'
+  String there({required Object n}) => '${n} there';
+
+  /// en: '$n in advance'
+  String before({required Object n}) => '${n} in advance';
+
+  /// en: '$n after'
+  String after({required Object n}) => '${n} after';
+
+  /// en: 'the latest on $date'
+  String last({required Object date}) => 'the latest on ${date}';
+
+  /// en: 'Currencies'
+  String get currencies => 'Currencies';
+
+  /// en: 'At the central bank rate of the day of each operation.'
+  String get ratesNote =>
+      'At the central bank rate of the day of each operation.';
+
+  /// en: '(one) {$n operation on the spot} (other) {$n operations on the spot}'
+  String onTheSpot({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} operation on the spot',
+        other: '${n} operations on the spot',
+      );
+
+  /// en: 'Some days have no rate yet, and the total leaves them out.'
+  String get noRate =>
+      'Some days have no rate yet, and the total leaves them out.';
+
+  /// en: 'Categories'
+  String get categories => 'Categories';
+
+  /// en: 'Operations'
+  String get operations => 'Operations';
+
+  /// en: 'No operations wear this tag yet.'
+  String get nothing => 'No operations wear this tag yet.';
+
+  /// en: 'No category'
+  String get noCategory => 'No category';
+}
+
+// Path: tags.form
+class Translations$tags$form$en {
+  Translations$tags$form$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'New tag'
+  String get newTitle => 'New tag';
+
+  /// en: 'Trip'
+  String get trip => 'Trip';
+
+  /// en: 'Tag'
+  String get plain => 'Tag';
+
+  /// en: 'Name'
+  String get name => 'Name';
+
+  /// en: 'Batumi'
+  String get namePlaceholder => 'Batumi';
+
+  /// en: 'Dates'
+  String get dates => 'Dates';
+
+  /// en: 'From'
+  String get from => 'From';
+
+  /// en: 'To'
+  String get to => 'To';
+
+  /// en: 'Tag the expenses'
+  String get marks => 'Tag the expenses';
+
+  /// en: 'Of these days'
+  String get marksOn => 'Of these days';
+
+  /// en: 'By hand only'
+  String get marksOff => 'By hand only';
+
+  /// en: 'The expenses of these days get the tag by themselves. Regular payments stay as they are.'
+  String get marksAhead =>
+      'The expenses of these days get the tag by themselves. Regular payments stay as they are.';
+
+  /// en: '(one) {These days already have $n expense, and it gets the tag now. Regular payments stay as they are.} (other) {These days already have $n expenses, and they get the tag now. Regular payments stay as they are.}'
+  String marksPast({
+    required num n,
+  }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+    n,
+    one:
+        'These days already have ${n} expense, and it gets the tag now. Regular payments stay as they are.',
+    other:
+        'These days already have ${n} expenses, and they get the tag now. Regular payments stay as they are.',
+  );
+
+  /// en: 'You put the tag on yourself, when you add an operation or on its card.'
+  String get manual =>
+      'You put the tag on yourself, when you add an operation or on its card.';
+
+  /// en: 'You put the tag on yourself, when you add an operation or on its card. Its report gathers what it took in every currency.'
+  String get plainNote =>
+      'You put the tag on yourself, when you add an operation or on its card. Its report gathers what it took in every currency.';
+
+  /// en: 'The tickets bought in advance can wear the tag too'
+  String get footTrip => 'The tickets bought in advance can wear the tag too';
+
+  /// en: 'Tags live in More → Tags'
+  String get footPlain => 'Tags live in More → Tags';
+
+  /// en: 'Save'
+  String get save => 'Save';
+
+  /// en: 'Done'
+  String get done => 'Done';
+
+  /// en: 'Give the tag a name.'
+  String get nameMissing => 'Give the tag a name.';
+
+  /// en: 'Could not save. Try again.'
+  String get failed => 'Could not save. Try again.';
+}
+
+// Path: tags.picker
+class Translations$tags$picker$en {
+  Translations$tags$picker$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Tags'
+  String get title => 'Tags';
+
+  /// en: 'Find or create'
+  String get search => 'Find or create';
+
+  /// en: 'New tag «$name»'
+  String create({required Object name}) => 'New tag «${name}»';
+
+  /// en: 'A trip with dates or just a tag'
+  String get createText => 'A trip with dates or just a tag';
+
+  /// en: 'While a trip goes on, its tag goes onto the expenses of its days by itself.'
+  String get tripsNote =>
+      'While a trip goes on, its tag goes onto the expenses of its days by itself.';
+
+  /// en: 'now'
+  String get now => 'now';
+
+  /// en: 'No tags yet'
+  String get emptyTitle => 'No tags yet';
+
+  /// en: 'Type a name: a trip, a renovation or a holiday. A tag gathers what they took in every currency.'
+  String get emptyText =>
+      'Type a name: a trip, a renovation or a holiday. A tag gathers what they took in every currency.';
+}
+
+// Path: tags.row
+class Translations$tags$row$en {
+  Translations$tags$row$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Add a tag'
+  String get add => 'Add a tag';
+
+  /// en: 'A trip, a renovation or a holiday'
+  String get addText => 'A trip, a renovation or a holiday';
+
+  /// en: 'Trip · $days'
+  String trip({required Object days}) => 'Trip · ${days}';
+
+  /// en: 'Trip · $days · by its dates'
+  String byDays({required Object days}) => 'Trip · ${days} · by its dates';
+
+  /// en: 'Tag'
+  String get plain => 'Tag';
+
+  /// en: 'and $n more'
+  String more({required Object n}) => 'and ${n} more';
 }
 
 // Path: transactions.sources
@@ -5579,6 +5956,162 @@ extension on Translations {
           'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
           'settings.monthStartNote' => 'for the overview and the reports',
           'settings.monthStartCalendar' => 'as on the calendar',
+          'tags.title' => 'Tags',
+          'tags.back' => 'Back',
+          'tags.add' => 'New tag',
+          'tags.close' => 'Close',
+          'tags.edit' => 'Edit',
+          'tags.now' => 'Now',
+          'tags.trips' => 'Trips',
+          'tags.plain' => 'Tags',
+          'tags.trip' => 'Trip',
+          'tags.tag' => 'Tag',
+          'tags.note' =>
+            'Totals are expenses at the central bank rate of the day of each.',
+          'tags.emptyTitle' => 'No tags yet',
+          'tags.emptyText' =>
+            'Tag a trip, a renovation or a holiday, and see what it took in every currency at once.',
+          'tags.failed' => 'Could not read the tags.',
+          'tags.lastDay' => 'Last day',
+          'tags.dayOf' =>
+            ({required Object day, required Object total}) =>
+                'Day ${day} of ${total}',
+          'tags.days' =>
+            ({required Object from, required Object to}) => '${from}–${to}',
+          'tags.daysApart' =>
+            ({required Object from, required Object to}) => '${from} — ${to}',
+          'tags.inDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'in ${n} day',
+                  other: 'in ${n} days',
+                ),
+          'tags.operations' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} operation',
+                  other: '${n} operations',
+                ),
+          'tags.since' => ({required Object date}) => 'since ${date}',
+          'tags.howItWorks' => 'How it works',
+          'tags.steps.first' =>
+            'A tag gathers what a trip or a project took in every currency, at the rate of the day.',
+          'tags.steps.second' =>
+            'A trip has days: its expenses on those days get its tag by themselves, except regular payments.',
+          'tags.steps.third' =>
+            'Tag the tickets and the stay that you bought in advance on the card of the operation.',
+          'tags.report.todayLast' => 'today is the last day',
+          'tags.report.perDay' => 'A day on the spot',
+          'tags.report.perMonth' => 'A month',
+          'tags.report.forDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'over ${n} day',
+                  other: 'over ${n} days',
+                ),
+          'tags.report.count' => 'Operations',
+          'tags.report.there' => ({required Object n}) => '${n} there',
+          'tags.report.before' => ({required Object n}) => '${n} in advance',
+          'tags.report.after' => ({required Object n}) => '${n} after',
+          'tags.report.last' =>
+            ({required Object date}) => 'the latest on ${date}',
+          'tags.report.currencies' => 'Currencies',
+          'tags.report.ratesNote' =>
+            'At the central bank rate of the day of each operation.',
+          'tags.report.onTheSpot' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} operation on the spot',
+                  other: '${n} operations on the spot',
+                ),
+          'tags.report.noRate' =>
+            'Some days have no rate yet, and the total leaves them out.',
+          'tags.report.categories' => 'Categories',
+          'tags.report.operations' => 'Operations',
+          'tags.report.nothing' => 'No operations wear this tag yet.',
+          'tags.report.noCategory' => 'No category',
+          'tags.form.newTitle' => 'New tag',
+          'tags.form.trip' => 'Trip',
+          'tags.form.plain' => 'Tag',
+          'tags.form.name' => 'Name',
+          'tags.form.namePlaceholder' => 'Batumi',
+          'tags.form.dates' => 'Dates',
+          'tags.form.from' => 'From',
+          'tags.form.to' => 'To',
+          'tags.form.marks' => 'Tag the expenses',
+          'tags.form.marksOn' => 'Of these days',
+          'tags.form.marksOff' => 'By hand only',
+          'tags.form.marksAhead' =>
+            'The expenses of these days get the tag by themselves. Regular payments stay as they are.',
+          'tags.form.marksPast' =>
+            ({
+              required num n,
+            }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+              n,
+              one:
+                  'These days already have ${n} expense, and it gets the tag now. Regular payments stay as they are.',
+              other:
+                  'These days already have ${n} expenses, and they get the tag now. Regular payments stay as they are.',
+            ),
+          'tags.form.manual' =>
+            'You put the tag on yourself, when you add an operation or on its card.',
+          'tags.form.plainNote' =>
+            'You put the tag on yourself, when you add an operation or on its card. Its report gathers what it took in every currency.',
+          'tags.form.footTrip' =>
+            'The tickets bought in advance can wear the tag too',
+          'tags.form.footPlain' => 'Tags live in More → Tags',
+          'tags.form.save' => 'Save',
+          'tags.form.done' => 'Done',
+          'tags.form.nameMissing' => 'Give the tag a name.',
+          'tags.form.failed' => 'Could not save. Try again.',
+          'tags.addedTrip' =>
+            ({required Object name}) => 'Added the trip «${name}»',
+          'tags.addedTag' =>
+            ({required Object name}) => 'Added the tag «${name}»',
+          'tags.saved' => ({required Object name}) => 'Saved «${name}»',
+          'tags.marked' =>
+            ({required num n, required Object name}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Tagged ${n} expense: «${name}»',
+                  other: 'Tagged ${n} expenses: «${name}»',
+                ),
+          'tags.unmarked' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Took the tag off ${n} expense',
+                  other: 'Took the tag off ${n} expenses',
+                ),
+          'tags.undo' => 'Undo',
+          'tags.picker.title' => 'Tags',
+          'tags.picker.search' => 'Find or create',
+          'tags.picker.create' =>
+            ({required Object name}) => 'New tag «${name}»',
+          'tags.picker.createText' => 'A trip with dates or just a tag',
+          'tags.picker.tripsNote' =>
+            'While a trip goes on, its tag goes onto the expenses of its days by itself.',
+          'tags.picker.now' => 'now',
+          'tags.picker.emptyTitle' => 'No tags yet',
+          'tags.picker.emptyText' =>
+            'Type a name: a trip, a renovation or a holiday. A tag gathers what they took in every currency.',
+          'tags.row.add' => 'Add a tag',
+          'tags.row.addText' => 'A trip, a renovation or a holiday',
+          'tags.row.trip' => ({required Object days}) => 'Trip · ${days}',
+          'tags.row.byDays' =>
+            ({required Object days}) => 'Trip · ${days} · by its dates',
+          'tags.row.plain' => 'Tag',
+          'tags.row.more' => ({required Object n}) => 'and ${n} more',
           'transactions.expense' => 'Expense',
           'transactions.income' => 'Income',
           'transactions.transfer' => 'Transfer',
@@ -5674,6 +6207,14 @@ extension on Translations {
           'transactions.monthNames.9' => 'October',
           'transactions.monthNames.10' => 'November',
           'transactions.monthNames.11' => 'December',
+          'transactions.allOperations' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'All ${n} operation',
+                  other: 'All ${n} operations',
+                ),
           _ => null,
         };
   }
