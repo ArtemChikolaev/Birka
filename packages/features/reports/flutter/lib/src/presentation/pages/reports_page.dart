@@ -294,77 +294,22 @@ class _Line extends StatelessWidget {
   final ReportLine line;
   final CategoryKind kind;
 
-  static const double _dot = 10;
-  static const double _bar = 4;
-
   @override
   Widget build(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
-    final color = _colorOf(line.category, colors);
     final change = line.change;
-    return Padding(
-      padding: const EdgeInsets.all(BirkaTokens.spaceMd),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: _dot,
-                height: _dot,
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: BirkaTokens.spaceXs),
-              Expanded(
-                child: Text(
-                  line.category?.name ?? t.app.noCategory,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: styles.bodyStrong.copyWith(color: colors.text),
-                ),
-              ),
-              if (change != null) ...[
-                const SizedBox(width: BirkaTokens.spaceXs),
-                Text(
-                  percentLabel(change),
-                  style: styles.caption.copyWith(
-                    color: _toneOf(change, kind, colors),
-                  ),
-                ),
-              ],
-              const SizedBox(width: BirkaTokens.spaceSm),
-              Flexible(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: AmountText(
-                    formatMoney(line.total),
-                    value: line.total.minorUnits,
-                    rise: _riseOf(kind),
-                    style: styles.bodyStrong.copyWith(color: colors.text),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: BirkaTokens.spaceXs),
-          ClipRRect(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(BirkaTokens.radiusXs),
-            ),
-            child: ColoredBox(
-              color: colors.surfaceRaised,
-              child: SizedBox(
-                height: _bar,
-                child: FractionallySizedBox(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: line.share,
-                  child: ColoredBox(color: color),
-                ),
-              ),
-            ),
-          ),
-        ],
+    return ShareLine(
+      color: _colorOf(line.category, colors),
+      title: line.category?.name ?? t.app.noCategory,
+      note: change == null ? null : percentLabel(change),
+      noteColor: change == null ? null : _toneOf(change, kind, colors),
+      fraction: line.share,
+      amount: AmountText(
+        formatMoney(line.total),
+        value: line.total.minorUnits,
+        rise: _riseOf(kind),
+        style: styles.bodyStrong.copyWith(color: colors.text),
       ),
     );
   }

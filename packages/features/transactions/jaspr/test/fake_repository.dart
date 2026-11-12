@@ -125,6 +125,14 @@ final class FakeRepository implements TransactionsRepository {
   );
 
   @override
+  Stream<List<Operation>> watchTagOperations(String id) => _follow(
+    () => [
+      for (final operation in operations)
+        if (operation.transaction.tagIds.contains(id)) operation,
+    ],
+  );
+
+  @override
   Future<List<CivilDate>> months() async => monthList;
 
   @override

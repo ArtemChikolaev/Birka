@@ -1,0 +1,102 @@
+title: Tags
+back: Back
+add: New tag
+close: Close
+edit: Edit
+now: Now
+trips: Trips
+plain: Tags
+trip: Trip
+tag: Tag
+note: Totals are expenses at the central bank rate of the day of each.
+emptyTitle: No tags yet
+emptyText: Tag a trip, a renovation or a holiday, and see what it took in every currency at once.
+failed: Could not read the tags.
+lastDay: Last day
+dayOf: Day $day of $total
+days: "$from–$to"
+daysApart: "$from — $to"
+inDays(n):
+  one: in $n day
+  other: in $n days
+operations(n):
+  one: $n operation
+  other: $n operations
+since: since $date
+howItWorks: How it works
+steps:
+  first: A tag gathers what a trip or a project took in every currency, at the rate of the day.
+  second: "A trip has days: its expenses on those days get its tag by themselves, except regular payments."
+  third: Tag the tickets and the stay that you bought in advance on the card of the operation.
+report:
+  todayLast: today is the last day
+  perDay: A day on the spot
+  perMonth: A month
+  forDays(n):
+    one: over $n day
+    other: over $n days
+  count: Operations
+  there: $n there
+  before: $n in advance
+  after: $n after
+  last: the latest on $date
+  currencies: Currencies
+  ratesNote: At the central bank rate of the day of each operation.
+  onTheSpot(n):
+    one: $n operation on the spot
+    other: $n operations on the spot
+  noRate: Some days have no rate yet, and the total leaves them out.
+  categories: Categories
+  operations: Operations
+  nothing: No operations wear this tag yet.
+  noCategory: No category
+form:
+  newTitle: New tag
+  trip: Trip
+  plain: Tag
+  name: Name
+  namePlaceholder: Batumi
+  dates: Dates
+  from: From
+  to: To
+  marks: Tag the expenses
+  marksOn: Of these days
+  marksOff: By hand only
+  marksAhead: The expenses of these days get the tag by themselves. Regular payments stay as they are.
+  marksPast(n):
+    one: These days already have $n expense, and it gets the tag now. Regular payments stay as they are.
+    other: These days already have $n expenses, and they get the tag now. Regular payments stay as they are.
+  manual: You put the tag on yourself, when you add an operation or on its card.
+  plainNote: You put the tag on yourself, when you add an operation or on its card. Its report gathers what it took in every currency.
+  footTrip: The tickets bought in advance can wear the tag too
+  footPlain: Tags live in More → Tags
+  save: Save
+  done: Done
+  nameMissing: Give the tag a name.
+  failed: Could not save. Try again.
+addedTrip: Added the trip «$name»
+addedTag: Added the tag «$name»
+saved: Saved «$name»
+marked(n):
+  one: "Tagged $n expense: «$name»"
+  other: "Tagged $n expenses: «$name»"
+unmarked(n):
+  one: Took the tag off $n expense
+  other: Took the tag off $n expenses
+undo: Undo
+picker:
+  title: Tags
+  search: Find or create
+  create: New tag «$name»
+  createText: A trip with dates or just a tag
+  tripsNote: While a trip goes on, its tag goes onto the expenses of its days by itself.
+  now: now
+  emptyTitle: No tags yet
+  emptyText: "Type a name: a trip, a renovation or a holiday. A tag gathers what they took in every currency."
+row:
+  add: Add a tag
+  addText: A trip, a renovation or a holiday
+  trip: Trip · $days
+  byDays: Trip · $days · by its dates
+  plain: Tag
+  more: and $n more

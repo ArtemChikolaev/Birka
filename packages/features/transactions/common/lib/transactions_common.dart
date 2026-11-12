@@ -23,4 +23,5 @@ export 'src/presentation/account_cubit.dart';
 export 'src/presentation/operation_cubit.dart';
 export 'src/presentation/operations_cubit.dart';
 export 'src/presentation/quick_add_cubit.dart';
+export 'src/presentation/tag_operations_cubit.dart';
 export 'src/presentation/transaction_labels.dart';

@@ -78,6 +78,10 @@ dependencies:
   settings_flutter:
     path: ../../packages/features/settings/flutter
   shared_preferences: ^2.5.5
+  tags_common:
+    path: ../../packages/features/tags/common
+  tags_flutter:
+    path: ../../packages/features/tags/flutter
   transactions_common:
     path: ../../packages/features/transactions/common
   transactions_flutter:

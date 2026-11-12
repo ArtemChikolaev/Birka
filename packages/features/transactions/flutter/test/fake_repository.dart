@@ -126,6 +126,14 @@ final class FakeRepository implements TransactionsRepository {
   );
 
   @override
+  Stream<List<Operation>> watchTagOperations(String id) => _follow(
+    () => [
+      for (final operation in operations)
+        if (operation.transaction.tagIds.contains(id)) operation,
+    ],
+  );
+
+  @override
   Future<List<CivilDate>> months() async => monthList;
 
   @override
@@ -182,9 +190,11 @@ Operation testOperation(
   DateTime? at,
   String note = '',
   TransactionSource source = TransactionSource.manual,
+  Map<String, TagMark> tags = const {},
 }) => Operation(
   transaction: Transaction(
     id: id,
+    tags: tags,
     kind:
         kind ??
         (amount.isNegative ? TransactionKind.expense : TransactionKind.income),
