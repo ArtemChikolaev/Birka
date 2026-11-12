@@ -75,6 +75,11 @@ bool _isPayment(Transaction transaction, List<Schedule> schedules) {
 
 /// What becomes of the money of the days of [plan] when the days take the
 /// [usual] pace instead of what the plan allows (ADR 0023, point 24).
+///
+/// Until an advance of the salary comes, the days live on what the accounts
+/// hold ([before]); on its day the advance brings what the payments after it
+/// leave ([lift]). So the money can run out before the advance, come back
+/// with it, and run out again before the end.
 @immutable
 final class SpendingForecast {
   /// Creates the forecast of [plan] at the [usual] pace.
@@ -86,8 +91,24 @@ final class SpendingForecast {
   /// What the days take as usual.
   final Money usual;
 
-  /// Whether the payments take all the money already, so no pace helps.
-  bool get none => !plan.free.isPositive;
+  /// The day of the advance, counted from today, or `null` without an
+  /// advance after today.
+  int? get advanceDay => plan.near?.days;
+
+  /// What the days may spend before the advance: what the accounts hold
+  /// until it, and no more than all the days may. All of [SpendingPlan.free]
+  /// without an advance.
+  Money get before => switch (plan.near) {
+    final near? when near.money.minorUnits < plan.free.minorUnits => near.money,
+    _ => plan.free,
+  };
+
+  /// What the advance adds to the money of the days on its day.
+  Money get lift => plan.free - before;
+
+  /// Whether the payments take all the money already, or all of it before
+  /// the advance, so no pace helps.
+  bool get none => !plan.free.isPositive || !before.isPositive;
 
   /// What is left after the last day of [plan]: negative when the money
   /// runs out before it.
@@ -96,11 +117,33 @@ final class SpendingForecast {
   /// Whether the money runs out before the end of [plan].
   bool get short => left.isNegative;
 
-  /// The first day that the money no longer covers at the usual pace, or
-  /// `null` while it lasts until the end.
+  /// Whether the money runs out on some day at the usual pace: before the
+  /// advance, even if the advance brings it back, or before the end, or now.
+  bool get runsDry => runsOut != null;
+
+  /// Whether the money runs out before the advance comes.
+  bool get shortBeforeAdvance {
+    final day = advanceDay;
+    return !none && day != null && (before - usual * day).isNegative;
+  }
+
+  /// The first day that the money no longer covers at the usual pace, before
+  /// the advance or after it, or `null` while it lasts until the end.
   CivilDate? get runsOut {
     if (none) return plan.today;
+    if (shortBeforeAdvance) {
+      return plan.today.addDays(before.minorUnits ~/ usual.minorUnits);
+    }
     if (!short) return null;
+    return plan.today.addDays(plan.free.minorUnits ~/ usual.minorUnits);
+  }
+
+  /// The day the money runs out once more, after the advance brought it
+  /// back, or `null`.
+  CivilDate? get runsOutAgain {
+    final day = advanceDay;
+    if (!shortBeforeAdvance || day == null || !short) return null;
+    if (!(before - usual * day + lift).isPositive) return null;
     return plan.today.addDays(plan.free.minorUnits ~/ usual.minorUnits);
   }
 }

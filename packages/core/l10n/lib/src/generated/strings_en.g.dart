@@ -3114,6 +3114,48 @@ class Translations$schedules$en {
   /// en: 'As usual, it lasts until the month ends'
   String get forecastLineMonth => 'As usual, it lasts until the month ends';
 
+  /// en: 'You usually spend ≈ $usual a day, and until the advance the plan allows $perDay. After the advance on $date it lasts: by $end ≈ $amount is left.'
+  String forecastAdvanceLastsText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object end,
+    required Object amount,
+  }) =>
+      'You usually spend ≈ ${usual} a day, and until the advance the plan allows ${perDay}. After the advance on ${date} it lasts: by ${end} ≈ ${amount} is left.';
+
+  /// en: 'You usually spend ≈ $usual a day, and until the advance the plan allows $perDay. With the advance on $date the money runs out again on $again: by $end ≈ $amount is missing.'
+  String forecastAdvanceAgainText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object again,
+    required Object end,
+    required Object amount,
+  }) =>
+      'You usually spend ≈ ${usual} a day, and until the advance the plan allows ${perDay}. With the advance on ${date} the money runs out again on ${again}: by ${end} ≈ ${amount} is missing.';
+
+  /// en: 'You usually spend ≈ $usual a day, and until the advance the plan allows $perDay. The advance on $date does not cover these days: by $end ≈ $amount is missing.'
+  String forecastAdvanceShortText({
+    required Object usual,
+    required Object perDay,
+    required Object date,
+    required Object end,
+    required Object amount,
+  }) =>
+      'You usually spend ≈ ${usual} a day, and until the advance the plan allows ${perDay}. The advance on ${date} does not cover these days: by ${end} ≈ ${amount} is missing.';
+
+  /// en: 'Until the advance on $date, the payments and the money set aside take more than the accounts hold.'
+  String forecastNoneAdvance({required Object date}) =>
+      'Until the advance on ${date}, the payments and the money set aside take more than the accounts hold.';
+
+  /// en: 'plan: $amount a day until the advance'
+  String forecastPlanAdvance({required Object amount}) =>
+      'plan: ${amount} a day until the advance';
+
+  /// en: '$date · advance'
+  String forecastAdvance({required Object date}) => '${date} · advance';
+
   /// en: 'Next on $date · $count'
   String subtitleNext({required Object date, required Object count}) =>
       'Next on ${date} · ${count}';
@@ -5443,6 +5485,42 @@ extension on Translations {
           'schedules.forecastLinePayday' => 'As usual, it lasts until payday',
           'schedules.forecastLineMonth' =>
             'As usual, it lasts until the month ends',
+          'schedules.forecastAdvanceLastsText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object end,
+              required Object amount,
+            }) =>
+                'You usually spend ≈ ${usual} a day, and until the advance the plan allows ${perDay}. After the advance on ${date} it lasts: by ${end} ≈ ${amount} is left.',
+          'schedules.forecastAdvanceAgainText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object again,
+              required Object end,
+              required Object amount,
+            }) =>
+                'You usually spend ≈ ${usual} a day, and until the advance the plan allows ${perDay}. With the advance on ${date} the money runs out again on ${again}: by ${end} ≈ ${amount} is missing.',
+          'schedules.forecastAdvanceShortText' =>
+            ({
+              required Object usual,
+              required Object perDay,
+              required Object date,
+              required Object end,
+              required Object amount,
+            }) =>
+                'You usually spend ≈ ${usual} a day, and until the advance the plan allows ${perDay}. The advance on ${date} does not cover these days: by ${end} ≈ ${amount} is missing.',
+          'schedules.forecastNoneAdvance' =>
+            ({required Object date}) =>
+                'Until the advance on ${date}, the payments and the money set aside take more than the accounts hold.',
+          'schedules.forecastPlanAdvance' =>
+            ({required Object amount}) =>
+                'plan: ${amount} a day until the advance',
+          'schedules.forecastAdvance' =>
+            ({required Object date}) => '${date} · advance',
           'schedules.subtitleNext' =>
             ({required Object date, required Object count}) =>
                 'Next on ${date} · ${count}',
@@ -5477,6 +5555,9 @@ extension on Translations {
             'On its day it waits for your «Post», or posts itself, as the payment says.',
           'schedules.how.2' =>
             'When it comes in a bank statement, Birka will not count it twice.',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.how.3' =>
             'Birka finds what repeats in your operations and offers to add it.',
           'schedules.failed' => 'Could not read the payments.',
@@ -5484,9 +5565,6 @@ extension on Translations {
           'schedules.previewNext' => 'The next times',
           'schedules.cancel' => 'Cancel',
           'settings.general' => 'General',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
           'settings.english' => 'English',

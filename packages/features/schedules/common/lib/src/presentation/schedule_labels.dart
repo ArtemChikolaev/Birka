@@ -336,17 +336,53 @@ String forecastTitle(SpendingForecast forecast) {
 }
 
 /// The figures of [forecast]: `Обычно вы тратите ≈ 2 100 ₽ в день, а можно
-/// 1 744 ₽. К 5 декабря не хватит ≈ 6 000 ₽.`
+/// 1 744 ₽. К 5 декабря не хватит ≈ 6 000 ₽.` When the money runs out before
+/// the advance, it says what the advance does then: `…а до аванса можно
+/// 1 657 ₽. После аванса 20 ноября хватит: к 5 декабря останется ≈ 20 500 ₽.`
 String forecastText(SpendingForecast forecast) {
   final plan = forecast.plan;
-  if (forecast.none) {
+  if (!plan.free.isPositive) {
     return _untilPayday(plan)
         ? t.schedules.forecastNonePayday
         : t.schedules.forecastNoneMonth;
   }
+  final advance = _advanceOf(plan);
+  if (forecast.none && advance != null) {
+    return t.schedules.forecastNoneAdvance(date: fullDate(advance, plan.today));
+  }
   final usual = formatMoney(roughly(forecast.usual));
   final date = fullDate(_forecastDay(plan), plan.today);
   final amount = formatMoney(roughly(forecast.left.abs()));
+  if (forecast.shortBeforeAdvance && advance != null) {
+    final perDay = formatMoney(plan.perDay);
+    final on = fullDate(advance, plan.today);
+    if (!forecast.short) {
+      return t.schedules.forecastAdvanceLastsText(
+        usual: usual,
+        perDay: perDay,
+        date: on,
+        end: date,
+        amount: amount,
+      );
+    }
+    if (forecast.runsOutAgain case final again?) {
+      return t.schedules.forecastAdvanceAgainText(
+        usual: usual,
+        perDay: perDay,
+        date: on,
+        again: fullDate(again, plan.today),
+        end: date,
+        amount: amount,
+      );
+    }
+    return t.schedules.forecastAdvanceShortText(
+      usual: usual,
+      perDay: perDay,
+      date: on,
+      end: date,
+      amount: amount,
+    );
+  }
   return forecast.short
       ? t.schedules.forecastShortText(
           usual: usual,
@@ -377,7 +413,28 @@ String forecastEnd(SpendingPlan plan) => _untilPayday(plan)
     : shortDate(plan.end);
 
 /// What the line of the plan on the chart stands for: `по плану: 1 744 ₽ в
-/// день`.
-String forecastPlan(SpendingPlan plan) => plan.free.isPositive
-    ? t.schedules.forecastPlan(amount: formatMoney(plan.perDay))
-    : t.schedules.forecastPlanBare;
+/// день`, or `…в день до аванса` while what the accounts hold until the
+/// advance holds the days back.
+String forecastPlan(SpendingPlan plan) {
+  if (!plan.free.isPositive) return t.schedules.forecastPlanBare;
+  final amount = formatMoney(plan.perDay);
+  final near = plan.near;
+  final held =
+      near != null &&
+      near.money.minorUnits ~/ near.days < plan.free.minorUnits ~/ plan.days;
+  return held
+      ? t.schedules.forecastPlanAdvance(amount: amount)
+      : t.schedules.forecastPlan(amount: amount);
+}
+
+/// The day of the advance on the chart of a forecast: `20 ноя · аванс`, or
+/// `null` without an advance after today.
+String? forecastAdvance(SpendingPlan plan) => switch (_advanceOf(plan)) {
+  final on? => t.schedules.forecastAdvance(date: shortDate(on)),
+  null => null,
+};
+
+/// The first advance of [plan] after today, which the days before it wait
+/// for.
+CivilDate? _advanceOf(SpendingPlan plan) =>
+    plan.near == null ? null : plan.advances.firstOrNull?.on;

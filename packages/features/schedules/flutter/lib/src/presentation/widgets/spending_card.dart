@@ -164,7 +164,7 @@ class _Plan extends StatelessWidget {
                               top: BirkaTokens.spaceXxs,
                             ),
                             child: _ForecastLine(
-                              short: forecast.short,
+                              short: forecast.runsDry,
                               text: line,
                             ),
                           ),

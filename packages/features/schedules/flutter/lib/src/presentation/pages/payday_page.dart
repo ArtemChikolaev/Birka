@@ -284,7 +284,7 @@ class _Forecast extends StatelessWidget {
     final plan = forecast.plan;
     final title = forecastTitle(forecast);
     final text = HiddenAmounts.mask(context, forecastText(forecast));
-    final bad = forecast.none || forecast.short;
+    final bad = forecast.runsDry;
     return GlassSurface(
       child: Semantics(
         liveRegion: true,
@@ -306,9 +306,13 @@ class _Forecast extends StatelessWidget {
             ),
             const SizedBox(height: BirkaTokens.spaceSm),
             ForecastChart(
-              start: plan.free.minorUnits.toDouble(),
+              start: forecast.before.minorUnits.toDouble(),
               pace: forecast.usual.minorUnits.toDouble(),
               days: plan.days,
+              stepDay: forecast.advanceDay,
+              stepAmount: forecast.lift.minorUnits.toDouble(),
+              planPace: plan.perDay.minorUnits.toDouble(),
+              stepLabel: forecastAdvance(plan),
               label: '$title. $text',
               from: t.schedules.forecastToday,
               to: forecastEnd(plan),

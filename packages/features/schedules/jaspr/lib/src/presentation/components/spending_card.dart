@@ -55,7 +55,7 @@ class SpendingCard extends StatelessComponent {
     final percent = (share * 100).round();
     final line = switch (view.forecast) {
       final forecast? => switch (forecastLine(forecast)) {
-        final text? => (short: forecast.short, text: text),
+        final text? => (short: forecast.runsDry, text: text),
         null => null,
       },
       null => null,
