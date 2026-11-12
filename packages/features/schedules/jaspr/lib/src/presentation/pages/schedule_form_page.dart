@@ -131,9 +131,12 @@ class _ScheduleFormPageState extends State<ScheduleFormPage> {
     final name = state.name.trim();
     switch (state.status) {
       case ScheduleFormStatus.saved:
-        // A payment made of what came every month says so in the list.
+        // A payment made of an operation, or of what came every month, says
+        // so: in the list, or on the card of the operation it came from.
         component.onDone(
-          state.found == null ? null : t.schedules.madeRegular(name: name),
+          state.found == null && state.madeFrom == null
+              ? null
+              : t.schedules.madeRegular(name: name),
         );
       case ScheduleFormStatus.deleted:
         component.onDone(t.schedules.deleted(name: name));

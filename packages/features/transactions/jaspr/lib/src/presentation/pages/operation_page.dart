@@ -22,6 +22,7 @@ class OperationPage extends StatefulComponent {
     required this.editHref,
     required this.repeatHref,
     this.closes = false,
+    this.schedule,
     super.key,
   });
 
@@ -36,6 +37,10 @@ class OperationPage extends StatefulComponent {
 
   /// Whether the way back closes the card, as it does beside the list.
   final bool closes;
+
+  /// The row of the regular payments under the facts, such as «Сделать
+  /// регулярным», which the host builds.
+  final Component? schedule;
 
   @override
   State<OperationPage> createState() => _OperationPageState();
@@ -145,6 +150,7 @@ class _OperationPageState extends State<OperationPage> {
             OperationState(:final operation?) => [
               _summary(operation, today: state.today),
               _facts(operation, today: state.today),
+              ..._schedule(),
               if (state.deleteFailed)
                 p(classes: 'text-caption operation__failure', [
                   .text(t.transactions.failedToDelete),
@@ -204,6 +210,11 @@ class _OperationPageState extends State<OperationPage> {
       ]),
     ]);
   }
+
+  /// The row of the regular payments, when the host gives one. It stands
+  /// apart from the list of the card, whose `if` with a context would break
+  /// the analyzer of Dart 3.10 next to a null-aware element.
+  List<Component> _schedule() => [?component.schedule];
 
   /// The accounts, the category and the date. A note is the title already.
   Component _facts(Operation operation, {required CivilDate today}) {

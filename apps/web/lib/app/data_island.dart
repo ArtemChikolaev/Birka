@@ -63,6 +63,9 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
   final _scrolls = <String, double>{};
 
   var _amountsHidden = false;
+
+  /// What the page before asked this one to say once it is ready.
+  String? _said;
   void Function()? _stopWatching;
   void Function()? _stopWatchingTab;
 
@@ -116,6 +119,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
     );
     _fragment = addressFragment;
     _amountsHidden = amountsHidden ?? settings.hideAmountsOnLaunch;
+    _said = takeSaid();
     _stopWatching = watchAddressFragment(_onFragmentChanged);
     _stopWatchingTab = watchTabShown(onTabShown);
     unawaited(_open());
@@ -182,13 +186,15 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
 
   /// Back from a view that other pages of the site link to: to [parent] if it
   /// is one step back, then to the page that led here, and otherwise to
-  /// [parent].
-  void closeView([String parent = '']) {
+  /// [parent]. It says whether it went back to the page that led here, which
+  /// then says what the view asks it to with `sayOnNextPage`.
+  bool closeView([String parent = '']) {
     if (!_trail.leadsBackTo(parent) && cameFromSite) {
       goBackInHistory();
-      return;
+      return true;
     }
     closeForm(parent);
+    return false;
   }
 
   void _toggleAmounts() {
@@ -213,6 +219,8 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
         },
         if (kIsWeb && (_fragment.isEmpty || _beside) && !_alone)
           SiteNav(page: page),
+        if (_said case final said? when _stage == _Stage.ready)
+          GlassToast(said, onGone: () => setState(() => _said = null)),
       ]),
     );
   }
