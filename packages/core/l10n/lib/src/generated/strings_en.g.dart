@@ -3433,6 +3433,9 @@ class Translations$transactions$en {
   /// en: 'Note'
   String get addNote => 'Note';
 
+  /// en: 'Tag'
+  String get addTag => 'Tag';
+
   /// en: 'Done'
   String get done => 'Done';
 
@@ -6121,6 +6124,7 @@ extension on Translations {
           'transactions.pickDay' => 'Pick a day',
           'transactions.note' => 'Note',
           'transactions.addNote' => 'Note',
+          'transactions.addTag' => 'Tag',
           'transactions.done' => 'Done',
           'transactions.account' => 'Account',
           'transactions.to' => 'To',

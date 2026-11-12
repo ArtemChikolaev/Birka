@@ -16,6 +16,7 @@ class OperationPage extends StatelessWidget {
     required this.onClose,
     required this.onEdit,
     required this.onRepeat,
+    this.tags,
     this.schedule,
     super.key,
   });
@@ -29,6 +30,10 @@ class OperationPage extends StatelessWidget {
   /// Called by the button that records it once more.
   final VoidCallback onRepeat;
 
+  /// What the метки say of the operation under its facts: the ones it
+  /// wears, or the way to put one on (ADR 0027). It keeps the space under it.
+  final Widget? tags;
+
   /// What the regular payments say of the operation over its actions, such
   /// as the way to make it one. It keeps the space under it.
   final Widget? schedule;
@@ -36,6 +41,7 @@ class OperationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final schedule = this.schedule ?? const SizedBox.shrink();
+    final tags = this.tags ?? const SizedBox.shrink();
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: AmbientBackground(
@@ -68,6 +74,7 @@ class OperationPage extends StatelessWidget {
                     const SizedBox(height: BirkaTokens.spaceLg),
                     _Facts(operation: operation, today: state.today),
                     const SizedBox(height: BirkaTokens.spaceLg),
+                    tags,
                     schedule,
                     if (state.deleteFailed) ...[
                       Text(

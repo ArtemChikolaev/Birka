@@ -37,6 +37,9 @@ abstract interface class TransactionsRepository {
   /// The operations that wear метка [id], the latest first (ADR 0027).
   Stream<List<Operation>> watchTagOperations(String id);
 
+  /// The метки there are, which an operation can wear (ADR 0027).
+  Future<List<Tag>> tags();
+
   /// The first days of the months with operations, the latest first.
   Future<List<CivilDate>> months();
 

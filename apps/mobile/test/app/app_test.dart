@@ -40,6 +40,7 @@ import 'package:ledger/ledger.dart'
         LedgerImport,
         Notice,
         Schedule,
+        Tag,
         Transaction,
         TransactionDraft,
         TransactionSource,
@@ -79,8 +80,14 @@ import 'package:schedules_flutter/schedules_flutter.dart'
 import 'package:settings_common/settings_common.dart'
     show BaseCurrency, MonthStart, Settings, SettingsCubit, SettingsStore;
 import 'package:tags_common/tags_common.dart'
-    show TagFormCubit, TagReportCubit, TagsCubit;
-import 'package:tags_common/testing.dart' show FakeTagsRepository;
+    show
+        OperationTagsCubit,
+        TagFormCubit,
+        TagPickerCubit,
+        TagReportCubit,
+        TagsCubit;
+import 'package:tags_common/testing.dart'
+    show FakeTagsRepository, istanbul, renovation;
 import 'package:tags_flutter/tags_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
@@ -321,6 +328,9 @@ final class _NoCategories implements CategoriesRepository {
 }
 
 final class _Transactions implements TransactionsRepository {
+  _Transactions(this._tags);
+
+  final FakeTagsRepository _tags;
   List<Operation> operations = const [];
   AccountBalance? account;
 
@@ -363,6 +373,9 @@ final class _Transactions implements TransactionsRepository {
   @override
   Stream<List<Operation>> watchTagOperations(String id) =>
       Stream.value(operations);
+
+  @override
+  Future<List<Tag>> tags() async => _tags.tags;
 
   @override
   Future<List<CivilDate>> months() async => const [];
@@ -537,6 +550,7 @@ void main() {
   late GetIt getIt;
   late _Accounts accounts;
   late _Transactions transactions;
+  late FakeTagsRepository tags;
   late _Overview overview;
   late _Settings settings;
   late _Links links;
@@ -553,7 +567,8 @@ void main() {
     forms = [];
     accounts = _Accounts();
     final CategoriesRepository categories = _NoCategories();
-    transactions = _Transactions();
+    tags = FakeTagsRepository();
+    transactions = _Transactions(tags);
     overview = _Overview();
     getIt
       ..registerFactory(() => AccountsCubit(accounts))
@@ -632,12 +647,18 @@ void main() {
       ..registerFactoryParam<QuickAddCubit, QuickAddSource?, void>(
         (source, _) => QuickAddCubit(transactions, source: source),
       )
-      ..registerFactory(() => TagsCubit(FakeTagsRepository()))
+      ..registerFactory(() => TagsCubit(tags))
       ..registerFactoryParam<TagReportCubit, String, void>(
-        (id, _) => TagReportCubit(FakeTagsRepository(), id),
+        (id, _) => TagReportCubit(tags, id),
       )
       ..registerFactoryParam<TagFormCubit, String?, String?>(
-        (id, name) => TagFormCubit(FakeTagsRepository(), id: id),
+        (id, name) => TagFormCubit(tags, id: id, name: name ?? ''),
+      )
+      ..registerFactoryParam<TagPickerCubit, Set<String>, void>(
+        (picked, _) => TagPickerCubit(tags, picked: picked),
+      )
+      ..registerFactoryParam<OperationTagsCubit, String, void>(
+        (id, _) => OperationTagsCubit(tags, id),
       )
       ..registerFactoryParam<TagOperationsCubit, String, void>(
         (id, _) => TagOperationsCubit(transactions, id),
@@ -1114,6 +1135,71 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.byType(TagOperations), findsOneWidget);
+  });
+
+  testWidgets('quick add makes a метка over the picker and wears it', (
+    tester,
+  ) async {
+    // No trip covers the day of the run, so the sheet starts without one.
+    tags = FakeTagsRepository(tags: [istanbul, renovation]);
+    transactions = _Transactions(tags)..operations = [_coffee()];
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel(t.app.newOperation));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('+ ${t.transactions.addTag}'));
+    await tester.pumpAndSettle();
+
+    final picker = find.byType(TagPickerSheet);
+    expect(picker, findsOneWidget);
+    expect(find.text('Стамбул'), findsOneWidget);
+
+    await tester.enterText(
+      find.descendant(of: picker, matching: find.byType(TextField)),
+      'Казань',
+    );
+    await tester.pump();
+    await tester.tap(find.text(t.tags.picker.create(name: 'Казань')));
+    await tester.pumpAndSettle();
+
+    // The form opens over the picker, with the name of the search.
+    final form = find.byType(TagFormPage);
+    expect(form, findsOneWidget);
+    expect(
+      find.descendant(of: form, matching: find.text('Казань')),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.descendant(of: form, matching: find.byType(BirkaButton)).last,
+    );
+    await tester.pumpAndSettle();
+
+    expect(form, findsNothing);
+    expect(picker, findsOneWidget);
+    expect(
+      find.descendant(of: picker, matching: find.text('Казань')),
+      findsOneWidget,
+    );
+    final made = tester.widget<BirkaCheckbox>(
+      find.descendant(
+        of: find.ancestor(
+          of: find.text('Казань'),
+          matching: find.byType(GlassListRow),
+        ),
+        matching: find.byType(BirkaCheckbox),
+      ),
+    );
+    expect(made.checked, isTrue);
+
+    await tester.tapAt(const Offset(200, 40));
+    await tester.pumpAndSettle();
+
+    expect(picker, findsNothing);
+    expect(find.byType(QuickAddPage), findsOneWidget);
+    expect(find.text('Казань'), findsOneWidget);
+    expect(find.text('+ ${t.transactions.addTag}'), findsNothing);
   });
 
   testWidgets('help opens from the more tab, over the bar', (tester) async {

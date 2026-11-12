@@ -125,6 +125,12 @@ final class FakeRepository implements TransactionsRepository {
     ],
   );
 
+  /// The метки there are.
+  List<Tag> tagList = const [];
+
+  @override
+  Future<List<Tag>> tags() async => tagList;
+
   @override
   Stream<List<Operation>> watchTagOperations(String id) => _follow(
     () => [

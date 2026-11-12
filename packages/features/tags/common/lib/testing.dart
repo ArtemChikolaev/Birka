@@ -179,6 +179,9 @@ final class FakeTagsRepository implements TagsRepository {
     controller.onCancel = subscription.cancel;
   });
 
+  /// The метки there are now.
+  List<Tag> get tags => _tags;
+
   @override
   CivilDate today() => _today;
 

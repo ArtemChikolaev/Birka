@@ -143,6 +143,12 @@ final class FakeTransactionsRepository implements TransactionsRepository {
     ],
   );
 
+  /// The метки there are.
+  List<Tag> tagList = const [];
+
+  @override
+  Future<List<Tag>> tags() async => tagList;
+
   @override
   Stream<List<Operation>> watchTagOperations(String id) => _follow(
     () => [
@@ -213,6 +219,7 @@ Operation testOperation(
   String note = '',
   TransactionStatus status = TransactionStatus.cleared,
   TransactionSource source = TransactionSource.manual,
+  Map<String, TagMark> tags = const {},
 }) {
   final from = account ?? testAccount('card', currency: amount.currency);
   final picked =
@@ -236,6 +243,7 @@ Operation testOperation(
         if (category != null)
           Allocation(categoryId: category.id, amount: amount.abs()),
       ],
+      tags: tags,
     ),
     account: from,
     toAccount: toAccount,

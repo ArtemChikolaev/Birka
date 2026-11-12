@@ -83,6 +83,9 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   );
 
   @override
+  Future<List<Tag>> tags() => _ledger.watchTags().first;
+
+  @override
   Future<List<CivilDate>> months() => _ledger.months();
 
   @override

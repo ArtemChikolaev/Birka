@@ -2855,6 +2855,8 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get addNote => 'Заметка';
   @override
+  String get addTag => 'Метка';
+  @override
   String get done => 'Готово';
   @override
   String get account => 'Счёт';
@@ -5531,6 +5533,7 @@ extension on TranslationsRu {
           'transactions.pickDay' => 'Выбрать день',
           'transactions.note' => 'Заметка',
           'transactions.addNote' => 'Заметка',
+          'transactions.addTag' => 'Метка',
           'transactions.done' => 'Готово',
           'transactions.account' => 'Счёт',
           'transactions.to' => 'Куда',
