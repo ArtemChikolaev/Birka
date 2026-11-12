@@ -24,6 +24,8 @@ class ImportPage extends StatefulComponent {
     required this.backHref,
     required this.operationsHref,
     required this.inboxHref,
+    required this.schedulesHref,
+    this.repeats,
     this.onStepChanged,
     this.clock = DateTime.now,
     super.key,
@@ -37,6 +39,14 @@ class ImportPage extends StatefulComponent {
 
   /// The inbox, where what the import leaves waits.
   final String inboxHref;
+
+  /// The regular payments, where the result leads to what the statement
+  /// posted and to what came every month.
+  final String schedulesHref;
+
+  /// The names of the operations that came every month and have no payment
+  /// yet, read once the import is in.
+  final Future<List<String>> Function()? repeats;
 
   /// Called when another step comes on screen, so that the host can show it
   /// from its top: its way on stands at its end on a phone.
@@ -190,6 +200,8 @@ class _ImportPageState extends State<ImportPage> {
                   ImportStep.done => DoneStep(
                     state: state,
                     inboxHref: component.inboxHref,
+                    schedulesHref: component.schedulesHref,
+                    repeats: component.repeats,
                   ),
                 },
               ]),
