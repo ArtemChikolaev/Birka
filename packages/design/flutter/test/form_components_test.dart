@@ -129,6 +129,27 @@ void main() {
       expect(icon.glyph, BirkaGlyph.fall);
       expect(icon.color, colors.negative);
     });
+
+    testWidgets('goes up in the color of bad news, as more spent', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        app(
+          HiddenAmounts(
+            notifier: ValueNotifier(false),
+            child: const BirkaChangePill(
+              label: '+100',
+              rise: true,
+              good: false,
+            ),
+          ),
+        ),
+      );
+
+      final icon = tester.widget<BirkaIcon>(find.byType(BirkaIcon));
+      expect(icon.glyph, BirkaGlyph.rise);
+      expect(icon.color, colors.negative);
+    });
   });
 
   group('BirkaStepBars', () {
@@ -824,6 +845,34 @@ void main() {
 
       expect(find.text('15'), findsOneWidget);
       expect(find.bySemanticsLabel('All, 15'), findsOneWidget);
+    });
+
+    testWidgets('shows a glyph after its label, turned as asked', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        app(
+          BirkaChip(
+            label: 'October',
+            selected: true,
+            trailingGlyph: BirkaGlyph.chevron,
+            trailingTurns: 1,
+            onTap: () {},
+          ),
+        ),
+      );
+
+      final icon = tester.widget<BirkaIcon>(find.byType(BirkaIcon));
+      expect(icon.glyph, BirkaGlyph.chevron);
+      expect(icon.color, colors.background);
+      expect(
+        tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns,
+        1,
+      );
+      expect(
+        tester.getTopLeft(find.byType(BirkaIcon)).dx,
+        greaterThan(tester.getTopRight(find.text('October')).dx),
+      );
     });
   });
 

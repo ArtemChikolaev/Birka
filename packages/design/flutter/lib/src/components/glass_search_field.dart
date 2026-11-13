@@ -15,6 +15,8 @@ class GlassSearchField extends StatelessWidget {
     required this.controller,
     required this.onChanged,
     this.hint,
+    this.autofocus = false,
+    this.onSubmitted,
     super.key,
   });
 
@@ -32,6 +34,13 @@ class GlassSearchField extends StatelessWidget {
 
   /// What an empty field shows.
   final String? hint;
+
+  /// Whether the field takes the focus, and the keyboard comes up, as soon as
+  /// it shows.
+  final bool autofocus;
+
+  /// Called with the text when the search key of the keyboard is pressed.
+  final ValueChanged<String>? onSubmitted;
 
   void _clear() {
     controller.clear();
@@ -59,6 +68,8 @@ class GlassSearchField extends StatelessWidget {
                 child: TextField(
                   controller: controller,
                   onChanged: onChanged,
+                  autofocus: autofocus,
+                  onSubmitted: onSubmitted,
                   onTapOutside: (_) => FocusScope.of(context).unfocus(),
                   textInputAction: TextInputAction.search,
                   textCapitalization: TextCapitalization.sentences,

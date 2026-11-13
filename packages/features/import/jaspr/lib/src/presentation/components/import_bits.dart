@@ -6,10 +6,6 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 
-/// [amount] with its sign: «+185 000 ₽» or «−2 340,50 ₽».
-String signedMoney(Money amount) =>
-    amount.isPositive ? '+${formatMoney(amount)}' : formatMoney(amount);
-
 /// The sums of [amounts] in each of their currencies, on one line:
 /// «−148 230,40 ₽ · −12 $», or a dash for none.
 String moneyLine(Iterable<Money> amounts, {bool signed = false}) {

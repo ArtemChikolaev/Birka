@@ -17,6 +17,7 @@ class OperationsPage extends StatefulWidget {
   const OperationsPage({
     required this.onOpen,
     required this.onRepeat,
+    this.onBack,
     super.key,
   });
 
@@ -25,6 +26,10 @@ class OperationsPage extends StatefulWidget {
 
   /// Called with the id of the operation to record once more.
   final ValueChanged<String> onRepeat;
+
+  /// Goes back, for the list of an answer of «Спросить» opened over it:
+  /// the header gets a back button and the plaque a way back to the answer.
+  final VoidCallback? onBack;
 
   @override
   State<OperationsPage> createState() => _OperationsPageState();
@@ -83,7 +88,7 @@ class _OperationsPageState extends State<OperationsPage> {
                   ),
                   sliver: SliverList.list(
                     children: [
-                      _Header(state: state),
+                      _Header(state: state, onBack: widget.onBack),
                       const SizedBox(height: BirkaTokens.spaceMd),
                       GlassSearchField(
                         label: t.transactions.search,
@@ -94,6 +99,21 @@ class _OperationsPageState extends State<OperationsPage> {
                       ),
                       const SizedBox(height: BirkaTokens.spaceSm),
                       _Filters(state: state),
+                      // The plaque of an answer closes as it is taken off.
+                      AnimatedSize(
+                        duration: BirkaMotion.reduced(context)
+                            ? Duration.zero
+                            : BirkaMotion.base,
+                        curve: BirkaMotion.standardCurve,
+                        alignment: Alignment.topCenter,
+                        child: switch (state.focus) {
+                          null => const SizedBox(width: double.infinity),
+                          final focus => _Plaque(
+                            focus: focus,
+                            onBack: widget.onBack,
+                          ),
+                        },
+                      ),
                       if (state.deleteFailed) ...[
                         const SizedBox(height: BirkaTokens.spaceSm),
                         Text(
@@ -120,6 +140,7 @@ class _OperationsPageState extends State<OperationsPage> {
                                   state.month,
                                   state.filter,
                                   state.query,
+                                  state.focus,
                                 )),
                                 state: state,
                               ),
@@ -161,6 +182,7 @@ class _OperationsPageState extends State<OperationsPage> {
                               state.month,
                               state.filter,
                               state.query,
+                              state.focus,
                             )),
                             days: state.days,
                             today: state.today,
@@ -181,9 +203,10 @@ class _OperationsPageState extends State<OperationsPage> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.state});
+  const _Header({required this.state, this.onBack});
 
   final OperationsState state;
+  final VoidCallback? onBack;
 
   Future<void> _pickMonth(BuildContext context) async {
     final cubit = context.read<OperationsCubit>();
@@ -218,8 +241,17 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onBack = this.onBack;
     return Row(
       children: [
+        if (onBack != null) ...[
+          GlassIconButton(
+            glyph: BirkaGlyph.back,
+            label: t.transactions.back,
+            onPressed: onBack,
+          ),
+          const SizedBox(width: BirkaTokens.spaceSm),
+        ],
         Expanded(
           child: Text(
             t.app.operations,
@@ -228,15 +260,64 @@ class _Header extends StatelessWidget {
             ).title.copyWith(color: BirkaColors.of(context).text),
           ),
         ),
-        const SizedBox(width: BirkaTokens.spaceXs),
-        BirkaChip(
-          glyph: BirkaGlyph.calendar,
-          label: monthLabel(state.month, today: state.today),
-          selected: false,
-          order: state.month,
-          onTap: () => _pickMonth(context),
-        ),
+        // Under the plaque of an answer the plaque tells the days.
+        if (state.focus == null) ...[
+          const SizedBox(width: BirkaTokens.spaceXs),
+          BirkaChip(
+            glyph: BirkaGlyph.calendar,
+            label: monthLabel(state.month, today: state.today),
+            selected: false,
+            order: state.month,
+            onTap: () => _pickMonth(context),
+          ),
+        ],
       ],
+    );
+  }
+}
+
+/// The plaque of an answer of «Спросить»: the list shows its operations
+/// alone until the cross takes it off, and a link leads back to the answer.
+class _Plaque extends StatelessWidget {
+  const _Plaque({required this.focus, this.onBack});
+
+  final OperationsFocus focus;
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    final onBack = this.onBack;
+    return Padding(
+      padding: const EdgeInsets.only(top: BirkaTokens.spaceMd),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: SectionLabel(t.transactions.fromQuestion)),
+              if (onBack != null)
+                AccentLink(
+                  label: t.transactions.toAnswer,
+                  chevron: false,
+                  onTap: onBack,
+                ),
+            ],
+          ),
+          const SizedBox(height: BirkaTokens.spaceXs),
+          Semantics(
+            label: t.transactions.dropFocus(title: focus.title),
+            excludeSemantics: true,
+            button: true,
+            child: BirkaChip(
+              label: focus.title,
+              selected: true,
+              trailingGlyph: BirkaGlyph.close,
+              onTap: () =>
+                  unawaited(context.read<OperationsCubit>().dropFocus()),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

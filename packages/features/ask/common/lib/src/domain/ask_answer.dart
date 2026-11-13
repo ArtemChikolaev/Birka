@@ -180,7 +180,9 @@ AskAnswer answerOf(
     count: now.length,
     average: now.isEmpty ? null : total.split(now.length).first,
     before: before,
-    bars: _bars(rows, period ?? _spanOf(now), rates, currency),
+    bars: now.isEmpty
+        ? const []
+        : _bars(rows, period ?? _spanOf(now), rates, currency),
     biggest: biggest.take(3).toList(),
     shares: query.categoryIds.length == 1
         ? const []

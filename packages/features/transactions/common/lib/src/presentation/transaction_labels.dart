@@ -79,8 +79,7 @@ String amountsLabel(List<Money> amounts) =>
     amounts.map(signedAmountLabel).join(' · ');
 
 /// [amount] with a plus when it is above zero.
-String signedAmountLabel(Money amount) =>
-    amount.isPositive ? '+${formatMoney(amount)}' : formatMoney(amount);
+String signedAmountLabel(Money amount) => signedMoney(amount);
 
 /// What the operation does to the money: `−370 ₽` and `+370 ₽`, and `370 ₽` for
 /// a transfer, which only moves it.

@@ -2984,6 +2984,12 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get clearSearch => 'Очистить поиск';
   @override
+  String get fromQuestion => 'Из вопроса';
+  @override
+  String get toAnswer => 'К ответу';
+  @override
+  String dropFocus({required Object title}) => 'Снять «${title}»';
+  @override
   String get filterAll => 'Все';
   @override
   String get filterExpenses => 'Расходы';
@@ -6233,6 +6239,10 @@ extension on TranslationsRu {
           'transactions.search' => 'Поиск',
           'transactions.searchHint' => 'Кафе, 250 или заметка',
           'transactions.clearSearch' => 'Очистить поиск',
+          'transactions.fromQuestion' => 'Из вопроса',
+          'transactions.toAnswer' => 'К ответу',
+          'transactions.dropFocus' =>
+            ({required Object title}) => 'Снять «${title}»',
           'transactions.filterAll' => 'Все',
           'transactions.filterExpenses' => 'Расходы',
           'transactions.filterIncome' => 'Доходы',

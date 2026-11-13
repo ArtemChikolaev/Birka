@@ -17,7 +17,9 @@ void main() {
   final october = AskPeriod.month(CivilDate(2026, 10, 1));
 
   test('counts a category with its subcategories over a month', () {
-    final answer = count(AskQuery(period: october, categoryIds: {'cafe'}));
+    final answer = count(
+      AskQuery(period: october, categoryIds: const {'cafe'}),
+    );
 
     expect(answer.total, units(5220, Currency.rub));
     expect(answer.count, 4);
@@ -114,10 +116,11 @@ void main() {
       AskQuery(period: october, categoryIds: const {'subs'}),
     );
 
-    expect(answer.total, Money.zero(Currency.rub));
+    expect(answer.total, const Money.zero(Currency.rub));
     expect(answer.count, 0);
     expect(answer.average, isNull);
     expect(answer.biggest, isEmpty);
+    expect(answer.bars, isEmpty);
   });
 
   test('leaves out what has no rate and says so', () {

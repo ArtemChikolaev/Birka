@@ -19,6 +19,13 @@ abstract interface class TransactionsRepository {
   /// Every operation of the month that starts on [month], the latest first.
   Stream<List<Operation>> watchOperations(CivilDate month);
 
+  /// The operations from [first] to [last], with both ends included, the
+  /// latest first.
+  Stream<List<Operation>> watchOperationsBetween(
+    CivilDate first,
+    CivilDate last,
+  );
+
   /// Operation [id], and `null` while it does not exist.
   Stream<Operation?> watchOperation(String id);
 

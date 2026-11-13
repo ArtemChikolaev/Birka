@@ -35,6 +35,18 @@ void main() {
     );
   });
 
+  test('names months by their first day when they start on the 9th', () {
+    final months = AskPeriod.months(
+      CivilDate(2026, 10, 9),
+      3,
+      start: 9,
+    );
+
+    expect('${months.first}..${months.last}', '2026-08-09..2026-11-08');
+    expect(label(months), 'Авг – Окт');
+    expect(periodLine(months, today: today), 'Август – октябрь');
+  });
+
   test('says what a total is set against', () {
     String before(AskPeriod period) => beforeLabel(period, today: today);
 

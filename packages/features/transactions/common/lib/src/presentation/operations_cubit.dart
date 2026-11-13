@@ -5,6 +5,7 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 import 'package:transactions_common/src/domain/operation.dart';
+import 'package:transactions_common/src/domain/operations_focus.dart';
 import 'package:transactions_common/src/domain/transactions_repository.dart';
 
 /// Which operations the list shows.
@@ -55,6 +56,7 @@ final class OperationsState {
     this.query = '',
     this.operations = const [],
     this.deleteFailed = false,
+    this.focus,
   });
 
   /// Where the list stands.
@@ -78,10 +80,17 @@ final class OperationsState {
   /// Whether the last delete failed.
   final bool deleteFailed;
 
+  /// The operations of an answer of «Спросить», which the list shows alone
+  /// until the plaque is taken off, or `null` for the month.
+  final OperationsFocus? focus;
+
   /// The operations that the filter and the search let through.
   late final List<Operation> shown = [
     for (final operation in operations)
-      if (filter.allows(operation.kind) && operation.matches(query)) operation,
+      if ((focus?.ids.contains(operation.id) ?? true) &&
+          filter.allows(operation.kind) &&
+          operation.matches(query))
+        operation,
   ];
 
   /// What the list shows, day by day.
@@ -94,7 +103,8 @@ final class OperationsState {
   late final List<Money> income = _sumOf(TransactionKind.income);
 
   /// Whether the list shows only part of [month].
-  bool get isNarrowed => filter != OperationsFilter.all || query.isNotEmpty;
+  bool get isNarrowed =>
+      filter != OperationsFilter.all || query.isNotEmpty || focus != null;
 
   List<Money> _sumOf(TransactionKind kind) => sumByCurrency(
     shown
@@ -112,6 +122,7 @@ final class OperationsState {
     String? query,
     List<Operation>? operations,
     bool deleteFailed = false,
+    OperationsFocus? Function()? focus,
   }) {
     return OperationsState(
       status: status ?? this.status,
@@ -121,6 +132,7 @@ final class OperationsState {
       query: query ?? this.query,
       operations: operations ?? this.operations,
       deleteFailed: deleteFailed,
+      focus: focus == null ? this.focus : focus(),
     );
   }
 }
@@ -128,9 +140,12 @@ final class OperationsState {
 /// Follows the operations of a month in the local database.
 class OperationsCubit extends Cubit<OperationsState> {
   /// Creates the cubit on the current month. [now] tells the time in tests.
-  OperationsCubit(this._repository, {DateTime Function()? now})
-    : _now = now ?? DateTime.now,
-      super(_initial((now ?? DateTime.now)())) {
+  OperationsCubit(
+    this._repository, {
+    DateTime Function()? now,
+    OperationsFocus? focus,
+  }) : _now = now ?? DateTime.now,
+       super(_initial((now ?? DateTime.now)(), focus)) {
     _follow();
   }
 
@@ -138,12 +153,13 @@ class OperationsCubit extends Cubit<OperationsState> {
   final DateTime Function() _now;
   StreamSubscription<void>? _subscription;
 
-  static OperationsState _initial(DateTime now) {
+  static OperationsState _initial(DateTime now, OperationsFocus? focus) {
     final today = CivilDate.of(now);
     return OperationsState(
       status: OperationsStatus.loading,
       today: today,
-      month: _monthOf(today),
+      month: _monthOf(focus?.last ?? today),
+      focus: focus,
     );
   }
 
@@ -173,6 +189,8 @@ class OperationsCubit extends Cubit<OperationsState> {
   Future<void> nextMonth() => _monthMoved(earlier: false);
 
   Future<void> _monthMoved({required bool earlier}) async {
+    // The operations of an answer stay until the plaque is taken off.
+    if (state.focus != null) return;
     final month = neighbourMonth(
       await months(),
       state.month,
@@ -199,6 +217,22 @@ class OperationsCubit extends Cubit<OperationsState> {
     } on Exception {
       return {current, state.month}.toList();
     }
+  }
+
+  /// Takes the plaque of an answer off: the list shows the month of its
+  /// last operation again.
+  Future<void> dropFocus() async {
+    if (state.focus == null) return;
+    final cancelled = _subscription?.cancel();
+    emit(
+      state.copyWith(
+        status: OperationsStatus.loading,
+        focus: () => null,
+        operations: const [],
+      ),
+    );
+    _follow();
+    await cancelled;
   }
 
   /// Reads the operations again after a failure.
@@ -229,18 +263,21 @@ class OperationsCubit extends Cubit<OperationsState> {
   }
 
   void _follow() {
-    _subscription = _repository
-        .watchOperations(state.month)
-        .listen(
-          (operations) => emit(
-            state.copyWith(
-              status: OperationsStatus.ready,
-              operations: operations,
-            ),
-          ),
-          onError: (Object _) =>
-              emit(state.copyWith(status: OperationsStatus.failed)),
-        );
+    final focus = state.focus;
+    _subscription =
+        (focus == null
+                ? _repository.watchOperations(state.month)
+                : _repository.watchOperationsBetween(focus.first, focus.last))
+            .listen(
+              (operations) => emit(
+                state.copyWith(
+                  status: OperationsStatus.ready,
+                  operations: operations,
+                ),
+              ),
+              onError: (Object _) =>
+                  emit(state.copyWith(status: OperationsStatus.failed)),
+            );
   }
 
   @override

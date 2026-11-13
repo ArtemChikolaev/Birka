@@ -71,6 +71,51 @@ void main() {
     expect(list.state.income, [rub(10000000)]);
   });
 
+  test(
+    'the operations of an answer stay alone until the plaque goes',
+    () async {
+      final list = OperationsCubit(
+        repository,
+        now: () => now,
+        focus: OperationsFocus(
+          title: 'Кафе · Октябрь 2026',
+          ids: const {'coffee', 'old'},
+          first: CivilDate(2026, 9, 1),
+          last: CivilDate(2026, 10, 31),
+        ),
+      );
+      addTearDown(list.close);
+      await settle();
+
+      expect(list.state.month, october);
+      expect(list.state.isNarrowed, isTrue);
+      expect(
+        [for (final operation in list.state.shown) operation.id],
+        [
+          'coffee',
+          'old',
+        ],
+      );
+      // A swipe does not leave the operations of the answer.
+      await list.previousMonth();
+      expect(list.state.month, october);
+
+      await list.dropFocus();
+      await settle();
+
+      expect(list.state.focus, isNull);
+      expect(list.state.month, october);
+      expect(
+        [for (final operation in list.state.shown) operation.id],
+        [
+          'coffee',
+          'pay',
+          'move',
+        ],
+      );
+    },
+  );
+
   test('follows the ledger', () async {
     final list = await open();
 

@@ -124,6 +124,53 @@ void main() {
     expect(find.text('Сентябрь'), findsNothing);
   });
 
+  testWidgets('the operations of an answer stand under a plaque', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(780, 1688);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    var back = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: BirkaTheme.dark(),
+        home: Scaffold(
+          body: BlocProvider(
+            create: (_) => OperationsCubit(
+              repository,
+              now: () => now,
+              focus: OperationsFocus(
+                title: 'Кафе · Октябрь 2026',
+                ids: const {'coffee'},
+                first: CivilDate(2026, 10, 1),
+                last: CivilDate(2026, 10, 31),
+              ),
+            ),
+            child: OperationsPage(
+              onOpen: opened.add,
+              onRepeat: repeated.add,
+              onBack: () => back++,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('ИЗ ВОПРОСА'), findsOneWidget);
+    expect(find.text('Кафе · Октябрь 2026'), findsOneWidget);
+    expect(find.text('Кофейня у дома'), findsOneWidget);
+    expect(find.text('Продукты'), findsNothing);
+
+    await tester.tap(find.text('К ответу'));
+    expect(back, 1);
+
+    await tapText(tester, 'Кафе · Октябрь 2026');
+
+    expect(find.text('ИЗ ВОПРОСА'), findsNothing);
+    expect(find.text('Продукты'), findsOneWidget);
+  });
+
   testWidgets('a row opens its operation', (tester) async {
     await pump(tester);
 

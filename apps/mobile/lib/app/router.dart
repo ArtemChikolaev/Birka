@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:accounts_common/accounts_common.dart';
 import 'package:accounts_flutter/accounts_flutter.dart';
+import 'package:ask_common/ask_common.dart' show AskAnswer, AskCubit, AskPlace;
+import 'package:ask_flutter/ask_flutter.dart';
 import 'package:backup_common/backup_common.dart'
     show BackupCubit, SettingsStore, demoStateIn;
 import 'package:backup_flutter/backup_flutter.dart';
@@ -111,6 +113,12 @@ abstract final class Paths {
   /// What Birka told the person (ADR 0026).
   static const notifications = '/notifications';
 
+  /// Questions about money in words (ADR 0028).
+  static const ask = '/ask';
+
+  /// The operations an answer counted, under its plaque.
+  static const askOperations = '/ask/operations';
+
   /// The form of a new category of [kind].
   static String newCategory(CategoryKind kind) =>
       '/categories/new?kind=${kind.name}';
@@ -201,6 +209,7 @@ GoRouter buildRouter(
                     onAccounts: () => context.push(Paths.accounts),
                     onOpenAccount: (id) =>
                         context.push(Paths.account(id), extra: _fromCard),
+                    ask: AskButton(onOpen: () => context.push(Paths.ask)),
                     bell: NotificationsBell(
                       onOpen: () => context.push(Paths.notifications),
                     ),
@@ -414,6 +423,56 @@ GoRouter buildRouter(
           create: (_) => getIt<HelpCubit>(),
           child: HelpPage(onBack: () => context.pop()),
         ),
+      ),
+      GoRoute(
+        path: Paths.ask,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<AskCubit>(),
+          child: AskPage(
+            onBack: () => context.pop(),
+            onShowOperations: (answer, title) => context.push(
+              Paths.askOperations,
+              extra: _focusOf(answer, title),
+            ),
+            onOpenPlace: (place) => _openPlace(context, getIt, place),
+            onOpenHelp: () => context.push(Paths.help),
+            onOpenOperation: (id) => context.push(Paths.operation(id)),
+            onOpenTag: (id) => context.push(Paths.tag(id)),
+            // What can be spent today and the next payments are the card of
+            // the overview.
+            fact: (context, fact) => BlocProvider(
+              create: (_) => getIt<SchedulesCubit>(),
+              child: SpendingCard(
+                onOpenPlan: () => context.push(Paths.payday),
+                onOpenList: () => context.push(Paths.schedules),
+              ),
+            ),
+          ),
+        ),
+        routes: [
+          GoRoute(
+            path: 'operations',
+            parentNavigatorKey: rootKey,
+            builder: (context, state) => Scaffold(
+              backgroundColor: Colors.transparent,
+              body: AmbientBackground(
+                child: BlocProvider(
+                  create: (_) => getIt<OperationsCubit>(
+                    param1: state.extra is OperationsFocus
+                        ? state.extra! as OperationsFocus
+                        : null,
+                  ),
+                  child: OperationsPage(
+                    onOpen: (id) => context.push(Paths.operation(id)),
+                    onRepeat: (id) => context.push(Paths.repeatOperation(id)),
+                    onBack: () => context.pop(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: Paths.schedules,
@@ -689,5 +748,53 @@ Future<void> _enableReminders(BuildContext context, GetIt getIt) async {
     if (context.mounted) await turnRemindersOn(context, reminders);
   } finally {
     await reminders.close();
+  }
+}
+
+/// The operations that [answer] counted, under the plaque [title].
+OperationsFocus _focusOf(AskAnswer answer, String title) {
+  final days = [
+    for (final operation in answer.operations) operation.transaction.occurredOn,
+  ]..sort();
+  final period = answer.query.period;
+  return OperationsFocus(
+    title: title,
+    ids: {for (final operation in answer.operations) operation.transaction.id},
+    first: period?.first ?? days.first,
+    last: period?.last ?? days.last,
+  );
+}
+
+/// Opens the screen of [place] from «Спросить»: a tab in place of it, the
+/// import in its sheet, and any other screen over it.
+void _openPlace(BuildContext context, GetIt getIt, AskPlace place) {
+  final path = switch (place) {
+    AskPlace.payday => Paths.payday,
+    AskPlace.schedules => Paths.schedules,
+    AskPlace.tags => Paths.tags,
+    AskPlace.accounts => Paths.accounts,
+    AskPlace.categories => Paths.categories,
+    AskPlace.inbox => Paths.inbox,
+    AskPlace.backup => Paths.backup,
+    AskPlace.help => Paths.help,
+    AskPlace.notifications => Paths.notifications,
+    AskPlace.reports => Paths.reports,
+    AskPlace.settings => Paths.more,
+    AskPlace.imports => null,
+  };
+  if (path == null) {
+    unawaited(
+      showImportSheet(
+        context,
+        cubit: getIt.call<ImportCubit>,
+        files: getIt<StatementFiles>(),
+        onSchedules: () => context.push(Paths.schedules),
+        repeats: () => repeatNames(getIt<SchedulesRepository>()),
+      ),
+    );
+  } else if (path == Paths.reports || path == Paths.more) {
+    context.go(path);
+  } else {
+    unawaited(context.push(path));
   }
 }

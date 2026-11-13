@@ -44,6 +44,18 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   }
 
   @override
+  Stream<List<Operation>> watchOperationsBetween(
+    CivilDate first,
+    CivilDate last,
+  ) => combineLatest(
+    _ledger.watchTransactions(from: first, to: last, limit: null),
+    _watchNames(),
+    (transactions, names) => [
+      for (final transaction in transactions) names.operationOf(transaction),
+    ],
+  );
+
+  @override
   Stream<Operation?> watchOperation(String id) => combineLatest(
     _ledger.watchTransaction(id),
     _watchNames(),
