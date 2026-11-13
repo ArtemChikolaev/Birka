@@ -1,4 +1,5 @@
 import 'package:birka_web/pages/accounts_island.dart';
+import 'package:birka_web/pages/ask_island.dart';
 import 'package:birka_web/pages/categories_island.dart';
 import 'package:birka_web/pages/import_island.dart';
 import 'package:birka_web/pages/inbox_island.dart';
@@ -26,6 +27,7 @@ void main() {
     ('inbox', InboxIsland()),
     ('notifications', NotificationsIsland()),
     ('tags', TagsIsland()),
+    ('ask', AskIsland()),
   ]) {
     testComponents('the build leaves a frame without words for $name', (
       tester,

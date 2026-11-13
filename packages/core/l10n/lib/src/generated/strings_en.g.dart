@@ -259,6 +259,9 @@ class Translations$ask$en {
   String get private =>
       'The app answers by itself: questions and answers stay on this device.';
 
+  /// en: 'Could not read the data for an answer.'
+  String get failed => 'Could not read the data for an answer.';
+
   /// en: 'The app answers by itself: questions and answers stay in this browser.'
   String get privateWeb =>
       'The app answers by itself: questions and answers stay in this browser.';
@@ -3590,6 +3593,13 @@ class Translations$transactions$en {
   /// en: 'Take off “$title”'
   String dropFocus({required Object title}) => 'Take off “${title}”';
 
+  /// en: 'The list shows only what the question was about. Take the plaque off to see every operation of the month.'
+  String get focusText =>
+      'The list shows only what the question was about. Take the plaque off to see every operation of the month.';
+
+  /// en: 'Go back to the answer'
+  String get backToAnswer => 'Go back to the answer';
+
   /// en: 'All'
   String get filterAll => 'All';
 
@@ -3920,6 +3930,10 @@ class Translations$ask$answer$en {
   String get counted =>
       'Counted on this device at the central bank rate of the day of each operation.';
 
+  /// en: 'Counted in this browser at the central bank rate of the day of each operation.'
+  String get countedWeb =>
+      'Counted in this browser at the central bank rate of the day of each operation.';
+
   /// en: 'Some amounts have no rate yet and stay out of the total.'
   String get partial =>
       'Some amounts have no rate yet and stay out of the total.';
@@ -4057,6 +4071,9 @@ class Translations$ask$fact$en {
 
   /// en: 'Rates update once a day and stay on the device.'
   String get rateKept => 'Rates update once a day and stay on the device.';
+
+  /// en: 'Rates update once a day and stay in this browser.'
+  String get rateKeptWeb => 'Rates update once a day and stay in this browser.';
 
   /// en: 'There is no rate of this currency yet.'
   String get rateMissing => 'There is no rate of this currency yet.';
@@ -4786,6 +4803,7 @@ extension on Translations {
           'ask.forget' => 'Clear',
           'ask.private' =>
             'The app answers by itself: questions and answers stay on this device.',
+          'ask.failed' => 'Could not read the data for an answer.',
           'ask.privateWeb' =>
             'The app answers by itself: questions and answers stay in this browser.',
           'ask.slash' => 'The / key opens Ask from any page.',
@@ -4857,6 +4875,8 @@ extension on Translations {
           'ask.answer.noCategory' => 'No category',
           'ask.answer.counted' =>
             'Counted on this device at the central bank rate of the day of each operation.',
+          'ask.answer.countedWeb' =>
+            'Counted in this browser at the central bank rate of the day of each operation.',
           'ask.answer.partial' =>
             'Some amounts have no rate yet and stay out of the total.',
           'ask.answer.trip' => 'Trip report',
@@ -4920,6 +4940,8 @@ extension on Translations {
           'ask.fact.rateFor' => ({required Object sign}) => 'for 1 ${sign}',
           'ask.fact.rateKept' =>
             'Rates update once a day and stay on the device.',
+          'ask.fact.rateKeptWeb' =>
+            'Rates update once a day and stay in this browser.',
           'ask.fact.rateMissing' => 'There is no rate of this currency yet.',
           'ask.fact.rateHelp' => 'Where the rate comes from',
           'ask.fact.rateHelpText' => 'An answer from the help',
@@ -5425,6 +5447,9 @@ extension on Translations {
           'imports.previewCategory' => 'Category',
           'imports.previewAmount' => 'Amount',
           'imports.transfer' => 'Transfer',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.learned' => 'as before',
           'imports.inbox' => 'Decide in the inbox',
           'imports.problems' =>
@@ -5435,9 +5460,6 @@ extension on Translations {
                   one: '${count} row did not read',
                   other: '${count} rows did not read',
                 ),
-          _ => null,
-        } ??
-        switch (path) {
           'imports.problemLine' =>
             ({required Object line, required Object fault}) =>
                 'Row ${line}: ${fault}',
@@ -6372,6 +6394,9 @@ extension on Translations {
           'schedules.partsTwo' =>
             ({required Object advance, required Object day}) =>
                 'Half and half: the advance on day ${advance}, the salary on day ${day}.',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.partsOwn' =>
             ({
               required Object advanceAmount,
@@ -6384,9 +6409,6 @@ extension on Translations {
           'schedules.halves' =>
             ({required Object amount}) =>
                 '${amount} as the advance and as the salary',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.halvesOwn' =>
             ({required Object advance, required Object rest}) =>
                 'the advance of ${advance} and the salary of ${rest}',
@@ -6908,6 +6930,9 @@ extension on Translations {
           'transactions.toAnswer' => 'Back to the answer',
           'transactions.dropFocus' =>
             ({required Object title}) => 'Take off “${title}”',
+          'transactions.focusText' =>
+            'The list shows only what the question was about. Take the plaque off to see every operation of the month.',
+          'transactions.backToAnswer' => 'Go back to the answer',
           'transactions.filterAll' => 'All',
           'transactions.filterExpenses' => 'Expenses',
           'transactions.filterIncome' => 'Income',

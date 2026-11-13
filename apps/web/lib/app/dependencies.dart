@@ -1,4 +1,5 @@
 import 'package:accounts_common/accounts_common.dart';
+import 'package:ask_common/ask_common.dart' show registerAsk;
 import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/browser_settings_store.dart';
@@ -18,7 +19,8 @@ import 'package:overview_common/overview_common.dart';
 import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart';
 import 'package:schedules_common/schedules_common.dart' show registerSchedules;
-import 'package:settings_common/settings_common.dart' show MonthStart, Settings;
+import 'package:settings_common/settings_common.dart'
+    show MonthStart, Settings, SettingsStore;
 import 'package:tags_common/tags_common.dart' show registerTags;
 import 'package:transactions_common/transactions_common.dart';
 
@@ -36,6 +38,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)
     ..registerSingleton(MonthStart(settings.monthStart))
+    ..registerSingleton<SettingsStore>(const BrowserSettingsStore())
     ..registerSingleton<BackupFiles>(const BrowserBackupFiles())
     ..registerSingleton<StatementFiles>(const BrowserStatementFiles())
     ..registerSingleton(
@@ -47,6 +50,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
       ),
     );
   registerAccounts(getIt);
+  registerAsk(getIt);
   registerBackup(getIt, const BrowserSettingsStore());
   registerCategories(getIt);
   registerImport(getIt, const BrowserSettingsStore());

@@ -121,4 +121,28 @@ void main() {
       ],
     );
   });
+
+  test('names the months of a longer answer, whatever their length', () {
+    AskAnswer answer(AskPeriod period) => answerOf(
+      AskQuery(period: period, categoryIds: const {'cafe'}),
+      transactions: askOperations(),
+      categories: askCategories(),
+      rates: askRates(),
+      currency: Currency.rub,
+    );
+
+    expect(
+      [
+        for (final bar in answer(
+          AskPeriod.months(CivilDate(2026, 10, 1), 3),
+        ).bars)
+          barLabel(bar),
+      ],
+      ['Авг', 'Сен', 'Окт'],
+    );
+    // The month that goes on is a month too, not the days of a week.
+    final year = answer(AskPeriod.year(2026).upTo(askToday)).bars;
+    expect(barLabel(year.last), 'Ноя');
+    expect(year.last.span, AskBarSpan.month);
+  });
 }

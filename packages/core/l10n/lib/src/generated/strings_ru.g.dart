@@ -252,6 +252,8 @@ class _Translations$ask$ru extends Translations$ask$en {
   String get private =>
       'Отвечает само приложение: вопросы и ответы остаются на этом устройстве.';
   @override
+  String get failed => 'Не удалось прочитать данные для ответа.';
+  @override
   String get privateWeb =>
       'Отвечает само приложение: вопросы и ответы остаются в этом браузере.';
   @override
@@ -2991,6 +2993,11 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String dropFocus({required Object title}) => 'Снять «${title}»';
   @override
+  String get focusText =>
+      'Список показывает только то, о чём был вопрос. Снимите плашку — вернутся все операции месяца.';
+  @override
+  String get backToAnswer => 'Вернуться к ответу';
+  @override
   String get filterAll => 'Все';
   @override
   String get filterExpenses => 'Расходы';
@@ -3267,6 +3274,9 @@ class _Translations$ask$answer$ru extends Translations$ask$answer$en {
   String get counted =>
       'Посчитано на этом устройстве по курсу ЦБ на день каждой операции.';
   @override
+  String get countedWeb =>
+      'Посчитано в этом браузере по курсу ЦБ на день каждой операции.';
+  @override
   String get partial => 'Часть сумм пока без курса и не вошла в итог.';
   @override
   String get trip => 'Отчёт поездки';
@@ -3385,6 +3395,9 @@ class _Translations$ask$fact$ru extends Translations$ask$fact$en {
   @override
   String get rateKept =>
       'Курсы обновляются раз в день и хранятся на устройстве.';
+  @override
+  String get rateKeptWeb =>
+      'Курсы обновляются раз в день и хранятся в этом браузере.';
   @override
   String get rateMissing => 'Курса этой валюты пока нет.';
   @override
@@ -4010,6 +4023,7 @@ extension on TranslationsRu {
           'ask.forget' => 'Очистить',
           'ask.private' =>
             'Отвечает само приложение: вопросы и ответы остаются на этом устройстве.',
+          'ask.failed' => 'Не удалось прочитать данные для ответа.',
           'ask.privateWeb' =>
             'Отвечает само приложение: вопросы и ответы остаются в этом браузере.',
           'ask.slash' => 'Клавиша / открывает «Спросить» с любой страницы.',
@@ -4087,6 +4101,8 @@ extension on TranslationsRu {
           'ask.answer.noCategory' => 'Без категории',
           'ask.answer.counted' =>
             'Посчитано на этом устройстве по курсу ЦБ на день каждой операции.',
+          'ask.answer.countedWeb' =>
+            'Посчитано в этом браузере по курсу ЦБ на день каждой операции.',
           'ask.answer.partial' =>
             'Часть сумм пока без курса и не вошла в итог.',
           'ask.answer.trip' => 'Отчёт поездки',
@@ -4152,6 +4168,8 @@ extension on TranslationsRu {
           'ask.fact.rateFor' => ({required Object sign}) => 'за 1 ${sign}',
           'ask.fact.rateKept' =>
             'Курсы обновляются раз в день и хранятся на устройстве.',
+          'ask.fact.rateKeptWeb' =>
+            'Курсы обновляются раз в день и хранятся в этом браузере.',
           'ask.fact.rateMissing' => 'Курса этой валюты пока нет.',
           'ask.fact.rateHelp' => 'Откуда берётся курс',
           'ask.fact.rateHelpText' => 'Ответ из справки',
@@ -4671,6 +4689,9 @@ extension on TranslationsRu {
           'imports.previewCategory' => 'Категория',
           'imports.previewAmount' => 'Сумма',
           'imports.transfer' => 'Перевод',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.learned' => 'как раньше',
           'imports.inbox' => 'Решу во «Входящих»',
           'imports.problems' =>
@@ -4683,9 +4704,6 @@ extension on TranslationsRu {
                   many: '${count} строк не прочитались',
                   other: '${count} строки не прочитались',
                 ),
-          _ => null,
-        } ??
-        switch (path) {
           'imports.problemLine' =>
             ({required Object line, required Object fault}) =>
                 'Строка ${line}: ${fault}',
@@ -5681,6 +5699,9 @@ extension on TranslationsRu {
           'schedules.partsTwo' =>
             ({required Object advance, required Object day}) =>
                 'Пополам: аванс ${advance}-го, зарплата ${day}-го.',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.partsOwn' =>
             ({
               required Object advanceAmount,
@@ -5692,9 +5713,6 @@ extension on TranslationsRu {
           'schedules.amountMonthly' => 'Сумма в месяц',
           'schedules.halves' =>
             ({required Object amount}) => 'по ${amount} авансом и зарплатой',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.halvesOwn' =>
             ({required Object advance, required Object rest}) =>
                 'аванс ${advance} и зарплата ${rest}',
@@ -6248,6 +6266,9 @@ extension on TranslationsRu {
           'transactions.toAnswer' => 'К ответу',
           'transactions.dropFocus' =>
             ({required Object title}) => 'Снять «${title}»',
+          'transactions.focusText' =>
+            'Список показывает только то, о чём был вопрос. Снимите плашку — вернутся все операции месяца.',
+          'transactions.backToAnswer' => 'Вернуться к ответу',
           'transactions.filterAll' => 'Все',
           'transactions.filterExpenses' => 'Расходы',
           'transactions.filterIncome' => 'Доходы',
