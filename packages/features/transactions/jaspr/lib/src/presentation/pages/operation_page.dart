@@ -6,7 +6,6 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
-import 'package:transactions_jaspr/src/presentation/components/back_header.dart';
 import 'package:transactions_jaspr/src/presentation/components/big_amount.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_badge.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_row.dart';
@@ -22,6 +21,7 @@ class OperationPage extends StatefulComponent {
     required this.editHref,
     required this.repeatHref,
     this.closes = false,
+    this.tags,
     this.schedule,
     super.key,
   });
@@ -38,7 +38,11 @@ class OperationPage extends StatefulComponent {
   /// Whether the way back closes the card, as it does beside the list.
   final bool closes;
 
-  /// The row of the regular payments under the facts, such as «Сделать
+  /// The метки of the operation under the facts, such as the trip it
+  /// belongs to or «Добавить метку», which the host builds.
+  final Component? tags;
+
+  /// The row of the regular payments under the метки, such as «Сделать
   /// регулярным», which the host builds.
   final Component? schedule;
 
@@ -150,7 +154,7 @@ class _OperationPageState extends State<OperationPage> {
             OperationState(:final operation?) => [
               _summary(operation, today: state.today),
               _facts(operation, today: state.today),
-              ..._schedule(),
+              ..._rows(),
               if (state.deleteFailed)
                 p(classes: 'text-caption operation__failure', [
                   .text(t.transactions.failedToDelete),
@@ -170,6 +174,7 @@ class _OperationPageState extends State<OperationPage> {
   Component _header(OperationState state) {
     return BackHeader(
       label: t.transactions.operation,
+      backLabel: component.closes ? t.app.close : t.transactions.back,
       onBack: component.onClose,
       closes: component.closes,
       trailing: (state.operation?.canChange ?? false)
@@ -211,10 +216,11 @@ class _OperationPageState extends State<OperationPage> {
     ]);
   }
 
-  /// The row of the regular payments, when the host gives one. It stands
-  /// apart from the list of the card, whose `if` with a context would break
-  /// the analyzer of Dart 3.10 next to a null-aware element.
-  List<Component> _schedule() => [?component.schedule];
+  /// The метки and the row of the regular payments, when the host gives
+  /// them. They stand apart from the list of the card, whose `if` with a
+  /// context would break the analyzer of Dart 3.10 next to a null-aware
+  /// element.
+  List<Component> _rows() => [?component.tags, ?component.schedule];
 
   /// The accounts, the category and the date. A note is the title already.
   Component _facts(Operation operation, {required CivilDate today}) {

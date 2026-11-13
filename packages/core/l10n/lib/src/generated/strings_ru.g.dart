@@ -2862,6 +2862,7 @@ class _Translations$tags$ru extends Translations$tags$en {
   String operations({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} операций',
         one: '${n} операция',
         few: '${n} операции',
         many: '${n} операций',
@@ -3826,6 +3827,8 @@ class _Translations$tags$picker$ru extends Translations$tags$picker$en {
   String get title => 'Метки';
   @override
   String get search => 'Найти или создать';
+  @override
+  String get clear => 'Очистить поиск';
   @override
   String create({required Object name}) => 'Новая метка «${name}»';
   @override
@@ -6076,6 +6079,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} операций',
                   one: '${n} операция',
                   few: '${n} операции',
                   many: '${n} операций',
@@ -6191,6 +6195,7 @@ extension on TranslationsRu {
           'tags.undo' => 'Вернуть',
           'tags.picker.title' => 'Метки',
           'tags.picker.search' => 'Найти или создать',
+          'tags.picker.clear' => 'Очистить поиск',
           'tags.picker.create' =>
             ({required Object name}) => 'Новая метка «${name}»',
           'tags.picker.createText' => 'Поездка с датами или просто метка',

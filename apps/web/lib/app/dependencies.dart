@@ -19,6 +19,7 @@ import 'package:rates/rates.dart';
 import 'package:reports_common/reports_common.dart';
 import 'package:schedules_common/schedules_common.dart' show registerSchedules;
 import 'package:settings_common/settings_common.dart' show MonthStart, Settings;
+import 'package:tags_common/tags_common.dart' show registerTags;
 import 'package:transactions_common/transactions_common.dart';
 
 /// Puts the objects of the app into [getIt]: the one place that knows every
@@ -60,5 +61,6 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   registerReports(getIt);
   // The site has no reminders: what needs them is never asked for here.
   registerSchedules(getIt, const BrowserSettingsStore());
+  registerTags(getIt);
   registerTransactions(getIt);
 }

@@ -7,8 +7,8 @@ import 'package:jaspr/jaspr.dart';
 /// only fades. Closed, it stays in the page, out of reach of the keyboard and
 /// of screen readers.
 ///
-/// It stands in a column whose rows keep [gap] apart, and takes that gap
-/// with it when it closes.
+/// It stands in a column whose rows keep [gap] apart, takes that gap with it
+/// when it closes, and keeps its own rows as far apart.
 class BirkaFold extends StatelessComponent {
   /// Creates a fold of [children].
   const BirkaFold({
@@ -74,6 +74,7 @@ class BirkaFold extends StatelessComponent {
       raw: {
         'display': 'flex',
         'flex-direction': 'column',
+        'gap': 'var(--birka-fold-gap)',
         'padding-top': 'var(--birka-fold-gap)',
       },
     ),

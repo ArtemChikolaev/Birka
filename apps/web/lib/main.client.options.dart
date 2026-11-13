@@ -28,6 +28,7 @@ import 'package:birka_web/pages/reports_island.dart'
     deferred as _reports_island;
 import 'package:birka_web/pages/schedules_island.dart'
     deferred as _schedules_island;
+import 'package:birka_web/pages/tags_island.dart' deferred as _tags_island;
 
 /// Default [ClientOptions] for use with your Jaspr project.
 ///
@@ -102,6 +103,10 @@ ClientOptions get defaultClientOptions => ClientOptions(
     'schedules_island': ClientLoader(
       (p) => _schedules_island.SchedulesIsland(),
       loader: _schedules_island.loadLibrary,
+    ),
+    'tags_island': ClientLoader(
+      (p) => _tags_island.TagsIsland(),
+      loader: _tags_island.loadLibrary,
     ),
   },
 );

@@ -237,7 +237,9 @@ void main() {
     expect(find.text('−4%'), findsOneComponent);
     expect(find.text('Кафе'), findsOneComponent);
     expect(find.text('+35%'), findsOneComponent);
-    final widths = stylesOf('reports__fill').map((styles) => styles['width']);
+    final widths = stylesOf(
+      'share-line__fill',
+    ).map((styles) => styles['width']);
     expect(widths.first, '100.0%');
     expect(double.parse(widths.last!.replaceAll('%', '')), closeTo(52.9, 0.1));
   });

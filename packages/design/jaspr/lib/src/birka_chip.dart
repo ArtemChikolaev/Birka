@@ -13,6 +13,8 @@ class BirkaChip extends StatelessComponent {
     this.glyph,
     this.compact = false,
     this.count,
+    this.dashed = false,
+    this.expanded,
     super.key,
   });
 
@@ -37,12 +39,21 @@ class BirkaChip extends StatelessComponent {
   /// How many things the option holds, after its label.
   final int? count;
 
+  /// Whether the chip offers to add something that is not set yet, with a
+  /// dashed outline as `BirkaChipField` has while it is empty.
+  final bool dashed;
+
+  /// Whether what the chip opens under it is open, for a chip that opens
+  /// something; `null` for a chip that does not.
+  final bool? expanded;
+
   @override
   Component build(BuildContext context) {
     final classes = [
       'text-body-strong birka-chip',
       if (selected) 'birka-chip--selected',
       if (compact) 'birka-chip--compact',
+      if (dashed && !selected) 'birka-chip--dashed',
     ].join(' ');
     final glyph = this.glyph;
     final count = this.count;
@@ -68,7 +79,12 @@ class BirkaChip extends StatelessComponent {
       type: ButtonType.button,
       disabled: onTap == null,
       onClick: onTap,
-      attributes: {'aria-pressed': '$selected'},
+      attributes: {
+        if (expanded case final expanded?)
+          'aria-expanded': '$expanded'
+        else
+          'aria-pressed': '$selected',
+      },
       content,
     );
   }
@@ -103,6 +119,12 @@ class BirkaChip extends StatelessComponent {
       },
     ),
     css('.birka-chip--compact').styles(raw: {'padding': '0 var(--space-sm)'}),
+    css('.birka-chip--dashed').styles(
+      raw: {
+        'background': 'none',
+        'border': '1px dashed var(--color-text-subtle)',
+      },
+    ),
     // A closed room takes back the gap before it, so a chip with no count
     // looks as it did without one.
     css('.birka-chip__room').styles(
