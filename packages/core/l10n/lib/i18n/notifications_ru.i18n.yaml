@@ -2,6 +2,7 @@ title: Уведомления
 back: Назад
 bell: Уведомления
 bellNew(n):
+  zero: Уведомления, $count новых
   one: Уведомления, $count новое
   few: Уведомления, $count новых
   many: Уведомления, $count новых
@@ -9,6 +10,7 @@ bellNew(n):
 fresh: "Новые · $count"
 readAll: Прочитать все
 subtitleNew(n):
+  zero: $count новых · история за 90 дней
   one: $count новое · история за 90 дней
   few: $count новых · история за 90 дней
   many: $count новых · история за 90 дней
@@ -37,11 +39,13 @@ skipped: "Пропустили · следующий $date"
 found: Нашли в выписке
 importTitle: "$bank · $period"
 importWaiting(n):
+  zero: $n из $count ждут во «Входящих»
   one: $n из $count ждёт во «Входящих»
   few: $n из $count ждут во «Входящих»
   many: $n из $count ждут во «Входящих»
   other: $n из $count ждут во «Входящих»
 importAdded(n):
+  zero: Добавили $count операций
   one: Добавили $count операцию
   few: Добавили $count операции
   many: Добавили $count операций

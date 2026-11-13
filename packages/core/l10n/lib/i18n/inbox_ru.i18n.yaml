@@ -1,6 +1,7 @@
 title: Входящие
 back: Назад
 waiting(n):
+  zero: $count ждут решения
   one: $count ждёт решения
   few: $count ждут решения
   many: $count ждут решения
@@ -28,6 +29,7 @@ other: Другая
 yes: Да
 categoryFor: "Категория для «$name»"
 sameName(n):
+  zero: так вы отметили его $count раз $when
   one: так вы отметили его $count раз $when
   few: так вы отметили его $count раза $when
   many: так вы отметили его $count раз $when
@@ -37,11 +39,13 @@ sameImport: как «$name» в этой выписке
 similarName: как «$name» $when
 since: с $month
 more(n):
+  zero: и ещё $count операций
   one: и ещё $count операция
   few: и ещё $count операции
   many: и ещё $count операций
   other: и ещё $count операции
 picked(n):
+  zero: Выбрано $count операций
   one: Выбрана $count операция
   few: Выбраны $count операции
   many: Выбрано $count операций
@@ -63,6 +67,7 @@ toImport: Загрузить выписку
 hinted: подсказка
 newCategory: Новая категория
 entryTitle(n):
+  zero: $count ждут решения во «Входящих»
   one: $count ждёт решения во «Входящих»
   few: $count ждут решения во «Входящих»
   many: $count ждут решения во «Входящих»
@@ -70,6 +75,7 @@ entryTitle(n):
 entryUncategorized: $count без категории
 entryTransfer: "перевод со счёта «$account»"
 entryTransfers(n):
+  zero: $count переводов между счетами
   one: $count перевод между счетами
   few: $count перевода между счетами
   many: $count переводов между счетами

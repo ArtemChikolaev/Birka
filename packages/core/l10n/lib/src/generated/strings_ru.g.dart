@@ -128,6 +128,7 @@ class _Translations$accounts$ru extends Translations$accounts$en {
   String inAccounts({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'в ${n} счетах',
         one: 'в ${n} счёте',
         few: 'в ${n} счетах',
         many: 'в ${n} счетах',
@@ -409,6 +410,7 @@ class _Translations$backup$ru extends Translations$backup$en {
   String operationsCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} операций',
         one: '${count} операция',
         few: '${count} операции',
         many: '${count} операций',
@@ -418,6 +420,7 @@ class _Translations$backup$ru extends Translations$backup$en {
   String accountsCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} счетов',
         one: '${count} счёт',
         few: '${count} счёта',
         many: '${count} счетов',
@@ -464,6 +467,7 @@ class _Translations$categories$ru extends Translations$categories$en {
   String subcategories({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} подкатегорий',
         one: '${n} подкатегория',
         few: '${n} подкатегории',
         many: '${n} подкатегорий',
@@ -819,6 +823,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String operations({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} операций',
         one: '${count} операция',
         few: '${count} операции',
         many: '${count} операций',
@@ -828,6 +833,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String accounts({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} счетов',
         one: '${count} счёт',
         few: '${count} счёта',
         many: '${count} счетов',
@@ -839,6 +845,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String undoAsk({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Убрать ${count} операций этого файла?',
         one: 'Убрать ${count} операцию этого файла?',
         few: 'Убрать ${count} операции этого файла?',
         many: 'Убрать ${count} операций этого файла?',
@@ -858,6 +865,8 @@ class _Translations$imports$ru extends Translations$imports$en {
     required Object total,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero:
+        'Совпали ${n} колонок из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
     one:
         'Совпала ${n} колонка из ${total}. По ней Birka разберёт файл, а вы проверите результат на следующем шаге.',
     few:
@@ -938,6 +947,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String write({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Импортировать ${count} операций',
         one: 'Импортировать ${count} операцию',
         few: 'Импортировать ${count} операции',
         many: 'Импортировать ${count} операций',
@@ -1026,6 +1036,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String problems({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} строк не прочитались',
         one: '${count} строка не прочиталась',
         few: '${count} строки не прочитались',
         many: '${count} строк не прочитались',
@@ -1106,6 +1117,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String copiesTitle({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} операций уже есть в учёте',
         one: '${count} операция уже есть в учёте',
         few: '${count} операции уже есть в учёте',
         many: '${count} операций уже есть в учёте',
@@ -1141,6 +1153,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String leftTitle({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} операций не попадут в учёт',
         one: '${count} операция не попадёт в учёт',
         few: '${count} операции не попадут в учёт',
         many: '${count} операций не попадут в учёт',
@@ -1156,6 +1169,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String doneTitle({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Добавили ${count} операций',
         one: 'Добавили ${count} операцию',
         few: 'Добавили ${count} операции',
         many: 'Добавили ${count} операций',
@@ -1181,6 +1195,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String unsortedTitle({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} ждут вашего решения во «Входящих»',
         one: '${count} ждёт вашего решения во «Входящих»',
         few: '${count} ждут вашего решения во «Входящих»',
         many: '${count} ждут вашего решения во «Входящих»',
@@ -1198,6 +1213,8 @@ class _Translations$imports$ru extends Translations$imports$en {
     required Object count,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero:
+        'Отмена уберёт ${count} операций этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
     one:
         'Отмена уберёт ${count} операцию этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
     few:
@@ -1278,6 +1295,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String columnsCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} колонок',
         one: '${count} колонка',
         few: '${count} колонки',
         many: '${count} колонок',
@@ -1287,6 +1305,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String rowsCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} строк',
         one: '${count} строка',
         few: '${count} строки',
         many: '${count} строк',
@@ -1331,6 +1350,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String categoriesCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} категорий в выписке',
         one: '${count} категория в выписке',
         few: '${count} категории в выписке',
         many: '${count} категорий в выписке',
@@ -1375,6 +1395,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String foundDone({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Провели ${count} платежей',
         one: 'Провели ${count} платёж',
         few: 'Провели ${count} платежа',
         many: 'Провели ${count} платежей',
@@ -1392,6 +1413,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String rowsLeft({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} строк не попадут в учёт',
         one: '${count} строка не попадёт в учёт',
         few: '${count} строки не попадут в учёт',
         many: '${count} строк не попадут в учёт',
@@ -1401,6 +1423,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String unreadCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} не прочитались',
         one: '${count} не прочиталась',
         few: '${count} не прочитались',
         many: '${count} не прочитались',
@@ -1410,6 +1433,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String declinedCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} не прошли в банке',
         one: '${count} не прошла в банке',
         few: '${count} не прошли в банке',
         many: '${count} не прошли в банке',
@@ -1419,6 +1443,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String unfitCount({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} не подходят счёту',
         one: '${count} не подходит счёту',
         few: '${count} не подходят счёту',
         many: '${count} не подходят счёту',
@@ -1428,6 +1453,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String restFine({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'остальные ${count} в порядке',
         one: 'ещё ${count} в порядке',
         few: 'остальные ${count} в порядке',
         many: 'остальные ${count} в порядке',
@@ -1459,6 +1485,7 @@ class _Translations$imports$ru extends Translations$imports$en {
     required Object total,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero: '${count} строк из ${total} не прочитались',
     one: '${count} строка из ${total} не прочиталась',
     few: '${count} строки из ${total} не прочитались',
     many: '${count} строк из ${total} не прочитались',
@@ -1473,6 +1500,7 @@ class _Translations$imports$ru extends Translations$imports$en {
   String declinedRows({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} операций не прошли в банке',
         one: '${count} операция не прошла в банке',
         few: '${count} операции не прошли в банке',
         many: '${count} операций не прошли в банке',
@@ -1497,6 +1525,7 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   String waiting({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} ждут решения',
         one: '${count} ждёт решения',
         few: '${count} ждут решения',
         many: '${count} ждут решения',
@@ -1554,6 +1583,7 @@ class _Translations$inbox$ru extends Translations$inbox$en {
     required Object when,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero: 'так вы отметили его ${count} раз ${when}',
     one: 'так вы отметили его ${count} раз ${when}',
     few: 'так вы отметили его ${count} раза ${when}',
     many: 'так вы отметили его ${count} раз ${when}',
@@ -1573,6 +1603,7 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   String more({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'и ещё ${count} операций',
         one: 'и ещё ${count} операция',
         few: 'и ещё ${count} операции',
         many: 'и ещё ${count} операций',
@@ -1582,6 +1613,7 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   String picked({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Выбрано ${count} операций',
         one: 'Выбрана ${count} операция',
         few: 'Выбраны ${count} операции',
         many: 'Выбрано ${count} операций',
@@ -1628,6 +1660,7 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   String entryTitle({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} ждут решения во «Входящих»',
         one: '${count} ждёт решения во «Входящих»',
         few: '${count} ждут решения во «Входящих»',
         many: '${count} ждут решения во «Входящих»',
@@ -1643,6 +1676,7 @@ class _Translations$inbox$ru extends Translations$inbox$en {
   String entryTransfers({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} переводов между счетами',
         one: '${count} перевод между счетами',
         few: '${count} перевода между счетами',
         many: '${count} переводов между счетами',
@@ -1674,6 +1708,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   String bellNew({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Уведомления, ${count} новых',
         one: 'Уведомления, ${count} новое',
         few: 'Уведомления, ${count} новых',
         many: 'Уведомления, ${count} новых',
@@ -1687,6 +1722,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   String subtitleNew({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${count} новых · история за 90 дней',
         one: '${count} новое · история за 90 дней',
         few: '${count} новых · история за 90 дней',
         many: '${count} новых · история за 90 дней',
@@ -1742,6 +1778,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   String importWaiting({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} из ${count} ждут во «Входящих»',
         one: '${n} из ${count} ждёт во «Входящих»',
         few: '${n} из ${count} ждут во «Входящих»',
         many: '${n} из ${count} ждут во «Входящих»',
@@ -1751,6 +1788,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   String importAdded({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Добавили ${count} операций',
         one: 'Добавили ${count} операцию',
         few: 'Добавили ${count} операции',
         many: 'Добавили ${count} операций',
@@ -1827,6 +1865,7 @@ class _Translations$overview$ru extends Translations$overview$en {
   String currencies({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} валют',
         one: '${n} валюта',
         few: '${n} валюты',
         many: '${n} валют',
@@ -2199,6 +2238,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String days({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} дней',
         one: '${n} день',
         few: '${n} дня',
         many: '${n} дней',
@@ -2222,6 +2262,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String paymentsUntilPayday({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} платежей до зарплаты',
         one: '${n} платёж до зарплаты',
         few: '${n} платежа до зарплаты',
         many: '${n} платежей до зарплаты',
@@ -2231,6 +2272,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String paymentsUntilMonth({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} платежей до конца месяца',
         one: '${n} платёж до конца месяца',
         few: '${n} платежа до конца месяца',
         many: '${n} платежей до конца месяца',
@@ -2242,6 +2284,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String leftFor({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Остаётся на ${n} дней',
         one: 'Остаётся на ${n} день',
         few: 'Остаётся на ${n} дня',
         many: 'Остаётся на ${n} дней',
@@ -2390,6 +2433,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String remindNotifyOn({required num n, required Object time}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} платежей · в ${time}',
         one: '${n} платёж · в ${time}',
         few: '${n} платежа · в ${time}',
         many: '${n} платежей · в ${time}',
@@ -2403,6 +2447,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String remindCalendarOn({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'календарь «Birka» · ${n} событий',
         one: 'календарь «Birka» · ${n} событие',
         few: 'календарь «Birka» · ${n} события',
         many: 'календарь «Birka» · ${n} событий',
@@ -2461,6 +2506,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String remindCalendarAskOwn({required num n, required Object time}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} платежей · напомнит в ${time}',
         one: '${n} платёж · напомнит в ${time}',
         few: '${n} платежа · напомнит в ${time}',
         many: '${n} платежей · напомнит в ${time}',
@@ -2485,6 +2531,8 @@ class _Translations$schedules$ru extends Translations$schedules$en {
     required num n,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero:
+        'Календарь «Birka» и ${n} событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
     one:
         'Календарь «Birka» и ${n} событие в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
     few:
@@ -2520,6 +2568,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String remindOnText({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Birka напомнит о ${n} платежах',
         one: 'Birka напомнит о ${n} платеже',
         few: 'Birka напомнит о ${n} платежах',
         many: 'Birka напомнит о ${n} платежах',
@@ -2589,6 +2638,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
     required Object count,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero: '${day}-го · ${count} раз подряд',
     one: '${day}-го · ${count} раз подряд',
     few: '${day}-го · ${count} раза подряд',
     many: '${day}-го · ${count} раз подряд',
@@ -2601,6 +2651,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
     required Object count,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero: 'около ${day}-го · ${count} раз',
     one: 'около ${day}-го · ${count} раз',
     few: 'около ${day}-го · ${count} раза',
     many: 'около ${day}-го · ${count} раз',
@@ -2617,6 +2668,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String foundIn({required num n, required Object count}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Нашли в операциях · ${count} раз',
         one: 'Нашли в операциях · ${count} раз',
         few: 'Нашли в операциях · ${count} раза',
         many: 'Нашли в операциях · ${count} раз',
@@ -2717,6 +2769,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String subtitleToday({required num n, required Object date}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Сегодня ${date} · ${n} ждут подтверждения',
         one: 'Сегодня ${date} · ${n} ждёт подтверждения',
         few: 'Сегодня ${date} · ${n} ждут подтверждения',
         many: 'Сегодня ${date} · ${n} ждут подтверждения',
@@ -2728,6 +2781,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String paymentsCount({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} платежей',
         one: '${n} платёж',
         few: '${n} платежа',
         many: '${n} платежей',
@@ -2853,6 +2907,7 @@ class _Translations$tags$ru extends Translations$tags$en {
   String inDays({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'через ${n} дней',
         one: 'через ${n} день',
         few: 'через ${n} дня',
         many: 'через ${n} дней',
@@ -2862,6 +2917,7 @@ class _Translations$tags$ru extends Translations$tags$en {
   String operations({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} операций',
         one: '${n} операция',
         few: '${n} операции',
         many: '${n} операций',
@@ -2892,6 +2948,7 @@ class _Translations$tags$ru extends Translations$tags$en {
   String marked({required num n, required Object name}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Отметили ${n} расходов: «${name}»',
         one: 'Отметили ${n} расход: «${name}»',
         few: 'Отметили ${n} расхода: «${name}»',
         many: 'Отметили ${n} расходов: «${name}»',
@@ -2901,6 +2958,7 @@ class _Translations$tags$ru extends Translations$tags$en {
   String unmarked({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Сняли метку с ${n} расходов',
         one: 'Сняли метку с ${n} расхода',
         few: 'Сняли метку с ${n} расходов',
         many: 'Сняли метку с ${n} расходов',
@@ -3080,6 +3138,7 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   String allOperations({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Все ${n} операций',
         one: 'Все ${n} операция',
         few: 'Все ${n} операции',
         many: 'Все ${n} операций',
@@ -3219,6 +3278,7 @@ class _Translations$ask$answer$ru extends Translations$ask$answer$en {
   String operations({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} операций',
         one: '${n} операция',
         few: '${n} операции',
         many: '${n} операций',
@@ -3228,6 +3288,7 @@ class _Translations$ask$answer$ru extends Translations$ask$answer$en {
   String incomes({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} поступлений',
         one: '${n} поступление',
         few: '${n} поступления',
         many: '${n} поступлений',
@@ -3247,6 +3308,7 @@ class _Translations$ask$answer$ru extends Translations$ask$answer$en {
   String show({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Показать ${n} операций',
         one: 'Показать ${n} операцию',
         few: 'Показать ${n} операции',
         many: 'Показать ${n} операций',
@@ -3325,6 +3387,7 @@ class _Translations$ask$period$ru extends Translations$ask$period$en {
   String lastMonths({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Последние ${n} месяцев',
         one: 'Последний ${n} месяц',
         few: 'Последние ${n} месяца',
         many: 'Последние ${n} месяцев',
@@ -3336,6 +3399,7 @@ class _Translations$ask$period$ru extends Translations$ask$period$en {
   String lastDays({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Последние ${n} дней',
         one: 'Последний ${n} день',
         few: 'Последние ${n} дня',
         many: 'Последние ${n} дней',
@@ -3368,6 +3432,7 @@ class _Translations$ask$fact$ru extends Translations$ask$fact$en {
   String accounts({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} счетов',
         one: '${n} счёт',
         few: '${n} счёта',
         many: '${n} счетов',
@@ -3657,6 +3722,7 @@ class _Translations$onboarding$categories$ru
   String count({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} категорий',
         one: '${n} категория',
         few: '${n} категории',
         many: '${n} категорий',
@@ -3705,6 +3771,7 @@ class _Translations$tags$report$ru extends Translations$tags$report$en {
   String forDays({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'за ${n} дней',
         one: 'за ${n} день',
         few: 'за ${n} дня',
         many: 'за ${n} дней',
@@ -3728,6 +3795,7 @@ class _Translations$tags$report$ru extends Translations$tags$report$en {
   String onTheSpot({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} операций на месте',
         one: '${n} операция на месте',
         few: '${n} операции на месте',
         many: '${n} операций на месте',
@@ -3784,6 +3852,8 @@ class _Translations$tags$form$ru extends Translations$tags$form$en {
     required num n,
   }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
     n,
+    zero:
+        'За эти дни уже ${n} расходов — отметим их сразу. Регулярные платежи не трогаем.',
     one:
         'За эти дни уже ${n} расход — отметим его сразу. Регулярные платежи не трогаем.',
     few:
@@ -3929,6 +3999,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'в ${n} счетах',
                   one: 'в ${n} счёте',
                   few: 'в ${n} счетах',
                   many: 'в ${n} счетах',
@@ -4044,6 +4115,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} операций',
                   one: '${n} операция',
                   few: '${n} операции',
                   many: '${n} операций',
@@ -4054,6 +4126,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} поступлений',
                   one: '${n} поступление',
                   few: '${n} поступления',
                   many: '${n} поступлений',
@@ -4072,6 +4145,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Показать ${n} операций',
                   one: 'Показать ${n} операцию',
                   few: 'Показать ${n} операции',
                   many: 'Показать ${n} операций',
@@ -4108,6 +4182,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Последние ${n} месяцев',
                   one: 'Последний ${n} месяц',
                   few: 'Последние ${n} месяца',
                   many: 'Последние ${n} месяцев',
@@ -4119,6 +4194,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Последние ${n} дней',
                   one: 'Последний ${n} день',
                   few: 'Последние ${n} дня',
                   many: 'Последние ${n} дней',
@@ -4138,6 +4214,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} счетов',
                   one: '${n} счёт',
                   few: '${n} счёта',
                   many: '${n} счетов',
@@ -4253,6 +4330,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} операций',
                   one: '${count} операция',
                   few: '${count} операции',
                   many: '${count} операций',
@@ -4263,6 +4341,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} счетов',
                   one: '${count} счёт',
                   few: '${count} счёта',
                   many: '${count} счетов',
@@ -4296,6 +4375,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} подкатегорий',
                   one: '${n} подкатегория',
                   few: '${n} подкатегории',
                   many: '${n} подкатегорий',
@@ -4521,6 +4601,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} операций',
                   one: '${count} операция',
                   few: '${count} операции',
                   many: '${count} операций',
@@ -4531,6 +4612,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} счетов',
                   one: '${count} счёт',
                   few: '${count} счёта',
                   many: '${count} счетов',
@@ -4542,6 +4624,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Убрать ${count} операций этого файла?',
                   one: 'Убрать ${count} операцию этого файла?',
                   few: 'Убрать ${count} операции этого файла?',
                   many: 'Убрать ${count} операций этого файла?',
@@ -4559,6 +4642,8 @@ extension on TranslationsRu {
               required Object total,
             }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
               n,
+              zero:
+                  'Совпали ${n} колонок из ${total}. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.',
               one:
                   'Совпала ${n} колонка из ${total}. По ней Birka разберёт файл, а вы проверите результат на следующем шаге.',
               few:
@@ -4613,6 +4698,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Импортировать ${count} операций',
                   one: 'Импортировать ${count} операцию',
                   few: 'Импортировать ${count} операции',
                   many: 'Импортировать ${count} операций',
@@ -4675,6 +4761,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} строк не прочитались',
                   one: '${count} строка не прочиталась',
                   few: '${count} строки не прочитались',
                   many: '${count} строк не прочитались',
@@ -4735,6 +4822,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} операций уже есть в учёте',
                   one: '${count} операция уже есть в учёте',
                   few: '${count} операции уже есть в учёте',
                   many: '${count} операций уже есть в учёте',
@@ -4761,6 +4849,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} операций не попадут в учёт',
                   one: '${count} операция не попадёт в учёт',
                   few: '${count} операции не попадут в учёт',
                   many: '${count} операций не попадут в учёт',
@@ -4775,6 +4864,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Добавили ${count} операций',
                   one: 'Добавили ${count} операцию',
                   few: 'Добавили ${count} операции',
                   many: 'Добавили ${count} операций',
@@ -4796,6 +4886,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} ждут вашего решения во «Входящих»',
                   one: '${count} ждёт вашего решения во «Входящих»',
                   few: '${count} ждут вашего решения во «Входящих»',
                   many: '${count} ждут вашего решения во «Входящих»',
@@ -4811,6 +4902,8 @@ extension on TranslationsRu {
               required Object count,
             }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
               n,
+              zero:
+                  'Отмена уберёт ${count} операций этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
               one:
                   'Отмена уберёт ${count} операцию этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».',
               few:
@@ -4877,6 +4970,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} колонок',
                   one: '${count} колонка',
                   few: '${count} колонки',
                   many: '${count} колонок',
@@ -4887,6 +4981,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} строк',
                   one: '${count} строка',
                   few: '${count} строки',
                   many: '${count} строк',
@@ -4921,6 +5016,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} категорий в выписке',
                   one: '${count} категория в выписке',
                   few: '${count} категории в выписке',
                   many: '${count} категорий в выписке',
@@ -4957,6 +5053,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Провели ${count} платежей',
                   one: 'Провели ${count} платёж',
                   few: 'Провели ${count} платежа',
                   many: 'Провели ${count} платежей',
@@ -4974,6 +5071,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} строк не попадут в учёт',
                   one: '${count} строка не попадёт в учёт',
                   few: '${count} строки не попадут в учёт',
                   many: '${count} строк не попадут в учёт',
@@ -4984,6 +5082,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} не прочитались',
                   one: '${count} не прочиталась',
                   few: '${count} не прочитались',
                   many: '${count} не прочитались',
@@ -4994,6 +5093,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} не прошли в банке',
                   one: '${count} не прошла в банке',
                   few: '${count} не прошли в банке',
                   many: '${count} не прошли в банке',
@@ -5004,6 +5104,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} не подходят счёту',
                   one: '${count} не подходит счёту',
                   few: '${count} не подходят счёту',
                   many: '${count} не подходят счёту',
@@ -5014,6 +5115,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'остальные ${count} в порядке',
                   one: 'ещё ${count} в порядке',
                   few: 'остальные ${count} в порядке',
                   many: 'остальные ${count} в порядке',
@@ -5038,6 +5140,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} строк из ${total} не прочитались',
                   one: '${count} строка из ${total} не прочиталась',
                   few: '${count} строки из ${total} не прочитались',
                   many: '${count} строк из ${total} не прочитались',
@@ -5051,6 +5154,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} операций не прошли в банке',
                   one: '${count} операция не прошла в банке',
                   few: '${count} операции не прошли в банке',
                   many: '${count} операций не прошли в банке',
@@ -5063,6 +5167,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} ждут решения',
                   one: '${count} ждёт решения',
                   few: '${count} ждут решения',
                   many: '${count} ждут решения',
@@ -5104,6 +5209,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'так вы отметили его ${count} раз ${when}',
                   one: 'так вы отметили его ${count} раз ${when}',
                   few: 'так вы отметили его ${count} раза ${when}',
                   many: 'так вы отметили его ${count} раз ${when}',
@@ -5122,6 +5228,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'и ещё ${count} операций',
                   one: 'и ещё ${count} операция',
                   few: 'и ещё ${count} операции',
                   many: 'и ещё ${count} операций',
@@ -5132,6 +5239,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Выбрано ${count} операций',
                   one: 'Выбрана ${count} операция',
                   few: 'Выбраны ${count} операции',
                   many: 'Выбрано ${count} операций',
@@ -5165,6 +5273,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} ждут решения во «Входящих»',
                   one: '${count} ждёт решения во «Входящих»',
                   few: '${count} ждут решения во «Входящих»',
                   many: '${count} ждут решения во «Входящих»',
@@ -5179,6 +5288,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} переводов между счетами',
                   one: '${count} перевод между счетами',
                   few: '${count} перевода между счетами',
                   many: '${count} переводов между счетами',
@@ -5196,6 +5306,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Уведомления, ${count} новых',
                   one: 'Уведомления, ${count} новое',
                   few: 'Уведомления, ${count} новых',
                   many: 'Уведомления, ${count} новых',
@@ -5209,6 +5320,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${count} новых · история за 90 дней',
                   one: '${count} новое · история за 90 дней',
                   few: '${count} новых · история за 90 дней',
                   many: '${count} новых · история за 90 дней',
@@ -5249,6 +5361,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} из ${count} ждут во «Входящих»',
                   one: '${n} из ${count} ждёт во «Входящих»',
                   few: '${n} из ${count} ждут во «Входящих»',
                   many: '${n} из ${count} ждут во «Входящих»',
@@ -5259,6 +5372,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Добавили ${count} операций',
                   one: 'Добавили ${count} операцию',
                   few: 'Добавили ${count} операции',
                   many: 'Добавили ${count} операций',
@@ -5306,6 +5420,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} категорий',
                   one: '${n} категория',
                   few: '${n} категории',
                   many: '${n} категорий',
@@ -5320,6 +5435,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} валют',
                   one: '${n} валюта',
                   few: '${n} валюты',
                   many: '${n} валют',
@@ -5563,6 +5679,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} дней',
                   one: '${n} день',
                   few: '${n} дня',
                   many: '${n} дней',
@@ -5585,6 +5702,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} платежей до зарплаты',
                   one: '${n} платёж до зарплаты',
                   few: '${n} платежа до зарплаты',
                   many: '${n} платежей до зарплаты',
@@ -5595,6 +5713,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} платежей до конца месяца',
                   one: '${n} платёж до конца месяца',
                   few: '${n} платежа до конца месяца',
                   many: '${n} платежей до конца месяца',
@@ -5606,6 +5725,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Остаётся на ${n} дней',
                   one: 'Остаётся на ${n} день',
                   few: 'Остаётся на ${n} дня',
                   many: 'Остаётся на ${n} дней',
@@ -5724,6 +5844,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} платежей · в ${time}',
                   one: '${n} платёж · в ${time}',
                   few: '${n} платежа · в ${time}',
                   many: '${n} платежей · в ${time}',
@@ -5736,6 +5857,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'календарь «Birka» · ${n} событий',
                   one: 'календарь «Birka» · ${n} событие',
                   few: 'календарь «Birka» · ${n} события',
                   many: 'календарь «Birka» · ${n} событий',
@@ -5778,6 +5900,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} платежей · напомнит в ${time}',
                   one: '${n} платёж · напомнит в ${time}',
                   few: '${n} платежа · напомнит в ${time}',
                   many: '${n} платежей · напомнит в ${time}',
@@ -5798,6 +5921,8 @@ extension on TranslationsRu {
               required num n,
             }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
               n,
+              zero:
+                  'Календарь «Birka» и ${n} событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
               one:
                   'Календарь «Birka» и ${n} событие в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.',
               few:
@@ -5824,6 +5949,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Birka напомнит о ${n} платежах',
                   one: 'Birka напомнит о ${n} платеже',
                   few: 'Birka напомнит о ${n} платежах',
                   many: 'Birka напомнит о ${n} платежах',
@@ -5872,6 +5998,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${day}-го · ${count} раз подряд',
                   one: '${day}-го · ${count} раз подряд',
                   few: '${day}-го · ${count} раза подряд',
                   many: '${day}-го · ${count} раз подряд',
@@ -5882,6 +6009,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'около ${day}-го · ${count} раз',
                   one: 'около ${day}-го · ${count} раз',
                   few: 'около ${day}-го · ${count} раза',
                   many: 'около ${day}-го · ${count} раз',
@@ -5897,6 +6025,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Нашли в операциях · ${count} раз',
                   one: 'Нашли в операциях · ${count} раз',
                   few: 'Нашли в операциях · ${count} раза',
                   many: 'Нашли в операциях · ${count} раз',
@@ -5988,6 +6117,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Сегодня ${date} · ${n} ждут подтверждения',
                   one: 'Сегодня ${date} · ${n} ждёт подтверждения',
                   few: 'Сегодня ${date} · ${n} ждут подтверждения',
                   many: 'Сегодня ${date} · ${n} ждут подтверждения',
@@ -5999,6 +6129,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} платежей',
                   one: '${n} платёж',
                   few: '${n} платежа',
                   many: '${n} платежей',
@@ -6066,6 +6197,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'через ${n} дней',
                   one: 'через ${n} день',
                   few: 'через ${n} дня',
                   many: 'через ${n} дней',
@@ -6076,6 +6208,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} операций',
                   one: '${n} операция',
                   few: '${n} операции',
                   many: '${n} операций',
@@ -6097,6 +6230,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'за ${n} дней',
                   one: 'за ${n} день',
                   few: 'за ${n} дня',
                   many: 'за ${n} дней',
@@ -6114,6 +6248,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} операций на месте',
                   one: '${n} операция на месте',
                   few: '${n} операции на месте',
                   many: '${n} операций на месте',
@@ -6143,6 +6278,8 @@ extension on TranslationsRu {
               required num n,
             }) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
               n,
+              zero:
+                  'За эти дни уже ${n} расходов — отметим их сразу. Регулярные платежи не трогаем.',
               one:
                   'За эти дни уже ${n} расход — отметим его сразу. Регулярные платежи не трогаем.',
               few:
@@ -6173,6 +6310,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Отметили ${n} расходов: «${name}»',
                   one: 'Отметили ${n} расход: «${name}»',
                   few: 'Отметили ${n} расхода: «${name}»',
                   many: 'Отметили ${n} расходов: «${name}»',
@@ -6183,6 +6321,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Сняли метку с ${n} расходов',
                   one: 'Сняли метку с ${n} расхода',
                   few: 'Сняли метку с ${n} расходов',
                   many: 'Сняли метку с ${n} расходов',
@@ -6313,6 +6452,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Все ${n} операций',
                   one: 'Все ${n} операция',
                   few: 'Все ${n} операции',
                   many: 'Все ${n} операций',

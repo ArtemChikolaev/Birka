@@ -38,11 +38,13 @@ newer: Эту копию сделала более новая версия Birka
 damaged: Копия повреждена, её не получится восстановить.
 failed: Не получилось. Попробуйте ещё раз.
 operationsCount(n):
+  zero: $count операций
   one: $count операция
   few: $count операции
   many: $count операций
   other: $count операции
 accountsCount(n):
+  zero: $count счетов
   one: $count счёт
   few: $count счёта
   many: $count счетов

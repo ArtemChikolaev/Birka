@@ -69,17 +69,20 @@ pastTitle: Прошлые импорты
 pastName: "$format · $period"
 pastLine: "$operations → $where · $day"
 operations(n):
+  zero: $count операций
   one: $count операция
   few: $count операции
   many: $count операций
   other: $count операции
 accounts(n):
+  zero: $count счетов
   one: $count счёт
   few: $count счёта
   many: $count счетов
   other: $count счёта
 undo: Отменить
 undoAsk(n):
+  zero: Убрать $count операций этого файла?
   one: Убрать $count операцию этого файла?
   few: Убрать $count операции этого файла?
   many: Убрать $count операций этого файла?
@@ -89,6 +92,7 @@ undoNo: Оставить
 undone: "Импорт «$name» отменён"
 looksLike: Похоже на выписку $bank
 matched(n):
+  zero: Совпали $n колонок из $total. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.
   one: Совпала $n колонка из $total. По ней Birka разберёт файл, а вы проверите результат на следующем шаге.
   few: Совпали $n колонки из $total. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.
   many: Совпали $n колонок из $total. По ним Birka разберёт файл, а вы проверите результат на следующем шаге.
@@ -132,6 +136,7 @@ next(map):
   account: "Дальше: счёт"
   copies: "Дальше: дубликаты"
 write(n):
+  zero: Импортировать $count операций
   one: Импортировать $count операцию
   few: Импортировать $count операции
   many: Импортировать $count операций
@@ -186,6 +191,7 @@ transfer: Перевод
 learned: как раньше
 inbox: Решу во «Входящих»
 problems(n):
+  zero: $count строк не прочитались
   one: $count строка не прочиталась
   few: $count строки не прочитались
   many: $count строк не прочитались
@@ -225,6 +231,7 @@ balanceInFile: В выписке на $day
 balanceInBirka: В Birka после импорта
 balanceHint: В учёте есть операции, которых нет в выписке, или их не хватает. Проверьте счёт и дубликаты.
 copiesTitle(n):
+  zero: $count операций уже есть в учёте
   one: $count операция уже есть в учёте
   few: $count операции уже есть в учёте
   many: $count операций уже есть в учёте
@@ -245,6 +252,7 @@ reasons(map):
 skipCopy: Пропустить копию
 keepBoth: Оставить обе
 leftTitle(n):
+  zero: $count операций не попадут в учёт
   one: $count операция не попадёт в учёт
   few: $count операции не попадут в учёт
   many: $count операций не попадут в учёт
@@ -254,6 +262,7 @@ planFaults(map):
   tooPrecise: больше знаков, чем у валюты
   unevenTransfer: перевод в одной валюте с двумя суммами
 doneTitle(n):
+  zero: Добавили $count операций
   one: Добавили $count операцию
   few: Добавили $count операции
   many: Добавили $count операций
@@ -265,6 +274,7 @@ doneSkipped: Пропустили копий
 doneBalance: Остаток счёта
 asInBank: как в банке
 unsortedTitle(n):
+  zero: $count ждут вашего решения во «Входящих»
   one: $count ждёт вашего решения во «Входящих»
   few: $count ждут вашего решения во «Входящих»
   many: $count ждут вашего решения во «Входящих»
@@ -273,6 +283,7 @@ unsortedText: В отчётах они уже есть, просто без ка
 sortInbox: Разобрать «Входящие»
 undoTitle: Передумали?
 undoText(n):
+  zero: Отмена уберёт $count операций этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
   one: Отмена уберёт $count операцию этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
   few: Отмена уберёт $count операции этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
   many: Отмена уберёт $count операций этого файла. Ваши записи и другие импорты останутся. Отменить можно и позже, в «Прошлых импортах».
@@ -311,11 +322,13 @@ sortLater: Разобрать потом
 inInbox: "$count во «Входящих»"
 unknownTitle: Формат не узнали
 columnsCount(n):
+  zero: $count колонок
   one: $count колонка
   few: $count колонки
   many: $count колонок
   other: $count колонки
 rowsCount(n):
+  zero: $count строк
   one: $count строка
   few: $count строки
   many: $count строк
@@ -341,6 +354,7 @@ ownColumns: колонки назначили вы
 looksLikeOwn: Узнали ваш формат
 categoriesHeading: Категории банка
 categoriesCount(n):
+  zero: $count категорий в выписке
   one: $count категория в выписке
   few: $count категории в выписке
   many: $count категорий в выписке
@@ -360,6 +374,7 @@ categoriesKept: "Выбор запомним для выписок $source"
 foundHeading: Регулярные платежи
 foundLine: "нашли $count: $names"
 foundDone(n):
+  zero: Провели $count платежей
   one: Провели $count платёж
   few: Провели $count платежа
   many: Провели $count платежей
@@ -368,26 +383,31 @@ foundDoneText: $names — из выписки
 repeatsTitle: Похоже на регулярные · $count
 namesAnd: $names и $last
 rowsLeft(n):
+  zero: $count строк не попадут в учёт
   one: $count строка не попадёт в учёт
   few: $count строки не попадут в учёт
   many: $count строк не попадут в учёт
   other: $count строки не попадут в учёт
 unreadCount(n):
+  zero: $count не прочитались
   one: $count не прочиталась
   few: $count не прочитались
   many: $count не прочитались
   other: $count не прочитались
 declinedCount(n):
+  zero: $count не прошли в банке
   one: $count не прошла в банке
   few: $count не прошли в банке
   many: $count не прошли в банке
   other: $count не прошли в банке
 unfitCount(n):
+  zero: $count не подходят счёту
   one: $count не подходит счёту
   few: $count не подходят счёту
   many: $count не подходят счёту
   other: $count не подходят счёту
 restFine(n):
+  zero: остальные $count в порядке
   one: ещё $count в порядке
   few: остальные $count в порядке
   many: остальные $count в порядке
@@ -401,6 +421,7 @@ understood: Понятно
 bankHas: "В банке $amount"
 bankHasMissing: "В банке $amount: похоже, не хватает непрочитанных строк"
 mostUnread(n):
+  zero: "$count строк из $total не прочитались"
   one: "$count строка из $total не прочиталась"
   few: "$count строки из $total не прочитались"
   many: "$count строк из $total не прочитались"
@@ -408,6 +429,7 @@ mostUnread(n):
 mostUnreadText: "Похоже, банк поменял выписку: проверьте, где в ней дата и сумма и чем отделены копейки."
 checkColumns: Проверить колонки
 declinedRows(n):
+  zero: $count операций не прошли в банке
   one: $count операция не прошла в банке
   few: $count операции не прошли в банке
   many: $count операций не прошли в банке

@@ -1,6 +1,7 @@
 capital: Капитал
 rateOn: Курс ЦБ РФ на $day
 currencies(n):
+  zero: $n валют
   one: $n валюта
   few: $n валюты
   many: $n валют
