@@ -66,6 +66,10 @@ final class QuickAddState {
     this.categoryId,
     this.note = '',
     this.changesExisting = false,
+    this.tags = const [],
+    this.tagIds = const {},
+    this.tagsPicked = false,
+    this.keptTags = const {},
   });
 
   /// How many categories stand on the sheet before the button for the rest.
@@ -118,6 +122,26 @@ final class QuickAddState {
 
   /// Whether a save changes an operation instead of adding one.
   final bool changesExisting;
+
+  /// The метки there are, to name the picked ones (ADR 0027).
+  final List<Tag> tags;
+
+  /// The метки that the operation is to wear.
+  final Set<String> tagIds;
+
+  /// Whether the person picked the метки, so that the days of a trip leave
+  /// them as they are.
+  final bool tagsPicked;
+
+  /// How the operation being changed wears its метки, which a change keeps
+  /// unless the person picks others.
+  final Map<String, TagMark> keptTags;
+
+  /// The метки that the operation is to wear, in the order of [tags].
+  List<Tag> get picked => [
+    for (final tag in tags)
+      if (tagIds.contains(tag.id)) tag,
+  ];
 
   /// The picked account.
   Account? get account => _accountWith(accountId);
@@ -225,6 +249,10 @@ final class QuickAddState {
     String? Function()? categoryId,
     String? note,
     bool? changesExisting,
+    List<Tag>? tags,
+    Set<String>? tagIds,
+    bool? tagsPicked,
+    Map<String, TagMark>? keptTags,
   }) {
     return QuickAddState(
       status: status ?? this.status,
@@ -243,6 +271,32 @@ final class QuickAddState {
       categoryId: categoryId == null ? this.categoryId : categoryId(),
       note: note ?? this.note,
       changesExisting: changesExisting ?? this.changesExisting,
+      tags: tags ?? this.tags,
+      tagIds: tagIds ?? this.tagIds,
+      tagsPicked: tagsPicked ?? this.tagsPicked,
+      keptTags: keptTags ?? this.keptTags,
+    );
+  }
+
+  /// The same state with the метки that the ledger puts on what it records
+  /// now, until the person picks them (ADR 0027): what an operation being
+  /// changed wears by hand, and the trips whose days cover an expense, unless
+  /// the person took them off it.
+  QuickAddState withTripsOfTheDay() {
+    if (tagsPicked) return this;
+    return copyWith(
+      tagIds: {
+        for (final MapEntry(:key, :value) in keptTags.entries)
+          if (value == TagMark.hand) key,
+        for (final tag in tags)
+          if (keptTags[tag.id] != TagMark.off &&
+              tag.marks(
+                kind: kind,
+                source: TransactionSource.manual,
+                day: day,
+              ))
+            tag.id,
+      },
     );
   }
 }
@@ -306,6 +360,8 @@ class QuickAddCubit extends Cubit<QuickAddState> {
         categoryId: () => operation.category?.id,
         note: operation.note,
         changesExisting: !repeats,
+        // A changed operation keeps what it wears; a copy follows its day.
+        keptTags: repeats ? null : operation.transaction.tags,
       ),
     );
   }
@@ -323,23 +379,27 @@ class QuickAddCubit extends Cubit<QuickAddState> {
       final expenses = await _repository.categories(CategoryKind.expense);
       final income = await _repository.categories(CategoryKind.income);
       final last = await _repository.lastAccountId();
+      final tags = await _repository.tags();
       if (isClosed) return;
       final current = state.accountId ?? last;
       final kept = [changing?.category];
       emit(
-        state.copyWith(
-          status: QuickAddStatus.editing,
-          accounts: accounts,
-          expenseCategories: changing?.kind == TransactionKind.expense
-              ? _withKept(expenses, kept, (category) => category.id)
-              : expenses,
-          incomeCategories: changing?.kind == TransactionKind.income
-              ? _withKept(income, kept, (category) => category.id)
-              : income,
-          accountId: accounts.any((account) => account.id == current)
-              ? current
-              : accounts.firstOrNull?.id,
-        ),
+        state
+            .copyWith(
+              status: QuickAddStatus.editing,
+              tags: tags,
+              accounts: accounts,
+              expenseCategories: changing?.kind == TransactionKind.expense
+                  ? _withKept(expenses, kept, (category) => category.id)
+                  : expenses,
+              incomeCategories: changing?.kind == TransactionKind.income
+                  ? _withKept(income, kept, (category) => category.id)
+                  : income,
+              accountId: accounts.any((account) => account.id == current)
+                  ? current
+                  : accounts.firstOrNull?.id,
+            )
+            .withTripsOfTheDay(),
       );
     } on Exception {
       if (!isClosed) emit(state.copyWith(status: QuickAddStatus.failedToRead));
@@ -362,7 +422,9 @@ class QuickAddCubit extends Cubit<QuickAddState> {
   /// Sets the kind. The category belongs to the old kind and goes with it.
   void kindChanged(TransactionKind value) {
     if (value == state.kind) return;
-    emit(state.copyWith(kind: value, categoryId: () => null));
+    emit(
+      state.copyWith(kind: value, categoryId: () => null).withTripsOfTheDay(),
+    );
   }
 
   /// Types a digit.
@@ -406,7 +468,23 @@ class QuickAddCubit extends Cubit<QuickAddState> {
   void categoryChanged(String id) => emit(state.copyWith(categoryId: () => id));
 
   /// Sets the day.
-  void dayChanged(CivilDate value) => emit(state.copyWith(day: value));
+  void dayChanged(CivilDate value) =>
+      emit(state.copyWith(day: value).withTripsOfTheDay());
+
+  /// Puts on the метки that the person picked, from then on whatever the day,
+  /// and reads the метки again, since the picker can make a new one. A
+  /// picker closed without a change leaves the метки to the day.
+  Future<void> tagsChanged(Set<String> ids) async {
+    final same =
+        ids.length == state.tagIds.length && state.tagIds.containsAll(ids);
+    if (!same) emit(state.copyWith(tagIds: ids, tagsPicked: true));
+    try {
+      final tags = await _repository.tags();
+      if (!isClosed) emit(state.copyWith(tags: tags).withTripsOfTheDay());
+    } on Exception {
+      // The names come with the next read.
+    }
+  }
 
   /// Sets the note.
   void noteChanged(String value) => emit(state.copyWith(note: value));
@@ -414,7 +492,9 @@ class QuickAddCubit extends Cubit<QuickAddState> {
   /// Saves the transaction, if every field is in place.
   Future<void> save() async {
     if (!state.canSave) return;
-    final draft = _draft();
+    // Until the person picks the метки, the ledger puts them on as the sheet
+    // shows them.
+    final draft = state.tagsPicked ? _draft().withTags(state.tagIds) : _draft();
     emit(state.copyWith(status: QuickAddStatus.saving));
     try {
       final changing = _changing;

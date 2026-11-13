@@ -19,7 +19,11 @@ void main() {
   var addedAccounts = 0;
   var addedCategories = 0;
 
-  Future<void> pump(WidgetTester tester, {QuickAddSource? source}) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    QuickAddSource? source,
+    Future<Set<String>?> Function(BuildContext, Set<String>)? onPickTags,
+  }) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -33,6 +37,7 @@ void main() {
             onClose: () => closed++,
             onAddAccount: () async => addedAccounts++,
             onAddCategories: () async => addedCategories++,
+            onPickTags: onPickTags,
           ),
         ),
       ),
@@ -362,6 +367,63 @@ void main() {
       Money(-250000, Currency.rub),
     );
     expect(closed, 1);
+  });
+
+  group('the метки', () {
+    final trip = Tag(
+      id: 'trip',
+      name: 'Тбилиси',
+      days: TagDays(CivilDate(2026, 10, 25), CivilDate(2026, 11, 5)),
+      marksDays: true,
+    );
+    const renovation = Tag(id: 'renovation', name: 'Ремонт кухни');
+
+    testWidgets('put the trip of the day on, and go with the operation', (
+      tester,
+    ) async {
+      repository.tagList = [trip, renovation];
+      final asked = <Set<String>>[];
+      await pump(
+        tester,
+        onPickTags: (_, picked) async {
+          asked.add(picked);
+          return {'renovation', 'trip'};
+        },
+      );
+
+      expect(find.text('Тбилиси'), findsOneWidget);
+
+      await press(tester, '250');
+      await tapText(tester, 'Кафе');
+      await tapText(tester, 'Тбилиси');
+
+      expect(asked, [
+        {'trip'},
+      ]);
+      expect(find.text('Тбилиси +1'), findsOneWidget);
+
+      await tapText(tester, 'СОХРАНИТЬ · КАФЕ');
+
+      expect(repository.recorded.single.tags, {'trip', 'renovation'});
+    });
+
+    testWidgets('of an income are offered, not put on', (tester) async {
+      repository.tagList = [trip, renovation];
+      await pump(tester, onPickTags: (_, picked) async => picked);
+
+      await tapText(tester, 'ДОХОД');
+
+      expect(find.text('+ Метка'), findsOneWidget);
+      expect(find.text('Тбилиси'), findsNothing);
+    });
+
+    testWidgets('are not on a sheet whose host has none', (tester) async {
+      repository.tagList = [trip];
+      await pump(tester);
+
+      expect(find.text('Тбилиси'), findsNothing);
+      expect(find.text('+ Метка'), findsNothing);
+    });
   });
 
   testWidgets('the cross closes without saving', (tester) async {

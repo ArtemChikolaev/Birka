@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:ledger/ledger.dart' show TransactionSource, TransactionStatus;
+import 'package:ledger/ledger.dart'
+    show Tag, TagDays, TagMark, TransactionSource, TransactionStatus;
 import 'package:money/money.dart';
 import 'package:test/test.dart';
 import 'package:transactions_common/transactions_common.dart';
@@ -666,6 +667,101 @@ void main() {
         'c5',
         'c9',
       ]);
+    });
+  });
+
+  group('метки', () {
+    // A trip of the last days of October, and a метка without days.
+    final trip = Tag(
+      id: 'trip',
+      name: 'Казань',
+      days: TagDays(CivilDate(2026, 10, 29), today),
+      marksDays: true,
+    );
+    const work = Tag(id: 'work', name: 'Работа');
+
+    setUp(() => repository.tagList = [trip, work]);
+
+    test('an expense of the days of a trip wears it until a pick', () async {
+      final form = await open();
+
+      expect(form.state.picked, [trip]);
+
+      form.dayChanged(CivilDate(2026, 10, 28));
+      expect(form.state.tagIds, isEmpty);
+
+      form
+        ..dayChanged(today)
+        ..kindChanged(TransactionKind.income);
+      expect(form.state.tagIds, isEmpty);
+
+      form.kindChanged(TransactionKind.expense);
+      expect(form.state.tagIds, {'trip'});
+
+      await form.tagsChanged({'work'});
+      form.dayChanged(yesterday);
+      expect(form.state.picked, [work]);
+    });
+
+    test('a save leaves the метки to the ledger until a pick', () async {
+      final form = await open();
+      type(form, '450');
+      form.categoryChanged('cafe');
+
+      await form.save();
+
+      expect(repository.recorded.single.tags, isNull);
+    });
+
+    test(
+      'a picker closed without a change leaves the метки to the day',
+      () async {
+        final form = await open();
+        type(form, '450');
+        form.categoryChanged('cafe');
+
+        await form.tagsChanged({'trip'});
+        form.dayChanged(CivilDate(2026, 10, 28));
+
+        expect(form.state.tagsPicked, isFalse);
+        expect(form.state.tagIds, isEmpty);
+
+        await form.save();
+
+        expect(repository.recorded.single.tags, isNull);
+      },
+    );
+
+    test('a save takes the метки that the person picked', () async {
+      final form = await open();
+      type(form, '450');
+      form.categoryChanged('cafe');
+      await form.tagsChanged({'work'});
+
+      await form.save();
+
+      expect(repository.recorded.single.tags, {'work'});
+    });
+
+    test('a change keeps the hand and leaves a trip taken off off', () async {
+      repository.operations = [
+        testOperation(
+          'lunch',
+          amount: rub(-45000),
+          category: testCategory('cafe'),
+          day: today,
+          tags: {'work': TagMark.hand, 'trip': TagMark.off},
+        ),
+      ];
+      final form = QuickAddCubit(
+        repository,
+        now: () => now,
+        source: const QuickAddSource.edit('lunch'),
+      );
+      addTearDown(form.close);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(form.state.tagIds, {'work'});
     });
   });
 }

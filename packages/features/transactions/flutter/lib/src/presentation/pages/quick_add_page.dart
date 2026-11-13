@@ -16,6 +16,7 @@ class QuickAddPage extends StatelessWidget {
     required this.onClose,
     required this.onAddAccount,
     required this.onAddCategories,
+    this.onPickTags,
     super.key,
   });
 
@@ -27,6 +28,12 @@ class QuickAddPage extends StatelessWidget {
 
   /// Leads to the categories, and completes on the way back.
   final Future<void> Function() onAddCategories;
+
+  /// Lets the person pick the метки of the operation, starting from those it
+  /// wears, and completes with the ones picked (ADR 0027). Without it the
+  /// sheet offers no метки.
+  final Future<Set<String>?> Function(BuildContext context, Set<String> picked)?
+  onPickTags;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +65,7 @@ class QuickAddPage extends StatelessWidget {
               _ => _Sheet(
                 state: state,
                 onClose: onClose,
+                onPickTags: onPickTags,
                 onAddAccount: () => _addThenRefresh(context, onAddAccount),
                 onAddCategories: () =>
                     _addThenRefresh(context, onAddCategories),
@@ -172,12 +180,14 @@ class _Sheet extends StatelessWidget {
     required this.onClose,
     required this.onAddAccount,
     required this.onAddCategories,
+    required this.onPickTags,
   });
 
   final QuickAddState state;
   final VoidCallback onClose;
   final VoidCallback onAddAccount;
   final VoidCallback onAddCategories;
+  final Future<Set<String>?> Function(BuildContext, Set<String>)? onPickTags;
 
   static const List<TransactionKind> _kinds = [
     TransactionKind.expense,
@@ -226,7 +236,7 @@ class _Sheet extends StatelessWidget {
                 _gap,
                 _Amount(state: state),
                 _gap,
-                _Details(state: state),
+                _Details(state: state, onPickTags: onPickTags),
                 _gap,
                 if (state.kind == TransactionKind.transfer)
                   _Targets(state: state, onAddAccount: onAddAccount)
@@ -425,17 +435,19 @@ class _Line extends StatelessWidget {
   }
 }
 
-/// The account, the day and the note.
+/// The account, the day, the метки and the note.
 class _Details extends StatelessWidget {
-  const _Details({required this.state});
+  const _Details({required this.state, required this.onPickTags});
 
   final QuickAddState state;
+  final Future<Set<String>?> Function(BuildContext, Set<String>)? onPickTags;
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<QuickAddCubit>();
     final day = state.day;
     final earlier = day != state.today && day != state.yesterday;
+    final picked = state.picked;
     return Wrap(
       spacing: BirkaTokens.spaceXs,
       runSpacing: BirkaTokens.spaceXs,
@@ -469,6 +481,21 @@ class _Details extends StatelessWidget {
             label: t.transactions.pickDay,
             onPressed: () => _pickDay(context),
           ),
+        // The trip of the day comes on by itself, and a day out of it, an
+        // income or a transfer offers «+ Метка» instead (ADR 0027).
+        if (onPickTags != null)
+          BirkaChip(
+            glyph: picked.isEmpty ? null : BirkaGlyph.tag,
+            label: picked.isEmpty
+                ? '+ ${t.transactions.addTag}'
+                : [
+                    picked.first.name,
+                    if (picked.length > 1) '+${picked.length - 1}',
+                  ].join(' '),
+            selected: picked.isNotEmpty,
+            dashed: picked.isEmpty,
+            onTap: () => unawaited(_pickTags(context)),
+          ),
         BirkaChip(
           label: state.note.isEmpty
               ? '+ ${t.transactions.addNote}'
@@ -479,6 +506,12 @@ class _Details extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _pickTags(BuildContext context) async {
+    final cubit = context.read<QuickAddCubit>();
+    final picked = await onPickTags?.call(context, state.tagIds);
+    if (picked != null && !cubit.isClosed) await cubit.tagsChanged(picked);
   }
 
   Future<void> _pickDay(BuildContext context) async {

@@ -22,6 +22,7 @@ import 'package:import_flutter/import_flutter.dart';
 import 'package:inbox_common/inbox_common.dart'
     show InboxCubit, InboxSummaryCubit;
 import 'package:inbox_flutter/inbox_flutter.dart';
+import 'package:ledger/ledger.dart' show TagMarking;
 import 'package:notifications_common/notifications_common.dart'
     show NoticePlace, NotificationsCubit, NotificationsSummaryCubit;
 import 'package:notifications_flutter/notifications_flutter.dart';
@@ -44,7 +45,12 @@ import 'package:settings_common/settings_common.dart' show SettingsCubit;
 import 'package:settings_flutter/settings_flutter.dart'
     show showMonthStartSheet;
 import 'package:tags_common/tags_common.dart'
-    show TagFormCubit, TagReportCubit, TagsCubit;
+    show
+        OperationTagsCubit,
+        TagFormCubit,
+        TagPickerCubit,
+        TagReportCubit,
+        TagsCubit;
 import 'package:tags_flutter/tags_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
@@ -135,8 +141,10 @@ abstract final class Paths {
   /// The метки and trips (ADR 0027).
   static const tags = '/tags';
 
-  /// The form of a new метка.
-  static const newTag = '/tags/new';
+  /// The form of a new метка, named [name] to begin with.
+  static String newTag({String? name}) => name == null
+      ? '/tags/new'
+      : '/tags/new?name=${Uri.encodeQueryComponent(name)}';
 
   /// The report of метка [id].
   static String tag(String id) => '/tags/$id';
@@ -235,6 +243,15 @@ GoRouter buildRouter(
                           onEdit: () => context.push(Paths.editOperation(id)),
                           onRepeat: () =>
                               context.push(Paths.repeatOperation(id)),
+                          tags: BlocProvider(
+                            create: (_) =>
+                                getIt<OperationTagsCubit>(param1: id),
+                            child: OperationTagsRow(
+                              onOpen: (tag) => context.push(Paths.tag(tag)),
+                              onPick: (context, picked) =>
+                                  _pickTags(context, getIt, picked),
+                            ),
+                          ),
                           schedule: BlocProvider(
                             create: (_) =>
                                 getIt<OperationScheduleCubit>(param1: id),
@@ -435,7 +452,7 @@ GoRouter buildRouter(
           create: (_) => getIt<TagsCubit>(),
           child: TagsPage(
             onBack: () => context.pop(),
-            onAdd: () => context.push(Paths.newTag),
+            onAdd: () => context.push(Paths.newTag()),
             onOpen: (id) => context.push(Paths.tag(id)),
           ),
         ),
@@ -443,7 +460,8 @@ GoRouter buildRouter(
           GoRoute(
             path: 'new',
             parentNavigatorKey: rootKey,
-            pageBuilder: (context, state) => _tagFormPage(getIt),
+            pageBuilder: (context, state) =>
+                _tagFormPage(getIt, name: state.uri.queryParameters['name']),
           ),
           GoRoute(
             path: ':id',
@@ -546,6 +564,8 @@ GoRouter buildRouter(
                 onClose: () => context.pop(),
                 onAddAccount: () => context.push<void>(Paths.newAccount),
                 onAddCategories: () => context.push<void>(Paths.categories),
+                onPickTags: (context, picked) =>
+                    _pickTags(context, getIt, picked),
               ),
             ),
           ),
@@ -617,8 +637,8 @@ Page<void> _scheduleFormPage(
 );
 
 /// The form of a метка, as a sheet (ADR 0027): метка [id], or a new one
-/// named [name].
-Page<void> _tagFormPage(GetIt getIt, {String? id, String? name}) =>
+/// named [name]. It closes with what it saved, for whatever pushed it.
+Page<TagMarking?> _tagFormPage(GetIt getIt, {String? id, String? name}) =>
     BirkaSheetPage(
       child: BlocProvider(
         create: (_) => getIt<TagFormCubit>(param1: id, param2: name),
@@ -627,6 +647,22 @@ Page<void> _tagFormPage(GetIt getIt, {String? id, String? name}) =>
         ),
       ),
     );
+
+/// Lets the person pick the метки of an operation, starting from [picked]
+/// (ADR 0027). A метка made from the search of the picker opens its form
+/// over it, and comes back picked.
+Future<Set<String>> _pickTags(
+  BuildContext context,
+  GetIt getIt,
+  Set<String> picked,
+) => showTagPicker(
+  context,
+  cubit: getIt<TagPickerCubit>(param1: picked),
+  onCreate: (context, name) async {
+    final made = await context.push<TagMarking>(Paths.newTag(name: name));
+    return made?.tag.id;
+  },
+);
 
 /// Asks which day the months start on, from the page of the money until the
 /// salary, and keeps it as the settings do: it is one setting (ADR 0024).
