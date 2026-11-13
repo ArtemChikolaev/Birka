@@ -7,6 +7,7 @@ examples: You can ask
 recent: Recent
 forget: Clear
 private: "The app answers by itself: questions and answers stay on this device."
+failed: Could not read the data for an answer.
 privateWeb: "The app answers by itself: questions and answers stay in this browser."
 slash: The / key opens Ask from any page.
 start:
@@ -55,6 +56,7 @@ answer:
   sharesIncome: Where from
   noCategory: No category
   counted: Counted on this device at the central bank rate of the day of each operation.
+  countedWeb: Counted in this browser at the central bank rate of the day of each operation.
   partial: Some amounts have no rate yet and stay out of the total.
   trip: Trip report
   tripText: Currencies, categories and days
@@ -95,6 +97,7 @@ fact:
   rate: Central bank rate on $day
   rateFor: for 1 $sign
   rateKept: Rates update once a day and stay on the device.
+  rateKeptWeb: Rates update once a day and stay in this browser.
   rateMissing: There is no rate of this currency yet.
   rateHelp: Where the rate comes from
   rateHelpText: An answer from the help

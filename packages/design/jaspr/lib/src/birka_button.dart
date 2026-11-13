@@ -48,7 +48,14 @@ class BirkaButton extends StatelessComponent {
       if (compact) 'birka-button--compact',
     ].join(' ');
     if (href case final href?) {
-      return a(classes: classes, href: href, [.text(label)]);
+      final onPressed = this.onPressed;
+      return a(
+        classes: classes,
+        href: href,
+        // A link can say where it leads before it goes.
+        events: onPressed == null ? null : {'click': (_) => onPressed()},
+        [.text(label)],
+      );
     }
     return button(
       classes: classes,

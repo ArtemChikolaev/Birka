@@ -11,11 +11,13 @@ import 'package:accounts_jaspr/src/presentation/pages/account_form_page.dart'
     as _account_form_page;
 import 'package:accounts_jaspr/src/presentation/pages/accounts_page.dart'
     as _accounts_page;
+import 'package:ask_jaspr/src/presentation/pages/ask_page.dart' as _ask_page;
 import 'package:backup_jaspr/src/presentation/pages/backup_page.dart'
     as _backup_page;
 import 'package:birka_web/components/capital_preview.dart' as _capital_preview;
 import 'package:birka_web/components/month_card.dart' as _month_card;
 import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
+import 'package:birka_web/pages/ask_island.dart' as _ask_island;
 import 'package:birka_web/pages/backup_island.dart' as _backup_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
 import 'package:birka_web/pages/help_island.dart' as _help_island;
@@ -151,6 +153,8 @@ import 'package:tags_jaspr/src/presentation/pages/tag_report_page.dart'
 import 'package:tags_jaspr/src/presentation/pages/tags_page.dart' as _tags_page;
 import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart'
     as _operation_day_group;
+import 'package:transactions_jaspr/src/presentation/components/operations_focus_card.dart'
+    as _operations_focus_card;
 import 'package:transactions_jaspr/src/presentation/components/operations_totals.dart'
     as _operations_totals;
 import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart'
@@ -189,6 +193,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
         ClientTarget<_capital_preview.CapitalPreview>('capital_preview'),
     _accounts_island.AccountsIsland:
         ClientTarget<_accounts_island.AccountsIsland>('accounts_island'),
+    _ask_island.AskIsland: ClientTarget<_ask_island.AskIsland>('ask_island'),
     _backup_island.BackupIsland: ClientTarget<_backup_island.BackupIsland>(
       'backup_island',
     ),
@@ -230,6 +235,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._account_row.AccountRow.styles,
     ..._account_form_page.AccountFormPage.styles,
     ..._accounts_page.AccountsPage.styles,
+    ..._ask_page.AskPage.styles,
     ..._backup_page.BackupPage.styles,
     ..._capital_preview.CapitalPreview.styles,
     ..._month_card.MonthCard.styles,
@@ -328,6 +334,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._tag_report_page.TagReportPage.styles,
     ..._tags_page.TagsPage.styles,
     ..._operation_day_group.OperationDayGroup.styles,
+    ..._operations_focus_card.OperationsFocusCard.styles,
     ..._operations_totals.OperationsTotals.styles,
     ..._quick_add_tile.QuickAddTile.styles,
     ..._quick_add_tile.QuickAddTiles.styles,

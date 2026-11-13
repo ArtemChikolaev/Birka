@@ -30,6 +30,8 @@ clearSearch: Clear the search
 fromQuestion: From the question
 toAnswer: Back to the answer
 dropFocus: Take off “$title”
+focusText: The list shows only what the question was about. Take the plaque off to see every operation of the month.
+backToAnswer: Go back to the answer
 filterAll: All
 filterExpenses: Expenses
 filterIncome: Income

@@ -125,6 +125,7 @@ void main() {
     ComponentTester tester, {
     String? note,
     Component? notice,
+    Component? ask,
     Component? bell,
     Component? side,
   }) async {
@@ -141,6 +142,7 @@ void main() {
             hrefOfAccount: (id) => 'open/$id',
             note: note,
             notice: notice,
+            ask: ask,
             bell: bell,
             side: side,
           ),
@@ -389,6 +391,25 @@ void main() {
       findsOneComponent,
     );
     expect(links().first, 'notifications/');
+  });
+
+  testComponents('the way to «Спросить» stands first in the header', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      ask: const a(href: 'ask/', [.text('Спросить')]),
+      bell: const a(href: 'notifications/', [.text('Колокольчик')]),
+    );
+
+    final actions = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent && component.classes == 'overview__actions',
+    );
+    final children =
+        (actions.evaluate().single.component as DomComponent).children;
+    expect(children, hasLength(3));
+    expect(links().take(2), ['ask/', 'notifications/']);
   });
 
   testComponents('one account takes the whole row', (tester) async {

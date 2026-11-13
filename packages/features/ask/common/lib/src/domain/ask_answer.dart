@@ -10,8 +10,15 @@ import 'package:rates/rates.dart';
 /// or a year.
 @immutable
 final class AskBar {
-  /// Creates the bar of the days from [first] to [last].
-  const AskBar(this.first, this.last, this.total, {this.top = false});
+  /// Creates the bar of the days from [first] to [last], one [span] of the
+  /// period or the part of one at an end of it.
+  const AskBar(
+    this.first,
+    this.last,
+    this.total, {
+    required this.span,
+    this.top = false,
+  });
 
   /// The first day.
   final CivilDate first;
@@ -25,14 +32,10 @@ final class AskBar {
   /// Whether it is the biggest of the bars.
   final bool top;
 
-  /// What one bar takes: [AskBarSpan.day] and up.
-  AskBarSpan get span => switch (first.daysUntil(last)) {
-    0 => AskBarSpan.day,
-    < 7 => AskBarSpan.week,
-    < 31 => AskBarSpan.week,
-    < 366 => AskBarSpan.month,
-    _ => AskBarSpan.year,
-  };
+  /// What the bars of the period take, whatever the length of this one: a
+  /// month of 31 days and the few days of a month at the end of the period
+  /// are both a month.
+  final AskBarSpan span;
 }
 
 /// What one bar of an answer takes.
@@ -336,19 +339,25 @@ List<AskBar> _bars(
 ) {
   if (period == null) return const [];
   final days = period.days;
+  final span = switch (days) {
+    <= 7 => AskBarSpan.day,
+    <= 62 => AskBarSpan.week,
+    <= 731 => AskBarSpan.month,
+    _ => AskBarSpan.year,
+  };
   final stretches = <(CivilDate, CivilDate)>[];
   var start = period.first;
   while (start.compareTo(period.last) <= 0) {
-    final CivilDate end;
-    if (days <= 7) {
-      end = start;
-    } else if (days <= 62) {
-      end = start.addDays(7 - start.weekday);
-    } else if (days <= 731) {
-      end = CivilDate(start.year, start.month, 1).addMonths(1).addDays(-1);
-    } else {
-      end = CivilDate(start.year, 12, 31);
-    }
+    final end = switch (span) {
+      AskBarSpan.day => start,
+      AskBarSpan.week => start.addDays(7 - start.weekday),
+      AskBarSpan.month => CivilDate(
+        start.year,
+        start.month,
+        1,
+      ).addMonths(1).addDays(-1),
+      AskBarSpan.year => CivilDate(start.year, 12, 31),
+    };
     final last = end.compareTo(period.last) < 0 ? end : period.last;
     stretches.add((start, last));
     start = last.addDays(1);
@@ -373,6 +382,7 @@ List<AskBar> _bars(
         first,
         last,
         totals[i],
+        span: span,
         top: totals[i].isPositive && totals[i] == top,
       ),
   ];

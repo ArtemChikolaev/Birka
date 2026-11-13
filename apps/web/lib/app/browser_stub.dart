@@ -73,6 +73,18 @@ void sayOnNextPage(String text) => _unavailable();
 String? takeSaid() => _unavailable();
 
 /// See `browser_web.dart`.
+void handToNextPage(String key, String text) => _unavailable();
+
+/// See `browser_web.dart`.
+String? takeHanded(String key) => _unavailable();
+
+/// See `browser_web.dart`.
+void Function() watchSlashKey(void Function() listener) => _unavailable();
+
+/// See `browser_web.dart`.
+void focusElement(String selector) => _unavailable();
+
+/// See `browser_web.dart`.
 String? keptValue(String key) => _unavailable();
 
 /// See `browser_web.dart`.

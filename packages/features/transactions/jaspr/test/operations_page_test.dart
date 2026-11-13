@@ -26,12 +26,15 @@ void main() {
     String? note,
     Component? side,
     String? picked,
+    OperationsFocus? focus,
+    String? answerHref,
   }) async {
     tester.pumpComponent(
       BlocProvider(
         create: (_) => OperationsCubit(
           repository,
           now: () => DateTime(2026, 10, 31, 9, 30),
+          focus: focus,
         ),
         child: OperationsPage(
           addHref: 'add',
@@ -39,6 +42,7 @@ void main() {
           note: note,
           side: side,
           picked: picked,
+          answerHref: answerHref,
         ),
       ),
     );
@@ -112,6 +116,64 @@ void main() {
   tearDown(() {
     resetIsClientForTesting();
     LocaleSettings.setLocaleSync(AppLocale.en);
+  });
+
+  testComponents('shows the operations of a question alone under its plaque', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      side: const Component.text('Month'),
+      focus: OperationsFocus(
+        title: 'Кафе · Октябрь 2026',
+        ids: const {'coffee'},
+        first: CivilDate(2026, 10, 31),
+        last: CivilDate(2026, 10, 31),
+      ),
+      answerHref: 'ask/#кафе',
+    );
+    await tester.pump();
+
+    expect(find.text('Из вопроса'), findsOneComponent);
+    final plaque =
+        find
+                .byComponentPredicate(
+                  (it) => it is BirkaChip && it.label == 'Кафе · Октябрь 2026',
+                )
+                .evaluate()
+                .single
+                .component
+            as BirkaChip;
+    expect(plaque.trailingGlyph, BirkaGlyph.close);
+    expect(plaque.semanticLabel, 'Снять «Кафе · Октябрь 2026»');
+    expect(links(), contains('ask/#кафе'));
+    expect(find.text('Кофейня у дома'), findsOneComponent);
+    expect(links(), isNot(contains('open/bread')));
+    // The totals of the question stand under it, beside a side too.
+    expect(find.byType(OperationsTotals), findsOneComponent);
+
+    await tap(tester, 'Кафе · Октябрь 2026');
+    await tester.pump();
+
+    final fold =
+        find.byType(BirkaFold).evaluate().single.component as BirkaFold;
+    expect(fold.open, isFalse);
+    expect(links(), contains('open/pay'));
+  });
+
+  testComponents('the card of a question leads back to its answer', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      const OperationsFocusCard(
+        question: 'кафе в октябре',
+        answerHref: 'ask/#q',
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('«кафе в октябре»'), findsOneComponent);
+    expect(links(), ['ask/#q']);
   });
 
   testComponents('shows the month day by day with its totals', (tester) async {

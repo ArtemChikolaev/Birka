@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ask_jaspr/ask_jaspr.dart';
 import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:birka_web/app/data_island.dart';
@@ -125,6 +126,7 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         hrefOfAccount: (id) => 'accounts/#$id',
         note: storageNote,
         notice: const InboxCard(href: 'inbox/'),
+        ask: const AskButton(href: 'ask/'),
         bell: const NotificationsBell(href: 'notifications/'),
         side: const SpendingCard(
           paydayHref: 'payday/',

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:birka_web/app/ask_focus.dart';
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/components/month_card.dart';
 import 'package:birka_web/components/site_nav.dart';
@@ -16,6 +17,10 @@ import 'package:transactions_jaspr/transactions_jaspr.dart';
 /// operation, `operations/#<id>` the card of one, and `operations/#edit-<id>`
 /// and `operations/#repeat-<id>` the form on it. In a wide window they open
 /// beside the list, which otherwise shows what the month came to.
+///
+/// The operations that an answer of «Спросить» left stand alone under the
+/// plaque of the question, and in a wide window the question stands beside
+/// them (ADR 0028).
 @client
 class OperationsIsland extends StatefulComponent {
   /// Creates the island.
@@ -31,6 +36,15 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland>
 
   OperationsCubit? _operations;
   ReportsCubit? _reports;
+
+  /// The operations of a question that «Спросить» left for this page.
+  QuestionFocus? _question;
+
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) _question = takeFocus();
+  }
 
   @override
   String get address => 'operations/';
@@ -63,7 +77,7 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland>
   @override
   Component buildPage(BuildContext context) {
     return BlocProvider<OperationsCubit>(
-      create: (_) => _operations = getIt(),
+      create: (_) => _operations = getIt(param1: _question?.focus),
       child: wide ? _besideList() : _inTurn(),
     );
   }
@@ -90,7 +104,16 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland>
           final view => operationOf(view),
         },
         side: switch (fragment) {
-          '' => const MonthCard(),
+          '' => BlocBuilder<OperationsCubit, OperationsState>(
+            buildWhen: (before, now) => before.focus != now.focus,
+            builder: (context, state) => switch (_question) {
+              final question? when state.focus != null => OperationsFocusCard(
+                question: question.question,
+                answerHref: answerHref(question.question),
+              ),
+              _ => const MonthCard(),
+            },
+          ),
           _new => GlassPanel(
             key: ValueKey(fragment),
             child: quickAdd(null, closeForm),
@@ -105,12 +128,14 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland>
   }
 
   Component _list({String? picked, Component? side}) {
+    final question = _question;
     return OperationsPage(
       addHref: '$address#$_new',
       hrefOf: (id) => '$address#$id',
       note: storageNote,
       picked: picked,
       side: side,
+      answerHref: question == null ? null : answerHref(question.question),
     );
   }
 }

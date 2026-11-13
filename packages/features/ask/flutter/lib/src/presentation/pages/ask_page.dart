@@ -807,6 +807,9 @@ class _Chips extends StatelessWidget {
                 label: chip.label,
                 selected: true,
                 glyph: switch (chip.kind) {
+                  AskChipKind.category => BirkaGlyph.named(
+                    chip.category?.icon,
+                  ),
                   AskChipKind.tag =>
                     chip.tag?.isTrip ?? false
                         ? BirkaGlyph.plane

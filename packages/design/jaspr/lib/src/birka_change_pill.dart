@@ -6,7 +6,12 @@ import 'package:jaspr/jaspr.dart';
 /// A pill with the arrow and the amount of a change.
 class BirkaChangePill extends StatelessComponent {
   /// Creates a pill that says [label].
-  const BirkaChangePill({required this.label, required this.rise, super.key});
+  const BirkaChangePill({
+    required this.label,
+    required this.rise,
+    this.good,
+    super.key,
+  });
 
   /// The formatted amount with its sign.
   final String label;
@@ -14,17 +19,22 @@ class BirkaChangePill extends StatelessComponent {
   /// Whether the amount went up.
   final bool rise;
 
+  /// Whether the change is good news, green, or bad, red: more spent is bad
+  /// news although it went up. Without it a rise is good.
+  final bool? good;
+
   @override
   Component build(BuildContext context) {
+    final good = this.good ?? rise;
     return span(
-      classes: rise
+      classes: good
           ? 'birka-change-pill birka-change-pill--rise'
           : 'birka-change-pill birka-change-pill--fall',
       [
         BirkaIcon(rise ? BirkaGlyph.rise : BirkaGlyph.fall),
         AmountText(
           label,
-          tone: rise ? AmountTone.positive : AmountTone.negative,
+          tone: good ? AmountTone.positive : AmountTone.negative,
           textClass: 'text-body-strong',
         ),
       ],

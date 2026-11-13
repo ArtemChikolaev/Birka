@@ -232,23 +232,60 @@ const _saidKey = 'birka-said';
 /// Asks the page that the tab goes back to next to say [text] once, such as
 /// that an operation has become a regular payment. It lasts as long as the
 /// tab; a browser that refuses the storage only loses the words.
-void sayOnNextPage(String text) {
+void sayOnNextPage(String text) => handToNextPage(_saidKey, text);
+
+/// What the page before asked this one to say, once: it is gone after this.
+String? takeSaid() => takeHanded(_saidKey);
+
+/// Leaves [text] under [key] for the next page of the tab to take once, such
+/// as the operations that an answer counted. It lasts as long as the tab; a
+/// browser that refuses the storage only loses it.
+void handToNextPage(String key, String text) {
   try {
-    web.window.sessionStorage.setItem(_saidKey, text);
+    web.window.sessionStorage.setItem(key, text);
   } on Object {
     return;
   }
 }
 
-/// What the page before asked this one to say, once: it is gone after this.
-String? takeSaid() {
+/// What the page before left under [key], once: it is gone after this.
+String? takeHanded(String key) {
   try {
-    final text = web.window.sessionStorage.getItem(_saidKey);
-    if (text != null) web.window.sessionStorage.removeItem(_saidKey);
+    final text = web.window.sessionStorage.getItem(key);
+    if (text != null) web.window.sessionStorage.removeItem(key);
     return text;
   } on Object {
     return null;
   }
+}
+
+/// Calls [listener] when the key `/` is pressed outside a field, until the
+/// returned function is called; the key then types nothing.
+void Function() watchSlashKey(void Function() listener) {
+  final callback = ((web.KeyboardEvent event) {
+    if (event.key != '/' || event.ctrlKey || event.metaKey || event.altKey) {
+      return;
+    }
+    final target = event.target;
+    if (target != null &&
+        target.isA<web.Element>() &&
+        (target as web.Element).closest(
+              'input, textarea, select, [contenteditable]',
+            ) !=
+            null) {
+      return;
+    }
+    event.preventDefault();
+    listener();
+  }).toJS;
+  web.document.addEventListener('keydown', callback);
+  return () => web.document.removeEventListener('keydown', callback);
+}
+
+/// Puts the focus into the first element that [selector] finds.
+void focusElement(String selector) {
+  final element = web.document.querySelector(selector);
+  if (element.isA<web.HTMLElement>()) (element! as web.HTMLElement).focus();
 }
 
 /// What this browser keeps under [key]. A browser that refuses the storage
