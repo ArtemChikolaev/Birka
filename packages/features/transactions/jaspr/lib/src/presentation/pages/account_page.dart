@@ -6,7 +6,6 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
-import 'package:transactions_jaspr/src/presentation/components/back_header.dart';
 import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart';
 
 /// One account: what it holds, how that changed and what happened on it. A
@@ -90,6 +89,7 @@ class AccountPage extends StatelessComponent {
     final ready = state.status == AccountStatus.ready && state.account != null;
     return BackHeader(
       label: t.transactions.account,
+      backLabel: t.transactions.back,
       onBack: onClose,
       trailing: ready
           ? GlassIconButton(

@@ -57,6 +57,7 @@ workspace:
   - packages/features/settings/jaspr
   - packages/features/tags/common
   - packages/features/tags/flutter
+  - packages/features/tags/jaspr
   - packages/features/transactions/common
   - packages/features/transactions/flutter
   - packages/features/transactions/jaspr

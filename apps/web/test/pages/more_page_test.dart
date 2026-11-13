@@ -61,8 +61,8 @@ void main() {
     expect(inHalf(1, find.text('Помощь и отзыв')), findsOneComponent);
   });
 
-  testComponents('leads to the accounts, the categories, the import, the data '
-      'and help', (
+  testComponents('leads to the accounts, the categories, the import, the data, '
+      'the метки and help', (
     tester,
   ) async {
     pump(tester);
@@ -81,6 +81,7 @@ void main() {
         'categories/',
         'import/',
         'data/',
+        'tags/',
         'help/',
         'https://github.com/ArtemChikolaev/Birka',
         'https://www.cbr-xml-daily.ru/',
@@ -96,6 +97,10 @@ void main() {
     );
     expect(
       find.descendant(of: find.tag('a'), matching: find.text('Данные')),
+      findsOneComponent,
+    );
+    expect(
+      find.descendant(of: find.tag('a'), matching: find.text('Метки')),
       findsOneComponent,
     );
     expect(
@@ -118,7 +123,7 @@ void main() {
       for (final element in find.byType(div).evaluate())
         if ((element.component as div).classes == 'more__wide') element,
     ];
-    expect(wide, hasLength(1));
+    expect(wide, hasLength(2));
   });
 
   testComponents('has nothing left to come', (tester) async {

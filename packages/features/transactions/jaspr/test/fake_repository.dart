@@ -208,6 +208,7 @@ Operation testOperation(
   DateTime? at,
   String note = '',
   TransactionSource source = TransactionSource.manual,
+  Map<String, TagMark> tags = const {},
 }) => Operation(
   transaction: Transaction(
     id: id,
@@ -228,6 +229,7 @@ Operation testOperation(
       if (category != null)
         Allocation(categoryId: category.id, amount: amount.abs()),
     ],
+    tags: tags,
   ),
   account: account,
   toAccount: toAccount,

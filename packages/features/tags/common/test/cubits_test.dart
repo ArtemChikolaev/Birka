@@ -153,6 +153,26 @@ void main() {
       expect(cubit.state.picked, {'renovation', 'batumi'});
       expect(cubit.state.query, isEmpty);
     });
+
+    test('makes a метка of the search where no form opens', () async {
+      final repository = FakeTagsRepository();
+      final cubit = TagPickerCubit(repository, picked: {'tbilisi'});
+      addTearDown(cubit.close);
+      await cubit.stream.firstWhere((it) => it.tags != null);
+
+      cubit.queryChanged('Ремонт кухни');
+      expect(await cubit.create(), isNull);
+
+      cubit.queryChanged(' Свадьба Кати ');
+      final id = await cubit.create();
+
+      final made = await repository.watchTags().first;
+      expect(made.last.name, 'Свадьба Кати');
+      expect(made.last.days, isNull);
+      expect(id, made.last.id);
+      expect(cubit.state.picked, {'tbilisi', id});
+      expect(cubit.state.query, isEmpty);
+    });
   });
 
   test('the card of an operation lists its метки, the trips first', () async {

@@ -4,6 +4,9 @@ import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:schedules_common/schedules_common.dart'
     show OperationScheduleCubit;
 import 'package:schedules_jaspr/schedules_jaspr.dart';
+import 'package:tags_common/tags_common.dart'
+    show OperationTagsCubit, TagPickerCubit;
+import 'package:tags_jaspr/tags_jaspr.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_jaspr/transactions_jaspr.dart';
 
@@ -27,9 +30,9 @@ mixin OperationViews<T extends StatefulComponent> on DataIslandState<T> {
 
   /// The card of an operation, `<id>`, or the form on it, `edit-<id>` and
   /// `repeat-<id>`. The card closes to [parent], and the fragments of the views
-  /// start with it. Beside a list the card [closes] with a cross. Its row of
-  /// the regular payments leads to the form of a payment made from it, and
-  /// the form comes back here.
+  /// start with it. Beside a list the card [closes] with a cross. Its метки
+  /// lead to their reports, and its row of the regular payments leads to the
+  /// form of a payment made from it, and the form comes back here.
   Component operationView(
     String view, {
     String parent = '',
@@ -52,6 +55,17 @@ mixin OperationViews<T extends StatefulComponent> on DataIslandState<T> {
         editHref: '$address#$start$_edit$view',
         repeatHref: '$address#$start$_repeat$view',
         closes: closes,
+        tags: MultiBlocProvider(
+          providers: [
+            BlocProvider<OperationTagsCubit>(
+              create: (_) => getIt(param1: view),
+            ),
+            BlocProvider<TagPickerCubit>(
+              create: (_) => getIt(param1: const <String>{}),
+            ),
+          ],
+          child: OperationTagsRow(hrefOf: (id) => 'tags/#$id'),
+        ),
         schedule: BlocProvider<OperationScheduleCubit>(
           create: (_) => getIt(param1: view),
           child: OperationScheduleRow(
@@ -72,6 +86,10 @@ mixin OperationViews<T extends StatefulComponent> on DataIslandState<T> {
         onClose: onClose,
         addAccountHref: 'accounts/#new',
         addCategoriesHref: 'categories/',
+        tags: (picked, onChanged) => BlocProvider<TagPickerCubit>(
+          create: (_) => getIt(param1: const <String>{}),
+          child: TagPicker(picked: picked, onChanged: onChanged),
+        ),
       ),
     );
   }

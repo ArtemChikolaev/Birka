@@ -4589,6 +4589,9 @@ class Translations$tags$picker$en {
   /// en: 'Find or create'
   String get search => 'Find or create';
 
+  /// en: 'Clear the search'
+  String get clear => 'Clear the search';
+
   /// en: 'New tag «$name»'
   String create({required Object name}) => 'New tag «${name}»';
 
@@ -6852,6 +6855,7 @@ extension on Translations {
           'tags.undo' => 'Undo',
           'tags.picker.title' => 'Tags',
           'tags.picker.search' => 'Find or create',
+          'tags.picker.clear' => 'Clear the search',
           'tags.picker.create' =>
             ({required Object name}) => 'New tag «${name}»',
           'tags.picker.createText' => 'A trip with dates or just a tag',
