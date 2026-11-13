@@ -1,0 +1,24 @@
+name: ask_jaspr
+description: >-
+  «Спросить» of Birka in Jaspr: questions about money in words, answered in
+  the browser, on the site.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  ask_common:
+    path: ../common
+  design_jaspr:
+    path: ../../../design/jaspr
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+
+dev_dependencies:
+  jaspr_test: ^0.22.3

@@ -19,6 +19,7 @@ class OverviewPage extends StatelessComponent {
     required this.hrefOfAccount,
     this.note,
     this.notice,
+    this.ask,
     this.bell,
     this.side,
     super.key,
@@ -39,6 +40,9 @@ class OverviewPage extends StatelessComponent {
   /// What waits for the person, such as the way to the inbox, between the
   /// capital and the accounts.
   final Component? notice;
+
+  /// What stands first in the header, such as the way to «Спросить».
+  final Component? ask;
 
   /// What stands in the header before the eye, such as the bell of the
   /// notices.
@@ -114,12 +118,13 @@ class OverviewPage extends StatelessComponent {
       label: hidden ? t.overview.showAmounts : t.overview.hideAmounts,
       onPressed: () => HiddenAmounts.toggle(context),
     );
+    final ask = this.ask;
     final bell = this.bell;
     return GlassPageHeader(
       title: monthTitle(state.month),
-      trailing: bell == null
+      trailing: ask == null && bell == null
           ? eye
-          : div(classes: 'overview__actions', [bell, eye]),
+          : div(classes: 'overview__actions', [?ask, ?bell, eye]),
     );
   }
 

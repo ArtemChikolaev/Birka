@@ -68,6 +68,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
   String? _said;
   void Function()? _stopWatching;
   void Function()? _stopWatchingTab;
+  void Function()? _stopWatchingSlash;
 
   /// The part of the address after `#`.
   String get fragment => _fragment;
@@ -103,6 +104,14 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
 
   bool get _beside => viewsBeside && wide;
 
+  /// Whether the tabs stay while the address has a fragment, as on a page
+  /// whose fragment holds what it shows rather than a view.
+  bool get fragmentKeepsTabs => false;
+
+  /// Called by the key `/` outside a field: it opens «Спросить» from any
+  /// page (ADR 0028).
+  void onSlashKey() => openSitePage('ask/');
+
   /// Called when the tab of the browser comes back into view, which can be
   /// after a night in the background.
   void onTabShown() {}
@@ -122,6 +131,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
     _said = takeSaid();
     _stopWatching = watchAddressFragment(_onFragmentChanged);
     _stopWatchingTab = watchTabShown(onTabShown);
+    _stopWatchingSlash = watchSlashKey(onSlashKey);
     unawaited(_open());
   }
 
@@ -129,6 +139,7 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
   void dispose() {
     _stopWatching?.call();
     _stopWatchingTab?.call();
+    _stopWatchingSlash?.call();
     super.dispose();
   }
 
@@ -217,7 +228,9 @@ abstract class DataIslandState<T extends StatefulComponent> extends State<T>
           _Stage.busy => _trouble(t.app.openElsewhere),
           _Stage.failed => _trouble(failure),
         },
-        if (kIsWeb && (_fragment.isEmpty || _beside) && !_alone)
+        if (kIsWeb &&
+            (_fragment.isEmpty || _beside || fragmentKeepsTabs) &&
+            !_alone)
           SiteNav(page: page),
         if (_said case final said? when _stage == _Stage.ready)
           GlassToast(said, onGone: () => setState(() => _said = null)),

@@ -33,6 +33,7 @@ class MoreIsland extends StatefulComponent {
 
 class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
   StreamSubscription<AppLocale>? _languages;
+  void Function()? _stopWatchingSlash;
 
   /// What waits in the inbox, once the database is open.
   InboxSummaryCubit? _inbox;
@@ -45,6 +46,8 @@ class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
       const BrowserSettingsStore(),
     ).applyLanguage(device: browserLanguage);
     _describePage();
+    // The key `/` opens «Спросить» here too (ADR 0028).
+    _stopWatchingSlash = watchSlashKey(() => openSitePage('ask/'));
     _languages = LocaleSettings.getLocaleStream().listen((_) {
       _describePage();
       setState(() {});
@@ -78,6 +81,7 @@ class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
   void dispose() {
     unawaited(_languages?.cancel());
     unawaited(_inbox?.close());
+    _stopWatchingSlash?.call();
     super.dispose();
   }
 

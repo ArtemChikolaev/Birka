@@ -70,7 +70,7 @@ class GlassListRow extends StatelessComponent {
   /// Where the row leads.
   final String? href;
 
-  /// Called on a click.
+  /// Called on a click, before the row leads away when it has [href] too.
   final VoidCallback? onTap;
 
   /// Whether the row stands under the row before it, such as a subcategory.
@@ -133,10 +133,19 @@ class GlassListRow extends StatelessComponent {
         ]),
     ];
     final action = this.action;
+    final onTap = this.onTap;
+    final leaving = onTap == null
+        ? null
+        : <String, EventCallback>{'click': (_) => onTap()};
     if (action != null && (href != null || onTap != null)) {
       return div(classes: 'glass-row glass-row--split$indent', [
         if (href case final href?)
-          a(classes: 'glass-row__link', href: href, content)
+          a(
+            classes: 'glass-row__link',
+            href: href,
+            events: leaving,
+            content,
+          )
         else
           button(
             classes: 'glass-row__link',
@@ -151,10 +160,11 @@ class GlassListRow extends StatelessComponent {
       return a(
         classes: 'glass-row glass-row--action$indent',
         href: href,
+        events: leaving,
         content,
       );
     }
-    if (onTap case final onTap?) {
+    if (onTap != null) {
       return button(
         classes: 'glass-row glass-row--action$indent',
         type: ButtonType.button,

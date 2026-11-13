@@ -1,6 +1,7 @@
 import 'package:design_jaspr/src/birka_icon.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
+import 'package:universal_web/web.dart' as web;
 
 /// A field of glass that searches as it is typed in, with a cross that clears
 /// it.
@@ -12,6 +13,8 @@ class GlassSearchField extends StatelessComponent {
     required this.value,
     required this.onChanged,
     this.hint,
+    this.autofocus = false,
+    this.onSubmitted,
     super.key,
   });
 
@@ -30,6 +33,12 @@ class GlassSearchField extends StatelessComponent {
   /// What an empty field shows.
   final String? hint;
 
+  /// Whether the field takes the focus as the page shows it.
+  final bool autofocus;
+
+  /// Called when Enter is pressed in the field.
+  final VoidCallback? onSubmitted;
+
   @override
   Component build(BuildContext context) {
     return div(classes: 'glass glass-search', [
@@ -45,6 +54,13 @@ class GlassSearchField extends StatelessComponent {
           'autocomplete': 'off',
           'enterkeyhint': 'search',
           'placeholder': ?hint,
+          if (autofocus) 'autofocus': '',
+        },
+        events: {
+          if (onSubmitted case final submitted?)
+            'keydown': (event) {
+              if ((event as web.KeyboardEvent).key == 'Enter') submitted();
+            },
         },
       ),
       if (value.isNotEmpty)

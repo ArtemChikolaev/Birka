@@ -14,6 +14,10 @@ import 'package:transactions_jaspr/src/presentation/components/operations_totals
 /// or the card of the [picked] operation, and the totals of the month go to
 /// it.
 ///
+/// The operations of an answer of «Спросить» stand alone under a plaque of
+/// the question, with their totals under it, until the cross of the plaque
+/// takes it off (ADR 0028).
+///
 /// It needs an [OperationsCubit] above it.
 class OperationsPage extends StatefulComponent {
   /// Creates the page.
@@ -23,6 +27,7 @@ class OperationsPage extends StatefulComponent {
     this.note,
     this.side,
     this.picked,
+    this.answerHref,
     super.key,
   });
 
@@ -40,6 +45,9 @@ class OperationsPage extends StatefulComponent {
 
   /// The operation whose card is open beside the list.
   final String? picked;
+
+  /// Where «К ответу» leads from the plaque of a question.
+  final String? answerHref;
 
   @override
   State<OperationsPage> createState() => _OperationsPageState();
@@ -61,12 +69,33 @@ class OperationsPage extends StatefulComponent {
     css('.operations__note').styles(
       raw: {'color': 'var(--color-text-subtle)', 'margin': '0'},
     ),
+    css('.operations__focus').styles(
+      raw: {
+        'align-items': 'center',
+        'display': 'flex',
+        'flex-wrap': 'wrap',
+        'gap': 'var(--space-xs) var(--space-sm)',
+      },
+    ),
+    css('.operations__focus .section-label').styles(
+      raw: {'color': 'var(--color-text-secondary)'},
+    ),
+    css('.operations__answer').styles(
+      raw: {
+        'color': 'var(--color-accent)',
+        'margin-left': 'auto',
+        'text-decoration': 'none',
+      },
+    ),
   ];
 }
 
 class _OperationsPageState extends State<OperationsPage> {
   /// The months to choose from, while the choice is open.
   List<CivilDate>? _months;
+
+  /// The plaque of the question, kept while it closes.
+  OperationsFocus? _focus;
 
   Future<void> _toggleMonths() async {
     if (_months != null) {
@@ -99,7 +128,7 @@ class _OperationsPageState extends State<OperationsPage> {
         );
         final list = [
           ?_monthChoice(state),
-          _tools(context, state, totals: side == null),
+          _tools(context, state, totals: side == null || state.focus != null),
           ...switch (state.status) {
             OperationsStatus.loading => const <Component>[],
             OperationsStatus.failed => [
@@ -172,8 +201,40 @@ class _OperationsPageState extends State<OperationsPage> {
     );
   }
 
+  /// The plaque of the question whose operations stand alone: its cross
+  /// takes it off, and «К ответу» leads back to the answer. It closes as the
+  /// list widens to the month.
+  Component? _plaque(OperationsCubit cubit, OperationsFocus? focus) {
+    if (focus != null) _focus = focus;
+    final shown = _focus;
+    if (shown == null) return null;
+    final answerHref = component.answerHref;
+    return BirkaFold(
+      open: focus != null,
+      gap: 'var(--space-sm)',
+      children: [
+        div(classes: 'operations__focus', [
+          SectionLabel(t.transactions.fromQuestion),
+          BirkaChip(
+            label: shown.title,
+            selected: true,
+            trailingGlyph: BirkaGlyph.close,
+            semanticLabel: t.transactions.dropFocus(title: shown.title),
+            onTap: () => unawaited(cubit.dropFocus()),
+          ),
+          if (answerHref != null)
+            a(
+              classes: 'text-body-strong operations__answer',
+              href: answerHref,
+              [.text(t.transactions.toAnswer)],
+            ),
+        ]),
+      ],
+    );
+  }
+
   /// The search and the filters, and under them the [totals] of the month on a
-  /// page without a side.
+  /// page without a side, or of the operations of a question.
   Component _tools(
     BuildContext context,
     OperationsState state, {
@@ -197,6 +258,7 @@ class _OperationsPageState extends State<OperationsPage> {
             onTap: () => cubit.filterChanged(filter),
           ),
       ]),
+      ?_plaque(cubit, state.focus),
       if (totals && (state.expenses.isNotEmpty || state.income.isNotEmpty))
         OperationsTotals(state),
     ]);

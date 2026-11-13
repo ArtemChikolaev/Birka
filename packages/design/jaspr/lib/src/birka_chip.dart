@@ -15,6 +15,9 @@ class BirkaChip extends StatelessComponent {
     this.count,
     this.dashed = false,
     this.expanded,
+    this.trailingGlyph,
+    this.trailingTurns = 0,
+    this.semanticLabel,
     super.key,
   });
 
@@ -47,6 +50,18 @@ class BirkaChip extends StatelessComponent {
   /// something; `null` for a chip that does not.
   final bool? expanded;
 
+  /// What stands after the label, such as the chevron of a chip that opens
+  /// a choice.
+  final BirkaGlyph? trailingGlyph;
+
+  /// How many quarter turns [trailingGlyph] makes clockwise; a change turns
+  /// it over `duration.base`.
+  final int trailingTurns;
+
+  /// What screen readers say instead of [label], such as what a click on a
+  /// chip with a cross does.
+  final String? semanticLabel;
+
   @override
   Component build(BuildContext context) {
     final classes = [
@@ -70,6 +85,14 @@ class BirkaChip extends StatelessComponent {
             span(classes: 'text-caption birka-chip__count', [.text('$count')]),
         ],
       ),
+      if (trailingGlyph case final trailing?)
+        span(
+          classes: 'birka-chip__trailing',
+          styles: Styles(
+            raw: {'transform': 'rotate(${trailingTurns * 90}deg)'},
+          ),
+          [BirkaIcon(trailing)],
+        ),
     ];
     if (href case final href?) {
       return a(classes: classes, href: href, content);
@@ -84,6 +107,7 @@ class BirkaChip extends StatelessComponent {
           'aria-expanded': '$expanded'
         else
           'aria-pressed': '$selected',
+        'aria-label': ?semanticLabel,
       },
       content,
     );
@@ -166,6 +190,19 @@ class BirkaChip extends StatelessComponent {
     css('.birka-chip .birka-icon').styles(
       raw: {'height': '20px', 'width': '20px'},
     ),
+    css('.birka-chip__trailing').styles(
+      raw: {
+        'display': 'flex',
+        'flex': 'none',
+        'transition': 'transform var(--duration-base) var(--easing-standard)',
+      },
+    ),
+    css('.birka-chip__trailing .birka-icon').styles(
+      raw: {'height': '16px', 'width': '16px'},
+    ),
+    css.media(const MediaQuery.raw('(prefers-reduced-motion: reduce)'), [
+      css('.birka-chip__trailing').styles(raw: {'transition': 'none'}),
+    ]),
     css('.birka-chip__label').styles(
       raw: {
         'min-width': '0',

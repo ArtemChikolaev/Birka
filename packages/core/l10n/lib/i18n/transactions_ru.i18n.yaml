@@ -30,6 +30,8 @@ clearSearch: Очистить поиск
 fromQuestion: Из вопроса
 toAnswer: К ответу
 dropFocus: Снять «$title»
+focusText: Список показывает только то, о чём был вопрос. Снимите плашку — вернутся все операции месяца.
+backToAnswer: Вернуться к ответу
 filterAll: Все
 filterExpenses: Расходы
 filterIncome: Доходы
