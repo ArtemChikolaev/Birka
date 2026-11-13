@@ -72,6 +72,21 @@ void main() {
     expect(cubit.state.answer?.count, 5);
   });
 
+  test('counts the answer again in a new currency of the totals', () async {
+    final repository = FakeAskRepository();
+    final cubit = await start(repository);
+    cubit.ask('кафе в октябре');
+    await settle();
+
+    repository
+      ..base = Currency.usd
+      ..changed();
+    await settle();
+
+    expect(cubit.state.currency, Currency.usd);
+    expect(cubit.state.answer?.currency, Currency.usd);
+  });
+
   test('answers the capital and a rate from what it knows', () async {
     final cubit = await start(FakeAskRepository());
 

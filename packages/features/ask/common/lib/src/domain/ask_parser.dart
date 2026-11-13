@@ -634,8 +634,10 @@ final class AskParser {
 
   /// The amount that starts at [start]: a number, maybe in groups of three
   /// (`5 000`), with `тыс` or `к`, and with a currency. Taken tokens are
-  /// marked. `null` when there is none, or when the number is a day of a
-  /// month, as in `до 15 ноября`.
+  /// marked. `null` when there is none, when the number is a day of a month,
+  /// as in `до 15 ноября`, or when it is no amount of money at all, such as
+  /// one beyond what an amount can hold: the digits go into `Money.parse`,
+  /// never into a `double` (ADR 0003).
   Money? _amountAt(List<AskToken> tokens, int start) {
     if (start >= tokens.length || !tokens[start].isNumber) return null;
     var end = start + 1;
@@ -648,12 +650,10 @@ final class AskParser {
       end++;
     }
     if (end < tokens.length && _monthOf(tokens[end].text) != null) return null;
-    final value = double.tryParse(digits.toString());
-    if (value == null) return null;
-    var units = value;
+    var text = digits.toString();
     if (end < tokens.length &&
         startsAny(tokens[end].text, ['тыс', 'тр', 'к', 'k', 'thousand'])) {
-      units *= 1000;
+      text = _thousands(text);
       end++;
     }
     var currency = vocabulary.base ?? Currency.rub;
@@ -664,14 +664,25 @@ final class AskParser {
         end++;
       }
     }
+    final Money amount;
+    try {
+      amount = Money.parse(text, currency);
+    } on FormatException {
+      return null;
+    }
     for (var k = start; k < end; k++) {
       tokens[k].used = true;
     }
-    var scale = 1;
-    for (var k = 0; k < currency.decimalDigits; k++) {
-      scale *= 10;
-    }
-    return Money((units * scale).round(), currency);
+    return amount;
+  }
+
+  /// [decimal] times a thousand, written exactly: `1.5` gives `1500`.
+  static String _thousands(String decimal) {
+    final [whole, ...rest] = decimal.split('.');
+    final fraction = rest.isEmpty ? '' : rest.first;
+    final shifted = fraction.padRight(3, '0');
+    final more = shifted.substring(3);
+    return '$whole${shifted.substring(0, 3)}${more.isEmpty ? '' : '.$more'}';
   }
 
   // ---------------------------------------------------------------- periods

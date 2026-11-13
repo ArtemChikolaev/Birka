@@ -364,7 +364,12 @@ final class AskCubit extends Cubit<AskState> {
         ready: _expensesRead && _tagsRead,
       ),
     );
-    if (state.text.isNotEmpty) _read();
+    // The currency of the totals may have changed while the question stayed
+    // the same, so the answer is counted again.
+    if (state.text.isNotEmpty) {
+      _read();
+      _count();
+    }
   }
 
   void _balancesChanged(List<AccountBalance> balances) {

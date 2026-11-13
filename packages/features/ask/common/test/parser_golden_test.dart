@@ -187,6 +187,8 @@ void main() {
     'больше 100 лари': data(above: '100.00 GEL'),
     'больше 50 долларов в октябре': data(above: '50.00 USD', when: october),
     'больше 5к': data(above: '5000.00 RUB'),
+    'больше 1,5 тыс': data(above: '1500.00 RUB'),
+    'больше 100000000000000000': {'unknown': true},
     // What it wants most.
     'самая большая трата в октябре': data(focus: 'biggest', when: october),
     'самые крупные покупки': data(focus: 'biggest'),
