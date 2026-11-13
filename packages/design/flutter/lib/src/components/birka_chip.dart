@@ -14,6 +14,8 @@ class BirkaChip extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.glyph,
+    this.trailingGlyph,
+    this.trailingTurns = 0,
     this.dashed = false,
     this.compact = false,
     this.order,
@@ -32,6 +34,13 @@ class BirkaChip extends StatelessWidget {
 
   /// What stands before the label.
   final BirkaGlyph? glyph;
+
+  /// What stands after the label, such as a chevron of a chip that opens a
+  /// choice, or the cross of one that takes something off.
+  final BirkaGlyph? trailingGlyph;
+
+  /// How many quarter turns [trailingGlyph] takes: 1 points a chevron down.
+  final int trailingTurns;
 
   /// Whether the chip offers something to add, with a dashed outline and no
   /// fill.
@@ -54,6 +63,7 @@ class BirkaChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
     final glyph = this.glyph;
+    final trailingGlyph = this.trailingGlyph;
     final order = this.order;
     final count = this.count;
     final foreground = selected ? colors.background : colors.textSecondary;
@@ -121,6 +131,17 @@ class BirkaChip extends StatelessWidget {
                             ),
                           ),
                   ),
+                  if (trailingGlyph != null) ...[
+                    const SizedBox(width: BirkaTokens.spaceXxs),
+                    RotatedBox(
+                      quarterTurns: trailingTurns,
+                      child: BirkaIcon(
+                        trailingGlyph,
+                        size: 16,
+                        color: foreground,
+                      ),
+                    ),
+                  ],
                   // A count that comes or goes opens or closes its room.
                   AnimatedSize(
                     duration: BirkaMotion.reduced(context)

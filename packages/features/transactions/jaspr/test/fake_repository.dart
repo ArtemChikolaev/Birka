@@ -85,6 +85,19 @@ final class FakeRepository implements TransactionsRepository {
   );
 
   @override
+  Stream<List<Operation>> watchOperationsBetween(
+    CivilDate first,
+    CivilDate last,
+  ) => _follow(
+    () => [
+      for (final operation in operations)
+        if (first.compareTo(operation.day) <= 0 &&
+            operation.day.compareTo(last) <= 0)
+          operation,
+    ],
+  );
+
+  @override
   Stream<Operation?> watchOperation(String id) => _follow(
     () => operations.where((operation) => operation.id == id).firstOrNull,
   );

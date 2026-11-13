@@ -1,0 +1,26 @@
+name: ask_flutter
+description: >-
+  «Спросить» in Flutter: the page that answers questions about money in
+  words, and the way to it from the overview, on phones.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  ask_common:
+    path: ../common
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

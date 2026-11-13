@@ -17,6 +17,7 @@ export 'package:ledger/ledger.dart'
 export 'src/di/register_transactions.dart';
 export 'src/domain/amount_expression.dart';
 export 'src/domain/operation.dart';
+export 'src/domain/operations_focus.dart';
 export 'src/domain/rank_categories.dart';
 export 'src/domain/transactions_repository.dart';
 export 'src/presentation/account_cubit.dart';

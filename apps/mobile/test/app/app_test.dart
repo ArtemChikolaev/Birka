@@ -353,6 +353,17 @@ final class _Transactions implements TransactionsRepository {
       Stream.value(operations);
 
   @override
+  Stream<List<Operation>> watchOperationsBetween(
+    CivilDate first,
+    CivilDate last,
+  ) => Stream.value([
+    for (final operation in operations)
+      if (first.compareTo(operation.day) <= 0 &&
+          operation.day.compareTo(last) <= 0)
+        operation,
+  ]);
+
+  @override
   Stream<Operation?> watchOperation(String id) => Stream.value(
     operations.where((operation) => operation.id == id).firstOrNull,
   );

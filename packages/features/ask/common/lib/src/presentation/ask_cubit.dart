@@ -14,6 +14,46 @@ import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 import 'package:rates/rates.dart';
 
+/// What an example at the start of «Спросить» stands for.
+enum AskExampleKind {
+  /// A category of the last month.
+  category,
+
+  /// The latest trip.
+  trip,
+
+  /// The big spending of this month, when there is no trip.
+  big,
+
+  /// What can be spent today.
+  allowance,
+
+  /// The next regular payment.
+  payments,
+
+  /// A common question of the help.
+  help,
+}
+
+/// A question that the start of «Спросить» offers to ask.
+@immutable
+final class AskExample {
+  /// Creates an example that asks [question].
+  const AskExample(this.kind, this.question, this.line, {this.category});
+
+  /// What it stands for.
+  final AskExampleKind kind;
+
+  /// The question, as it goes into the field.
+  final String question;
+
+  /// What its answer holds.
+  final String line;
+
+  /// The category of an example of [AskExampleKind.category].
+  final Category? category;
+}
+
 /// What «Спросить» shows (ADR 0028).
 @immutable
 final class AskState {
@@ -30,6 +70,7 @@ final class AskState {
     this.rates = const RateBook.empty(),
     this.currency = Currency.rub,
     this.monthStart = 1,
+    this.ready = false,
   });
 
   /// The day of the device.
@@ -65,6 +106,10 @@ final class AskState {
   /// The day that months start on.
   final int monthStart;
 
+  /// Whether the categories and the метки have come, which the examples
+  /// and the reading of a question need.
+  final bool ready;
+
   /// Whether a question about money waits for the ledger.
   bool get counting => reading is AskData && answer == null;
 
@@ -86,6 +131,64 @@ final class AskState {
       unit *= 10;
     }
     return rates.convert(Money(unit, asked), currency);
+  }
+
+  /// The questions that the start of the page offers, from what the ledger
+  /// holds: the first category of expenses in the last month, the latest
+  /// trip or else the big spending of this month, what can be spent today,
+  /// the next payment and a question of the help.
+  List<AskExample> get examples {
+    final categories = [
+      for (final category in names.categories.values)
+        if (category.kind == CategoryKind.expense &&
+            category.parentId == null &&
+            !category.archived)
+          category,
+    ]..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    final trips = [
+      for (final tag in names.tags.values)
+        if (tag.days != null && !tag.archived) tag,
+    ]..sort((a, b) => b.days!.last.compareTo(a.days!.last));
+    final month = today.monthStart(monthStart).addMonths(-1);
+    return [
+      if (categories.firstOrNull case final category?)
+        AskExample(
+          AskExampleKind.category,
+          t.ask.example.category(
+            category: category.name,
+            month: t.overview.monthsIn[month.month - 1],
+          ),
+          t.ask.example.categoryText,
+          category: category,
+        ),
+      if (trips.firstOrNull case final trip?)
+        AskExample(
+          AskExampleKind.trip,
+          t.ask.example.trip(name: trip.name),
+          t.ask.example.tripText,
+        )
+      else
+        AskExample(
+          AskExampleKind.big,
+          t.ask.example.big,
+          t.ask.example.bigText,
+        ),
+      AskExample(
+        AskExampleKind.allowance,
+        t.ask.example.allowance,
+        t.ask.example.allowanceText,
+      ),
+      AskExample(
+        AskExampleKind.payments,
+        t.ask.example.payments,
+        t.ask.example.paymentsText,
+      ),
+      AskExample(
+        AskExampleKind.help,
+        t.ask.example.move,
+        t.ask.example.moveText,
+      ),
+    ];
   }
 
   /// The periods that the plaque of the days offers: this month and the two
@@ -127,6 +230,7 @@ final class AskState {
     RateBook? rates,
     Currency? currency,
     int? monthStart,
+    bool? ready,
   }) => AskState(
     today: today ?? this.today,
     text: text ?? this.text,
@@ -139,6 +243,7 @@ final class AskState {
     rates: rates ?? this.rates,
     currency: currency ?? this.currency,
     monthStart: monthStart ?? this.monthStart,
+    ready: ready ?? this.ready,
   );
 }
 
@@ -189,6 +294,8 @@ final class AskCubit extends Cubit<AskState> {
   List<Category> _income = const [];
   List<Tag> _tags = const [];
   Currency? _base;
+  var _expensesRead = false;
+  var _tagsRead = false;
   List<Transaction>? _transactions;
   AskPeriod? _chosen;
 
@@ -238,6 +345,8 @@ final class AskCubit extends Cubit<AskState> {
     _expenses = expenses ?? _expenses;
     _income = income ?? _income;
     _tags = tags ?? _tags;
+    _expensesRead = _expensesRead || expenses != null;
+    _tagsRead = _tagsRead || tags != null;
     emit(
       state.copyWith(
         names: AskNames(
@@ -252,6 +361,7 @@ final class AskCubit extends Cubit<AskState> {
           },
         ),
         currency: _currency(state.balances),
+        ready: _expensesRead && _tagsRead,
       ),
     );
     // The currency of the totals may have changed while the question stayed

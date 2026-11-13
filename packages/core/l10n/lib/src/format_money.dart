@@ -40,6 +40,11 @@ String formatMoney(Money amount, {AppLocale? locale}) {
   return amount.isNegative ? '$_minus$text' : text;
 }
 
+/// [amount] with its sign: `+2 280 ₽` above zero, `−2 280 ₽` below it and
+/// `0 ₽` at zero, as a change or a total that went either way says it.
+String signedMoney(Money amount) =>
+    amount.isPositive ? '+${formatMoney(amount)}' : formatMoney(amount);
+
 /// `45 000 ₽` or `+60 000 ₽`: the amount of a time of a regular payment as
 /// its reminders and notices say it, with a sign only for what comes in
 /// (ADR 0025).

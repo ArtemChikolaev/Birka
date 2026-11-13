@@ -104,7 +104,12 @@ void main() {
   var listed = 0;
   late List<String> opened;
 
-  Future<void> pump(WidgetTester tester, {Widget? notice}) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    Widget? notice,
+    Widget? ask,
+    Widget? bell,
+  }) async {
     tester.view.physicalSize = const Size(780, 1688);
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -121,6 +126,8 @@ void main() {
                 onAccounts: () => listed++,
                 onOpenAccount: opened.add,
                 notice: notice,
+                ask: ask,
+                bell: bell,
               ),
             ),
           ),
@@ -158,6 +165,21 @@ void main() {
   tearDown(() {
     hidden.dispose();
     LocaleSettings.setLocaleSync(AppLocale.en);
+  });
+
+  testWidgets('puts the way to «Спросить» first in the header', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      ask: const SizedBox(width: 44, height: 44, key: Key('ask')),
+      bell: const SizedBox(width: 44, height: 44, key: Key('bell')),
+    );
+
+    final ask = tester.getTopLeft(find.byKey(const Key('ask')));
+    final bell = tester.getTopLeft(find.byKey(const Key('bell')));
+    expect(ask.dx, lessThan(bell.dx));
+    expect(ask.dy, bell.dy);
   });
 
   testWidgets('shows the capital and what changed it', (tester) async {

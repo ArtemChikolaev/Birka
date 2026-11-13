@@ -12,6 +12,7 @@ class BirkaChangePill extends StatelessWidget {
   const BirkaChangePill({
     required this.label,
     required this.rise,
+    this.good,
     this.value,
     super.key,
   });
@@ -22,6 +23,10 @@ class BirkaChangePill extends StatelessWidget {
   /// Whether the amount went up.
   final bool rise;
 
+  /// Whether the change is good news, green, or bad, red: more spent is bad
+  /// news although it went up. Without it a rise is good.
+  final bool? good;
+
   /// How big the change is, such as in minor units, so that it rolls to a
   /// new one ([AmountText.value]). Its color already tells the news, so it
   /// does not flash.
@@ -30,7 +35,8 @@ class BirkaChangePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
-    final color = rise ? colors.positive : colors.negative;
+    final good = this.good ?? rise;
+    final color = good ? colors.positive : colors.negative;
     return AnimatedContainer(
       duration: BirkaMotion.reduced(context) ? Duration.zero : BirkaMotion.base,
       padding: const EdgeInsets.symmetric(
@@ -56,7 +62,7 @@ class BirkaChangePill extends StatelessWidget {
             child: AmountText(
               label,
               value: value,
-              tone: rise ? AmountTone.positive : AmountTone.negative,
+              tone: good ? AmountTone.positive : AmountTone.negative,
               style: BirkaTextStyles.of(context).bodyStrong,
             ),
           ),

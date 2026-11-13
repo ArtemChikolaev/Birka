@@ -151,7 +151,8 @@ String periodLabel(AskPeriod period, {required CivilDate today}) {
       if (period.contains(today)) return t.ask.period.thisMonth;
       return '${t.transactions.monthNames[first.month - 1]} ${first.year}';
     case AskSpan.months:
-      final last = period.last.addDays(1 - period.last.day);
+      // The last month starts a month before the day after the period.
+      final last = period.last.addDays(1).addMonths(-1);
       final from = t.reports.monthsShort[first.month - 1];
       final to = t.reports.monthsShort[last.month - 1];
       if (first.year == last.year) {
@@ -178,7 +179,10 @@ String? periodLine(AskPeriod period, {required CivilDate today}) =>
         daysLabel(period.first, period.last, today: today),
       AskSpan.months => t.ask.period.months(
         from: t.transactions.monthNames[period.first.month - 1],
-        to: t.transactions.monthNames[period.last.month - 1].toLowerCase(),
+        to: t
+            .transactions
+            .monthNames[period.last.addDays(1).addMonths(-1).month - 1]
+            .toLowerCase(),
       ),
       AskSpan.year when period.contains(today) => t.ask.period.sinceYear,
       _ => null,

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:accounts_common/accounts_common.dart';
+import 'package:ask_common/ask_common.dart';
 import 'package:backup_common/backup_common.dart';
 import 'package:backup_flutter/backup_flutter.dart';
 import 'package:categories_common/categories_common.dart';
@@ -80,6 +81,7 @@ void registerDependencies(
     ..registerSingleton<ReminderChannel>(_reminders)
     ..registerSingleton<ReminderCalendar>(DeviceReminderCalendar(settings));
   registerAccounts(getIt);
+  registerAsk(getIt);
   registerBackup(getIt, settings);
   registerCategories(getIt);
   registerHelp(getIt, about: readAppAbout);

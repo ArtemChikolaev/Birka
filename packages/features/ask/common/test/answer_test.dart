@@ -120,6 +120,7 @@ void main() {
     expect(answer.count, 0);
     expect(answer.average, isNull);
     expect(answer.biggest, isEmpty);
+    expect(answer.bars, isEmpty);
   });
 
   test('leaves out what has no rate and says so', () {

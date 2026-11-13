@@ -18,6 +18,7 @@ class OverviewPage extends StatefulWidget {
     required this.onAccounts,
     required this.onOpenAccount,
     this.notice,
+    this.ask,
     this.bell,
     super.key,
   });
@@ -37,6 +38,9 @@ class OverviewPage extends StatefulWidget {
   /// capital and the accounts. It keeps the space under it itself, so that
   /// it can close with it.
   final Widget? notice;
+
+  /// What stands first in the header, such as the way to «Спросить».
+  final Widget? ask;
 
   /// What stands in the header before the eye, such as the bell of the
   /// notices.
@@ -80,7 +84,11 @@ class _OverviewPageState extends State<OverviewPage> {
               GlassNavBar.clearance + MediaQuery.viewPaddingOf(context).bottom,
             ),
             children: [
-              _Header(today: state.month, bell: widget.bell),
+              _Header(
+                today: state.month,
+                ask: widget.ask,
+                bell: widget.bell,
+              ),
               gap,
               ...switch (state.status) {
                 OverviewStatus.loading => const <Widget>[],
@@ -125,9 +133,10 @@ class _OverviewPageState extends State<OverviewPage> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.today, this.bell});
+  const _Header({required this.today, this.ask, this.bell});
 
   final CivilDate today;
+  final Widget? ask;
   final Widget? bell;
 
   @override
@@ -143,6 +152,10 @@ class _Header extends StatelessWidget {
             ).title.copyWith(color: BirkaColors.of(context).text),
           ),
         ),
+        if (ask case final ask?) ...[
+          ask,
+          const SizedBox(width: BirkaTokens.spaceXs),
+        ],
         if (bell case final bell?) ...[
           bell,
           const SizedBox(width: BirkaTokens.spaceXs),

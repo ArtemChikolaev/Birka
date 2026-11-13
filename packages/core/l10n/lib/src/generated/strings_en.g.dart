@@ -3581,6 +3581,15 @@ class Translations$transactions$en {
   /// en: 'Clear the search'
   String get clearSearch => 'Clear the search';
 
+  /// en: 'From the question'
+  String get fromQuestion => 'From the question';
+
+  /// en: 'Back to the answer'
+  String get toAnswer => 'Back to the answer';
+
+  /// en: 'Take off “$title”'
+  String dropFocus({required Object title}) => 'Take off “${title}”';
+
   /// en: 'All'
   String get filterAll => 'All';
 
@@ -6891,6 +6900,10 @@ extension on Translations {
           'transactions.search' => 'Search',
           'transactions.searchHint' => 'Cafe, 250 or a note',
           'transactions.clearSearch' => 'Clear the search',
+          'transactions.fromQuestion' => 'From the question',
+          'transactions.toAnswer' => 'Back to the answer',
+          'transactions.dropFocus' =>
+            ({required Object title}) => 'Take off “${title}”',
           'transactions.filterAll' => 'All',
           'transactions.filterExpenses' => 'Expenses',
           'transactions.filterIncome' => 'Income',

@@ -27,6 +27,9 @@ addCategories: Add categories
 search: Search
 searchHint: Cafe, 250 or a note
 clearSearch: Clear the search
+fromQuestion: From the question
+toAnswer: Back to the answer
+dropFocus: Take off “$title”
 filterAll: All
 filterExpenses: Expenses
 filterIncome: Income

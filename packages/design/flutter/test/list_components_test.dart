@@ -81,6 +81,33 @@ void main() {
     expect(button.right, closeTo(field.right, 24));
   });
 
+  testWidgets('takes the focus at once and answers the search key', (
+    tester,
+  ) async {
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+    final sent = <String>[];
+    await tester.pumpWidget(
+      app(
+        GlassSearchField(
+          label: 'Search',
+          clearLabel: 'Clear',
+          controller: controller,
+          onChanged: (_) {},
+          autofocus: true,
+          onSubmitted: sent.add,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.testTextInput.isVisible, isTrue);
+    await tester.enterText(find.byType(TextField), 'cafe');
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+
+    expect(sent, ['cafe']);
+  });
+
   testWidgets('the cross keeps the keyboard for a new word', (tester) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);

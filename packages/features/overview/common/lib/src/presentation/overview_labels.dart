@@ -24,5 +24,4 @@ String spendingTitle(CivilDate today) =>
     t.overview.spendingIn(month: t.overview.monthsIn[today.month - 1]);
 
 /// [change] with its sign.
-String changeLabel(Money change) =>
-    change.isPositive ? '+${formatMoney(change)}' : formatMoney(change);
+String changeLabel(Money change) => signedMoney(change);
