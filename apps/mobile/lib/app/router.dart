@@ -751,17 +751,19 @@ Future<void> _enableReminders(BuildContext context, GetIt getIt) async {
   }
 }
 
-/// The operations that [answer] counted, under the plaque [title].
+/// The operations that [answer] counted, under the plaque [title], from the
+/// day of the first of them to the day of the last: the list comes back to
+/// the month of the last one once the plaque goes, whatever day the months
+/// of the question start on.
 OperationsFocus _focusOf(AskAnswer answer, String title) {
   final days = [
     for (final operation in answer.operations) operation.transaction.occurredOn,
   ]..sort();
-  final period = answer.query.period;
   return OperationsFocus(
     title: title,
     ids: {for (final operation in answer.operations) operation.transaction.id},
-    first: period?.first ?? days.first,
-    last: period?.last ?? days.last,
+    first: days.first,
+    last: days.last,
   );
 }
 
