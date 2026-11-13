@@ -18,6 +18,7 @@ workspace:
   - packages/design/jaspr
   - packages/design/tokens
   - packages/features/accounts/common
+  - packages/features/ask/common
   - packages/features/accounts/flutter
   - packages/features/accounts/jaspr
   - packages/features/backup/common

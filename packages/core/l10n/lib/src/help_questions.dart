@@ -1,4 +1,5 @@
-import 'package:l10n/l10n.dart';
+import 'package:l10n/src/generated/strings.g.dart';
+import 'package:l10n/src/search_key.dart';
 import 'package:meta/meta.dart';
 
 /// A common question with its answer.
