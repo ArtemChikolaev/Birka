@@ -1,0 +1,158 @@
+title: Спросить
+open: Спросить
+hint: Спросите про деньги
+clear: Стереть вопрос
+back: Назад
+examples: Можно спросить
+recent: Недавние
+forget: Очистить
+private: "Отвечает само приложение: вопросы и ответы остаются на этом устройстве."
+privateWeb: "Отвечает само приложение: вопросы и ответы остаются в этом браузере."
+slash: Клавиша / открывает «Спросить» с любой страницы.
+start:
+  title: Спросите про деньги словами
+  text: "Что, когда и сколько: «кафе в октябре», «траты в поездке», «больше 5000 в этом месяце». Birka поймёт вопрос, покажет, как поняла, и посчитает ответ сама."
+example:
+  category: $category $month
+  categoryText: Сумма, сравнение и самые крупные
+  trip: Траты в поездке «$name»
+  tripText: Итог поездки во всех валютах
+  big: Больше 5000 в этом месяце
+  bigText: Крупные траты месяца
+  allowance: Сколько можно тратить
+  allowanceText: Сегодня и до зарплаты
+  payments: Когда следующий платёж
+  paymentsText: Регулярные платежи по датам
+  move: Как перенести данные
+  moveText: Ответ из справки
+understood: Понял так
+side:
+  expenses: Траты
+  income: Доходы
+above: Больше $amount
+below: Меньше $amount
+word: «$word»
+allTime: За всё время
+answer:
+  of: $what · $when
+  everything: $what
+  operations(n):
+    one: $n операция
+    few: $n операции
+    many: $n операций
+    other: $n операции
+  incomes(n):
+    one: $n поступление
+    few: $n поступления
+    many: $n поступлений
+    other: $n поступления
+  average: в среднем $amount
+  share: $percent% всех трат $when
+  none: Таких операций нет
+  noneText: Попробуйте другой период или уберите лишнее из вопроса.
+  show(n):
+    one: Показать $n операцию
+    few: Показать $n операции
+    many: Показать $n операций
+    other: Показать $n операции
+  biggest: Самые крупные
+  operationsTitle: Операции
+  sharesExpenses: По категориям
+  sharesIncome: Откуда
+  noCategory: Без категории
+  counted: Посчитано на этом устройстве по курсу ЦБ на день каждой операции.
+  partial: Часть сумм пока без курса и не вошла в итог.
+  trip: Отчёт поездки
+  tripText: Валюты, категории и дни
+before:
+  month: к $month
+  months: к $period
+  days: к $period
+  year: к тем же дням $year
+  wholeYear: к $year
+  day: к $day
+  week: к прошлой неделе
+period:
+  title: Период
+  subtitle: Ответ посчитается заново
+  today: Сегодня
+  yesterday: Вчера
+  thisWeek: Эта неделя
+  lastWeek: Прошлая неделя
+  thisMonth: Этот месяц
+  lastMonths(n):
+    one: Последний $n месяц
+    few: Последние $n месяца
+    many: Последние $n месяцев
+    other: Последние $n месяца
+  thisYear: Этот год
+  lastDays(n):
+    one: Последний $n день
+    few: Последние $n дня
+    many: Последние $n дней
+    other: Последние $n дня
+  months: $from – $to
+  sinceYear: С 1 января
+  days: "$from–$to"
+  daysApart: "$from — $to"
+fact:
+  capital: Капитал · $currencies
+  accounts(n):
+    one: $n счёт
+    few: $n счёта
+    many: $n счетов
+    other: $n счёта
+  allAccounts: Все счета
+  allAccountsText: Балансы и история
+  rate: Курс ЦБ на $day
+  rateFor: за 1 $sign
+  rateKept: Курсы обновляются раз в день и хранятся на устройстве.
+  rateMissing: Курса этой валюты пока нет.
+  rateHelp: Откуда берётся курс
+  rateHelpText: Ответ из справки
+help:
+  title: Из справки
+  all: Вся справка
+places:
+  title: Экраны
+  payday: Деньги до зарплаты
+  paydayText: Сколько можно тратить в день и прогноз
+  schedules: Регулярные платежи
+  schedulesText: Подписки, аренда и зарплата
+  tags: Метки и поездки
+  tagsText: Траты поездок и проектов
+  accounts: Счета
+  accountsText: Балансы и история
+  categories: Категории
+  categoriesText: Расходы и доходы
+  imports: Импорт выписки
+  importsText: Операции из файла банка
+  inbox: Входящие
+  inboxText: Что ждёт решения после импорта
+  backup: Данные
+  backupText: Копия, восстановление и экспорт
+  help: Помощь и отзыв
+  helpText: Частые вопросы и письмо разработчику
+  notifications: Уведомления
+  notificationsText: Что сообщала Birka
+  reports: Отчёты
+  reportsText: Траты и доходы по месяцам
+  settings: Ещё
+  settingsText: Базовая валюта, начало месяца, язык
+refused:
+  advice: Советов о вложениях и курсах не даю
+  adviceText: Birka считает ваши деньги, но не предсказывает курсы и не говорит, что покупать.
+  offTopic: Отвечаю только про ваши деньги
+  offTopicText: Спросите про траты, доходы, счета, платежи или настройки Birka.
+  unknown: Не понял вопрос
+  unknownText: "Попробуйте короче: что, когда и сколько. Например, «кафе в октябре»."
+  suggest: Можно спросить так
+  write: Написать разработчику
+  writeText: Расскажите, что хотели узнать
+suggest:
+  capital: Сколько у меня денег
+  rate: Курс доллара
+  allowance: Сколько можно тратить
+  payments: Когда следующий платёж
+  income: Доходы в прошлом месяце
+  expenses: Траты в этом месяце

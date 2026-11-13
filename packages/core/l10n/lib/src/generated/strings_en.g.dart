@@ -50,6 +50,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$accounts$en accounts =
       Translations$accounts$en.internal(_root);
   late final Translations$app$en app = Translations$app$en.internal(_root);
+  late final Translations$ask$en ask = Translations$ask$en.internal(_root);
   late final Translations$backup$en backup = Translations$backup$en.internal(
     _root,
   );
@@ -220,6 +221,93 @@ class Translations$app$en {
 
   /// en: 'Source code on GitHub'
   String get sourceCode => 'Source code on GitHub';
+}
+
+// Path: ask
+class Translations$ask$en {
+  Translations$ask$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Ask'
+  String get title => 'Ask';
+
+  /// en: 'Ask'
+  String get open => 'Ask';
+
+  /// en: 'Ask about your money'
+  String get hint => 'Ask about your money';
+
+  /// en: 'Clear the question'
+  String get clear => 'Clear the question';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'You can ask'
+  String get examples => 'You can ask';
+
+  /// en: 'Recent'
+  String get recent => 'Recent';
+
+  /// en: 'Clear'
+  String get forget => 'Clear';
+
+  /// en: 'The app answers by itself: questions and answers stay on this device.'
+  String get private =>
+      'The app answers by itself: questions and answers stay on this device.';
+
+  /// en: 'The app answers by itself: questions and answers stay in this browser.'
+  String get privateWeb =>
+      'The app answers by itself: questions and answers stay in this browser.';
+
+  /// en: 'The / key opens Ask from any page.'
+  String get slash => 'The / key opens Ask from any page.';
+
+  late final Translations$ask$start$en start =
+      Translations$ask$start$en.internal(_root);
+  late final Translations$ask$example$en example =
+      Translations$ask$example$en.internal(_root);
+
+  /// en: 'Read as'
+  String get understood => 'Read as';
+
+  late final Translations$ask$side$en side = Translations$ask$side$en.internal(
+    _root,
+  );
+
+  /// en: 'Over $amount'
+  String above({required Object amount}) => 'Over ${amount}';
+
+  /// en: 'Under $amount'
+  String below({required Object amount}) => 'Under ${amount}';
+
+  /// en: '“$word”'
+  String word({required Object word}) => '“${word}”';
+
+  /// en: 'All time'
+  String get allTime => 'All time';
+
+  late final Translations$ask$answer$en answer =
+      Translations$ask$answer$en.internal(_root);
+  late final Translations$ask$before$en before =
+      Translations$ask$before$en.internal(_root);
+  late final Translations$ask$period$en period =
+      Translations$ask$period$en.internal(_root);
+  late final Translations$ask$fact$en fact = Translations$ask$fact$en.internal(
+    _root,
+  );
+  late final Translations$ask$help$en help = Translations$ask$help$en.internal(
+    _root,
+  );
+  late final Translations$ask$places$en places =
+      Translations$ask$places$en.internal(_root);
+  late final Translations$ask$refused$en refused =
+      Translations$ask$refused$en.internal(_root);
+  late final Translations$ask$suggest$en suggest =
+      Translations$ask$suggest$en.internal(_root);
 }
 
 // Path: backup
@@ -3675,6 +3763,467 @@ class Translations$accounts$form$en {
   String get failed => 'Could not save. Try again.';
 }
 
+// Path: ask.start
+class Translations$ask$start$en {
+  Translations$ask$start$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Ask about your money in words'
+  String get title => 'Ask about your money in words';
+
+  /// en: 'What, when and how much: “cafes in October”, “spending on the trip”, “over 5000 this month”. Birka reads the question, shows how it read it and counts the answer itself.'
+  String get text =>
+      'What, when and how much: “cafes in October”, “spending on the trip”, “over 5000 this month”. Birka reads the question, shows how it read it and counts the answer itself.';
+}
+
+// Path: ask.example
+class Translations$ask$example$en {
+  Translations$ask$example$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: '$category $month'
+  String category({required Object category, required Object month}) =>
+      '${category} ${month}';
+
+  /// en: 'Total, comparison and the biggest'
+  String get categoryText => 'Total, comparison and the biggest';
+
+  /// en: 'Spending on the trip “$name”'
+  String trip({required Object name}) => 'Spending on the trip “${name}”';
+
+  /// en: 'What the trip took in every currency'
+  String get tripText => 'What the trip took in every currency';
+
+  /// en: 'Over 5000 this month'
+  String get big => 'Over 5000 this month';
+
+  /// en: 'The big spending of the month'
+  String get bigText => 'The big spending of the month';
+
+  /// en: 'How much can I spend'
+  String get allowance => 'How much can I spend';
+
+  /// en: 'Today and until payday'
+  String get allowanceText => 'Today and until payday';
+
+  /// en: 'When is the next payment'
+  String get payments => 'When is the next payment';
+
+  /// en: 'Regular payments by date'
+  String get paymentsText => 'Regular payments by date';
+
+  /// en: 'How to move my data'
+  String get move => 'How to move my data';
+
+  /// en: 'An answer from the help'
+  String get moveText => 'An answer from the help';
+}
+
+// Path: ask.side
+class Translations$ask$side$en {
+  Translations$ask$side$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Spending'
+  String get expenses => 'Spending';
+
+  /// en: 'Income'
+  String get income => 'Income';
+}
+
+// Path: ask.answer
+class Translations$ask$answer$en {
+  Translations$ask$answer$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: '$what · $when'
+  String of({required Object what, required Object when}) =>
+      '${what} · ${when}';
+
+  /// en: '$what'
+  String everything({required Object what}) => '${what}';
+
+  /// en: '(one) {$n operation} (other) {$n operations}'
+  String operations({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} operation',
+        other: '${n} operations',
+      );
+
+  /// en: '(one) {$n payment in} (other) {$n payments in}'
+  String incomes({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} payment in',
+        other: '${n} payments in',
+      );
+
+  /// en: '$amount on average'
+  String average({required Object amount}) => '${amount} on average';
+
+  /// en: '$percent% of all spending $when'
+  String share({required Object percent, required Object when}) =>
+      '${percent}% of all spending ${when}';
+
+  /// en: 'No such operations'
+  String get none => 'No such operations';
+
+  /// en: 'Try another period or drop part of the question.'
+  String get noneText => 'Try another period or drop part of the question.';
+
+  /// en: '(one) {Show $n operation} (other) {Show $n operations}'
+  String show({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Show ${n} operation',
+        other: 'Show ${n} operations',
+      );
+
+  /// en: 'The biggest'
+  String get biggest => 'The biggest';
+
+  /// en: 'Operations'
+  String get operationsTitle => 'Operations';
+
+  /// en: 'By category'
+  String get sharesExpenses => 'By category';
+
+  /// en: 'Where from'
+  String get sharesIncome => 'Where from';
+
+  /// en: 'No category'
+  String get noCategory => 'No category';
+
+  /// en: 'Counted on this device at the central bank rate of the day of each operation.'
+  String get counted =>
+      'Counted on this device at the central bank rate of the day of each operation.';
+
+  /// en: 'Some amounts have no rate yet and stay out of the total.'
+  String get partial =>
+      'Some amounts have no rate yet and stay out of the total.';
+
+  /// en: 'Trip report'
+  String get trip => 'Trip report';
+
+  /// en: 'Currencies, categories and days'
+  String get tripText => 'Currencies, categories and days';
+}
+
+// Path: ask.before
+class Translations$ask$before$en {
+  Translations$ask$before$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'against $month'
+  String month({required Object month}) => 'against ${month}';
+
+  /// en: 'against $period'
+  String months({required Object period}) => 'against ${period}';
+
+  /// en: 'against $period'
+  String days({required Object period}) => 'against ${period}';
+
+  /// en: 'against the same days of $year'
+  String year({required Object year}) => 'against the same days of ${year}';
+
+  /// en: 'against $year'
+  String wholeYear({required Object year}) => 'against ${year}';
+
+  /// en: 'against $day'
+  String day({required Object day}) => 'against ${day}';
+
+  /// en: 'against last week'
+  String get week => 'against last week';
+}
+
+// Path: ask.period
+class Translations$ask$period$en {
+  Translations$ask$period$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Period'
+  String get title => 'Period';
+
+  /// en: 'The answer is counted again'
+  String get subtitle => 'The answer is counted again';
+
+  /// en: 'Today'
+  String get today => 'Today';
+
+  /// en: 'Yesterday'
+  String get yesterday => 'Yesterday';
+
+  /// en: 'This week'
+  String get thisWeek => 'This week';
+
+  /// en: 'Last week'
+  String get lastWeek => 'Last week';
+
+  /// en: 'This month'
+  String get thisMonth => 'This month';
+
+  /// en: '(one) {Last month} (other) {Last $n months}'
+  String lastMonths({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Last month',
+        other: 'Last ${n} months',
+      );
+
+  /// en: 'This year'
+  String get thisYear => 'This year';
+
+  /// en: '(one) {Last day} (other) {Last $n days}'
+  String lastDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Last day',
+        other: 'Last ${n} days',
+      );
+
+  /// en: '$from – $to'
+  String months({required Object from, required Object to}) =>
+      '${from} – ${to}';
+
+  /// en: 'Since January 1'
+  String get sinceYear => 'Since January 1';
+
+  /// en: '$from–$to'
+  String days({required Object from, required Object to}) => '${from}–${to}';
+
+  /// en: '$from — $to'
+  String daysApart({required Object from, required Object to}) =>
+      '${from} — ${to}';
+}
+
+// Path: ask.fact
+class Translations$ask$fact$en {
+  Translations$ask$fact$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Capital · $currencies'
+  String capital({required Object currencies}) => 'Capital · ${currencies}';
+
+  /// en: '(one) {$n account} (other) {$n accounts}'
+  String accounts({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} account',
+        other: '${n} accounts',
+      );
+
+  /// en: 'All accounts'
+  String get allAccounts => 'All accounts';
+
+  /// en: 'Balances and history'
+  String get allAccountsText => 'Balances and history';
+
+  /// en: 'Central bank rate on $day'
+  String rate({required Object day}) => 'Central bank rate on ${day}';
+
+  /// en: 'for 1 $sign'
+  String rateFor({required Object sign}) => 'for 1 ${sign}';
+
+  /// en: 'Rates update once a day and stay on the device.'
+  String get rateKept => 'Rates update once a day and stay on the device.';
+
+  /// en: 'There is no rate of this currency yet.'
+  String get rateMissing => 'There is no rate of this currency yet.';
+
+  /// en: 'Where the rate comes from'
+  String get rateHelp => 'Where the rate comes from';
+
+  /// en: 'An answer from the help'
+  String get rateHelpText => 'An answer from the help';
+}
+
+// Path: ask.help
+class Translations$ask$help$en {
+  Translations$ask$help$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'From the help'
+  String get title => 'From the help';
+
+  /// en: 'All help'
+  String get all => 'All help';
+}
+
+// Path: ask.places
+class Translations$ask$places$en {
+  Translations$ask$places$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Screens'
+  String get title => 'Screens';
+
+  /// en: 'Money until payday'
+  String get payday => 'Money until payday';
+
+  /// en: 'What you can spend a day, and the forecast'
+  String get paydayText => 'What you can spend a day, and the forecast';
+
+  /// en: 'Regular payments'
+  String get schedules => 'Regular payments';
+
+  /// en: 'Subscriptions, rent and salary'
+  String get schedulesText => 'Subscriptions, rent and salary';
+
+  /// en: 'Tags and trips'
+  String get tags => 'Tags and trips';
+
+  /// en: 'What trips and projects took'
+  String get tagsText => 'What trips and projects took';
+
+  /// en: 'Accounts'
+  String get accounts => 'Accounts';
+
+  /// en: 'Balances and history'
+  String get accountsText => 'Balances and history';
+
+  /// en: 'Categories'
+  String get categories => 'Categories';
+
+  /// en: 'Spending and income'
+  String get categoriesText => 'Spending and income';
+
+  /// en: 'Import a statement'
+  String get imports => 'Import a statement';
+
+  /// en: 'Operations from a bank file'
+  String get importsText => 'Operations from a bank file';
+
+  /// en: 'Inbox'
+  String get inbox => 'Inbox';
+
+  /// en: 'What waits for a decision after an import'
+  String get inboxText => 'What waits for a decision after an import';
+
+  /// en: 'Data'
+  String get backup => 'Data';
+
+  /// en: 'Copy, restore and export'
+  String get backupText => 'Copy, restore and export';
+
+  /// en: 'Help and feedback'
+  String get help => 'Help and feedback';
+
+  /// en: 'Common questions and a letter to the developer'
+  String get helpText => 'Common questions and a letter to the developer';
+
+  /// en: 'Notifications'
+  String get notifications => 'Notifications';
+
+  /// en: 'What Birka told you'
+  String get notificationsText => 'What Birka told you';
+
+  /// en: 'Reports'
+  String get reports => 'Reports';
+
+  /// en: 'Spending and income by month'
+  String get reportsText => 'Spending and income by month';
+
+  /// en: 'More'
+  String get settings => 'More';
+
+  /// en: 'Base currency, start of the month, language'
+  String get settingsText => 'Base currency, start of the month, language';
+}
+
+// Path: ask.refused
+class Translations$ask$refused$en {
+  Translations$ask$refused$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'I give no advice on investments or rates'
+  String get advice => 'I give no advice on investments or rates';
+
+  /// en: 'Birka counts your money but does not predict rates or say what to buy.'
+  String get adviceText =>
+      'Birka counts your money but does not predict rates or say what to buy.';
+
+  /// en: 'I answer only about your money'
+  String get offTopic => 'I answer only about your money';
+
+  /// en: 'Ask about spending, income, accounts, payments or the settings of Birka.'
+  String get offTopicText =>
+      'Ask about spending, income, accounts, payments or the settings of Birka.';
+
+  /// en: 'I did not understand the question'
+  String get unknown => 'I did not understand the question';
+
+  /// en: 'Try it shorter: what, when and how much. For example, “cafes in October”.'
+  String get unknownText =>
+      'Try it shorter: what, when and how much. For example, “cafes in October”.';
+
+  /// en: 'You can ask'
+  String get suggest => 'You can ask';
+
+  /// en: 'Write to the developer'
+  String get write => 'Write to the developer';
+
+  /// en: 'Tell what you wanted to find out'
+  String get writeText => 'Tell what you wanted to find out';
+}
+
+// Path: ask.suggest
+class Translations$ask$suggest$en {
+  Translations$ask$suggest$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'How much money do I have'
+  String get capital => 'How much money do I have';
+
+  /// en: 'Dollar rate'
+  String get rate => 'Dollar rate';
+
+  /// en: 'How much can I spend'
+  String get allowance => 'How much can I spend';
+
+  /// en: 'When is the next payment'
+  String get payments => 'When is the next payment';
+
+  /// en: 'Income last month'
+  String get income => 'Income last month';
+
+  /// en: 'Spending this month'
+  String get expenses => 'Spending this month';
+}
+
 // Path: backup.csv
 class Translations$backup$csv$en {
   Translations$backup$csv$en.internal(this._root);
@@ -4215,6 +4764,201 @@ extension on Translations {
           'app.keptOnDevice' => 'your data stays on this device',
           'app.keptInBrowser' => 'your data stays in this browser',
           'app.sourceCode' => 'Source code on GitHub',
+          'ask.title' => 'Ask',
+          'ask.open' => 'Ask',
+          'ask.hint' => 'Ask about your money',
+          'ask.clear' => 'Clear the question',
+          'ask.back' => 'Back',
+          'ask.examples' => 'You can ask',
+          'ask.recent' => 'Recent',
+          'ask.forget' => 'Clear',
+          'ask.private' =>
+            'The app answers by itself: questions and answers stay on this device.',
+          'ask.privateWeb' =>
+            'The app answers by itself: questions and answers stay in this browser.',
+          'ask.slash' => 'The / key opens Ask from any page.',
+          'ask.start.title' => 'Ask about your money in words',
+          'ask.start.text' =>
+            'What, when and how much: “cafes in October”, “spending on the trip”, “over 5000 this month”. Birka reads the question, shows how it read it and counts the answer itself.',
+          'ask.example.category' =>
+            ({required Object category, required Object month}) =>
+                '${category} ${month}',
+          'ask.example.categoryText' => 'Total, comparison and the biggest',
+          'ask.example.trip' =>
+            ({required Object name}) => 'Spending on the trip “${name}”',
+          'ask.example.tripText' => 'What the trip took in every currency',
+          'ask.example.big' => 'Over 5000 this month',
+          'ask.example.bigText' => 'The big spending of the month',
+          'ask.example.allowance' => 'How much can I spend',
+          'ask.example.allowanceText' => 'Today and until payday',
+          'ask.example.payments' => 'When is the next payment',
+          'ask.example.paymentsText' => 'Regular payments by date',
+          'ask.example.move' => 'How to move my data',
+          'ask.example.moveText' => 'An answer from the help',
+          'ask.understood' => 'Read as',
+          'ask.side.expenses' => 'Spending',
+          'ask.side.income' => 'Income',
+          'ask.above' => ({required Object amount}) => 'Over ${amount}',
+          'ask.below' => ({required Object amount}) => 'Under ${amount}',
+          'ask.word' => ({required Object word}) => '“${word}”',
+          'ask.allTime' => 'All time',
+          'ask.answer.of' =>
+            ({required Object what, required Object when}) =>
+                '${what} · ${when}',
+          'ask.answer.everything' => ({required Object what}) => '${what}',
+          'ask.answer.operations' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} operation',
+                  other: '${n} operations',
+                ),
+          'ask.answer.incomes' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} payment in',
+                  other: '${n} payments in',
+                ),
+          'ask.answer.average' =>
+            ({required Object amount}) => '${amount} on average',
+          'ask.answer.share' =>
+            ({required Object percent, required Object when}) =>
+                '${percent}% of all spending ${when}',
+          'ask.answer.none' => 'No such operations',
+          'ask.answer.noneText' =>
+            'Try another period or drop part of the question.',
+          'ask.answer.show' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Show ${n} operation',
+                  other: 'Show ${n} operations',
+                ),
+          'ask.answer.biggest' => 'The biggest',
+          'ask.answer.operationsTitle' => 'Operations',
+          'ask.answer.sharesExpenses' => 'By category',
+          'ask.answer.sharesIncome' => 'Where from',
+          'ask.answer.noCategory' => 'No category',
+          'ask.answer.counted' =>
+            'Counted on this device at the central bank rate of the day of each operation.',
+          'ask.answer.partial' =>
+            'Some amounts have no rate yet and stay out of the total.',
+          'ask.answer.trip' => 'Trip report',
+          'ask.answer.tripText' => 'Currencies, categories and days',
+          'ask.before.month' => ({required Object month}) => 'against ${month}',
+          'ask.before.months' =>
+            ({required Object period}) => 'against ${period}',
+          'ask.before.days' =>
+            ({required Object period}) => 'against ${period}',
+          'ask.before.year' =>
+            ({required Object year}) => 'against the same days of ${year}',
+          'ask.before.wholeYear' =>
+            ({required Object year}) => 'against ${year}',
+          'ask.before.day' => ({required Object day}) => 'against ${day}',
+          'ask.before.week' => 'against last week',
+          'ask.period.title' => 'Period',
+          'ask.period.subtitle' => 'The answer is counted again',
+          'ask.period.today' => 'Today',
+          'ask.period.yesterday' => 'Yesterday',
+          'ask.period.thisWeek' => 'This week',
+          'ask.period.lastWeek' => 'Last week',
+          'ask.period.thisMonth' => 'This month',
+          'ask.period.lastMonths' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Last month',
+                  other: 'Last ${n} months',
+                ),
+          'ask.period.thisYear' => 'This year',
+          'ask.period.lastDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Last day',
+                  other: 'Last ${n} days',
+                ),
+          'ask.period.months' =>
+            ({required Object from, required Object to}) => '${from} – ${to}',
+          'ask.period.sinceYear' => 'Since January 1',
+          'ask.period.days' =>
+            ({required Object from, required Object to}) => '${from}–${to}',
+          'ask.period.daysApart' =>
+            ({required Object from, required Object to}) => '${from} — ${to}',
+          'ask.fact.capital' =>
+            ({required Object currencies}) => 'Capital · ${currencies}',
+          'ask.fact.accounts' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} account',
+                  other: '${n} accounts',
+                ),
+          'ask.fact.allAccounts' => 'All accounts',
+          'ask.fact.allAccountsText' => 'Balances and history',
+          'ask.fact.rate' =>
+            ({required Object day}) => 'Central bank rate on ${day}',
+          'ask.fact.rateFor' => ({required Object sign}) => 'for 1 ${sign}',
+          'ask.fact.rateKept' =>
+            'Rates update once a day and stay on the device.',
+          'ask.fact.rateMissing' => 'There is no rate of this currency yet.',
+          'ask.fact.rateHelp' => 'Where the rate comes from',
+          'ask.fact.rateHelpText' => 'An answer from the help',
+          'ask.help.title' => 'From the help',
+          'ask.help.all' => 'All help',
+          'ask.places.title' => 'Screens',
+          'ask.places.payday' => 'Money until payday',
+          'ask.places.paydayText' =>
+            'What you can spend a day, and the forecast',
+          'ask.places.schedules' => 'Regular payments',
+          'ask.places.schedulesText' => 'Subscriptions, rent and salary',
+          'ask.places.tags' => 'Tags and trips',
+          'ask.places.tagsText' => 'What trips and projects took',
+          'ask.places.accounts' => 'Accounts',
+          'ask.places.accountsText' => 'Balances and history',
+          'ask.places.categories' => 'Categories',
+          'ask.places.categoriesText' => 'Spending and income',
+          'ask.places.imports' => 'Import a statement',
+          'ask.places.importsText' => 'Operations from a bank file',
+          'ask.places.inbox' => 'Inbox',
+          'ask.places.inboxText' => 'What waits for a decision after an import',
+          'ask.places.backup' => 'Data',
+          'ask.places.backupText' => 'Copy, restore and export',
+          'ask.places.help' => 'Help and feedback',
+          'ask.places.helpText' =>
+            'Common questions and a letter to the developer',
+          'ask.places.notifications' => 'Notifications',
+          'ask.places.notificationsText' => 'What Birka told you',
+          'ask.places.reports' => 'Reports',
+          'ask.places.reportsText' => 'Spending and income by month',
+          'ask.places.settings' => 'More',
+          'ask.places.settingsText' =>
+            'Base currency, start of the month, language',
+          'ask.refused.advice' => 'I give no advice on investments or rates',
+          'ask.refused.adviceText' =>
+            'Birka counts your money but does not predict rates or say what to buy.',
+          'ask.refused.offTopic' => 'I answer only about your money',
+          'ask.refused.offTopicText' =>
+            'Ask about spending, income, accounts, payments or the settings of Birka.',
+          'ask.refused.unknown' => 'I did not understand the question',
+          'ask.refused.unknownText' =>
+            'Try it shorter: what, when and how much. For example, “cafes in October”.',
+          'ask.refused.suggest' => 'You can ask',
+          'ask.refused.write' => 'Write to the developer',
+          'ask.refused.writeText' => 'Tell what you wanted to find out',
+          'ask.suggest.capital' => 'How much money do I have',
+          'ask.suggest.rate' => 'Dollar rate',
+          'ask.suggest.allowance' => 'How much can I spend',
+          'ask.suggest.payments' => 'When is the next payment',
+          'ask.suggest.income' => 'Income last month',
+          'ask.suggest.expenses' => 'Spending this month',
           'backup.title' => 'Data',
           'backup.back' => 'Back',
           'backup.storedTitle' => 'Your records live here',
@@ -4679,6 +5423,9 @@ extension on Translations {
                   one: '${count} row did not read',
                   other: '${count} rows did not read',
                 ),
+          _ => null,
+        } ??
+        switch (path) {
           'imports.problemLine' =>
             ({required Object line, required Object fault}) =>
                 'Row ${line}: ${fault}',
@@ -4920,9 +5667,6 @@ extension on Translations {
           'imports.categoriesAsBeforeText' =>
             ({required Object source}) =>
                 'Your choice for the last statement of ${source}. Change it if something is different now.',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.ownFormatOf' => 'your format',
           'imports.inboxNote' => 'operations wait without a category',
           'imports.newCategoryNote' => 'made with the import',
@@ -5628,6 +6372,9 @@ extension on Translations {
           'schedules.halves' =>
             ({required Object amount}) =>
                 '${amount} as the advance and as the salary',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.halvesOwn' =>
             ({required Object advance, required Object rest}) =>
                 'the advance of ${advance} and the salary of ${rest}',
@@ -5935,9 +6682,6 @@ extension on Translations {
             'On its day it waits for your «Post», or posts itself, as the payment says.',
           'schedules.how.2' =>
             'When it comes in a bank statement, Birka will not count it twice.',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.how.3' =>
             'Birka finds what repeats in your operations and offers to add it.',
           'schedules.failed' => 'Could not read the payments.',

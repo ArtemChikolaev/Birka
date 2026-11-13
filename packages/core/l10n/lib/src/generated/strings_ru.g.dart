@@ -61,6 +61,8 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$app$ru app = _Translations$app$ru._(_root);
   @override
+  late final _Translations$ask$ru ask = _Translations$ask$ru._(_root);
+  @override
   late final _Translations$backup$ru backup = _Translations$backup$ru._(_root);
   @override
   late final _Translations$categories$ru categories =
@@ -219,6 +221,92 @@ class _Translations$app$ru extends Translations$app$en {
   String get keptInBrowser => 'данные хранятся в этом браузере';
   @override
   String get sourceCode => 'Исходный код на GitHub';
+}
+
+// Path: ask
+class _Translations$ask$ru extends Translations$ask$en {
+  _Translations$ask$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Спросить';
+  @override
+  String get open => 'Спросить';
+  @override
+  String get hint => 'Спросите про деньги';
+  @override
+  String get clear => 'Стереть вопрос';
+  @override
+  String get back => 'Назад';
+  @override
+  String get examples => 'Можно спросить';
+  @override
+  String get recent => 'Недавние';
+  @override
+  String get forget => 'Очистить';
+  @override
+  String get private =>
+      'Отвечает само приложение: вопросы и ответы остаются на этом устройстве.';
+  @override
+  String get privateWeb =>
+      'Отвечает само приложение: вопросы и ответы остаются в этом браузере.';
+  @override
+  String get slash => 'Клавиша / открывает «Спросить» с любой страницы.';
+  @override
+  late final _Translations$ask$start$ru start = _Translations$ask$start$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$ask$example$ru example =
+      _Translations$ask$example$ru._(_root);
+  @override
+  String get understood => 'Понял так';
+  @override
+  late final _Translations$ask$side$ru side = _Translations$ask$side$ru._(
+    _root,
+  );
+  @override
+  String above({required Object amount}) => 'Больше ${amount}';
+  @override
+  String below({required Object amount}) => 'Меньше ${amount}';
+  @override
+  String word({required Object word}) => '«${word}»';
+  @override
+  String get allTime => 'За всё время';
+  @override
+  late final _Translations$ask$answer$ru answer = _Translations$ask$answer$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$ask$before$ru before = _Translations$ask$before$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$ask$period$ru period = _Translations$ask$period$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$ask$fact$ru fact = _Translations$ask$fact$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$ask$help$ru help = _Translations$ask$help$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$ask$places$ru places = _Translations$ask$places$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$ask$refused$ru refused =
+      _Translations$ask$refused$ru._(_root);
+  @override
+  late final _Translations$ask$suggest$ru suggest =
+      _Translations$ask$suggest$ru._(_root);
 }
 
 // Path: backup
@@ -3040,6 +3128,395 @@ class _Translations$accounts$form$ru extends Translations$accounts$form$en {
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
 }
 
+// Path: ask.start
+class _Translations$ask$start$ru extends Translations$ask$start$en {
+  _Translations$ask$start$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Спросите про деньги словами';
+  @override
+  String get text =>
+      'Что, когда и сколько: «кафе в октябре», «траты в поездке», «больше 5000 в этом месяце». Birka поймёт вопрос, покажет, как поняла, и посчитает ответ сама.';
+}
+
+// Path: ask.example
+class _Translations$ask$example$ru extends Translations$ask$example$en {
+  _Translations$ask$example$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String category({required Object category, required Object month}) =>
+      '${category} ${month}';
+  @override
+  String get categoryText => 'Сумма, сравнение и самые крупные';
+  @override
+  String trip({required Object name}) => 'Траты в поездке «${name}»';
+  @override
+  String get tripText => 'Итог поездки во всех валютах';
+  @override
+  String get big => 'Больше 5000 в этом месяце';
+  @override
+  String get bigText => 'Крупные траты месяца';
+  @override
+  String get allowance => 'Сколько можно тратить';
+  @override
+  String get allowanceText => 'Сегодня и до зарплаты';
+  @override
+  String get payments => 'Когда следующий платёж';
+  @override
+  String get paymentsText => 'Регулярные платежи по датам';
+  @override
+  String get move => 'Как перенести данные';
+  @override
+  String get moveText => 'Ответ из справки';
+}
+
+// Path: ask.side
+class _Translations$ask$side$ru extends Translations$ask$side$en {
+  _Translations$ask$side$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get expenses => 'Траты';
+  @override
+  String get income => 'Доходы';
+}
+
+// Path: ask.answer
+class _Translations$ask$answer$ru extends Translations$ask$answer$en {
+  _Translations$ask$answer$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String of({required Object what, required Object when}) =>
+      '${what} · ${when}';
+  @override
+  String everything({required Object what}) => '${what}';
+  @override
+  String operations({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} операция',
+        few: '${n} операции',
+        many: '${n} операций',
+        other: '${n} операции',
+      );
+  @override
+  String incomes({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} поступление',
+        few: '${n} поступления',
+        many: '${n} поступлений',
+        other: '${n} поступления',
+      );
+  @override
+  String average({required Object amount}) => 'в среднем ${amount}';
+  @override
+  String share({required Object percent, required Object when}) =>
+      '${percent}% всех трат ${when}';
+  @override
+  String get none => 'Таких операций нет';
+  @override
+  String get noneText =>
+      'Попробуйте другой период или уберите лишнее из вопроса.';
+  @override
+  String show({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Показать ${n} операцию',
+        few: 'Показать ${n} операции',
+        many: 'Показать ${n} операций',
+        other: 'Показать ${n} операции',
+      );
+  @override
+  String get biggest => 'Самые крупные';
+  @override
+  String get operationsTitle => 'Операции';
+  @override
+  String get sharesExpenses => 'По категориям';
+  @override
+  String get sharesIncome => 'Откуда';
+  @override
+  String get noCategory => 'Без категории';
+  @override
+  String get counted =>
+      'Посчитано на этом устройстве по курсу ЦБ на день каждой операции.';
+  @override
+  String get partial => 'Часть сумм пока без курса и не вошла в итог.';
+  @override
+  String get trip => 'Отчёт поездки';
+  @override
+  String get tripText => 'Валюты, категории и дни';
+}
+
+// Path: ask.before
+class _Translations$ask$before$ru extends Translations$ask$before$en {
+  _Translations$ask$before$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String month({required Object month}) => 'к ${month}';
+  @override
+  String months({required Object period}) => 'к ${period}';
+  @override
+  String days({required Object period}) => 'к ${period}';
+  @override
+  String year({required Object year}) => 'к тем же дням ${year}';
+  @override
+  String wholeYear({required Object year}) => 'к ${year}';
+  @override
+  String day({required Object day}) => 'к ${day}';
+  @override
+  String get week => 'к прошлой неделе';
+}
+
+// Path: ask.period
+class _Translations$ask$period$ru extends Translations$ask$period$en {
+  _Translations$ask$period$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Период';
+  @override
+  String get subtitle => 'Ответ посчитается заново';
+  @override
+  String get today => 'Сегодня';
+  @override
+  String get yesterday => 'Вчера';
+  @override
+  String get thisWeek => 'Эта неделя';
+  @override
+  String get lastWeek => 'Прошлая неделя';
+  @override
+  String get thisMonth => 'Этот месяц';
+  @override
+  String lastMonths({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Последний ${n} месяц',
+        few: 'Последние ${n} месяца',
+        many: 'Последние ${n} месяцев',
+        other: 'Последние ${n} месяца',
+      );
+  @override
+  String get thisYear => 'Этот год';
+  @override
+  String lastDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Последний ${n} день',
+        few: 'Последние ${n} дня',
+        many: 'Последние ${n} дней',
+        other: 'Последние ${n} дня',
+      );
+  @override
+  String months({required Object from, required Object to}) =>
+      '${from} – ${to}';
+  @override
+  String get sinceYear => 'С 1 января';
+  @override
+  String days({required Object from, required Object to}) => '${from}–${to}';
+  @override
+  String daysApart({required Object from, required Object to}) =>
+      '${from} — ${to}';
+}
+
+// Path: ask.fact
+class _Translations$ask$fact$ru extends Translations$ask$fact$en {
+  _Translations$ask$fact$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String capital({required Object currencies}) => 'Капитал · ${currencies}';
+  @override
+  String accounts({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} счёт',
+        few: '${n} счёта',
+        many: '${n} счетов',
+        other: '${n} счёта',
+      );
+  @override
+  String get allAccounts => 'Все счета';
+  @override
+  String get allAccountsText => 'Балансы и история';
+  @override
+  String rate({required Object day}) => 'Курс ЦБ на ${day}';
+  @override
+  String rateFor({required Object sign}) => 'за 1 ${sign}';
+  @override
+  String get rateKept =>
+      'Курсы обновляются раз в день и хранятся на устройстве.';
+  @override
+  String get rateMissing => 'Курса этой валюты пока нет.';
+  @override
+  String get rateHelp => 'Откуда берётся курс';
+  @override
+  String get rateHelpText => 'Ответ из справки';
+}
+
+// Path: ask.help
+class _Translations$ask$help$ru extends Translations$ask$help$en {
+  _Translations$ask$help$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Из справки';
+  @override
+  String get all => 'Вся справка';
+}
+
+// Path: ask.places
+class _Translations$ask$places$ru extends Translations$ask$places$en {
+  _Translations$ask$places$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Экраны';
+  @override
+  String get payday => 'Деньги до зарплаты';
+  @override
+  String get paydayText => 'Сколько можно тратить в день и прогноз';
+  @override
+  String get schedules => 'Регулярные платежи';
+  @override
+  String get schedulesText => 'Подписки, аренда и зарплата';
+  @override
+  String get tags => 'Метки и поездки';
+  @override
+  String get tagsText => 'Траты поездок и проектов';
+  @override
+  String get accounts => 'Счета';
+  @override
+  String get accountsText => 'Балансы и история';
+  @override
+  String get categories => 'Категории';
+  @override
+  String get categoriesText => 'Расходы и доходы';
+  @override
+  String get imports => 'Импорт выписки';
+  @override
+  String get importsText => 'Операции из файла банка';
+  @override
+  String get inbox => 'Входящие';
+  @override
+  String get inboxText => 'Что ждёт решения после импорта';
+  @override
+  String get backup => 'Данные';
+  @override
+  String get backupText => 'Копия, восстановление и экспорт';
+  @override
+  String get help => 'Помощь и отзыв';
+  @override
+  String get helpText => 'Частые вопросы и письмо разработчику';
+  @override
+  String get notifications => 'Уведомления';
+  @override
+  String get notificationsText => 'Что сообщала Birka';
+  @override
+  String get reports => 'Отчёты';
+  @override
+  String get reportsText => 'Траты и доходы по месяцам';
+  @override
+  String get settings => 'Ещё';
+  @override
+  String get settingsText => 'Базовая валюта, начало месяца, язык';
+}
+
+// Path: ask.refused
+class _Translations$ask$refused$ru extends Translations$ask$refused$en {
+  _Translations$ask$refused$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get advice => 'Советов о вложениях и курсах не даю';
+  @override
+  String get adviceText =>
+      'Birka считает ваши деньги, но не предсказывает курсы и не говорит, что покупать.';
+  @override
+  String get offTopic => 'Отвечаю только про ваши деньги';
+  @override
+  String get offTopicText =>
+      'Спросите про траты, доходы, счета, платежи или настройки Birka.';
+  @override
+  String get unknown => 'Не понял вопрос';
+  @override
+  String get unknownText =>
+      'Попробуйте короче: что, когда и сколько. Например, «кафе в октябре».';
+  @override
+  String get suggest => 'Можно спросить так';
+  @override
+  String get write => 'Написать разработчику';
+  @override
+  String get writeText => 'Расскажите, что хотели узнать';
+}
+
+// Path: ask.suggest
+class _Translations$ask$suggest$ru extends Translations$ask$suggest$en {
+  _Translations$ask$suggest$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get capital => 'Сколько у меня денег';
+  @override
+  String get rate => 'Курс доллара';
+  @override
+  String get allowance => 'Сколько можно тратить';
+  @override
+  String get payments => 'Когда следующий платёж';
+  @override
+  String get income => 'Доходы в прошлом месяце';
+  @override
+  String get expenses => 'Траты в этом месяце';
+}
+
 // Path: backup.csv
 class _Translations$backup$csv$ru extends Translations$backup$csv$en {
   _Translations$backup$csv$ru._(TranslationsRu root)
@@ -3514,6 +3991,206 @@ extension on TranslationsRu {
           'app.keptOnDevice' => 'данные хранятся на этом устройстве',
           'app.keptInBrowser' => 'данные хранятся в этом браузере',
           'app.sourceCode' => 'Исходный код на GitHub',
+          'ask.title' => 'Спросить',
+          'ask.open' => 'Спросить',
+          'ask.hint' => 'Спросите про деньги',
+          'ask.clear' => 'Стереть вопрос',
+          'ask.back' => 'Назад',
+          'ask.examples' => 'Можно спросить',
+          'ask.recent' => 'Недавние',
+          'ask.forget' => 'Очистить',
+          'ask.private' =>
+            'Отвечает само приложение: вопросы и ответы остаются на этом устройстве.',
+          'ask.privateWeb' =>
+            'Отвечает само приложение: вопросы и ответы остаются в этом браузере.',
+          'ask.slash' => 'Клавиша / открывает «Спросить» с любой страницы.',
+          'ask.start.title' => 'Спросите про деньги словами',
+          'ask.start.text' =>
+            'Что, когда и сколько: «кафе в октябре», «траты в поездке», «больше 5000 в этом месяце». Birka поймёт вопрос, покажет, как поняла, и посчитает ответ сама.',
+          'ask.example.category' =>
+            ({required Object category, required Object month}) =>
+                '${category} ${month}',
+          'ask.example.categoryText' => 'Сумма, сравнение и самые крупные',
+          'ask.example.trip' =>
+            ({required Object name}) => 'Траты в поездке «${name}»',
+          'ask.example.tripText' => 'Итог поездки во всех валютах',
+          'ask.example.big' => 'Больше 5000 в этом месяце',
+          'ask.example.bigText' => 'Крупные траты месяца',
+          'ask.example.allowance' => 'Сколько можно тратить',
+          'ask.example.allowanceText' => 'Сегодня и до зарплаты',
+          'ask.example.payments' => 'Когда следующий платёж',
+          'ask.example.paymentsText' => 'Регулярные платежи по датам',
+          'ask.example.move' => 'Как перенести данные',
+          'ask.example.moveText' => 'Ответ из справки',
+          'ask.understood' => 'Понял так',
+          'ask.side.expenses' => 'Траты',
+          'ask.side.income' => 'Доходы',
+          'ask.above' => ({required Object amount}) => 'Больше ${amount}',
+          'ask.below' => ({required Object amount}) => 'Меньше ${amount}',
+          'ask.word' => ({required Object word}) => '«${word}»',
+          'ask.allTime' => 'За всё время',
+          'ask.answer.of' =>
+            ({required Object what, required Object when}) =>
+                '${what} · ${when}',
+          'ask.answer.everything' => ({required Object what}) => '${what}',
+          'ask.answer.operations' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} операция',
+                  few: '${n} операции',
+                  many: '${n} операций',
+                  other: '${n} операции',
+                ),
+          'ask.answer.incomes' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} поступление',
+                  few: '${n} поступления',
+                  many: '${n} поступлений',
+                  other: '${n} поступления',
+                ),
+          'ask.answer.average' =>
+            ({required Object amount}) => 'в среднем ${amount}',
+          'ask.answer.share' =>
+            ({required Object percent, required Object when}) =>
+                '${percent}% всех трат ${when}',
+          'ask.answer.none' => 'Таких операций нет',
+          'ask.answer.noneText' =>
+            'Попробуйте другой период или уберите лишнее из вопроса.',
+          'ask.answer.show' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Показать ${n} операцию',
+                  few: 'Показать ${n} операции',
+                  many: 'Показать ${n} операций',
+                  other: 'Показать ${n} операции',
+                ),
+          'ask.answer.biggest' => 'Самые крупные',
+          'ask.answer.operationsTitle' => 'Операции',
+          'ask.answer.sharesExpenses' => 'По категориям',
+          'ask.answer.sharesIncome' => 'Откуда',
+          'ask.answer.noCategory' => 'Без категории',
+          'ask.answer.counted' =>
+            'Посчитано на этом устройстве по курсу ЦБ на день каждой операции.',
+          'ask.answer.partial' =>
+            'Часть сумм пока без курса и не вошла в итог.',
+          'ask.answer.trip' => 'Отчёт поездки',
+          'ask.answer.tripText' => 'Валюты, категории и дни',
+          'ask.before.month' => ({required Object month}) => 'к ${month}',
+          'ask.before.months' => ({required Object period}) => 'к ${period}',
+          'ask.before.days' => ({required Object period}) => 'к ${period}',
+          'ask.before.year' =>
+            ({required Object year}) => 'к тем же дням ${year}',
+          'ask.before.wholeYear' => ({required Object year}) => 'к ${year}',
+          'ask.before.day' => ({required Object day}) => 'к ${day}',
+          'ask.before.week' => 'к прошлой неделе',
+          'ask.period.title' => 'Период',
+          'ask.period.subtitle' => 'Ответ посчитается заново',
+          'ask.period.today' => 'Сегодня',
+          'ask.period.yesterday' => 'Вчера',
+          'ask.period.thisWeek' => 'Эта неделя',
+          'ask.period.lastWeek' => 'Прошлая неделя',
+          'ask.period.thisMonth' => 'Этот месяц',
+          'ask.period.lastMonths' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Последний ${n} месяц',
+                  few: 'Последние ${n} месяца',
+                  many: 'Последние ${n} месяцев',
+                  other: 'Последние ${n} месяца',
+                ),
+          'ask.period.thisYear' => 'Этот год',
+          'ask.period.lastDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Последний ${n} день',
+                  few: 'Последние ${n} дня',
+                  many: 'Последние ${n} дней',
+                  other: 'Последние ${n} дня',
+                ),
+          'ask.period.months' =>
+            ({required Object from, required Object to}) => '${from} – ${to}',
+          'ask.period.sinceYear' => 'С 1 января',
+          'ask.period.days' =>
+            ({required Object from, required Object to}) => '${from}–${to}',
+          'ask.period.daysApart' =>
+            ({required Object from, required Object to}) => '${from} — ${to}',
+          'ask.fact.capital' =>
+            ({required Object currencies}) => 'Капитал · ${currencies}',
+          'ask.fact.accounts' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} счёт',
+                  few: '${n} счёта',
+                  many: '${n} счетов',
+                  other: '${n} счёта',
+                ),
+          'ask.fact.allAccounts' => 'Все счета',
+          'ask.fact.allAccountsText' => 'Балансы и история',
+          'ask.fact.rate' => ({required Object day}) => 'Курс ЦБ на ${day}',
+          'ask.fact.rateFor' => ({required Object sign}) => 'за 1 ${sign}',
+          'ask.fact.rateKept' =>
+            'Курсы обновляются раз в день и хранятся на устройстве.',
+          'ask.fact.rateMissing' => 'Курса этой валюты пока нет.',
+          'ask.fact.rateHelp' => 'Откуда берётся курс',
+          'ask.fact.rateHelpText' => 'Ответ из справки',
+          'ask.help.title' => 'Из справки',
+          'ask.help.all' => 'Вся справка',
+          'ask.places.title' => 'Экраны',
+          'ask.places.payday' => 'Деньги до зарплаты',
+          'ask.places.paydayText' => 'Сколько можно тратить в день и прогноз',
+          'ask.places.schedules' => 'Регулярные платежи',
+          'ask.places.schedulesText' => 'Подписки, аренда и зарплата',
+          'ask.places.tags' => 'Метки и поездки',
+          'ask.places.tagsText' => 'Траты поездок и проектов',
+          'ask.places.accounts' => 'Счета',
+          'ask.places.accountsText' => 'Балансы и история',
+          'ask.places.categories' => 'Категории',
+          'ask.places.categoriesText' => 'Расходы и доходы',
+          'ask.places.imports' => 'Импорт выписки',
+          'ask.places.importsText' => 'Операции из файла банка',
+          'ask.places.inbox' => 'Входящие',
+          'ask.places.inboxText' => 'Что ждёт решения после импорта',
+          'ask.places.backup' => 'Данные',
+          'ask.places.backupText' => 'Копия, восстановление и экспорт',
+          'ask.places.help' => 'Помощь и отзыв',
+          'ask.places.helpText' => 'Частые вопросы и письмо разработчику',
+          'ask.places.notifications' => 'Уведомления',
+          'ask.places.notificationsText' => 'Что сообщала Birka',
+          'ask.places.reports' => 'Отчёты',
+          'ask.places.reportsText' => 'Траты и доходы по месяцам',
+          'ask.places.settings' => 'Ещё',
+          'ask.places.settingsText' => 'Базовая валюта, начало месяца, язык',
+          'ask.refused.advice' => 'Советов о вложениях и курсах не даю',
+          'ask.refused.adviceText' =>
+            'Birka считает ваши деньги, но не предсказывает курсы и не говорит, что покупать.',
+          'ask.refused.offTopic' => 'Отвечаю только про ваши деньги',
+          'ask.refused.offTopicText' =>
+            'Спросите про траты, доходы, счета, платежи или настройки Birka.',
+          'ask.refused.unknown' => 'Не понял вопрос',
+          'ask.refused.unknownText' =>
+            'Попробуйте короче: что, когда и сколько. Например, «кафе в октябре».',
+          'ask.refused.suggest' => 'Можно спросить так',
+          'ask.refused.write' => 'Написать разработчику',
+          'ask.refused.writeText' => 'Расскажите, что хотели узнать',
+          'ask.suggest.capital' => 'Сколько у меня денег',
+          'ask.suggest.rate' => 'Курс доллара',
+          'ask.suggest.allowance' => 'Сколько можно тратить',
+          'ask.suggest.payments' => 'Когда следующий платёж',
+          'ask.suggest.income' => 'Доходы в прошлом месяце',
+          'ask.suggest.expenses' => 'Траты в этом месяце',
           'backup.title' => 'Данные',
           'backup.back' => 'Назад',
           'backup.storedTitle' => 'Учёт хранится здесь',
@@ -3997,6 +4674,9 @@ extension on TranslationsRu {
                   many: '${count} строк не прочитались',
                   other: '${count} строки не прочитались',
                 ),
+          _ => null,
+        } ??
+        switch (path) {
           'imports.problemLine' =>
             ({required Object line, required Object fault}) =>
                 'Строка ${line}: ${fault}',
@@ -4253,9 +4933,6 @@ extension on TranslationsRu {
           'imports.categoriesAsBeforeText' =>
             ({required Object source}) =>
                 'Взяли ваш выбор с прошлой выписки ${source}. Поменяйте, если что-то теперь иначе.',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.ownFormatOf' => 'вашего формата',
           'imports.inboxNote' => 'операции подождут без категории',
           'imports.newCategoryNote' => 'появится при импорте',
@@ -5006,6 +5683,9 @@ extension on TranslationsRu {
           'schedules.amountMonthly' => 'Сумма в месяц',
           'schedules.halves' =>
             ({required Object amount}) => 'по ${amount} авансом и зарплатой',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.halvesOwn' =>
             ({required Object advance, required Object rest}) =>
                 'аванс ${advance} и зарплата ${rest}',
@@ -5331,9 +6011,6 @@ extension on TranslationsRu {
           'schedules.how.1' =>
             'В день платежа он ждёт вашего «Провести» или проводится сам — как выбрано в платеже.',
           'schedules.how.2' => 'Придёт в выписке банка — Birka не задвоит его.',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.how.3' =>
             'Повторы в операциях Birka находит сама и предлагает добавить.',
           'schedules.failed' => 'Не удалось прочитать платежи.',

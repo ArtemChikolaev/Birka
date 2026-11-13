@@ -1,0 +1,146 @@
+title: Ask
+open: Ask
+hint: Ask about your money
+clear: Clear the question
+back: Back
+examples: You can ask
+recent: Recent
+forget: Clear
+private: "The app answers by itself: questions and answers stay on this device."
+privateWeb: "The app answers by itself: questions and answers stay in this browser."
+slash: The / key opens Ask from any page.
+start:
+  title: Ask about your money in words
+  text: "What, when and how much: “cafes in October”, “spending on the trip”, “over 5000 this month”. Birka reads the question, shows how it read it and counts the answer itself."
+example:
+  category: $category $month
+  categoryText: Total, comparison and the biggest
+  trip: Spending on the trip “$name”
+  tripText: What the trip took in every currency
+  big: Over 5000 this month
+  bigText: The big spending of the month
+  allowance: How much can I spend
+  allowanceText: Today and until payday
+  payments: When is the next payment
+  paymentsText: Regular payments by date
+  move: How to move my data
+  moveText: An answer from the help
+understood: Read as
+side:
+  expenses: Spending
+  income: Income
+above: Over $amount
+below: Under $amount
+word: “$word”
+allTime: All time
+answer:
+  of: $what · $when
+  everything: $what
+  operations(n):
+    one: $n operation
+    other: $n operations
+  incomes(n):
+    one: $n payment in
+    other: $n payments in
+  average: $amount on average
+  share: $percent% of all spending $when
+  none: No such operations
+  noneText: Try another period or drop part of the question.
+  show(n):
+    one: Show $n operation
+    other: Show $n operations
+  biggest: The biggest
+  operationsTitle: Operations
+  sharesExpenses: By category
+  sharesIncome: Where from
+  noCategory: No category
+  counted: Counted on this device at the central bank rate of the day of each operation.
+  partial: Some amounts have no rate yet and stay out of the total.
+  trip: Trip report
+  tripText: Currencies, categories and days
+before:
+  month: against $month
+  months: against $period
+  days: against $period
+  year: against the same days of $year
+  wholeYear: against $year
+  day: against $day
+  week: against last week
+period:
+  title: Period
+  subtitle: The answer is counted again
+  today: Today
+  yesterday: Yesterday
+  thisWeek: This week
+  lastWeek: Last week
+  thisMonth: This month
+  lastMonths(n):
+    one: Last month
+    other: Last $n months
+  thisYear: This year
+  lastDays(n):
+    one: Last day
+    other: Last $n days
+  months: $from – $to
+  sinceYear: Since January 1
+  days: "$from–$to"
+  daysApart: "$from — $to"
+fact:
+  capital: Capital · $currencies
+  accounts(n):
+    one: $n account
+    other: $n accounts
+  allAccounts: All accounts
+  allAccountsText: Balances and history
+  rate: Central bank rate on $day
+  rateFor: for 1 $sign
+  rateKept: Rates update once a day and stay on the device.
+  rateMissing: There is no rate of this currency yet.
+  rateHelp: Where the rate comes from
+  rateHelpText: An answer from the help
+help:
+  title: From the help
+  all: All help
+places:
+  title: Screens
+  payday: Money until payday
+  paydayText: What you can spend a day, and the forecast
+  schedules: Regular payments
+  schedulesText: Subscriptions, rent and salary
+  tags: Tags and trips
+  tagsText: What trips and projects took
+  accounts: Accounts
+  accountsText: Balances and history
+  categories: Categories
+  categoriesText: Spending and income
+  imports: Import a statement
+  importsText: Operations from a bank file
+  inbox: Inbox
+  inboxText: What waits for a decision after an import
+  backup: Data
+  backupText: Copy, restore and export
+  help: Help and feedback
+  helpText: Common questions and a letter to the developer
+  notifications: Notifications
+  notificationsText: What Birka told you
+  reports: Reports
+  reportsText: Spending and income by month
+  settings: More
+  settingsText: Base currency, start of the month, language
+refused:
+  advice: I give no advice on investments or rates
+  adviceText: Birka counts your money but does not predict rates or say what to buy.
+  offTopic: I answer only about your money
+  offTopicText: Ask about spending, income, accounts, payments or the settings of Birka.
+  unknown: I did not understand the question
+  unknownText: "Try it shorter: what, when and how much. For example, “cafes in October”."
+  suggest: You can ask
+  write: Write to the developer
+  writeText: Tell what you wanted to find out
+suggest:
+  capital: How much money do I have
+  rate: Dollar rate
+  allowance: How much can I spend
+  payments: When is the next payment
+  income: Income last month
+  expenses: Spending this month
