@@ -1,7 +1,8 @@
-import 'package:design_jaspr/design_jaspr.dart';
+import 'package:design_jaspr/src/birka_icon.dart';
+import 'package:design_jaspr/src/glass_icon_button.dart';
+import 'package:design_jaspr/src/section_label.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:l10n/l10n.dart';
 
 /// The top line of a page that leads back: the way back, what the page is
 /// about and what can be done to it. Beside a list on a wide page the way back
@@ -10,6 +11,7 @@ class BackHeader extends StatelessComponent {
   /// Creates a header that says [label].
   const BackHeader({
     required this.label,
+    required this.backLabel,
     required this.onBack,
     this.trailing,
     this.closes = false,
@@ -18,6 +20,9 @@ class BackHeader extends StatelessComponent {
 
   /// What the page is about.
   final String label;
+
+  /// What the way back does, for screen readers: back, or close for a cross.
+  final String backLabel;
 
   /// Called by the way back.
   final VoidCallback onBack;
@@ -33,7 +38,7 @@ class BackHeader extends StatelessComponent {
     return div(classes: 'back-header', [
       GlassIconButton(
         glyph: closes ? BirkaGlyph.close : BirkaGlyph.back,
-        label: closes ? t.app.close : t.transactions.back,
+        label: backLabel,
         onPressed: onBack,
       ),
       SectionLabel(label),

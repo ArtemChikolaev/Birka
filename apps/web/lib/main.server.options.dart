@@ -32,6 +32,7 @@ import 'package:birka_web/pages/page_frame.dart' as _page_frame;
 import 'package:birka_web/pages/payday_island.dart' as _payday_island;
 import 'package:birka_web/pages/reports_island.dart' as _reports_island;
 import 'package:birka_web/pages/schedules_island.dart' as _schedules_island;
+import 'package:birka_web/pages/tags_island.dart' as _tags_island;
 import 'package:categories_jaspr/src/presentation/pages/categories_page.dart'
     as _categories_page;
 import 'package:categories_jaspr/src/presentation/pages/category_form_page.dart'
@@ -40,6 +41,7 @@ import 'package:design_jaspr/src/account_card.dart' as _account_card;
 import 'package:design_jaspr/src/ambient_background.dart'
     as _ambient_background;
 import 'package:design_jaspr/src/amount_text.dart' as _amount_text;
+import 'package:design_jaspr/src/back_header.dart' as _back_header;
 import 'package:design_jaspr/src/birka_arrow_button.dart'
     as _birka_arrow_button;
 import 'package:design_jaspr/src/birka_bars.dart' as _birka_bars;
@@ -51,6 +53,7 @@ import 'package:design_jaspr/src/birka_chip_field.dart' as _birka_chip_field;
 import 'package:design_jaspr/src/birka_choice.dart' as _birka_choice;
 import 'package:design_jaspr/src/birka_column.dart' as _birka_column;
 import 'package:design_jaspr/src/birka_date_chip.dart' as _birka_date_chip;
+import 'package:design_jaspr/src/birka_date_field.dart' as _birka_date_field;
 import 'package:design_jaspr/src/birka_field_pair.dart' as _birka_field_pair;
 import 'package:design_jaspr/src/birka_fold.dart' as _birka_fold;
 import 'package:design_jaspr/src/birka_form.dart' as _birka_form;
@@ -87,6 +90,7 @@ import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/glass_toast.dart' as _glass_toast;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
+import 'package:design_jaspr/src/share_line.dart' as _share_line;
 import 'package:design_jaspr/src/tinted_box.dart' as _tinted_box;
 import 'package:design_jaspr/src/welcome_art.dart' as _welcome_art;
 import 'package:help_jaspr/src/presentation/pages/help_page.dart' as _help_page;
@@ -122,8 +126,6 @@ import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
     as _onboarding_page;
 import 'package:overview_jaspr/src/presentation/pages/overview_page.dart'
     as _overview_page;
-import 'package:reports_jaspr/src/presentation/components/report_line_row.dart'
-    as _report_line_row;
 import 'package:reports_jaspr/src/presentation/pages/reports_page.dart'
     as _reports_page;
 import 'package:schedules_jaspr/src/presentation/components/schedule_bits.dart'
@@ -138,14 +140,23 @@ import 'package:schedules_jaspr/src/presentation/pages/schedules_page.dart'
     as _schedules_page;
 import 'package:settings_jaspr/src/presentation/components/settings_section.dart'
     as _settings_section;
-import 'package:transactions_jaspr/src/presentation/components/back_header.dart'
-    as _back_header;
+import 'package:tags_jaspr/src/presentation/components/operation_tags_row.dart'
+    as _operation_tags_row;
+import 'package:tags_jaspr/src/presentation/components/tag_picker.dart'
+    as _tag_picker;
+import 'package:tags_jaspr/src/presentation/pages/tag_form_page.dart'
+    as _tag_form_page;
+import 'package:tags_jaspr/src/presentation/pages/tag_report_page.dart'
+    as _tag_report_page;
+import 'package:tags_jaspr/src/presentation/pages/tags_page.dart' as _tags_page;
 import 'package:transactions_jaspr/src/presentation/components/operation_day_group.dart'
     as _operation_day_group;
 import 'package:transactions_jaspr/src/presentation/components/operations_totals.dart'
     as _operations_totals;
 import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart'
     as _quick_add_tile;
+import 'package:transactions_jaspr/src/presentation/components/tag_operations.dart'
+    as _tag_operations;
 import 'package:transactions_jaspr/src/presentation/pages/account_page.dart'
     as _account_page;
 import 'package:transactions_jaspr/src/presentation/pages/operation_page.dart'
@@ -211,6 +222,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ),
     _schedules_island.SchedulesIsland:
         ClientTarget<_schedules_island.SchedulesIsland>('schedules_island'),
+    _tags_island.TagsIsland: ClientTarget<_tags_island.TagsIsland>(
+      'tags_island',
+    ),
   },
   styles: () => [
     ..._account_row.AccountRow.styles,
@@ -227,6 +241,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._account_card.AccountCard.styles,
     ..._ambient_background.AmbientBackground.styles,
     ..._amount_text.AmountText.styles,
+    ..._back_header.BackHeader.styles,
     ..._birka_arrow_button.BirkaArrowButton.styles,
     ..._birka_bars.BirkaBars.styles,
     ..._birka_button.BirkaButton.styles,
@@ -237,6 +252,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_choice.BirkaChoice.styles,
     ..._birka_column.BirkaColumn.styles,
     ..._birka_date_chip.BirkaDateChip.styles,
+    ..._birka_date_field.BirkaDateField.styles,
     ..._birka_field_pair.BirkaFieldPair.styles,
     ..._birka_fold.BirkaFold.styles,
     ..._birka_form.BirkaForm.styles,
@@ -274,6 +290,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glass_toast.GlassToast.styles,
     ..._glyph_badge.GlyphBadge.styles,
     ..._section_label.SectionLabel.styles,
+    ..._share_line.ShareLine.styles,
     ..._tinted_box.TintedBox.styles,
     ..._tinted_box.TintedNotice.styles,
     ..._welcome_art.WelcomeArt.styles,
@@ -297,7 +314,6 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._notifications_page.NotificationsPage.styles,
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,
-    ..._report_line_row.ReportLineRow.styles,
     ..._reports_page.ReportsPage.styles,
     ..._schedule_bits.DateColumn.styles,
     ..._schedule_bits.ScheduleDot.styles,
@@ -306,11 +322,16 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._schedule_form_page.ScheduleFormPage.styles,
     ..._schedules_page.SchedulesPage.styles,
     ..._settings_section.SettingsSection.styles,
-    ..._back_header.BackHeader.styles,
+    ..._operation_tags_row.OperationTagsRow.styles,
+    ..._tag_picker.TagPicker.styles,
+    ..._tag_form_page.TagFormPage.styles,
+    ..._tag_report_page.TagReportPage.styles,
+    ..._tags_page.TagsPage.styles,
     ..._operation_day_group.OperationDayGroup.styles,
     ..._operations_totals.OperationsTotals.styles,
     ..._quick_add_tile.QuickAddTile.styles,
     ..._quick_add_tile.QuickAddTiles.styles,
+    ..._tag_operations.TagOperations.styles,
     ..._account_page.AccountPage.styles,
     ..._operation_page.OperationPage.styles,
     ..._operations_page.OperationsPage.styles,

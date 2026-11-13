@@ -43,10 +43,10 @@ class MonthCard extends StatefulComponent {
       raw: {'display': 'flex', 'flex-direction': 'column'},
     ),
     // The rows keep their insides and lose their outsides to the card.
-    css('.month-card__lines .reports__line').styles(
+    css('.month-card__lines .share-line').styles(
       raw: {'padding-left': '0', 'padding-right': '0'},
     ),
-    css('.month-card__lines .reports__line + .reports__line::before').styles(
+    css('.month-card__lines .share-line + .share-line::before').styles(
       raw: {'left': '0', 'right': '0'},
     ),
   ];

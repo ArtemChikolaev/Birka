@@ -18,6 +18,7 @@ class QuickAddPage extends StatelessComponent {
     required this.onClose,
     required this.addAccountHref,
     required this.addCategoriesHref,
+    this.tags,
     super.key,
   });
 
@@ -29,6 +30,11 @@ class QuickAddPage extends StatelessComponent {
 
   /// Where the categories open.
   final String addCategoriesHref;
+
+  /// The picker of the метки (ADR 0027), which the host builds on the ids
+  /// that are picked and which gives the ids picked after a click. Without
+  /// it the form has no chip of the метки.
+  final TagPickerBuilder? tags;
 
   @override
   Component build(BuildContext context) {
@@ -69,6 +75,7 @@ class QuickAddPage extends StatelessComponent {
           onClose: onClose,
           addAccountHref: addAccountHref,
           addCategoriesHref: addCategoriesHref,
+          tags: tags,
         ),
       },
     );
@@ -172,18 +179,25 @@ class QuickAddPage extends StatelessComponent {
   ];
 }
 
+/// Builds the picker of the метки on the ids that are [picked], and gives
+/// the ids picked after a click to [onChanged].
+typedef TagPickerBuilder =
+    Component Function(Set<String> picked, ValueChanged<Set<String>> onChanged);
+
 class _Sheet extends StatefulComponent {
   const _Sheet({
     required this.state,
     required this.onClose,
     required this.addAccountHref,
     required this.addCategoriesHref,
+    required this.tags,
   });
 
   final QuickAddState state;
   final VoidCallback onClose;
   final String addAccountHref;
   final String addCategoriesHref;
+  final TagPickerBuilder? tags;
 
   @override
   State<_Sheet> createState() => _SheetState();
@@ -204,6 +218,9 @@ class _SheetState extends State<_Sheet> {
 
   /// Whether every category stands on the page.
   var _allCategories = false;
+
+  /// Whether the метки to choose from are open.
+  var _pickingTags = false;
 
   QuickAddState get _state => component.state;
 
@@ -236,6 +253,7 @@ class _SheetState extends State<_Sheet> {
           ),
           _amount(cubit),
           _details(cubit),
+          ?_tagChoice(cubit),
           ?_accountChoice(cubit),
           if (state.kind == TransactionKind.transfer)
             _targets(cubit)
@@ -364,12 +382,47 @@ class _SheetState extends State<_Sheet> {
         last: '${state.today}',
         onChanged: (text) => _dayPicked(cubit, text),
       ),
+      // The trip of the day comes on by itself, and a day out of it, an
+      // income or a transfer offers «+ Метка» instead (ADR 0027).
+      if (component.tags != null) _tagChip(),
       BirkaChipField(
         label: '+ ${t.transactions.addNote}',
         value: state.note,
         onChanged: cubit.noteChanged,
       ),
     ]);
+  }
+
+  /// The chip of the метки: the first one picked and how many more, or
+  /// «+ Метка». It opens the picker under the line.
+  Component _tagChip() {
+    final picked = _state.picked;
+    return BirkaChip(
+      glyph: picked.isEmpty ? null : BirkaGlyph.tag,
+      label: picked.isEmpty
+          ? '+ ${t.transactions.addTag}'
+          : [
+              picked.first.name,
+              if (picked.length > 1) '+${picked.length - 1}',
+            ].join(' '),
+      selected: picked.isNotEmpty,
+      dashed: picked.isEmpty,
+      expanded: _pickingTags,
+      onTap: () => setState(() => _pickingTags = !_pickingTags),
+    );
+  }
+
+  /// The picker of the метки, which opens and closes under the line.
+  Component? _tagChoice(QuickAddCubit cubit) {
+    final tags = component.tags;
+    if (tags == null) return null;
+    return BirkaFold(
+      open: _pickingTags,
+      gap: 'var(--space-sm)',
+      children: [
+        tags(_state.tagIds, (ids) => unawaited(cubit.tagsChanged(ids))),
+      ],
+    );
   }
 
   /// Takes a day from the calendar. A day typed by hand can be out of range.

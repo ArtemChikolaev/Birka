@@ -131,6 +131,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/settings/flutter && flutter test
 	cd packages/features/settings/jaspr && dart test
 	cd packages/features/tags/flutter && flutter test
+	cd packages/features/tags/jaspr && dart test
 	cd packages/features/transactions/flutter && flutter test
 	cd packages/features/transactions/jaspr && dart test
 

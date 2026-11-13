@@ -26,6 +26,7 @@ void main() {
     ComponentTester tester, {
     String id = 'coffee',
     bool closes = false,
+    Component? tags,
     Component? schedule,
   }) async {
     tester.pumpComponent(
@@ -36,6 +37,7 @@ void main() {
           editHref: 'edit',
           repeatHref: 'repeat',
           closes: closes,
+          tags: tags,
           schedule: schedule,
         ),
       ),
@@ -89,17 +91,22 @@ void main() {
     expect(find.text('31 октября'), findsOneComponent);
   });
 
-  testComponents('puts the row of the payments under the facts', (
-    tester,
-  ) async {
-    await pump(tester, schedule: const Component.text('Payments'));
+  testComponents('puts the метки and the row of the payments under the '
+      'facts', (tester) async {
+    await pump(
+      tester,
+      tags: const Component.text('Метки'),
+      schedule: const Component.text('Payments'),
+    );
 
     final texts = [
       for (final element in find.byType(Text).evaluate())
         (element.component as Text).text,
     ];
+    final tags = texts.indexOf('Метки');
     final row = texts.indexOf('Payments');
-    expect(row, greaterThan(texts.indexOf('31 октября')));
+    expect(tags, greaterThan(texts.indexOf('31 октября')));
+    expect(row, greaterThan(tags));
     expect(row, lessThan(texts.indexOf('Повторить')));
   });
 

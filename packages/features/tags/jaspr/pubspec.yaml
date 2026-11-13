@@ -1,0 +1,26 @@
+name: tags_jaspr
+description: >-
+  Метки and trips of Birka in Jaspr: the list of метки, the report of a trip,
+  the form of a метка and the метки of an operation, on the site.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_jaspr:
+    path: ../../../design/jaspr
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  money:
+    path: ../../../core/money
+  tags_common:
+    path: ../common
+
+dev_dependencies:
+  jaspr_test: ^0.22.3

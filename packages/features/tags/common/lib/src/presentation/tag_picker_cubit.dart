@@ -100,6 +100,22 @@ final class TagPickerCubit extends Cubit<TagPickerState> {
   void created(String id) =>
       emit(state.copyWith(picked: {...state.picked, id}, query: ''));
 
+  /// Makes a метка without days of the name in the search, where a form
+  /// cannot open over the picker, as on the site: picks it, clears the
+  /// search and gives its id. It gives `null` when the search names a метка
+  /// already or the save fails.
+  Future<String?> create() async {
+    if (!state.canCreate) return null;
+    try {
+      final marking = await _repository.add(name: state.query.trim());
+      final id = marking.tag.id;
+      if (!isClosed) created(id);
+      return id;
+    } on Object {
+      return null;
+    }
+  }
+
   @override
   Future<void> close() async {
     await _tags.cancel();

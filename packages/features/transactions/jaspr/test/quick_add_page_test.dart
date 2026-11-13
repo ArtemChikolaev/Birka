@@ -1,9 +1,11 @@
 import 'package:design_jaspr/design_jaspr.dart';
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
 import 'package:jaspr_test/jaspr_test.dart';
 import 'package:l10n/l10n.dart';
+import 'package:ledger/ledger.dart' show Tag;
 import 'package:money/money.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_jaspr/transactions_jaspr.dart';
@@ -413,6 +415,61 @@ void main() {
       Money(-250000, Currency.rub),
     );
     expect(closed, 1);
+  });
+
+  testComponents('the chip of the метки opens the picker of the host', (
+    tester,
+  ) async {
+    repository.tagList = const [Tag(id: 'renovation', name: 'Ремонт кухни')];
+    final shown = <Set<String>>[];
+    ValueChanged<Set<String>>? pick;
+    tester.pumpComponent(
+      BlocProvider(
+        create: (_) => QuickAddCubit(repository, now: () => now),
+        child: QuickAddPage(
+          onClose: () {},
+          addAccountHref: 'new-account',
+          addCategoriesHref: 'categories',
+          tags: (picked, onChanged) {
+            shown.add(picked);
+            pick = onChanged;
+            return const p([.text('the picker of the host')]);
+          },
+        ),
+      ),
+    );
+    await tester.pump();
+    BirkaChip chip() =>
+        find
+                .byComponentPredicate(
+                  (it) => it is BirkaChip && it.expanded != null,
+                )
+                .evaluate()
+                .single
+                .component
+            as BirkaChip;
+    bool open() =>
+        (find.byType(BirkaFold).evaluate().single.component as BirkaFold).open;
+
+    expect(chip().label, '+ Метка');
+    expect(chip().dashed, isTrue);
+    expect(open(), isFalse);
+
+    await tap(tester, '+ Метка');
+
+    expect(chip().expanded, isTrue);
+    expect(open(), isTrue);
+    expect(find.text('the picker of the host'), findsOneComponent);
+    expect(shown.last, isEmpty);
+
+    pick!({'renovation'});
+    await tester.pump();
+    await tester.pump();
+
+    expect(chip().label, 'Ремонт кухни');
+    expect(chip().selected, isTrue);
+    expect(chip().glyph, BirkaGlyph.tag);
+    expect(shown.last, {'renovation'});
   });
 
   testComponents('the cross closes without saving', (tester) async {

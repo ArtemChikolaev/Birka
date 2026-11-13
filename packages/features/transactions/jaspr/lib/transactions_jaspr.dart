@@ -5,6 +5,7 @@
 library;
 
 export 'src/presentation/components/operations_totals.dart';
+export 'src/presentation/components/tag_operations.dart';
 export 'src/presentation/pages/account_page.dart';
 export 'src/presentation/pages/operation_page.dart';
 export 'src/presentation/pages/operations_page.dart';

@@ -13,6 +13,7 @@ import 'package:birka_web/pages/page_frame.dart';
 import 'package:birka_web/pages/payday_island.dart';
 import 'package:birka_web/pages/reports_island.dart';
 import 'package:birka_web/pages/schedules_island.dart';
+import 'package:birka_web/pages/tags_island.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 
@@ -82,6 +83,11 @@ class App extends StatelessComponent {
           path: '/payday',
           title: 'Payday · Birka',
           builder: (_, _) => const PageFrame(wide: true, child: PaydayIsland()),
+        ),
+        Route(
+          path: '/tags',
+          title: 'Tags · Birka',
+          builder: (_, _) => const PageFrame(wide: true, child: TagsIsland()),
         ),
         Route(
           path: '/notifications',

@@ -44,6 +44,23 @@ class MorePage extends StatelessComponent {
         label: t.app.data,
         href: 'data/',
       ),
+      div(classes: 'more__wide', [
+        GlassListGroup(
+          children: [
+            GlassListRow(
+              leading: const GlyphBadge(
+                glyph: BirkaGlyph.tag,
+                color: 'var(--color-accent)',
+              ),
+              title: t.tags.title,
+              href: 'tags/',
+              trailing: const span(classes: 'more__end', [
+                BirkaIcon(BirkaGlyph.chevron),
+              ]),
+            ),
+          ],
+        ),
+      ]),
     ]);
     final settings = [
       const SettingsSection(),

@@ -87,6 +87,7 @@ undo: Undo
 picker:
   title: Tags
   search: Find or create
+  clear: Clear the search
   create: New tag «$name»
   createText: A trip with dates or just a tag
   tripsNote: While a trip goes on, its tag goes onto the expenses of its days by itself.
