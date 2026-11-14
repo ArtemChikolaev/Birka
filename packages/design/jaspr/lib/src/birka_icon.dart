@@ -218,6 +218,11 @@ enum BirkaGlyph {
   tag(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5v6.1a1.6 1.6 0 0 0 .47 1.13l8.3 8.3a1.6 1.6 0 0 0 2.26 0l6-6a1.6 1.6 0 0 0 0-2.26l-8.3-8.3A1.6 1.6 0 0 0 11.1 3.5H5A1.5 1.5 0 0 0 3.5 5z"/><circle cx="8" cy="8" r="1.4"/></svg>',
   ),
+
+  /// Two people, for the debts between them (ADR 0029).
+  people(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.2 19.5c0-3.3 2.6-5.6 5.8-5.6s5.8 2.3 5.8 5.6"/><path d="M15.6 4.9a3 3 0 0 1 0 6"/><path d="M17.4 14.2c2 .6 3.4 2.6 3.4 5.3"/></svg>',
+  ),
   ;
 
   const BirkaGlyph(this.svg);

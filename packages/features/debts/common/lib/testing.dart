@@ -194,10 +194,19 @@ final class FakeDebtsRepository implements DebtsRepository {
   @override
   CivilDate today() => _today;
 
-  Stream<T> _follow<T>(T Function() read) async* {
-    if (failing) throw StateError('No ledger');
-    yield read();
-    yield* _changes.stream.map((_) => read());
+  /// What [read] gives now, and again after every change. A cancel gives
+  /// back no future: one of a broadcast stream completes in the root zone,
+  /// which the fake time of a widget test never runs, so `first` would wait
+  /// for it forever.
+  Stream<T> _follow<T>(T Function() read) {
+    if (failing) return Stream.error(StateError('No ledger'));
+    return Stream.multi((controller) {
+      controller.add(read());
+      final subscription = _changes.stream.listen(
+        (_) => controller.add(read()),
+      );
+      controller.onCancel = () => unawaited(subscription.cancel());
+    });
   }
 
   List<Debt> _read() => debtsOf(

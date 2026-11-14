@@ -11,6 +11,9 @@ import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
+import 'package:debts_common/debts_common.dart'
+    show DebtFormCubit, DebtReturnCubit, DebtTermsCubit, DebtsCubit;
+import 'package:debts_flutter/debts_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -159,6 +162,24 @@ abstract final class Paths {
 
   /// The form of метка [id].
   static String editTag(String id) => '/tags/$id/edit';
+
+  /// The debts between the person and others (ADR 0029).
+  static const debts = '/debts';
+
+  /// The form of a new debt.
+  static const newDebt = '/debts/new';
+
+  /// The card of debt [id].
+  static String debt(String id) => '/debts/$id';
+
+  /// The form of a return of debt [id].
+  static String debtReturn(String id) => '/debts/$id/return';
+
+  /// The form of more money on debt [id].
+  static String debtMore(String id) => '/debts/$id/more';
+
+  /// The form of the terms of debt [id].
+  static String editDebt(String id) => '/debts/$id/edit';
 }
 
 /// Says that an account opens from its card, which grows into the page of the
@@ -236,6 +257,7 @@ GoRouter buildRouter(
                   create: (_) => getIt<OperationsCubit>(),
                   child: OperationsPage(
                     onOpen: (id) => context.push(Paths.operation(id)),
+                    onOpenDebt: (id) => context.push(Paths.debt(id)),
                     onRepeat: (id) => context.push(Paths.repeatOperation(id)),
                   ),
                 ),
@@ -299,6 +321,7 @@ GoRouter buildRouter(
                     BlocProvider(create: (_) => getIt<SettingsCubit>()),
                     BlocProvider(create: (_) => getIt<InboxSummaryCubit>()),
                     BlocProvider(create: (_) => getIt<RemindersCubit>()),
+                    BlocProvider(create: (_) => getIt<DebtsCubit>()),
                   ],
                   child: MorePage(
                     links: getIt<HelpLinks>(),
@@ -348,6 +371,7 @@ GoRouter buildRouter(
                   onEdit: () => context.push(Paths.editAccount(id)),
                   onOpen: (operation) =>
                       context.push(Paths.operation(operation)),
+                  onOpenDebt: (debt) => context.push(Paths.debt(debt)),
                   onRepeat: (operation) =>
                       context.push(Paths.repeatOperation(operation)),
                 ),
@@ -465,6 +489,7 @@ GoRouter buildRouter(
                   ),
                   child: OperationsPage(
                     onOpen: (id) => context.push(Paths.operation(id)),
+                    onOpenDebt: (id) => context.push(Paths.debt(id)),
                     onRepeat: (id) => context.push(Paths.repeatOperation(id)),
                     onBack: () => context.pop(),
                   ),
@@ -542,6 +567,7 @@ GoRouter buildRouter(
                   operations: TagOperations(
                     onOpen: (operation) =>
                         context.push(Paths.operation(operation)),
+                    onOpenDebt: (debt) => context.push(Paths.debt(debt)),
                     onRepeat: (operation) =>
                         context.push(Paths.repeatOperation(operation)),
                   ),
@@ -554,6 +580,82 @@ GoRouter buildRouter(
                 parentNavigatorKey: rootKey,
                 pageBuilder: (context, state) =>
                     _tagFormPage(getIt, id: state.pathParameters['id']),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: Paths.debts,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<DebtsCubit>(),
+          child: DebtsPage(
+            onBack: () => context.pop(),
+            onAdd: () => context.push(Paths.newDebt),
+            onOpen: (id) => context.push(Paths.debt(id)),
+          ),
+        ),
+        routes: [
+          GoRoute(
+            path: 'new',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) => _debtFormPage(getIt),
+          ),
+          GoRoute(
+            path: ':id',
+            parentNavigatorKey: rootKey,
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return BlocProvider(
+                create: (_) => getIt<DebtsCubit>(),
+                child: DebtPage(
+                  id: id,
+                  onBack: () => context.pop(),
+                  onEdit: () => context.push(Paths.editDebt(id)),
+                  onReturn: () => context.push(Paths.debtReturn(id)),
+                  onMore: () => context.push(Paths.debtMore(id)),
+                  onOpenStep: (operation) =>
+                      context.push(Paths.operation(operation)),
+                ),
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'return',
+                parentNavigatorKey: rootKey,
+                pageBuilder: (context, state) => BirkaSheetPage(
+                  child: BlocProvider(
+                    create: (_) => getIt<DebtReturnCubit>(
+                      param1: state.pathParameters['id'],
+                    ),
+                    child: Builder(
+                      builder: (context) =>
+                          DebtReturnPage(onClose: () => context.pop()),
+                    ),
+                  ),
+                ),
+              ),
+              GoRoute(
+                path: 'more',
+                parentNavigatorKey: rootKey,
+                pageBuilder: (context, state) =>
+                    _debtFormPage(getIt, id: state.pathParameters['id']),
+              ),
+              GoRoute(
+                path: 'edit',
+                parentNavigatorKey: rootKey,
+                pageBuilder: (context, state) => BirkaSheetPage(
+                  child: BlocProvider(
+                    create: (_) => getIt<DebtTermsCubit>(
+                      param1: state.pathParameters['id'],
+                    ),
+                    child: Builder(
+                      builder: (context) =>
+                          DebtTermsPage(onClose: () => context.pop()),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -706,6 +808,16 @@ Page<TagMarking?> _tagFormPage(GetIt getIt, {String? id, String? name}) =>
         ),
       ),
     );
+
+/// The form of a new debt, or of more money on debt [id] (ADR 0029).
+Page<String?> _debtFormPage(GetIt getIt, {String? id}) => BirkaSheetPage(
+  child: BlocProvider(
+    create: (_) => getIt<DebtFormCubit>(param1: id),
+    child: Builder(
+      builder: (context) => DebtFormPage(onClose: context.pop),
+    ),
+  ),
+);
 
 /// Lets the person pick the метки of an operation, starting from [picked]
 /// (ADR 0027). A метка made from the search of the picker opens its form

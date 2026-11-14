@@ -18,6 +18,7 @@ class AccountPage extends StatefulWidget {
     required this.onEdit,
     required this.onOpen,
     required this.onRepeat,
+    this.onOpenDebt,
     super.key,
   });
 
@@ -32,6 +33,11 @@ class AccountPage extends StatefulWidget {
 
   /// Called with the id of the operation to record once more.
   final ValueChanged<String> onRepeat;
+
+  /// Called with the id of the debt that an operation moves, to open its
+  /// card instead of the operation (ADR 0029). Without it the operation
+  /// opens.
+  final ValueChanged<String>? onOpenDebt;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -150,6 +156,7 @@ class _AccountPageState extends State<AccountPage> {
                               today: state.today,
                               accountId: account.account.id,
                               onOpen: widget.onOpen,
+                              onOpenDebt: widget.onOpenDebt,
                               onRepeat: widget.onRepeat,
                               onDelete: _delete,
                             )

@@ -1,4 +1,8 @@
 title: Debts
+toMore: More
+close: Close
+done: Done
+foldClosed: Show the settled ones
 moreHint: Who owes whom, and by what day
 moreBoth: Owed to me $owed · mine $mine
 moreOwed: Owed to me $owed
@@ -67,6 +71,7 @@ form:
   dueBy: Due by
   noDue: No due date
   note: Note
+  noteHint: Optional
   remind: Remind on the due date
   lendCaption: "A debt is not spending: the money leaves the account but stays out of the month's expenses."
   borrowCaption: "A debt is not income: the money comes to the account but stays out of the month's income."
@@ -74,6 +79,15 @@ form:
   save: Save
   saved: "Saved: $name, $amount"
   failed: Could not save. Try again.
+  moreTitle: Lend more · $name
+  borrowMoreTitle: Borrow more · $name
+  dueChoices:
+    none: No due date
+    week: In a week
+    twoWeeks: In two weeks
+    month: In a month
+    pick: Pick a day
+  today: Today
   editTitle: Edit the debt
 back:
   returnTitle: Paid back · $name

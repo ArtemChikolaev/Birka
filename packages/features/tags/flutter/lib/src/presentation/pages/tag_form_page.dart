@@ -97,7 +97,7 @@ class _Form extends StatelessWidget {
                 const SizedBox(height: BirkaTokens.spaceLg),
                 GlassListGroup(
                   children: [
-                    _Line(
+                    GlassValueRow(
                       key: const ValueKey('name'),
                       label: t.tags.form.name,
                       value: name.isEmpty ? t.tags.form.namePlaceholder : name,
@@ -105,7 +105,7 @@ class _Form extends StatelessWidget {
                       onTap: () => unawaited(_editName(context)),
                     ),
                     if (state.trip)
-                      _Line(
+                      GlassValueRow(
                         key: const ValueKey('dates'),
                         label: t.tags.form.dates,
                         value: daysLabel(
@@ -272,51 +272,5 @@ class _Form extends StatelessWidget {
     if (picked != null) {
       cubit.daysChanged(CivilDate.of(picked.start), CivilDate.of(picked.end));
     }
-  }
-}
-
-/// A row of the form: what it is, its value, and the way to change it.
-class _Line extends StatelessWidget {
-  const _Line({
-    required this.label,
-    required this.value,
-    required this.onTap,
-    this.quiet = false,
-    super.key,
-  });
-
-  final String label;
-  final String value;
-  final VoidCallback onTap;
-
-  /// Whether the value is a hint rather than what the person set.
-  final bool quiet;
-
-  @override
-  Widget build(BuildContext context) {
-    final styles = BirkaTextStyles.of(context);
-    final colors = BirkaColors.of(context);
-    return GlassListRow(
-      title: label,
-      onTap: onTap,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 200),
-            child: FadingText(
-              value,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: styles.bodyStrong.copyWith(
-                color: quiet ? colors.textMuted : colors.text,
-              ),
-            ),
-          ),
-          const SizedBox(width: BirkaTokens.spaceXs),
-          BirkaIcon(BirkaGlyph.chevron, size: 16, color: colors.textMuted),
-        ],
-      ),
-    );
   }
 }

@@ -37,6 +37,9 @@ class OperationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accountId = this.accountId;
+    // A transfer of a debt speaks of the account of the person, as its label
+    // does (ADR 0029).
+    final shown = accountId ?? operation.ownAccount?.id;
     return GlassSwipeRow(
       actions: [
         if (operation.canChange)
@@ -63,9 +66,7 @@ class OperationRow extends StatelessWidget {
                 ? operationAmount(operation)
                 : operationAmountOn(operation, accountId),
             value:
-                (accountId == null
-                        ? operation.amount
-                        : operation.amountOn(accountId))
+                (shown == null ? operation.amount : operation.amountOn(shown))
                     .minorUnits,
             rise: operationRise(operation, accountId: accountId),
             tone: accountId == null

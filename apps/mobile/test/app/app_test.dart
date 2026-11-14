@@ -10,6 +10,10 @@ import 'package:birka_mobile/app/app_version.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
+import 'package:debts_common/debts_common.dart'
+    show DebtFormCubit, DebtReturnCubit, DebtTermsCubit, DebtsCubit;
+import 'package:debts_common/testing.dart' show FakeDebtsRepository;
+import 'package:debts_flutter/debts_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,6 +40,7 @@ import 'package:ledger/ledger.dart'
         AccountType,
         CivilDate,
         DayChange,
+        DebtSide,
         Entry,
         LedgerImport,
         Notice,
@@ -562,6 +567,7 @@ void main() {
   late _Accounts accounts;
   late _Transactions transactions;
   late FakeTagsRepository tags;
+  late FakeDebtsRepository debts;
   late _Overview overview;
   late _Settings settings;
   late _Links links;
@@ -579,6 +585,7 @@ void main() {
     accounts = _Accounts();
     final CategoriesRepository categories = _NoCategories();
     tags = FakeTagsRepository();
+    debts = FakeDebtsRepository();
     transactions = _Transactions(tags);
     overview = _Overview();
     getIt
@@ -673,6 +680,17 @@ void main() {
       )
       ..registerFactoryParam<TagOperationsCubit, String, void>(
         (id, _) => TagOperationsCubit(transactions, id),
+      )
+      ..registerFactory(() => DebtsCubit(debts))
+      ..registerFactoryParam<DebtFormCubit, String?, DebtSide?>(
+        (id, side) =>
+            DebtFormCubit(debts, debtId: id, side: side ?? DebtSide.lent),
+      )
+      ..registerFactoryParam<DebtReturnCubit, String, void>(
+        (id, _) => DebtReturnCubit(debts, id),
+      )
+      ..registerFactoryParam<DebtTermsCubit, String, void>(
+        (id, _) => DebtTermsCubit(debts, id),
       );
   });
 
@@ -1352,6 +1370,28 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.app.close));
     await tester.pumpAndSettle();
     expect(find.byType(CategoriesPage), findsOneWidget);
+  });
+
+  testWidgets('the debts open from the more tab, and a person opens its '
+      'card', (tester) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+    expect(find.byType(DebtsMoreRow), findsOneWidget);
+    await tester.tap(find.text(t.debts.title));
+    await tester.pumpAndSettle();
+    expect(find.byType(DebtsPage), findsOneWidget);
+
+    await tester.tap(find.text('Маша'));
+    await tester.pumpAndSettle();
+    expect(find.byType(DebtPage), findsOneWidget);
+
+    await tester.tap(find.text(t.debts.card.lendMore));
+    await tester.pumpAndSettle();
+    expect(find.byType(DebtFormPage), findsOneWidget);
+    expect(find.text(t.debts.form.moreTitle(name: 'Маша')), findsOneWidget);
   });
 
   test('bundles the fonts of the design system and their licenses', () async {

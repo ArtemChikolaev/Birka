@@ -1,0 +1,371 @@
+import 'dart:async';
+
+import 'package:debts_common/debts_common.dart';
+import 'package:debts_flutter/src/presentation/widgets/debt_choices.dart';
+import 'package:design_flutter/design_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:l10n/l10n.dart';
+import 'package:ledger/ledger.dart';
+import 'package:money/money.dart';
+
+/// The form of a new debt, or of more money on one (ADR 0029): whether the
+/// person lends or borrows, who, how much, from or to which account, when,
+/// by what day, a note and the reminder of that day.
+///
+/// It needs a [DebtFormCubit] above it. Once saved, it says what it wrote in
+/// a toast, and gives the id of the debt to [onClose].
+class DebtFormPage extends StatelessWidget {
+  /// Creates the form.
+  const DebtFormPage({required this.onClose, super.key});
+
+  /// Closes the form, with the id of the debt that the save wrote, or
+  /// `null`.
+  final ValueChanged<String?> onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: AmbientBackground(
+        child: SafeArea(
+          child: BlocBuilder<DebtFormCubit, DebtFormState>(
+            builder: (context, state) => switch (state.status) {
+              DebtFormStatus.loading => const SizedBox.shrink(),
+              _ => _Form(state: state, onClose: onClose),
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Form extends StatelessWidget {
+  const _Form({required this.state, required this.onClose});
+
+  final DebtFormState state;
+  final ValueChanged<String?> onClose;
+
+  String get _title {
+    if (!state.fixed) return t.debts.newDebt;
+    final name = state.match?.name ?? state.name;
+    return state.side == DebtSide.lent
+        ? t.debts.form.moreTitle(name: name)
+        : t.debts.form.borrowMoreTitle(name: name);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<DebtFormCubit>();
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    final form = t.debts.form;
+    final lend = state.side == DebtSide.lent;
+    final amount = state.amount;
+    final account = state.account;
+    final due = state.dueOn;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            BirkaTokens.spaceLg,
+            BirkaTokens.spaceXs,
+            BirkaTokens.spaceLg,
+            BirkaTokens.spaceSm,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: styles.heading.copyWith(color: colors.text),
+                ),
+              ),
+              GlassIconButton(
+                glyph: BirkaGlyph.close,
+                label: t.debts.close,
+                glass: false,
+                onPressed: () => onClose(null),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ScrollEdgeFade(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BirkaTokens.spaceLg,
+                vertical: BirkaTokens.spaceXs,
+              ),
+              children: [
+                if (!state.fixed) ...[
+                  GlassSegmented<DebtSide>(
+                    segments: {
+                      DebtSide.lent: form.lend,
+                      DebtSide.borrowed: form.borrow,
+                    },
+                    selected: state.side,
+                    onChanged: cubit.sideChanged,
+                  ),
+                  const SizedBox(height: BirkaTokens.spaceLg),
+                  SectionLabel(form.who),
+                  const SizedBox(height: BirkaTokens.spaceXs),
+                  _People(state: state),
+                  if (state.nameMissing) ...[
+                    const SizedBox(height: BirkaTokens.spaceXs),
+                    Text(
+                      form.nameMissing,
+                      style: styles.caption.copyWith(color: colors.negative),
+                    ),
+                  ],
+                  const SizedBox(height: BirkaTokens.spaceLg),
+                ],
+                GlassListGroup(
+                  children: [
+                    GlassValueRow(
+                      key: const ValueKey('amount'),
+                      label: form.amount,
+                      value: amount == null
+                          ? '—'
+                          : HiddenAmounts.mask(context, formatMoney(amount)),
+                      quiet: state.amountMinor == 0,
+                      onTap: amount == null
+                          ? null
+                          : () => unawaited(_editAmount(context, amount)),
+                    ),
+                    GlassValueRow(
+                      key: const ValueKey('account'),
+                      label: lend ? form.fromAccount : form.toAccount,
+                      value: account?.name ?? '—',
+                      onTap: state.offered.isEmpty
+                          ? null
+                          : () => unawaited(_pickAccount(context)),
+                    ),
+                    GlassValueRow(
+                      key: const ValueKey('day'),
+                      label: form.when,
+                      value: debtDayValue(state.day, today: state.today),
+                      onTap: () => unawaited(_pickDay(context)),
+                    ),
+                    GlassValueRow(
+                      key: const ValueKey('due'),
+                      label: form.dueBy,
+                      value: due == null
+                          ? form.noDue
+                          : debtDay(due, today: state.today),
+                      quiet: due == null,
+                      onTap: () => unawaited(_pickDue(context)),
+                    ),
+                    GlassValueRow(
+                      key: const ValueKey('note'),
+                      label: form.note,
+                      value: state.note.trim().isEmpty
+                          ? form.noteHint
+                          : state.note.trim(),
+                      quiet: state.note.trim().isEmpty,
+                      onTap: () => unawaited(_editNote(context)),
+                    ),
+                  ],
+                ),
+                if (state.noAccount) ...[
+                  const SizedBox(height: BirkaTokens.spaceXs),
+                  Text(
+                    form.noAccount(currency: state.match!.currency.code),
+                    style: styles.caption.copyWith(color: colors.negative),
+                  ),
+                ],
+                AnimatedColumn(
+                  children: [
+                    if (due != null)
+                      Padding(
+                        key: const ValueKey('remind'),
+                        padding: const EdgeInsets.only(
+                          top: BirkaTokens.spaceSm,
+                        ),
+                        child: GlassListGroup(
+                          children: [
+                            GlassListRow(
+                              title: form.remind,
+                              trailing: Switch(
+                                value: state.reminds,
+                                onChanged: (on) =>
+                                    cubit.remindsChanged(reminds: on),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: BirkaTokens.spaceMd),
+                FadingText(
+                  lend ? form.lendCaption : form.borrowCaption,
+                  style: styles.caption.copyWith(color: colors.textMuted),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            BirkaTokens.spaceLg,
+            BirkaTokens.spaceXs,
+            BirkaTokens.spaceLg,
+            BirkaTokens.spaceMd,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (state.status == DebtFormStatus.failed) ...[
+                Text(
+                  form.failed,
+                  textAlign: TextAlign.center,
+                  style: styles.caption.copyWith(color: colors.negative),
+                ),
+                const SizedBox(height: BirkaTokens.spaceXs),
+              ],
+              // Once saved, the button turns into a check mark, and the
+              // toast comes as the form goes down.
+              BirkaButton(
+                label: form.save,
+                onPressed: state.canSave || state.name.trim().isEmpty
+                    ? () => unawaited(cubit.save())
+                    : null,
+                done: state.status == DebtFormStatus.saved,
+                onDone: () => _done(context),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _done(BuildContext context) {
+    final saved = state.saved;
+    if (saved != null) showGlassToast(context, debtSavedToast(saved));
+    onClose(saved?.debtId);
+  }
+
+  Future<void> _editAmount(BuildContext context, Money amount) async {
+    final cubit = context.read<DebtFormCubit>();
+    final minorUnits = await editDebtAmount(
+      context,
+      label: t.debts.form.amount,
+      amount: amount,
+    );
+    if (minorUnits != null) cubit.amountChanged(minorUnits);
+  }
+
+  Future<void> _pickAccount(BuildContext context) async {
+    final cubit = context.read<DebtFormCubit>();
+    final id = await pickDebtAccount(
+      context,
+      title: state.side == DebtSide.lent
+          ? t.debts.form.fromAccount
+          : t.debts.form.toAccount,
+      accounts: state.offered,
+      selected: state.accountId,
+    );
+    if (id != null) cubit.accountChanged(id);
+  }
+
+  Future<void> _pickDay(BuildContext context) async {
+    final cubit = context.read<DebtFormCubit>();
+    final day = await pickDebtDay(
+      context,
+      today: state.today,
+      current: state.day,
+    );
+    if (day != null) cubit.dayChanged(day);
+  }
+
+  Future<void> _pickDue(BuildContext context) async {
+    final cubit = context.read<DebtFormCubit>();
+    final picked = await pickDebtDue(
+      context,
+      today: state.today,
+      current: state.dueOn,
+    );
+    if (picked != null) cubit.dueChanged(picked.$1);
+  }
+
+  Future<void> _editNote(BuildContext context) async {
+    final cubit = context.read<DebtFormCubit>();
+    final note = await showFieldSheet(
+      context,
+      label: t.debts.form.note,
+      done: t.debts.done,
+      initial: state.note,
+    );
+    if (note != null) cubit.noteChanged(note);
+  }
+}
+
+/// The people of the debts as chips, and one more for someone else, whose
+/// name the person types.
+class _People extends StatelessWidget {
+  const _People({required this.state});
+
+  final DebtFormState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<DebtFormCubit>();
+    final people = state.people;
+    final typed = state.name.trim();
+    final other =
+        typed.isNotEmpty &&
+        !people.any((name) => name.toLowerCase() == typed.toLowerCase());
+    bool picked(String name) => name.toLowerCase() == typed.toLowerCase();
+    return Wrap(
+      spacing: BirkaTokens.spaceXs,
+      runSpacing: BirkaTokens.spaceXs,
+      children: [
+        for (final name in people)
+          BirkaChip(
+            key: ValueKey('person-$name'),
+            label: name,
+            selected: picked(name),
+            onTap: () => cubit.nameChanged(name),
+          ),
+        if (other)
+          BirkaChip(
+            key: const ValueKey('typed'),
+            label: typed,
+            selected: true,
+            onTap: () => unawaited(_name(context)),
+          ),
+        BirkaChip(
+          key: const ValueKey('other'),
+          label: t.debts.form.other,
+          glyph: BirkaGlyph.plus,
+          dashed: true,
+          selected: false,
+          onTap: () => unawaited(_name(context)),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _name(BuildContext context) async {
+    final cubit = context.read<DebtFormCubit>();
+    final typed = state.name.trim();
+    final known = state.people.any(
+      (name) => name.toLowerCase() == typed.toLowerCase(),
+    );
+    final name = await showFieldSheet(
+      context,
+      label: t.debts.form.name,
+      hint: t.debts.form.nameHint,
+      done: t.debts.done,
+      initial: known ? '' : typed,
+    );
+    if (name != null && name.trim().isNotEmpty) cubit.nameChanged(name);
+  }
+}

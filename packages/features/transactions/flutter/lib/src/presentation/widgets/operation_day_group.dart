@@ -15,6 +15,7 @@ class SliverOperationDays extends StatelessWidget {
     required this.onRepeat,
     required this.onDelete,
     this.accountId,
+    this.onOpenDebt,
     super.key,
   });
 
@@ -36,6 +37,11 @@ class SliverOperationDays extends StatelessWidget {
   /// The account that the amounts are about.
   final String? accountId;
 
+  /// Called with the id of the debt that an operation moves, to open its
+  /// card instead of the operation (ADR 0029). Without it the operation
+  /// opens.
+  final ValueChanged<String>? onOpenDebt;
+
   @override
   Widget build(BuildContext context) {
     return SliverAnimatedColumn(
@@ -50,6 +56,7 @@ class SliverOperationDays extends StatelessWidget {
               today: today,
               accountId: accountId,
               onOpen: onOpen,
+              onOpenDebt: onOpenDebt,
               onRepeat: onRepeat,
               onDelete: onDelete,
             ),
@@ -70,6 +77,7 @@ class OperationDayGroup extends StatelessWidget {
     required this.onRepeat,
     required this.onDelete,
     this.accountId,
+    this.onOpenDebt,
     super.key,
   });
 
@@ -91,9 +99,15 @@ class OperationDayGroup extends StatelessWidget {
   /// The account that the amounts are about.
   final String? accountId;
 
+  /// Called with the id of the debt that an operation moves, to open its
+  /// card instead of the operation (ADR 0029). Without it the operation
+  /// opens.
+  final ValueChanged<String>? onOpenDebt;
+
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
+    final onOpenDebt = this.onOpenDebt;
     final accountId = this.accountId;
     final total = accountId == null ? day.total : day.totalOn(accountId);
     return Column(
@@ -133,7 +147,10 @@ class OperationDayGroup extends StatelessWidget {
                 key: ValueKey(operation.id),
                 operation: operation,
                 accountId: accountId,
-                onOpen: () => onOpen(operation.id),
+                onOpen: switch ((operation.debt, onOpenDebt)) {
+                  (final debt?, final open?) => () => open(debt.id),
+                  _ => () => onOpen(operation.id),
+                },
                 onRepeat: () => onRepeat(operation.id),
                 onDelete: () => onDelete(operation),
               ),

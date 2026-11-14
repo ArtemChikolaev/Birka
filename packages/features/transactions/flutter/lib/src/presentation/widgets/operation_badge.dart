@@ -2,8 +2,9 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:transactions_common/transactions_common.dart';
 
-/// The picture of an operation: its category, two arrows for a transfer, or a
-/// check mark for a correction.
+/// The picture of an operation: its category, two arrows for a transfer, the
+/// initial of the person for a transfer of a debt, or a check mark for a
+/// correction.
 class OperationBadge extends StatelessWidget {
   /// Creates a badge of [operation].
   const OperationBadge(this.operation, {this.size = 40, super.key});
@@ -16,6 +17,15 @@ class OperationBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A transfer of a debt shows the other person (ADR 0029).
+    final debt = operation.debt;
+    if (debt != null) {
+      return InitialBadge(
+        name: debt.name,
+        color: CardArt.values.byName(debt.art.name).tint,
+        size: size,
+      );
+    }
     final color = operation.category?.color;
     return GlyphBadge(
       size: size,

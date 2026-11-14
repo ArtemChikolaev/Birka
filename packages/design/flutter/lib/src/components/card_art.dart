@@ -33,6 +33,17 @@ enum CardArt {
 
   /// The color of the glow.
   Color get color => Color(_color);
+
+  /// The bright color of the art, for a small mark such as the initial of a
+  /// person whose debt wears it (ADR 0029).
+  Color get tint => Color(switch (this) {
+    CardArt.emerald => BirkaTokens.colorPaletteGreen,
+    CardArt.graphite => BirkaTokens.colorPaletteCyan,
+    CardArt.sapphire => BirkaTokens.colorPaletteSky,
+    CardArt.amber => BirkaTokens.colorPaletteAmber,
+    CardArt.violet => BirkaTokens.colorPaletteViolet,
+    CardArt.rose => BirkaTokens.colorPaletteRose,
+  });
 }
 
 /// A card with [art] behind [child].

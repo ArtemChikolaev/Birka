@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:l10n/l10n.dart';
+import 'package:ledger/ledger.dart' show AccountType, DebtSide, DebtTerms;
 import 'package:money/money.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
@@ -177,6 +178,63 @@ void main() {
     await tapText(tester, 'Кофейня у дома');
 
     expect(opened, ['coffee']);
+  });
+
+  testWidgets('a transfer of a debt names the person and opens the debt', (
+    tester,
+  ) async {
+    const masha = Account(
+      id: 'masha',
+      name: 'Маша',
+      type: AccountType.debt,
+      openingBalance: Money.zero(Currency.rub),
+      includeInTotals: false,
+      archived: false,
+      sortOrder: 0,
+      debt: DebtTerms(side: DebtSide.lent),
+    );
+    repository = FakeRepository(
+      accountList: [card, cash],
+      operations: [
+        testOperation(
+          'lent',
+          amount: rub(-500000),
+          account: cash,
+          toAccount: masha,
+          kind: TransactionKind.transfer,
+          note: 'на билеты',
+        ),
+      ],
+    );
+    final debts = <String>[];
+    tester.view.physicalSize = const Size(780, 1688);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: BirkaTheme.dark(),
+        home: Scaffold(
+          body: BlocProvider(
+            create: (_) => OperationsCubit(repository, now: () => now),
+            child: OperationsPage(
+              onOpen: opened.add,
+              onOpenDebt: debts.add,
+              onRepeat: repeated.add,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Маша · в долг'), findsOneWidget);
+    expect(find.text('Долг · Наличные · на билеты'), findsOneWidget);
+    expect(find.text('−5${space}000$space₽'), findsOneWidget);
+    expect(find.text('М'), findsOneWidget);
+
+    await tapText(tester, 'Маша · в долг');
+    expect(debts, ['masha']);
+    expect(opened, isEmpty);
   });
 
   testWidgets('a filter narrows the list', (tester) async {

@@ -520,6 +520,14 @@ class _Translations$debts$ru extends Translations$debts$en {
   @override
   String get title => 'Долги';
   @override
+  String get toMore => 'Ещё';
+  @override
+  String get close => 'Закрыть';
+  @override
+  String get done => 'Готово';
+  @override
+  String get foldClosed => 'Показать закрытые';
+  @override
   String get moreHint => 'Кто кому должен и до какого дня';
   @override
   String moreBoth({required Object owed, required Object mine}) =>
@@ -3901,6 +3909,8 @@ class _Translations$debts$form$ru extends Translations$debts$form$en {
   @override
   String get note => 'Заметка';
   @override
+  String get noteHint => 'Необязательно';
+  @override
   String get remind => 'Напомнить в срок';
   @override
   String get lendCaption =>
@@ -3918,6 +3928,15 @@ class _Translations$debts$form$ru extends Translations$debts$form$en {
       'Записали: ${name}, ${amount}';
   @override
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+  @override
+  String moreTitle({required Object name}) => 'Ещё в долг · ${name}';
+  @override
+  String borrowMoreTitle({required Object name}) => 'Занять ещё · ${name}';
+  @override
+  late final _Translations$debts$form$dueChoices$ru dueChoices =
+      _Translations$debts$form$dueChoices$ru._(_root);
+  @override
+  String get today => 'Сегодня';
   @override
   String get editTitle => 'Изменить долг';
 }
@@ -4403,6 +4422,28 @@ class _Translations$transactions$keys$ru
   String get backspace => 'Стереть';
 }
 
+// Path: debts.form.dueChoices
+class _Translations$debts$form$dueChoices$ru
+    extends Translations$debts$form$dueChoices$en {
+  _Translations$debts$form$dueChoices$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get none => 'Без срока';
+  @override
+  String get week => 'Через неделю';
+  @override
+  String get twoWeeks => 'Через две недели';
+  @override
+  String get month => 'Через месяц';
+  @override
+  String get pick => 'Выбрать день';
+}
+
 /// The flat map containing all translations for locale <ru>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -4846,6 +4887,10 @@ extension on TranslationsRu {
           'categories.how.2' =>
             'Категории видны в операциях, отчётах и регулярных платежах.',
           'debts.title' => 'Долги',
+          'debts.toMore' => 'Ещё',
+          'debts.close' => 'Закрыть',
+          'debts.done' => 'Готово',
+          'debts.foldClosed' => 'Показать закрытые',
           'debts.moreHint' => 'Кто кому должен и до какого дня',
           'debts.moreBoth' =>
             ({required Object owed, required Object mine}) =>
@@ -4941,6 +4986,7 @@ extension on TranslationsRu {
           'debts.form.dueBy' => 'Вернуть до',
           'debts.form.noDue' => 'Без срока',
           'debts.form.note' => 'Заметка',
+          'debts.form.noteHint' => 'Необязательно',
           'debts.form.remind' => 'Напомнить в срок',
           'debts.form.lendCaption' =>
             'Долг — не трата: деньги уйдут со счёта, но в расходы месяца не попадут.',
@@ -4954,6 +5000,16 @@ extension on TranslationsRu {
             ({required Object name, required Object amount}) =>
                 'Записали: ${name}, ${amount}',
           'debts.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+          'debts.form.moreTitle' =>
+            ({required Object name}) => 'Ещё в долг · ${name}',
+          'debts.form.borrowMoreTitle' =>
+            ({required Object name}) => 'Занять ещё · ${name}',
+          'debts.form.dueChoices.none' => 'Без срока',
+          'debts.form.dueChoices.week' => 'Через неделю',
+          'debts.form.dueChoices.twoWeeks' => 'Через две недели',
+          'debts.form.dueChoices.month' => 'Через месяц',
+          'debts.form.dueChoices.pick' => 'Выбрать день',
+          'debts.form.today' => 'Сегодня',
           'debts.form.editTitle' => 'Изменить долг',
           'debts.back.returnTitle' =>
             ({required Object name}) => 'Возврат · ${name}',
@@ -5140,6 +5196,9 @@ extension on TranslationsRu {
           'imports.dropTitle' => 'Перетащите выписку сюда',
           'imports.dropText' =>
             'Файл из интернет-банка за любой период. Birka узнает банк по колонкам и покажет, как прочитала каждую строку, прежде чем что-то записать.',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.choose' => 'Выбрать файл',
           'imports.reading' => 'Читаем файл…',
           'imports.kinds.0' => 'CSV',
@@ -5158,9 +5217,6 @@ extension on TranslationsRu {
           'imports.unreadable.empty' => 'В файле пусто.',
           'imports.unreadable.tooLarge' =>
             'Файл слишком большой. Возьмите выписку покороче, до 10 000 строк.',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.unreadable.incomplete' =>
             'Операции выписки не сходятся с её итогами, часть не прочиталась. Скачайте выписку заново.',
           'imports.howTitle' => 'Как это устроено',
@@ -6187,6 +6243,9 @@ extension on TranslationsRu {
                 '${date} · ${amount} · отметили платёж проведённым, копии не будет',
           'schedules.donePosted' =>
             ({required Object date}) => 'проведён сегодня · следующий ${date}',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.doneSkipped' =>
             ({required Object date}) => 'пропущен · следующий ${date}',
           'schedules.doneFound' =>
@@ -6202,9 +6261,6 @@ extension on TranslationsRu {
           'schedules.weekday.tue' => 'вт',
           'schedules.weekday.wed' => 'ср',
           'schedules.weekday.thu' => 'чт',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.weekday.fri' => 'пт',
           'schedules.weekday.sat' => 'сб',
           'schedules.weekday.sun' => 'вс',

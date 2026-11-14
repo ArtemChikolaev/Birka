@@ -130,7 +130,10 @@ enum BirkaGlyph {
   alert,
 
   /// A tag on a string, for a метка (ADR 0027).
-  tag
+  tag,
+
+  /// Two people, for the debts between them (ADR 0029).
+  people
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer
