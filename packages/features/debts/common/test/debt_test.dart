@@ -1,5 +1,6 @@
 import 'package:debts_common/debts_common.dart';
 import 'package:debts_common/testing.dart';
+import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:test/test.dart';
 
@@ -121,5 +122,28 @@ void main() {
     expect(debtOf('masha').isDue(boardToday), isFalse);
     expect(debtOf('masha').isDue(CivilDate(2026, 12, 2)), isTrue);
     expect(debtOf('ira').isDue(boardToday), isFalse);
+  });
+
+  test('a reminder says what is left and the day', () {
+    LocaleSettings.setLocaleSync(AppLocale.ru);
+    addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
+    final debts = debtsOf(
+      boardDebts(),
+      boardTransfers(),
+      accounts: {
+        for (final it in [...boardAccounts(), ...boardDebts()]) it.id: it,
+      },
+    );
+    final masha = debts.firstWhere((debt) => debt.id == 'masha');
+    final ira = debts.firstWhere((debt) => debt.id == 'ira');
+    expect(
+      debtRemindText(masha, today: boardToday),
+      'Привет! Напоминаю про ${nb('3 000 ₽')} — договаривались вернуть до '
+      '1 декабря.',
+    );
+    expect(
+      debtRemindText(ira, today: boardToday),
+      'Привет! Напоминаю про ${nb('0 ₽')}.',
+    );
   });
 }

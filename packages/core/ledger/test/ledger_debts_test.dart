@@ -295,6 +295,82 @@ void main() {
     });
   });
 
+  group('a person', () {
+    test('owns each debt, and their other debts take a new name', () async {
+      final personId = masha.personId!;
+      expect((await ledger.person(personId))!.name, 'Маша');
+      final borrowed = await ledger.addAccount(
+        name: 'не важно',
+        type: AccountType.debt,
+        openingBalance: rub(0),
+        debt: const DebtTerms(side: DebtSide.borrowed),
+        personId: personId,
+      );
+      expect(borrowed.name, 'Маша');
+      expect(borrowed.personId, personId);
+
+      final person = (await ledger.person(personId))!;
+      await ledger.updatePerson(
+        person.copyWith(
+          name: ' Маша К. ',
+          about: ' соседка ',
+          phone: () => ' +7 999 123-45-67 ',
+        ),
+      );
+      expect(
+        await ledger.person(personId),
+        Person(
+          id: personId,
+          name: 'Маша К.',
+          about: 'соседка',
+          phone: '+7 999 123-45-67',
+        ),
+      );
+      expect((await ledger.account(masha.id))!.name, 'Маша К.');
+      expect((await ledger.account(borrowed.id))!.name, 'Маша К.');
+
+      await ledger.updateAccount(masha.id, name: 'Мария');
+      expect((await ledger.person(personId))!.name, 'Мария');
+      expect((await ledger.account(borrowed.id))!.name, 'Мария');
+      expect((await ledger.account(cash.id))!.personId, isNull);
+    });
+
+    test('may share a name, and needs one', () async {
+      final neighbour = await ledger.addPerson(name: 'Иван', about: 'сосед');
+      final colleague = await ledger.addPerson(
+        name: 'Иван',
+        about: 'коллега',
+        phone: '  ',
+      );
+      expect(colleague.phone, isNull);
+      expect(
+        [for (final it in await ledger.watchPeople().first) it.about],
+        containsAll(['сосед', 'коллега']),
+      );
+      expect(neighbour.id, isNot(colleague.id));
+      expect(() => ledger.addPerson(name: '  '), throwsLedger());
+      expect(
+        () => ledger.addAccount(
+          name: 'Card',
+          type: AccountType.debit,
+          openingBalance: rub(0),
+          personId: neighbour.id,
+        ),
+        throwsLedger(),
+      );
+      expect(
+        () => ledger.addAccount(
+          name: 'Иван',
+          type: AccountType.debt,
+          openingBalance: rub(0),
+          debt: const DebtTerms(side: DebtSide.lent),
+          personId: 'nobody',
+        ),
+        throwsLedger(),
+      );
+    });
+  });
+
   group('a copy', () {
     test('keeps the terms of a debt', () async {
       await lend(500000, nov(3));
@@ -317,6 +393,32 @@ void main() {
       expect(read.debt, masha.debt!.copyWith(reminds: true));
       expect(read.includeInTotals, isFalse);
       expect(await restored.balance(masha.id), rub(500000));
+    });
+
+    test('keeps the people of the debts', () async {
+      final person = (await ledger.person(masha.personId!))!;
+      await ledger.updatePerson(
+        person.copyWith(about: 'соседка', phone: () => '+7 999 123-45-67'),
+      );
+      final copy = LedgerCopy.parse((await ledger.copy()).encode());
+
+      final other = BirkaDatabase(NativeDatabase.memory());
+      addTearDown(other.close);
+      final restored = LedgerRepository(other, now: () => now);
+      await restored.restore(copy);
+
+      expect(
+        await restored.person(person.id),
+        person.copyWith(about: 'соседка', phone: () => '+7 999 123-45-67'),
+      );
+      expect((await restored.account(masha.id))!.personId, person.id);
+    });
+
+    test('of an old version gives the debts of one name one person', () {
+      final copy = LedgerCopy.parse(ledgerCopyOf(version: 9));
+      expect(copy.personRows.single.id, 'debt');
+      expect(copy.personRows.single.name, 'Ира');
+      expect(copy.accountRows.single.personId, 'debt');
     });
 
     test('of an old version makes a debt of an account of that type', () {

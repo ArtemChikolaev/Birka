@@ -133,7 +133,10 @@ void main() {
       await settle();
 
       expect(form.state.status, DebtFormStatus.editing);
-      expect(form.state.people, ['Маша', 'Саша', 'Ира', 'Папа', 'Дима']);
+      expect(
+        [for (final person in form.state.chips) person.name],
+        ['Маша', 'Саша', 'Ира', 'Папа', 'Дима'],
+      );
       form
         ..nameChanged('Лена')
         ..accountChanged('cash')
@@ -174,7 +177,7 @@ void main() {
         addTearDown(form.close);
         await settle();
 
-        form.nameChanged('дима');
+        form.personPicked(form.state.chips.last);
         expect(form.state.match?.id, 'dima');
         expect(form.state.offered.map((row) => row.account.id), ['savings']);
         expect(form.state.accountId, 'savings');
@@ -233,9 +236,97 @@ void main() {
       addTearDown(form.close);
       await settle();
 
-      form.nameChanged('Дима');
+      form.personPicked(form.state.chips.last);
       expect(form.state.noAccount, isTrue);
       expect(form.state.canSave, isFalse);
+    });
+  });
+
+  group('the people', () {
+    // The person lent 500 ₽ to Иван, a neighbour, on 1 November.
+    FakeDebtsRepository neighbour() => FakeDebtsRepository(
+      debts: [
+        debtAccount('ivan', 'Иван', DebtSide.lent, personId: 'p-ivan'),
+      ],
+      people: [const Person(id: 'p-ivan', name: 'Иван', about: 'сосед')],
+      transfers: [
+        transfer('ivan-lent', 'card', 'ivan', rub(500), CivilDate(2026, 11, 1)),
+      ],
+    );
+
+    test('a chip picks the person, and a typed name is someone new', () async {
+      final form = DebtFormCubit(neighbour());
+      addTearDown(form.close);
+      await settle();
+
+      form.personPicked(form.state.chips.single);
+      expect(form.state.match?.id, 'ivan');
+      expect(form.state.about, 'сосед');
+      expect(form.state.twin, isNull);
+
+      form.nameChanged('Иван');
+      expect(form.state.personId, isNull);
+      expect(form.state.match, isNull);
+      expect(form.state.about, '');
+      expect(form.state.twin?.about, 'сосед');
+      expect(
+        debtTwinLine(form.state.twin!),
+        'Иван уже есть — сосед. Напишите, кто это, чтобы их различать.',
+      );
+    });
+
+    test('someone new keeps who they are and their number', () async {
+      final repository = neighbour();
+      final form = DebtFormCubit(repository);
+      addTearDown(form.close);
+      await settle();
+
+      form
+        ..nameChanged(' Иван ')
+        ..aboutChanged('коллега из бухгалтерии')
+        ..phoneChanged(' +7 999 123-45-67 ')
+        ..accountChanged('card')
+        ..amountChanged(200000);
+      await form.save();
+
+      final colleague = repository.people.last;
+      expect(colleague.name, 'Иван');
+      expect(colleague.about, 'коллега из бухгалтерии');
+      expect(colleague.phone, '+7 999 123-45-67');
+      expect(repository.debts.last.personId, colleague.id);
+      expect(repository.debts.first.personId, 'p-ivan');
+      expect(
+        [
+          for (final person in repository.people)
+            debtPersonLabel(person, repository.people),
+        ],
+        ['Иван · сосед', 'Иван · коллега из бухгалтерии'],
+      );
+    });
+
+    test('the terms change the person of every debt of theirs', () async {
+      final repository = neighbour();
+      final terms = DebtTermsCubit(repository, 'ivan');
+      addTearDown(terms.close);
+      await settle();
+
+      expect(terms.state.about, 'сосед');
+      terms
+        ..nameChanged('Ваня')
+        ..aboutChanged('сосед с 5 этажа')
+        ..phoneChanged('+7 999 765-43-21');
+      await terms.save();
+
+      expect(
+        repository.people.single,
+        const Person(
+          id: 'p-ivan',
+          name: 'Ваня',
+          about: 'сосед с 5 этажа',
+          phone: '+7 999 765-43-21',
+        ),
+      );
+      expect(repository.debts.single.name, 'Ваня');
     });
   });
 

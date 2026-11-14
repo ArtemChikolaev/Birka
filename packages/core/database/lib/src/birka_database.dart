@@ -21,6 +21,7 @@ part 'birka_database.g.dart';
     Notices,
     Tags,
     TransactionTags,
+    People,
   ],
 )
 class BirkaDatabase extends _$BirkaDatabase {
@@ -28,7 +29,7 @@ class BirkaDatabase extends _$BirkaDatabase {
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -110,6 +111,34 @@ class BirkaDatabase extends _$BirkaDatabase {
       from12To13: (m, schema) async {
         await m.addColumn(schema.notices, schema.notices.debtId);
         await m.createIndex(schema.noticesDebtDay);
+      },
+      from13To14: (m, schema) async {
+        await m.createTable(schema.people);
+        await m.addColumn(schema.accounts, schema.accounts.personId);
+        // Each debt gets its person: the debts of one name, whichever way
+        // the money went, share one, which takes the id of the first of them
+        // (ADR 0030). Dart folds the case, as SQLite folds only Latin.
+        final debts = await customSelect(
+          'SELECT id, name, created_at, updated_at FROM accounts '
+          "WHERE type = 'debt' ORDER BY created_at, id",
+        ).get();
+        final people = <String, String>{};
+        for (final debt in debts) {
+          final id = debt.read<String>('id');
+          final name = debt.read<String>('name').trim();
+          final person = people.putIfAbsent(name.toLowerCase(), () => id);
+          if (person == id) {
+            await customStatement(
+              'INSERT INTO people (id, created_at, updated_at, name, about) '
+              "VALUES (?, ?, ?, ?, '')",
+              [id, debt.data['created_at'], debt.data['updated_at'], name],
+            );
+          }
+          await customStatement(
+            'UPDATE accounts SET person_id = ? WHERE id = ?',
+            [person, id],
+          );
+        }
       },
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),

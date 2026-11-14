@@ -11,6 +11,9 @@ abstract interface class DebtsRepository {
   /// The debts that have anything to show, again after every change.
   Stream<List<Debt>> watchDebts();
 
+  /// The people of the debts by name, again after every change (ADR 0030).
+  Stream<List<Person>> watchPeople();
+
   /// The accounts of the person that money of a debt can go from or to, with
   /// what each holds: neither archived ones nor debts.
   Stream<List<AccountBalance>> watchAccounts();
@@ -25,11 +28,13 @@ abstract interface class DebtsRepository {
   /// The currency of the first account in the totals.
   Stream<Currency?> watchMainCurrency();
 
-  /// Moves [amount] between account [accountId] of the person and the debt
-  /// of [name] on [side]: out of the account when the person lends, into it
-  /// when they borrow. The debt of [debtId] takes it, or else the debt of
-  /// that name and side, or else a new one in the currency of [amount].
-  /// [terms] replace those of the debt when given. Gives the id of the debt.
+  /// Moves [amount] between account [accountId] of the person and a debt on
+  /// [side]: out of the account when the person lends, into it when they
+  /// borrow. The debt of [debtId] takes it, or else the debt of person
+  /// [personId] on that side in the currency of [amount], or else a new one.
+  /// Without [personId] a new person of [name], [about] and [phone] comes
+  /// with it: names may repeat (ADR 0030). [terms] replace those of the debt
+  /// when given. Gives the id of the debt.
   Future<String> open({
     required String name,
     required DebtSide side,
@@ -37,6 +42,9 @@ abstract interface class DebtsRepository {
     required Money amount,
     required CivilDate day,
     String? debtId,
+    String? personId,
+    String about = '',
+    String? phone,
     String note = '',
     DebtTerms? terms,
   });
@@ -51,10 +59,13 @@ abstract interface class DebtsRepository {
     required CivilDate day,
   });
 
-  /// Gives debt [debtId] the name [name] and the terms [terms].
+  /// Gives debt [debtId] the terms [terms], and its person the name [name],
+  /// who they are [about] and the [phone], which all their debts share.
   Future<void> update(
     String debtId, {
     required String name,
     required DebtTerms terms,
+    String about = '',
+    String? phone,
   });
 }

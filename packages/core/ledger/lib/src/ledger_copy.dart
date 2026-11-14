@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:database/database.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:ledger/src/account.dart';
 import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
@@ -84,6 +85,7 @@ final class LedgerCopy {
   @internal
   LedgerCopy.of({
     required DateTime madeAt,
+    required this.personRows,
     required this.importRows,
     required this.accountRows,
     required this.categoryRows,
@@ -129,14 +131,19 @@ final class LedgerCopy {
   /// category (ADR 0021), version 3 regular payments, version 4 what was done
   /// to their last times, version 5 their advances, version 6 the
   /// transactions they were made from, version 7 the amounts of advances of
-  /// their own (ADR 0023), version 8 метки and trips (ADR 0027), and version
-  /// 9 the terms of debts (ADR 0029).
-  static const version = 9;
+  /// their own (ADR 0023), version 8 метки and trips (ADR 0027), version 9
+  /// the terms of debts (ADR 0029), and version 10 the people of the debts
+  /// (ADR 0030).
+  static const version = 10;
 
   static const _format = 'birka-copy';
 
   /// When the copy was made.
   final DateTime madeAt;
+
+  /// The people of the debts, for the ledger to write back.
+  @internal
+  final List<PersonRow> personRows;
 
   /// The imports, for the ledger to write back.
   @internal
@@ -200,6 +207,15 @@ final class LedgerCopy {
       'format': _format,
       'version': version,
       'madeAt': _text(madeAt),
+      'people': [
+        for (final row in personRows)
+          {
+            ..._stamps(row.id, row.createdAt, row.updatedAt),
+            'name': row.name,
+            'about': row.about,
+            'phone': row.phone,
+          },
+      ],
       'imports': [
         for (final row in importRows)
           {
@@ -228,6 +244,7 @@ final class LedgerCopy {
             'debtSide': row.debtSide,
             'debtDueOn': row.debtDueOn,
             'debtReminds': row.debtReminds,
+            'personId': row.personId,
           },
       ],
       'categories': [
@@ -360,11 +377,41 @@ LedgerCopy _read(Map<String, Object?> json) {
     }
   }
 
+  final people = <String, PersonRow>{};
+  final listed = json['people'] == null
+      ? const <Object?>[]
+      : _list(json, 'people');
+  for (final item in listed) {
+    final row = _person(_object(item));
+    if (people.containsKey(row.id)) _damaged('Person ${row.id} twice');
+    people[row.id] = row;
+  }
   final accounts = <String, AccountRow>{};
+  // A debt of a copy before version 10 had no person: the debts of one name
+  // share one, which takes the id of the first of them (ADR 0030).
+  final byName = <String, String>{};
   for (final item in _list(json, 'accounts')) {
-    final row = _account(_object(item));
+    var row = _account(_object(item));
     if (accounts.containsKey(row.id)) _damaged('Account ${row.id} twice');
     checkImport(row.importId, 'Account ${row.id}');
+    final personId = row.personId;
+    if (personId != null && !people.containsKey(personId)) {
+      _damaged('Account ${row.id} belongs to no person $personId');
+    }
+    if (row.debtSide != null && personId == null) {
+      final name = row.name.trim();
+      final id = byName.putIfAbsent(name.toLowerCase(), () => row.id);
+      if (id == row.id) {
+        people[id] = PersonRow(
+          id: id,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt,
+          name: name,
+          about: '',
+        );
+      }
+      row = row.copyWith(personId: Value(id));
+    }
     accounts[row.id] = row;
   }
   final categories = <String, CategoryRow>{};
@@ -436,6 +483,7 @@ LedgerCopy _read(Map<String, Object?> json) {
   }
   return LedgerCopy.of(
     madeAt: _moment(json, 'madeAt'),
+    personRows: [...people.values],
     importRows: [...imports.values],
     accountRows: [...accounts.values],
     categoryRows: [
@@ -514,6 +562,10 @@ AccountRow _account(Map<String, Object?> json) {
     if (!debt) _damaged('Account $id of type $type has a day of a debt');
     _obeying('$dueOn is not a date', () => CivilDate.parse(dueOn));
   }
+  final personId = _field<String?>(json, 'personId');
+  if (personId != null && !debt) {
+    _damaged('Account $id of type $type belongs to a person');
+  }
   return AccountRow(
     id: id,
     createdAt: _moment(json, 'createdAt'),
@@ -533,6 +585,21 @@ AccountRow _account(Map<String, Object?> json) {
     debtSide: side,
     debtDueOn: dueOn,
     debtReminds: (_field<bool?>(json, 'debtReminds') ?? false) && debt,
+    personId: personId,
+  );
+}
+
+PersonRow _person(Map<String, Object?> json) {
+  final id = _id(json);
+  final name = _string(json, 'name').trim();
+  if (name.isEmpty) _damaged('Person $id has no name');
+  return PersonRow(
+    id: id,
+    createdAt: _moment(json, 'createdAt'),
+    updatedAt: _moment(json, 'updatedAt'),
+    name: name,
+    about: _field<String?>(json, 'about') ?? '',
+    phone: _field<String?>(json, 'phone'),
   );
 }
 

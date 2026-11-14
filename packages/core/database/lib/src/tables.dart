@@ -73,6 +73,24 @@ class Accounts extends Table with SyncedRow {
 
   /// Whether the phone reminds of a debt on [debtDueOn].
   BoolColumn get debtReminds => boolean().withDefault(const Constant(false))();
+
+  /// The person of a debt, and `null` on every account that is not a debt
+  /// (ADR 0030). The debts of one person, whichever way the money went,
+  /// point at the same one.
+  TextColumn get personId => text().nullable().references(People, #id)();
+}
+
+/// Someone the person lends to or borrows from (ADR 0030).
+@DataClassName('PersonRow')
+class People extends Table with SyncedRow {
+  /// The name Birka shows, which the debts of the person wear too.
+  TextColumn get name => text()();
+
+  /// Who they are, such as «коллега», to tell namesakes apart, or empty.
+  TextColumn get about => text().withDefault(const Constant(''))();
+
+  /// A number to write to, as the person typed it or the contact gave it.
+  TextColumn get phone => text().nullable()();
 }
 
 /// What money is spent on or earned from.

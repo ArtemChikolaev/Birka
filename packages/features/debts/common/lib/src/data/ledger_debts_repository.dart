@@ -38,6 +38,9 @@ final class LedgerDebtsRepository implements DebtsRepository {
   CivilDate today() => CivilDate.of(_now());
 
   @override
+  Stream<List<Person>> watchPeople() => _ledger.watchPeople();
+
+  @override
   Stream<List<Debt>> watchDebts() {
     late final StreamController<List<Debt>> controller;
     final subscriptions = <StreamSubscription<Object?>>[];
@@ -106,6 +109,9 @@ final class LedgerDebtsRepository implements DebtsRepository {
     required Money amount,
     required CivilDate day,
     String? debtId,
+    String? personId,
+    String about = '',
+    String? phone,
     String note = '',
     DebtTerms? terms,
   }) async {
@@ -123,23 +129,37 @@ final class LedgerDebtsRepository implements DebtsRepository {
         : debts
               .where(
                 (debt) =>
+                    personId != null &&
+                    debt.personId == personId &&
                     debt.debt?.side == side &&
-                    debt.currency == amount.currency &&
-                    _sameName(debt.name, named),
+                    debt.currency == amount.currency,
               )
               .firstOrNull;
     if (debtId != null && found == null) {
       throw LedgerException('No debt $debtId');
     }
+    // Another debt of the person keeps its art, so that one person wears
+    // one color.
+    final sibling = personId == null
+        ? null
+        : debts.where((debt) => debt.personId == personId).firstOrNull;
     return _ledger.atomically(() async {
       final String id;
       if (found == null) {
+        final person =
+            personId ??
+            (await _ledger.addPerson(
+              name: named,
+              about: about,
+              phone: phone,
+            )).id;
         final account = await _ledger.addAccount(
           name: named,
           type: AccountType.debt,
           openingBalance: Money.zero(amount.currency),
-          art: _arts[debts.length % _arts.length],
+          art: sibling?.art ?? _arts[debts.length % _arts.length],
           debt: kept ?? DebtTerms(side: side),
+          personId: person,
         );
         id = account.id;
       } else {
@@ -204,8 +224,14 @@ final class LedgerDebtsRepository implements DebtsRepository {
     String debtId, {
     required String name,
     required DebtTerms terms,
-  }) => _ledger.updateAccount(debtId, name: name.trim(), debt: terms);
-
-  static bool _sameName(String a, String b) =>
-      a.trim().toLowerCase() == b.trim().toLowerCase();
+    String about = '',
+    String? phone,
+  }) => _ledger.atomically(() async {
+    final personId = (await _ledger.account(debtId))?.personId;
+    if (personId == null) throw LedgerException('No debt $debtId');
+    await _ledger.updatePerson(
+      Person(id: personId, name: name, about: about, phone: phone),
+    );
+    await _ledger.updateAccount(debtId, debt: terms);
+  });
 }

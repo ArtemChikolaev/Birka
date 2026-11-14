@@ -31,3 +31,4 @@
 | [0027](0027-tags.md) | Метки and trips | accepted 2026-11-12 |
 | [0028](0028-ask.md) | «Спросить»: questions in words, answered on the device | accepted 2026-11-13 |
 | [0029](0029-debts.md) | Debts between people | accepted 2026-11-14 |
+| [0030](0030-people.md) | The people of the debts | accepted 2026-11-14 |

@@ -26,6 +26,8 @@
    whether the phone reminds of that day. Every other account has no terms,
    a debt keeps its type, and an account that a copy or an old database has
    of that type becomes a debt owed to the person.
+   The other person later became a record of their own, which the debt
+   points at ([ADR 0030](0030-people.md)).
 2. A debt never counts towards the capital: the money is not the person's
    now. The ledger keeps `includeInTotals` off on a debt, and the lists and
    pickers of accounts leave debts out unless they ask

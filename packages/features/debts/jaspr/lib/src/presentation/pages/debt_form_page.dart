@@ -112,15 +112,14 @@ class _DebtFormPageState extends State<DebtFormPage> {
               error: state.nameMissing ? form.nameMissing : null,
               onChanged: cubit.nameChanged,
             ),
-            if (state.people.isNotEmpty)
+            if (state.chips.isNotEmpty)
               div(classes: 'debt-form__people', [
-                for (final person in state.people)
+                for (final person in state.chips)
                   BirkaChip(
-                    key: ValueKey(person),
-                    label: person,
-                    selected:
-                        person.toLowerCase() == state.name.trim().toLowerCase(),
-                    onTap: () => cubit.nameChanged(person),
+                    key: ValueKey(person.id),
+                    label: debtPersonLabel(person, state.people),
+                    selected: state.personId == person.id,
+                    onTap: () => cubit.personPicked(person),
                   ),
               ]),
           ]),

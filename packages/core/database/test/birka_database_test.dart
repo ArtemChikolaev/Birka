@@ -13,6 +13,7 @@ void main() {
   test('creates every table of the schema', () async {
     expect(database.allTables.map((table) => table.actualTableName), [
       'imports',
+      'people',
       'accounts',
       'categories',
       'transactions',
@@ -29,6 +30,7 @@ void main() {
     await expectLater(database.select(database.entries).get(), completes);
     await expectLater(database.select(database.schedules).get(), completes);
     await expectLater(database.select(database.notices).get(), completes);
+    await expectLater(database.select(database.people).get(), completes);
     await expectLater(
       database.select(database.transactionTags).get(),
       completes,
