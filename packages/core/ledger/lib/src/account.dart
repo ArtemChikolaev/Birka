@@ -150,6 +150,7 @@ final class Account {
     this.lastDigits,
     this.art = AccountArt.emerald,
     this.debt,
+    this.personId,
   });
 
   /// The id.
@@ -183,6 +184,10 @@ final class Account {
   /// What a debt keeps besides its money, and `null` on every other account.
   /// An account of a debt is named after the person (ADR 0029).
   final DebtTerms? debt;
+
+  /// The person of a debt, whose name it wears (ADR 0030), and `null` on
+  /// every other account.
+  final String? personId;
 
   /// Whether the account is a debt between the person and someone else.
   bool get isDebt => type == AccountType.debt;

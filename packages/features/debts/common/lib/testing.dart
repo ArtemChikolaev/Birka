@@ -33,7 +33,7 @@ Account own(String id, String name, Currency currency) => Account(
   sortOrder: 0,
 );
 
-/// A debt with [name] on [side].
+/// A debt with [name] on [side], of person [personId] or `p-<id>`.
 Account debtAccount(
   String id,
   String name,
@@ -42,6 +42,7 @@ Account debtAccount(
   CivilDate? dueOn,
   bool reminds = false,
   AccountArt art = AccountArt.emerald,
+  String? personId,
 }) => Account(
   id: id,
   name: name,
@@ -52,7 +53,21 @@ Account debtAccount(
   sortOrder: 0,
   art: art,
   debt: DebtTerms(side: side, dueOn: dueOn, reminds: reminds),
+  personId: personId ?? 'p-$id',
 );
+
+/// The people of [debts]: one for each person they point at, by the name
+/// of the first debt.
+List<Person> peopleOf(List<Account> debts) {
+  final people = <String, Person>{};
+  for (final debt in debts) {
+    final id = debt.personId;
+    if (id != null) {
+      people.putIfAbsent(id, () => Person(id: id, name: debt.name));
+    }
+  }
+  return [...people.values];
+}
 
 /// A transfer of [amount] from [from] to [to] on [day].
 Transaction transfer(
@@ -159,6 +174,7 @@ final class FakeDebtsRepository implements DebtsRepository {
   FakeDebtsRepository({
     List<Account>? accounts,
     List<Account>? debts,
+    List<Person>? people,
     List<Transaction>? transfers,
     RateBook? rates,
     this.base,
@@ -166,12 +182,14 @@ final class FakeDebtsRepository implements DebtsRepository {
     this.failing = false,
   }) : _accounts = accounts ?? boardAccounts(),
        _debts = debts ?? boardDebts(),
+       _people = people ?? peopleOf(debts ?? boardDebts()),
        _transfers = transfers ?? boardTransfers(),
        _rates = rates ?? boardRates(),
        _today = today ?? boardToday;
 
   final List<Account> _accounts;
   final List<Account> _debts;
+  final List<Person> _people;
   final List<Transaction> _transfers;
   final RateBook _rates;
   final CivilDate _today;
@@ -187,6 +205,9 @@ final class FakeDebtsRepository implements DebtsRepository {
 
   /// The debts as the ledger holds them now, settled ones too.
   List<Account> get debts => List.unmodifiable(_debts);
+
+  /// The people of the debts as the ledger holds them now.
+  List<Person> get people => List.unmodifiable(_people);
 
   /// The transfers as the ledger holds them now.
   List<Transaction> get transfers => List.unmodifiable(_transfers);
@@ -216,6 +237,9 @@ final class FakeDebtsRepository implements DebtsRepository {
       for (final account in [..._accounts, ..._debts]) account.id: account,
     },
   );
+
+  @override
+  Stream<List<Person>> watchPeople() => _follow(() => [..._people]);
 
   @override
   Stream<List<Debt>> watchDebts() => _follow(_read);
@@ -255,25 +279,39 @@ final class FakeDebtsRepository implements DebtsRepository {
     required Money amount,
     required CivilDate day,
     String? debtId,
+    String? personId,
+    String about = '',
+    String? phone,
     String note = '',
     DebtTerms? terms,
   }) async {
     var index = _debts.indexWhere(
       (debt) => debtId != null
           ? debt.id == debtId
-          : debt.debt?.side == side &&
-                debt.currency == amount.currency &&
-                debt.name.toLowerCase() == name.trim().toLowerCase(),
+          : personId != null &&
+                debt.personId == personId &&
+                debt.debt?.side == side &&
+                debt.currency == amount.currency,
     );
     if (index < 0) {
+      final person =
+          _people.where((it) => it.id == personId).firstOrNull ??
+          Person(
+            id: 'person-${_next++}',
+            name: name.trim(),
+            about: about.trim(),
+            phone: phone,
+          );
+      if (!_people.contains(person)) _people.add(person);
       _debts.add(
         debtAccount(
           'debt-${_next++}',
-          name.trim(),
+          person.name,
           side,
           currency: amount.currency,
           dueOn: terms?.dueOn,
           reminds: terms?.reminds ?? false,
+          personId: person.id,
         ),
       );
       index = _debts.length - 1;
@@ -322,9 +360,25 @@ final class FakeDebtsRepository implements DebtsRepository {
     String debtId, {
     required String name,
     required DebtTerms terms,
+    String about = '',
+    String? phone,
   }) async {
     final index = _debts.indexWhere((debt) => debt.id == debtId);
-    _debts[index] = _withTerms(_debts[index], terms, name: name.trim());
+    final personId = _debts[index].personId;
+    final at = _people.indexWhere((it) => it.id == personId);
+    if (at >= 0) {
+      _people[at] = _people[at].copyWith(
+        name: name.trim(),
+        about: about.trim(),
+        phone: () => phone,
+      );
+    }
+    _debts[index] = _withTerms(_debts[index], terms);
+    for (var i = 0; i < _debts.length; i++) {
+      if (_debts[i].personId == personId) {
+        _debts[i] = _withTerms(_debts[i], _debts[i].debt!, name: name.trim());
+      }
+    }
     _changes.add(null);
   }
 
@@ -339,5 +393,6 @@ final class FakeDebtsRepository implements DebtsRepository {
         sortOrder: debt.sortOrder,
         art: debt.art,
         debt: terms,
+        personId: debt.personId,
       );
 }

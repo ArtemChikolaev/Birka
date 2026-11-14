@@ -12,6 +12,7 @@ import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v12.dart' as v12;
 import 'generated/schema_v13.dart' as v13;
+import 'generated/schema_v14.dart' as v14;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -668,4 +669,57 @@ void main() {
       },
     );
   });
+
+  test(
+    'every debt gets its person in v14, one for the debts of a name',
+    () async {
+      const at = '2026-11-14T12:00:00.000Z';
+      v13.AccountsCompanion account(String id, String name, {String? side}) =>
+          v13.AccountsCompanion.insert(
+            id: id,
+            createdAt: at,
+            updatedAt: at,
+            name: name,
+            type: side == null ? 'cash' : 'debt',
+            currency: 'RUB',
+            decimalDigits: 2,
+            debtSide: Value(side),
+          );
+      await verifier.testWithDataIntegrity(
+        oldVersion: 13,
+        newVersion: 14,
+        createOld: v13.DatabaseAtV13.new,
+        createNew: v14.DatabaseAtV14.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch.insertAll(old.accounts, [
+            account('cash', 'Наличные'),
+            account('masha', 'Маша', side: 'lent'),
+            account('masha-borrowed', ' маша ', side: 'borrowed'),
+            account('sasha', 'Саша', side: 'borrowed'),
+          ]);
+        },
+        validateItems: (migrated) async {
+          final people = {
+            for (final row in await migrated.select(migrated.people).get())
+              row.id: row,
+          };
+          expect(people.keys, unorderedEquals(['masha', 'sasha']));
+          expect(people['masha']!.name, 'Маша');
+          expect(people['masha']!.about, '');
+          expect(people['masha']!.phone, isNull);
+          final accounts = {
+            for (final row in await migrated.select(migrated.accounts).get())
+              row.id: row.personId,
+          };
+          expect(accounts, {
+            'cash': null,
+            'masha': 'masha',
+            'masha-borrowed': 'masha',
+            'sasha': 'sasha',
+          });
+        },
+      );
+    },
+  );
 }

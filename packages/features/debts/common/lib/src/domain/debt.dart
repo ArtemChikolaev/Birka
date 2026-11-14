@@ -193,6 +193,9 @@ final class Debt {
   /// The name of the other person.
   String get name => account.name;
 
+  /// The other person, whose debts all wear their name (ADR 0030).
+  String? get personId => account.personId;
+
   /// Who owes whom.
   DebtSide get side => account.debt?.side ?? DebtSide.lent;
 

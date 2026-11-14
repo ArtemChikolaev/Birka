@@ -225,3 +225,43 @@ String debtReturnTitle(Debt debt) => debt.side == DebtSide.lent
 /// The choice of all that is left: «Всё · 3 000 ₽».
 String debtReturnAll(Debt debt) =>
     t.debts.back.all(amount: debtAmount(debt.left));
+
+/// `Иван · сосед`: what the chip of [person] says among [people], with who
+/// they are when someone else has the same name (ADR 0030).
+String debtPersonLabel(Person person, Iterable<Person> people) {
+  final about = person.about.trim();
+  final key = person.name.trim().toLowerCase();
+  final namesake = people.any(
+    (other) => other.id != person.id && other.name.trim().toLowerCase() == key,
+  );
+  return namesake && about.isNotEmpty ? '${person.name} · $about' : person.name;
+}
+
+/// What the form says when someone new has the name of [twin], who is there
+/// already: to say who the new one is, or, where chips pick people and
+/// [picks], to pick the chip when it is the same person.
+String debtTwinLine(Person twin, {bool picks = false}) {
+  final words = t.debts.person;
+  final about = twin.about.trim();
+  if (about.isEmpty) {
+    return picks
+        ? words.twinPickPlain(name: twin.name)
+        : words.twinPlain(name: twin.name);
+  }
+  return picks
+      ? words.twinPick(name: twin.name, about: about)
+      : words.twin(name: twin.name, about: about);
+}
+
+/// The message that reminds the other person of [debt] on [today]: what is
+/// left and the day it should come back by.
+String debtRemindText(Debt debt, {required CivilDate today}) {
+  final amount = debtAmount(debt.left);
+  final due = debt.dueOn;
+  return due == null
+      ? t.debts.remind.textNoDue(amount: amount)
+      : t.debts.remind.text(
+          amount: amount,
+          day: debtDay(due, today: today),
+        );
+}

@@ -653,6 +653,10 @@ class Translations$debts$en {
 
   late final Translations$debts$move$en move =
       Translations$debts$move$en.internal(_root);
+  late final Translations$debts$person$en person =
+      Translations$debts$person$en.internal(_root);
+  late final Translations$debts$remind$en remind =
+      Translations$debts$remind$en.internal(_root);
 }
 
 // Path: demo
@@ -4874,6 +4878,48 @@ class Translations$debts$move$en {
   String get repaid => 'Repaid';
 }
 
+// Path: debts.person
+class Translations$debts$person$en {
+  Translations$debts$person$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: '$name is here already, $about. Say who this one is, to tell them apart.'
+  String twin({required Object name, required Object about}) =>
+      '${name} is here already, ${about}. Say who this one is, to tell them apart.';
+
+  /// en: '$name is here already. Say who this one is, to tell them apart.'
+  String twinPlain({required Object name}) =>
+      '${name} is here already. Say who this one is, to tell them apart.';
+
+  /// en: '$name is here already, $about. If it is the same person, pick them above; if not, say who this one is.'
+  String twinPick({required Object name, required Object about}) =>
+      '${name} is here already, ${about}. If it is the same person, pick them above; if not, say who this one is.';
+
+  /// en: '$name is here already. If it is the same person, pick them above; if not, say who this one is.'
+  String twinPickPlain({required Object name}) =>
+      '${name} is here already. If it is the same person, pick them above; if not, say who this one is.';
+}
+
+// Path: debts.remind
+class Translations$debts$remind$en {
+  Translations$debts$remind$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Hi! A reminder about $amount: we said it would come back by $day.'
+  String text({required Object amount, required Object day}) =>
+      'Hi! A reminder about ${amount}: we said it would come back by ${day}.';
+
+  /// en: 'Hi! A reminder about $amount.'
+  String textNoDue({required Object amount}) =>
+      'Hi! A reminder about ${amount}.';
+}
+
 // Path: demo.people
 class Translations$demo$people$en {
   Translations$demo$people$en.internal(this._root);
@@ -5919,6 +5965,23 @@ extension on Translations {
           'debts.move.returned' => 'Paid back',
           'debts.move.borrowed' => 'Borrowed',
           'debts.move.repaid' => 'Repaid',
+          'debts.person.twin' =>
+            ({required Object name, required Object about}) =>
+                '${name} is here already, ${about}. Say who this one is, to tell them apart.',
+          'debts.person.twinPlain' =>
+            ({required Object name}) =>
+                '${name} is here already. Say who this one is, to tell them apart.',
+          'debts.person.twinPick' =>
+            ({required Object name, required Object about}) =>
+                '${name} is here already, ${about}. If it is the same person, pick them above; if not, say who this one is.',
+          'debts.person.twinPickPlain' =>
+            ({required Object name}) =>
+                '${name} is here already. If it is the same person, pick them above; if not, say who this one is.',
+          'debts.remind.text' =>
+            ({required Object amount, required Object day}) =>
+                'Hi! A reminder about ${amount}: we said it would come back by ${day}.',
+          'debts.remind.textNoDue' =>
+            ({required Object amount}) => 'Hi! A reminder about ${amount}.',
           'demo.card' => 'Salary card',
           'demo.cash' => 'Cash',
           'demo.savings' => 'Savings',
@@ -6047,6 +6110,9 @@ extension on Translations {
           'imports.stepWhat.format' => 'whose statement it is',
           'imports.stepWhat.columns' => 'how to read the columns',
           'imports.stepWhat.account' => 'where it goes',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.stepWhat.copies' => 'what the ledger already has',
           'imports.stepWhat.done' => 'the result',
           'imports.stepsLabel' => 'Steps of the import',
@@ -6054,9 +6120,6 @@ extension on Translations {
           'imports.dropTitle' => 'Drop a statement here',
           'imports.dropText' =>
             'A file from your online bank for any period. Birka tells the bank by its columns and shows how it read every row before anything is written.',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.choose' => 'Choose a file',
           'imports.reading' => 'Reading the file…',
           'imports.kinds.0' => 'CSV',
@@ -6989,6 +7052,9 @@ extension on Translations {
           'schedules.section' =>
             ({required Object title, required Object count}) =>
                 '${title} · ${count}',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.all' => 'All regular payments',
           'schedules.emptyTitle' => 'No regular payments yet',
           'schedules.emptyText' =>
@@ -6998,9 +7064,6 @@ extension on Translations {
             ({required Object day}) => 'every month on day ${day}',
           'schedules.everyWeek' =>
             ({required Object weekday}) => 'every week, ${weekday}',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.everyYear' =>
             ({required Object date}) => 'once a year, ${date}',
           'schedules.asks' => 'ask',

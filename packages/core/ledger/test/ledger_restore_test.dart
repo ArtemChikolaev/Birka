@@ -289,6 +289,7 @@ void main() {
       // A subcategory before its parent breaks a foreign key on the way in.
       final broken = LedgerCopy.of(
         madeAt: copy.madeAt,
+        personRows: copy.personRows,
         importRows: copy.importRows,
         accountRows: copy.accountRows,
         categoryRows: copy.categoryRows.reversed.toList(),

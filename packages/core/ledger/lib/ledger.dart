@@ -14,6 +14,7 @@ export 'src/ledger_import.dart';
 export 'src/ledger_repository.dart';
 export 'src/ledger_totals.dart';
 export 'src/notice.dart';
+export 'src/person.dart';
 export 'src/schedule.dart';
 export 'src/tag.dart';
 export 'src/transaction.dart';

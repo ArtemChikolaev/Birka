@@ -29,6 +29,7 @@ final class DebtsState {
     required this.status,
     required this.today,
     this.debts = const [],
+    this.people = const [],
     this.base = Currency.rub,
     this.rates = const RateBook.empty(),
   });
@@ -41,6 +42,13 @@ final class DebtsState {
 
   /// Every debt that has anything to show.
   final List<Debt> debts;
+
+  /// The people of the debts (ADR 0030).
+  final List<Person> people;
+
+  /// The person of [debt], once the people are read.
+  Person? personOf(Debt debt) =>
+      people.where((person) => person.id == debt.personId).firstOrNull;
 
   /// The currency of the totals.
   final Currency base;
@@ -108,11 +116,18 @@ final class DebtsState {
       other.today == today &&
       other.base == base &&
       identical(other.rates, rates) &&
-      _same(other.debts, debts);
+      _same(other.debts, debts) &&
+      _same(other.people, people);
 
   @override
-  int get hashCode =>
-      Object.hash(status, today, base, rates, Object.hashAll(debts));
+  int get hashCode => Object.hash(
+    status,
+    today,
+    base,
+    rates,
+    Object.hashAll(debts),
+    Object.hashAll(people),
+  );
 }
 
 bool _same<T>(List<T> a, List<T> b) {
@@ -135,6 +150,10 @@ final class DebtsCubit extends Cubit<DebtsState> {
         _debts = debts;
         _update();
       }, onError: _failed),
+      _repository.watchPeople().listen((people) {
+        _people = people;
+        _update();
+      }, onError: (Object _) {}),
       _repository.watchRates().listen((rates) {
         _rates = rates;
         _update();
@@ -154,6 +173,7 @@ final class DebtsCubit extends Cubit<DebtsState> {
   final DebtsRepository _repository;
   final _subscriptions = <StreamSubscription<Object?>>[];
   List<Debt>? _debts;
+  List<Person> _people = const [];
   RateBook _rates = const RateBook.empty();
   Currency? _base;
   var _baseRead = false;
@@ -172,6 +192,7 @@ final class DebtsCubit extends Cubit<DebtsState> {
         status: DebtsStatus.ready,
         today: _repository.today(),
         debts: debts,
+        people: _people,
         base: _base ?? _main ?? Currency.rub,
         rates: _rates,
       ),

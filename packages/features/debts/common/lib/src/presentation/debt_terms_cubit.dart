@@ -25,7 +25,8 @@ enum DebtTermsStatus {
 }
 
 /// What the form that changes a debt holds: the name of the other person,
-/// the day it should come back by and the reminder of it (ADR 0029).
+/// who they are and their number (ADR 0030), the day it should come back by
+/// and the reminder of it (ADR 0029).
 @immutable
 final class DebtTermsState {
   /// Creates a state.
@@ -34,6 +35,8 @@ final class DebtTermsState {
     required this.today,
     this.debt,
     this.name = '',
+    this.about = '',
+    this.phone,
     this.dueOn,
     this.reminds = false,
     this.nameMissing = false,
@@ -51,6 +54,12 @@ final class DebtTermsState {
   /// The name of the other person.
   final String name;
 
+  /// Who the other person is, such as «коллега».
+  final String about;
+
+  /// Their number, or `null`.
+  final String? phone;
+
   /// The day the debt should come back by.
   final CivilDate? dueOn;
 
@@ -66,6 +75,8 @@ final class DebtTermsState {
     DebtTermsStatus? status,
     Debt? debt,
     String? name,
+    String? about,
+    String? Function()? phone,
     CivilDate? Function()? dueOn,
     bool? reminds,
     bool? nameMissing,
@@ -74,13 +85,15 @@ final class DebtTermsState {
     today: today,
     debt: debt ?? this.debt,
     name: name ?? this.name,
+    about: about ?? this.about,
+    phone: phone == null ? this.phone : phone(),
     dueOn: dueOn == null ? this.dueOn : dueOn(),
     reminds: reminds ?? this.reminds,
     nameMissing: nameMissing ?? this.nameMissing,
   );
 }
 
-/// Changes the name, the day and the reminder of debt [_id].
+/// Changes the other person of debt [_id], its day and the reminder of it.
 final class DebtTermsCubit extends Cubit<DebtTermsState> {
   /// Creates the form on [_repository].
   DebtTermsCubit(this._repository, this._id, {bool reminders = true})
@@ -104,16 +117,22 @@ final class DebtTermsCubit extends Cubit<DebtTermsState> {
   Future<void> _load() async {
     try {
       final debts = await _repository.watchDebts().first;
+      final people = await _repository.watchPeople().first;
       if (isClosed) return;
       final debt = debts.where((debt) => debt.id == _id).firstOrNull;
       if (debt == null) {
         return emit(state.copyWith(status: DebtTermsStatus.gone));
       }
+      final person = people
+          .where((person) => person.id == debt.personId)
+          .firstOrNull;
       emit(
         state.copyWith(
           status: DebtTermsStatus.editing,
           debt: debt,
           name: debt.name,
+          about: person?.about,
+          phone: () => person?.phone,
           dueOn: () => debt.dueOn,
           reminds: debt.reminds,
         ),
@@ -126,6 +145,15 @@ final class DebtTermsCubit extends Cubit<DebtTermsState> {
   /// The person typed [name].
   void nameChanged(String name) =>
       emit(state.copyWith(name: name, nameMissing: false));
+
+  /// The person typed who the other one is.
+  void aboutChanged(String about) => emit(state.copyWith(about: about));
+
+  /// The person typed the number, or took it from a contact.
+  void phoneChanged(String? phone) {
+    final typed = phone?.trim() ?? '';
+    emit(state.copyWith(phone: () => typed.isEmpty ? null : typed));
+  }
 
   /// The person picked the day the debt should come back by, or none. A day
   /// turns the reminder on at first.
@@ -153,6 +181,8 @@ final class DebtTermsCubit extends Cubit<DebtTermsState> {
       await _repository.update(
         debt.id,
         name: form.name,
+        about: form.about,
+        phone: form.phone,
         terms: DebtTerms(
           side: debt.side,
           dueOn: form.dueOn,

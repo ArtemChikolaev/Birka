@@ -119,3 +119,11 @@ move:
   returned: Paid back
   borrowed: Borrowed
   repaid: Repaid
+person:
+  twin: "$name is here already, $about. Say who this one is, to tell them apart."
+  twinPlain: "$name is here already. Say who this one is, to tell them apart."
+  twinPick: "$name is here already, $about. If it is the same person, pick them above; if not, say who this one is."
+  twinPickPlain: "$name is here already. If it is the same person, pick them above; if not, say who this one is."
+remind:
+  text: "Hi! A reminder about $amount: we said it would come back by $day."
+  textNoDue: "Hi! A reminder about $amount."

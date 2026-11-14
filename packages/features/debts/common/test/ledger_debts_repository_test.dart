@@ -75,8 +75,8 @@ void main() {
     expect(debts.single.steps.single.note, 'на билеты');
   });
 
-  test('more money on a person goes to the debt of that name and side, and '
-      'a return settles it', () async {
+  test('more money on a person goes to their debt on that side, and a '
+      'return settles it', () async {
     final id = await repository.open(
       name: 'Маша',
       side: DebtSide.lent,
@@ -84,12 +84,14 @@ void main() {
       amount: rub(5000),
       day: nov(3),
     );
+    final personId = (await ledger.account(id))!.personId;
     final again = await repository.open(
-      name: 'маша',
+      name: 'Маша',
       side: DebtSide.lent,
       accountId: card.id,
       amount: rub(1000),
       day: nov(5),
+      personId: personId,
       terms: const DebtTerms(side: DebtSide.lent),
     );
     expect(again, id);

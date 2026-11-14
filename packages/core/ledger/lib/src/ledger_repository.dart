@@ -9,6 +9,7 @@ import 'package:ledger/src/ledger_ids.dart';
 import 'package:ledger/src/ledger_import.dart';
 import 'package:ledger/src/ledger_totals.dart';
 import 'package:ledger/src/notice.dart';
+import 'package:ledger/src/person.dart';
 import 'package:ledger/src/schedule.dart';
 import 'package:ledger/src/tag.dart';
 import 'package:ledger/src/transaction.dart';
@@ -39,7 +40,8 @@ final class LedgerRepository {
   ///
   /// A debt needs its [debt] terms, and no other account has them. A debt
   /// never counts towards the capital: the money is not the person's now
-  /// (ADR 0029).
+  /// (ADR 0029). A debt belongs to person [personId] and wears their name,
+  /// or else to a new person of [name] (ADR 0030).
   Future<Account> addAccount({
     required String name,
     required AccountType type,
@@ -50,6 +52,7 @@ final class LedgerRepository {
     int? sortOrder,
     String? importId,
     DebtTerms? debt,
+    String? personId,
   }) {
     if ((type == AccountType.debt) != (debt != null)) {
       throw LedgerException(
@@ -58,9 +61,25 @@ final class LedgerRepository {
             : 'Account $name of type ${type.name} cannot have debt terms',
       );
     }
+    if (personId != null && debt == null) {
+      throw LedgerException('Account $name cannot belong to a person');
+    }
     return _db.transaction(() async {
       final id = _newId();
       final at = _timestamp();
+      final PersonRow? person;
+      if (debt == null) {
+        person = null;
+      } else if (personId == null) {
+        person = await _insertPerson(name: name, at: at);
+      } else {
+        person =
+            await (_db.select(_db.people)..where(
+                  (row) => row.id.equals(personId) & row.deletedAt.isNull(),
+                ))
+                .getSingleOrNull() ??
+            (throw LedgerException('No person $personId'));
+      }
       final last = _db.accounts.sortOrder.max();
       final position =
           sortOrder ??
@@ -76,7 +95,7 @@ final class LedgerRepository {
               id: id,
               createdAt: at,
               updatedAt: at,
-              name: name,
+              name: person?.name ?? name,
               type: type.name,
               currency: openingBalance.currency.code,
               decimalDigits: openingBalance.currency.decimalDigits,
@@ -89,6 +108,7 @@ final class LedgerRepository {
               debtSide: Value(debt?.side.name),
               debtDueOn: Value(debt?.dueOn?.toString()),
               debtReminds: Value(debt?.reminds ?? false),
+              personId: Value(person?.id),
             ),
           );
       await _log(_db.accounts, id, 'insert', at);
@@ -101,7 +121,8 @@ final class LedgerRepository {
   ///
   /// [debt] puts new terms on a debt. A debt stays a debt and another
   /// account never becomes one, and a debt never counts towards the capital
-  /// (ADR 0029).
+  /// (ADR 0029). The [name] of a debt is the name of its person: their other
+  /// debts take it too (ADR 0030).
   Future<void> updateAccount(
     String id, {
     String? name,
@@ -120,7 +141,8 @@ final class LedgerRepository {
           openingBalance != null ||
           type != null ||
           debt != null ||
-          includeInTotals != null;
+          includeInTotals != null ||
+          name != null;
       final account = checks ? await this.account(id) : null;
       if (account != null) {
         if (openingBalance != null &&
@@ -168,8 +190,141 @@ final class LedgerRepository {
           );
       if (updated == 0) throw LedgerException('No account $id');
       await _log(_db.accounts, id, 'update', at);
+      final personId = account?.personId;
+      if (name != null && personId != null) {
+        await _renamePerson(personId, name, at);
+      }
     });
   }
+
+  /// The people of the debts by name, again after every change (ADR 0030).
+  Stream<List<Person>> watchPeople() {
+    final query = _db.select(_db.people)
+      ..where((row) => row.deletedAt.isNull())
+      ..orderBy([
+        (row) => OrderingTerm(expression: row.name),
+        (row) => OrderingTerm(expression: row.id),
+      ]);
+    return query.watch().map((rows) => rows.map(_personOf).toList());
+  }
+
+  /// Person [id], if they exist.
+  Future<Person?> person(String id) async {
+    final row =
+        await (_db.select(_db.people)
+              ..where((row) => row.id.equals(id) & row.deletedAt.isNull()))
+            .getSingleOrNull();
+    return row == null ? null : _personOf(row);
+  }
+
+  /// Adds a person by [name], with who they are [about] and their [phone]
+  /// (ADR 0030). Names may repeat: [about] tells namesakes apart.
+  Future<Person> addPerson({
+    required String name,
+    String about = '',
+    String? phone,
+  }) => _db.transaction(
+    () async => _personOf(
+      await _insertPerson(
+        name: name,
+        about: about,
+        phone: phone,
+        at: _timestamp(),
+      ),
+    ),
+  );
+
+  /// Puts [person] in place of the one with its id. Their debts take the new
+  /// name.
+  Future<void> updatePerson(Person person) {
+    return _db.transaction(() async {
+      final at = _timestamp();
+      final updated =
+          await (_db.update(_db.people)..where(
+                (row) => row.id.equals(person.id) & row.deletedAt.isNull(),
+              ))
+              .write(
+                PeopleCompanion(
+                  updatedAt: Value(at),
+                  about: Value(person.about.trim()),
+                  phone: Value(_phoneOf(person.phone)),
+                ),
+              );
+      if (updated == 0) throw LedgerException('No person ${person.id}');
+      await _log(_db.people, person.id, 'update', at);
+      await _renamePerson(person.id, person.name, at);
+    });
+  }
+
+  /// A new row of a person by [name], written and logged.
+  Future<PersonRow> _insertPerson({
+    required String name,
+    required DateTime at,
+    String about = '',
+    String? phone,
+  }) async {
+    final row = await _db
+        .into(_db.people)
+        .insertReturning(
+          PeopleCompanion.insert(
+            id: _newId(),
+            createdAt: at,
+            updatedAt: at,
+            name: _personName(name),
+            about: Value(about.trim()),
+            phone: Value(_phoneOf(phone)),
+          ),
+        );
+    await _log(_db.people, row.id, 'insert', at);
+    return row;
+  }
+
+  /// Gives person [id] and every debt of theirs the name [name].
+  Future<void> _renamePerson(String id, String name, DateTime at) async {
+    final named = _personName(name);
+    final person =
+        await (_db.select(_db.people)
+              ..where((row) => row.id.equals(id) & row.deletedAt.isNull()))
+            .getSingleOrNull();
+    if (person == null) throw LedgerException('No person $id');
+    if (person.name != named) {
+      await (_db.update(_db.people)..where((row) => row.id.equals(id))).write(
+        PeopleCompanion(updatedAt: Value(at), name: Value(named)),
+      );
+      await _log(_db.people, id, 'update', at);
+    }
+    final renamed =
+        await (_db.update(_db.accounts)..where(
+              (row) =>
+                  row.personId.equals(id) &
+                  row.deletedAt.isNull() &
+                  row.name.equals(named).not(),
+            ))
+            .writeReturning(
+              AccountsCompanion(updatedAt: Value(at), name: Value(named)),
+            );
+    for (final account in renamed) {
+      await _log(_db.accounts, account.id, 'update', at);
+    }
+  }
+
+  static String _personName(String name) {
+    final named = name.trim();
+    if (named.isEmpty) throw const LedgerException('A person needs a name');
+    return named;
+  }
+
+  static String? _phoneOf(String? phone) {
+    final typed = phone?.trim() ?? '';
+    return typed.isEmpty ? null : typed;
+  }
+
+  Person _personOf(PersonRow row) => Person(
+    id: row.id,
+    name: row.name,
+    about: row.about,
+    phone: row.phone,
+  );
 
   /// The account [id], if it exists.
   Future<Account?> account(String id) async {
@@ -317,6 +472,14 @@ final class LedgerRepository {
         ..where(_db.tags.deletedAt.isNull());
       return LedgerCopy.of(
         madeAt: _timestamp(),
+        personRows:
+            await (_db.select(_db.people)
+                  ..where((row) => row.deletedAt.isNull())
+                  ..orderBy([
+                    (row) => OrderingTerm(expression: row.createdAt),
+                    (row) => OrderingTerm(expression: row.id),
+                  ]))
+                .get(),
         importRows:
             await (_db.select(_db.imports)
                   ..where((row) => row.deletedAt.isNull())
@@ -429,6 +592,7 @@ final class LedgerRepository {
       final at = _timestamp();
       final written = <(TableInfo<Table, Object?>, Iterable<String>)>[
         (_db.imports, copy.importRows.map((row) => row.id)),
+        (_db.people, copy.personRows.map((row) => row.id)),
         (_db.accounts, copy.accountRows.map((row) => row.id)),
         (_db.categories, copy.categoryRows.map((row) => row.id)),
         (_db.transactions, copy.transactionRows.map((row) => row.id)),
@@ -441,6 +605,7 @@ final class LedgerRepository {
       await _db.batch((batch) {
         batch
           ..insertAll(_db.imports, copy.importRows)
+          ..insertAll(_db.people, copy.personRows)
           ..insertAll(_db.accounts, copy.accountRows)
           ..insertAll(_db.categories, copy.categoryRows)
           ..insertAll(_db.transactions, copy.transactionRows)
@@ -481,6 +646,7 @@ final class LedgerRepository {
       _db.transactions,
       _db.categories,
       _db.accounts,
+      _db.people,
       _db.imports,
       _db.changes,
     ]) {
@@ -2795,6 +2961,7 @@ final class LedgerRepository {
       ),
       null => null,
     },
+    personId: row.personId,
   );
 
   Category _categoryOf(CategoryRow row) => Category(

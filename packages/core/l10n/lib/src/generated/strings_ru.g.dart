@@ -606,6 +606,12 @@ class _Translations$debts$ru extends Translations$debts$en {
   late final _Translations$debts$move$ru move = _Translations$debts$move$ru._(
     _root,
   );
+  @override
+  late final _Translations$debts$person$ru person =
+      _Translations$debts$person$ru._(_root);
+  @override
+  late final _Translations$debts$remind$ru remind =
+      _Translations$debts$remind$ru._(_root);
 }
 
 // Path: demo
@@ -4120,6 +4126,46 @@ class _Translations$debts$move$ru extends Translations$debts$move$en {
   String get repaid => 'Отдали';
 }
 
+// Path: debts.person
+class _Translations$debts$person$ru extends Translations$debts$person$en {
+  _Translations$debts$person$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String twin({required Object name, required Object about}) =>
+      '${name} уже есть — ${about}. Напишите, кто это, чтобы их различать.';
+  @override
+  String twinPlain({required Object name}) =>
+      '${name} уже есть. Напишите, кто это, чтобы их различать.';
+  @override
+  String twinPick({required Object name, required Object about}) =>
+      '${name} уже есть — ${about}. Если это тот же человек, выберите его выше; если другой — напишите, кто это.';
+  @override
+  String twinPickPlain({required Object name}) =>
+      '${name} уже есть. Если это тот же человек, выберите его выше; если другой — напишите, кто это.';
+}
+
+// Path: debts.remind
+class _Translations$debts$remind$ru extends Translations$debts$remind$en {
+  _Translations$debts$remind$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String text({required Object amount, required Object day}) =>
+      'Привет! Напоминаю про ${amount} — договаривались вернуть до ${day}.';
+  @override
+  String textNoDue({required Object amount}) =>
+      'Привет! Напоминаю про ${amount}.';
+}
+
 // Path: demo.people
 class _Translations$demo$people$ru extends Translations$demo$people$en {
   _Translations$demo$people$ru._(TranslationsRu root)
@@ -5141,6 +5187,23 @@ extension on TranslationsRu {
           'debts.move.returned' => 'Возврат',
           'debts.move.borrowed' => 'Заняли',
           'debts.move.repaid' => 'Отдали',
+          'debts.person.twin' =>
+            ({required Object name, required Object about}) =>
+                '${name} уже есть — ${about}. Напишите, кто это, чтобы их различать.',
+          'debts.person.twinPlain' =>
+            ({required Object name}) =>
+                '${name} уже есть. Напишите, кто это, чтобы их различать.',
+          'debts.person.twinPick' =>
+            ({required Object name, required Object about}) =>
+                '${name} уже есть — ${about}. Если это тот же человек, выберите его выше; если другой — напишите, кто это.',
+          'debts.person.twinPickPlain' =>
+            ({required Object name}) =>
+                '${name} уже есть. Если это тот же человек, выберите его выше; если другой — напишите, кто это.',
+          'debts.remind.text' =>
+            ({required Object amount, required Object day}) =>
+                'Привет! Напоминаю про ${amount} — договаривались вернуть до ${day}.',
+          'debts.remind.textNoDue' =>
+            ({required Object amount}) => 'Привет! Напоминаю про ${amount}.',
           'demo.card' => 'Зарплатная карта',
           'demo.cash' => 'Наличные',
           'demo.savings' => 'Накопления',
@@ -5270,6 +5333,9 @@ extension on TranslationsRu {
           'imports.stepWhat.format' => 'чья это выписка',
           'imports.stepWhat.columns' => 'как прочитать колонки',
           'imports.stepWhat.account' => 'куда записать',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.stepWhat.copies' => 'что уже есть в учёте',
           'imports.stepWhat.done' => 'итог',
           'imports.stepsLabel' => 'Шаги импорта',
@@ -5277,9 +5343,6 @@ extension on TranslationsRu {
           'imports.dropTitle' => 'Перетащите выписку сюда',
           'imports.dropText' =>
             'Файл из интернет-банка за любой период. Birka узнает банк по колонкам и покажет, как прочитала каждую строку, прежде чем что-то записать.',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.choose' => 'Выбрать файл',
           'imports.reading' => 'Читаем файл…',
           'imports.kinds.0' => 'CSV',
@@ -6313,6 +6376,9 @@ extension on TranslationsRu {
           'schedules.section' =>
             ({required Object title, required Object count}) =>
                 '${title} · ${count}',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.all' => 'Все регулярные',
           'schedules.emptyTitle' => 'Регулярных платежей пока нет',
           'schedules.emptyText' =>
@@ -6322,9 +6388,6 @@ extension on TranslationsRu {
             ({required Object day}) => 'каждый месяц ${day}-го',
           'schedules.everyWeek' =>
             ({required Object weekday}) => 'каждую неделю, ${weekday}',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.everyYear' =>
             ({required Object date}) => 'раз в год, ${date}',
           'schedules.asks' => 'спросить',

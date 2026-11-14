@@ -65,6 +65,7 @@ class _Form extends StatelessWidget {
     final amount = state.amount;
     final account = state.account;
     final due = state.dueOn;
+    final twin = state.twin;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -122,6 +123,26 @@ class _Form extends StatelessWidget {
                       style: styles.caption.copyWith(color: colors.negative),
                     ),
                   ],
+                  // A namesake of someone there waits for who they are.
+                  AnimatedColumn(
+                    children: [
+                      if (twin != null)
+                        Padding(
+                          key: const ValueKey('twin'),
+                          padding: const EdgeInsets.only(
+                            top: BirkaTokens.spaceXs,
+                          ),
+                          child: Text(
+                            debtTwinLine(twin, picks: true),
+                            style: styles.caption.copyWith(
+                              color: const Color(
+                                BirkaTokens.colorPaletteAmber,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: BirkaTokens.spaceLg),
                 ],
                 GlassListGroup(
@@ -307,8 +328,8 @@ class _Form extends StatelessWidget {
   }
 }
 
-/// The people of the debts as chips, and one more for someone else, whose
-/// name the person types.
+/// The people of the debts as chips, and one more for someone new, whose
+/// name the person types (ADR 0030). A chip of a namesake says who they are.
 class _People extends StatelessWidget {
   const _People({required this.state});
 
@@ -317,22 +338,18 @@ class _People extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<DebtFormCubit>();
-    final people = state.people;
     final typed = state.name.trim();
-    final other =
-        typed.isNotEmpty &&
-        !people.any((name) => name.toLowerCase() == typed.toLowerCase());
-    bool picked(String name) => name.toLowerCase() == typed.toLowerCase();
+    final other = typed.isNotEmpty && state.personId == null;
     return Wrap(
       spacing: BirkaTokens.spaceXs,
       runSpacing: BirkaTokens.spaceXs,
       children: [
-        for (final name in people)
+        for (final person in state.chips)
           BirkaChip(
-            key: ValueKey('person-$name'),
-            label: name,
-            selected: picked(name),
-            onTap: () => cubit.nameChanged(name),
+            key: ValueKey('person-${person.id}'),
+            label: debtPersonLabel(person, state.people),
+            selected: state.personId == person.id,
+            onTap: () => cubit.personPicked(person),
           ),
         if (other)
           BirkaChip(
@@ -356,15 +373,12 @@ class _People extends StatelessWidget {
   Future<void> _name(BuildContext context) async {
     final cubit = context.read<DebtFormCubit>();
     final typed = state.name.trim();
-    final known = state.people.any(
-      (name) => name.toLowerCase() == typed.toLowerCase(),
-    );
     final name = await showFieldSheet(
       context,
       label: t.debts.form.name,
       hint: t.debts.form.nameHint,
       done: t.debts.done,
-      initial: known ? '' : typed,
+      initial: state.personId == null ? typed : '',
     );
     if (name != null && name.trim().isNotEmpty) cubit.nameChanged(name);
   }
