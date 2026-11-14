@@ -4136,6 +4136,37 @@ class _Translations$debts$person$ru extends Translations$debts$person$en {
 
   // Translations
   @override
+  String get newTitle => 'Новый человек';
+  @override
+  String get fromContacts => 'Выбрать из контактов';
+  @override
+  String get fromContactsNote => 'Имя и номер подставятся сами';
+  @override
+  String get about => 'Кто это';
+  @override
+  String get aboutHint => 'Необязательно · коллега, сосед';
+  @override
+  String get phone => 'Телефон';
+  @override
+  String get optional => 'Необязательно';
+  @override
+  String get number => 'Номер';
+  @override
+  String get noNumber => 'Без номера';
+  @override
+  String get noNumberNote => 'Напомнить можно будет через другое приложение';
+  @override
+  String get hint =>
+      'Имя видно в списке и в напоминаниях. «Кто это» поможет различить тёзок.';
+  @override
+  String fromContact({required Object contact}) =>
+      'Из контактов: ${contact}. Birka взяла только этот контакт, а номер хранит на этом телефоне.';
+  @override
+  String get contactsRow => 'Взять номер из контактов';
+  @override
+  String get shared =>
+      'Имя, «кто это» и номер — общие для всех долгов этого человека. Номер хранится только на этом телефоне и в ваших копиях.';
+  @override
   String twin({required Object name, required Object about}) =>
       '${name} уже есть — ${about}. Напишите, кто это, чтобы их различать.';
   @override
@@ -4158,6 +4189,26 @@ class _Translations$debts$remind$ru extends Translations$debts$remind$en {
   final TranslationsRu _root; // ignore: unused_field
 
   // Translations
+  @override
+  String get action => 'Напомнить';
+  @override
+  String get title => 'Напомнить';
+  @override
+  String get message => 'Сообщение';
+  @override
+  String get sms => 'Отправить SMS';
+  @override
+  String get otherApp => 'Другое приложение';
+  @override
+  String get share => 'Поделиться';
+  @override
+  String get caption =>
+      'Birka только откроет сообщение, а отправите его вы. Текст можно поправить.';
+  @override
+  String get captionShare =>
+      'Birka откроет окно «Поделиться»: выберите, где написать. Текст можно поправить.';
+  @override
+  String get noPhone => 'Номера нет · добавьте в «Изменить»';
   @override
   String text({required Object amount, required Object day}) =>
       'Привет! Напоминаю про ${amount} — договаривались вернуть до ${day}.';
@@ -5187,6 +5238,25 @@ extension on TranslationsRu {
           'debts.move.returned' => 'Возврат',
           'debts.move.borrowed' => 'Заняли',
           'debts.move.repaid' => 'Отдали',
+          'debts.person.newTitle' => 'Новый человек',
+          'debts.person.fromContacts' => 'Выбрать из контактов',
+          'debts.person.fromContactsNote' => 'Имя и номер подставятся сами',
+          'debts.person.about' => 'Кто это',
+          'debts.person.aboutHint' => 'Необязательно · коллега, сосед',
+          'debts.person.phone' => 'Телефон',
+          'debts.person.optional' => 'Необязательно',
+          'debts.person.number' => 'Номер',
+          'debts.person.noNumber' => 'Без номера',
+          'debts.person.noNumberNote' =>
+            'Напомнить можно будет через другое приложение',
+          'debts.person.hint' =>
+            'Имя видно в списке и в напоминаниях. «Кто это» поможет различить тёзок.',
+          'debts.person.fromContact' =>
+            ({required Object contact}) =>
+                'Из контактов: ${contact}. Birka взяла только этот контакт, а номер хранит на этом телефоне.',
+          'debts.person.contactsRow' => 'Взять номер из контактов',
+          'debts.person.shared' =>
+            'Имя, «кто это» и номер — общие для всех долгов этого человека. Номер хранится только на этом телефоне и в ваших копиях.',
           'debts.person.twin' =>
             ({required Object name, required Object about}) =>
                 '${name} уже есть — ${about}. Напишите, кто это, чтобы их различать.',
@@ -5199,6 +5269,17 @@ extension on TranslationsRu {
           'debts.person.twinPickPlain' =>
             ({required Object name}) =>
                 '${name} уже есть. Если это тот же человек, выберите его выше; если другой — напишите, кто это.',
+          'debts.remind.action' => 'Напомнить',
+          'debts.remind.title' => 'Напомнить',
+          'debts.remind.message' => 'Сообщение',
+          'debts.remind.sms' => 'Отправить SMS',
+          'debts.remind.otherApp' => 'Другое приложение',
+          'debts.remind.share' => 'Поделиться',
+          'debts.remind.caption' =>
+            'Birka только откроет сообщение, а отправите его вы. Текст можно поправить.',
+          'debts.remind.captionShare' =>
+            'Birka откроет окно «Поделиться»: выберите, где написать. Текст можно поправить.',
+          'debts.remind.noPhone' => 'Номера нет · добавьте в «Изменить»',
           'debts.remind.text' =>
             ({required Object amount, required Object day}) =>
                 'Привет! Напоминаю про ${amount} — договаривались вернуть до ${day}.',
@@ -5305,6 +5386,9 @@ extension on TranslationsRu {
           'imports.account' => 'Счёт из выписки',
           'imports.formats.alfa' => 'Альфа-Банк',
           'imports.formats.tbank' => 'Т-Банк',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.formats.sber' => 'Сбербанк',
           'imports.formats.zenmoney' => 'Дзен-мани',
           'imports.formats.wise' => 'Wise',
@@ -5333,9 +5417,6 @@ extension on TranslationsRu {
           'imports.stepWhat.format' => 'чья это выписка',
           'imports.stepWhat.columns' => 'как прочитать колонки',
           'imports.stepWhat.account' => 'куда записать',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.stepWhat.copies' => 'что уже есть в учёте',
           'imports.stepWhat.done' => 'итог',
           'imports.stepsLabel' => 'Шаги импорта',
@@ -6339,6 +6420,9 @@ extension on TranslationsRu {
           'reports.monthReport.2' => 'Отчёт за март',
           'reports.monthReport.3' => 'Отчёт за апрель',
           'reports.monthReport.4' => 'Отчёт за май',
+          _ => null,
+        } ??
+        switch (path) {
           'reports.monthReport.5' => 'Отчёт за июнь',
           'reports.monthReport.6' => 'Отчёт за июль',
           'reports.monthReport.7' => 'Отчёт за август',
@@ -6376,9 +6460,6 @@ extension on TranslationsRu {
           'schedules.section' =>
             ({required Object title, required Object count}) =>
                 '${title} · ${count}',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.all' => 'Все регулярные',
           'schedules.emptyTitle' => 'Регулярных платежей пока нет',
           'schedules.emptyText' =>

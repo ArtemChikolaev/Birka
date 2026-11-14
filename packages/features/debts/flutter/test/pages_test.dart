@@ -154,7 +154,8 @@ void main() {
 
       await tester.tap(find.text('Другой'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'Лена');
+      await tester.enterText(find.byType(TextField).first, 'Лена');
+      await tester.pump();
       await tester.tap(find.text('ГОТОВО'));
       await tester.pumpAndSettle();
 
@@ -254,6 +255,212 @@ void main() {
         repository.debts.firstWhere((debt) => debt.id == 'sasha').name,
         'Саша Н.',
       );
+    });
+  });
+
+  group('the people', () {
+    const masha = '+7 999 123-45-67';
+
+    /// The people of the boards, with who Маша is and her [number].
+    List<Person> people({String? number}) => [
+      for (final person in peopleOf(boardDebts()))
+        person.id == 'p-masha'
+            ? person.copyWith(about: 'коллега', phone: () => number)
+            : person,
+    ];
+
+    Future<void> card(
+      WidgetTester tester,
+      String id, {
+      required List<Person> people,
+      PeoplePhone? port,
+    }) async {
+      final cubit = DebtsCubit(FakeDebtsRepository(people: people));
+      addTearDown(cubit.close);
+      await tester.pumpWidget(
+        phone(
+          cubit,
+          DebtPage(
+            id: id,
+            onBack: () {},
+            onEdit: () {},
+            onReturn: () {},
+            onMore: () {},
+            onOpenStep: (_) {},
+            phone: port,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('the card says who it is and reminds by SMS', (tester) async {
+      final port = FakePeoplePhone();
+      await card(
+        tester,
+        'masha',
+        people: people(number: masha),
+        port: port,
+      );
+
+      expect(find.text('коллега'), findsOneWidget);
+      await tester.tap(find.text('Напомнить'));
+      await tester.pumpAndSettle();
+
+      final text =
+          'Привет! Напоминаю про ${nb('3 000 ₽')} — договаривались вернуть '
+          'до 1 декабря.';
+      expect(find.text('Маша · коллега'), findsOneWidget);
+      expect(find.text(masha), findsOneWidget);
+      expect(find.text(text), findsOneWidget);
+      expect(find.text('ДРУГОЕ ПРИЛОЖЕНИЕ'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), '$text Спасибо!');
+      await tester.tap(find.text('ОТПРАВИТЬ SMS'));
+      await tester.pumpAndSettle();
+
+      expect(port.sms, [(masha, '$text Спасибо!')]);
+      expect(find.text('Маша · коллега'), findsNothing);
+    });
+
+    testWidgets('without a number the reminder is shared', (tester) async {
+      final port = FakePeoplePhone();
+      await card(tester, 'masha', people: people(), port: port);
+
+      await tester.tap(find.text('Напомнить'));
+      await tester.pumpAndSettle();
+      expect(find.text('Номера нет · добавьте в «Изменить»'), findsOneWidget);
+      expect(find.text('ОТПРАВИТЬ SMS'), findsNothing);
+
+      await tester.tap(find.text('ПОДЕЛИТЬСЯ'));
+      await tester.pumpAndSettle();
+      expect(port.shared, hasLength(1));
+      expect(port.sms, isEmpty);
+    });
+
+    testWidgets('a debt of the person and a site have no reminder', (
+      tester,
+    ) async {
+      await card(
+        tester,
+        'sasha',
+        people: people(number: masha),
+        port: FakePeoplePhone(),
+      );
+      expect(find.text('Напомнить'), findsNothing);
+
+      await card(tester, 'masha', people: people(number: masha));
+      expect(find.text('коллега'), findsOneWidget);
+      expect(find.text('Напомнить'), findsNothing);
+    });
+
+    testWidgets('someone new comes from the contacts', (tester) async {
+      final port = FakePeoplePhone(
+        contact: const PickedContact(
+          name: 'Иванов Иван Петрович',
+          givenName: 'Иван',
+          numbers: [
+            ContactNumber(label: 'мобильный', number: '+7 999 765-43-21'),
+            ContactNumber(label: 'рабочий', number: '+7 495 765-43-21'),
+          ],
+        ),
+      );
+      final cubit = DebtFormCubit(FakeDebtsRepository());
+      addTearDown(cubit.close);
+      await tester.pumpWidget(
+        phone(cubit, DebtFormPage(onClose: (_) {}, phone: port)),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Другой'));
+      await tester.pumpAndSettle();
+      expect(find.text('Новый человек'), findsOneWidget);
+      await tester.tap(find.text('Выбрать из контактов'));
+      await tester.pumpAndSettle();
+
+      expect(port.picks, 1);
+      expect(find.text('Иван'), findsOneWidget);
+      expect(find.text('+7 999 765-43-21'), findsOneWidget);
+      expect(
+        find.textContaining('Из контактов: Иванов Иван Петрович.'),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('мобильный'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Рабочий'));
+      await tester.pumpAndSettle();
+      expect(find.text('+7 495 765-43-21'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField).at(1), 'бухгалтер');
+      await tester.tap(find.widgetWithText(BirkaButton, 'ГОТОВО'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Новый человек'), findsNothing);
+      expect(
+        (cubit.state.name, cubit.state.about, cubit.state.phone),
+        ('Иван', 'бухгалтер', '+7 495 765-43-21'),
+      );
+      expect(find.text('Иван'), findsOneWidget);
+    });
+
+    testWidgets('a namesake asks who the new one is', (tester) async {
+      final cubit = DebtFormCubit(
+        FakeDebtsRepository(people: people(number: masha)),
+      );
+      addTearDown(cubit.close);
+      await tester.pumpWidget(phone(cubit, DebtFormPage(onClose: (_) {})));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Другой'));
+      await tester.pumpAndSettle();
+      expect(find.text('Выбрать из контактов'), findsNothing);
+      await tester.enterText(find.byType(TextField).first, 'маша');
+      await tester.pumpAndSettle();
+      const twin =
+          'Маша уже есть — коллега. Напишите, кто это, чтобы их различать.';
+      expect(find.text(twin), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField).at(1), 'сестра');
+      await tester.pumpAndSettle();
+      expect(find.text(twin), findsNothing);
+      await tester.tap(find.widgetWithText(BirkaButton, 'ГОТОВО'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('маша · сестра'), findsOneWidget);
+      expect(find.text('Маша · коллега'), findsOneWidget);
+    });
+
+    testWidgets('the terms change who it is and take a number', (
+      tester,
+    ) async {
+      final repository = FakeDebtsRepository();
+      final cubit = DebtTermsCubit(repository, 'sasha');
+      addTearDown(cubit.close);
+      final port = FakePeoplePhone(
+        contact: const PickedContact(
+          name: 'Саша',
+          numbers: [ContactNumber(label: '', number: '+7 900 000-00-00')],
+        ),
+      );
+      await tester.pumpWidget(
+        phone(cubit, DebtTermsPage(onClose: () {}, phone: port)),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const ValueKey('about')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'брат');
+      await tester.tap(find.text('ГОТОВО'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Взять номер из контактов'));
+      await tester.pumpAndSettle();
+      expect(find.text('+7 900 000-00-00'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(BirkaButton, 'СОХРАНИТЬ'));
+      await tester.pumpAndSettle();
+      final person = repository.people.firstWhere((it) => it.id == 'p-sasha');
+      expect((person.about, person.phone), ('брат', '+7 900 000-00-00'));
     });
   });
 

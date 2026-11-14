@@ -4886,6 +4886,51 @@ class Translations$debts$person$en {
 
   // Translations
 
+  /// en: 'Someone new'
+  String get newTitle => 'Someone new';
+
+  /// en: 'Pick from the contacts'
+  String get fromContacts => 'Pick from the contacts';
+
+  /// en: 'The name and the number fill in'
+  String get fromContactsNote => 'The name and the number fill in';
+
+  /// en: 'Who it is'
+  String get about => 'Who it is';
+
+  /// en: 'Optional · a colleague, a neighbour'
+  String get aboutHint => 'Optional · a colleague, a neighbour';
+
+  /// en: 'Phone'
+  String get phone => 'Phone';
+
+  /// en: 'Optional'
+  String get optional => 'Optional';
+
+  /// en: 'Number'
+  String get number => 'Number';
+
+  /// en: 'No number'
+  String get noNumber => 'No number';
+
+  /// en: 'A reminder can go through another app'
+  String get noNumberNote => 'A reminder can go through another app';
+
+  /// en: 'The name shows in the list and in reminders. «Who it is» tells namesakes apart.'
+  String get hint =>
+      'The name shows in the list and in reminders. «Who it is» tells namesakes apart.';
+
+  /// en: 'From the contacts: $contact. Birka took this contact alone and keeps the number on this phone.'
+  String fromContact({required Object contact}) =>
+      'From the contacts: ${contact}. Birka took this contact alone and keeps the number on this phone.';
+
+  /// en: 'Take the number from the contacts'
+  String get contactsRow => 'Take the number from the contacts';
+
+  /// en: 'The name, who it is and the number are the same for every debt of this person. The number stays on this phone and in your copies.'
+  String get shared =>
+      'The name, who it is and the number are the same for every debt of this person. The number stays on this phone and in your copies.';
+
   /// en: '$name is here already, $about. Say who this one is, to tell them apart.'
   String twin({required Object name, required Object about}) =>
       '${name} is here already, ${about}. Say who this one is, to tell them apart.';
@@ -4910,6 +4955,35 @@ class Translations$debts$remind$en {
   final Translations _root; // ignore: unused_field
 
   // Translations
+
+  /// en: 'Remind'
+  String get action => 'Remind';
+
+  /// en: 'Remind'
+  String get title => 'Remind';
+
+  /// en: 'Message'
+  String get message => 'Message';
+
+  /// en: 'Send an SMS'
+  String get sms => 'Send an SMS';
+
+  /// en: 'Another app'
+  String get otherApp => 'Another app';
+
+  /// en: 'Share'
+  String get share => 'Share';
+
+  /// en: 'Birka only opens the message; you send it. The text can be changed.'
+  String get caption =>
+      'Birka only opens the message; you send it. The text can be changed.';
+
+  /// en: 'Birka opens the window of sharing: pick where to write. The text can be changed.'
+  String get captionShare =>
+      'Birka opens the window of sharing: pick where to write. The text can be changed.';
+
+  /// en: 'No number · add it in «Edit»'
+  String get noPhone => 'No number · add it in «Edit»';
 
   /// en: 'Hi! A reminder about $amount: we said it would come back by $day.'
   String text({required Object amount, required Object day}) =>
@@ -5965,6 +6039,25 @@ extension on Translations {
           'debts.move.returned' => 'Paid back',
           'debts.move.borrowed' => 'Borrowed',
           'debts.move.repaid' => 'Repaid',
+          'debts.person.newTitle' => 'Someone new',
+          'debts.person.fromContacts' => 'Pick from the contacts',
+          'debts.person.fromContactsNote' => 'The name and the number fill in',
+          'debts.person.about' => 'Who it is',
+          'debts.person.aboutHint' => 'Optional · a colleague, a neighbour',
+          'debts.person.phone' => 'Phone',
+          'debts.person.optional' => 'Optional',
+          'debts.person.number' => 'Number',
+          'debts.person.noNumber' => 'No number',
+          'debts.person.noNumberNote' =>
+            'A reminder can go through another app',
+          'debts.person.hint' =>
+            'The name shows in the list and in reminders. «Who it is» tells namesakes apart.',
+          'debts.person.fromContact' =>
+            ({required Object contact}) =>
+                'From the contacts: ${contact}. Birka took this contact alone and keeps the number on this phone.',
+          'debts.person.contactsRow' => 'Take the number from the contacts',
+          'debts.person.shared' =>
+            'The name, who it is and the number are the same for every debt of this person. The number stays on this phone and in your copies.',
           'debts.person.twin' =>
             ({required Object name, required Object about}) =>
                 '${name} is here already, ${about}. Say who this one is, to tell them apart.',
@@ -5977,6 +6070,17 @@ extension on Translations {
           'debts.person.twinPickPlain' =>
             ({required Object name}) =>
                 '${name} is here already. If it is the same person, pick them above; if not, say who this one is.',
+          'debts.remind.action' => 'Remind',
+          'debts.remind.title' => 'Remind',
+          'debts.remind.message' => 'Message',
+          'debts.remind.sms' => 'Send an SMS',
+          'debts.remind.otherApp' => 'Another app',
+          'debts.remind.share' => 'Share',
+          'debts.remind.caption' =>
+            'Birka only opens the message; you send it. The text can be changed.',
+          'debts.remind.captionShare' =>
+            'Birka opens the window of sharing: pick where to write. The text can be changed.',
+          'debts.remind.noPhone' => 'No number · add it in «Edit»',
           'debts.remind.text' =>
             ({required Object amount, required Object day}) =>
                 'Hi! A reminder about ${amount}: we said it would come back by ${day}.',
@@ -6082,6 +6186,9 @@ extension on Translations {
           'imports.account' => 'Statement account',
           'imports.formats.alfa' => 'Alfa-Bank',
           'imports.formats.tbank' => 'T-Bank',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.formats.sber' => 'Sberbank',
           'imports.formats.zenmoney' => 'Zenmoney',
           'imports.formats.wise' => 'Wise',
@@ -6110,9 +6217,6 @@ extension on Translations {
           'imports.stepWhat.format' => 'whose statement it is',
           'imports.stepWhat.columns' => 'how to read the columns',
           'imports.stepWhat.account' => 'where it goes',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.stepWhat.copies' => 'what the ledger already has',
           'imports.stepWhat.done' => 'the result',
           'imports.stepsLabel' => 'Steps of the import',
@@ -7015,6 +7119,9 @@ extension on Translations {
           'reports.monthReport.2' => 'Report for March',
           'reports.monthReport.3' => 'Report for April',
           'reports.monthReport.4' => 'Report for May',
+          _ => null,
+        } ??
+        switch (path) {
           'reports.monthReport.5' => 'Report for June',
           'reports.monthReport.6' => 'Report for July',
           'reports.monthReport.7' => 'Report for August',
@@ -7052,9 +7159,6 @@ extension on Translations {
           'schedules.section' =>
             ({required Object title, required Object count}) =>
                 '${title} · ${count}',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.all' => 'All regular payments',
           'schedules.emptyTitle' => 'No regular payments yet',
           'schedules.emptyText' =>

@@ -3,6 +3,7 @@
 /// on phones (ADR 0029).
 library;
 
+export 'src/data/channel_people_phone.dart';
 export 'src/presentation/pages/debt_form_page.dart';
 export 'src/presentation/pages/debt_page.dart';
 export 'src/presentation/pages/debt_return_page.dart';

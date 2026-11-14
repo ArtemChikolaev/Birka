@@ -396,3 +396,35 @@ final class FakeDebtsRepository implements DebtsRepository {
         personId: debt.personId,
       );
 }
+
+/// A phone whose window of the contacts gives [contact], and that keeps the
+/// messages it was asked to open.
+final class FakePeoplePhone implements PeoplePhone {
+  /// Creates a phone that gives [contact], or nothing as if closed.
+  FakePeoplePhone({this.contact});
+
+  /// What the window of the contacts gives.
+  PickedContact? contact;
+
+  /// How many times the window of the contacts opened.
+  int picks = 0;
+
+  /// The SMS opened, as the number and the text.
+  final sms = <(String, String)>[];
+
+  /// The texts shared.
+  final shared = <String>[];
+
+  @override
+  Future<PickedContact?> pickContact() async {
+    picks++;
+    return contact;
+  }
+
+  @override
+  Future<void> sendSms(String number, String text) async =>
+      sms.add((number, text));
+
+  @override
+  Future<void> share(String text) async => shared.add(text);
+}

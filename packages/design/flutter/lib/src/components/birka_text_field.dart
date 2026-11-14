@@ -1,5 +1,6 @@
 import 'package:design_flutter/src/components/glass_surface.dart';
 import 'package:design_flutter/src/theme/birka_colors.dart';
+import 'package:design_flutter/src/theme/birka_motion.dart';
 import 'package:design_flutter/src/theme/birka_text_styles.dart';
 import 'package:design_tokens/design_tokens.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,10 @@ class BirkaTextField extends StatelessWidget {
     this.inputFormatters,
     this.textStyle,
     this.suffix,
+    this.trailing,
+    this.minLines,
+    this.maxLines = 1,
+    this.highlighted = false,
     super.key,
   });
 
@@ -65,6 +70,24 @@ class BirkaTextField extends StatelessWidget {
   /// What stands at the end of the field, such as the sign of a currency.
   final String? suffix;
 
+  /// What stands at the end of the field after [suffix], such as a chip that
+  /// picks among numbers or fills the field from elsewhere.
+  final Widget? trailing;
+
+  /// The lines the field takes at least, for a text of several lines.
+  final int? minLines;
+
+  /// The lines the field grows to before it scrolls.
+  final int maxLines;
+
+  /// Whether the field glows in the accent for a moment, as when a value came
+  /// into it from elsewhere, such as from a contact.
+  final bool highlighted;
+
+  static const _radius = BorderRadius.all(
+    Radius.circular(BirkaTokens.radiusMd),
+  );
+
   @override
   Widget build(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
@@ -81,40 +104,70 @@ class BirkaTextField extends StatelessWidget {
           style: styles.caption.copyWith(color: colors.textMuted),
         ),
         const SizedBox(height: BirkaTokens.spaceXs),
-        GlassSurface(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(BirkaTokens.radiusMd),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: BirkaTokens.spaceMd,
-            vertical: BirkaTokens.spaceSm,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  onChanged: onChanged,
-                  onSubmitted: onSubmitted,
-                  autofocus: autofocus,
-                  keyboardType: keyboardType,
-                  textInputAction: textInputAction,
-                  textCapitalization: textCapitalization,
-                  inputFormatters: inputFormatters,
-                  style: style.copyWith(color: colors.text),
-                  cursorColor: colors.accent,
-                  decoration: InputDecoration.collapsed(
-                    hintText: hint,
-                    hintStyle: style.copyWith(color: colors.textSubtle),
+        Stack(
+          children: [
+            GlassSurface(
+              borderRadius: _radius,
+              padding: const EdgeInsets.symmetric(
+                horizontal: BirkaTokens.spaceMd,
+                vertical: BirkaTokens.spaceSm,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      onChanged: onChanged,
+                      onSubmitted: onSubmitted,
+                      autofocus: autofocus,
+                      keyboardType: keyboardType,
+                      textInputAction: textInputAction,
+                      textCapitalization: textCapitalization,
+                      inputFormatters: inputFormatters,
+                      minLines: minLines,
+                      maxLines: maxLines,
+                      style: style.copyWith(color: colors.text),
+                      cursorColor: colors.accent,
+                      decoration: InputDecoration.collapsed(
+                        hintText: hint,
+                        hintStyle: style.copyWith(color: colors.textSubtle),
+                      ),
+                    ),
+                  ),
+                  if (suffix != null) ...[
+                    const SizedBox(width: BirkaTokens.spaceXs),
+                    Text(
+                      suffix,
+                      style: style.copyWith(color: colors.textSubtle),
+                    ),
+                  ],
+                  if (trailing case final trailing?) ...[
+                    const SizedBox(width: BirkaTokens.spaceXs),
+                    trailing,
+                  ],
+                ],
+              ),
+            ),
+            // The glow comes and goes over the surface, never in its way.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: AnimatedOpacity(
+                  opacity: highlighted ? 1 : 0,
+                  duration: BirkaMotion.slow,
+                  curve: BirkaMotion.fadeCurve,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: _radius,
+                      color: colors.accent.withValues(alpha: 0.08),
+                      border: Border.all(
+                        color: colors.accent.withValues(alpha: 0.55),
+                      ),
+                    ),
                   ),
                 ),
               ),
-              if (suffix != null) ...[
-                const SizedBox(width: BirkaTokens.spaceXs),
-                Text(suffix, style: style.copyWith(color: colors.textSubtle)),
-              ],
-            ],
-          ),
+            ),
+          ],
         ),
         if (error != null) ...[
           const SizedBox(height: BirkaTokens.spaceXxs),

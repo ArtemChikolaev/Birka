@@ -8,15 +8,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
 
 /// The form that changes a debt (ADR 0029): the name of the other person,
+/// who they are and their number, which go to all their debts (ADR 0030),
 /// the day it should come back by and the reminder of that day.
 ///
 /// It needs a [DebtTermsCubit] above it, and closes once saved.
 class DebtTermsPage extends StatelessWidget {
   /// Creates the form.
-  const DebtTermsPage({required this.onClose, super.key});
+  const DebtTermsPage({required this.onClose, this.phone, super.key});
 
   /// Closes the form.
   final VoidCallback onClose;
+
+  /// The contacts of the phone, which can give the number, or `null` where
+  /// there are none.
+  final PeoplePhone? phone;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class DebtTermsPage extends StatelessWidget {
             builder: (context, state) => switch (state.status) {
               DebtTermsStatus.loading ||
               DebtTermsStatus.gone => const SizedBox.shrink(),
-              _ => _Form(state: state, onClose: onClose),
+              _ => _Form(state: state, onClose: onClose, phone: phone),
             },
           ),
         ),
@@ -42,10 +47,15 @@ class DebtTermsPage extends StatelessWidget {
 }
 
 class _Form extends StatelessWidget {
-  const _Form({required this.state, required this.onClose});
+  const _Form({
+    required this.state,
+    required this.onClose,
+    required this.phone,
+  });
 
   final DebtTermsState state;
   final VoidCallback onClose;
+  final PeoplePhone? phone;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +63,12 @@ class _Form extends StatelessWidget {
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
     final form = t.debts.form;
+    final words = t.debts.person;
     final due = state.dueOn;
     final name = state.name.trim();
+    final about = state.about.trim();
+    final number = state.phone;
+    final phone = this.phone;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -102,6 +116,42 @@ class _Form extends StatelessWidget {
                       onTap: () => unawaited(_editName(context)),
                     ),
                     GlassValueRow(
+                      key: const ValueKey('about'),
+                      label: words.about,
+                      value: about.isEmpty ? words.optional : about,
+                      quiet: about.isEmpty,
+                      onTap: () => unawaited(_editAbout(context)),
+                    ),
+                    GlassValueRow(
+                      key: const ValueKey('phone'),
+                      label: words.phone,
+                      value: number ?? words.optional,
+                      quiet: number == null,
+                      onTap: () => unawaited(_editPhone(context)),
+                    ),
+                    if (phone != null)
+                      GlassListRow(
+                        key: const ValueKey('contacts'),
+                        leading: GlyphBadge(
+                          glyph: BirkaGlyph.contact,
+                          color: colors.accent,
+                        ),
+                        title: words.contactsRow,
+                        onTap: () => unawaited(_fromContacts(context, phone)),
+                      ),
+                  ],
+                ),
+                if (state.nameMissing) ...[
+                  const SizedBox(height: BirkaTokens.spaceXs),
+                  Text(
+                    form.nameMissing,
+                    style: styles.caption.copyWith(color: colors.negative),
+                  ),
+                ],
+                const SizedBox(height: BirkaTokens.spaceSm),
+                GlassListGroup(
+                  children: [
+                    GlassValueRow(
                       key: const ValueKey('due'),
                       label: form.dueBy,
                       value: due == null
@@ -112,13 +162,6 @@ class _Form extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (state.nameMissing) ...[
-                  const SizedBox(height: BirkaTokens.spaceXs),
-                  Text(
-                    form.nameMissing,
-                    style: styles.caption.copyWith(color: colors.negative),
-                  ),
-                ],
                 AnimatedColumn(
                   children: [
                     if (due != null)
@@ -141,6 +184,11 @@ class _Form extends StatelessWidget {
                         ),
                       ),
                   ],
+                ),
+                const SizedBox(height: BirkaTokens.spaceMd),
+                Text(
+                  words.shared,
+                  style: styles.caption.copyWith(color: colors.textMuted),
                 ),
               ],
             ),
@@ -192,6 +240,57 @@ class _Form extends StatelessWidget {
       initial: state.name,
     );
     if (name != null) cubit.nameChanged(name);
+  }
+
+  Future<void> _editAbout(BuildContext context) async {
+    final cubit = context.read<DebtTermsCubit>();
+    final about = await showFieldSheet(
+      context,
+      label: t.debts.person.about,
+      hint: t.debts.person.aboutHint,
+      done: t.debts.done,
+      initial: state.about,
+    );
+    if (about != null) cubit.aboutChanged(about.trim());
+  }
+
+  Future<void> _editPhone(BuildContext context) async {
+    final cubit = context.read<DebtTermsCubit>();
+    final number = await showFieldSheet(
+      context,
+      label: t.debts.person.phone,
+      hint: t.debts.person.optional,
+      done: t.debts.done,
+      initial: state.phone ?? '',
+      keyboardType: TextInputType.phone,
+      textCapitalization: TextCapitalization.none,
+    );
+    if (number != null) cubit.phoneChanged(number);
+  }
+
+  /// Takes the number from a contact: the one it has, or the one the person
+  /// picks of several.
+  Future<void> _fromContacts(BuildContext context, PeoplePhone phone) async {
+    final cubit = context.read<DebtTermsCubit>();
+    final contact = await phone.pickContact();
+    final numbers = contact?.numbers ?? const <ContactNumber>[];
+    if (numbers.isEmpty || !context.mounted) return;
+    var number = numbers.first;
+    if (numbers.length > 1) {
+      // The number the person has now is checked, if the contact has it.
+      final picked = await showChoiceSheet<ContactNumber?>(
+        context,
+        title: t.debts.person.number,
+        choices: numbers,
+        selected: numbers.where((it) => it.number == state.phone).firstOrNull,
+        labelOf: (number) => debtNumberKind(number!),
+        subtitleOf: (number) => number!.number,
+      );
+      final chosen = picked?.$1;
+      if (chosen == null) return;
+      number = chosen;
+    }
+    cubit.phoneChanged(number.number);
   }
 
   Future<void> _pickDue(BuildContext context) async {

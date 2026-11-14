@@ -7,6 +7,7 @@ export 'src/data/ledger_debts_repository.dart';
 export 'src/di/register_debts.dart';
 export 'src/domain/debt.dart';
 export 'src/domain/debts_repository.dart';
+export 'src/domain/people_phone.dart';
 export 'src/presentation/debt_form_cubit.dart';
 export 'src/presentation/debt_labels.dart';
 export 'src/presentation/debt_return_cubit.dart';
