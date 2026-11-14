@@ -131,6 +131,7 @@ class _DebtFormPageState extends State<DebtFormPage> {
                   ),
               ]),
           ]),
+          // The hint stands in the fold, over who the new one is.
           BirkaFold(
             open: fresh,
             children: [

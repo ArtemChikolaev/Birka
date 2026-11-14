@@ -200,10 +200,13 @@ final class DebtFormState {
   /// Whether the debt that is there is in a currency that no account has.
   bool get noAccount => match != null && offered.isEmpty;
 
-  /// Whether the form can be saved.
+  /// Whether the form can be saved. A namesake of someone there waits for
+  /// the chip of that person or for who the new one is, so that two people
+  /// of one name never look alike (ADR 0030).
   bool get canSave =>
       status == DebtFormStatus.editing &&
       name.trim().isNotEmpty &&
+      twin == null &&
       amountMinor > 0 &&
       account != null;
 

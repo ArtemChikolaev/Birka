@@ -274,8 +274,14 @@ void main() {
         'Иван уже есть — сосед. Напишите, кто это, чтобы их различать.',
       );
 
+      // A namesake waits for who they are before it is saved.
+      form
+        ..accountChanged('card')
+        ..amountChanged(50000);
+      expect(form.state.canSave, isFalse);
       form.aboutChanged('коллега');
       expect(form.state.twin, isNull);
+      expect(form.state.canSave, isTrue);
     });
 
     test('someone new keeps who they are and their number', () async {

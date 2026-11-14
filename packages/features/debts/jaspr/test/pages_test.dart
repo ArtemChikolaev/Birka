@@ -212,6 +212,41 @@ void main() {
     expect(repository.debts.last.name, 'Лена');
   });
 
+  testComponents('the form asks a namesake who they are', (tester) async {
+    final cubit = DebtFormCubit(
+      FakeDebtsRepository(
+        people: [
+          for (final person in peopleOf(boardDebts()))
+            person.id == 'p-masha' ? person.copyWith(about: 'коллега') : person,
+        ],
+      ),
+      reminders: false,
+    );
+    addTearDown(cubit.close);
+    tester.pumpComponent(
+      BlocProvider<DebtFormCubit>.value(
+        value: cubit,
+        child: DebtFormPage(onClose: () {}, onDone: (_) {}),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    field('Кто').onInput!('маша');
+    field('Сумма').onInput!('2 500');
+    await tester.pump();
+    const twin =
+        'Маша уже есть — коллега. Если это тот же человек, выберите его '
+        'выше; если другой — напишите, кто это.';
+    expect(find.text(twin), findsOneComponent);
+    expect(cubit.state.canSave, isFalse);
+
+    await tester.click(buttonOf('Маша'));
+    await tester.pump();
+    expect(find.text(twin), findsNothing);
+    expect(cubit.state.canSave, isTrue);
+  });
+
   testComponents('the terms rename the person and keep the reminder of a '
       'phone', (tester) async {
     final repository = FakeDebtsRepository();

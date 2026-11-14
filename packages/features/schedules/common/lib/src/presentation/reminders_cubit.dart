@@ -30,7 +30,9 @@ final class RemindersState {
   /// The regular payments.
   final List<Schedule> schedules;
 
-  /// How many open debts remind of a day still to come (ADR 0029).
+  /// How many days of open debts the phone reminds of, as it plans them
+  /// (ADR 0029): their reminders still to come, within the days ahead that
+  /// it keeps.
   final int debts;
 
   /// Whether the notifications of Birka are on.
@@ -85,19 +87,18 @@ class RemindersCubit extends Cubit<RemindersState> {
   }) : _now = now ?? DateTime.now,
        super(const RemindersState()) {
     _subscriptions = [
+      // A new time of the reminders moves the ones still to come.
       _repository.watchReminders().listen(
-        (settings) => emit(state.copyWith(settings: settings)),
+        (settings) => emit(
+          state.copyWith(settings: settings, debts: _debtsAhead(settings)),
+        ),
       ),
       _repository.watchSchedules().listen(
         (schedules) => emit(state.copyWith(schedules: schedules)),
       ),
       _repository.watchDebtDays().listen((days) {
-        final today = CivilDate.of(_now());
-        emit(
-          state.copyWith(
-            debts: days.where((it) => it.due.compareTo(today) >= 0).length,
-          ),
-        );
+        _debtDays = days;
+        emit(state.copyWith(debts: _debtsAhead(state.settings)));
       }),
     ];
     unawaited(accessChecked());
@@ -109,6 +110,17 @@ class RemindersCubit extends Cubit<RemindersState> {
   final DateTime Function() _now;
   late final List<StreamSubscription<void>> _subscriptions;
 
+  /// The days of the open debts that remind, as the ledger has them.
+  List<DebtDay> _debtDays = const [];
+
+  /// How many of [_debtDays] the phone reminds of now, as
+  /// the scheduler of the reminders plans them.
+  int _debtsAhead(ReminderSettings? settings) => debtDaysAhead(
+    _debtDays,
+    now: _now(),
+    minutes: settings?.minutes ?? ReminderSettings.defaultMinutes,
+  ).length;
+
   /// The first reminder to come once they are on, for the question that
   /// turns them on to show, or `null` when no payment reminds.
   PlannedReminder? get nearest => planReminders(
@@ -119,12 +131,19 @@ class RemindersCubit extends Cubit<RemindersState> {
   ).firstOrNull;
 
   /// Reads again whether the phone lets Birka show notifications and keep
-  /// its calendar, as when the person comes back from its settings.
+  /// its calendar, as when the person comes back from its settings or to
+  /// the app, and counts the days of debts again, as one may have passed.
   Future<void> accessChecked() async {
     final access = await _channel.access();
     final calendarAccess = await _calendar.access();
     if (isClosed) return;
-    emit(state.copyWith(access: access, calendarAccess: calendarAccess));
+    emit(
+      state.copyWith(
+        access: access,
+        calendarAccess: calendarAccess,
+        debts: _debtsAhead(state.settings),
+      ),
+    );
   }
 
   /// Turns the notifications of Birka on once the phone allows them, and

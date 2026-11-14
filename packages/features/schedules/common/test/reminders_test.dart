@@ -936,10 +936,14 @@ void main() {
       );
     });
 
-    test('the cubit counts the debts whose day is still to come', () async {
+    test('the cubit counts the debts that the phone reminds of', () async {
       await lend('Маша', 3000, CivilDate(2026, 11, 20));
       await lend('Дима', 500, CivilDate(2026, 11, 21), reminds: false);
       await lend('Ира', 1500, CivilDate(2026, 11, 2));
+      // Today's reminder came at 9:00, an hour ago, and May is not planned
+      // yet.
+      await lend('Лена', 700, CivilDate(2026, 11, 18));
+      await lend('Саша', 900, CivilDate(2027, 5, 20));
       final cubit = RemindersCubit(
         repository,
         channel,
@@ -951,6 +955,11 @@ void main() {
 
       expect(cubit.state.debts, 1);
       expect(cubit.state.reminding, 1);
+
+      // At 11:00 today's reminder is still to come.
+      await repository.saveReminders(const ReminderSettings(minutes: 660));
+      await pumpEventQueue();
+      expect(cubit.state.debts, 2);
     });
 
     test('the notices take the day of a debt that came', () async {
