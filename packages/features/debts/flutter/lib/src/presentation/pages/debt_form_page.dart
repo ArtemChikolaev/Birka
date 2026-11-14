@@ -76,6 +76,7 @@ class _Form extends StatelessWidget {
     final amount = state.amount;
     final account = state.account;
     final due = state.dueOn;
+    final twin = state.twin;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -133,6 +134,26 @@ class _Form extends StatelessWidget {
                       style: styles.caption.copyWith(color: colors.negative),
                     ),
                   ],
+                  // A namesake of someone there waits for who they are.
+                  AnimatedColumn(
+                    children: [
+                      if (twin != null)
+                        Padding(
+                          key: const ValueKey('twin'),
+                          padding: const EdgeInsets.only(
+                            top: BirkaTokens.spaceXs,
+                          ),
+                          child: Text(
+                            debtTwinLine(twin, picks: true),
+                            style: styles.caption.copyWith(
+                              color: const Color(
+                                BirkaTokens.colorPaletteAmber,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: BirkaTokens.spaceLg),
                 ],
                 GlassListGroup(

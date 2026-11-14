@@ -63,6 +63,33 @@ void main() {
     expect(ira.steps, hasLength(3));
   });
 
+  test('a return dated before the money it returns counts in its round', () {
+    final masha = debtOf('masha', [
+      transfer('early', 'masha', 'card', rub(2000), nov(5)),
+      transfer('lent', 'cash', 'masha', rub(5000), nov(10)),
+    ]);
+
+    expect(masha.left, rub(3000));
+    expect(masha.total, rub(5000));
+    expect(masha.settled, rub(2000));
+    expect(masha.share, closeTo(0.4, 1e-9));
+    expect(masha.since, nov(10));
+    expect(masha.closed, isFalse);
+  });
+
+  test('money that came back beyond a debt counts in the next round', () {
+    final masha = debtOf('masha', [
+      transfer('lent', 'cash', 'masha', rub(1000), nov(3)),
+      transfer('back', 'masha', 'card', rub(1500), nov(5)),
+      transfer('again', 'cash', 'masha', rub(2000), nov(10)),
+    ]);
+
+    expect(masha.left, rub(1500));
+    expect(masha.total, rub(2000));
+    expect(masha.settled, rub(500));
+    expect(masha.since, nov(10));
+  });
+
   test('a debt of the person reads the other way round', () {
     final sasha = debtOf('sasha');
 

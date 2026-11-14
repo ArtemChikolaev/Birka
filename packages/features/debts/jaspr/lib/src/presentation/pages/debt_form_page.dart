@@ -44,6 +44,10 @@ class DebtFormPage extends StatefulComponent {
     css('.debt-form__note').styles(
       raw: {'color': 'var(--color-text-secondary)', 'margin': '0'},
     ),
+    // Someone of the same name is there: who the new one is tells them apart.
+    css('.debt-form__twin').styles(
+      raw: {'color': 'var(--color-palette-amber)', 'margin': '0'},
+    ),
   ];
 }
 
@@ -79,6 +83,7 @@ class _DebtFormPageState extends State<DebtFormPage> {
     final accountId = state.account?.id;
     final due = state.dueOn;
     final name = state.match?.name ?? state.name;
+    final twin = state.twin;
     return BirkaForm(
       title: !state.fixed
           ? t.debts.newDebt
@@ -121,6 +126,10 @@ class _DebtFormPageState extends State<DebtFormPage> {
                     selected: state.personId == person.id,
                     onTap: () => cubit.personPicked(person),
                   ),
+              ]),
+            if (twin != null)
+              p(classes: 'text-caption debt-form__twin', [
+                .text(debtTwinLine(twin, picks: true)),
               ]),
           ]),
         ],
