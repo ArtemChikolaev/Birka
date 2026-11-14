@@ -30,3 +30,4 @@
 | [0026](0026-notifications.md) | The notices of the bell | accepted 2026-11-07 |
 | [0027](0027-tags.md) | Метки and trips | accepted 2026-11-12 |
 | [0028](0028-ask.md) | «Спросить»: questions in words, answered on the device | accepted 2026-11-13 |
+| [0029](0029-debts.md) | Debts between people | accepted 2026-11-14 |

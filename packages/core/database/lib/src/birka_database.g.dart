@@ -706,6 +706,43 @@ class $AccountsTable extends Accounts
       'REFERENCES imports (id)',
     ),
   );
+  static const VerificationMeta _debtSideMeta = const VerificationMeta(
+    'debtSide',
+  );
+  @override
+  late final GeneratedColumn<String> debtSide = GeneratedColumn<String>(
+    'debt_side',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _debtDueOnMeta = const VerificationMeta(
+    'debtDueOn',
+  );
+  @override
+  late final GeneratedColumn<String> debtDueOn = GeneratedColumn<String>(
+    'debt_due_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _debtRemindsMeta = const VerificationMeta(
+    'debtReminds',
+  );
+  @override
+  late final GeneratedColumn<bool> debtReminds = GeneratedColumn<bool>(
+    'debt_reminds',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("debt_reminds" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -723,6 +760,9 @@ class $AccountsTable extends Accounts
     archived,
     sortOrder,
     importId,
+    debtSide,
+    debtDueOn,
+    debtReminds,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -846,6 +886,27 @@ class $AccountsTable extends Accounts
         importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
       );
     }
+    if (data.containsKey('debt_side')) {
+      context.handle(
+        _debtSideMeta,
+        debtSide.isAcceptableOrUnknown(data['debt_side']!, _debtSideMeta),
+      );
+    }
+    if (data.containsKey('debt_due_on')) {
+      context.handle(
+        _debtDueOnMeta,
+        debtDueOn.isAcceptableOrUnknown(data['debt_due_on']!, _debtDueOnMeta),
+      );
+    }
+    if (data.containsKey('debt_reminds')) {
+      context.handle(
+        _debtRemindsMeta,
+        debtReminds.isAcceptableOrUnknown(
+          data['debt_reminds']!,
+          _debtRemindsMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -915,6 +976,18 @@ class $AccountsTable extends Accounts
         DriftSqlType.string,
         data['${effectivePrefix}import_id'],
       ),
+      debtSide: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}debt_side'],
+      ),
+      debtDueOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}debt_due_on'],
+      ),
+      debtReminds: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}debt_reminds'],
+      )!,
     );
   }
 
@@ -973,6 +1046,17 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
   /// The import that created the account, which takes it away again if
   /// nothing else uses it (ADR 0021).
   final String? importId;
+
+  /// Who owes whom on a debt, one of the names of `DebtSide` in the ledger,
+  /// and `null` on every account that is not a debt (ADR 0029).
+  final String? debtSide;
+
+  /// The day a debt should come back by, as `YYYY-MM-DD`, when the person
+  /// gave one.
+  final String? debtDueOn;
+
+  /// Whether the phone reminds of a debt on [debtDueOn].
+  final bool debtReminds;
   const AccountRow({
     required this.id,
     required this.createdAt,
@@ -989,6 +1073,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     required this.archived,
     required this.sortOrder,
     this.importId,
+    this.debtSide,
+    this.debtDueOn,
+    required this.debtReminds,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1014,6 +1101,13 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     if (!nullToAbsent || importId != null) {
       map['import_id'] = Variable<String>(importId);
     }
+    if (!nullToAbsent || debtSide != null) {
+      map['debt_side'] = Variable<String>(debtSide);
+    }
+    if (!nullToAbsent || debtDueOn != null) {
+      map['debt_due_on'] = Variable<String>(debtDueOn);
+    }
+    map['debt_reminds'] = Variable<bool>(debtReminds);
     return map;
   }
 
@@ -1040,6 +1134,13 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       importId: importId == null && nullToAbsent
           ? const Value.absent()
           : Value(importId),
+      debtSide: debtSide == null && nullToAbsent
+          ? const Value.absent()
+          : Value(debtSide),
+      debtDueOn: debtDueOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(debtDueOn),
+      debtReminds: Value(debtReminds),
     );
   }
 
@@ -1066,6 +1167,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       archived: serializer.fromJson<bool>(json['archived']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       importId: serializer.fromJson<String?>(json['importId']),
+      debtSide: serializer.fromJson<String?>(json['debtSide']),
+      debtDueOn: serializer.fromJson<String?>(json['debtDueOn']),
+      debtReminds: serializer.fromJson<bool>(json['debtReminds']),
     );
   }
   @override
@@ -1087,6 +1191,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       'archived': serializer.toJson<bool>(archived),
       'sortOrder': serializer.toJson<int>(sortOrder),
       'importId': serializer.toJson<String?>(importId),
+      'debtSide': serializer.toJson<String?>(debtSide),
+      'debtDueOn': serializer.toJson<String?>(debtDueOn),
+      'debtReminds': serializer.toJson<bool>(debtReminds),
     };
   }
 
@@ -1106,6 +1213,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     bool? archived,
     int? sortOrder,
     Value<String?> importId = const Value.absent(),
+    Value<String?> debtSide = const Value.absent(),
+    Value<String?> debtDueOn = const Value.absent(),
+    bool? debtReminds,
   }) => AccountRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -1122,6 +1232,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     archived: archived ?? this.archived,
     sortOrder: sortOrder ?? this.sortOrder,
     importId: importId.present ? importId.value : this.importId,
+    debtSide: debtSide.present ? debtSide.value : this.debtSide,
+    debtDueOn: debtDueOn.present ? debtDueOn.value : this.debtDueOn,
+    debtReminds: debtReminds ?? this.debtReminds,
   );
   AccountRow copyWithCompanion(AccountsCompanion data) {
     return AccountRow(
@@ -1148,6 +1261,11 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
       archived: data.archived.present ? data.archived.value : this.archived,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       importId: data.importId.present ? data.importId.value : this.importId,
+      debtSide: data.debtSide.present ? data.debtSide.value : this.debtSide,
+      debtDueOn: data.debtDueOn.present ? data.debtDueOn.value : this.debtDueOn,
+      debtReminds: data.debtReminds.present
+          ? data.debtReminds.value
+          : this.debtReminds,
     );
   }
 
@@ -1168,7 +1286,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           ..write('includeInTotals: $includeInTotals, ')
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('importId: $importId')
+          ..write('importId: $importId, ')
+          ..write('debtSide: $debtSide, ')
+          ..write('debtDueOn: $debtDueOn, ')
+          ..write('debtReminds: $debtReminds')
           ..write(')'))
         .toString();
   }
@@ -1190,6 +1311,9 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
     archived,
     sortOrder,
     importId,
+    debtSide,
+    debtDueOn,
+    debtReminds,
   );
   @override
   bool operator ==(Object other) =>
@@ -1209,7 +1333,10 @@ class AccountRow extends DataClass implements Insertable<AccountRow> {
           other.includeInTotals == this.includeInTotals &&
           other.archived == this.archived &&
           other.sortOrder == this.sortOrder &&
-          other.importId == this.importId);
+          other.importId == this.importId &&
+          other.debtSide == this.debtSide &&
+          other.debtDueOn == this.debtDueOn &&
+          other.debtReminds == this.debtReminds);
 }
 
 class AccountsCompanion extends UpdateCompanion<AccountRow> {
@@ -1228,6 +1355,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
   final Value<bool> archived;
   final Value<int> sortOrder;
   final Value<String?> importId;
+  final Value<String?> debtSide;
+  final Value<String?> debtDueOn;
+  final Value<bool> debtReminds;
   final Value<int> rowid;
   const AccountsCompanion({
     this.id = const Value.absent(),
@@ -1245,6 +1375,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.importId = const Value.absent(),
+    this.debtSide = const Value.absent(),
+    this.debtDueOn = const Value.absent(),
+    this.debtReminds = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AccountsCompanion.insert({
@@ -1263,6 +1396,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.importId = const Value.absent(),
+    this.debtSide = const Value.absent(),
+    this.debtDueOn = const Value.absent(),
+    this.debtReminds = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -1287,6 +1423,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Expression<bool>? archived,
     Expression<int>? sortOrder,
     Expression<String>? importId,
+    Expression<String>? debtSide,
+    Expression<String>? debtDueOn,
+    Expression<bool>? debtReminds,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1306,6 +1445,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       if (archived != null) 'archived': archived,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (importId != null) 'import_id': importId,
+      if (debtSide != null) 'debt_side': debtSide,
+      if (debtDueOn != null) 'debt_due_on': debtDueOn,
+      if (debtReminds != null) 'debt_reminds': debtReminds,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1326,6 +1468,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     Value<bool>? archived,
     Value<int>? sortOrder,
     Value<String?>? importId,
+    Value<String?>? debtSide,
+    Value<String?>? debtDueOn,
+    Value<bool>? debtReminds,
     Value<int>? rowid,
   }) {
     return AccountsCompanion(
@@ -1344,6 +1489,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
       archived: archived ?? this.archived,
       sortOrder: sortOrder ?? this.sortOrder,
       importId: importId ?? this.importId,
+      debtSide: debtSide ?? this.debtSide,
+      debtDueOn: debtDueOn ?? this.debtDueOn,
+      debtReminds: debtReminds ?? this.debtReminds,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1396,6 +1544,15 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
     if (importId.present) {
       map['import_id'] = Variable<String>(importId.value);
     }
+    if (debtSide.present) {
+      map['debt_side'] = Variable<String>(debtSide.value);
+    }
+    if (debtDueOn.present) {
+      map['debt_due_on'] = Variable<String>(debtDueOn.value);
+    }
+    if (debtReminds.present) {
+      map['debt_reminds'] = Variable<bool>(debtReminds.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1420,6 +1577,9 @@ class AccountsCompanion extends UpdateCompanion<AccountRow> {
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('importId: $importId, ')
+          ..write('debtSide: $debtSide, ')
+          ..write('debtDueOn: $debtDueOn, ')
+          ..write('debtReminds: $debtReminds, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -8611,6 +8771,9 @@ typedef $$AccountsTableCreateCompanionBuilder =
       Value<bool> archived,
       Value<int> sortOrder,
       Value<String?> importId,
+      Value<String?> debtSide,
+      Value<String?> debtDueOn,
+      Value<bool> debtReminds,
       Value<int> rowid,
     });
 typedef $$AccountsTableUpdateCompanionBuilder =
@@ -8630,6 +8793,9 @@ typedef $$AccountsTableUpdateCompanionBuilder =
       Value<bool> archived,
       Value<int> sortOrder,
       Value<String?> importId,
+      Value<String?> debtSide,
+      Value<String?> debtDueOn,
+      Value<bool> debtReminds,
       Value<int> rowid,
     });
 
@@ -8750,6 +8916,21 @@ class $$AccountsTableFilterComposer
 
   ColumnFilters<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get debtSide => $composableBuilder(
+    column: $table.debtSide,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get debtDueOn => $composableBuilder(
+    column: $table.debtDueOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get debtReminds => $composableBuilder(
+    column: $table.debtReminds,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8881,6 +9062,21 @@ class $$AccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get debtSide => $composableBuilder(
+    column: $table.debtSide,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get debtDueOn => $composableBuilder(
+    column: $table.debtDueOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get debtReminds => $composableBuilder(
+    column: $table.debtReminds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ImportsTableOrderingComposer get importId {
     final $$ImportsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -8963,6 +9159,17 @@ class $$AccountsTableAnnotationComposer
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<String> get debtSide =>
+      $composableBuilder(column: $table.debtSide, builder: (column) => column);
+
+  GeneratedColumn<String> get debtDueOn =>
+      $composableBuilder(column: $table.debtDueOn, builder: (column) => column);
+
+  GeneratedColumn<bool> get debtReminds => $composableBuilder(
+    column: $table.debtReminds,
+    builder: (column) => column,
+  );
 
   $$ImportsTableAnnotationComposer get importId {
     final $$ImportsTableAnnotationComposer composer = $composerBuilder(
@@ -9056,6 +9263,9 @@ class $$AccountsTableTableManager
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
+                Value<String?> debtSide = const Value.absent(),
+                Value<String?> debtDueOn = const Value.absent(),
+                Value<bool> debtReminds = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AccountsCompanion(
                 id: id,
@@ -9073,6 +9283,9 @@ class $$AccountsTableTableManager
                 archived: archived,
                 sortOrder: sortOrder,
                 importId: importId,
+                debtSide: debtSide,
+                debtDueOn: debtDueOn,
+                debtReminds: debtReminds,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -9092,6 +9305,9 @@ class $$AccountsTableTableManager
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
+                Value<String?> debtSide = const Value.absent(),
+                Value<String?> debtDueOn = const Value.absent(),
+                Value<bool> debtReminds = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AccountsCompanion.insert(
                 id: id,
@@ -9109,6 +9325,9 @@ class $$AccountsTableTableManager
                 archived: archived,
                 sortOrder: sortOrder,
                 importId: importId,
+                debtSide: debtSide,
+                debtDueOn: debtDueOn,
+                debtReminds: debtReminds,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

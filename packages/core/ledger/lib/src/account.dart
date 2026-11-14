@@ -1,3 +1,4 @@
+import 'package:ledger/src/civil_date.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 
@@ -52,6 +53,88 @@ enum AccountArt {
   rose,
 }
 
+/// Who owes whom on a debt (ADR 0029).
+enum DebtSide {
+  /// The person lent: the other one owes them, and the account of the debt
+  /// holds what is to come back, above zero.
+  lent,
+
+  /// The person borrowed: they owe the other one, and the account of the debt
+  /// holds what they are to give back, below zero.
+  borrowed,
+}
+
+/// What a transfer does to a debt, as the person sees it (ADR 0029).
+enum DebtMove {
+  /// The person lent: money went from their account into the debt.
+  lent,
+
+  /// The other one gave back what they owed: money came out of the debt.
+  returned,
+
+  /// The person borrowed: money came to them out of the debt.
+  borrowed,
+
+  /// The person gave back what they owed: money went into the debt.
+  repaid
+  ;
+
+  /// What a transfer does to a debt of [side]: one [into] the debt, or one
+  /// out of it.
+  static DebtMove of(DebtSide side, {required bool into}) =>
+      switch ((side, into)) {
+        (DebtSide.lent, true) => lent,
+        (DebtSide.lent, false) => returned,
+        (DebtSide.borrowed, false) => borrowed,
+        (DebtSide.borrowed, true) => repaid,
+      };
+
+  /// Whether the move brings the debt closer to nought.
+  bool get settles => this == returned || this == repaid;
+}
+
+/// What a debt keeps besides its money: who owes whom, by what day, and
+/// whether the phone reminds of that day (ADR 0029).
+@immutable
+final class DebtTerms {
+  /// Creates the terms of a debt.
+  const DebtTerms({required this.side, this.dueOn, this.reminds = false});
+
+  /// Who owes whom.
+  final DebtSide side;
+
+  /// The day the debt should come back by, when one was given.
+  final CivilDate? dueOn;
+
+  /// Whether the phone reminds of the debt on [dueOn].
+  final bool reminds;
+
+  /// The same terms with the given fields changed. [dueOn] takes a function,
+  /// so that it can become `null`.
+  DebtTerms copyWith({
+    DebtSide? side,
+    CivilDate? Function()? dueOn,
+    bool? reminds,
+  }) => DebtTerms(
+    side: side ?? this.side,
+    dueOn: dueOn == null ? this.dueOn : dueOn(),
+    reminds: reminds ?? this.reminds,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is DebtTerms &&
+      other.side == side &&
+      other.dueOn == dueOn &&
+      other.reminds == reminds;
+
+  @override
+  int get hashCode => Object.hash(side, dueOn, reminds);
+
+  @override
+  String toString() => 'DebtTerms(${side.name}, $dueOn, reminds: $reminds)';
+}
+
 /// Where money lives. Its currency never changes.
 @immutable
 final class Account {
@@ -66,6 +149,7 @@ final class Account {
     required this.sortOrder,
     this.lastDigits,
     this.art = AccountArt.emerald,
+    this.debt,
   });
 
   /// The id.
@@ -95,6 +179,13 @@ final class Account {
 
   /// The art of the account.
   final AccountArt art;
+
+  /// What a debt keeps besides its money, and `null` on every other account.
+  /// An account of a debt is named after the person (ADR 0029).
+  final DebtTerms? debt;
+
+  /// Whether the account is a debt between the person and someone else.
+  bool get isDebt => type == AccountType.debt;
 
   /// The currency of the account.
   Currency get currency => openingBalance.currency;

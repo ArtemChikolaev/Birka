@@ -27,3 +27,14 @@ trip: Поездка
 toCash: Снятие наличных
 toSavings: В накопления
 toEuro: Евро на поездку
+people:
+  masha: Маша
+  dima: Дима
+  sasha: Саша
+  ira: Ира
+  dad: Папа
+debtNotes:
+  tickets: на билеты
+  flat: за квартиру
+  salary: до зарплаты
+  concert: на концерт

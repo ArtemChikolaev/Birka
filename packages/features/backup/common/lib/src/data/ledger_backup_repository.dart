@@ -25,7 +25,10 @@ final class LedgerBackupRepository implements BackupRepository {
   @override
   Future<OperationsExport> operations() async => OperationsExport(
     transactions: await _ledger.watchTransactions(limit: null).first,
-    accounts: await _ledger.watchAccounts(includeArchived: true).first,
+    // A transfer of a debt names the person, whose debt is an account too.
+    accounts: await _ledger
+        .watchAccounts(includeArchived: true, includeDebts: true)
+        .first,
     categories: [
       for (final kind in CategoryKind.values)
         ...await _ledger.watchCategories(kind, includeArchived: true).first,

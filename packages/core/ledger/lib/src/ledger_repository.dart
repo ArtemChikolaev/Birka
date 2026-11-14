@@ -36,6 +36,10 @@ final class LedgerRepository {
   /// Adds an account, after the others unless [sortOrder] says otherwise.
   /// The currency of [openingBalance] becomes the currency of the account for
   /// good.
+  ///
+  /// A debt needs its [debt] terms, and no other account has them. A debt
+  /// never counts towards the capital: the money is not the person's now
+  /// (ADR 0029).
   Future<Account> addAccount({
     required String name,
     required AccountType type,
@@ -45,7 +49,15 @@ final class LedgerRepository {
     bool includeInTotals = true,
     int? sortOrder,
     String? importId,
+    DebtTerms? debt,
   }) {
+    if ((type == AccountType.debt) != (debt != null)) {
+      throw LedgerException(
+        type == AccountType.debt
+            ? 'Debt $name needs its terms'
+            : 'Account $name of type ${type.name} cannot have debt terms',
+      );
+    }
     return _db.transaction(() async {
       final id = _newId();
       final at = _timestamp();
@@ -71,9 +83,12 @@ final class LedgerRepository {
               openingBalanceMinor: Value(openingBalance.minorUnits),
               lastDigits: Value(lastDigits),
               art: Value(art.name),
-              includeInTotals: Value(includeInTotals),
+              includeInTotals: Value(includeInTotals && debt == null),
               sortOrder: Value(position),
               importId: Value(importId),
+              debtSide: Value(debt?.side.name),
+              debtDueOn: Value(debt?.dueOn?.toString()),
+              debtReminds: Value(debt?.reminds ?? false),
             ),
           );
       await _log(_db.accounts, id, 'insert', at);
@@ -83,6 +98,10 @@ final class LedgerRepository {
 
   /// Changes the given fields of an account. The currency of
   /// [openingBalance] has to stay the currency of the account.
+  ///
+  /// [debt] puts new terms on a debt. A debt stays a debt and another
+  /// account never becomes one, and a debt never counts towards the capital
+  /// (ADR 0029).
   Future<void> updateAccount(
     String id, {
     String? name,
@@ -93,16 +112,35 @@ final class LedgerRepository {
     bool? includeInTotals,
     bool? archived,
     int? sortOrder,
+    DebtTerms? debt,
   }) {
     return _db.transaction(() async {
       final at = _timestamp();
-      if (openingBalance != null) {
-        final account = await this.account(id);
-        if (account != null && account.currency != openingBalance.currency) {
+      final checks =
+          openingBalance != null ||
+          type != null ||
+          debt != null ||
+          includeInTotals != null;
+      final account = checks ? await this.account(id) : null;
+      if (account != null) {
+        if (openingBalance != null &&
+            account.currency != openingBalance.currency) {
           throw LedgerException(
             'Account ${account.name} is in ${account.currency}, not in '
             '${openingBalance.currency}',
           );
+        }
+        if (type != null &&
+            (type == AccountType.debt) != (account.type == AccountType.debt)) {
+          throw LedgerException(
+            'Account ${account.name} cannot become a ${type.name}',
+          );
+        }
+        if (debt != null && !account.isDebt) {
+          throw LedgerException('Account ${account.name} is not a debt');
+        }
+        if ((includeInTotals ?? false) && account.isDebt) {
+          throw LedgerException('Debt ${account.name} cannot count in totals');
         }
       }
       final updated =
@@ -121,6 +159,11 @@ final class LedgerRepository {
               includeInTotals: Value.absentIfNull(includeInTotals),
               archived: Value.absentIfNull(archived),
               sortOrder: Value.absentIfNull(sortOrder),
+              debtSide: Value.absentIfNull(debt?.side.name),
+              debtDueOn: debt == null
+                  ? const Value.absent()
+                  : Value(debt.dueOn?.toString()),
+              debtReminds: Value.absentIfNull(debt?.reminds),
             ),
           );
       if (updated == 0) throw LedgerException('No account $id');
@@ -137,13 +180,21 @@ final class LedgerRepository {
     return row == null ? null : _accountOf(row);
   }
 
-  /// The accounts in their order, without archived ones unless asked.
-  Stream<List<Account>> watchAccounts({bool includeArchived = false}) {
+  /// The accounts in their order, without archived ones and without debts
+  /// unless asked. A debt is the money of a person between the owner and
+  /// someone else, so lists and pickers of accounts leave it out (ADR 0029).
+  Stream<List<Account>> watchAccounts({
+    bool includeArchived = false,
+    bool includeDebts = false,
+  }) {
     final query = _db.select(_db.accounts)
       ..where(
         (row) =>
             row.deletedAt.isNull() &
-            (includeArchived ? const Constant(true) : row.archived.not()),
+            (includeArchived ? const Constant(true) : row.archived.not()) &
+            (includeDebts
+                ? const Constant(true)
+                : row.type.equals(AccountType.debt.name).not()),
       )
       ..orderBy([
         (row) => OrderingTerm(expression: row.sortOrder),
@@ -153,10 +204,12 @@ final class LedgerRepository {
   }
 
   /// The accounts in their order with what each one holds, without archived
-  /// ones unless asked. One query gives both, so a list never shows an account
-  /// with a balance from before its last change.
+  /// ones and without debts unless asked, as [watchAccounts]. One query gives
+  /// both, so a list never shows an account with a balance from before its
+  /// last change.
   Stream<List<AccountBalance>> watchAccountBalances({
     bool includeArchived = false,
+    bool includeDebts = false,
   }) {
     return _db
         .customSelect(
@@ -164,11 +217,14 @@ final class LedgerRepository {
           SELECT a.*, $_balance AS balance
           FROM accounts a
           WHERE a.deleted_at IS NULL AND (? OR NOT a.archived)
+            AND (? OR a.type <> ?)
           ORDER BY a.sort_order, a.name
           ''',
           variables: [
             Variable.withString(TransactionStatus.planned.name),
             Variable.withBool(includeArchived),
+            Variable.withBool(includeDebts),
+            Variable.withString(AccountType.debt.name),
           ],
           readsFrom: {_db.accounts, _db.entries, _db.transactions},
         )
@@ -2048,14 +2104,15 @@ final class LedgerRepository {
 
   /// The latest [limit] transactions, or all of them without a limit. They can
   /// be narrowed to [accountId], to the days from [from] to [to], with both
-  /// ends included, to those that wear метка [tagId], and to those that
-  /// wear any метка when [tagged].
+  /// ends included, to those that wear метка [tagId], to those that wear any
+  /// метка when [tagged], and to those that move a debt when [debts].
   Stream<List<Transaction>> watchTransactions({
     String? accountId,
     CivilDate? from,
     CivilDate? to,
     String? tagId,
     bool tagged = false,
+    bool debts = false,
     int? limit = 200,
   }) {
     final query = _db.select(_db.transactions)
@@ -2077,6 +2134,18 @@ final class LedgerRepository {
             ..addColumns([links.transactionId])
             ..where(worn);
           matches &= row.id.isInQuery(wearing);
+        }
+        if (debts) {
+          final debtAccounts = _db.selectOnly(_db.accounts)
+            ..addColumns([_db.accounts.id])
+            ..where(_db.accounts.type.equals(AccountType.debt.name));
+          final ofDebts = _db.selectOnly(_db.entries)
+            ..addColumns([_db.entries.transactionId])
+            ..where(
+              _db.entries.accountId.isInQuery(debtAccounts) &
+                  _db.entries.deletedAt.isNull(),
+            );
+          matches &= row.id.isInQuery(ofDebts);
         }
         if (accountId == null) return matches;
         final ofAccount = _db.selectOnly(_db.entries)
@@ -2530,6 +2599,17 @@ final class LedgerRepository {
     includeInTotals: row.includeInTotals,
     archived: row.archived,
     sortOrder: row.sortOrder,
+    debt: switch (row.debtSide) {
+      final side? => DebtTerms(
+        side: DebtSide.values.byName(side),
+        dueOn: switch (row.debtDueOn) {
+          final day? => CivilDate.parse(day),
+          null => null,
+        },
+        reminds: row.debtReminds,
+      ),
+      null => null,
+    },
   );
 
   Category _categoryOf(CategoryRow row) => Category(

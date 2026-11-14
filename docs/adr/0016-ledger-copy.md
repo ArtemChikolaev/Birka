@@ -23,9 +23,10 @@
    category or a transaction, and allocations without a category
    ([ADR 0021](0021-statements.md)), version 3 the regular payments,
    version 4 what was done to their last times and version 5 their advances
-   ([ADR 0023](0023-regular-payments.md)), and version 8 the метки and how
-   each transaction wears them ([ADR 0027](0027-tags.md)); files of the
-   versions before still read.
+   ([ADR 0023](0023-regular-payments.md)), version 8 the метки and how
+   each transaction wears them ([ADR 0027](0027-tags.md)), and version 9 the
+   terms of debts ([ADR 0029](0029-debts.md)); files of the versions before
+   still read.
 2. Tombstones stay out of a copy: what a person deleted does not travel in a
    file that they may send somewhere. Exchange rates stay out because any
    device fetches them again, and settings because they belong to a device

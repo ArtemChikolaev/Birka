@@ -1,0 +1,107 @@
+title: Debts
+moreHint: Who owes whom, and by what day
+moreBoth: Owed to me $owed · mine $mine
+moreOwed: Owed to me $owed
+moreMine: My debts $mine
+owedToMe: Owed to me
+myDebts: My debts
+people(n):
+  one: $n person
+  other: $n people
+closed: Settled · $n
+caption: "Debts are not in the capital: this money is not on your accounts now."
+captionRates: "Debts are not in the capital: this money is not on your accounts now. Other currencies at today's CBR rate."
+failed: Could not read the debts.
+gone: This debt is gone.
+emptyTitle: No debts
+emptyText: "Write down whom you lent to or borrowed from: Birka shows how much is left and by what day."
+add: Add a debt
+newDebt: New debt
+line:
+  dueToday: due today
+  dueOn: by $day
+  overdue: was due $day
+  since: since $day
+  returned: paid back $day
+  repaid: repaid $day
+  of: of $total
+  approx: ≈ $amount
+card:
+  title: Debt
+  edit: Edit
+  leftToMe: left to come back of $total
+  leftToThem: left to give back of $total
+  allReturned: all paid back · $day
+  allRepaid: all repaid · $day
+  returned: Paid back $amount
+  repaid: Repaid $amount
+  dueRemind: Due $day · we will remind you that day
+  dueIn: Due $day · $inDays
+  dueOn: Due $day
+  dueToday: Due today
+  dueWas: Was due $day
+  noDue: No due date
+  closed: Debt settled
+  closedRemind: Debt settled · reminder removed
+  history: History
+  returnAction: Paid back
+  repayAction: Repay
+  lendMore: Lend more
+  borrowMore: Borrow more
+  newDebt: New debt
+inDays(n):
+  one: in $n day
+  other: in $n days
+form:
+  lend: Lend
+  borrow: Borrow
+  who: Who
+  other: Someone else
+  name: Name
+  nameHint: Their name
+  nameMissing: Write who it is
+  amount: Amount
+  fromAccount: From account
+  toAccount: To account
+  when: When
+  dueBy: Due by
+  noDue: No due date
+  note: Note
+  remind: Remind on the due date
+  lendCaption: "A debt is not spending: the money leaves the account but stays out of the month's expenses."
+  borrowCaption: "A debt is not income: the money comes to the account but stays out of the month's income."
+  noAccount: "The debt is in $currency, and no account is in that currency."
+  save: Save
+  saved: "Saved: $name, $amount"
+  failed: Could not save. Try again.
+  editTitle: Edit the debt
+back:
+  returnTitle: Paid back · $name
+  repayTitle: Repay · $name
+  all: All · $amount
+  part: Part
+  howMuchReturned: How much came back
+  howMuchRepaid: How much you gave back
+  tooMuch: More than is left
+  returnClosing: The debt will be settled. The money comes to the account but not into income.
+  returnClosingRemind: The debt will be settled and its reminder removed. The money comes to the account but not into income.
+  returnLeft: $left will be left. The money comes to the account but not into income.
+  returnLeftDue: $left will be left until $day. The money comes to the account but not into income.
+  repayClosing: The debt will be settled. The money leaves the account but not into expenses.
+  repayClosingRemind: The debt will be settled and its reminder removed. The money leaves the account but not into expenses.
+  repayLeft: $left will be left. The money leaves the account but not into expenses.
+  repayLeftDue: $left will be left until $day. The money leaves the account but not into expenses.
+  save: Save the payment
+  closedToast: "$name: debt settled"
+  returnedToast: Paid back $amount · $left left
+  repaidToast: Repaid $amount · $left left
+steps:
+  first: "Write down whom you lent to and whom you borrowed from: the money leaves the account or comes to it."
+  second: "A debt is neither spending nor income: it stays out of the month's reports."
+  third: Payments settle a debt in parts, and the list shows how much is left and by what day.
+howItWorks: How it works
+move:
+  lent: Lent
+  returned: Paid back
+  borrowed: Borrowed
+  repaid: Repaid

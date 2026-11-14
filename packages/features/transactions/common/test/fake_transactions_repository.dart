@@ -195,15 +195,20 @@ final class FakeTransactionsRepository implements TransactionsRepository {
   }
 }
 
-/// An account for tests.
-Account testAccount(String id, {Currency currency = Currency.rub}) => Account(
+/// An account for tests, or a debt of [debt] named after a person.
+Account testAccount(
+  String id, {
+  Currency currency = Currency.rub,
+  DebtSide? debt,
+}) => Account(
   id: id,
   name: id,
-  type: AccountType.debit,
+  type: debt == null ? AccountType.debit : AccountType.debt,
   openingBalance: Money.zero(currency),
-  includeInTotals: true,
+  includeInTotals: debt == null,
   archived: false,
   sortOrder: 0,
+  debt: debt == null ? null : DebtTerms(side: debt),
 );
 
 /// A category for tests.

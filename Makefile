@@ -6,7 +6,7 @@ CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/core/rates packages/core/device_settings \
 	packages/features/accounts/common packages/features/ask/common \
 	packages/features/backup/common \
-	packages/features/categories/common \
+	packages/features/categories/common packages/features/debts/common \
 	packages/features/help/common packages/features/import/common \
 	packages/features/inbox/common \
 	packages/features/notifications/common \

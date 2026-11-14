@@ -111,6 +111,38 @@ void main() {
       },
     );
 
+    test('holds the debts of five people outside the capital', () async {
+      await fillDemo(ledger, now: now);
+
+      final debts = [
+        for (final account
+            in await ledger.watchAccounts(includeDebts: true).first)
+          if (account.isDebt) account,
+      ];
+      expect(debts.map((it) => it.name), [
+        'Маша',
+        'Дима',
+        'Саша',
+        'Ира',
+        'Папа',
+      ]);
+      expect(debts.every((it) => !it.includeInTotals), isTrue);
+      final balances = [
+        for (final debt in debts) await ledger.balance(debt.id),
+      ];
+      expect(balances, [
+        Money(300000, Currency.rub),
+        Money(12000, Currency.usd),
+        Money(-400000, Currency.rub),
+        const Money.zero(Currency.rub),
+        const Money.zero(Currency.rub),
+      ]);
+      final dima = debts[1].debt!;
+      expect(dima.dueOn, CivilDate.of(now));
+      expect(dima.reminds, isTrue);
+      expect(debts[2].debt!.side, DebtSide.borrowed);
+    });
+
     test('covers half a year up to today', () async {
       await fillDemo(ledger, now: now);
 

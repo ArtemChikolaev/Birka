@@ -10,6 +10,7 @@ import 'generated/schema.dart';
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
+import 'generated/schema_v12.dart' as v12;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -571,6 +572,62 @@ void main() {
         expect(entry.amountMinor, -3800);
         expect(await migrated.select(migrated.tags).get(), isEmpty);
         expect(await migrated.select(migrated.transactionTags).get(), isEmpty);
+      },
+    );
+  });
+
+  test('an account keeps its data, and one of type debt becomes an owed '
+      'debt outside the capital in v12', () async {
+    const at = '2026-11-14T12:00:00.000Z';
+    await verifier.testWithDataIntegrity(
+      oldVersion: 11,
+      newVersion: 12,
+      createOld: v11.DatabaseAtV11.new,
+      createNew: v12.DatabaseAtV12.new,
+      openTestedDatabase: BirkaDatabase.new,
+      createItems: (batch, old) {
+        batch
+          ..insert(
+            old.accounts,
+            v11.AccountsCompanion.insert(
+              id: 'cash',
+              createdAt: at,
+              updatedAt: at,
+              name: 'Cash',
+              type: 'cash',
+              currency: 'RUB',
+              decimalDigits: 2,
+              openingBalanceMinor: const Value(650000),
+            ),
+          )
+          ..insert(
+            old.accounts,
+            v11.AccountsCompanion.insert(
+              id: 'ira',
+              createdAt: at,
+              updatedAt: at,
+              name: 'Ira',
+              type: 'debt',
+              currency: 'RUB',
+              decimalDigits: 2,
+            ),
+          );
+      },
+      validateItems: (migrated) async {
+        final accounts = {
+          for (final row in await migrated.select(migrated.accounts).get())
+            row.id: row,
+        };
+        final cash = accounts['cash']!;
+        expect(cash.name, 'Cash');
+        expect(cash.openingBalanceMinor, 650000);
+        expect(cash.includeInTotals, 1);
+        expect(cash.debtSide, isNull);
+        expect(cash.debtDueOn, isNull);
+        expect(cash.debtReminds, 0);
+        final ira = accounts['ira']!;
+        expect(ira.debtSide, 'lent');
+        expect(ira.includeInTotals, 0);
       },
     );
   });

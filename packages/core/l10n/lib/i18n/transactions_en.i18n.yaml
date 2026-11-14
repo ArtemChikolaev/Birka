@@ -56,6 +56,12 @@ back: Back
 category: Category
 from: From
 date: Date
+debt:
+  title: Debt
+  lent: lent
+  returned: paid back
+  borrowed: borrowed
+  repaid: repaid
 sources:
   manual: Manually
   import: Imported

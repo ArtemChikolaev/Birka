@@ -1,0 +1,113 @@
+title: Долги
+moreHint: Кто кому должен и до какого дня
+moreBoth: Мне должны $owed · мои $mine
+moreOwed: Мне должны $owed
+moreMine: Мои долги $mine
+owedToMe: Мне должны
+myDebts: Мои долги
+people(n):
+  zero: $n человек
+  one: $n человек
+  few: $n человека
+  many: $n человек
+  other: $n человека
+closed: Закрытые · $n
+caption: "Долги не входят в капитал: этих денег сейчас нет на ваших счетах."
+captionRates: "Долги не входят в капитал: этих денег сейчас нет на ваших счетах. Другие валюты — по курсу ЦБ на сегодня."
+failed: Не удалось прочитать долги.
+gone: Этого долга больше нет.
+emptyTitle: Долгов нет
+emptyText: "Запишите, кому одолжили или у кого заняли: Birka покажет, сколько осталось и до какого дня."
+add: Записать долг
+newDebt: Новый долг
+line:
+  dueToday: срок сегодня
+  dueOn: до $day
+  overdue: срок был $day
+  since: с $day
+  returned: вернули $day
+  repaid: отдали $day
+  of: из $total
+  approx: ≈ $amount
+card:
+  title: Долг
+  edit: Изменить
+  leftToMe: осталось вернуть вам из $total
+  leftToThem: осталось отдать из $total
+  allReturned: вернули всё · $day
+  allRepaid: отдали всё · $day
+  returned: Вернули $amount
+  repaid: Отдали $amount
+  dueRemind: Срок $day · напомним в этот день
+  dueIn: Срок $day · $inDays
+  dueOn: Срок $day
+  dueToday: Срок сегодня
+  dueWas: Срок был $day
+  noDue: Без срока
+  closed: Долг закрыт
+  closedRemind: Долг закрыт · напоминание снято
+  history: История
+  returnAction: Возврат
+  repayAction: Отдать
+  lendMore: Ещё в долг
+  borrowMore: Занять ещё
+  newDebt: Новый долг
+inDays(n):
+  zero: через $n дней
+  one: через $n день
+  few: через $n дня
+  many: через $n дней
+  other: через $n дня
+form:
+  lend: Одолжить
+  borrow: Занять
+  who: Кто
+  other: Другой
+  name: Имя
+  nameHint: Как зовут
+  nameMissing: Напишите, кто это
+  amount: Сумма
+  fromAccount: Со счёта
+  toAccount: На счёт
+  when: Когда
+  dueBy: Вернуть до
+  noDue: Без срока
+  note: Заметка
+  remind: Напомнить в срок
+  lendCaption: "Долг — не трата: деньги уйдут со счёта, но в расходы месяца не попадут."
+  borrowCaption: "Долг — не доход: деньги придут на счёт, но в доходы месяца не попадут."
+  noAccount: "Долг в $currency, а счёта в этой валюте нет."
+  save: Сохранить
+  saved: "Записали: $name, $amount"
+  failed: Не удалось сохранить. Попробуйте ещё раз.
+  editTitle: Изменить долг
+back:
+  returnTitle: Возврат · $name
+  repayTitle: Отдать · $name
+  all: Всё · $amount
+  part: Часть
+  howMuchReturned: Сколько вернули
+  howMuchRepaid: Сколько отдали
+  tooMuch: Больше, чем осталось
+  returnClosing: Долг закроется. Деньги придут на счёт, но не в доходы.
+  returnClosingRemind: Долг закроется, и напоминание о нём уйдёт. Деньги придут на счёт, но не в доходы.
+  returnLeft: Останется $left. Деньги придут на счёт, но не в доходы.
+  returnLeftDue: Останется $left до $day. Деньги придут на счёт, но не в доходы.
+  repayClosing: Долг закроется. Деньги уйдут со счёта, но не в расходы.
+  repayClosingRemind: Долг закроется, и напоминание о нём уйдёт. Деньги уйдут со счёта, но не в расходы.
+  repayLeft: Останется $left. Деньги уйдут со счёта, но не в расходы.
+  repayLeftDue: Останется $left до $day. Деньги уйдут со счёта, но не в расходы.
+  save: Сохранить возврат
+  closedToast: "$name: долг закрыт"
+  returnedToast: Возврат $amount · осталось $left
+  repaidToast: Отдали $amount · осталось $left
+steps:
+  first: "Запишите, кому одолжили и у кого заняли: деньги уйдут со счёта или придут на него."
+  second: "Долг — не трата и не доход: в отчёты месяца он не попадёт."
+  third: Возвраты закрывают долг частями, и список покажет, сколько осталось и до какого дня.
+howItWorks: Как это устроено
+move:
+  lent: В долг
+  returned: Возврат
+  borrowed: Заняли
+  repaid: Отдали

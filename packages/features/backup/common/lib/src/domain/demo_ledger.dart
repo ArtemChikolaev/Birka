@@ -6,8 +6,9 @@ import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 
 /// Fills [ledger] with the demo, in place of all it holds: four accounts in
-/// rubles, dollars and euros, the whole set of categories and half a year of
-/// operations up to [now], in the language of the app (ADR 0019).
+/// rubles, dollars and euros, the whole set of categories, half a year of
+/// operations up to [now] and the debts of five people (ADR 0029), in the
+/// language of the app (ADR 0019).
 ///
 /// The same [now] gives the same demo, which screenshots and checks rely on.
 ///
@@ -92,6 +93,111 @@ final class _Demo {
     ) {
       await _day(moment, today: moment == today);
     }
+    await _debts(CivilDate(today.year, today.month, today.day));
+  }
+
+  /// The debts of the boards «Кто кому должен» (ADR 0029): Маша owes part of
+  /// the tickets, Дима the dollars of a flat by today, the person owes Саша
+  /// until payday, and Ира and Папа gave everything back.
+  Future<void> _debts(CivilDate today) async {
+    final masha = await _debt(
+      t.demo.people.masha,
+      DebtSide.lent,
+      Currency.rub,
+      AccountArt.emerald,
+      dueOn: today.addDays(17),
+      reminds: true,
+    );
+    final dima = await _debt(
+      t.demo.people.dima,
+      DebtSide.lent,
+      Currency.usd,
+      AccountArt.sapphire,
+      dueOn: today,
+      reminds: true,
+    );
+    final sasha = await _debt(
+      t.demo.people.sasha,
+      DebtSide.borrowed,
+      Currency.rub,
+      AccountArt.amber,
+      dueOn: today.addDays(6),
+    );
+    final ira = await _debt(
+      t.demo.people.ira,
+      DebtSide.lent,
+      Currency.rub,
+      AccountArt.rose,
+    );
+    final dad = await _debt(
+      t.demo.people.dad,
+      DebtSide.lent,
+      Currency.rub,
+      AccountArt.violet,
+    );
+    final rubles = Money(1000000, Currency.rub);
+    await _move(today.addDays(-44), _card, rubles, dad, '');
+    await _move(today.addDays(-15), dad, rubles, _card, '');
+    final dollars = Money(12000, Currency.usd);
+    await _move(
+      today.addDays(-25),
+      _savings,
+      dollars,
+      dima,
+      t.demo.debtNotes.flat,
+    );
+    final ira1500 = Money(150000, Currency.rub);
+    await _move(today.addDays(-20), _card, ira1500, ira, '');
+    await _move(today.addDays(-12), ira, ira1500, _card, '');
+    final tickets = Money(500000, Currency.rub);
+    final from = _balances[_cash]! >= tickets.minorUnits ? _cash : _card;
+    await _move(
+      today.addDays(-11),
+      from,
+      tickets,
+      masha,
+      t.demo.debtNotes.tickets,
+    );
+    await _move(
+      today.addDays(-4),
+      masha,
+      Money(200000, Currency.rub),
+      _card,
+      '',
+    );
+    // A borrowed debt goes below nought, so it skips the check of _move.
+    final borrowed = Money(400000, Currency.rub);
+    await _ledger.record(
+      TransactionDraft.transfer(
+        fromAccountId: sasha,
+        sent: borrowed,
+        toAccountId: _card,
+        received: borrowed,
+        occurredOn: today.addDays(-6),
+        note: t.demo.debtNotes.salary,
+      ),
+    );
+    _balances[_card] = _balances[_card]! + borrowed.minorUnits;
+  }
+
+  /// A debt of [name], which starts at nought.
+  Future<String> _debt(
+    String name,
+    DebtSide side,
+    Currency currency,
+    AccountArt art, {
+    CivilDate? dueOn,
+    bool reminds = false,
+  }) async {
+    final account = await _ledger.addAccount(
+      name: name,
+      type: AccountType.debt,
+      openingBalance: Money.zero(currency),
+      art: art,
+      debt: DebtTerms(side: side, dueOn: dueOn, reminds: reminds),
+    );
+    _balances[account.id] = 0;
+    return account.id;
   }
 
   Future<String> _account(

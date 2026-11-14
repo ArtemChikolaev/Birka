@@ -27,3 +27,14 @@ trip: Trip
 toCash: Cash withdrawal
 toSavings: To savings
 toEuro: Euros for the trip
+people:
+  masha: Masha
+  dima: Dima
+  sasha: Sasha
+  ira: Ira
+  dad: Dad
+debtNotes:
+  tickets: for the tickets
+  flat: for the flat
+  salary: until payday
+  concert: for the concert
