@@ -18,6 +18,7 @@ class OperationsPage extends StatefulWidget {
     required this.onOpen,
     required this.onRepeat,
     this.onBack,
+    this.onOpenDebt,
     super.key,
   });
 
@@ -26,6 +27,11 @@ class OperationsPage extends StatefulWidget {
 
   /// Called with the id of the operation to record once more.
   final ValueChanged<String> onRepeat;
+
+  /// Called with the id of the debt that an operation moves, to open its
+  /// card instead of the operation (ADR 0029). Without it the operation
+  /// opens.
+  final ValueChanged<String>? onOpenDebt;
 
   /// Goes back, for the list of an answer of «Спросить» opened over it:
   /// the header gets a back button and the plaque a way back to the answer.
@@ -187,6 +193,7 @@ class _OperationsPageState extends State<OperationsPage> {
                             days: state.days,
                             today: state.today,
                             onOpen: widget.onOpen,
+                            onOpenDebt: widget.onOpenDebt,
                             onRepeat: widget.onRepeat,
                             onDelete: _delete,
                           )

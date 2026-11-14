@@ -60,6 +60,27 @@
    Маша owes part of the tickets, Дима the dollars of a flat by today, the
    person owes Саша until payday, and Ира and Папа gave everything back.
 
+9. The phone has the debts in `debts_flutter`, and «Ещё» leads to them
+   from the row «Долги» beside «Метки», which says what others owe and what
+   the person owes:
+   - the list adds both up in the currency of the totals, puts the debts
+     with the nearest day first, shows a day that has come in amber, and
+     keeps the settled ones in a fold;
+   - the card says what is left of what, grows the bar of what came back,
+     says the day and whether the phone reminds of it, and lists the steps;
+     a tap on a step opens its operation;
+   - a new debt, more money on one, a return and the terms are sheets. The
+     return takes all that is left or a part, which it asks for at once;
+   - a transfer of a debt in the operations shows the initial of the
+     person in the color of the art of the debt, and opens the card of the
+     debt;
+   - the kit gets the glyph `people`, `InitialBadge`, the bright tint of an
+     art (`CardArt.tint`), `GlassActionTile`, which the page of an operation
+     used on its own, and `GlassValueRow`, which the form of a метка did.
+10. The phone reminds of the day of a debt in the next change, with the
+    notices of the bell; until then the switch «Напомнить в срок» keeps what
+    the person chose.
+
 ## Options considered
 
 | Option | Why not |

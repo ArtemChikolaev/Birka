@@ -559,6 +559,18 @@ class Translations$debts$en {
   /// en: 'Debts'
   String get title => 'Debts';
 
+  /// en: 'More'
+  String get toMore => 'More';
+
+  /// en: 'Close'
+  String get close => 'Close';
+
+  /// en: 'Done'
+  String get done => 'Done';
+
+  /// en: 'Show the settled ones'
+  String get foldClosed => 'Show the settled ones';
+
   /// en: 'Who owes whom, and by what day'
   String get moreHint => 'Who owes whom, and by what day';
 
@@ -4611,6 +4623,9 @@ class Translations$debts$form$en {
   /// en: 'Note'
   String get note => 'Note';
 
+  /// en: 'Optional'
+  String get noteHint => 'Optional';
+
   /// en: 'Remind on the due date'
   String get remind => 'Remind on the due date';
 
@@ -4635,6 +4650,18 @@ class Translations$debts$form$en {
 
   /// en: 'Could not save. Try again.'
   String get failed => 'Could not save. Try again.';
+
+  /// en: 'Lend more · $name'
+  String moreTitle({required Object name}) => 'Lend more · ${name}';
+
+  /// en: 'Borrow more · $name'
+  String borrowMoreTitle({required Object name}) => 'Borrow more · ${name}';
+
+  late final Translations$debts$form$dueChoices$en dueChoices =
+      Translations$debts$form$dueChoices$en.internal(_root);
+
+  /// en: 'Today'
+  String get today => 'Today';
 
   /// en: 'Edit the debt'
   String get editTitle => 'Edit the debt';
@@ -5189,6 +5216,30 @@ class Translations$transactions$keys$en {
   String get backspace => 'Erase';
 }
 
+// Path: debts.form.dueChoices
+class Translations$debts$form$dueChoices$en {
+  Translations$debts$form$dueChoices$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'No due date'
+  String get none => 'No due date';
+
+  /// en: 'In a week'
+  String get week => 'In a week';
+
+  /// en: 'In two weeks'
+  String get twoWeeks => 'In two weeks';
+
+  /// en: 'In a month'
+  String get month => 'In a month';
+
+  /// en: 'Pick a day'
+  String get pick => 'Pick a day';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -5610,6 +5661,10 @@ extension on Translations {
           'categories.how.2' =>
             'Categories show in operations, reports and regular payments.',
           'debts.title' => 'Debts',
+          'debts.toMore' => 'More',
+          'debts.close' => 'Close',
+          'debts.done' => 'Done',
+          'debts.foldClosed' => 'Show the settled ones',
           'debts.moreHint' => 'Who owes whom, and by what day',
           'debts.moreBoth' =>
             ({required Object owed, required Object mine}) =>
@@ -5701,6 +5756,7 @@ extension on Translations {
           'debts.form.dueBy' => 'Due by',
           'debts.form.noDue' => 'No due date',
           'debts.form.note' => 'Note',
+          'debts.form.noteHint' => 'Optional',
           'debts.form.remind' => 'Remind on the due date',
           'debts.form.lendCaption' =>
             'A debt is not spending: the money leaves the account but stays out of the month\'s expenses.',
@@ -5714,6 +5770,16 @@ extension on Translations {
             ({required Object name, required Object amount}) =>
                 'Saved: ${name}, ${amount}',
           'debts.form.failed' => 'Could not save. Try again.',
+          'debts.form.moreTitle' =>
+            ({required Object name}) => 'Lend more · ${name}',
+          'debts.form.borrowMoreTitle' =>
+            ({required Object name}) => 'Borrow more · ${name}',
+          'debts.form.dueChoices.none' => 'No due date',
+          'debts.form.dueChoices.week' => 'In a week',
+          'debts.form.dueChoices.twoWeeks' => 'In two weeks',
+          'debts.form.dueChoices.month' => 'In a month',
+          'debts.form.dueChoices.pick' => 'Pick a day',
+          'debts.form.today' => 'Today',
           'debts.form.editTitle' => 'Edit the debt',
           'debts.back.returnTitle' =>
             ({required Object name}) => 'Paid back · ${name}',
@@ -5899,6 +5965,9 @@ extension on Translations {
           'imports.dropTitle' => 'Drop a statement here',
           'imports.dropText' =>
             'A file from your online bank for any period. Birka tells the bank by its columns and shows how it read every row before anything is written.',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.choose' => 'Choose a file',
           'imports.reading' => 'Reading the file…',
           'imports.kinds.0' => 'CSV',
@@ -5917,9 +5986,6 @@ extension on Translations {
           'imports.unreadable.empty' => 'The file is empty.',
           'imports.unreadable.tooLarge' =>
             'The file is too large. Take a shorter statement, up to 10,000 rows.',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.unreadable.incomplete' =>
             'The operations of the statement miss its totals; some did not read. Download the statement again.',
           'imports.howTitle' => 'How it works',
@@ -6844,6 +6910,9 @@ extension on Translations {
                 '${date} · ${amount} · marked as posted, no copy will come',
           'schedules.donePosted' =>
             ({required Object date}) => 'posted today · next on ${date}',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.doneSkipped' =>
             ({required Object date}) => 'skipped · next on ${date}',
           'schedules.doneFound' =>
@@ -6860,9 +6929,6 @@ extension on Translations {
           'schedules.weekday.tue' => 'Tue',
           'schedules.weekday.wed' => 'Wed',
           'schedules.weekday.thu' => 'Thu',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.weekday.fri' => 'Fri',
           'schedules.weekday.sat' => 'Sat',
           'schedules.weekday.sun' => 'Sun',

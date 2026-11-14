@@ -1,5 +1,6 @@
 import 'package:birka_mobile/app/app_version.dart';
 import 'package:birka_mobile/app/router.dart';
+import 'package:debts_flutter/debts_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +12,8 @@ import 'package:settings_flutter/settings_flutter.dart';
 
 /// The tab with everything that has no tab of its own, and the settings.
 ///
-/// It needs an `InboxSummaryCubit` above it for the way to the inbox.
+/// It needs an `InboxSummaryCubit` above it for the way to the inbox, and a
+/// `DebtsCubit` for the row of the debts.
 class MorePage extends StatelessWidget {
   /// Creates the page; [links] open the code of Birka, and [onImport]
   /// starts the import of a statement.
@@ -98,6 +100,7 @@ class MorePage extends StatelessWidget {
                 ),
                 onTap: () => context.push(Paths.tags),
               ),
+              DebtsMoreRow(onOpen: () => context.push(Paths.debts)),
             ],
           ),
           const SizedBox(height: BirkaTokens.spaceLg),

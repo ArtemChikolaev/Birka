@@ -28,6 +28,10 @@ dependencies:
     path: ../../packages/features/categories/flutter
   database:
     path: ../../packages/core/database
+  debts_common:
+    path: ../../packages/features/debts/common
+  debts_flutter:
+    path: ../../packages/features/debts/flutter
   design_flutter:
     path: ../../packages/design/flutter
   drift_flutter: ^0.2.8

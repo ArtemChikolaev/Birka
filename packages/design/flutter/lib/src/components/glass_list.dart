@@ -209,3 +209,63 @@ class GlassListValue extends StatelessWidget {
     );
   }
 }
+
+/// A row of a form: what it is, the value that stands now in strong text,
+/// and a chevron when a tap changes it. A new value fades over the old one.
+class GlassValueRow extends StatelessWidget {
+  /// Creates a row.
+  const GlassValueRow({
+    required this.label,
+    required this.value,
+    required this.onTap,
+    this.quiet = false,
+    super.key,
+  });
+
+  /// What the row is.
+  final String label;
+
+  /// What stands in it now.
+  final String value;
+
+  /// Changes it, or `null` while it cannot change.
+  final VoidCallback? onTap;
+
+  /// Whether the value is a hint rather than what the person set.
+  final bool quiet;
+
+  /// How far the value reaches, so that it leaves room for the label.
+  static const double _widest = 200;
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    return GlassListRow(
+      title: label,
+      onTap: onTap,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // The old value and the new one share the width while they
+          // cross-fade, so neither may push the row past its edge.
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _widest),
+            child: FadingText(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: styles.bodyStrong.copyWith(
+                color: quiet ? colors.textMuted : colors.text,
+              ),
+            ),
+          ),
+          if (onTap != null) ...[
+            const SizedBox(width: BirkaTokens.spaceXs),
+            BirkaIcon(BirkaGlyph.chevron, size: 16, color: colors.textMuted),
+          ],
+        ],
+      ),
+    );
+  }
+}

@@ -70,7 +70,8 @@ String? debtAmountNote(Debt debt, DebtsState state) {
   if (debt.settled.isPositive) {
     return t.debts.line.of(total: debtAmount(debt.total));
   }
-  final inBase = state.inBase(debt);
+  // What a debt comes to at today's rate is only as exact as the rate.
+  final inBase = state.inBase(debt)?.roundedToWhole();
   return inBase == null
       ? null
       : t.debts.line.approx(amount: debtAmount(inBase));
@@ -143,9 +144,13 @@ String debtStepTitle(DebtStep step) => switch (step.move) {
   DebtMove.repaid => t.debts.move.repaid,
 };
 
-/// The line under a step: its day, the account and the note.
+/// The line under a step: its day, «Сегодня» for today, the account and the
+/// note.
 String debtStepLine(DebtStep step, {required CivilDate today}) => [
-  debtDay(step.day, today: today),
+  if (step.day == today)
+    t.debts.form.today
+  else
+    debtDay(step.day, today: today),
   ?step.account?.name,
   if (step.note.isNotEmpty) step.note,
 ].join(' · ');

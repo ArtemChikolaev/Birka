@@ -112,6 +112,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/backup/jaspr && dart test
 	cd packages/features/categories/flutter && flutter test
 	cd packages/features/categories/jaspr && dart test
+	cd packages/features/debts/flutter && flutter test
 	cd packages/features/help/flutter && flutter test
 	cd packages/features/help/jaspr && dart test
 	cd packages/features/import/flutter && flutter test

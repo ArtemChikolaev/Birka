@@ -274,7 +274,7 @@ class _Actions extends StatelessWidget {
       children: [
         if (operation.canChange) ...[
           Expanded(
-            child: _Action(
+            child: GlassActionTile(
               glyph: BirkaGlyph.copy,
               label: t.transactions.repeat,
               onTap: onRepeat,
@@ -283,7 +283,7 @@ class _Actions extends StatelessWidget {
           const SizedBox(width: BirkaTokens.spaceSm),
         ],
         Expanded(
-          child: _Action(
+          child: GlassActionTile(
             glyph: BirkaGlyph.trash,
             label: t.transactions.delete,
             danger: true,
@@ -291,49 +291,6 @@ class _Actions extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _Action extends StatelessWidget {
-  const _Action({
-    required this.glyph,
-    required this.label,
-    required this.onTap,
-    this.danger = false,
-  });
-
-  final BirkaGlyph glyph;
-  final String label;
-  final VoidCallback onTap;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BirkaColors.of(context);
-    final ink = danger ? colors.negative : colors.text;
-    return Semantics(
-      button: true,
-      label: label,
-      excludeSemantics: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: GlassSurface(
-          child: Column(
-            children: [
-              BirkaIcon(glyph, color: ink),
-              const SizedBox(height: BirkaTokens.spaceXs),
-              Text(
-                label,
-                style: BirkaTextStyles.of(
-                  context,
-                ).bodyStrong.copyWith(color: ink),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -1,0 +1,29 @@
+name: debts_flutter
+description: >-
+  Debts in Flutter: the list of who owes whom, the card of a person, the
+  forms of a new debt, of a return and of its terms, and the row in «Ещё»,
+  on phones.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  debts_common:
+    path: ../common
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  money:
+    path: ../../../core/money
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

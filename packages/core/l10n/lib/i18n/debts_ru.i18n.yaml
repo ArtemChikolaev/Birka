@@ -1,4 +1,8 @@
 title: Долги
+toMore: Ещё
+close: Закрыть
+done: Готово
+foldClosed: Показать закрытые
 moreHint: Кто кому должен и до какого дня
 moreBoth: Мне должны $owed · мои $mine
 moreOwed: Мне должны $owed
@@ -73,6 +77,7 @@ form:
   dueBy: Вернуть до
   noDue: Без срока
   note: Заметка
+  noteHint: Необязательно
   remind: Напомнить в срок
   lendCaption: "Долг — не трата: деньги уйдут со счёта, но в расходы месяца не попадут."
   borrowCaption: "Долг — не доход: деньги придут на счёт, но в доходы месяца не попадут."
@@ -80,6 +85,15 @@ form:
   save: Сохранить
   saved: "Записали: $name, $amount"
   failed: Не удалось сохранить. Попробуйте ещё раз.
+  moreTitle: Ещё в долг · $name
+  borrowMoreTitle: Занять ещё · $name
+  dueChoices:
+    none: Без срока
+    week: Через неделю
+    twoWeeks: Через две недели
+    month: Через месяц
+    pick: Выбрать день
+  today: Сегодня
   editTitle: Изменить долг
 back:
   returnTitle: Возврат · $name
