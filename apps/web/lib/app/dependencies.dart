@@ -5,6 +5,7 @@ import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/browser_settings_store.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:database/database.dart';
+import 'package:debts_common/debts_common.dart' show registerDebts;
 import 'package:drift/drift.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
@@ -53,6 +54,8 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   registerAsk(getIt);
   registerBackup(getIt, const BrowserSettingsStore());
   registerCategories(getIt);
+  // The site has no reminders, so a day of a debt turns none on.
+  registerDebts(getIt, reminders: false);
   registerImport(getIt, const BrowserSettingsStore());
   registerInbox(getIt, const BrowserSettingsStore());
   registerOnboarding(

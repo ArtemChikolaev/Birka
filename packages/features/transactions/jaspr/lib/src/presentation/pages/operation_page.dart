@@ -103,24 +103,6 @@ class OperationPage extends StatefulComponent {
         'text-align': 'center',
       },
     ),
-    css('.operation__actions').styles(
-      raw: {'display': 'flex', 'gap': 'var(--space-sm)'},
-    ),
-    css('.glass.operation__action').styles(
-      raw: {
-        'align-items': 'center',
-        'color': 'var(--color-text)',
-        'cursor': 'pointer',
-        'display': 'flex',
-        'flex': '1',
-        'flex-direction': 'column',
-        'gap': 'var(--space-xs)',
-        'text-decoration': 'none',
-      },
-    ),
-    css('.glass.operation__action--danger').styles(
-      raw: {'color': 'var(--color-negative)'},
-    ),
   ];
 }
 
@@ -256,26 +238,18 @@ class _OperationPageState extends State<OperationPage> {
   }
 
   Component _actions(Operation operation) {
-    return div(classes: 'operation__actions', [
+    return div(classes: 'glass-action-tiles', [
       if (operation.canChange)
-        a(
-          classes: 'glass text-body-strong operation__action',
+        GlassActionTile(
+          glyph: BirkaGlyph.copy,
+          label: t.transactions.repeat,
           href: component.repeatHref,
-          [
-            const BirkaIcon(BirkaGlyph.copy),
-            .text(t.transactions.repeat),
-          ],
         ),
-      button(
-        classes:
-            'glass text-body-strong operation__action '
-            'operation__action--danger',
-        type: ButtonType.button,
-        onClick: () => setState(() => _confirming = true),
-        [
-          const BirkaIcon(BirkaGlyph.trash),
-          .text(t.transactions.delete),
-        ],
+      GlassActionTile(
+        glyph: BirkaGlyph.trash,
+        label: t.transactions.delete,
+        danger: true,
+        onTap: () => setState(() => _confirming = true),
       ),
     ]);
   }

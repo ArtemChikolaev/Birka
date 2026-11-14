@@ -8,8 +8,9 @@ import 'package:get_it/get_it.dart';
 import 'package:ledger/ledger.dart';
 
 /// Registers the feature in [getIt], which has to know the `LedgerRepository`,
-/// the `RatesRepository` and the `BaseCurrency` of the host.
-void registerDebts(GetIt getIt) {
+/// the `RatesRepository` and the `BaseCurrency` of the host. [reminders]
+/// says whether this host reminds of debts: the site does not.
+void registerDebts(GetIt getIt, {bool reminders = true}) {
   getIt
     ..registerLazySingleton<DebtsRepository>(
       () => LedgerDebtsRepository(getIt(), getIt(), getIt()),
@@ -18,13 +19,17 @@ void registerDebts(GetIt getIt) {
     // The form of a new debt takes no id; «Ещё в долг» on a card gives the
     // debt, whose side the form then follows.
     ..registerFactoryParam<DebtFormCubit, String?, DebtSide?>(
-      (id, side) =>
-          DebtFormCubit(getIt(), debtId: id, side: side ?? DebtSide.lent),
+      (id, side) => DebtFormCubit(
+        getIt(),
+        debtId: id,
+        side: side ?? DebtSide.lent,
+        reminders: reminders,
+      ),
     )
     ..registerFactoryParam<DebtReturnCubit, String, void>(
       (id, _) => DebtReturnCubit(getIt(), id),
     )
     ..registerFactoryParam<DebtTermsCubit, String, void>(
-      (id, _) => DebtTermsCubit(getIt(), id),
+      (id, _) => DebtTermsCubit(getIt(), id, reminders: reminders),
     );
 }

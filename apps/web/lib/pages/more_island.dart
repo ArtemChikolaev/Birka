@@ -7,6 +7,8 @@ import 'package:birka_web/app/opened_database.dart';
 import 'package:birka_web/app/wide_window.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:birka_web/pages/more_page.dart';
+import 'package:debts_common/debts_common.dart'
+    show DebtsCubit, DebtsState, DebtsStatus, debtsMoreLine;
 import 'package:design_jaspr/design_jaspr.dart';
 import 'package:get_it/get_it.dart';
 import 'package:inbox_common/inbox_common.dart'
@@ -38,6 +40,9 @@ class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
   /// What waits in the inbox, once the database is open.
   InboxSummaryCubit? _inbox;
 
+  /// The debts, once the database is open (ADR 0029).
+  DebtsCubit? _debts;
+
   @override
   void initState() {
     super.initState();
@@ -67,7 +72,10 @@ class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
       return;
     }
     if (!mounted) return;
-    setState(() => _inbox = getIt());
+    setState(() {
+      _inbox = getIt();
+      _debts = getIt();
+    });
   }
 
   void _describePage() {
@@ -81,6 +89,7 @@ class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
   void dispose() {
     unawaited(_languages?.cancel());
     unawaited(_inbox?.close());
+    unawaited(_debts?.close());
     _stopWatchingSlash?.call();
     super.dispose();
   }
@@ -91,6 +100,7 @@ class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
   Component build(BuildContext context) {
     if (!kIsWeb) return const BirkaColumn(children: [BirkaPlaceholder()]);
     final inbox = _inbox;
+    final debts = _debts;
     return BlocProvider<SettingsCubit>(
       // The other pages read the choice when they load.
       create: (_) => SettingsCubit(
@@ -102,18 +112,32 @@ class _MoreIslandState extends State<MoreIsland> with WideWindow<MoreIsland> {
         ),
       ),
       child: div(key: ValueKey(LocaleSettings.currentLocale), [
-        MorePage(
-          wide: wide,
-          inbox: inbox == null
-              ? const InboxTile(href: 'inbox/')
-              : BlocBuilder<InboxSummaryCubit, InboxState>(
-                  bloc: inbox,
-                  builder: (context, state) =>
-                      InboxTile(href: 'inbox/', state: state),
-                ),
-        ),
+        if (debts == null)
+          _page(inbox, null)
+        else
+          BlocBuilder<DebtsCubit, DebtsState>(
+            bloc: debts,
+            builder: (context, state) => _page(
+              inbox,
+              state.status == DebtsStatus.ready ? debtsMoreLine(state) : null,
+            ),
+          ),
         const SiteNav(page: SitePage.more),
       ]),
+    );
+  }
+
+  Component _page(InboxSummaryCubit? inbox, String? debtsLine) {
+    return MorePage(
+      wide: wide,
+      debtsLine: debtsLine,
+      inbox: inbox == null
+          ? const InboxTile(href: 'inbox/')
+          : BlocBuilder<InboxSummaryCubit, InboxState>(
+              bloc: inbox,
+              builder: (context, state) =>
+                  InboxTile(href: 'inbox/', state: state),
+            ),
     );
   }
 }

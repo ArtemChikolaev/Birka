@@ -20,6 +20,7 @@ import 'package:birka_web/pages/accounts_island.dart' as _accounts_island;
 import 'package:birka_web/pages/ask_island.dart' as _ask_island;
 import 'package:birka_web/pages/backup_island.dart' as _backup_island;
 import 'package:birka_web/pages/categories_island.dart' as _categories_island;
+import 'package:birka_web/pages/debts_island.dart' as _debts_island;
 import 'package:birka_web/pages/help_island.dart' as _help_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
 import 'package:birka_web/pages/import_island.dart' as _import_island;
@@ -39,6 +40,14 @@ import 'package:categories_jaspr/src/presentation/pages/categories_page.dart'
     as _categories_page;
 import 'package:categories_jaspr/src/presentation/pages/category_form_page.dart'
     as _category_form_page;
+import 'package:debts_jaspr/src/presentation/components/debt_return_form.dart'
+    as _debt_return_form;
+import 'package:debts_jaspr/src/presentation/pages/debt_form_page.dart'
+    as _debt_form_page;
+import 'package:debts_jaspr/src/presentation/pages/debt_page.dart'
+    as _debt_page;
+import 'package:debts_jaspr/src/presentation/pages/debts_page.dart'
+    as _debts_page;
 import 'package:design_jaspr/src/account_card.dart' as _account_card;
 import 'package:design_jaspr/src/ambient_background.dart'
     as _ambient_background;
@@ -75,6 +84,7 @@ import 'package:design_jaspr/src/card_art.dart' as _card_art;
 import 'package:design_jaspr/src/dot_badge.dart' as _dot_badge;
 import 'package:design_jaspr/src/file_drop_zone.dart' as _file_drop_zone;
 import 'package:design_jaspr/src/forecast_chart.dart' as _forecast_chart;
+import 'package:design_jaspr/src/glass_action_tile.dart' as _glass_action_tile;
 import 'package:design_jaspr/src/glass_icon_button.dart' as _glass_icon_button;
 import 'package:design_jaspr/src/glass_keypad.dart' as _glass_keypad;
 import 'package:design_jaspr/src/glass_list.dart' as _glass_list;
@@ -91,6 +101,7 @@ import 'package:design_jaspr/src/glass_steps.dart' as _glass_steps;
 import 'package:design_jaspr/src/glass_surface.dart' as _glass_surface;
 import 'package:design_jaspr/src/glass_toast.dart' as _glass_toast;
 import 'package:design_jaspr/src/glyph_badge.dart' as _glyph_badge;
+import 'package:design_jaspr/src/initial_badge.dart' as _initial_badge;
 import 'package:design_jaspr/src/section_label.dart' as _section_label;
 import 'package:design_jaspr/src/share_line.dart' as _share_line;
 import 'package:design_jaspr/src/tinted_box.dart' as _tinted_box;
@@ -199,6 +210,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ),
     _categories_island.CategoriesIsland:
         ClientTarget<_categories_island.CategoriesIsland>('categories_island'),
+    _debts_island.DebtsIsland: ClientTarget<_debts_island.DebtsIsland>(
+      'debts_island',
+    ),
     _help_island.HelpIsland: ClientTarget<_help_island.HelpIsland>(
       'help_island',
     ),
@@ -244,6 +258,10 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._page_frame.PageFrame.styles,
     ..._categories_page.CategoriesPage.styles,
     ..._category_form_page.CategoryFormPage.styles,
+    ..._debt_return_form.DebtReturnForm.styles,
+    ..._debt_form_page.DebtFormPage.styles,
+    ..._debt_page.DebtPage.styles,
+    ..._debts_page.DebtsPage.styles,
     ..._account_card.AccountCard.styles,
     ..._ambient_background.AmbientBackground.styles,
     ..._amount_text.AmountText.styles,
@@ -279,6 +297,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._dot_badge.DotBadge.styles,
     ..._file_drop_zone.FileDropZone.styles,
     ..._forecast_chart.ForecastChart.styles,
+    ..._glass_action_tile.GlassActionTile.styles,
     ..._glass_icon_button.GlassIconButton.styles,
     ..._glass_keypad.GlassKeypad.styles,
     ..._glass_list.GlassListGroup.styles,
@@ -295,6 +314,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._glass_surface.GlassSurface.styles,
     ..._glass_toast.GlassToast.styles,
     ..._glyph_badge.GlyphBadge.styles,
+    ..._initial_badge.InitialBadge.styles,
     ..._section_label.SectionLabel.styles,
     ..._share_line.ShareLine.styles,
     ..._tinted_box.TintedBox.styles,

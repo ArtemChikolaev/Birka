@@ -685,17 +685,14 @@ Component _select<T>({
   String? dot,
   bool quiet = false,
 }) {
-  return div(classes: 'schedule-form__field', [
-    span(classes: 'text-caption schedule-form__label', [.text(label)]),
-    BirkaSelect<T>(
-      label: label,
-      options: options,
-      selected: selected,
-      onChanged: onChanged,
-      dot: dot,
-      quiet: quiet,
-    ),
-  ]);
+  return BirkaSelectField<T>(
+    label: label,
+    options: options,
+    selected: selected,
+    onChanged: onChanged,
+    dot: dot,
+    quiet: quiet,
+  );
 }
 
 /// The days of a month, as the form names them: `12-го`.

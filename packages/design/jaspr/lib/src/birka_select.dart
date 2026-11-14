@@ -194,3 +194,50 @@ class BirkaSelect<T> extends StatelessComponent {
     ),
   ];
 }
+
+/// A [BirkaSelect] under its label, as the fields of a form stand.
+class BirkaSelectField<T> extends StatelessComponent {
+  /// Creates a select under [label].
+  const BirkaSelectField({
+    required this.label,
+    required this.options,
+    required this.selected,
+    required this.onChanged,
+    this.dot,
+    this.quiet = false,
+    super.key,
+  });
+
+  /// What the select is for, over it.
+  final String label;
+
+  /// The options and their names.
+  final Map<T, String> options;
+
+  /// The option that stands now.
+  final T selected;
+
+  /// Called with the option the person picks.
+  final ValueChanged<T> onChanged;
+
+  /// The color of a dot before the value, as CSS.
+  final String? dot;
+
+  /// Whether the value is a hint rather than what the person set.
+  final bool quiet;
+
+  @override
+  Component build(BuildContext context) {
+    return div(classes: 'birka-field', [
+      span(classes: 'text-caption birka-field__label', [.text(label)]),
+      BirkaSelect<T>(
+        label: label,
+        options: options,
+        selected: selected,
+        onChanged: onChanged,
+        dot: dot,
+        quiet: quiet,
+      ),
+    ]);
+  }
+}

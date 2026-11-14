@@ -19,7 +19,19 @@ enum CardArt {
   violet,
 
   /// Pink.
-  rose,
+  rose
+  ;
+
+  /// The bright color of the art as CSS, for a small mark such as the
+  /// initial of a person whose debt wears it (ADR 0029).
+  String get tint => switch (this) {
+    CardArt.emerald => 'var(--color-palette-green)',
+    CardArt.graphite => 'var(--color-palette-cyan)',
+    CardArt.sapphire => 'var(--color-palette-sky)',
+    CardArt.amber => 'var(--color-palette-amber)',
+    CardArt.violet => 'var(--color-palette-violet)',
+    CardArt.rose => 'var(--color-palette-rose)',
+  };
 }
 
 /// A card with [art] behind [child].

@@ -132,6 +132,7 @@ class _OperationsIslandState extends DataIslandState<OperationsIsland>
     return OperationsPage(
       addHref: '$address#$_new',
       hrefOf: (id) => '$address#$id',
+      hrefOfDebt: (id) => 'debts/#$id',
       note: storageNote,
       picked: picked,
       side: side,

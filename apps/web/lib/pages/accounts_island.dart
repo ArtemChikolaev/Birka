@@ -85,6 +85,7 @@ class _AccountsIslandState extends DataIslandState<AccountsIsland>
           onClose: closeView,
           editHref: '$address#$id/$_edit',
           hrefOf: (operation) => '$address#$id/$operation',
+          hrefOfDebt: (debt) => 'debts/#$debt',
           wide: wide,
         ),
         [_edit] => _form(id, () => closeForm(id)),
