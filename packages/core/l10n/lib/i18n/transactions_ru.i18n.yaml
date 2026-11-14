@@ -97,6 +97,7 @@ monthNames:
   - Ноябрь
   - Декабрь
 allOperations(n):
+  zero: Все $n операций
   one: Все $n операция
   few: Все $n операции
   many: Все $n операций

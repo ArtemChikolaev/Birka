@@ -4,6 +4,7 @@ add: Добавить счёт
 capital: Капитал
 and: и
 inAccounts(n):
+  zero: в $n счетах
   one: в $n счёте
   few: в $n счетах
   many: в $n счетах

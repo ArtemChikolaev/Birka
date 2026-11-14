@@ -38,11 +38,13 @@ answer:
   of: $what · $when
   everything: $what
   operations(n):
+    zero: $n операций
     one: $n операция
     few: $n операции
     many: $n операций
     other: $n операции
   incomes(n):
+    zero: $n поступлений
     one: $n поступление
     few: $n поступления
     many: $n поступлений
@@ -52,6 +54,7 @@ answer:
   none: Таких операций нет
   noneText: Попробуйте другой период или уберите лишнее из вопроса.
   show(n):
+    zero: Показать $n операций
     one: Показать $n операцию
     few: Показать $n операции
     many: Показать $n операций
@@ -83,12 +86,14 @@ period:
   lastWeek: Прошлая неделя
   thisMonth: Этот месяц
   lastMonths(n):
+    zero: Последние $n месяцев
     one: Последний $n месяц
     few: Последние $n месяца
     many: Последние $n месяцев
     other: Последние $n месяца
   thisYear: Этот год
   lastDays(n):
+    zero: Последние $n дней
     one: Последний $n день
     few: Последние $n дня
     many: Последние $n дней
@@ -100,6 +105,7 @@ period:
 fact:
   capital: Капитал · $currencies
   accounts(n):
+    zero: $n счетов
     one: $n счёт
     few: $n счёта
     many: $n счетов

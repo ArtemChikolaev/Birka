@@ -104,6 +104,7 @@ noPaydayTitle: Сколько можно тратить в день?
 noPaydayText: Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.
 noPaydayAction: Указать день зарплаты
 days(n):
+  zero: $n дней
   one: $n день
   few: $n дня
   many: $n дней
@@ -115,17 +116,20 @@ untilPayday: до зарплаты $date · $days
 untilDate: до $date · $days
 morning: Утром на счетах
 paymentsUntilPayday(n):
+  zero: $n платежей до зарплаты
   one: $n платёж до зарплаты
   few: $n платежа до зарплаты
   many: $n платежей до зарплаты
   other: $n платежей до зарплаты
 paymentsUntilMonth(n):
+  zero: $n платежей до конца месяца
   one: $n платёж до конца месяца
   few: $n платежа до конца месяца
   many: $n платежей до конца месяца
   other: $n платежей до конца месяца
 aside: Отложить
 leftFor(n):
+  zero: Остаётся на $n дней
   one: Остаётся на $n день
   few: Остаётся на $n дня
   many: Остаётся на $n дней
@@ -193,6 +197,7 @@ remindTitle: Напоминания
 remindNotify: Уведомления от Birka
 remindNotifyOff: пока Birka на телефоне
 remindNotifyOn(n):
+  zero: $n платежей · в $time
   one: $n платёж · в $time
   few: $n платежа · в $time
   many: $n платежей · в $time
@@ -200,6 +205,7 @@ remindNotifyOn(n):
 remindNotifyDenied: нет доступа к уведомлениям
 remindCalendar: События в календаре
 remindCalendarOn(n):
+  zero: календарь «Birka» · $n событий
   one: календарь «Birka» · $n событие
   few: календарь «Birka» · $n события
   many: календарь «Birka» · $n событий
@@ -225,6 +231,7 @@ remindNotNow: Не сейчас
 remindCalendarAskText: Birka заведёт календарь «Birka» и добавит в него регулярные платежи. Напоминать будет сам календарь — даже если удалить Birka.
 remindCalendarAskOwnTitle: Календарь «Birka»
 remindCalendarAskOwn(n):
+  zero: $n платежей · напомнит в $time
   one: $n платёж · напомнит в $time
   few: $n платежа · напомнит в $time
   many: $n платежей · напомнит в $time
@@ -236,6 +243,7 @@ remindCalendarAskOthersText: "Телефон спросит полный дос�
 remindCalendarAllow: Разрешить доступ к календарю
 remindCalendarRemoveTitle: Убрать календарь «Birka»?
 remindCalendarRemoveText(n):
+  zero: Календарь «Birka» и $n событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
   one: Календарь «Birka» и $n событие в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
   few: Календарь «Birka» и $n события в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
   many: Календарь «Birka» и $n событий в нём исчезнут с телефона, и календарь перестанет напоминать о платежах. Другие календари не изменятся.
@@ -251,6 +259,7 @@ remindOpenSettings: Открыть настройки
 remindCancel: Отмена
 remindOnTitle: Напоминания включены
 remindOnText(n):
+  zero: Birka напомнит о $n платежах
   one: Birka напомнит о $n платеже
   few: Birka напомнит о $n платежах
   many: Birka напомнит о $n платежах
@@ -282,11 +291,13 @@ findsTitle: Похоже на регулярные
 findsTitleEmpty: Нашли в ваших операциях
 findsNote: Повторялись каждый месяц. Нажмите, чтобы добавить, или ✕, если повтор случайный.
 findLine(n):
+  zero: $day-го · $count раз подряд
   one: $day-го · $count раз подряд
   few: $day-го · $count раза подряд
   many: $day-го · $count раз подряд
   other: $day-го · $count раза подряд
 findLineVaries(n):
+  zero: около $day-го · $count раз
   one: около $day-го · $count раз
   few: около $day-го · $count раза
   many: около $day-го · $count раз
@@ -295,6 +306,7 @@ findDismiss: "Не регулярный: $name"
 findDismissed: Не будем предлагать «$name»
 findRestore: Вернуть
 foundIn(n):
+  zero: Нашли в операциях · $count раз
   one: Нашли в операциях · $count раз
   few: Нашли в операциях · $count раза
   many: Нашли в операциях · $count раз
@@ -326,12 +338,14 @@ forecastPlanAdvance: "по плану: $amount в день до аванса"
 forecastAdvance: $date · аванс
 subtitleNext: Ближайший $date · $count
 subtitleToday(n):
+  zero: Сегодня $date · $n ждут подтверждения
   one: Сегодня $date · $n ждёт подтверждения
   few: Сегодня $date · $n ждут подтверждения
   many: Сегодня $date · $n ждут подтверждения
   other: Сегодня $date · $n ждут подтверждения
 subtitleNone: Пока ни одного
 paymentsCount(n):
+  zero: $n платежей
   one: $n платёж
   few: $n платежа
   many: $n платежей

@@ -15,6 +15,7 @@ categories:
   short: Короткий набор
   full: Полный набор
   count(n):
+    zero: $n категорий
     one: $n категория
     few: $n категории
     many: $n категорий
