@@ -168,6 +168,133 @@ void main() {
     });
   });
 
+  group('the day of a debt', () {
+    final december = CivilDate(2026, 12, 1);
+    final nine = DateTime(2026, 12, 1, 9);
+
+    Future<void> remind({CivilDate? dueOn}) => ledger.updateAccount(
+      masha.id,
+      debt: DebtTerms(
+        side: DebtSide.lent,
+        dueOn: dueOn ?? december,
+        reminds: true,
+      ),
+    );
+
+    Future<String> back(int minorUnits, CivilDate day) => ledger.record(
+      TransactionDraft.transfer(
+        fromAccountId: masha.id,
+        sent: rub(minorUnits),
+        toAccountId: cash.id,
+        received: rub(minorUnits),
+        occurredOn: day,
+      ),
+    );
+
+    Future<void> noteDecember() => ledger.noteDebtDays([
+      (debtId: masha.id, due: december, at: nine),
+    ]);
+
+    Future<DebtNotice> notice() async =>
+        (await ledger.watchNotices().first).single as DebtNotice;
+
+    test('comes into the notices once, with what was owed then', () async {
+      await remind();
+      await lend(500000, nov(1));
+      await back(200000, nov(10));
+
+      await noteDecember();
+      await noteDecember();
+
+      expect(
+        await notice(),
+        isA<DebtNotice>()
+            .having((it) => it.name, 'name', 'Маша')
+            .having((it) => it.side, 'side', DebtSide.lent)
+            .having((it) => it.due, 'due', december)
+            .having((it) => it.at, 'at', nine.toUtc())
+            .having((it) => it.owed, 'owed', rub(300000))
+            .having((it) => it.left, 'left', rub(300000))
+            .having((it) => it.since, 'since', nov(1))
+            .having((it) => it.note, 'note', 'на билеты')
+            .having((it) => it.settledOn, 'settled', isNull)
+            .having((it) => it.gone, 'gone', isFalse)
+            .having((it) => it.isNew, 'new', isTrue),
+      );
+    });
+
+    test('needs the reminder of that day and something owed', () async {
+      await lend(500000, nov(1));
+      await noteDecember();
+      await remind(dueOn: CivilDate(2026, 12, 5));
+      await noteDecember();
+      expect(await ledger.watchNotices().first, isEmpty);
+
+      await remind();
+      await back(500000, nov(10));
+      await noteDecember();
+      expect(await ledger.watchNotices().first, isEmpty);
+    });
+
+    test('says the day its round came back to nought, and keeps it when the '
+        'person lends again', () async {
+      await remind();
+      await lend(500000, nov(1));
+      await noteDecember();
+
+      await back(200000, CivilDate(2026, 12, 2));
+      expect((await notice()).left, rub(300000));
+      await back(300000, CivilDate(2026, 12, 3));
+      expect((await notice()).settledOn, CivilDate(2026, 12, 3));
+      expect((await notice()).left, isNull);
+
+      await lend(100000, CivilDate(2026, 12, 10));
+      final again = await notice();
+      expect(again.settledOn, CivilDate(2026, 12, 3));
+      expect(again.since, nov(1));
+    });
+
+    test('counts a return dated before the day', () async {
+      await remind();
+      await lend(500000, nov(1));
+      await noteDecember();
+
+      await back(500000, CivilDate(2026, 11, 30));
+
+      expect((await notice()).settledOn, CivilDate(2026, 11, 30));
+    });
+
+    test('is gone with the transfer that started its round, and comes back '
+        'open when a return goes', () async {
+      await remind();
+      final lent = await lend(500000, nov(1));
+      final returned = await back(500000, CivilDate(2026, 12, 2));
+      await ledger.delete(returned);
+      await noteDecember();
+      await ledger.delete(lent);
+      expect((await notice()).gone, isTrue);
+
+      await lend(500000, nov(1));
+      final returnedAgain = await back(500000, CivilDate(2026, 12, 2));
+      expect((await notice()).settledOn, CivilDate(2026, 12, 2));
+      await ledger.delete(returnedAgain);
+      final open = await notice();
+      expect(open.settledOn, isNull);
+      expect(open.left, rub(500000));
+    });
+
+    test('is read once the person settles the debt', () async {
+      await remind();
+      await lend(500000, nov(1));
+      await noteDecember();
+
+      await ledger.readDebtNotices(masha.id);
+
+      expect((await notice()).isNew, isFalse);
+      expect(await ledger.watchNewNotices().first, 0);
+    });
+  });
+
   group('a copy', () {
     test('keeps the terms of a debt', () async {
       await lend(500000, nov(3));

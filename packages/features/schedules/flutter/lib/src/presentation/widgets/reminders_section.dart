@@ -72,8 +72,9 @@ class _RemindersSectionState extends State<RemindersSection> {
                   subtitle: state.denied
                       ? t.schedules.remindNotifyDenied
                       : settings.notify
-                      ? t.schedules.remindNotifyOn(
-                          n: state.reminding,
+                      ? remindNotifyLine(
+                          payments: state.reminding,
+                          debts: state.debts,
                           time: time,
                         )
                       : t.schedules.remindNotifyOff,

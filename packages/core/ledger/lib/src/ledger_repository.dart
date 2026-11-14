@@ -1206,6 +1206,8 @@ final class LedgerRepository {
             i.format AS import_format, i.first_day AS import_first_day,
             i.last_day AS import_last_day,
             i.deleted_at AS import_deleted_at,
+            d.debt_side AS debt_side, d.deleted_at AS debt_deleted_at,
+            d.opening_balance_minor AS debt_opening,
             (SELECT COUNT(*) FROM transactions t
               WHERE t.import_id = n.import_id AND t.deleted_at IS NULL)
               AS import_transactions,
@@ -1216,6 +1218,7 @@ final class LedgerRepository {
                 AND a.category_id IS NULL) AS import_waiting
           FROM notices n
           LEFT JOIN imports i ON i.id = n.import_id
+          LEFT JOIN accounts d ON d.id = n.debt_id
           ORDER BY n.created_at DESC, n.id DESC
           ''',
           readsFrom: {
@@ -1223,10 +1226,51 @@ final class LedgerRepository {
             _db.imports,
             _db.transactions,
             _db.allocations,
+            _db.accounts,
+            _db.entries,
           },
         )
         .watch()
-        .map((rows) => [for (final row in rows) ?_noticeOf(row)]);
+        .asyncMap((rows) async {
+          final legs = await _debtLegs({
+            for (final row in rows) ?row.read<String?>('debt_id'),
+          });
+          return [for (final row in rows) ?_noticeOf(row, legs)];
+        });
+  }
+
+  /// The entries of debts [ids] that are not planned, by debt, the earliest
+  /// first, with the day and the note of their transfers.
+  Future<Map<String, List<({CivilDate day, int minor, String note})>>>
+  _debtLegs(Set<String> ids) async {
+    if (ids.isEmpty) return const {};
+    final rows = await _db
+        .customSelect(
+          '''
+          SELECT e.account_id, e.amount_minor, t.occurred_on, t.note
+          FROM entries e
+          JOIN transactions t ON t.id = e.transaction_id
+          WHERE e.account_id IN (${List.filled(ids.length, '?').join(', ')})
+            AND e.deleted_at IS NULL AND t.deleted_at IS NULL
+            AND t.status <> ?
+          ORDER BY t.occurred_on, t.id
+          ''',
+          variables: [
+            for (final id in ids) Variable.withString(id),
+            Variable.withString(TransactionStatus.planned.name),
+          ],
+          readsFrom: {_db.entries, _db.transactions},
+        )
+        .get();
+    final legs = <String, List<({CivilDate day, int minor, String note})>>{};
+    for (final row in rows) {
+      (legs[row.read<String>('account_id')] ??= []).add((
+        day: CivilDate.parse(row.read<String>('occurred_on')),
+        minor: row.read<int>('amount_minor'),
+        note: row.read<String>('note'),
+      ));
+    }
+    return legs;
   }
 
   /// How many notices the person has not read yet, again after every change.
@@ -1276,6 +1320,56 @@ final class LedgerRepository {
             );
       }
     });
+  }
+
+  /// Puts into the notices each of [days] of a debt that came at its moment
+  /// (ADR 0029): one notice for each day of a debt, which keeps the moment it
+  /// came at, the name of the person and what was owed then. A day that has
+  /// a notice already keeps it, and a debt that is gone, owes nothing now, or
+  /// keeps another day or no reminder of it gets none.
+  Future<void> noteDebtDays(
+    Iterable<({String debtId, CivilDate due, DateTime at})> days,
+  ) {
+    return _db.transaction(() async {
+      for (final day in days) {
+        final debt = await account(day.debtId);
+        final terms = debt?.debt;
+        if (debt == null ||
+            terms == null ||
+            !terms.reminds ||
+            terms.dueOn != day.due) {
+          continue;
+        }
+        final sign = terms.side == DebtSide.lent ? 1 : -1;
+        final owed = (await balance(debt.id)).minorUnits * sign;
+        if (owed <= 0) continue;
+        await _db
+            .into(_db.notices)
+            .insert(
+              NoticesCompanion.insert(
+                id: _newId(),
+                source: NoticeSource.debt.name,
+                createdAt: day.at.toUtc(),
+                debtId: Value(debt.id),
+                timeOn: Value(day.due.toString()),
+                name: Value(debt.name),
+                amountMinor: Value(owed),
+                currency: Value(debt.currency.code),
+                decimalDigits: Value(debt.currency.decimalDigits),
+              ),
+              mode: InsertMode.insertOrIgnore,
+            );
+      }
+    });
+  }
+
+  /// Marks read the notices of debt [debtId] that are new, as when the
+  /// person settled it: what they did is no news to them.
+  Future<void> readDebtNotices(String debtId) async {
+    await (_db.update(_db.notices)..where(
+          (row) => row.debtId.equals(debtId) & row.readAt.isNull(),
+        ))
+        .write(NoticesCompanion(readAt: Value(_timestamp())));
   }
 
   /// Forgets the notices that came before [before], read or not, and says
@@ -1445,9 +1539,13 @@ final class LedgerRepository {
           ))
           .go();
 
-  /// The notice of [row] of [watchNotices], or `null` for one that this
-  /// version cannot read, such as of a source that a newer one added.
-  Notice? _noticeOf(QueryRow row) {
+  /// The notice of [row] of [watchNotices], with the [legs] of its debt, or
+  /// `null` for one that this version cannot read, such as of a source that
+  /// a newer one added.
+  Notice? _noticeOf(
+    QueryRow row,
+    Map<String, List<({CivilDate day, int minor, String note})>> legs,
+  ) {
     final notice = _db.notices.map(row.data);
     switch (NoticeSource.values.asNameMap()[notice.source]) {
       case NoticeSource.payment:
@@ -1490,6 +1588,55 @@ final class LedgerRepository {
             null => null,
           },
         );
+      case NoticeSource.debt:
+        final NoticeRow(
+          :debtId,
+          :timeOn,
+          :name,
+          :amountMinor,
+          :currency,
+          :decimalDigits,
+        ) = notice;
+        if (debtId == null ||
+            timeOn == null ||
+            name == null ||
+            amountMinor == null ||
+            currency == null ||
+            decimalDigits == null) {
+          return null;
+        }
+        final money = _currency(currency, decimalDigits);
+        final due = CivilDate.parse(timeOn);
+        final sideName = row.read<String?>('debt_side');
+        final side = DebtSide.values.asNameMap()[sideName];
+        final gone = row.read<DateTime?>('debt_deleted_at') != null;
+        // A debt that the ledger no longer has, or deleted, has no rounds.
+        final round = side == null || gone
+            ? null
+            : _roundOf(
+                due,
+                opening: row.read<int>('debt_opening'),
+                sign: side == DebtSide.lent ? 1 : -1,
+                legs: legs[debtId] ?? const [],
+              );
+        return DebtNotice(
+          id: notice.id,
+          at: notice.createdAt,
+          readAt: notice.readAt,
+          debtId: debtId,
+          name: name,
+          side: side ?? DebtSide.lent,
+          due: due,
+          owed: Money(amountMinor, money),
+          left: switch (round?.left) {
+            final left? when left > 0 => Money(left, money),
+            _ => null,
+          },
+          since: round?.since,
+          note: round?.note ?? '',
+          settledOn: round?.settledOn,
+          gone: round == null,
+        );
       case NoticeSource.import:
         final fileName = row.read<String?>('import_file_name');
         final importId = notice.importId;
@@ -1510,6 +1657,44 @@ final class LedgerRepository {
       case null:
         return null;
     }
+  }
+
+  /// The round of a debt that [due] falls in (ADR 0029): the latest one that
+  /// started by that day, from the [opening] balance of the debt and its
+  /// [legs] in order, where [sign] turns what the debt holds into what is
+  /// owed. It gives the day the round started, unknown for an opening
+  /// balance, the note that started it, the day it came back to nought and
+  /// what is owed while it is open, or `null` when no round started by then.
+  static ({CivilDate? since, String note, CivilDate? settledOn, int left})?
+  _roundOf(
+    CivilDate due, {
+    required int opening,
+    required int sign,
+    required List<({CivilDate day, int minor, String note})> legs,
+  }) {
+    var owed = opening * sign;
+    var found = owed > 0;
+    CivilDate? since;
+    var note = '';
+    CivilDate? settledOn;
+    for (final leg in legs) {
+      final before = owed;
+      owed += leg.minor * sign;
+      if (before <= 0 && owed > 0) {
+        // A round that starts after the day leaves the one it falls in.
+        if (leg.day.compareTo(due) > 0) break;
+        (found, since, note, settledOn) = (true, leg.day, leg.note, null);
+      } else if (before > 0 && owed <= 0 && found) {
+        settledOn = leg.day;
+      }
+    }
+    if (!found) return null;
+    return (
+      since: since,
+      note: note,
+      settledOn: settledOn,
+      left: settledOn == null ? owed : 0,
+    );
   }
 
   /// The transaction that regular payment [schedule] gives on [on].

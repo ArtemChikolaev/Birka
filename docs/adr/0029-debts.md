@@ -77,9 +77,29 @@
    - the kit gets the glyph `people`, `InitialBadge`, the bright tint of an
      art (`CardArt.tint`), `GlassActionTile`, which the page of an operation
      used on its own, and `GlassValueRow`, which the form of a метка did.
-10. The phone reminds of the day of a debt in the next change, with the
-    notices of the bell; until then the switch «Напомнить в срок» keeps what
-    the person chose.
+10. The phone reminds of the day of an open debt that keeps the reminder:
+    - at the time of the reminders and while their notifications are on
+      ([ADR 0025](0025-reminders.md)), with «Срок сегодня · Маша, 3 000 ₽»,
+      or without the amount when the reminders hide them, and a line that
+      says who gives the money back. A tap opens the card of the debt;
+    - `ReminderScheduler` puts these reminders among the ones of the
+      payments, the earliest first, within the same limit of 60. The days
+      come from the ledger (`watchDebtDays`): a debt that owes nothing,
+      keeps no day or no reminder has none;
+    - the calendar «Birka» keeps only the payments: its events repeat by a
+      rule, and the day of a debt comes once;
+    - the bell takes the day in at the same moment as a `DebtNotice` of the
+      source «Долги» ([ADR 0026](0026-notifications.md)), whatever the
+      switches say and in the demo too. The notice keeps the name and what
+      was owed then; schema version 13 gives `notices` the column `debt_id`
+      and a unique index on the debt and the day;
+    - what became of the day is worked out from the ledger each time, from
+      the round of the debt that the day falls in: the day it came back to
+      nought («Вернули 2 ноября»), a part that came back, what is still
+      owed, or that the debt is gone. A return can be deleted from its
+      operation, so nothing of this is stored. A return that closes the
+      debt marks its notices read, as what the person does to a payment
+      does.
 11. The site has the same pages (`debts_jaspr`) at `debts/`, with the card
     at `debts/#<id>`, more money at `debts/#more-<id>`, the terms at
     `debts/#edit-<id>` and a new debt at `debts/#new`. A wide window keeps

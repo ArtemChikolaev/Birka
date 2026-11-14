@@ -59,6 +59,29 @@ ImportNotice import({
   undone: undone,
 );
 
+DebtNotice debt({
+  CivilDate? due,
+  DebtSide side = DebtSide.lent,
+  int? left = 3000,
+  CivilDate? since,
+  String note = 'За квартиру',
+  CivilDate? settledOn,
+  bool gone = false,
+}) => DebtNotice(
+  id: 'masha ${due ?? today}',
+  at: DateTime(2026, 11, 25, 9),
+  debtId: 'masha',
+  name: 'Маша',
+  side: side,
+  due: due ?? today,
+  owed: rub(3000),
+  left: left == null ? null : rub(left),
+  since: since ?? CivilDate(2026, 10, 20),
+  note: note,
+  settledOn: settledOn,
+  gone: gone,
+);
+
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.ru));
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
@@ -66,7 +89,7 @@ void main() {
   group('a notice says', () {
     test('what it is about', () {
       expect(
-        noticeTitle(payment(), thisYear: 2026),
+        noticeTitle(payment(), today: today),
         'Аренда · ${nb('45 000 ₽')}',
       );
       expect(
@@ -77,15 +100,15 @@ void main() {
             kind: TransactionKind.income,
             advance: true,
           ),
-          thisYear: 2026,
+          today: today,
         ),
         'Аванс · ${nb('+60 000 ₽')}',
       );
-      expect(noticeTitle(import(), thisYear: 2026), 'Альфа-Банк · ноябрь');
+      expect(noticeTitle(import(), today: today), 'Альфа-Банк · ноябрь');
       expect(
         noticeTitle(
           import(format: null, firstDay: CivilDate(2025, 12, 20)),
-          thisYear: 2026,
+          today: today,
         ),
         'alfa-2026-11.xlsx · декабрь 2025 – ноябрь',
       );
@@ -169,6 +192,66 @@ void main() {
         line(import(undone: true)),
         ('Импорт отменён', NoticeTone.left),
       );
+    });
+
+    test('the day of a debt, who owes and what became of it', () {
+      expect(
+        noticeTitle(debt(), today: today),
+        'Срок сегодня · Маша, ${nb('3 000 ₽')}',
+      );
+      expect(
+        noticeTitle(debt(due: CivilDate(2026, 11, 1)), today: today),
+        'Срок · Маша, ${nb('3 000 ₽')}',
+      );
+      (String, NoticeTone) line(DebtNotice notice, {bool fresh = false}) =>
+          noticeLine(notice, today: today, fresh: fresh);
+      expect(line(debt(), fresh: true), (
+        'За квартиру · с 20 октября',
+        NoticeTone.plain,
+      ));
+      expect(line(debt(note: ''), fresh: true), (
+        'с 20 октября',
+        NoticeTone.plain,
+      ));
+      expect(line(debt()), (
+        'Ещё не вернули · осталось ${nb('3 000 ₽')}',
+        NoticeTone.waits,
+      ));
+      expect(line(debt(side: DebtSide.borrowed)), (
+        'Ещё не отдали · осталось ${nb('3 000 ₽')}',
+        NoticeTone.waits,
+      ));
+      expect(line(debt(left: 1000), fresh: true), (
+        'Вернули часть · осталось ${nb('1 000 ₽')}',
+        NoticeTone.waits,
+      ));
+      expect(line(debt(left: null, settledOn: today), fresh: true), (
+        'Вернули сегодня',
+        NoticeTone.done,
+      ));
+      expect(line(debt(left: null, settledOn: CivilDate(2026, 11, 2))), (
+        'Вернули 2 ноября',
+        NoticeTone.done,
+      ));
+      expect(
+        line(
+          debt(
+            side: DebtSide.borrowed,
+            left: null,
+            settledOn: CivilDate(2026, 11, 24),
+          ),
+        ),
+        ('Отдали вчера', NoticeTone.done),
+      );
+      expect(line(debt(left: null, gone: true)), (
+        'Этого долга больше нет',
+        NoticeTone.left,
+      ));
+      expect(
+        noticePlace(debt(), today: today),
+        (place: NoticePlace.debt, id: 'masha'),
+      );
+      expect(noticePlace(debt(gone: true), today: today), isNull);
     });
 
     test('when it came and where a tap leads', () {

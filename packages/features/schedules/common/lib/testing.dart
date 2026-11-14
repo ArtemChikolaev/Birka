@@ -449,4 +449,18 @@ final class FakeSchedulesRepository implements SchedulesRepository {
 
   @override
   Future<void> noteReminders(List<PlannedReminder> reminders) async {}
+
+  /// The days of the open debts that remind of them.
+  List<DebtDay> debtDays = const [];
+
+  /// The days of debts that went into the notices, with their minutes.
+  final notedDebtDays = <(DebtDay, int)>[];
+
+  @override
+  Stream<List<DebtDay>> watchDebtDays() => _watch(() => debtDays);
+
+  @override
+  Future<void> noteDebtDays(List<DebtDay> days, {required int minutes}) async {
+    notedDebtDays.addAll([for (final day in days) (day, minutes)]);
+  }
 }

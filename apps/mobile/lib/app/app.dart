@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:l10n/l10n.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:schedules_common/schedules_common.dart'
-    show ReminderChannel, ReminderTap;
+    show DebtReminderTap, PaymentReminderTap, ReminderChannel, ReminderTap;
 import 'package:settings_common/settings_common.dart';
 
 /// The root widget of the Flutter app.
@@ -60,15 +60,19 @@ class _BirkaAppState extends State<BirkaApp> {
   void initState() {
     super.initState();
     _languages = LocaleSettings.getLocaleStream().listen(_onLanguageChanged);
-    // A tapped reminder of the day before opens its payment, and one of the
-    // day the regular payments, where it is posted (ADR 0025). The steps of a
-    // new device stay.
+    // A tapped reminder of the day before opens its payment, one of the day
+    // the regular payments, where it is posted (ADR 0025), and one of the day
+    // of a debt its card (ADR 0029). The steps of a new device stay.
     _reminders = widget.getIt<ReminderChannel>().opened.listen((tap) {
       if (_onboarding != null) return;
       unawaited(
-        _router.push(
-          tap.early ? Paths.schedule(tap.scheduleId) : Paths.schedules,
-        ),
+        _router.push(switch (tap) {
+          PaymentReminderTap(:final scheduleId, early: true) => Paths.schedule(
+            scheduleId,
+          ),
+          PaymentReminderTap() => Paths.schedules,
+          DebtReminderTap(:final debtId) => Paths.debt(debtId),
+        }),
       );
     });
   }

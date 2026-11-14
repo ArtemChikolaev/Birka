@@ -193,6 +193,10 @@ final class LedgerDebtsRepository implements DebtsRepository {
         occurredOn: day,
       ),
     );
+    // A return that closes the debt is no news to the person: its days go
+    // into the history of the bell.
+    final owed = (await _ledger.balance(debtId)).minorUnits * (back ? 1 : -1);
+    if (owed <= 0) await _ledger.readDebtNotices(debtId);
   });
 
   @override

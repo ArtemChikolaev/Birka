@@ -85,4 +85,13 @@ abstract interface class SchedulesRepository {
   /// Puts [reminders] that came into the notices of this device, each at its
   /// moment, unless its time has a notice or was done meanwhile (ADR 0026).
   Future<void> noteReminders(List<PlannedReminder> reminders);
+
+  /// The days of the open debts that keep the reminder of them (ADR 0029),
+  /// again after every change of the debts.
+  Stream<List<DebtDay>> watchDebtDays();
+
+  /// Puts [days] of debts that came into the notices of this device, each at
+  /// [minutes] after midnight of its day, unless the day has a notice or the
+  /// debt owes nothing now (ADR 0029).
+  Future<void> noteDebtDays(List<DebtDay> days, {required int minutes});
 }

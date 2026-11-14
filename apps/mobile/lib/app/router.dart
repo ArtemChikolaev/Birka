@@ -709,6 +709,8 @@ GoRouter buildRouter(
               NoticePlace.schedule when id != null => Paths.schedule(id),
               NoticePlace.schedule => Paths.schedules,
               NoticePlace.inbox => Paths.inbox,
+              NoticePlace.debt when id != null => Paths.debt(id),
+              NoticePlace.debt => Paths.debts,
             }),
           ),
         ),

@@ -26,9 +26,49 @@ ReminderNote reminderNote(PlannedReminder reminder, {required bool sums}) {
         : schedule.onDay == ScheduleOnDay.post
         ? t.schedules.remindTodayAuto
         : t.schedules.remindToday,
-    tap: ReminderTap(schedule.id, early: reminder.early),
+    tap: PaymentReminderTap(schedule.id, early: reminder.early),
   );
 }
+
+/// `3 платежа · в 9:00`, `1 долг · в 9:00` or `3 платежа и 1 долг · в 9:00`:
+/// what the notifications of Birka remind of, [payments] that remind and
+/// [debts] whose day is still to come, at [time] (ADR 0025, ADR 0029).
+String remindNotifyLine({
+  required int payments,
+  required int debts,
+  required String time,
+}) {
+  final schedules = t.schedules;
+  if (debts == 0) return schedules.remindNotifyOn(n: payments, time: time);
+  if (payments == 0) return schedules.remindNotifyDebts(n: debts, time: time);
+  return schedules.remindNotifyBoth(
+    payments: schedules.remindPayments(n: payments),
+    debts: schedules.remindDebtCount(n: debts),
+    time: time,
+  );
+}
+
+/// What the phone shows for [day] of a debt (ADR 0029), at [minutes] after
+/// midnight of the day: that the day is today, the name of the person and,
+/// with [sums], what is owed, and under it who is to give the money back.
+ReminderNote debtReminderNote(
+  DebtDay day, {
+  required int minutes,
+  required bool sums,
+}) => ReminderNote(
+  day: day.due,
+  minutes: minutes,
+  title: sums
+      ? t.schedules.remindDebtTitle(
+          name: day.name,
+          amount: formatMoney(day.owed),
+        )
+      : t.schedules.remindDebtTitleNoSum(name: day.name),
+  body: day.side == DebtSide.lent
+      ? t.schedules.remindDebtLent
+      : t.schedules.remindDebtBorrowed,
+  tap: DebtReminderTap(day.debtId),
+);
 
 /// `Аренда · 45 000 ₽`: the name of the time [on] of [schedule] and, with
 /// [sums], its amount, as a reminder and an event of the calendar say it.

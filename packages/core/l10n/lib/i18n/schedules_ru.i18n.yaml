@@ -202,6 +202,25 @@ remindNotifyOn(n):
   few: $n платежа · в $time
   many: $n платежей · в $time
   other: $n платежей · в $time
+remindNotifyDebts(n):
+  zero: $n долгов · в $time
+  one: $n долг · в $time
+  few: $n долга · в $time
+  many: $n долгов · в $time
+  other: $n долгов · в $time
+remindNotifyBoth: $payments и $debts · в $time
+remindPayments(n):
+  zero: $n платежей
+  one: $n платёж
+  few: $n платежа
+  many: $n платежей
+  other: $n платежей
+remindDebtCount(n):
+  zero: $n долгов
+  one: $n долг
+  few: $n долга
+  many: $n долгов
+  other: $n долгов
 remindNotifyDenied: нет доступа к уведомлениям
 remindCalendar: События в календаре
 remindCalendarOn(n):
@@ -215,7 +234,7 @@ remindCalendarDenied: нет доступа к календарю
 remindTime: Время
 remindSums: Суммы в напоминаниях
 remindSumsNote: на экране блокировки и в календаре
-remindNoteOff: "Напомнить можно в день платежа или накануне: это выбирается у каждого платежа."
+remindNoteOff: "Напомнить можно в день платежа или накануне: это выбирается у каждого платежа. О долге Birka напомнит в день срока."
 remindNoteOn: Удалите Birka — напоминания исчезнут вместе с ней. Календарь напомнит и без неё.
 remindNoteDenied: Чтобы Birka напоминала, разрешите ей уведомления в настройках телефона.
 remindNoteCalendar: Если календарь синхронизируется с iCloud или Google, названия и суммы платежей попадут туда.
@@ -268,8 +287,12 @@ remindOnNone: Отметьте «Напомнить» у платежей
 remindToday: Сегодня. Нажмите, чтобы провести или пропустить.
 remindTodayAuto: Сегодня, проведётся само.
 remindTomorrow: Завтра, $date. Нажмите, чтобы открыть платёж.
-remindChannel: Напоминания о платежах
-remindChannelNote: Регулярные платежи в их день или накануне
+remindDebtTitle: Срок сегодня · $name, $amount
+remindDebtTitleNoSum: Срок сегодня · $name
+remindDebtLent: Сегодня вам должны вернуть долг. Нажмите, чтобы открыть его.
+remindDebtBorrowed: Сегодня срок отдать долг. Нажмите, чтобы открыть его.
+remindChannel: Напоминания о платежах и долгах
+remindChannelNote: Регулярные платежи в их день или накануне и сроки долгов
 remindSection: Напомнить
 reminder(map):
   onDay: В день

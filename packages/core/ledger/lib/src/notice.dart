@@ -1,3 +1,4 @@
+import 'package:ledger/src/account.dart';
 import 'package:ledger/src/civil_date.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:meta/meta.dart';
@@ -7,6 +8,9 @@ import 'package:money/money.dart';
 enum NoticeSource {
   /// A time of a regular payment.
   payment,
+
+  /// The day of a debt (ADR 0029).
+  debt,
 
   /// An import of a statement.
   import,
@@ -40,7 +44,8 @@ sealed class Notice {
   /// The id.
   final String id;
 
-  /// When it came: when Birka reminded of the time, did it or imported.
+  /// When it came: when Birka reminded of the time or of the day of a debt,
+  /// did it or imported.
   final DateTime at;
 
   /// When the person read it, or `null` while it is new.
@@ -225,4 +230,105 @@ final class ImportNotice extends Notice {
   String toString() =>
       'ImportNotice($fileName, $transactions, $waiting waiting'
       '${undone ? ', undone' : ''})';
+}
+
+/// The day of a debt that came while the debt was open (ADR 0029), with
+/// what became of it since: the round of the debt that the day falls in
+/// came back to nought, or it is still open.
+final class DebtNotice extends Notice {
+  /// Creates the notice of the day [due] of debt [debtId].
+  const DebtNotice({
+    required super.id,
+    required super.at,
+    required this.debtId,
+    required this.name,
+    required this.side,
+    required this.due,
+    required this.owed,
+    super.readAt,
+    this.left,
+    this.since,
+    this.note = '',
+    this.settledOn,
+    this.gone = false,
+  });
+
+  /// The debt.
+  final String debtId;
+
+  /// The name of the person when the notice came.
+  final String name;
+
+  /// Who owes whom.
+  final DebtSide side;
+
+  /// The day the debt was to come back by.
+  final CivilDate due;
+
+  /// What was owed when the notice came, above zero.
+  final Money owed;
+
+  /// What is owed now while the round that [due] falls in is open, or `null`
+  /// once it came back to nought or is gone.
+  final Money? left;
+
+  /// The first day of the round of the debt that [due] falls in, or `null`
+  /// when the ledger does not tell it.
+  final CivilDate? since;
+
+  /// The note of the transfer that started that round.
+  final String note;
+
+  /// The day that round came back to nought, or `null` while it is open.
+  final CivilDate? settledOn;
+
+  /// Whether the debt, or the round that [due] falls in, is no longer in the
+  /// ledger.
+  final bool gone;
+
+  @override
+  NoticeSource get source => NoticeSource.debt;
+
+  @override
+  bool operator ==(Object other) =>
+      other is DebtNotice &&
+      other.id == id &&
+      other.at == at &&
+      other.readAt == readAt &&
+      other.debtId == debtId &&
+      other.name == name &&
+      other.side == side &&
+      other.due == due &&
+      other.owed == owed &&
+      other.left == left &&
+      other.since == since &&
+      other.note == note &&
+      other.settledOn == settledOn &&
+      other.gone == gone;
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    at,
+    readAt,
+    debtId,
+    name,
+    side,
+    due,
+    owed,
+    left,
+    since,
+    note,
+    settledOn,
+    gone,
+  );
+
+  @override
+  String toString() =>
+      'DebtNotice($name, $due, '
+      '${gone
+          ? 'gone'
+          : settledOn == null
+          ? 'open'
+          : 'settled $settledOn'})';
 }

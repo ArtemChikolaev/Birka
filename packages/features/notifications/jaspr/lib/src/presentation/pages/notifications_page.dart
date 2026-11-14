@@ -14,6 +14,9 @@ const _payments = 'var(--color-palette-amber)';
 /// The color of an import of a statement.
 const _imports = 'var(--color-palette-sky)';
 
+/// The color of the day of a debt, which comes as a payment does.
+const _debts = 'var(--color-palette-amber)';
+
 /// The color of what waits for the person.
 const _waits = 'var(--color-palette-amber)';
 
@@ -516,7 +519,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
     return GlassListRow(
       key: ValueKey(notice.id),
-      title: noticeTitle(notice, thisYear: today.year),
+      title: noticeTitle(notice, today: today),
       subtitle: line,
       subtitleColor: 'var(--color-text-secondary)',
       leading: span(classes: 'notifications__lead', [
@@ -549,7 +552,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     final (line, tone) = noticeLine(notice, today: today);
     return GlassListRow(
       key: ValueKey(notice.id),
-      title: noticeTitle(notice, thisYear: today.year),
+      title: noticeTitle(notice, today: today),
       subtitle: line,
       subtitleLines: 2,
       subtitleColor: switch (tone) {
@@ -571,6 +574,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
     NoticeSource.payment => const GlyphBadge(
       glyph: BirkaGlyph.calendar,
       color: _payments,
+    ),
+    NoticeSource.debt => const GlyphBadge(
+      glyph: BirkaGlyph.people,
+      color: _debts,
     ),
     NoticeSource.import => const GlyphBadge(
       glyph: BirkaGlyph.download,

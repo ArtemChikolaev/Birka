@@ -15,6 +15,7 @@ final class RemindersState {
     this.access = ReminderAccess.unknown,
     this.calendarAccess = ReminderAccess.unknown,
     this.schedules = const [],
+    this.debts = 0,
   });
 
   /// How this device reminds, `null` until it is read.
@@ -28,6 +29,9 @@ final class RemindersState {
 
   /// The regular payments.
   final List<Schedule> schedules;
+
+  /// How many open debts remind of a day still to come (ADR 0029).
+  final int debts;
 
   /// Whether the notifications of Birka are on.
   bool get notify => settings?.notify ?? false;
@@ -57,11 +61,13 @@ final class RemindersState {
     ReminderAccess? access,
     ReminderAccess? calendarAccess,
     List<Schedule>? schedules,
+    int? debts,
   }) => RemindersState(
     settings: settings ?? this.settings,
     access: access ?? this.access,
     calendarAccess: calendarAccess ?? this.calendarAccess,
     schedules: schedules ?? this.schedules,
+    debts: debts ?? this.debts,
   );
 }
 
@@ -85,6 +91,14 @@ class RemindersCubit extends Cubit<RemindersState> {
       _repository.watchSchedules().listen(
         (schedules) => emit(state.copyWith(schedules: schedules)),
       ),
+      _repository.watchDebtDays().listen((days) {
+        final today = CivilDate.of(_now());
+        emit(
+          state.copyWith(
+            debts: days.where((it) => it.due.compareTo(today) >= 0).length,
+          ),
+        );
+      }),
     ];
     unawaited(accessChecked());
   }

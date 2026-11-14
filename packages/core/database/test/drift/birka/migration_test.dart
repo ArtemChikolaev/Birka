@@ -11,6 +11,7 @@ import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v10.dart' as v10;
 import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v12.dart' as v12;
+import 'generated/schema_v13.dart' as v13;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -628,6 +629,42 @@ void main() {
         final ira = accounts['ira']!;
         expect(ira.debtSide, 'lent');
         expect(ira.includeInTotals, 0);
+      },
+    );
+  });
+
+  test('a notice keeps its data and names no debt in v13', () async {
+    const at = '2026-11-14T06:00:00.000Z';
+    await verifier.testWithDataIntegrity(
+      oldVersion: 12,
+      newVersion: 13,
+      createOld: v12.DatabaseAtV12.new,
+      createNew: v13.DatabaseAtV13.new,
+      openTestedDatabase: BirkaDatabase.new,
+      createItems: (batch, old) {
+        batch.insert(
+          old.notices,
+          v12.NoticesCompanion.insert(
+            id: 'rent',
+            source: 'payment',
+            createdAt: at,
+            scheduleId: const Value('rent'),
+            timeOn: const Value('2026-11-14'),
+            name: const Value('Rent'),
+            kind: const Value('expense'),
+            amountMinor: const Value(4500000),
+            currency: const Value('RUB'),
+            decimalDigits: const Value(2),
+          ),
+        );
+      },
+      validateItems: (migrated) async {
+        final notice = await migrated.select(migrated.notices).getSingle();
+        expect(notice.id, 'rent');
+        expect(notice.scheduleId, 'rent');
+        expect(notice.timeOn, '2026-11-14');
+        expect(notice.amountMinor, 4500000);
+        expect(notice.debtId, isNull);
       },
     );
   });

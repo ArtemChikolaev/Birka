@@ -126,6 +126,21 @@ final class FakeNotificationsRepository implements NotificationsRepository {
       outcomeAt: notice.outcomeAt,
       next: notice.next,
     ),
+    DebtNotice() => DebtNotice(
+      id: notice.id,
+      at: notice.at,
+      readAt: clock,
+      debtId: notice.debtId,
+      name: notice.name,
+      side: notice.side,
+      due: notice.due,
+      owed: notice.owed,
+      left: notice.left,
+      since: notice.since,
+      note: notice.note,
+      settledOn: notice.settledOn,
+      gone: notice.gone,
+    ),
     ImportNotice() => ImportNotice(
       id: notice.id,
       at: notice.at,
@@ -241,6 +256,55 @@ void main() {
     expect(find.text('Альфа-Банк · ноябрь'), findsOneWidget);
     expect(find.text('Аренда · ${nb('45 000 ₽')}'), findsNothing);
     expect(find.text('5 НОЯБРЯ'), findsNothing);
+  });
+
+  testWidgets('the day of a debt says who and what for, and opens the '
+      'debt', (tester) async {
+    final repository = FakeNotificationsRepository([
+      DebtNotice(
+        id: 'dima',
+        at: DateTime(2026, 11, 25, 9),
+        debtId: 'dima',
+        name: 'Дима',
+        side: DebtSide.lent,
+        due: CivilDate(2026, 11, 25),
+        owed: Money(12000, Currency.usd),
+        left: Money(12000, Currency.usd),
+        since: CivilDate(2026, 10, 20),
+        note: 'За квартиру в Тбилиси',
+      ),
+      ...boardNotices(),
+      DebtNotice(
+        id: 'ira',
+        at: DateTime(2026, 11, 1, 9),
+        readAt: DateTime(2026, 11, 1, 10),
+        debtId: 'ira',
+        name: 'Ира',
+        side: DebtSide.lent,
+        due: CivilDate(2026, 11, 1),
+        owed: rub(1500),
+        since: CivilDate(2026, 10, 12),
+        settledOn: CivilDate(2026, 11, 2),
+      ),
+    ]);
+    final opened = await pump(tester, repository);
+
+    expect(find.text('НОВЫЕ · 3'), findsOneWidget);
+    expect(find.text('Срок сегодня · Дима, ${nb(r'120 $')}'), findsOneWidget);
+    expect(find.text('За квартиру в Тбилиси · с 20 октября'), findsOneWidget);
+    expect(find.text('Срок · Ира, ${nb('1 500 ₽')}'), findsOneWidget);
+    expect(find.text('Вернули 2 ноября'), findsOneWidget);
+    expect(colorOf(tester, 'Вернули 2 ноября'), BirkaColors.dark.positive);
+
+    await tester.tap(find.text('Долги'));
+    await tester.pumpAndSettle();
+    expect(find.text('Аренда · ${nb('45 000 ₽')}'), findsNothing);
+    expect(find.text('НОВЫЕ · 1'), findsOneWidget);
+
+    await tester.tap(find.text('Срок сегодня · Дима, ${nb(r'120 $')}'));
+    await tester.pumpAndSettle();
+    expect(opened, [(NoticePlace.debt, 'dima')]);
+    expect(repository.read_, ['dima']);
   });
 
   testWidgets('says that it is quiet while nothing came', (tester) async {
