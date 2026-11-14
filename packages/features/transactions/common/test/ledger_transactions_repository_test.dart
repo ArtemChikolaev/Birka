@@ -200,6 +200,34 @@ void main() {
     expect(await repository.lastAccountId(), cash.id);
   });
 
+  test('a debt that came back names the account of the person, and its '
+      'operation names the person', () async {
+    final card = await account('Card');
+    final masha = await ledger.addAccount(
+      name: 'Маша',
+      type: AccountType.debt,
+      openingBalance: const Money.zero(Currency.rub),
+      debt: const DebtTerms(side: DebtSide.lent),
+    );
+    await repository.record(
+      TransactionDraft.transfer(
+        fromAccountId: masha.id,
+        sent: Money(200000, Currency.rub),
+        toAccountId: card.id,
+        received: Money(200000, Currency.rub),
+        occurredOn: CivilDate(2026, 11, 10),
+      ),
+    );
+
+    expect(await repository.lastAccountId(), card.id);
+    expect((await repository.accounts()).map((it) => it.name), ['Card']);
+    final operation =
+        (await repository.watchOperations(CivilDate(2026, 11, 1)).first).single;
+    expect(operation.debt?.name, 'Маша');
+    expect(operation.ownAccount?.name, 'Card');
+    expect(operation.debtMove, DebtMove.returned);
+  });
+
   test('what is recorded changes the balance', () async {
     final card = await account('Card');
     final food = await ledger.addCategory(

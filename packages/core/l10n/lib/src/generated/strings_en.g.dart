@@ -56,6 +56,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   );
   late final Translations$categories$en categories =
       Translations$categories$en.internal(_root);
+  late final Translations$debts$en debts = Translations$debts$en.internal(
+    _root,
+  );
   late final Translations$demo$en demo = Translations$demo$en.internal(_root);
   late final Translations$help$en help = Translations$help$en.internal(_root);
   late final Translations$imports$en imports = Translations$imports$en.internal(
@@ -545,6 +548,101 @@ class Translations$categories$en {
   ];
 }
 
+// Path: debts
+class Translations$debts$en {
+  Translations$debts$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Debts'
+  String get title => 'Debts';
+
+  /// en: 'Who owes whom, and by what day'
+  String get moreHint => 'Who owes whom, and by what day';
+
+  /// en: 'Owed to me $owed · mine $mine'
+  String moreBoth({required Object owed, required Object mine}) =>
+      'Owed to me ${owed} · mine ${mine}';
+
+  /// en: 'Owed to me $owed'
+  String moreOwed({required Object owed}) => 'Owed to me ${owed}';
+
+  /// en: 'My debts $mine'
+  String moreMine({required Object mine}) => 'My debts ${mine}';
+
+  /// en: 'Owed to me'
+  String get owedToMe => 'Owed to me';
+
+  /// en: 'My debts'
+  String get myDebts => 'My debts';
+
+  /// en: '(one) {$n person} (other) {$n people}'
+  String people({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} person',
+        other: '${n} people',
+      );
+
+  /// en: 'Settled · $n'
+  String closed({required Object n}) => 'Settled · ${n}';
+
+  /// en: 'Debts are not in the capital: this money is not on your accounts now.'
+  String get caption =>
+      'Debts are not in the capital: this money is not on your accounts now.';
+
+  /// en: 'Debts are not in the capital: this money is not on your accounts now. Other currencies at today's CBR rate.'
+  String get captionRates =>
+      'Debts are not in the capital: this money is not on your accounts now. Other currencies at today\'s CBR rate.';
+
+  /// en: 'Could not read the debts.'
+  String get failed => 'Could not read the debts.';
+
+  /// en: 'This debt is gone.'
+  String get gone => 'This debt is gone.';
+
+  /// en: 'No debts'
+  String get emptyTitle => 'No debts';
+
+  /// en: 'Write down whom you lent to or borrowed from: Birka shows how much is left and by what day.'
+  String get emptyText =>
+      'Write down whom you lent to or borrowed from: Birka shows how much is left and by what day.';
+
+  /// en: 'Add a debt'
+  String get add => 'Add a debt';
+
+  /// en: 'New debt'
+  String get newDebt => 'New debt';
+
+  late final Translations$debts$line$en line =
+      Translations$debts$line$en.internal(_root);
+  late final Translations$debts$card$en card =
+      Translations$debts$card$en.internal(_root);
+
+  /// en: '(one) {in $n day} (other) {in $n days}'
+  String inDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'in ${n} day',
+        other: 'in ${n} days',
+      );
+
+  late final Translations$debts$form$en form =
+      Translations$debts$form$en.internal(_root);
+  late final Translations$debts$back$en back =
+      Translations$debts$back$en.internal(_root);
+  late final Translations$debts$steps$en steps =
+      Translations$debts$steps$en.internal(_root);
+
+  /// en: 'How it works'
+  String get howItWorks => 'How it works';
+
+  late final Translations$debts$move$en move =
+      Translations$debts$move$en.internal(_root);
+}
+
 // Path: demo
 class Translations$demo$en {
   Translations$demo$en.internal(this._root);
@@ -639,6 +737,11 @@ class Translations$demo$en {
 
   /// en: 'Euros for the trip'
   String get toEuro => 'Euros for the trip';
+
+  late final Translations$demo$people$en people =
+      Translations$demo$people$en.internal(_root);
+  late final Translations$demo$debtNotes$en debtNotes =
+      Translations$demo$debtNotes$en.internal(_root);
 }
 
 // Path: help
@@ -3672,6 +3775,8 @@ class Translations$transactions$en {
   /// en: 'Date'
   String get date => 'Date';
 
+  late final Translations$transactions$debt$en debt =
+      Translations$transactions$debt$en.internal(_root);
   late final Translations$transactions$sources$en sources =
       Translations$transactions$sources$en.internal(_root);
   late final Translations$transactions$keys$en keys =
@@ -4346,6 +4451,358 @@ class Translations$categories$form$en {
   String get failed => 'Could not save. Try again.';
 }
 
+// Path: debts.line
+class Translations$debts$line$en {
+  Translations$debts$line$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'due today'
+  String get dueToday => 'due today';
+
+  /// en: 'by $day'
+  String dueOn({required Object day}) => 'by ${day}';
+
+  /// en: 'was due $day'
+  String overdue({required Object day}) => 'was due ${day}';
+
+  /// en: 'since $day'
+  String since({required Object day}) => 'since ${day}';
+
+  /// en: 'paid back $day'
+  String returned({required Object day}) => 'paid back ${day}';
+
+  /// en: 'repaid $day'
+  String repaid({required Object day}) => 'repaid ${day}';
+
+  /// en: 'of $total'
+  String of({required Object total}) => 'of ${total}';
+
+  /// en: '≈ $amount'
+  String approx({required Object amount}) => '≈ ${amount}';
+}
+
+// Path: debts.card
+class Translations$debts$card$en {
+  Translations$debts$card$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Debt'
+  String get title => 'Debt';
+
+  /// en: 'Edit'
+  String get edit => 'Edit';
+
+  /// en: 'left to come back of $total'
+  String leftToMe({required Object total}) => 'left to come back of ${total}';
+
+  /// en: 'left to give back of $total'
+  String leftToThem({required Object total}) => 'left to give back of ${total}';
+
+  /// en: 'all paid back · $day'
+  String allReturned({required Object day}) => 'all paid back · ${day}';
+
+  /// en: 'all repaid · $day'
+  String allRepaid({required Object day}) => 'all repaid · ${day}';
+
+  /// en: 'Paid back $amount'
+  String returned({required Object amount}) => 'Paid back ${amount}';
+
+  /// en: 'Repaid $amount'
+  String repaid({required Object amount}) => 'Repaid ${amount}';
+
+  /// en: 'Due $day · we will remind you that day'
+  String dueRemind({required Object day}) =>
+      'Due ${day} · we will remind you that day';
+
+  /// en: 'Due $day · $inDays'
+  String dueIn({required Object day, required Object inDays}) =>
+      'Due ${day} · ${inDays}';
+
+  /// en: 'Due $day'
+  String dueOn({required Object day}) => 'Due ${day}';
+
+  /// en: 'Due today'
+  String get dueToday => 'Due today';
+
+  /// en: 'Was due $day'
+  String dueWas({required Object day}) => 'Was due ${day}';
+
+  /// en: 'No due date'
+  String get noDue => 'No due date';
+
+  /// en: 'Debt settled'
+  String get closed => 'Debt settled';
+
+  /// en: 'Debt settled · reminder removed'
+  String get closedRemind => 'Debt settled · reminder removed';
+
+  /// en: 'History'
+  String get history => 'History';
+
+  /// en: 'Paid back'
+  String get returnAction => 'Paid back';
+
+  /// en: 'Repay'
+  String get repayAction => 'Repay';
+
+  /// en: 'Lend more'
+  String get lendMore => 'Lend more';
+
+  /// en: 'Borrow more'
+  String get borrowMore => 'Borrow more';
+
+  /// en: 'New debt'
+  String get newDebt => 'New debt';
+}
+
+// Path: debts.form
+class Translations$debts$form$en {
+  Translations$debts$form$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Lend'
+  String get lend => 'Lend';
+
+  /// en: 'Borrow'
+  String get borrow => 'Borrow';
+
+  /// en: 'Who'
+  String get who => 'Who';
+
+  /// en: 'Someone else'
+  String get other => 'Someone else';
+
+  /// en: 'Name'
+  String get name => 'Name';
+
+  /// en: 'Their name'
+  String get nameHint => 'Their name';
+
+  /// en: 'Write who it is'
+  String get nameMissing => 'Write who it is';
+
+  /// en: 'Amount'
+  String get amount => 'Amount';
+
+  /// en: 'From account'
+  String get fromAccount => 'From account';
+
+  /// en: 'To account'
+  String get toAccount => 'To account';
+
+  /// en: 'When'
+  String get when => 'When';
+
+  /// en: 'Due by'
+  String get dueBy => 'Due by';
+
+  /// en: 'No due date'
+  String get noDue => 'No due date';
+
+  /// en: 'Note'
+  String get note => 'Note';
+
+  /// en: 'Remind on the due date'
+  String get remind => 'Remind on the due date';
+
+  /// en: 'A debt is not spending: the money leaves the account but stays out of the month's expenses.'
+  String get lendCaption =>
+      'A debt is not spending: the money leaves the account but stays out of the month\'s expenses.';
+
+  /// en: 'A debt is not income: the money comes to the account but stays out of the month's income.'
+  String get borrowCaption =>
+      'A debt is not income: the money comes to the account but stays out of the month\'s income.';
+
+  /// en: 'The debt is in $currency, and no account is in that currency.'
+  String noAccount({required Object currency}) =>
+      'The debt is in ${currency}, and no account is in that currency.';
+
+  /// en: 'Save'
+  String get save => 'Save';
+
+  /// en: 'Saved: $name, $amount'
+  String saved({required Object name, required Object amount}) =>
+      'Saved: ${name}, ${amount}';
+
+  /// en: 'Could not save. Try again.'
+  String get failed => 'Could not save. Try again.';
+
+  /// en: 'Edit the debt'
+  String get editTitle => 'Edit the debt';
+}
+
+// Path: debts.back
+class Translations$debts$back$en {
+  Translations$debts$back$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Paid back · $name'
+  String returnTitle({required Object name}) => 'Paid back · ${name}';
+
+  /// en: 'Repay · $name'
+  String repayTitle({required Object name}) => 'Repay · ${name}';
+
+  /// en: 'All · $amount'
+  String all({required Object amount}) => 'All · ${amount}';
+
+  /// en: 'Part'
+  String get part => 'Part';
+
+  /// en: 'How much came back'
+  String get howMuchReturned => 'How much came back';
+
+  /// en: 'How much you gave back'
+  String get howMuchRepaid => 'How much you gave back';
+
+  /// en: 'More than is left'
+  String get tooMuch => 'More than is left';
+
+  /// en: 'The debt will be settled. The money comes to the account but not into income.'
+  String get returnClosing =>
+      'The debt will be settled. The money comes to the account but not into income.';
+
+  /// en: 'The debt will be settled and its reminder removed. The money comes to the account but not into income.'
+  String get returnClosingRemind =>
+      'The debt will be settled and its reminder removed. The money comes to the account but not into income.';
+
+  /// en: '$left will be left. The money comes to the account but not into income.'
+  String returnLeft({required Object left}) =>
+      '${left} will be left. The money comes to the account but not into income.';
+
+  /// en: '$left will be left until $day. The money comes to the account but not into income.'
+  String returnLeftDue({required Object left, required Object day}) =>
+      '${left} will be left until ${day}. The money comes to the account but not into income.';
+
+  /// en: 'The debt will be settled. The money leaves the account but not into expenses.'
+  String get repayClosing =>
+      'The debt will be settled. The money leaves the account but not into expenses.';
+
+  /// en: 'The debt will be settled and its reminder removed. The money leaves the account but not into expenses.'
+  String get repayClosingRemind =>
+      'The debt will be settled and its reminder removed. The money leaves the account but not into expenses.';
+
+  /// en: '$left will be left. The money leaves the account but not into expenses.'
+  String repayLeft({required Object left}) =>
+      '${left} will be left. The money leaves the account but not into expenses.';
+
+  /// en: '$left will be left until $day. The money leaves the account but not into expenses.'
+  String repayLeftDue({required Object left, required Object day}) =>
+      '${left} will be left until ${day}. The money leaves the account but not into expenses.';
+
+  /// en: 'Save the payment'
+  String get save => 'Save the payment';
+
+  /// en: '$name: debt settled'
+  String closedToast({required Object name}) => '${name}: debt settled';
+
+  /// en: 'Paid back $amount · $left left'
+  String returnedToast({required Object amount, required Object left}) =>
+      'Paid back ${amount} · ${left} left';
+
+  /// en: 'Repaid $amount · $left left'
+  String repaidToast({required Object amount, required Object left}) =>
+      'Repaid ${amount} · ${left} left';
+}
+
+// Path: debts.steps
+class Translations$debts$steps$en {
+  Translations$debts$steps$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Write down whom you lent to and whom you borrowed from: the money leaves the account or comes to it.'
+  String get first =>
+      'Write down whom you lent to and whom you borrowed from: the money leaves the account or comes to it.';
+
+  /// en: 'A debt is neither spending nor income: it stays out of the month's reports.'
+  String get second =>
+      'A debt is neither spending nor income: it stays out of the month\'s reports.';
+
+  /// en: 'Payments settle a debt in parts, and the list shows how much is left and by what day.'
+  String get third =>
+      'Payments settle a debt in parts, and the list shows how much is left and by what day.';
+}
+
+// Path: debts.move
+class Translations$debts$move$en {
+  Translations$debts$move$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Lent'
+  String get lent => 'Lent';
+
+  /// en: 'Paid back'
+  String get returned => 'Paid back';
+
+  /// en: 'Borrowed'
+  String get borrowed => 'Borrowed';
+
+  /// en: 'Repaid'
+  String get repaid => 'Repaid';
+}
+
+// Path: demo.people
+class Translations$demo$people$en {
+  Translations$demo$people$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Masha'
+  String get masha => 'Masha';
+
+  /// en: 'Dima'
+  String get dima => 'Dima';
+
+  /// en: 'Sasha'
+  String get sasha => 'Sasha';
+
+  /// en: 'Ira'
+  String get ira => 'Ira';
+
+  /// en: 'Dad'
+  String get dad => 'Dad';
+}
+
+// Path: demo.debtNotes
+class Translations$demo$debtNotes$en {
+  Translations$demo$debtNotes$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'for the tickets'
+  String get tickets => 'for the tickets';
+
+  /// en: 'for the flat'
+  String get flat => 'for the flat';
+
+  /// en: 'until payday'
+  String get salary => 'until payday';
+
+  /// en: 'for the concert'
+  String get concert => 'for the concert';
+}
+
 // Path: onboarding.welcome
 class Translations$onboarding$welcome$en {
   Translations$onboarding$welcome$en.internal(this._root);
@@ -4655,6 +5112,30 @@ class Translations$tags$row$en {
 
   /// en: 'and $n more'
   String more({required Object n}) => 'and ${n} more';
+}
+
+// Path: transactions.debt
+class Translations$transactions$debt$en {
+  Translations$transactions$debt$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Debt'
+  String get title => 'Debt';
+
+  /// en: 'lent'
+  String get lent => 'lent';
+
+  /// en: 'paid back'
+  String get returned => 'paid back';
+
+  /// en: 'borrowed'
+  String get borrowed => 'borrowed';
+
+  /// en: 'repaid'
+  String get repaid => 'repaid';
 }
 
 // Path: transactions.sources
@@ -5128,6 +5609,161 @@ extension on Translations {
             'Expenses and income are separate lists: the switch above them picks one.',
           'categories.how.2' =>
             'Categories show in operations, reports and regular payments.',
+          'debts.title' => 'Debts',
+          'debts.moreHint' => 'Who owes whom, and by what day',
+          'debts.moreBoth' =>
+            ({required Object owed, required Object mine}) =>
+                'Owed to me ${owed} · mine ${mine}',
+          'debts.moreOwed' => ({required Object owed}) => 'Owed to me ${owed}',
+          'debts.moreMine' => ({required Object mine}) => 'My debts ${mine}',
+          'debts.owedToMe' => 'Owed to me',
+          'debts.myDebts' => 'My debts',
+          'debts.people' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} person',
+                  other: '${n} people',
+                ),
+          'debts.closed' => ({required Object n}) => 'Settled · ${n}',
+          'debts.caption' =>
+            'Debts are not in the capital: this money is not on your accounts now.',
+          'debts.captionRates' =>
+            'Debts are not in the capital: this money is not on your accounts now. Other currencies at today\'s CBR rate.',
+          'debts.failed' => 'Could not read the debts.',
+          'debts.gone' => 'This debt is gone.',
+          'debts.emptyTitle' => 'No debts',
+          'debts.emptyText' =>
+            'Write down whom you lent to or borrowed from: Birka shows how much is left and by what day.',
+          'debts.add' => 'Add a debt',
+          'debts.newDebt' => 'New debt',
+          'debts.line.dueToday' => 'due today',
+          'debts.line.dueOn' => ({required Object day}) => 'by ${day}',
+          'debts.line.overdue' => ({required Object day}) => 'was due ${day}',
+          'debts.line.since' => ({required Object day}) => 'since ${day}',
+          'debts.line.returned' =>
+            ({required Object day}) => 'paid back ${day}',
+          'debts.line.repaid' => ({required Object day}) => 'repaid ${day}',
+          'debts.line.of' => ({required Object total}) => 'of ${total}',
+          'debts.line.approx' => ({required Object amount}) => '≈ ${amount}',
+          'debts.card.title' => 'Debt',
+          'debts.card.edit' => 'Edit',
+          'debts.card.leftToMe' =>
+            ({required Object total}) => 'left to come back of ${total}',
+          'debts.card.leftToThem' =>
+            ({required Object total}) => 'left to give back of ${total}',
+          'debts.card.allReturned' =>
+            ({required Object day}) => 'all paid back · ${day}',
+          'debts.card.allRepaid' =>
+            ({required Object day}) => 'all repaid · ${day}',
+          'debts.card.returned' =>
+            ({required Object amount}) => 'Paid back ${amount}',
+          'debts.card.repaid' =>
+            ({required Object amount}) => 'Repaid ${amount}',
+          'debts.card.dueRemind' =>
+            ({required Object day}) =>
+                'Due ${day} · we will remind you that day',
+          'debts.card.dueIn' =>
+            ({required Object day, required Object inDays}) =>
+                'Due ${day} · ${inDays}',
+          'debts.card.dueOn' => ({required Object day}) => 'Due ${day}',
+          'debts.card.dueToday' => 'Due today',
+          'debts.card.dueWas' => ({required Object day}) => 'Was due ${day}',
+          'debts.card.noDue' => 'No due date',
+          'debts.card.closed' => 'Debt settled',
+          'debts.card.closedRemind' => 'Debt settled · reminder removed',
+          'debts.card.history' => 'History',
+          'debts.card.returnAction' => 'Paid back',
+          'debts.card.repayAction' => 'Repay',
+          'debts.card.lendMore' => 'Lend more',
+          'debts.card.borrowMore' => 'Borrow more',
+          'debts.card.newDebt' => 'New debt',
+          'debts.inDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'in ${n} day',
+                  other: 'in ${n} days',
+                ),
+          'debts.form.lend' => 'Lend',
+          'debts.form.borrow' => 'Borrow',
+          'debts.form.who' => 'Who',
+          'debts.form.other' => 'Someone else',
+          'debts.form.name' => 'Name',
+          'debts.form.nameHint' => 'Their name',
+          'debts.form.nameMissing' => 'Write who it is',
+          'debts.form.amount' => 'Amount',
+          'debts.form.fromAccount' => 'From account',
+          'debts.form.toAccount' => 'To account',
+          'debts.form.when' => 'When',
+          'debts.form.dueBy' => 'Due by',
+          'debts.form.noDue' => 'No due date',
+          'debts.form.note' => 'Note',
+          'debts.form.remind' => 'Remind on the due date',
+          'debts.form.lendCaption' =>
+            'A debt is not spending: the money leaves the account but stays out of the month\'s expenses.',
+          'debts.form.borrowCaption' =>
+            'A debt is not income: the money comes to the account but stays out of the month\'s income.',
+          'debts.form.noAccount' =>
+            ({required Object currency}) =>
+                'The debt is in ${currency}, and no account is in that currency.',
+          'debts.form.save' => 'Save',
+          'debts.form.saved' =>
+            ({required Object name, required Object amount}) =>
+                'Saved: ${name}, ${amount}',
+          'debts.form.failed' => 'Could not save. Try again.',
+          'debts.form.editTitle' => 'Edit the debt',
+          'debts.back.returnTitle' =>
+            ({required Object name}) => 'Paid back · ${name}',
+          'debts.back.repayTitle' =>
+            ({required Object name}) => 'Repay · ${name}',
+          'debts.back.all' => ({required Object amount}) => 'All · ${amount}',
+          'debts.back.part' => 'Part',
+          'debts.back.howMuchReturned' => 'How much came back',
+          'debts.back.howMuchRepaid' => 'How much you gave back',
+          'debts.back.tooMuch' => 'More than is left',
+          'debts.back.returnClosing' =>
+            'The debt will be settled. The money comes to the account but not into income.',
+          'debts.back.returnClosingRemind' =>
+            'The debt will be settled and its reminder removed. The money comes to the account but not into income.',
+          'debts.back.returnLeft' =>
+            ({required Object left}) =>
+                '${left} will be left. The money comes to the account but not into income.',
+          'debts.back.returnLeftDue' =>
+            ({required Object left, required Object day}) =>
+                '${left} will be left until ${day}. The money comes to the account but not into income.',
+          'debts.back.repayClosing' =>
+            'The debt will be settled. The money leaves the account but not into expenses.',
+          'debts.back.repayClosingRemind' =>
+            'The debt will be settled and its reminder removed. The money leaves the account but not into expenses.',
+          'debts.back.repayLeft' =>
+            ({required Object left}) =>
+                '${left} will be left. The money leaves the account but not into expenses.',
+          'debts.back.repayLeftDue' =>
+            ({required Object left, required Object day}) =>
+                '${left} will be left until ${day}. The money leaves the account but not into expenses.',
+          'debts.back.save' => 'Save the payment',
+          'debts.back.closedToast' =>
+            ({required Object name}) => '${name}: debt settled',
+          'debts.back.returnedToast' =>
+            ({required Object amount, required Object left}) =>
+                'Paid back ${amount} · ${left} left',
+          'debts.back.repaidToast' =>
+            ({required Object amount, required Object left}) =>
+                'Repaid ${amount} · ${left} left',
+          'debts.steps.first' =>
+            'Write down whom you lent to and whom you borrowed from: the money leaves the account or comes to it.',
+          'debts.steps.second' =>
+            'A debt is neither spending nor income: it stays out of the month\'s reports.',
+          'debts.steps.third' =>
+            'Payments settle a debt in parts, and the list shows how much is left and by what day.',
+          'debts.howItWorks' => 'How it works',
+          'debts.move.lent' => 'Lent',
+          'debts.move.returned' => 'Paid back',
+          'debts.move.borrowed' => 'Borrowed',
+          'debts.move.repaid' => 'Repaid',
           'demo.card' => 'Salary card',
           'demo.cash' => 'Cash',
           'demo.savings' => 'Savings',
@@ -5157,6 +5793,15 @@ extension on Translations {
           'demo.toCash' => 'Cash withdrawal',
           'demo.toSavings' => 'To savings',
           'demo.toEuro' => 'Euros for the trip',
+          'demo.people.masha' => 'Masha',
+          'demo.people.dima' => 'Dima',
+          'demo.people.sasha' => 'Sasha',
+          'demo.people.ira' => 'Ira',
+          'demo.people.dad' => 'Dad',
+          'demo.debtNotes.tickets' => 'for the tickets',
+          'demo.debtNotes.flat' => 'for the flat',
+          'demo.debtNotes.salary' => 'until payday',
+          'demo.debtNotes.concert' => 'for the concert',
           'help.title' => 'Help',
           'help.back' => 'Back',
           'help.search' => 'Search the help',
@@ -5272,6 +5917,9 @@ extension on Translations {
           'imports.unreadable.empty' => 'The file is empty.',
           'imports.unreadable.tooLarge' =>
             'The file is too large. Take a shorter statement, up to 10,000 rows.',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.unreadable.incomplete' =>
             'The operations of the statement miss its totals; some did not read. Download the statement again.',
           'imports.howTitle' => 'How it works',
@@ -5447,9 +6095,6 @@ extension on Translations {
           'imports.previewCategory' => 'Category',
           'imports.previewAmount' => 'Amount',
           'imports.transfer' => 'Transfer',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.learned' => 'as before',
           'imports.inbox' => 'Decide in the inbox',
           'imports.problems' =>
@@ -6215,6 +6860,9 @@ extension on Translations {
           'schedules.weekday.tue' => 'Tue',
           'schedules.weekday.wed' => 'Wed',
           'schedules.weekday.thu' => 'Thu',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.weekday.fri' => 'Fri',
           'schedules.weekday.sat' => 'Sat',
           'schedules.weekday.sun' => 'Sun',
@@ -6394,9 +7042,6 @@ extension on Translations {
           'schedules.partsTwo' =>
             ({required Object advance, required Object day}) =>
                 'Half and half: the advance on day ${advance}, the salary on day ${day}.',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.partsOwn' =>
             ({
               required Object advanceAmount,
@@ -6960,6 +7605,11 @@ extension on Translations {
           'transactions.category' => 'Category',
           'transactions.from' => 'From',
           'transactions.date' => 'Date',
+          'transactions.debt.title' => 'Debt',
+          'transactions.debt.lent' => 'lent',
+          'transactions.debt.returned' => 'paid back',
+          'transactions.debt.borrowed' => 'borrowed',
+          'transactions.debt.repaid' => 'repaid',
           'transactions.sources.manual' => 'Manually',
           'transactions.sources.import' => 'Imported',
           'transactions.sources.notification' => 'From a notification',

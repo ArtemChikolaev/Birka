@@ -1,5 +1,5 @@
 import 'package:l10n/l10n.dart';
-import 'package:ledger/ledger.dart' show TransactionSource;
+import 'package:ledger/ledger.dart' show DebtMove, DebtSide, TransactionSource;
 import 'package:money/money.dart';
 import 'package:test/test.dart';
 import 'package:transactions_common/transactions_common.dart';
@@ -166,6 +166,66 @@ void main() {
 
       expect(operationTitle(transfer), 'Savings');
       expect(operationSubtitle(transfer), 'Transfer · Card → Cash');
+    });
+
+    group('of a debt', () {
+      final masha = testAccount('Маша', debt: DebtSide.lent);
+      final sasha = testAccount('Саша', debt: DebtSide.borrowed);
+
+      setUp(() => LocaleSettings.setLocaleSync(AppLocale.ru));
+
+      test('names the person and what it did, and keeps its sign', () {
+        final lent = testOperation(
+          'lent',
+          amount: rub(-500000),
+          account: cash,
+          toAccount: masha,
+          kind: TransactionKind.transfer,
+          note: 'на билеты',
+        );
+        expect(lent.debt, masha);
+        expect(lent.ownAccount, cash);
+        expect(lent.debtMove, DebtMove.lent);
+        expect(operationTitle(lent), 'Маша · в долг');
+        expect(operationSubtitle(lent), 'Долг · Cash · на билеты');
+        expect(operationAmount(lent), '−5\u00a0000\u00a0₽');
+        expect(lent.canChange, isFalse);
+
+        final back = testOperation(
+          'back',
+          amount: rub(-200000),
+          account: masha,
+          toAccount: card,
+          kind: TransactionKind.transfer,
+        );
+        expect(operationTitle(back), 'Маша · возврат');
+        expect(operationSubtitle(back), 'Долг · Card');
+        expect(operationAmount(back), '+2\u00a0000\u00a0₽');
+      });
+
+      test('the person owes reads the other way round', () {
+        final borrowed = testOperation(
+          'borrowed',
+          amount: rub(-400000),
+          account: sasha,
+          toAccount: card,
+          kind: TransactionKind.transfer,
+        );
+        expect(borrowed.debtMove, DebtMove.borrowed);
+        expect(operationTitle(borrowed), 'Саша · заняли');
+
+        final repaid = testOperation(
+          'repaid',
+          amount: rub(-100000),
+          account: card,
+          toAccount: sasha,
+          kind: TransactionKind.transfer,
+        );
+        expect(repaid.debtMove, DebtMove.repaid);
+        expect(repaid.debtMove!.settles, isTrue);
+        expect(operationTitle(repaid), 'Саша · отдали');
+        expect(operationAmount(repaid), '−1\u00a0000\u00a0₽');
+      });
     });
 
     test('without a category is called by its kind', () {

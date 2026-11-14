@@ -82,25 +82,54 @@ String amountsLabel(List<Money> amounts) =>
 String signedAmountLabel(Money amount) => signedMoney(amount);
 
 /// What the operation does to the money: `−370 ₽` and `+370 ₽`, and `370 ₽` for
-/// a transfer, which only moves it.
-String operationAmount(Operation operation) =>
-    operation.kind == TransactionKind.transfer
-    ? formatMoney(operation.amount.abs())
-    : signedAmountLabel(operation.amount);
+/// a transfer, which only moves it. A transfer of a debt says what it did to
+/// the account of the person: `−5 000 ₽` lent, `+2 000 ₽` back (ADR 0029).
+String operationAmount(Operation operation) {
+  final own = operation.ownAccount;
+  if (own != null) return signedAmountLabel(operation.amountOn(own.id));
+  return operation.kind == TransactionKind.transfer
+      ? formatMoney(operation.amount.abs())
+      : signedAmountLabel(operation.amount);
+}
+
+/// What [move] did, after the name of the other person: «в долг»,
+/// «возврат», «заняли» or «отдали».
+String debtMoveLabel(DebtMove move) => switch (move) {
+  DebtMove.lent => t.transactions.debt.lent,
+  DebtMove.returned => t.transactions.debt.returned,
+  DebtMove.borrowed => t.transactions.debt.borrowed,
+  DebtMove.repaid => t.transactions.debt.repaid,
+};
 
 /// What the operation does to account [accountId], with a sign even for a
 /// transfer, which brings money to one account and takes it from the other.
 String operationAmountOn(Operation operation, String accountId) =>
     signedAmountLabel(operation.amountOn(accountId));
 
-/// The main line of an operation: the note, or what it is for.
+/// The main line of an operation: the note, or what it is for. A transfer of
+/// a debt names the other person and what it did: «Маша · в долг».
 String operationTitle(Operation operation) {
+  final debt = operation.debt;
+  final move = operation.debtMove;
+  if (debt != null && move != null) {
+    return '${debt.name} · ${debtMoveLabel(move)}';
+  }
   if (operation.note.isNotEmpty) return operation.note;
   return operation.category?.name ?? transactionKindLabel(operation.kind);
 }
 
-/// The quieter line of an operation: what the title leaves out.
+/// The quieter line of an operation: what the title leaves out. A transfer of
+/// a debt says that it is one, then the account of the person and the note:
+/// «Долг · Наличные · на билеты».
 String operationSubtitle(Operation operation) {
+  final own = operation.ownAccount;
+  if (own != null) {
+    return [
+      t.transactions.debt.title,
+      own.name,
+      if (operation.note.isNotEmpty) operation.note,
+    ].join(' · ');
+  }
   final account = operation.account?.name ?? '';
   final parts = operation.kind == TransactionKind.transfer
       ? [

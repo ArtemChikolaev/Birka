@@ -129,8 +129,9 @@ final class LedgerCopy {
   /// category (ADR 0021), version 3 regular payments, version 4 what was done
   /// to their last times, version 5 their advances, version 6 the
   /// transactions they were made from, version 7 the amounts of advances of
-  /// their own (ADR 0023), and version 8 метки and trips (ADR 0027).
-  static const version = 8;
+  /// their own (ADR 0023), version 8 метки and trips (ADR 0027), and version
+  /// 9 the terms of debts (ADR 0029).
+  static const version = 9;
 
   static const _format = 'birka-copy';
 
@@ -224,6 +225,9 @@ final class LedgerCopy {
             'archived': row.archived,
             'sortOrder': row.sortOrder,
             'importId': row.importId,
+            'debtSide': row.debtSide,
+            'debtDueOn': row.debtDueOn,
+            'debtReminds': row.debtReminds,
           },
       ],
       'categories': [
@@ -337,11 +341,11 @@ final class LedgerCopy {
   static String _text(DateTime moment) => moment.toUtc().toIso8601String();
 }
 
-/// Reads the rows of versions 1 to 8, and checks them as the ledger checks a
+/// Reads the rows of versions 1 to 9, and checks them as the ledger checks a
 /// write. Version 1 has no imports, versions 1 and 2 no regular payments,
 /// version 3 nothing done to their times, version 4 no advances, version 5
 /// no transactions they were made from, version 6 no advances of their own,
-/// and versions before 8 no метки.
+/// versions before 8 no метки, and versions before 9 no terms of debts.
 LedgerCopy _read(Map<String, Object?> json) {
   final imports = <String, ImportRow>{};
   for (final item
@@ -492,21 +496,43 @@ AccountRow _account(Map<String, Object?> json) {
   final decimalDigits = _int(json, 'decimalDigits');
   final openingBalanceMinor = _int(json, 'openingBalanceMinor');
   _money(openingBalanceMinor, currency, decimalDigits, 'Account $id');
+  final type = _name(json, 'type', AccountType.values);
+  final debt = type == AccountType.debt.name;
+  // No screen made a debt before version 9, though the type was there: such
+  // an account becomes a debt that is owed to the person.
+  final side = json['debtSide'] == null && debt
+      ? DebtSide.lent.name
+      : _field<String?>(json, 'debtSide');
+  if (side != null) {
+    if (!debt) _damaged('Account $id of type $type has a debt side');
+    if (!DebtSide.values.any((value) => value.name == side)) {
+      _damaged('debtSide $side is unknown');
+    }
+  }
+  final dueOn = _field<String?>(json, 'debtDueOn');
+  if (dueOn != null) {
+    if (!debt) _damaged('Account $id of type $type has a day of a debt');
+    _obeying('$dueOn is not a date', () => CivilDate.parse(dueOn));
+  }
   return AccountRow(
     id: id,
     createdAt: _moment(json, 'createdAt'),
     updatedAt: _moment(json, 'updatedAt'),
     name: _string(json, 'name'),
-    type: _name(json, 'type', AccountType.values),
+    type: type,
     currency: currency,
     decimalDigits: decimalDigits,
     openingBalanceMinor: openingBalanceMinor,
     lastDigits: _field<String?>(json, 'lastDigits'),
     art: _name(json, 'art', AccountArt.values),
-    includeInTotals: _field<bool>(json, 'includeInTotals'),
+    // A debt never counts towards the capital (ADR 0029).
+    includeInTotals: _field<bool>(json, 'includeInTotals') && !debt,
     archived: _field<bool>(json, 'archived'),
     sortOrder: _int(json, 'sortOrder'),
     importId: _field<String?>(json, 'importId'),
+    debtSide: side,
+    debtDueOn: dueOn,
+    debtReminds: (_field<bool?>(json, 'debtReminds') ?? false) && debt,
   );
 }
 

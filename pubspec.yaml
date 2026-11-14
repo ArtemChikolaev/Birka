@@ -29,6 +29,7 @@ workspace:
   - packages/features/categories/common
   - packages/features/categories/flutter
   - packages/features/categories/jaspr
+  - packages/features/debts/common
   - packages/features/help/common
   - packages/features/help/flutter
   - packages/features/help/jaspr

@@ -68,6 +68,8 @@ class TranslationsRu extends Translations
   late final _Translations$categories$ru categories =
       _Translations$categories$ru._(_root);
   @override
+  late final _Translations$debts$ru debts = _Translations$debts$ru._(_root);
+  @override
   late final _Translations$demo$ru demo = _Translations$demo$ru._(_root);
   @override
   late final _Translations$help$ru help = _Translations$help$ru._(_root);
@@ -506,6 +508,98 @@ class _Translations$categories$ru extends Translations$categories$en {
   ];
 }
 
+// Path: debts
+class _Translations$debts$ru extends Translations$debts$en {
+  _Translations$debts$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Долги';
+  @override
+  String get moreHint => 'Кто кому должен и до какого дня';
+  @override
+  String moreBoth({required Object owed, required Object mine}) =>
+      'Мне должны ${owed} · мои ${mine}';
+  @override
+  String moreOwed({required Object owed}) => 'Мне должны ${owed}';
+  @override
+  String moreMine({required Object mine}) => 'Мои долги ${mine}';
+  @override
+  String get owedToMe => 'Мне должны';
+  @override
+  String get myDebts => 'Мои долги';
+  @override
+  String people({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        zero: '${n} человек',
+        one: '${n} человек',
+        few: '${n} человека',
+        many: '${n} человек',
+        other: '${n} человека',
+      );
+  @override
+  String closed({required Object n}) => 'Закрытые · ${n}';
+  @override
+  String get caption =>
+      'Долги не входят в капитал: этих денег сейчас нет на ваших счетах.';
+  @override
+  String get captionRates =>
+      'Долги не входят в капитал: этих денег сейчас нет на ваших счетах. Другие валюты — по курсу ЦБ на сегодня.';
+  @override
+  String get failed => 'Не удалось прочитать долги.';
+  @override
+  String get gone => 'Этого долга больше нет.';
+  @override
+  String get emptyTitle => 'Долгов нет';
+  @override
+  String get emptyText =>
+      'Запишите, кому одолжили или у кого заняли: Birka покажет, сколько осталось и до какого дня.';
+  @override
+  String get add => 'Записать долг';
+  @override
+  String get newDebt => 'Новый долг';
+  @override
+  late final _Translations$debts$line$ru line = _Translations$debts$line$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$debts$card$ru card = _Translations$debts$card$ru._(
+    _root,
+  );
+  @override
+  String inDays({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        zero: 'через ${n} дней',
+        one: 'через ${n} день',
+        few: 'через ${n} дня',
+        many: 'через ${n} дней',
+        other: 'через ${n} дня',
+      );
+  @override
+  late final _Translations$debts$form$ru form = _Translations$debts$form$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$debts$back$ru back = _Translations$debts$back$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$debts$steps$ru steps =
+      _Translations$debts$steps$ru._(_root);
+  @override
+  String get howItWorks => 'Как это устроено';
+  @override
+  late final _Translations$debts$move$ru move = _Translations$debts$move$ru._(
+    _root,
+  );
+}
+
 // Path: demo
 class _Translations$demo$ru extends Translations$demo$en {
   _Translations$demo$ru._(TranslationsRu root)
@@ -573,6 +667,12 @@ class _Translations$demo$ru extends Translations$demo$en {
   String get toSavings => 'В накопления';
   @override
   String get toEuro => 'Евро на поездку';
+  @override
+  late final _Translations$demo$people$ru people =
+      _Translations$demo$people$ru._(_root);
+  @override
+  late final _Translations$demo$debtNotes$ru debtNotes =
+      _Translations$demo$debtNotes$ru._(_root);
 }
 
 // Path: help
@@ -3103,6 +3203,9 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get date => 'Дата';
   @override
+  late final _Translations$transactions$debt$ru debt =
+      _Translations$transactions$debt$ru._(_root);
+  @override
   late final _Translations$transactions$sources$ru sources =
       _Translations$transactions$sources$ru._(_root);
   @override
@@ -3675,6 +3778,288 @@ class _Translations$categories$form$ru extends Translations$categories$form$en {
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
 }
 
+// Path: debts.line
+class _Translations$debts$line$ru extends Translations$debts$line$en {
+  _Translations$debts$line$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get dueToday => 'срок сегодня';
+  @override
+  String dueOn({required Object day}) => 'до ${day}';
+  @override
+  String overdue({required Object day}) => 'срок был ${day}';
+  @override
+  String since({required Object day}) => 'с ${day}';
+  @override
+  String returned({required Object day}) => 'вернули ${day}';
+  @override
+  String repaid({required Object day}) => 'отдали ${day}';
+  @override
+  String of({required Object total}) => 'из ${total}';
+  @override
+  String approx({required Object amount}) => '≈ ${amount}';
+}
+
+// Path: debts.card
+class _Translations$debts$card$ru extends Translations$debts$card$en {
+  _Translations$debts$card$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Долг';
+  @override
+  String get edit => 'Изменить';
+  @override
+  String leftToMe({required Object total}) =>
+      'осталось вернуть вам из ${total}';
+  @override
+  String leftToThem({required Object total}) => 'осталось отдать из ${total}';
+  @override
+  String allReturned({required Object day}) => 'вернули всё · ${day}';
+  @override
+  String allRepaid({required Object day}) => 'отдали всё · ${day}';
+  @override
+  String returned({required Object amount}) => 'Вернули ${amount}';
+  @override
+  String repaid({required Object amount}) => 'Отдали ${amount}';
+  @override
+  String dueRemind({required Object day}) =>
+      'Срок ${day} · напомним в этот день';
+  @override
+  String dueIn({required Object day, required Object inDays}) =>
+      'Срок ${day} · ${inDays}';
+  @override
+  String dueOn({required Object day}) => 'Срок ${day}';
+  @override
+  String get dueToday => 'Срок сегодня';
+  @override
+  String dueWas({required Object day}) => 'Срок был ${day}';
+  @override
+  String get noDue => 'Без срока';
+  @override
+  String get closed => 'Долг закрыт';
+  @override
+  String get closedRemind => 'Долг закрыт · напоминание снято';
+  @override
+  String get history => 'История';
+  @override
+  String get returnAction => 'Возврат';
+  @override
+  String get repayAction => 'Отдать';
+  @override
+  String get lendMore => 'Ещё в долг';
+  @override
+  String get borrowMore => 'Занять ещё';
+  @override
+  String get newDebt => 'Новый долг';
+}
+
+// Path: debts.form
+class _Translations$debts$form$ru extends Translations$debts$form$en {
+  _Translations$debts$form$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get lend => 'Одолжить';
+  @override
+  String get borrow => 'Занять';
+  @override
+  String get who => 'Кто';
+  @override
+  String get other => 'Другой';
+  @override
+  String get name => 'Имя';
+  @override
+  String get nameHint => 'Как зовут';
+  @override
+  String get nameMissing => 'Напишите, кто это';
+  @override
+  String get amount => 'Сумма';
+  @override
+  String get fromAccount => 'Со счёта';
+  @override
+  String get toAccount => 'На счёт';
+  @override
+  String get when => 'Когда';
+  @override
+  String get dueBy => 'Вернуть до';
+  @override
+  String get noDue => 'Без срока';
+  @override
+  String get note => 'Заметка';
+  @override
+  String get remind => 'Напомнить в срок';
+  @override
+  String get lendCaption =>
+      'Долг — не трата: деньги уйдут со счёта, но в расходы месяца не попадут.';
+  @override
+  String get borrowCaption =>
+      'Долг — не доход: деньги придут на счёт, но в доходы месяца не попадут.';
+  @override
+  String noAccount({required Object currency}) =>
+      'Долг в ${currency}, а счёта в этой валюте нет.';
+  @override
+  String get save => 'Сохранить';
+  @override
+  String saved({required Object name, required Object amount}) =>
+      'Записали: ${name}, ${amount}';
+  @override
+  String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+  @override
+  String get editTitle => 'Изменить долг';
+}
+
+// Path: debts.back
+class _Translations$debts$back$ru extends Translations$debts$back$en {
+  _Translations$debts$back$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String returnTitle({required Object name}) => 'Возврат · ${name}';
+  @override
+  String repayTitle({required Object name}) => 'Отдать · ${name}';
+  @override
+  String all({required Object amount}) => 'Всё · ${amount}';
+  @override
+  String get part => 'Часть';
+  @override
+  String get howMuchReturned => 'Сколько вернули';
+  @override
+  String get howMuchRepaid => 'Сколько отдали';
+  @override
+  String get tooMuch => 'Больше, чем осталось';
+  @override
+  String get returnClosing =>
+      'Долг закроется. Деньги придут на счёт, но не в доходы.';
+  @override
+  String get returnClosingRemind =>
+      'Долг закроется, и напоминание о нём уйдёт. Деньги придут на счёт, но не в доходы.';
+  @override
+  String returnLeft({required Object left}) =>
+      'Останется ${left}. Деньги придут на счёт, но не в доходы.';
+  @override
+  String returnLeftDue({required Object left, required Object day}) =>
+      'Останется ${left} до ${day}. Деньги придут на счёт, но не в доходы.';
+  @override
+  String get repayClosing =>
+      'Долг закроется. Деньги уйдут со счёта, но не в расходы.';
+  @override
+  String get repayClosingRemind =>
+      'Долг закроется, и напоминание о нём уйдёт. Деньги уйдут со счёта, но не в расходы.';
+  @override
+  String repayLeft({required Object left}) =>
+      'Останется ${left}. Деньги уйдут со счёта, но не в расходы.';
+  @override
+  String repayLeftDue({required Object left, required Object day}) =>
+      'Останется ${left} до ${day}. Деньги уйдут со счёта, но не в расходы.';
+  @override
+  String get save => 'Сохранить возврат';
+  @override
+  String closedToast({required Object name}) => '${name}: долг закрыт';
+  @override
+  String returnedToast({required Object amount, required Object left}) =>
+      'Возврат ${amount} · осталось ${left}';
+  @override
+  String repaidToast({required Object amount, required Object left}) =>
+      'Отдали ${amount} · осталось ${left}';
+}
+
+// Path: debts.steps
+class _Translations$debts$steps$ru extends Translations$debts$steps$en {
+  _Translations$debts$steps$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get first =>
+      'Запишите, кому одолжили и у кого заняли: деньги уйдут со счёта или придут на него.';
+  @override
+  String get second =>
+      'Долг — не трата и не доход: в отчёты месяца он не попадёт.';
+  @override
+  String get third =>
+      'Возвраты закрывают долг частями, и список покажет, сколько осталось и до какого дня.';
+}
+
+// Path: debts.move
+class _Translations$debts$move$ru extends Translations$debts$move$en {
+  _Translations$debts$move$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get lent => 'В долг';
+  @override
+  String get returned => 'Возврат';
+  @override
+  String get borrowed => 'Заняли';
+  @override
+  String get repaid => 'Отдали';
+}
+
+// Path: demo.people
+class _Translations$demo$people$ru extends Translations$demo$people$en {
+  _Translations$demo$people$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get masha => 'Маша';
+  @override
+  String get dima => 'Дима';
+  @override
+  String get sasha => 'Саша';
+  @override
+  String get ira => 'Ира';
+  @override
+  String get dad => 'Папа';
+}
+
+// Path: demo.debtNotes
+class _Translations$demo$debtNotes$ru extends Translations$demo$debtNotes$en {
+  _Translations$demo$debtNotes$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get tickets => 'на билеты';
+  @override
+  String get flat => 'за квартиру';
+  @override
+  String get salary => 'до зарплаты';
+  @override
+  String get concert => 'на концерт';
+}
+
 // Path: onboarding.welcome
 class _Translations$onboarding$welcome$ru
     extends Translations$onboarding$welcome$en {
@@ -3948,6 +4333,28 @@ class _Translations$tags$row$ru extends Translations$tags$row$en {
   String get plain => 'Метка';
   @override
   String more({required Object n}) => 'и ещё ${n}';
+}
+
+// Path: transactions.debt
+class _Translations$transactions$debt$ru
+    extends Translations$transactions$debt$en {
+  _Translations$transactions$debt$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Долг';
+  @override
+  String get lent => 'в долг';
+  @override
+  String get returned => 'возврат';
+  @override
+  String get borrowed => 'заняли';
+  @override
+  String get repaid => 'отдали';
 }
 
 // Path: transactions.sources
@@ -4438,6 +4845,165 @@ extension on TranslationsRu {
             'Расходы и доходы — отдельные списки: переключатель над ними.',
           'categories.how.2' =>
             'Категории видны в операциях, отчётах и регулярных платежах.',
+          'debts.title' => 'Долги',
+          'debts.moreHint' => 'Кто кому должен и до какого дня',
+          'debts.moreBoth' =>
+            ({required Object owed, required Object mine}) =>
+                'Мне должны ${owed} · мои ${mine}',
+          'debts.moreOwed' => ({required Object owed}) => 'Мне должны ${owed}',
+          'debts.moreMine' => ({required Object mine}) => 'Мои долги ${mine}',
+          'debts.owedToMe' => 'Мне должны',
+          'debts.myDebts' => 'Мои долги',
+          'debts.people' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  zero: '${n} человек',
+                  one: '${n} человек',
+                  few: '${n} человека',
+                  many: '${n} человек',
+                  other: '${n} человека',
+                ),
+          'debts.closed' => ({required Object n}) => 'Закрытые · ${n}',
+          'debts.caption' =>
+            'Долги не входят в капитал: этих денег сейчас нет на ваших счетах.',
+          'debts.captionRates' =>
+            'Долги не входят в капитал: этих денег сейчас нет на ваших счетах. Другие валюты — по курсу ЦБ на сегодня.',
+          'debts.failed' => 'Не удалось прочитать долги.',
+          'debts.gone' => 'Этого долга больше нет.',
+          'debts.emptyTitle' => 'Долгов нет',
+          'debts.emptyText' =>
+            'Запишите, кому одолжили или у кого заняли: Birka покажет, сколько осталось и до какого дня.',
+          'debts.add' => 'Записать долг',
+          'debts.newDebt' => 'Новый долг',
+          'debts.line.dueToday' => 'срок сегодня',
+          'debts.line.dueOn' => ({required Object day}) => 'до ${day}',
+          'debts.line.overdue' => ({required Object day}) => 'срок был ${day}',
+          'debts.line.since' => ({required Object day}) => 'с ${day}',
+          'debts.line.returned' => ({required Object day}) => 'вернули ${day}',
+          'debts.line.repaid' => ({required Object day}) => 'отдали ${day}',
+          'debts.line.of' => ({required Object total}) => 'из ${total}',
+          'debts.line.approx' => ({required Object amount}) => '≈ ${amount}',
+          'debts.card.title' => 'Долг',
+          'debts.card.edit' => 'Изменить',
+          'debts.card.leftToMe' =>
+            ({required Object total}) => 'осталось вернуть вам из ${total}',
+          'debts.card.leftToThem' =>
+            ({required Object total}) => 'осталось отдать из ${total}',
+          'debts.card.allReturned' =>
+            ({required Object day}) => 'вернули всё · ${day}',
+          'debts.card.allRepaid' =>
+            ({required Object day}) => 'отдали всё · ${day}',
+          'debts.card.returned' =>
+            ({required Object amount}) => 'Вернули ${amount}',
+          'debts.card.repaid' =>
+            ({required Object amount}) => 'Отдали ${amount}',
+          'debts.card.dueRemind' =>
+            ({required Object day}) => 'Срок ${day} · напомним в этот день',
+          'debts.card.dueIn' =>
+            ({required Object day, required Object inDays}) =>
+                'Срок ${day} · ${inDays}',
+          'debts.card.dueOn' => ({required Object day}) => 'Срок ${day}',
+          'debts.card.dueToday' => 'Срок сегодня',
+          'debts.card.dueWas' => ({required Object day}) => 'Срок был ${day}',
+          'debts.card.noDue' => 'Без срока',
+          'debts.card.closed' => 'Долг закрыт',
+          'debts.card.closedRemind' => 'Долг закрыт · напоминание снято',
+          'debts.card.history' => 'История',
+          'debts.card.returnAction' => 'Возврат',
+          'debts.card.repayAction' => 'Отдать',
+          'debts.card.lendMore' => 'Ещё в долг',
+          'debts.card.borrowMore' => 'Занять ещё',
+          'debts.card.newDebt' => 'Новый долг',
+          'debts.inDays' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  zero: 'через ${n} дней',
+                  one: 'через ${n} день',
+                  few: 'через ${n} дня',
+                  many: 'через ${n} дней',
+                  other: 'через ${n} дня',
+                ),
+          'debts.form.lend' => 'Одолжить',
+          'debts.form.borrow' => 'Занять',
+          'debts.form.who' => 'Кто',
+          'debts.form.other' => 'Другой',
+          'debts.form.name' => 'Имя',
+          'debts.form.nameHint' => 'Как зовут',
+          'debts.form.nameMissing' => 'Напишите, кто это',
+          'debts.form.amount' => 'Сумма',
+          'debts.form.fromAccount' => 'Со счёта',
+          'debts.form.toAccount' => 'На счёт',
+          'debts.form.when' => 'Когда',
+          'debts.form.dueBy' => 'Вернуть до',
+          'debts.form.noDue' => 'Без срока',
+          'debts.form.note' => 'Заметка',
+          'debts.form.remind' => 'Напомнить в срок',
+          'debts.form.lendCaption' =>
+            'Долг — не трата: деньги уйдут со счёта, но в расходы месяца не попадут.',
+          'debts.form.borrowCaption' =>
+            'Долг — не доход: деньги придут на счёт, но в доходы месяца не попадут.',
+          'debts.form.noAccount' =>
+            ({required Object currency}) =>
+                'Долг в ${currency}, а счёта в этой валюте нет.',
+          'debts.form.save' => 'Сохранить',
+          'debts.form.saved' =>
+            ({required Object name, required Object amount}) =>
+                'Записали: ${name}, ${amount}',
+          'debts.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+          'debts.form.editTitle' => 'Изменить долг',
+          'debts.back.returnTitle' =>
+            ({required Object name}) => 'Возврат · ${name}',
+          'debts.back.repayTitle' =>
+            ({required Object name}) => 'Отдать · ${name}',
+          'debts.back.all' => ({required Object amount}) => 'Всё · ${amount}',
+          'debts.back.part' => 'Часть',
+          'debts.back.howMuchReturned' => 'Сколько вернули',
+          'debts.back.howMuchRepaid' => 'Сколько отдали',
+          'debts.back.tooMuch' => 'Больше, чем осталось',
+          'debts.back.returnClosing' =>
+            'Долг закроется. Деньги придут на счёт, но не в доходы.',
+          'debts.back.returnClosingRemind' =>
+            'Долг закроется, и напоминание о нём уйдёт. Деньги придут на счёт, но не в доходы.',
+          'debts.back.returnLeft' =>
+            ({required Object left}) =>
+                'Останется ${left}. Деньги придут на счёт, но не в доходы.',
+          'debts.back.returnLeftDue' =>
+            ({required Object left, required Object day}) =>
+                'Останется ${left} до ${day}. Деньги придут на счёт, но не в доходы.',
+          'debts.back.repayClosing' =>
+            'Долг закроется. Деньги уйдут со счёта, но не в расходы.',
+          'debts.back.repayClosingRemind' =>
+            'Долг закроется, и напоминание о нём уйдёт. Деньги уйдут со счёта, но не в расходы.',
+          'debts.back.repayLeft' =>
+            ({required Object left}) =>
+                'Останется ${left}. Деньги уйдут со счёта, но не в расходы.',
+          'debts.back.repayLeftDue' =>
+            ({required Object left, required Object day}) =>
+                'Останется ${left} до ${day}. Деньги уйдут со счёта, но не в расходы.',
+          'debts.back.save' => 'Сохранить возврат',
+          'debts.back.closedToast' =>
+            ({required Object name}) => '${name}: долг закрыт',
+          'debts.back.returnedToast' =>
+            ({required Object amount, required Object left}) =>
+                'Возврат ${amount} · осталось ${left}',
+          'debts.back.repaidToast' =>
+            ({required Object amount, required Object left}) =>
+                'Отдали ${amount} · осталось ${left}',
+          'debts.steps.first' =>
+            'Запишите, кому одолжили и у кого заняли: деньги уйдут со счёта или придут на него.',
+          'debts.steps.second' =>
+            'Долг — не трата и не доход: в отчёты месяца он не попадёт.',
+          'debts.steps.third' =>
+            'Возвраты закрывают долг частями, и список покажет, сколько осталось и до какого дня.',
+          'debts.howItWorks' => 'Как это устроено',
+          'debts.move.lent' => 'В долг',
+          'debts.move.returned' => 'Возврат',
+          'debts.move.borrowed' => 'Заняли',
+          'debts.move.repaid' => 'Отдали',
           'demo.card' => 'Зарплатная карта',
           'demo.cash' => 'Наличные',
           'demo.savings' => 'Накопления',
@@ -4467,6 +5033,15 @@ extension on TranslationsRu {
           'demo.toCash' => 'Снятие наличных',
           'demo.toSavings' => 'В накопления',
           'demo.toEuro' => 'Евро на поездку',
+          'demo.people.masha' => 'Маша',
+          'demo.people.dima' => 'Дима',
+          'demo.people.sasha' => 'Саша',
+          'demo.people.ira' => 'Ира',
+          'demo.people.dad' => 'Папа',
+          'demo.debtNotes.tickets' => 'на билеты',
+          'demo.debtNotes.flat' => 'за квартиру',
+          'demo.debtNotes.salary' => 'до зарплаты',
+          'demo.debtNotes.concert' => 'на концерт',
           'help.title' => 'Помощь',
           'help.back' => 'Назад',
           'help.search' => 'Поиск по справке',
@@ -4583,6 +5158,9 @@ extension on TranslationsRu {
           'imports.unreadable.empty' => 'В файле пусто.',
           'imports.unreadable.tooLarge' =>
             'Файл слишком большой. Возьмите выписку покороче, до 10 000 строк.',
+          _ => null,
+        } ??
+        switch (path) {
           'imports.unreadable.incomplete' =>
             'Операции выписки не сходятся с её итогами, часть не прочиталась. Скачайте выписку заново.',
           'imports.howTitle' => 'Как это устроено',
@@ -4774,9 +5352,6 @@ extension on TranslationsRu {
           'imports.previewCategory' => 'Категория',
           'imports.previewAmount' => 'Сумма',
           'imports.transfer' => 'Перевод',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.learned' => 'как раньше',
           'imports.inbox' => 'Решу во «Входящих»',
           'imports.problems' =>
@@ -5627,6 +6202,9 @@ extension on TranslationsRu {
           'schedules.weekday.tue' => 'вт',
           'schedules.weekday.wed' => 'ср',
           'schedules.weekday.thu' => 'чт',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.weekday.fri' => 'пт',
           'schedules.weekday.sat' => 'сб',
           'schedules.weekday.sun' => 'вс',
@@ -5818,9 +6396,6 @@ extension on TranslationsRu {
           'schedules.partsTwo' =>
             ({required Object advance, required Object day}) =>
                 'Пополам: аванс ${advance}-го, зарплата ${day}-го.',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.partsOwn' =>
             ({
               required Object advanceAmount,
@@ -6434,6 +7009,11 @@ extension on TranslationsRu {
           'transactions.category' => 'Категория',
           'transactions.from' => 'Откуда',
           'transactions.date' => 'Дата',
+          'transactions.debt.title' => 'Долг',
+          'transactions.debt.lent' => 'в долг',
+          'transactions.debt.returned' => 'возврат',
+          'transactions.debt.borrowed' => 'заняли',
+          'transactions.debt.repaid' => 'отдали',
           'transactions.sources.manual' => 'Вручную',
           'transactions.sources.import' => 'Из выписки',
           'transactions.sources.notification' => 'Из уведомления',

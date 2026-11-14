@@ -62,6 +62,17 @@ class Accounts extends Table with SyncedRow {
   /// The import that created the account, which takes it away again if
   /// nothing else uses it (ADR 0021).
   TextColumn get importId => text().nullable().references(Imports, #id)();
+
+  /// Who owes whom on a debt, one of the names of `DebtSide` in the ledger,
+  /// and `null` on every account that is not a debt (ADR 0029).
+  TextColumn get debtSide => text().nullable()();
+
+  /// The day a debt should come back by, as `YYYY-MM-DD`, when the person
+  /// gave one.
+  TextColumn get debtDueOn => text().nullable()();
+
+  /// Whether the phone reminds of a debt on [debtDueOn].
+  BoolColumn get debtReminds => boolean().withDefault(const Constant(false))();
 }
 
 /// What money is spent on or earned from.

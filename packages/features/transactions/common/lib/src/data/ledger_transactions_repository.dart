@@ -25,7 +25,15 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   @override
   Future<String?> lastAccountId() async {
     final latest = await _ledger.watchTransactions(limit: 1).first;
-    return latest.firstOrNull?.entries.firstOrNull?.accountId;
+    final entries = latest.firstOrNull?.entries ?? const <Entry>[];
+    // A transfer of a debt starts on the debt when money comes back, and the
+    // account of the person is the other one (ADR 0029).
+    final own = {for (final account in await accounts()) account.id};
+    return entries
+            .map((entry) => entry.accountId)
+            .where(own.contains)
+            .firstOrNull ??
+        entries.firstOrNull?.accountId;
   }
 
   @override
@@ -65,7 +73,7 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
 
   @override
   Stream<AccountBalance?> watchAccount(String id) => _ledger
-      .watchAccountBalances(includeArchived: true)
+      .watchAccountBalances(includeArchived: true, includeDebts: true)
       .map(
         (rows) => rows.where((row) => row.account.id == id).firstOrNull,
       );
@@ -107,10 +115,11 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   @override
   Future<void> delete(String id) => _ledger.delete(id);
 
-  /// Every account and category, archived ones too, since old operations keep
-  /// them. Following them keeps a list right after a change of a name.
+  /// Every account and category, archived ones and debts too, since old
+  /// operations keep them and a transfer of a debt names its person.
+  /// Following them keeps a list right after a change of a name.
   Stream<_Names> _watchNames() => combineLatest(
-    _ledger.watchAccounts(includeArchived: true),
+    _ledger.watchAccounts(includeArchived: true, includeDebts: true),
     combineLatest(
       _ledger.watchCategories(CategoryKind.expense, includeArchived: true),
       _ledger.watchCategories(CategoryKind.income, includeArchived: true),

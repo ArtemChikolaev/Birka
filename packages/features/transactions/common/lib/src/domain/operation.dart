@@ -44,6 +44,30 @@ final class Operation {
   /// The category.
   final Category? category;
 
+  /// The debt that a transfer moves, the account named after the other
+  /// person, or `null` for any other operation (ADR 0029).
+  Account? get debt {
+    if (kind != TransactionKind.transfer) return null;
+    final from = account;
+    final to = toAccount;
+    if (from == null || to == null || from.isDebt == to.isDebt) return null;
+    return from.isDebt ? from : to;
+  }
+
+  /// The account of the person that a transfer of a debt moves money on.
+  Account? get ownAccount => switch (debt) {
+    null => null,
+    final debt => debt == account ? toAccount : account,
+  };
+
+  /// What a transfer of a debt does to it.
+  DebtMove? get debtMove {
+    final debt = this.debt;
+    final side = debt?.debt?.side;
+    if (debt == null || side == null) return null;
+    return DebtMove.of(side, into: debt == toAccount);
+  }
+
   /// The id.
   String get id => transaction.id;
 
@@ -79,9 +103,12 @@ final class Operation {
       happened;
 
   /// Whether quick add can show all of it, which is one category at most and
-  /// not a correction.
+  /// not a correction. A debt changes on its own card (ADR 0029), since quick
+  /// add offers no debts among the accounts.
   bool get canChange =>
-      kind != TransactionKind.adjustment && transaction.allocations.length <= 1;
+      kind != TransactionKind.adjustment &&
+      transaction.allocations.length <= 1 &&
+      debt == null;
 
   /// Whether every word of [query] is in the note, in a name or is an amount.
   ///

@@ -56,6 +56,12 @@ back: Назад
 category: Категория
 from: Откуда
 date: Дата
+debt:
+  title: Долг
+  lent: в долг
+  returned: возврат
+  borrowed: заняли
+  repaid: отдали
 sources:
   manual: Вручную
   import: Из выписки

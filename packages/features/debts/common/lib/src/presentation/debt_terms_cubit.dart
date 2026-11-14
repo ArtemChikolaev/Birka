@@ -1,0 +1,161 @@
+import 'dart:async';
+
+import 'package:bloc/bloc.dart';
+import 'package:debts_common/src/domain/debt.dart';
+import 'package:debts_common/src/domain/debts_repository.dart';
+import 'package:ledger/ledger.dart';
+import 'package:meta/meta.dart';
+
+/// Where the form of the terms of a debt stands.
+enum DebtTermsStatus {
+  /// The debt is on its way.
+  loading,
+
+  /// The person is filling in the form.
+  editing,
+
+  /// The terms are saved, and the form can close.
+  saved,
+
+  /// The debt is gone.
+  gone,
+
+  /// The debt could not be read, or the save failed.
+  failed,
+}
+
+/// What the form that changes a debt holds: the name of the other person,
+/// the day it should come back by and the reminder of it (ADR 0029).
+@immutable
+final class DebtTermsState {
+  /// Creates a state.
+  const DebtTermsState({
+    required this.status,
+    required this.today,
+    this.debt,
+    this.name = '',
+    this.dueOn,
+    this.reminds = false,
+    this.nameMissing = false,
+  });
+
+  /// Where the form stands.
+  final DebtTermsStatus status;
+
+  /// Today on this device.
+  final CivilDate today;
+
+  /// The debt.
+  final Debt? debt;
+
+  /// The name of the other person.
+  final String name;
+
+  /// The day the debt should come back by.
+  final CivilDate? dueOn;
+
+  /// Whether the phone reminds of the debt on [dueOn].
+  final bool reminds;
+
+  /// Whether a save was tried without a name.
+  final bool nameMissing;
+
+  /// A copy with the given fields changed. [dueOn] takes a function, so that
+  /// it can become `null`.
+  DebtTermsState copyWith({
+    DebtTermsStatus? status,
+    Debt? debt,
+    String? name,
+    CivilDate? Function()? dueOn,
+    bool? reminds,
+    bool? nameMissing,
+  }) => DebtTermsState(
+    status: status ?? this.status,
+    today: today,
+    debt: debt ?? this.debt,
+    name: name ?? this.name,
+    dueOn: dueOn == null ? this.dueOn : dueOn(),
+    reminds: reminds ?? this.reminds,
+    nameMissing: nameMissing ?? this.nameMissing,
+  );
+}
+
+/// Changes the name, the day and the reminder of debt [_id].
+final class DebtTermsCubit extends Cubit<DebtTermsState> {
+  /// Creates the form on [_repository].
+  DebtTermsCubit(this._repository, this._id)
+    : super(
+        DebtTermsState(
+          status: DebtTermsStatus.loading,
+          today: _repository.today(),
+        ),
+      ) {
+    unawaited(_load());
+  }
+
+  final DebtsRepository _repository;
+  final String _id;
+
+  Future<void> _load() async {
+    try {
+      final debts = await _repository.watchDebts().first;
+      if (isClosed) return;
+      final debt = debts.where((debt) => debt.id == _id).firstOrNull;
+      if (debt == null) {
+        return emit(state.copyWith(status: DebtTermsStatus.gone));
+      }
+      emit(
+        state.copyWith(
+          status: DebtTermsStatus.editing,
+          debt: debt,
+          name: debt.name,
+          dueOn: () => debt.dueOn,
+          reminds: debt.reminds,
+        ),
+      );
+    } on Object {
+      if (!isClosed) emit(state.copyWith(status: DebtTermsStatus.failed));
+    }
+  }
+
+  /// The person typed [name].
+  void nameChanged(String name) =>
+      emit(state.copyWith(name: name, nameMissing: false));
+
+  /// The person picked the day the debt should come back by, or none. A day
+  /// turns the reminder on at first.
+  void dueChanged(CivilDate? dueOn) => emit(
+    state.copyWith(
+      dueOn: () => dueOn,
+      reminds: dueOn != null && (state.dueOn == null || state.reminds),
+    ),
+  );
+
+  /// The person chose whether the phone reminds of the day.
+  void remindsChanged({required bool reminds}) =>
+      emit(state.copyWith(reminds: reminds && state.dueOn != null));
+
+  /// Saves the terms.
+  Future<void> save() async {
+    final form = state;
+    final debt = form.debt;
+    if (debt == null || form.status != DebtTermsStatus.editing) return;
+    if (form.name.trim().isEmpty) {
+      return emit(form.copyWith(nameMissing: true));
+    }
+    try {
+      await _repository.update(
+        debt.id,
+        name: form.name,
+        terms: DebtTerms(
+          side: debt.side,
+          dueOn: form.dueOn,
+          reminds: form.reminds && form.dueOn != null,
+        ),
+      );
+      if (!isClosed) emit(state.copyWith(status: DebtTermsStatus.saved));
+    } on Object {
+      if (!isClosed) emit(state.copyWith(status: DebtTermsStatus.failed));
+    }
+  }
+}

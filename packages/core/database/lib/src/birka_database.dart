@@ -28,7 +28,7 @@ class BirkaDatabase extends _$BirkaDatabase {
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -92,6 +92,19 @@ class BirkaDatabase extends _$BirkaDatabase {
         await m.createTable(schema.transactionTags);
         await m.createIndex(schema.transactionTagsTransaction);
         await m.createIndex(schema.transactionTagsTag);
+      },
+      from11To12: (m, schema) async {
+        final accounts = schema.accounts;
+        await m.addColumn(accounts, accounts.debtSide);
+        await m.addColumn(accounts, accounts.debtDueOn);
+        await m.addColumn(accounts, accounts.debtReminds);
+        // No screen made a debt before, though the type was there: such an
+        // account becomes a debt that is owed to the person, outside the
+        // capital (ADR 0029).
+        await customStatement(
+          "UPDATE accounts SET debt_side = 'lent', include_in_totals = 0 "
+          "WHERE type = 'debt'",
+        );
       },
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
