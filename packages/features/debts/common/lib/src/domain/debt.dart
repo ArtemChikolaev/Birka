@@ -130,9 +130,12 @@ final class Debt {
         settled += amount;
         if (owed <= 0) closedOn = transaction.occurredOn;
       } else {
+        // Money lent once all came back starts a new round. What came back
+        // beyond it, as a return dated before the money it returns, counts
+        // as returned in the new one.
         if (owed <= 0) {
           total = 0;
-          settled = 0;
+          settled = -owed;
           since = transaction.occurredOn;
           closedOn = null;
         }
