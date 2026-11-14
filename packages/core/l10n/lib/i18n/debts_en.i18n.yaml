@@ -134,6 +134,7 @@ person:
   fromContact: "From the contacts: $contact. Birka took this contact alone and keeps the number on this phone."
   contactsRow: Take the number from the contacts
   shared: The name, who it is and the number are the same for every debt of this person. The number stays on this phone and in your copies.
+  sharedSite: The name, who it is and the number are the same for every debt of this person. The number stays in this browser and in your copies.
   twin: "$name is here already, $about. Say who this one is, to tell them apart."
   twinPlain: "$name is here already. Say who this one is, to tell them apart."
   twinPick: "$name is here already, $about. If it is the same person, pick them above; if not, say who this one is."
@@ -148,5 +149,9 @@ remind:
   caption: Birka only opens the message; you send it. The text can be changed.
   captionShare: "Birka opens the window of sharing: pick where to write. The text can be changed."
   noPhone: No number · add it in «Edit»
+  copy: Copy the text
+  copied: The text is copied
+  notCopied: "Could not copy: select the text and copy it yourself"
+  captionSite: "The site sends nothing itself: copy the text and paste it into a messenger or an SMS."
   text: "Hi! A reminder about $amount: we said it would come back by $day."
   textNoDue: "Hi! A reminder about $amount."

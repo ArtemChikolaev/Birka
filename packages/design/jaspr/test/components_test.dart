@@ -1209,6 +1209,44 @@ void main() {
       expect(typed, ['Visa']);
     });
 
+    testComponents('of several lines is a text area that keeps its text', (
+      tester,
+    ) async {
+      final typed = <String>[];
+      tester.pumpComponent(
+        BirkaTextField(
+          label: 'Message',
+          value: 'Hi! A reminder.',
+          onChanged: typed.add,
+          lines: 3,
+          sentence: true,
+        ),
+      );
+
+      expect(find.byType(input<String>), findsNothing);
+      final area =
+          find.byType(textarea).evaluate().single.component as textarea;
+      expect(area.rows, 3);
+      expect(
+        area.classes,
+        'text-body birka-field__input birka-field__input--lines',
+      );
+      expect(area.attributes, {
+        'autocomplete': 'off',
+        'autocapitalize': 'sentences',
+      });
+      expect(
+        find.descendant(
+          of: find.byType(textarea),
+          matching: find.text('Hi! A reminder.'),
+        ),
+        findsOneComponent,
+      );
+
+      area.onInput!('Hi! A reminder, thanks.');
+      expect(typed, ['Hi! A reminder, thanks.']);
+    });
+
     testComponents('shows an error and marks the input', (tester) async {
       tester.pumpComponent(
         BirkaTextField(

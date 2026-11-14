@@ -131,4 +131,7 @@ final class BrowserHelpLinks implements HelpLinks {
 }
 
 /// See `browser_web.dart`.
+Future<bool> copyText(String text) => _unavailable();
+
+/// See `browser_web.dart`.
 AppAbout get browserAbout => _unavailable();

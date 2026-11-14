@@ -8,9 +8,10 @@ import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 
-/// The form that changes a debt (ADR 0029): the name of the other person and
-/// the day it should come back by. A reminder set on a phone stays as it
-/// is. It calls [onDone] once saved.
+/// The form that changes a debt (ADR 0029): the name of the other person,
+/// who they are and their number, which go to all their debts (ADR 0030),
+/// and the day it should come back by. A reminder set on a phone stays as
+/// it is. It calls [onDone] once saved.
 ///
 /// It needs a [DebtTermsCubit] above it.
 class DebtTermsPage extends StatelessComponent {
@@ -43,6 +44,7 @@ class DebtTermsPage extends StatelessComponent {
     final form = t.debts.form;
     final today = state.today;
     final due = state.dueOn;
+    final words = t.debts.person;
     return BirkaForm(
       title: form.editTitle,
       closeLabel: t.debts.close,
@@ -51,6 +53,8 @@ class DebtTermsPage extends StatelessComponent {
       onSubmit: () => unawaited(cubit.save()),
       submitting: state.status == DebtTermsStatus.saved,
       failure: state.status == DebtTermsStatus.failed ? form.failed : null,
+      // The person is one for all their debts, and so is the save.
+      note: words.sharedSite,
       children: [
         BirkaTextField(
           label: form.name,
@@ -59,6 +63,20 @@ class DebtTermsPage extends StatelessComponent {
           sentence: true,
           error: state.nameMissing ? form.nameMissing : null,
           onChanged: cubit.nameChanged,
+        ),
+        BirkaTextField(
+          label: words.about,
+          value: state.about,
+          hint: words.aboutHint,
+          sentence: true,
+          onChanged: cubit.aboutChanged,
+        ),
+        BirkaTextField(
+          label: words.phone,
+          value: state.phone ?? '',
+          hint: words.optional,
+          inputMode: 'tel',
+          onChanged: cubit.phoneChanged,
         ),
         // A cleared date takes the day away.
         BirkaDateField(

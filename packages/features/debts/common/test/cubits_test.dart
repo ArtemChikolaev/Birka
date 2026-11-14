@@ -273,6 +273,9 @@ void main() {
         debtTwinLine(form.state.twin!),
         'Иван уже есть — сосед. Напишите, кто это, чтобы их различать.',
       );
+
+      form.aboutChanged('коллега');
+      expect(form.state.twin, isNull);
     });
 
     test('someone new keeps who they are and their number', () async {

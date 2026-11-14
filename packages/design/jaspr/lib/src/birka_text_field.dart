@@ -17,6 +17,7 @@ class BirkaTextField extends StatelessComponent {
     this.sentence = false,
     this.textClass = 'text-body',
     this.suffix,
+    this.lines = 1,
     super.key,
   });
 
@@ -50,6 +51,11 @@ class BirkaTextField extends StatelessComponent {
   /// What stands after the text, such as the sign of a currency.
   final String? suffix;
 
+  /// The lines that the field shows, as for a message; a field of one line
+  /// takes no line breaks. A field of several lines starts with [value] and
+  /// then keeps what is typed, so a new value from elsewhere needs a new key.
+  final int lines;
+
   @override
   Component build(BuildContext context) {
     final error = this.error;
@@ -58,20 +64,36 @@ class BirkaTextField extends StatelessComponent {
       [
         span(classes: 'text-caption birka-field__label', [.text(label)]),
         div(classes: 'glass birka-field__box', [
-          input<String>(
-            classes: '$textClass birka-field__input',
-            type: InputType.text,
-            value: value,
-            onInput: onChanged,
-            attributes: {
-              'autocomplete': 'off',
-              'placeholder': ?hint,
-              'inputmode': ?inputMode,
-              'maxlength': ?maxLength?.toString(),
-              if (sentence) 'autocapitalize': 'sentences',
-              if (error != null) 'aria-invalid': 'true',
-            },
-          ),
+          if (lines > 1)
+            textarea(
+              classes:
+                  '$textClass birka-field__input birka-field__input--lines',
+              rows: lines,
+              placeholder: hint,
+              onInput: onChanged,
+              attributes: {
+                'autocomplete': 'off',
+                'maxlength': ?maxLength?.toString(),
+                if (sentence) 'autocapitalize': 'sentences',
+                if (error != null) 'aria-invalid': 'true',
+              },
+              [.text(value)],
+            )
+          else
+            input<String>(
+              classes: '$textClass birka-field__input',
+              type: InputType.text,
+              value: value,
+              onInput: onChanged,
+              attributes: {
+                'autocomplete': 'off',
+                'placeholder': ?hint,
+                'inputmode': ?inputMode,
+                'maxlength': ?maxLength?.toString(),
+                if (sentence) 'autocapitalize': 'sentences',
+                if (error != null) 'aria-invalid': 'true',
+              },
+            ),
           if (suffix case final suffix?)
             span(classes: '$textClass birka-field__suffix', [.text(suffix)]),
         ]),
@@ -122,6 +144,10 @@ class BirkaTextField extends StatelessComponent {
         'padding': '0',
         'width': '100%',
       },
+    ),
+    // A field of several lines wraps its text and keeps its size.
+    css('.birka-field__input--lines').styles(
+      raw: {'line-height': '1.45', 'resize': 'none'},
     ),
     css('.birka-field__suffix').styles(
       raw: {
