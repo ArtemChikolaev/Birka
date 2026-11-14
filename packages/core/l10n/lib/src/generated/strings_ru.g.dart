@@ -4167,6 +4167,9 @@ class _Translations$debts$person$ru extends Translations$debts$person$en {
   String get shared =>
       'Имя, «кто это» и номер — общие для всех долгов этого человека. Номер хранится только на этом телефоне и в ваших копиях.';
   @override
+  String get sharedSite =>
+      'Имя, «кто это» и номер — общие для всех долгов этого человека. Номер хранится только в этом браузере и в ваших копиях.';
+  @override
   String twin({required Object name, required Object about}) =>
       '${name} уже есть — ${about}. Напишите, кто это, чтобы их различать.';
   @override
@@ -4209,6 +4212,16 @@ class _Translations$debts$remind$ru extends Translations$debts$remind$en {
       'Birka откроет окно «Поделиться»: выберите, где написать. Текст можно поправить.';
   @override
   String get noPhone => 'Номера нет · добавьте в «Изменить»';
+  @override
+  String get copy => 'Скопировать текст';
+  @override
+  String get copied => 'Текст скопирован';
+  @override
+  String get notCopied =>
+      'Не получилось скопировать — выделите текст и скопируйте сами';
+  @override
+  String get captionSite =>
+      'Сайт сам ничего не отправляет: скопируйте текст и вставьте его в мессенджер или SMS.';
   @override
   String text({required Object amount, required Object day}) =>
       'Привет! Напоминаю про ${amount} — договаривались вернуть до ${day}.';
@@ -5257,6 +5270,8 @@ extension on TranslationsRu {
           'debts.person.contactsRow' => 'Взять номер из контактов',
           'debts.person.shared' =>
             'Имя, «кто это» и номер — общие для всех долгов этого человека. Номер хранится только на этом телефоне и в ваших копиях.',
+          'debts.person.sharedSite' =>
+            'Имя, «кто это» и номер — общие для всех долгов этого человека. Номер хранится только в этом браузере и в ваших копиях.',
           'debts.person.twin' =>
             ({required Object name, required Object about}) =>
                 '${name} уже есть — ${about}. Напишите, кто это, чтобы их различать.',
@@ -5280,6 +5295,12 @@ extension on TranslationsRu {
           'debts.remind.captionShare' =>
             'Birka откроет окно «Поделиться»: выберите, где написать. Текст можно поправить.',
           'debts.remind.noPhone' => 'Номера нет · добавьте в «Изменить»',
+          'debts.remind.copy' => 'Скопировать текст',
+          'debts.remind.copied' => 'Текст скопирован',
+          'debts.remind.notCopied' =>
+            'Не получилось скопировать — выделите текст и скопируйте сами',
+          'debts.remind.captionSite' =>
+            'Сайт сам ничего не отправляет: скопируйте текст и вставьте его в мессенджер или SMS.',
           'debts.remind.text' =>
             ({required Object amount, required Object day}) =>
                 'Привет! Напоминаю про ${amount} — договаривались вернуть до ${day}.',
@@ -5379,6 +5400,9 @@ extension on TranslationsRu {
               required Object system,
               required Object language,
             }) => 'Birka ${version} · ${system} · ${language}',
+          _ => null,
+        } ??
+        switch (path) {
           'help.noMail' =>
             ({required Object address}) =>
                 'Почта не открылась. Адрес скопирован: ${address}',
@@ -5386,9 +5410,6 @@ extension on TranslationsRu {
           'imports.account' => 'Счёт из выписки',
           'imports.formats.alfa' => 'Альфа-Банк',
           'imports.formats.tbank' => 'Т-Банк',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.formats.sber' => 'Сбербанк',
           'imports.formats.zenmoney' => 'Дзен-мани',
           'imports.formats.wise' => 'Wise',
@@ -6415,14 +6436,14 @@ extension on TranslationsRu {
           'reports.monthsShort.9' => 'Окт',
           'reports.monthsShort.10' => 'Ноя',
           'reports.monthsShort.11' => 'Дек',
+          _ => null,
+        } ??
+        switch (path) {
           'reports.monthReport.0' => 'Отчёт за январь',
           'reports.monthReport.1' => 'Отчёт за февраль',
           'reports.monthReport.2' => 'Отчёт за март',
           'reports.monthReport.3' => 'Отчёт за апрель',
           'reports.monthReport.4' => 'Отчёт за май',
-          _ => null,
-        } ??
-        switch (path) {
           'reports.monthReport.5' => 'Отчёт за июнь',
           'reports.monthReport.6' => 'Отчёт за июль',
           'reports.monthReport.7' => 'Отчёт за август',

@@ -11,8 +11,10 @@ import 'package:money/money.dart';
 
 /// The form of a new debt, or of more money on one (ADR 0029): whether the
 /// person lends or borrows, who, how much, from or to which account, when,
-/// by what day and a note. The site has no reminders, so the form has no
-/// switch of them. Once saved, it gives what it wrote to [onDone].
+/// by what day and a note. A name typed that no chip picks is someone new,
+/// and folds in who they are and their number (ADR 0030). The site has no
+/// reminders, so the form has no switch of them. Once saved, it gives what
+/// it wrote to [onDone].
 ///
 /// It needs a [DebtFormCubit] above it.
 class DebtFormPage extends StatefulComponent {
@@ -83,6 +85,7 @@ class _DebtFormPageState extends State<DebtFormPage> {
     final accountId = state.account?.id;
     final due = state.dueOn;
     final name = state.match?.name ?? state.name;
+    final fresh = state.personId == null && state.name.trim().isNotEmpty;
     final twin = state.twin;
     return BirkaForm(
       title: !state.fixed
@@ -127,11 +130,31 @@ class _DebtFormPageState extends State<DebtFormPage> {
                     onTap: () => cubit.personPicked(person),
                   ),
               ]),
-            if (twin != null)
-              p(classes: 'text-caption debt-form__twin', [
-                .text(debtTwinLine(twin, picks: true)),
-              ]),
           ]),
+          // The hint stands in the fold, over who the new one is.
+          BirkaFold(
+            open: fresh,
+            children: [
+              if (twin != null)
+                p(classes: 'text-caption debt-form__twin', [
+                  .text(debtTwinLine(twin, picks: true)),
+                ]),
+              BirkaTextField(
+                label: t.debts.person.about,
+                value: state.about,
+                hint: t.debts.person.aboutHint,
+                sentence: true,
+                onChanged: cubit.aboutChanged,
+              ),
+              BirkaTextField(
+                label: t.debts.person.phone,
+                value: state.phone ?? '',
+                hint: t.debts.person.optional,
+                inputMode: 'tel',
+                onChanged: cubit.phoneChanged,
+              ),
+            ],
+          ),
         ],
         BirkaFieldPair(
           children: [

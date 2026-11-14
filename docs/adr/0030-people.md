@@ -62,3 +62,6 @@
   notices and «Спросить» read it as before.
 - A person whose debts are all deleted stays among the people, and no list
   of people is drawn yet: they show as the chips of the form.
+- The site has no contacts and sends nothing. A person there is typed, with
+  who they are and the number, and «Напомнить» shows the text and the
+  number for the person to copy into a messenger or an SMS.

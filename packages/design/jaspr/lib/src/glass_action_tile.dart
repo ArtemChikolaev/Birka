@@ -79,6 +79,10 @@ class GlassActionTile extends StatelessComponent {
         'flex': '1',
         'flex-direction': 'column',
         'gap': 'var(--space-xs)',
+        // Narrow sides leave room for three tiles in a row.
+        'padding-left': 'var(--space-xs)',
+        'padding-right': 'var(--space-xs)',
+        'text-align': 'center',
         'text-decoration': 'none',
         'transition': 'opacity var(--duration-fast)',
       },

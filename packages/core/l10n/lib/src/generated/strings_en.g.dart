@@ -4931,6 +4931,10 @@ class Translations$debts$person$en {
   String get shared =>
       'The name, who it is and the number are the same for every debt of this person. The number stays on this phone and in your copies.';
 
+  /// en: 'The name, who it is and the number are the same for every debt of this person. The number stays in this browser and in your copies.'
+  String get sharedSite =>
+      'The name, who it is and the number are the same for every debt of this person. The number stays in this browser and in your copies.';
+
   /// en: '$name is here already, $about. Say who this one is, to tell them apart.'
   String twin({required Object name, required Object about}) =>
       '${name} is here already, ${about}. Say who this one is, to tell them apart.';
@@ -4984,6 +4988,20 @@ class Translations$debts$remind$en {
 
   /// en: 'No number · add it in «Edit»'
   String get noPhone => 'No number · add it in «Edit»';
+
+  /// en: 'Copy the text'
+  String get copy => 'Copy the text';
+
+  /// en: 'The text is copied'
+  String get copied => 'The text is copied';
+
+  /// en: 'Could not copy: select the text and copy it yourself'
+  String get notCopied =>
+      'Could not copy: select the text and copy it yourself';
+
+  /// en: 'The site sends nothing itself: copy the text and paste it into a messenger or an SMS.'
+  String get captionSite =>
+      'The site sends nothing itself: copy the text and paste it into a messenger or an SMS.';
 
   /// en: 'Hi! A reminder about $amount: we said it would come back by $day.'
   String text({required Object amount, required Object day}) =>
@@ -6058,6 +6076,8 @@ extension on Translations {
           'debts.person.contactsRow' => 'Take the number from the contacts',
           'debts.person.shared' =>
             'The name, who it is and the number are the same for every debt of this person. The number stays on this phone and in your copies.',
+          'debts.person.sharedSite' =>
+            'The name, who it is and the number are the same for every debt of this person. The number stays in this browser and in your copies.',
           'debts.person.twin' =>
             ({required Object name, required Object about}) =>
                 '${name} is here already, ${about}. Say who this one is, to tell them apart.',
@@ -6081,6 +6101,12 @@ extension on Translations {
           'debts.remind.captionShare' =>
             'Birka opens the window of sharing: pick where to write. The text can be changed.',
           'debts.remind.noPhone' => 'No number · add it in «Edit»',
+          'debts.remind.copy' => 'Copy the text',
+          'debts.remind.copied' => 'The text is copied',
+          'debts.remind.notCopied' =>
+            'Could not copy: select the text and copy it yourself',
+          'debts.remind.captionSite' =>
+            'The site sends nothing itself: copy the text and paste it into a messenger or an SMS.',
           'debts.remind.text' =>
             ({required Object amount, required Object day}) =>
                 'Hi! A reminder about ${amount}: we said it would come back by ${day}.',
@@ -6179,6 +6205,9 @@ extension on Translations {
               required Object system,
               required Object language,
             }) => 'Birka ${version} · ${system} · ${language}',
+          _ => null,
+        } ??
+        switch (path) {
           'help.noMail' =>
             ({required Object address}) =>
                 'Mail did not open. The address is copied: ${address}',
@@ -6186,9 +6215,6 @@ extension on Translations {
           'imports.account' => 'Statement account',
           'imports.formats.alfa' => 'Alfa-Bank',
           'imports.formats.tbank' => 'T-Bank',
-          _ => null,
-        } ??
-        switch (path) {
           'imports.formats.sber' => 'Sberbank',
           'imports.formats.zenmoney' => 'Zenmoney',
           'imports.formats.wise' => 'Wise',
@@ -7114,14 +7140,14 @@ extension on Translations {
           'reports.monthsShort.9' => 'Oct',
           'reports.monthsShort.10' => 'Nov',
           'reports.monthsShort.11' => 'Dec',
+          _ => null,
+        } ??
+        switch (path) {
           'reports.monthReport.0' => 'Report for January',
           'reports.monthReport.1' => 'Report for February',
           'reports.monthReport.2' => 'Report for March',
           'reports.monthReport.3' => 'Report for April',
           'reports.monthReport.4' => 'Report for May',
-          _ => null,
-        } ??
-        switch (path) {
           'reports.monthReport.5' => 'Report for June',
           'reports.monthReport.6' => 'Report for July',
           'reports.monthReport.7' => 'Report for August',

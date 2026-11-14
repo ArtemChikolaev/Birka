@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:debts_common/debts_common.dart';
 import 'package:debts_jaspr/src/presentation/components/debt_badge.dart';
 import 'package:design_jaspr/design_jaspr.dart';
@@ -7,9 +9,11 @@ import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 
-/// The card of a debt (ADR 0029): what is left of what, the bar of what came
-/// back, its day, the return in a fold under the actions, more money, and
-/// its steps. Beside the list on a wide page it [closes] with a cross.
+/// The card of a debt (ADR 0029): the person and who they are, what is left
+/// of what, the bar of what came back, its day, the return in a fold under
+/// the actions, more money, a reminder whose text the person copies
+/// (ADR 0030), and its steps. Beside the list on a wide page it [closes]
+/// with a cross.
 ///
 /// It needs a [DebtsCubit] above it. A debt that goes takes the page back.
 class DebtPage extends StatefulComponent {
@@ -23,6 +27,7 @@ class DebtPage extends StatefulComponent {
     this.closes = false,
     this.returnForm,
     this.returnOpen = false,
+    this.onCopy,
     super.key,
   });
 
@@ -50,6 +55,10 @@ class DebtPage extends StatefulComponent {
 
   /// Whether the return stands open at first.
   final bool returnOpen;
+
+  /// Copies the text of a reminder for the person to send, where the host
+  /// can. Without it a debt has no reminder.
+  final Future<void> Function(String text)? onCopy;
 
   @override
   State<DebtPage> createState() => _DebtPageState();
@@ -89,6 +98,14 @@ class DebtPage extends StatefulComponent {
     ),
     css('.debt-card__check .birka-icon').styles(
       raw: {'height': '14px', 'width': '14px'},
+    ),
+    css('.debt-card__who').styles(
+      raw: {
+        'align-items': 'center',
+        'display': 'flex',
+        'flex-direction': 'column',
+        'gap': '2px',
+      },
     ),
     css('.debt-card__name, .debt-card__line').styles(raw: {'margin': '0'}),
     css('.debt-card__line').styles(raw: {'color': 'var(--color-text-muted)'}),
@@ -148,13 +165,46 @@ class DebtPage extends StatefulComponent {
     css('.debt-card__due .birka-icon').styles(
       raw: {'flex': 'none', 'height': '16px', 'width': '16px'},
     ),
+    css('.debt-remind').styles(
+      raw: {
+        'display': 'flex',
+        'flex-direction': 'column',
+        'gap': 'var(--space-md)',
+      },
+    ),
+    css('.debt-remind__to').styles(
+      raw: {
+        'align-items': 'center',
+        'color': 'var(--color-text-secondary)',
+        'display': 'flex',
+        'gap': 'var(--space-xs)',
+        'margin': '0',
+      },
+    ),
+    css('.debt-remind__to .birka-icon').styles(
+      raw: {'flex': 'none', 'height': '18px', 'width': '18px'},
+    ),
+    // The number is picked whole with one click, to copy it.
+    css('.debt-remind__number').styles(
+      raw: {'color': 'var(--color-text)', 'user-select': 'all'},
+    ),
+    css('.debt-remind__note').styles(
+      raw: {'color': 'var(--color-text-secondary)', 'margin': '0'},
+    ),
   ];
 }
 
-class _DebtPageState extends State<DebtPage> {
-  late bool _returnOpen = component.returnOpen;
+/// What opens under the actions of a card, one at a time.
+enum _Fold { back, remind }
 
-  void _close() => setState(() => _returnOpen = false);
+class _DebtPageState extends State<DebtPage> {
+  late _Fold? _open = component.returnOpen ? _Fold.back : null;
+
+  void _close() => setState(() => _open = null);
+
+  /// Opens [fold], closing the other one, or closes it when it is open.
+  void _toggle(_Fold fold) =>
+      setState(() => _open = _open == fold ? null : fold);
 
   @override
   Component build(BuildContext context) {
@@ -183,28 +233,32 @@ class _DebtPageState extends State<DebtPage> {
               GlassNotice(text: t.debts.failed),
             if (state.status == DebtsStatus.ready && debt == null)
               GlassNotice(text: t.debts.gone),
-            if (debt != null) ..._card(debt, state.today),
+            if (debt != null) ..._card(debt, state),
           ],
         );
       },
     );
   }
 
-  List<Component> _card(Debt debt, CivilDate today) {
+  List<Component> _card(Debt debt, DebtsState state) {
+    final today = state.today;
     final lent = debt.side == DebtSide.lent;
     final returnForm = component.returnForm;
+    final onCopy = component.onCopy;
+    final back = _open == _Fold.back && !debt.closed;
+    // Money owed to the person can be reminded of with a text to send.
+    final reminds = lent && !debt.closed && onCopy != null;
+    final remind = _open == _Fold.remind && reminds;
     return [
-      _summary(debt, today),
+      _summary(debt, state.personOf(debt)?.about.trim() ?? '', today),
       _settled(debt, today),
       div(classes: 'glass-action-tiles', [
         GlassActionTile(
           glyph: lent ? BirkaGlyph.download : BirkaGlyph.upload,
           label: lent ? t.debts.card.returnAction : t.debts.card.repayAction,
           accent: !debt.closed,
-          expanded: _returnOpen && !debt.closed,
-          onTap: debt.closed
-              ? null
-              : () => setState(() => _returnOpen = !_returnOpen),
+          expanded: back,
+          onTap: debt.closed ? null : () => _toggle(_Fold.back),
         ),
         GlassActionTile(
           glyph: BirkaGlyph.plus,
@@ -215,11 +269,28 @@ class _DebtPageState extends State<DebtPage> {
               : t.debts.card.borrowMore,
           href: component.moreHref,
         ),
+        if (reminds)
+          GlassActionTile(
+            glyph: BirkaGlyph.message,
+            label: t.debts.remind.action,
+            expanded: remind,
+            onTap: () => _toggle(_Fold.remind),
+          ),
       ]),
       if (returnForm != null)
+        BirkaFold(open: back, children: [if (back) returnForm(_close)]),
+      if (onCopy != null)
         BirkaFold(
-          open: _returnOpen && !debt.closed,
-          children: [if (_returnOpen && !debt.closed) returnForm(_close)],
+          open: remind,
+          children: [
+            if (remind)
+              _Remind(
+                debt: debt,
+                person: state.personOf(debt),
+                today: today,
+                onCopy: onCopy,
+              ),
+          ],
         ),
       section(classes: 'debts__group', [
         SectionLabel(t.debts.card.history),
@@ -254,8 +325,8 @@ class _DebtPageState extends State<DebtPage> {
     ];
   }
 
-  /// The person, what is left and of what.
-  Component _summary(Debt debt, CivilDate today) {
+  /// The person and who they are, what is left and of what.
+  Component _summary(Debt debt, String about, CivilDate today) {
     return div(classes: 'debt-card__summary', [
       span(classes: 'debt-card__badge', [
         DebtBadge(debt.account, size: 72),
@@ -264,7 +335,11 @@ class _DebtPageState extends State<DebtPage> {
             BirkaIcon(BirkaGlyph.check),
           ]),
       ]),
-      h1(classes: 'text-heading debt-card__name', [.text(debt.name)]),
+      div(classes: 'debt-card__who', [
+        h1(classes: 'text-heading debt-card__name', [.text(debt.name)]),
+        if (about.isNotEmpty)
+          p(classes: 'text-body debt-card__line', [.text(about)]),
+      ]),
       AmountText(debtAmount(debt.left), textClass: 'text-display'),
       p(classes: 'text-body debt-card__line', [
         .text(debtLeftLine(debt, today: today)),
@@ -303,6 +378,77 @@ class _DebtPageState extends State<DebtPage> {
             const BirkaIcon(BirkaGlyph.calendar),
             span([.text(due.text)]),
           ],
+        ),
+      ]),
+    );
+  }
+}
+
+/// The reminder of [debt] in the fold under the actions (ADR 0030): a ready
+/// text that the person may change and copy, and the number to send it to.
+/// The site sends nothing itself.
+class _Remind extends StatefulComponent {
+  const _Remind({
+    required this.debt,
+    required this.person,
+    required this.today,
+    required this.onCopy,
+  });
+
+  final Debt debt;
+  final Person? person;
+  final CivilDate today;
+  final Future<void> Function(String text) onCopy;
+
+  /// The ready text of the reminder.
+  String get text => debtRemindText(debt, today: today);
+
+  @override
+  State<_Remind> createState() => _RemindState();
+}
+
+class _RemindState extends State<_Remind> {
+  /// What the person typed, once they did.
+  String? _typed;
+
+  @override
+  void didUpdateComponent(_Remind oldComponent) {
+    super.didUpdateComponent(oldComponent);
+    // A new text, as after a return, starts over.
+    if (oldComponent.text != component.text) _typed = null;
+  }
+
+  @override
+  Component build(BuildContext context) {
+    final words = t.debts.remind;
+    final text = component.text;
+    final number = component.person?.phone;
+    return GlassSurface(
+      child: div(classes: 'debt-remind', [
+        BirkaTextField(
+          key: ValueKey(text),
+          label: words.message,
+          value: text,
+          lines: 3,
+          sentence: true,
+          onChanged: (typed) => _typed = typed,
+        ),
+        p(classes: 'text-body debt-remind__to', [
+          const BirkaIcon(BirkaGlyph.contact),
+          span([
+            .text('${component.debt.name} · '),
+            if (number != null)
+              span(classes: 'debt-remind__number', [.text(number)])
+            else
+              .text(words.noPhone),
+          ]),
+        ]),
+        p(classes: 'text-caption debt-remind__note', [
+          .text(words.captionSite),
+        ]),
+        BirkaButton(
+          label: words.copy,
+          onPressed: () => unawaited(component.onCopy((_typed ?? text).trim())),
         ),
       ]),
     );

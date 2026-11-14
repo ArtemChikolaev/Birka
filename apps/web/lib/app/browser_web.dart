@@ -441,12 +441,17 @@ final class BrowserHelpLinks implements HelpLinks {
   }
 
   @override
-  Future<void> copy(String text) async {
-    try {
-      await web.window.navigator.clipboard.writeText(text).toDart;
-    } on Object {
-      return;
-    }
+  Future<void> copy(String text) async => copyText(text);
+}
+
+/// Puts [text] on the clipboard, and says whether the browser let it: a page
+/// out of a secure context, or a browser that refuses, has no clipboard.
+Future<bool> copyText(String text) async {
+  try {
+    await web.window.navigator.clipboard.writeText(text).toDart;
+    return true;
+  } on Object {
+    return false;
   }
 }
 

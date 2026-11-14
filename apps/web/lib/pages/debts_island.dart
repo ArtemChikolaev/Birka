@@ -1,3 +1,4 @@
+import 'package:birka_web/app/browser.dart';
 import 'package:birka_web/app/data_island.dart';
 import 'package:birka_web/components/site_nav.dart';
 import 'package:debts_common/debts_common.dart';
@@ -9,7 +10,8 @@ import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 
 /// The debts of this browser (ADR 0029): the list, the card of a debt at
-/// `debts/#<id>` with its return in a fold, more money on it at
+/// `debts/#<id>` with its return and the text of a reminder to copy in
+/// folds (ADR 0030), more money on it at
 /// `debts/#more-<id>`, its terms at `debts/#edit-<id>` and a new debt at
 /// `debts/#new`. In a wide window they open beside the list, which otherwise
 /// says how the debts work. A save says what it wrote.
@@ -130,6 +132,14 @@ class _DebtsIslandState extends DataIslandState<DebtsIsland> {
       moreHref: '$_address#$_more$view',
       hrefOfOperation: (id) => 'operations/#$id',
       closes: closes,
+      onCopy: (text) async {
+        final copied = await copyText(text);
+        setState(
+          () => _toast = copied
+              ? t.debts.remind.copied
+              : t.debts.remind.notCopied,
+        );
+      },
       returnForm: (close) => BlocProvider<DebtReturnCubit>(
         create: (_) => getIt(param1: view),
         child: DebtReturnForm(
