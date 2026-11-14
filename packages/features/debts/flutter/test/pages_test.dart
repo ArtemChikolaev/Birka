@@ -173,6 +173,48 @@ void main() {
       expect(find.text('Записали: Лена, ${nb('2 500 ₽')}'), findsOneWidget);
     });
 
+    testWidgets('waits for who a namesake is, or for their chip', (
+      tester,
+    ) async {
+      final cubit = DebtFormCubit(
+        FakeDebtsRepository(
+          people: [
+            for (final person in peopleOf(boardDebts()))
+              person.id == 'p-masha'
+                  ? person.copyWith(about: 'коллега')
+                  : person,
+          ],
+        ),
+      );
+      addTearDown(cubit.close);
+      await tester.pumpWidget(phone(cubit, DebtFormPage(onClose: (_) {})));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Другой'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'маша');
+      await tester.pump();
+      await tester.tap(find.text('ГОТОВО'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Сумма'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), '2500');
+      await tester.tap(find.text('ГОТОВО'));
+      await tester.pumpAndSettle();
+
+      const twin =
+          'Маша уже есть — коллега. Если это тот же человек, выберите его '
+          'выше; если другой — напишите, кто это.';
+      expect(find.text(twin), findsOneWidget);
+      final save = find.widgetWithText(BirkaButton, 'СОХРАНИТЬ');
+      expect(tester.widget<BirkaButton>(save).onPressed, isNull);
+
+      await tester.tap(find.text('Маша'));
+      await tester.pumpAndSettle();
+      expect(find.text(twin), findsNothing);
+      expect(tester.widget<BirkaButton>(save).onPressed, isNotNull);
+    });
+
     testWidgets('of more money keeps to its person and its side', (
       tester,
     ) async {
