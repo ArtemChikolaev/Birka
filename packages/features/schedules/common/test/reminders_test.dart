@@ -298,6 +298,48 @@ void main() {
     });
   });
 
+  group('the days of debts', () {
+    DebtDay day(String name, CivilDate due) => DebtDay(
+      debtId: name,
+      name: name,
+      side: DebtSide.lent,
+      due: due,
+      owed: rub(1000),
+    );
+    final today = day('Сегодня', CivilDate(2026, 11, 18));
+    final tomorrow = day('Завтра', CivilDate(2026, 11, 19));
+    final late = day('Февраль', CivilDate(2027, 2, 20));
+    final past = day('Сентябрь', CivilDate(2026, 9, 1));
+    final old = day('Июль', CivilDate(2026, 7, 1));
+
+    test('ahead come after the hour of today, the earliest first', () {
+      expect(
+        debtDaysAhead([late, tomorrow, today, past], now: now, minutes: 540),
+        [tomorrow],
+      );
+      expect(
+        debtDaysAhead([tomorrow, today], now: now, minutes: 11 * 60),
+        [today, tomorrow],
+      );
+      expect(
+        debtDaysAhead([late], now: now, minutes: 540, days: 100),
+        [late],
+      );
+    });
+
+    test('came are the ones whose moment passed, for 90 days', () {
+      expect(
+        debtDaysCame(
+          [tomorrow, today, past, old],
+          now: now,
+          minutes: 540,
+        ),
+        [past, today],
+      );
+      expect(debtDaysCame([today], now: now, minutes: 11 * 60), isEmpty);
+    });
+  });
+
   group('what a reminder says', () {
     test('the name, the amount and what a tap does', () {
       final rent = schedule('Аренда', 45000, CivilDate(2026, 11, 25));
@@ -321,13 +363,16 @@ void main() {
         'Сегодня. Нажмите, чтобы провести или пропустить.',
       );
       expect(reminderNote(today, sums: false).title, 'Аренда');
-      expect(reminderNote(today, sums: true).tap, const ReminderTap('Аренда'));
+      expect(
+        reminderNote(today, sums: true).tap,
+        const PaymentReminderTap('Аренда'),
+      );
       final early = reminderNote(
         at(rent, CivilDate(2026, 11, 25), CivilDate(2026, 11, 24)),
         sums: true,
       );
       expect(early.body, 'Завтра, 25 ноября. Нажмите, чтобы открыть платёж.');
-      expect(early.tap, const ReminderTap('Аренда', early: true));
+      expect(early.tap, const PaymentReminderTap('Аренда', early: true));
       final pay = reminderNote(
         at(salary, CivilDate(2026, 12, 5), CivilDate(2026, 12, 5)),
         sums: true,
@@ -338,12 +383,63 @@ void main() {
 
     test('a tap comes back from what the phone keeps', () {
       for (final tap in const [
-        ReminderTap('0b7c1f2e-rent'),
-        ReminderTap('0b7c1f2e-rent', early: true),
+        PaymentReminderTap('0b7c1f2e-rent'),
+        PaymentReminderTap('0b7c1f2e-rent', early: true),
+        DebtReminderTap('0b7c1f2e-masha'),
       ]) {
         expect(ReminderTap.parse(tap.payload), tap);
       }
-      expect(const ReminderTap('rent').payload, 'rent');
+      expect(const PaymentReminderTap('rent').payload, 'rent');
+      expect(const DebtReminderTap('masha').payload, 'debt:masha');
+    });
+
+    test('a debt names the day, the person and who gives the money back', () {
+      final masha = DebtDay(
+        debtId: 'masha',
+        name: 'Маша',
+        side: DebtSide.lent,
+        due: CivilDate(2026, 12, 1),
+        owed: rub(3000),
+      );
+      final note = debtReminderNote(masha, minutes: 540, sums: true);
+      expect(note.day, CivilDate(2026, 12, 1));
+      expect(note.minutes, 540);
+      expect(note.title, 'Срок сегодня · Маша, ${nb('3 000 ₽')}');
+      expect(
+        note.body,
+        'Сегодня вам должны вернуть долг. Нажмите, чтобы открыть его.',
+      );
+      expect(note.tap, const DebtReminderTap('masha'));
+      expect(
+        debtReminderNote(masha, minutes: 540, sums: false).title,
+        'Срок сегодня · Маша',
+      );
+      final sasha = DebtDay(
+        debtId: 'sasha',
+        name: 'Саша',
+        side: DebtSide.borrowed,
+        due: CivilDate(2026, 11, 20),
+        owed: rub(4000),
+      );
+      expect(
+        debtReminderNote(sasha, minutes: 540, sums: true).body,
+        'Сегодня срок отдать долг. Нажмите, чтобы открыть его.',
+      );
+    });
+
+    test('the notifications count the payments and the days of debts', () {
+      expect(
+        remindNotifyLine(payments: 6, debts: 0, time: '9:00'),
+        '6 платежей · в 9:00',
+      );
+      expect(
+        remindNotifyLine(payments: 0, debts: 1, time: '9:00'),
+        '1 долг · в 9:00',
+      );
+      expect(
+        remindNotifyLine(payments: 3, debts: 2, time: '20:00'),
+        '3 платежа и 2 долга · в 20:00',
+      );
     });
 
     test('the line of the form names the first reminder to come', () {
@@ -761,6 +857,142 @@ void main() {
         ],
       );
       // The internet reminds tomorrow at 9:00, a day less an hour on.
+      expect(waits.last, const Duration(hours: 23, seconds: 1));
+    });
+
+    Future<Account> lend(
+      String name,
+      int rubles,
+      CivilDate due, {
+      bool reminds = true,
+      DebtSide side = DebtSide.lent,
+    }) async {
+      final debt = await ledger.addAccount(
+        name: name,
+        type: AccountType.debt,
+        openingBalance: rub(0),
+        debt: DebtTerms(side: side, dueOn: due, reminds: reminds),
+      );
+      final lent = side == DebtSide.lent;
+      await ledger.record(
+        TransactionDraft.transfer(
+          fromAccountId: lent ? card.id : debt.id,
+          sent: rub(rubles),
+          toAccountId: lent ? debt.id : card.id,
+          received: rub(rubles),
+          occurredOn: CivilDate(2026, 11, 1),
+        ),
+      );
+      return debt;
+    }
+
+    test('the phone reminds of the day of an open debt beside the '
+        'payments', () async {
+      final masha = await lend('Маша', 3000, CivilDate(2026, 11, 20));
+      await lend('Дима', 500, CivilDate(2026, 11, 21), reminds: false);
+      await lend(
+        'Саша',
+        4000,
+        CivilDate(2026, 11, 25),
+        side: DebtSide.borrowed,
+      );
+      final scheduler = ReminderScheduler(
+        repository,
+        channel,
+        calendar,
+        now: () => now,
+      )..start();
+      addTearDown(scheduler.stop);
+      await repository.saveReminders(const ReminderSettings(notify: true));
+      await pumpEventQueue();
+
+      // The rent comes every month; November is enough here.
+      expect(
+        [
+          for (final note in channel.shown.last)
+            if (note.day.month == 11) (note.day, note.title),
+        ],
+        [
+          (CivilDate(2026, 11, 20), 'Срок сегодня · Маша, ${nb('3 000 ₽')}'),
+          (CivilDate(2026, 11, 25), 'Аренда · ${nb('45 000 ₽')}'),
+          (CivilDate(2026, 11, 25), 'Срок сегодня · Саша, ${nb('4 000 ₽')}'),
+        ],
+      );
+      expect(channel.shown.last.first.tap, DebtReminderTap(masha.id));
+
+      await ledger.record(
+        TransactionDraft.transfer(
+          fromAccountId: masha.id,
+          sent: rub(3000),
+          toAccountId: card.id,
+          received: rub(3000),
+          occurredOn: CivilDate(2026, 11, 18),
+        ),
+      );
+      await pumpEventQueue();
+      expect(
+        [for (final note in channel.shown.last) note.title],
+        isNot(contains(startsWith('Срок сегодня · Маша'))),
+      );
+    });
+
+    test('the cubit counts the debts that the phone reminds of', () async {
+      await lend('Маша', 3000, CivilDate(2026, 11, 20));
+      await lend('Дима', 500, CivilDate(2026, 11, 21), reminds: false);
+      await lend('Ира', 1500, CivilDate(2026, 11, 2));
+      // Today's reminder came at 9:00, an hour ago, and May is not planned
+      // yet.
+      await lend('Лена', 700, CivilDate(2026, 11, 18));
+      await lend('Саша', 900, CivilDate(2027, 5, 20));
+      final cubit = RemindersCubit(
+        repository,
+        channel,
+        calendar,
+        now: () => now,
+      );
+      addTearDown(cubit.close);
+      await pumpEventQueue();
+
+      expect(cubit.state.debts, 1);
+      expect(cubit.state.reminding, 1);
+
+      // At 11:00 today's reminder is still to come.
+      await repository.saveReminders(const ReminderSettings(minutes: 660));
+      await pumpEventQueue();
+      expect(cubit.state.debts, 2);
+    });
+
+    test('the notices take the day of a debt that came', () async {
+      final masha = await lend('Маша', 3000, CivilDate(2026, 11, 18));
+      await lend('Дима', 500, CivilDate(2026, 11, 19));
+      final waits = <Duration>[];
+      final notices = ReminderNotices(
+        repository,
+        now: () => now,
+        timer: (after, callback) {
+          waits.add(after);
+          return Timer(const Duration(days: 1), callback);
+        },
+      );
+      addTearDown(notices.stop);
+
+      notices.start();
+      await pumpEventQueue();
+      await notices.catchUp();
+
+      final noted = (await ledger.watchNotices().first).cast<DebtNotice>();
+      expect(
+        [for (final it in noted) (it.debtId, it.due, it.owed, it.at)],
+        [
+          (
+            masha.id,
+            CivilDate(2026, 11, 18),
+            rub(3000),
+            DateTime(2026, 11, 18, 9).toUtc(),
+          ),
+        ],
+      );
+      // The day of Дима comes tomorrow at 9:00, a day less an hour on.
       expect(waits.last, const Duration(hours: 23, seconds: 1));
     });
 

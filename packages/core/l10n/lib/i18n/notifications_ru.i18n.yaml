@@ -19,10 +19,11 @@ subtitleRead: Всё прочитано · история за 90 дней
 filters(map):
   all: Все
   payment: Платежи
+  debt: Долги
   import: Импорт
 filtersLabel: Чьи уведомления
 emptyTitle: Пока тихо
-emptyText: Здесь появятся напоминания о платежах и итоги импорта.
+emptyText: Здесь появятся напоминания о платежах и сроках долгов и итоги импорта.
 emptyImports: Здесь появятся итоги импорта выписок.
 failed: Не удалось прочитать уведомления.
 keeps: Birka хранит уведомления 90 дней
@@ -51,6 +52,18 @@ importAdded(n):
   many: Добавили $count операций
   other: Добавили $count операции
 importUndone: Импорт отменён
+debtTitle: "Срок · $name, $amount"
+debtTitleToday: "Срок сегодня · $name, $amount"
+debtSince: с $date
+debtNoteSince: "$note · с $date"
+debtReturned: Вернули $date
+debtRepaid: Отдали $date
+debtReturnedPart: "Вернули часть · осталось $left"
+debtRepaidPart: "Отдали часть · осталось $left"
+debtWaits: "Ещё не вернули · осталось $left"
+debtWaitsRepaid: "Ещё не отдали · осталось $left"
+debtGone: Этого долга больше нет
+today: сегодня
 months:
   - январь
   - февраль

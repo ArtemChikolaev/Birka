@@ -187,6 +187,16 @@ remindNotifyOff: while Birka is on the phone
 remindNotifyOn(n):
   one: $n payment · at $time
   other: $n payments · at $time
+remindNotifyDebts(n):
+  one: $n debt · at $time
+  other: $n debts · at $time
+remindNotifyBoth: $payments and $debts · at $time
+remindPayments(n):
+  one: $n payment
+  other: $n payments
+remindDebtCount(n):
+  one: $n debt
+  other: $n debts
 remindNotifyDenied: no access to notifications
 remindCalendar: Calendar events
 remindCalendarOn(n):
@@ -197,7 +207,7 @@ remindCalendarDenied: no access to the calendar
 remindTime: Time
 remindSums: Amounts in reminders
 remindSumsNote: on the lock screen and in the calendar
-remindNoteOff: "A payment can remind on its day or the day before: each payment says which."
+remindNoteOff: "A payment can remind on its day or the day before: each payment says which. A debt reminds on its day."
 remindNoteOn: Delete Birka and its reminders go with it. The calendar reminds even without it.
 remindNoteDenied: For Birka to remind, allow its notifications in the settings of the phone.
 remindNoteCalendar: If the calendar syncs with iCloud or Google, the names and the amounts of the payments go there.
@@ -241,8 +251,12 @@ remindOnNone: Mark «Remind» on the payments
 remindToday: Today. Tap to post or skip it.
 remindTodayAuto: Today, it posts itself.
 remindTomorrow: Tomorrow, $date. Tap to open the payment.
-remindChannel: Payment reminders
-remindChannelNote: Regular payments on their day or the day before
+remindDebtTitle: Due today · $name, $amount
+remindDebtTitleNoSum: Due today · $name
+remindDebtLent: The money is due back to you today. Tap to open the debt.
+remindDebtBorrowed: Your debt is due today. Tap to open it.
+remindChannel: Payment and debt reminders
+remindChannelNote: Regular payments on their day or the day before, and the days of debts
 remindSection: Remind
 reminder(map):
   onDay: On the day

@@ -1844,6 +1844,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   Map<String, String> get filters => {
     'all': 'Все',
     'payment': 'Платежи',
+    'debt': 'Долги',
     'import': 'Импорт',
   };
   @override
@@ -1852,7 +1853,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   String get emptyTitle => 'Пока тихо';
   @override
   String get emptyText =>
-      'Здесь появятся напоминания о платежах и итоги импорта.';
+      'Здесь появятся напоминания о платежах и сроках долгов и итоги импорта.';
   @override
   String get emptyImports => 'Здесь появятся итоги импорта выписок.';
   @override
@@ -1906,6 +1907,37 @@ class _Translations$notifications$ru extends Translations$notifications$en {
       );
   @override
   String get importUndone => 'Импорт отменён';
+  @override
+  String debtTitle({required Object name, required Object amount}) =>
+      'Срок · ${name}, ${amount}';
+  @override
+  String debtTitleToday({required Object name, required Object amount}) =>
+      'Срок сегодня · ${name}, ${amount}';
+  @override
+  String debtSince({required Object date}) => 'с ${date}';
+  @override
+  String debtNoteSince({required Object note, required Object date}) =>
+      '${note} · с ${date}';
+  @override
+  String debtReturned({required Object date}) => 'Вернули ${date}';
+  @override
+  String debtRepaid({required Object date}) => 'Отдали ${date}';
+  @override
+  String debtReturnedPart({required Object left}) =>
+      'Вернули часть · осталось ${left}';
+  @override
+  String debtRepaidPart({required Object left}) =>
+      'Отдали часть · осталось ${left}';
+  @override
+  String debtWaits({required Object left}) =>
+      'Ещё не вернули · осталось ${left}';
+  @override
+  String debtWaitsRepaid({required Object left}) =>
+      'Ещё не отдали · осталось ${left}';
+  @override
+  String get debtGone => 'Этого долга больше нет';
+  @override
+  String get today => 'сегодня';
   @override
   List<String> get months => [
     'январь',
@@ -2550,6 +2582,42 @@ class _Translations$schedules$ru extends Translations$schedules$en {
         other: '${n} платежей · в ${time}',
       );
   @override
+  String remindNotifyDebts({required num n, required Object time}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        zero: '${n} долгов · в ${time}',
+        one: '${n} долг · в ${time}',
+        few: '${n} долга · в ${time}',
+        many: '${n} долгов · в ${time}',
+        other: '${n} долгов · в ${time}',
+      );
+  @override
+  String remindNotifyBoth({
+    required Object payments,
+    required Object debts,
+    required Object time,
+  }) => '${payments} и ${debts} · в ${time}';
+  @override
+  String remindPayments({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        zero: '${n} платежей',
+        one: '${n} платёж',
+        few: '${n} платежа',
+        many: '${n} платежей',
+        other: '${n} платежей',
+      );
+  @override
+  String remindDebtCount({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        zero: '${n} долгов',
+        one: '${n} долг',
+        few: '${n} долга',
+        many: '${n} долгов',
+        other: '${n} долгов',
+      );
+  @override
   String get remindNotifyDenied => 'нет доступа к уведомлениям';
   @override
   String get remindCalendar => 'События в календаре';
@@ -2575,7 +2643,7 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String get remindSumsNote => 'на экране блокировки и в календаре';
   @override
   String get remindNoteOff =>
-      'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа.';
+      'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа. О долге Birka напомнит в день срока.';
   @override
   String get remindNoteOn =>
       'Удалите Birka — напоминания исчезнут вместе с ней. Календарь напомнит и без неё.';
@@ -2694,9 +2762,22 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String remindTomorrow({required Object date}) =>
       'Завтра, ${date}. Нажмите, чтобы открыть платёж.';
   @override
-  String get remindChannel => 'Напоминания о платежах';
+  String remindDebtTitle({required Object name, required Object amount}) =>
+      'Срок сегодня · ${name}, ${amount}';
   @override
-  String get remindChannelNote => 'Регулярные платежи в их день или накануне';
+  String remindDebtTitleNoSum({required Object name}) =>
+      'Срок сегодня · ${name}';
+  @override
+  String get remindDebtLent =>
+      'Сегодня вам должны вернуть долг. Нажмите, чтобы открыть его.';
+  @override
+  String get remindDebtBorrowed =>
+      'Сегодня срок отдать долг. Нажмите, чтобы открыть его.';
+  @override
+  String get remindChannel => 'Напоминания о платежах и долгах';
+  @override
+  String get remindChannelNote =>
+      'Регулярные платежи в их день или накануне и сроки долгов';
   @override
   String get remindSection => 'Напомнить';
   @override
@@ -5980,11 +6061,12 @@ extension on TranslationsRu {
           'notifications.subtitleRead' => 'Всё прочитано · история за 90 дней',
           'notifications.filters.all' => 'Все',
           'notifications.filters.payment' => 'Платежи',
+          'notifications.filters.debt' => 'Долги',
           'notifications.filters.import' => 'Импорт',
           'notifications.filtersLabel' => 'Чьи уведомления',
           'notifications.emptyTitle' => 'Пока тихо',
           'notifications.emptyText' =>
-            'Здесь появятся напоминания о платежах и итоги импорта.',
+            'Здесь появятся напоминания о платежах и сроках долгов и итоги импорта.',
           'notifications.emptyImports' =>
             'Здесь появятся итоги импорта выписок.',
           'notifications.failed' => 'Не удалось прочитать уведомления.',
@@ -6030,6 +6112,30 @@ extension on TranslationsRu {
                   other: 'Добавили ${count} операции',
                 ),
           'notifications.importUndone' => 'Импорт отменён',
+          'notifications.debtTitle' =>
+            ({required Object name, required Object amount}) =>
+                'Срок · ${name}, ${amount}',
+          'notifications.debtTitleToday' =>
+            ({required Object name, required Object amount}) =>
+                'Срок сегодня · ${name}, ${amount}',
+          'notifications.debtSince' => ({required Object date}) => 'с ${date}',
+          'notifications.debtNoteSince' =>
+            ({required Object note, required Object date}) =>
+                '${note} · с ${date}',
+          'notifications.debtReturned' =>
+            ({required Object date}) => 'Вернули ${date}',
+          'notifications.debtRepaid' =>
+            ({required Object date}) => 'Отдали ${date}',
+          'notifications.debtReturnedPart' =>
+            ({required Object left}) => 'Вернули часть · осталось ${left}',
+          'notifications.debtRepaidPart' =>
+            ({required Object left}) => 'Отдали часть · осталось ${left}',
+          'notifications.debtWaits' =>
+            ({required Object left}) => 'Ещё не вернули · осталось ${left}',
+          'notifications.debtWaitsRepaid' =>
+            ({required Object left}) => 'Ещё не отдали · осталось ${left}',
+          'notifications.debtGone' => 'Этого долга больше нет',
+          'notifications.today' => 'сегодня',
           'notifications.months.0' => 'январь',
           'notifications.months.1' => 'февраль',
           'notifications.months.2' => 'март',
@@ -6216,6 +6322,9 @@ extension on TranslationsRu {
             ({required Object day}) => 'каждый месяц ${day}-го',
           'schedules.everyWeek' =>
             ({required Object weekday}) => 'каждую неделю, ${weekday}',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.everyYear' =>
             ({required Object date}) => 'раз в год, ${date}',
           'schedules.asks' => 'спросить',
@@ -6243,9 +6352,6 @@ extension on TranslationsRu {
                 '${date} · ${amount} · отметили платёж проведённым, копии не будет',
           'schedules.donePosted' =>
             ({required Object date}) => 'проведён сегодня · следующий ${date}',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.doneSkipped' =>
             ({required Object date}) => 'пропущен · следующий ${date}',
           'schedules.doneFound' =>
@@ -6501,6 +6607,45 @@ extension on TranslationsRu {
                   many: '${n} платежей · в ${time}',
                   other: '${n} платежей · в ${time}',
                 ),
+          'schedules.remindNotifyDebts' =>
+            ({required num n, required Object time}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  zero: '${n} долгов · в ${time}',
+                  one: '${n} долг · в ${time}',
+                  few: '${n} долга · в ${time}',
+                  many: '${n} долгов · в ${time}',
+                  other: '${n} долгов · в ${time}',
+                ),
+          'schedules.remindNotifyBoth' =>
+            ({
+              required Object payments,
+              required Object debts,
+              required Object time,
+            }) => '${payments} и ${debts} · в ${time}',
+          'schedules.remindPayments' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  zero: '${n} платежей',
+                  one: '${n} платёж',
+                  few: '${n} платежа',
+                  many: '${n} платежей',
+                  other: '${n} платежей',
+                ),
+          'schedules.remindDebtCount' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  zero: '${n} долгов',
+                  one: '${n} долг',
+                  few: '${n} долга',
+                  many: '${n} долгов',
+                  other: '${n} долгов',
+                ),
           'schedules.remindNotifyDenied' => 'нет доступа к уведомлениям',
           'schedules.remindCalendar' => 'События в календаре',
           'schedules.remindCalendarOn' =>
@@ -6520,7 +6665,7 @@ extension on TranslationsRu {
           'schedules.remindSums' => 'Суммы в напоминаниях',
           'schedules.remindSumsNote' => 'на экране блокировки и в календаре',
           'schedules.remindNoteOff' =>
-            'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа.',
+            'Напомнить можно в день платежа или накануне: это выбирается у каждого платежа. О долге Birka напомнит в день срока.',
           'schedules.remindNoteOn' =>
             'Удалите Birka — напоминания исчезнут вместе с ней. Календарь напомнит и без неё.',
           'schedules.remindNoteDenied' =>
@@ -6613,9 +6758,18 @@ extension on TranslationsRu {
           'schedules.remindTomorrow' =>
             ({required Object date}) =>
                 'Завтра, ${date}. Нажмите, чтобы открыть платёж.',
-          'schedules.remindChannel' => 'Напоминания о платежах',
+          'schedules.remindDebtTitle' =>
+            ({required Object name, required Object amount}) =>
+                'Срок сегодня · ${name}, ${amount}',
+          'schedules.remindDebtTitleNoSum' =>
+            ({required Object name}) => 'Срок сегодня · ${name}',
+          'schedules.remindDebtLent' =>
+            'Сегодня вам должны вернуть долг. Нажмите, чтобы открыть его.',
+          'schedules.remindDebtBorrowed' =>
+            'Сегодня срок отдать долг. Нажмите, чтобы открыть его.',
+          'schedules.remindChannel' => 'Напоминания о платежах и долгах',
           'schedules.remindChannelNote' =>
-            'Регулярные платежи в их день или накануне',
+            'Регулярные платежи в их день или накануне и сроки долгов',
           'schedules.remindSection' => 'Напомнить',
           'schedules.reminder.onDay' => 'В день',
           'schedules.reminder.dayBefore' => 'За день',

@@ -6187,6 +6187,15 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _debtIdMeta = const VerificationMeta('debtId');
+  @override
+  late final GeneratedColumn<String> debtId = GeneratedColumn<String>(
+    'debt_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -6207,6 +6216,7 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
     nextOn,
     foundBy,
     importId,
+    debtId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6340,6 +6350,12 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
         importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
       );
     }
+    if (data.containsKey('debt_id')) {
+      context.handle(
+        _debtIdMeta,
+        debtId.isAcceptableOrUnknown(data['debt_id']!, _debtIdMeta),
+      );
+    }
     return context;
   }
 
@@ -6425,6 +6441,10 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
         DriftSqlType.string,
         data['${effectivePrefix}import_id'],
       ),
+      debtId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}debt_id'],
+      ),
     );
   }
 
@@ -6451,17 +6471,19 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
   /// the notices go before the ledger when the ledger is emptied.
   final String? scheduleId;
 
-  /// The civil date of that time as `YYYY-MM-DD`.
+  /// The civil date of that time, or of the day of a debt, as `YYYY-MM-DD`.
   final String? timeOn;
 
-  /// What the payment was called at that time.
+  /// What the payment was called at that time, or the name of the person of
+  /// a debt.
   final String? name;
 
   /// One of the names of `TransactionKind` in the ledger: what the payment
   /// moves.
   final String? kind;
 
-  /// The amount of the payment at that time, in minor units.
+  /// The amount of the payment at that time, or what the debt held then, in
+  /// minor units.
   final int? amountMinor;
 
   /// The code of the currency of its account.
@@ -6493,6 +6515,11 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
   /// The import of a notice of an import, by its id alone, as for
   /// [scheduleId].
   final String? importId;
+
+  /// The debt of a notice of its day, by its id alone, as for [scheduleId]:
+  /// [timeOn] keeps the day, and [name] and [amountMinor] what was owed when
+  /// the notice came.
+  final String? debtId;
   const NoticeRow({
     required this.id,
     required this.source,
@@ -6512,6 +6539,7 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     this.nextOn,
     this.foundBy,
     this.importId,
+    this.debtId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6560,6 +6588,9 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     if (!nullToAbsent || importId != null) {
       map['import_id'] = Variable<String>(importId);
     }
+    if (!nullToAbsent || debtId != null) {
+      map['debt_id'] = Variable<String>(debtId);
+    }
     return map;
   }
 
@@ -6605,6 +6636,9 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       importId: importId == null && nullToAbsent
           ? const Value.absent()
           : Value(importId),
+      debtId: debtId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(debtId),
     );
   }
 
@@ -6632,6 +6666,7 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       nextOn: serializer.fromJson<String?>(json['nextOn']),
       foundBy: serializer.fromJson<String?>(json['foundBy']),
       importId: serializer.fromJson<String?>(json['importId']),
+      debtId: serializer.fromJson<String?>(json['debtId']),
     );
   }
   @override
@@ -6656,6 +6691,7 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       'nextOn': serializer.toJson<String?>(nextOn),
       'foundBy': serializer.toJson<String?>(foundBy),
       'importId': serializer.toJson<String?>(importId),
+      'debtId': serializer.toJson<String?>(debtId),
     };
   }
 
@@ -6678,6 +6714,7 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     Value<String?> nextOn = const Value.absent(),
     Value<String?> foundBy = const Value.absent(),
     Value<String?> importId = const Value.absent(),
+    Value<String?> debtId = const Value.absent(),
   }) => NoticeRow(
     id: id ?? this.id,
     source: source ?? this.source,
@@ -6699,6 +6736,7 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     nextOn: nextOn.present ? nextOn.value : this.nextOn,
     foundBy: foundBy.present ? foundBy.value : this.foundBy,
     importId: importId.present ? importId.value : this.importId,
+    debtId: debtId.present ? debtId.value : this.debtId,
   );
   NoticeRow copyWithCompanion(NoticesCompanion data) {
     return NoticeRow(
@@ -6728,6 +6766,7 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       nextOn: data.nextOn.present ? data.nextOn.value : this.nextOn,
       foundBy: data.foundBy.present ? data.foundBy.value : this.foundBy,
       importId: data.importId.present ? data.importId.value : this.importId,
+      debtId: data.debtId.present ? data.debtId.value : this.debtId,
     );
   }
 
@@ -6751,7 +6790,8 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
           ..write('outcomeAt: $outcomeAt, ')
           ..write('nextOn: $nextOn, ')
           ..write('foundBy: $foundBy, ')
-          ..write('importId: $importId')
+          ..write('importId: $importId, ')
+          ..write('debtId: $debtId')
           ..write(')'))
         .toString();
   }
@@ -6776,6 +6816,7 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     nextOn,
     foundBy,
     importId,
+    debtId,
   );
   @override
   bool operator ==(Object other) =>
@@ -6798,7 +6839,8 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
           other.outcomeAt == this.outcomeAt &&
           other.nextOn == this.nextOn &&
           other.foundBy == this.foundBy &&
-          other.importId == this.importId);
+          other.importId == this.importId &&
+          other.debtId == this.debtId);
 }
 
 class NoticesCompanion extends UpdateCompanion<NoticeRow> {
@@ -6820,6 +6862,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
   final Value<String?> nextOn;
   final Value<String?> foundBy;
   final Value<String?> importId;
+  final Value<String?> debtId;
   final Value<int> rowid;
   const NoticesCompanion({
     this.id = const Value.absent(),
@@ -6840,6 +6883,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     this.nextOn = const Value.absent(),
     this.foundBy = const Value.absent(),
     this.importId = const Value.absent(),
+    this.debtId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   NoticesCompanion.insert({
@@ -6861,6 +6905,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     this.nextOn = const Value.absent(),
     this.foundBy = const Value.absent(),
     this.importId = const Value.absent(),
+    this.debtId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        source = Value(source),
@@ -6884,6 +6929,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     Expression<String>? nextOn,
     Expression<String>? foundBy,
     Expression<String>? importId,
+    Expression<String>? debtId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -6905,6 +6951,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
       if (nextOn != null) 'next_on': nextOn,
       if (foundBy != null) 'found_by': foundBy,
       if (importId != null) 'import_id': importId,
+      if (debtId != null) 'debt_id': debtId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -6928,6 +6975,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     Value<String?>? nextOn,
     Value<String?>? foundBy,
     Value<String?>? importId,
+    Value<String?>? debtId,
     Value<int>? rowid,
   }) {
     return NoticesCompanion(
@@ -6949,6 +6997,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
       nextOn: nextOn ?? this.nextOn,
       foundBy: foundBy ?? this.foundBy,
       importId: importId ?? this.importId,
+      debtId: debtId ?? this.debtId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -7010,6 +7059,9 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     if (importId.present) {
       map['import_id'] = Variable<String>(importId.value);
     }
+    if (debtId.present) {
+      map['debt_id'] = Variable<String>(debtId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -7037,6 +7089,7 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
           ..write('nextOn: $nextOn, ')
           ..write('foundBy: $foundBy, ')
           ..write('importId: $importId, ')
+          ..write('debtId: $debtId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -8158,6 +8211,10 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     'notices_created_at',
     'CREATE INDEX notices_created_at ON notices (created_at)',
   );
+  late final Index noticesDebtDay = Index(
+    'notices_debt_day',
+    'CREATE UNIQUE INDEX notices_debt_day ON notices (debt_id, time_on)',
+  );
   late final Index transactionTagsTransaction = Index(
     'transaction_tags_transaction',
     'CREATE INDEX transaction_tags_transaction ON transaction_tags (transaction_id)',
@@ -8191,6 +8248,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     allocationsCategory,
     schedulesNextOn,
     noticesCreatedAt,
+    noticesDebtDay,
     transactionTagsTransaction,
     transactionTagsTag,
   ];
@@ -13041,6 +13099,7 @@ typedef $$NoticesTableCreateCompanionBuilder =
       Value<String?> nextOn,
       Value<String?> foundBy,
       Value<String?> importId,
+      Value<String?> debtId,
       Value<int> rowid,
     });
 typedef $$NoticesTableUpdateCompanionBuilder =
@@ -13063,6 +13122,7 @@ typedef $$NoticesTableUpdateCompanionBuilder =
       Value<String?> nextOn,
       Value<String?> foundBy,
       Value<String?> importId,
+      Value<String?> debtId,
       Value<int> rowid,
     });
 
@@ -13162,6 +13222,11 @@ class $$NoticesTableFilterComposer
 
   ColumnFilters<String> get importId => $composableBuilder(
     column: $table.importId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get debtId => $composableBuilder(
+    column: $table.debtId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -13264,6 +13329,11 @@ class $$NoticesTableOrderingComposer
     column: $table.importId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get debtId => $composableBuilder(
+    column: $table.debtId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$NoticesTableAnnotationComposer
@@ -13336,6 +13406,9 @@ class $$NoticesTableAnnotationComposer
 
   GeneratedColumn<String> get importId =>
       $composableBuilder(column: $table.importId, builder: (column) => column);
+
+  GeneratedColumn<String> get debtId =>
+      $composableBuilder(column: $table.debtId, builder: (column) => column);
 }
 
 class $$NoticesTableTableManager
@@ -13387,6 +13460,7 @@ class $$NoticesTableTableManager
                 Value<String?> nextOn = const Value.absent(),
                 Value<String?> foundBy = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
+                Value<String?> debtId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NoticesCompanion(
                 id: id,
@@ -13407,6 +13481,7 @@ class $$NoticesTableTableManager
                 nextOn: nextOn,
                 foundBy: foundBy,
                 importId: importId,
+                debtId: debtId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -13429,6 +13504,7 @@ class $$NoticesTableTableManager
                 Value<String?> nextOn = const Value.absent(),
                 Value<String?> foundBy = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
+                Value<String?> debtId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NoticesCompanion.insert(
                 id: id,
@@ -13449,6 +13525,7 @@ class $$NoticesTableTableManager
                 nextOn: nextOn,
                 foundBy: foundBy,
                 importId: importId,
+                debtId: debtId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

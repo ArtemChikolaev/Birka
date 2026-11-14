@@ -66,8 +66,11 @@ import 'package:reports_flutter/reports_flutter.dart';
 import 'package:schedules_common/schedules_common.dart'
     show
         CalendarReminder,
+        DebtDay,
+        DebtReminderTap,
         OperationScheduleCubit,
         PaydaySettings,
+        PaymentReminderTap,
         PlannedReminder,
         ReminderAccess,
         ReminderCalendar,
@@ -260,6 +263,12 @@ final class _NoSchedules implements SchedulesRepository {
 
   @override
   Future<void> noteReminders(List<PlannedReminder> reminders) async {}
+
+  @override
+  Stream<List<DebtDay>> watchDebtDays() => Stream.value(const []);
+
+  @override
+  Future<void> noteDebtDays(List<DebtDay> days, {required int minutes}) async {}
 }
 
 /// A device that Birka told nothing yet.
@@ -1264,7 +1273,7 @@ void main() {
       await tester.pumpWidget(BirkaApp(getIt: getIt));
       await tester.pumpAndSettle();
 
-      reminders.taps.add(const ReminderTap('rent'));
+      reminders.taps.add(const PaymentReminderTap('rent'));
       await tester.pumpAndSettle();
       expect(find.byType(SchedulesPage), findsOneWidget);
       expect(forms, isEmpty);
@@ -1274,7 +1283,7 @@ void main() {
       await tester.pumpWidget(BirkaApp(getIt: getIt));
       await tester.pumpAndSettle();
 
-      reminders.taps.add(const ReminderTap('rent', early: true));
+      reminders.taps.add(const PaymentReminderTap('rent', early: true));
       await tester.pumpAndSettle();
       // The form of that payment opened, not the list. Here the payment is
       // gone, as one deleted since the reminder came, so the form closed at
@@ -1283,6 +1292,16 @@ void main() {
       expect(find.byType(SchedulesPage), findsNothing);
       expect(find.byType(ScheduleFormPage), findsNothing);
       expect(find.byType(GlassNavBar), findsOneWidget);
+    });
+
+    testWidgets('of the day of a debt opens its card', (tester) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt));
+      await tester.pumpAndSettle();
+
+      reminders.taps.add(const DebtReminderTap('masha'));
+      await tester.pumpAndSettle();
+      expect(find.byType(DebtPage), findsOneWidget);
+      expect(find.text('Маша'), findsWidgets);
     });
   });
 

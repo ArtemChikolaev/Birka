@@ -334,6 +334,11 @@ class Changes extends Table {
 /// ledger leave it out, and it lasts 90 days.
 @DataClassName('NoticeRow')
 @TableIndex(name: 'notices_created_at', columns: {#createdAt})
+@TableIndex(
+  name: 'notices_debt_day',
+  columns: {#debtId, #timeOn},
+  unique: true,
+)
 class Notices extends Table {
   /// A UUIDv7 string created on the device.
   TextColumn get id => text()();
@@ -351,17 +356,19 @@ class Notices extends Table {
   /// the notices go before the ledger when the ledger is emptied.
   TextColumn get scheduleId => text().nullable()();
 
-  /// The civil date of that time as `YYYY-MM-DD`.
+  /// The civil date of that time, or of the day of a debt, as `YYYY-MM-DD`.
   TextColumn get timeOn => text().nullable()();
 
-  /// What the payment was called at that time.
+  /// What the payment was called at that time, or the name of the person of
+  /// a debt.
   TextColumn get name => text().nullable()();
 
   /// One of the names of `TransactionKind` in the ledger: what the payment
   /// moves.
   TextColumn get kind => text().nullable()();
 
-  /// The amount of the payment at that time, in minor units.
+  /// The amount of the payment at that time, or what the debt held then, in
+  /// minor units.
   IntColumn get amountMinor => integer().nullable()();
 
   /// The code of the currency of its account.
@@ -393,6 +400,11 @@ class Notices extends Table {
   /// The import of a notice of an import, by its id alone, as for
   /// [scheduleId].
   TextColumn get importId => text().nullable()();
+
+  /// The debt of a notice of its day, by its id alone, as for [scheduleId]:
+  /// [timeOn] keeps the day, and [name] and [amountMinor] what was owed when
+  /// the notice came.
+  TextColumn get debtId => text().nullable()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

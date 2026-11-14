@@ -141,6 +141,21 @@ final class _Notices implements NotificationsRepository {
       outcomeAt: notice.outcomeAt,
       next: notice.next,
     ),
+    DebtNotice() => DebtNotice(
+      id: notice.id,
+      at: notice.at,
+      readAt: _now,
+      debtId: notice.debtId,
+      name: notice.name,
+      side: notice.side,
+      due: notice.due,
+      owed: notice.owed,
+      left: notice.left,
+      since: notice.since,
+      note: notice.note,
+      settledOn: notice.settledOn,
+      gone: notice.gone,
+    ),
     ImportNotice() => ImportNotice(
       id: notice.id,
       at: notice.at,
@@ -473,5 +488,53 @@ void main() {
       ),
       findsOneComponent,
     );
+  });
+
+  testComponents('the day of a debt reads as on the phone and leads to the '
+      'debt', (tester) async {
+    final notices = _Notices([
+      DebtNotice(
+        id: 'dima',
+        at: DateTime(2026, 11, 25, 9),
+        debtId: 'dima',
+        name: 'Дима',
+        side: DebtSide.lent,
+        due: CivilDate(2026, 11, 25),
+        owed: Money(12000, Currency.usd),
+        left: Money(12000, Currency.usd),
+        since: CivilDate(2026, 10, 20),
+        note: 'За квартиру в Тбилиси',
+      ),
+      ..._boardNotices(),
+    ]);
+    final opened = <String>[];
+    tester.pumpComponent(
+      BlocProvider(
+        create: (_) => NotificationsCubit(notices),
+        child: NotificationsPage(
+          backHref: 'overview/',
+          hrefOf: (place, id) => switch (place) {
+            NoticePlace.debt => 'debts/#$id',
+            NoticePlace.inbox => 'inbox/',
+            _ => null,
+          },
+          onOpen: opened.add,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final title = 'Срок сегодня · Дима, ${_nb(r'120 $')}';
+    expect(find.text(title), findsOneComponent);
+    expect(
+      find.text('За квартиру в Тбилиси · с 20 октября'),
+      findsOneComponent,
+    );
+    expect(find.text('Долги'), findsOneComponent);
+
+    await tester.click(_buttonOf(title));
+    await tester.pump();
+    expect(notices.read_, ['dima']);
+    expect(opened, ['debts/#dima']);
   });
 }

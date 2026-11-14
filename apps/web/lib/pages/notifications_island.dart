@@ -52,6 +52,8 @@ class _NotificationsIslandState extends DataIslandState<NotificationsIsland> {
           NoticePlace.inbox => 'inbox/',
           NoticePlace.schedule when id != null => 'schedules/#$id',
           NoticePlace.schedules || NoticePlace.schedule => 'schedules/',
+          NoticePlace.debt when id != null => 'debts/#$id',
+          NoticePlace.debt => 'debts/',
         },
         onOpen: openSitePage,
       ),

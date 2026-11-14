@@ -107,6 +107,39 @@ void main() {
     expect(await ledger.balance(card.id), rub(50200));
   });
 
+  test('a return that closes a debt reads the notices of its day, and a '
+      'part leaves them new', () async {
+    final id = await repository.open(
+      name: 'Маша',
+      side: DebtSide.lent,
+      accountId: cash.id,
+      amount: rub(5000),
+      day: nov(3),
+      terms: DebtTerms(side: DebtSide.lent, dueOn: nov(14), reminds: true),
+    );
+    await ledger.noteDebtDays([
+      (debtId: id, due: nov(14), at: DateTime.utc(2026, 11, 14, 6)),
+    ]);
+
+    await repository.settle(
+      id,
+      accountId: cash.id,
+      amount: rub(2000),
+      day: nov(14),
+    );
+    expect(await ledger.watchNewNotices().first, 1);
+
+    await repository.settle(
+      id,
+      accountId: cash.id,
+      amount: rub(3000),
+      day: nov(14),
+    );
+    expect(await ledger.watchNewNotices().first, 0);
+    final notice = (await ledger.watchNotices().first).single as DebtNotice;
+    expect(notice.settledOn, nov(14));
+  });
+
   test('a debt of the person goes the other way, and takes its own '
       'account', () async {
     final lent = await repository.open(

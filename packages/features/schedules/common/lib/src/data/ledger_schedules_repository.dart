@@ -175,4 +175,44 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
             at: reminder.at,
           ),
       ]);
+
+  @override
+  Stream<List<DebtDay>> watchDebtDays() => _ledger
+      .watchAccountBalances(includeDebts: true)
+      .map(
+        (balances) => [
+          for (final AccountBalance(:account, :balance) in balances)
+            if (account.debt case DebtTerms(
+              :final side,
+              dueOn: final due?,
+              reminds: true,
+            ))
+              if (balance.minorUnits * (side == DebtSide.lent ? 1 : -1)
+                  case final owed when owed > 0)
+                DebtDay(
+                  debtId: account.id,
+                  name: account.name,
+                  side: side,
+                  due: due,
+                  owed: Money(owed, account.currency),
+                ),
+        ],
+      )
+      // Every operation changes the balances; the days change seldom.
+      .distinct(_sameDays);
+
+  static bool _sameDays(List<DebtDay> a, List<DebtDay> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  Future<void> noteDebtDays(List<DebtDay> days, {required int minutes}) =>
+      _ledger.noteDebtDays([
+        for (final day in days)
+          (debtId: day.debtId, due: day.due, at: day.at(minutes)),
+      ]);
 }

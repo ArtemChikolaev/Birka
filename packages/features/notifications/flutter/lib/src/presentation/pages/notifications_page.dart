@@ -13,6 +13,9 @@ const _payments = Color(BirkaTokens.colorPaletteAmber);
 /// The color of an import of a statement.
 const _imports = Color(BirkaTokens.colorPaletteSky);
 
+/// The color of the day of a debt, which comes as a payment does.
+const _debts = Color(BirkaTokens.colorPaletteAmber);
+
 /// The color of what waits for the person.
 const _waits = Color(BirkaTokens.colorPaletteAmber);
 
@@ -260,6 +263,10 @@ class _NoticeRow extends StatelessWidget {
         glyph: BirkaGlyph.calendar,
         color: _payments,
       ),
+      NoticeSource.debt => const GlyphBadge(
+        glyph: BirkaGlyph.people,
+        color: _debts,
+      ),
       NoticeSource.import => const GlyphBadge(
         glyph: BirkaGlyph.download,
         color: _imports,
@@ -273,7 +280,7 @@ class _NoticeRow extends StatelessWidget {
       ),
     );
     return GlassListRow(
-      title: noticeTitle(notice, thisYear: today.year),
+      title: noticeTitle(notice, today: today),
       subtitle: line,
       subtitleLines: fresh ? 1 : 2,
       subtitleColor: fresh

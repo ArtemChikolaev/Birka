@@ -2108,6 +2108,7 @@ class Translations$notifications$en {
   Map<String, String> get filters => {
     'all': 'All',
     'payment': 'Payments',
+    'debt': 'Debts',
     'import': 'Imports',
   };
 
@@ -2117,9 +2118,9 @@ class Translations$notifications$en {
   /// en: 'All quiet'
   String get emptyTitle => 'All quiet';
 
-  /// en: 'Reminders of your payments and the results of imports come here.'
+  /// en: 'Reminders of your payments and of the days of your debts, and the results of imports, come here.'
   String get emptyText =>
-      'Reminders of your payments and the results of imports come here.';
+      'Reminders of your payments and of the days of your debts, and the results of imports, come here.';
 
   /// en: 'The results of your statement imports come here.'
   String get emptyImports => 'The results of your statement imports come here.';
@@ -2185,6 +2186,49 @@ class Translations$notifications$en {
 
   /// en: 'Import undone'
   String get importUndone => 'Import undone';
+
+  /// en: 'Due · $name, $amount'
+  String debtTitle({required Object name, required Object amount}) =>
+      'Due · ${name}, ${amount}';
+
+  /// en: 'Due today · $name, $amount'
+  String debtTitleToday({required Object name, required Object amount}) =>
+      'Due today · ${name}, ${amount}';
+
+  /// en: 'since $date'
+  String debtSince({required Object date}) => 'since ${date}';
+
+  /// en: '$note · since $date'
+  String debtNoteSince({required Object note, required Object date}) =>
+      '${note} · since ${date}';
+
+  /// en: 'Paid back $date'
+  String debtReturned({required Object date}) => 'Paid back ${date}';
+
+  /// en: 'You paid back $date'
+  String debtRepaid({required Object date}) => 'You paid back ${date}';
+
+  /// en: 'Part paid back · $left left'
+  String debtReturnedPart({required Object left}) =>
+      'Part paid back · ${left} left';
+
+  /// en: 'You paid back a part · $left left'
+  String debtRepaidPart({required Object left}) =>
+      'You paid back a part · ${left} left';
+
+  /// en: 'Not paid back yet · $left left'
+  String debtWaits({required Object left}) =>
+      'Not paid back yet · ${left} left';
+
+  /// en: 'Not paid back yet · $left left'
+  String debtWaitsRepaid({required Object left}) =>
+      'Not paid back yet · ${left} left';
+
+  /// en: 'This debt is no longer here'
+  String get debtGone => 'This debt is no longer here';
+
+  /// en: 'today'
+  String get today => 'today';
 
   List<String> get months => [
     'January',
@@ -2963,6 +3007,37 @@ class Translations$schedules$en {
         other: '${n} payments · at ${time}',
       );
 
+  /// en: '(one) {$n debt · at $time} (other) {$n debts · at $time}'
+  String remindNotifyDebts({required num n, required Object time}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} debt · at ${time}',
+        other: '${n} debts · at ${time}',
+      );
+
+  /// en: '$payments and $debts · at $time'
+  String remindNotifyBoth({
+    required Object payments,
+    required Object debts,
+    required Object time,
+  }) => '${payments} and ${debts} · at ${time}';
+
+  /// en: '(one) {$n payment} (other) {$n payments}'
+  String remindPayments({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} payment',
+        other: '${n} payments',
+      );
+
+  /// en: '(one) {$n debt} (other) {$n debts}'
+  String remindDebtCount({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} debt',
+        other: '${n} debts',
+      );
+
   /// en: 'no access to notifications'
   String get remindNotifyDenied => 'no access to notifications';
 
@@ -2992,9 +3067,9 @@ class Translations$schedules$en {
   /// en: 'on the lock screen and in the calendar'
   String get remindSumsNote => 'on the lock screen and in the calendar';
 
-  /// en: 'A payment can remind on its day or the day before: each payment says which.'
+  /// en: 'A payment can remind on its day or the day before: each payment says which. A debt reminds on its day.'
   String get remindNoteOff =>
-      'A payment can remind on its day or the day before: each payment says which.';
+      'A payment can remind on its day or the day before: each payment says which. A debt reminds on its day.';
 
   /// en: 'Delete Birka and its reminders go with it. The calendar reminds even without it.'
   String get remindNoteOn =>
@@ -3140,12 +3215,26 @@ class Translations$schedules$en {
   String remindTomorrow({required Object date}) =>
       'Tomorrow, ${date}. Tap to open the payment.';
 
-  /// en: 'Payment reminders'
-  String get remindChannel => 'Payment reminders';
+  /// en: 'Due today · $name, $amount'
+  String remindDebtTitle({required Object name, required Object amount}) =>
+      'Due today · ${name}, ${amount}';
 
-  /// en: 'Regular payments on their day or the day before'
+  /// en: 'Due today · $name'
+  String remindDebtTitleNoSum({required Object name}) => 'Due today · ${name}';
+
+  /// en: 'The money is due back to you today. Tap to open the debt.'
+  String get remindDebtLent =>
+      'The money is due back to you today. Tap to open the debt.';
+
+  /// en: 'Your debt is due today. Tap to open it.'
+  String get remindDebtBorrowed => 'Your debt is due today. Tap to open it.';
+
+  /// en: 'Payment and debt reminders'
+  String get remindChannel => 'Payment and debt reminders';
+
+  /// en: 'Regular payments on their day or the day before, and the days of debts'
   String get remindChannelNote =>
-      'Regular payments on their day or the day before';
+      'Regular payments on their day or the day before, and the days of debts';
 
   /// en: 'Remind'
   String get remindSection => 'Remind';
@@ -6658,11 +6747,12 @@ extension on Translations {
           'notifications.subtitleRead' => 'All read · 90 days of history',
           'notifications.filters.all' => 'All',
           'notifications.filters.payment' => 'Payments',
+          'notifications.filters.debt' => 'Debts',
           'notifications.filters.import' => 'Imports',
           'notifications.filtersLabel' => 'Whose notifications',
           'notifications.emptyTitle' => 'All quiet',
           'notifications.emptyText' =>
-            'Reminders of your payments and the results of imports come here.',
+            'Reminders of your payments and of the days of your debts, and the results of imports, come here.',
           'notifications.emptyImports' =>
             'The results of your statement imports come here.',
           'notifications.failed' => 'Could not read the notifications.',
@@ -6702,6 +6792,31 @@ extension on Translations {
                   other: 'Added ${count} operations',
                 ),
           'notifications.importUndone' => 'Import undone',
+          'notifications.debtTitle' =>
+            ({required Object name, required Object amount}) =>
+                'Due · ${name}, ${amount}',
+          'notifications.debtTitleToday' =>
+            ({required Object name, required Object amount}) =>
+                'Due today · ${name}, ${amount}',
+          'notifications.debtSince' =>
+            ({required Object date}) => 'since ${date}',
+          'notifications.debtNoteSince' =>
+            ({required Object note, required Object date}) =>
+                '${note} · since ${date}',
+          'notifications.debtReturned' =>
+            ({required Object date}) => 'Paid back ${date}',
+          'notifications.debtRepaid' =>
+            ({required Object date}) => 'You paid back ${date}',
+          'notifications.debtReturnedPart' =>
+            ({required Object left}) => 'Part paid back · ${left} left',
+          'notifications.debtRepaidPart' =>
+            ({required Object left}) => 'You paid back a part · ${left} left',
+          'notifications.debtWaits' =>
+            ({required Object left}) => 'Not paid back yet · ${left} left',
+          'notifications.debtWaitsRepaid' =>
+            ({required Object left}) => 'Not paid back yet · ${left} left',
+          'notifications.debtGone' => 'This debt is no longer here',
+          'notifications.today' => 'today',
           'notifications.months.0' => 'January',
           'notifications.months.1' => 'February',
           'notifications.months.2' => 'March',
@@ -6883,6 +6998,9 @@ extension on Translations {
             ({required Object day}) => 'every month on day ${day}',
           'schedules.everyWeek' =>
             ({required Object weekday}) => 'every week, ${weekday}',
+          _ => null,
+        } ??
+        switch (path) {
           'schedules.everyYear' =>
             ({required Object date}) => 'once a year, ${date}',
           'schedules.asks' => 'ask',
@@ -6910,9 +7028,6 @@ extension on Translations {
                 '${date} · ${amount} · marked as posted, no copy will come',
           'schedules.donePosted' =>
             ({required Object date}) => 'posted today · next on ${date}',
-          _ => null,
-        } ??
-        switch (path) {
           'schedules.doneSkipped' =>
             ({required Object date}) => 'skipped · next on ${date}',
           'schedules.doneFound' =>
@@ -7155,6 +7270,36 @@ extension on Translations {
                   one: '${n} payment · at ${time}',
                   other: '${n} payments · at ${time}',
                 ),
+          'schedules.remindNotifyDebts' =>
+            ({required num n, required Object time}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} debt · at ${time}',
+                  other: '${n} debts · at ${time}',
+                ),
+          'schedules.remindNotifyBoth' =>
+            ({
+              required Object payments,
+              required Object debts,
+              required Object time,
+            }) => '${payments} and ${debts} · at ${time}',
+          'schedules.remindPayments' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} payment',
+                  other: '${n} payments',
+                ),
+          'schedules.remindDebtCount' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} debt',
+                  other: '${n} debts',
+                ),
           'schedules.remindNotifyDenied' => 'no access to notifications',
           'schedules.remindCalendar' => 'Calendar events',
           'schedules.remindCalendarOn' =>
@@ -7172,7 +7317,7 @@ extension on Translations {
           'schedules.remindSumsNote' =>
             'on the lock screen and in the calendar',
           'schedules.remindNoteOff' =>
-            'A payment can remind on its day or the day before: each payment says which.',
+            'A payment can remind on its day or the day before: each payment says which. A debt reminds on its day.',
           'schedules.remindNoteOn' =>
             'Delete Birka and its reminders go with it. The calendar reminds even without it.',
           'schedules.remindNoteDenied' =>
@@ -7254,9 +7399,18 @@ extension on Translations {
           'schedules.remindTomorrow' =>
             ({required Object date}) =>
                 'Tomorrow, ${date}. Tap to open the payment.',
-          'schedules.remindChannel' => 'Payment reminders',
+          'schedules.remindDebtTitle' =>
+            ({required Object name, required Object amount}) =>
+                'Due today · ${name}, ${amount}',
+          'schedules.remindDebtTitleNoSum' =>
+            ({required Object name}) => 'Due today · ${name}',
+          'schedules.remindDebtLent' =>
+            'The money is due back to you today. Tap to open the debt.',
+          'schedules.remindDebtBorrowed' =>
+            'Your debt is due today. Tap to open it.',
+          'schedules.remindChannel' => 'Payment and debt reminders',
           'schedules.remindChannelNote' =>
-            'Regular payments on their day or the day before',
+            'Regular payments on their day or the day before, and the days of debts',
           'schedules.remindSection' => 'Remind',
           'schedules.reminder.onDay' => 'On the day',
           'schedules.reminder.dayBefore' => 'The day before',

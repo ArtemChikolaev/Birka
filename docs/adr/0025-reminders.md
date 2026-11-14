@@ -47,7 +47,8 @@
    to the one the phone holds leaves it alone; another replaces every
    pending reminder of Birka, and the ones that came stay in the
    notification centre. The events of the calendar follow the same changes
-   while the calendar is on.
+   while the calendar is on. The days of the debts later joined the
+   reminders of the phone, but not the calendar ([ADR 0029](0029-debts.md)).
 6. The demo plans nothing: its payments are not the person's, and the phone
    keeps the reminders of the ledger of the device while the demo is on
    ([ADR 0019](0019-demo.md)).

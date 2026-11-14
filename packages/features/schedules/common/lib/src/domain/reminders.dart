@@ -1,6 +1,7 @@
 import 'package:device_settings/device_settings.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
+import 'package:money/money.dart';
 
 /// How this device reminds of the regular payments (ADR 0025): with
 /// notifications of its own, with the events of a calendar of its own, at
@@ -174,18 +175,35 @@ final class ReminderNote {
   int get hashCode => Object.hash(day, minutes, title, body, tap);
 }
 
+/// A tap on a reminder (ADR 0025), which gives back what it reminded of: a
+/// time of a regular payment or the day of a debt (ADR 0029).
+@immutable
+sealed class ReminderTap {
+  const ReminderTap();
+
+  /// The tap that a reminder keeping [payload] stands for.
+  factory ReminderTap.parse(String payload) {
+    if (payload.startsWith(DebtReminderTap._mark)) {
+      return DebtReminderTap(payload.substring(DebtReminderTap._mark.length));
+    }
+    return payload.startsWith(PaymentReminderTap._earlyMark)
+        ? PaymentReminderTap(
+            payload.substring(PaymentReminderTap._earlyMark.length),
+            early: true,
+          )
+        : PaymentReminderTap(payload);
+  }
+
+  /// What the phone keeps with the reminder to give the tap back.
+  String get payload;
+}
+
 /// A tap on a reminder of payment [scheduleId] (ADR 0025). A reminder of the
 /// day before, [early], opens the payment, as its line says. One of the day
 /// opens the regular payments, where a time that waits is posted or skipped.
-@immutable
-final class ReminderTap {
+final class PaymentReminderTap extends ReminderTap {
   /// Creates the tap.
-  const ReminderTap(this.scheduleId, {this.early = false});
-
-  /// The tap that a reminder keeping [payload] stands for.
-  factory ReminderTap.parse(String payload) => payload.startsWith(_earlyMark)
-      ? ReminderTap(payload.substring(_earlyMark.length), early: true)
-      : ReminderTap(payload);
+  const PaymentReminderTap(this.scheduleId, {this.early = false});
 
   static const _earlyMark = 'early:';
 
@@ -195,17 +213,89 @@ final class ReminderTap {
   /// Whether the reminder came the day before the payment.
   final bool early;
 
-  /// What the phone keeps with the reminder to give the tap back.
+  @override
   String get payload => early ? '$_earlyMark$scheduleId' : scheduleId;
 
   @override
   bool operator ==(Object other) =>
-      other is ReminderTap &&
+      other is PaymentReminderTap &&
       other.scheduleId == scheduleId &&
       other.early == early;
 
   @override
   int get hashCode => Object.hash(scheduleId, early);
+}
+
+/// A tap on a reminder of the day of debt [debtId] (ADR 0029), which opens
+/// the card of the debt.
+final class DebtReminderTap extends ReminderTap {
+  /// Creates the tap.
+  const DebtReminderTap(this.debtId);
+
+  static const _mark = 'debt:';
+
+  /// The debt the reminder is of.
+  final String debtId;
+
+  @override
+  String get payload => '$_mark$debtId';
+
+  @override
+  bool operator ==(Object other) =>
+      other is DebtReminderTap && other.debtId == debtId;
+
+  @override
+  int get hashCode => debtId.hashCode;
+}
+
+/// The day of an open debt that keeps the reminder of it (ADR 0029): the
+/// phone reminds of it at the time of the reminders, and the bell takes it
+/// in at that moment.
+@immutable
+final class DebtDay {
+  /// Creates the day [due] of debt [debtId] of [name], where [owed] is owed.
+  const DebtDay({
+    required this.debtId,
+    required this.name,
+    required this.side,
+    required this.due,
+    required this.owed,
+  });
+
+  /// The debt.
+  final String debtId;
+
+  /// The name of the person.
+  final String name;
+
+  /// Who owes whom.
+  final DebtSide side;
+
+  /// The day the debt should come back by.
+  final CivilDate due;
+
+  /// What is owed now, above zero.
+  final Money owed;
+
+  /// The moment its reminder comes, [minutes] after midnight of [due] on the
+  /// clock of this device.
+  DateTime at(int minutes) =>
+      DateTime(due.year, due.month, due.day, 0, minutes);
+
+  @override
+  bool operator ==(Object other) =>
+      other is DebtDay &&
+      other.debtId == debtId &&
+      other.name == name &&
+      other.side == side &&
+      other.due == due &&
+      other.owed == owed;
+
+  @override
+  int get hashCode => Object.hash(debtId, name, side, due, owed);
+
+  @override
+  String toString() => 'DebtDay($name, $due, $owed)';
 }
 
 /// The notifications of this phone (ADR 0025): the phone keeps them and shows
@@ -366,6 +456,43 @@ List<PlannedReminder> remindersCame(
               minutes: minutes,
             ),
   ]..sort(_earliest);
+}
+
+/// The days of [debts] whose reminders come after [now], at [minutes] after
+/// midnight, no later than [days] days on, the earliest first (ADR 0029).
+List<DebtDay> debtDaysAhead(
+  List<DebtDay> debts, {
+  required DateTime now,
+  required int minutes,
+  int days = 92,
+}) {
+  final last = CivilDate.of(now).addDays(days);
+  return [
+    for (final debt in debts)
+      if (debt.at(minutes).isAfter(now) && debt.due.compareTo(last) <= 0) debt,
+  ]..sort(_earliestDay);
+}
+
+/// The days of [debts] whose reminders came by [now], at [minutes] after
+/// midnight, the earliest first (ADR 0029): from the last [days] days, today
+/// included, as for [remindersCame].
+List<DebtDay> debtDaysCame(
+  List<DebtDay> debts, {
+  required DateTime now,
+  required int minutes,
+  int days = Notice.keepDays,
+}) {
+  final first = CivilDate.of(now).addDays(1 - days);
+  return [
+    for (final debt in debts)
+      if (!debt.at(minutes).isAfter(now) && debt.due.compareTo(first) >= 0)
+        debt,
+  ]..sort(_earliestDay);
+}
+
+int _earliestDay(DebtDay a, DebtDay b) {
+  final byDay = a.due.compareTo(b.due);
+  return byDay != 0 ? byDay : a.name.compareTo(b.name);
 }
 
 CivilDate _dayOf(Schedule schedule, CivilDate on) =>

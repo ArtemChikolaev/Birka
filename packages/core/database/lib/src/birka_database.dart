@@ -28,7 +28,7 @@ class BirkaDatabase extends _$BirkaDatabase {
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -38,10 +38,11 @@ class BirkaDatabase extends _$BirkaDatabase {
       for (final entity in allSchemaEntities) {
         if (entity is Index) {
           await customStatement(
-            entity.createStatementsByDialect[SqlDialect.sqlite]!.replaceFirst(
-              'CREATE INDEX ',
-              'CREATE INDEX IF NOT EXISTS ',
-            ),
+            entity.createStatementsByDialect[SqlDialect.sqlite]!
+                .replaceFirstMapped(
+                  RegExp('^CREATE (UNIQUE )?INDEX '),
+                  (match) => 'CREATE ${match[1] ?? ''}INDEX IF NOT EXISTS ',
+                ),
           );
         } else {
           await m.create(entity);
@@ -105,6 +106,10 @@ class BirkaDatabase extends _$BirkaDatabase {
           "UPDATE accounts SET debt_side = 'lent', include_in_totals = 0 "
           "WHERE type = 'debt'",
         );
+      },
+      from12To13: (m, schema) async {
+        await m.addColumn(schema.notices, schema.notices.debtId);
+        await m.createIndex(schema.noticesDebtDay);
       },
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
