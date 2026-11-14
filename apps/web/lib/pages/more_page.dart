@@ -11,10 +11,19 @@ import 'package:settings_jaspr/settings_jaspr.dart';
 /// [wide] page has the tiles on one half and the settings on the other.
 class MorePage extends StatelessComponent {
   /// Creates the page, with [inbox] as the way to the inbox over the tiles.
-  const MorePage({this.inbox, this.wide = false, super.key});
+  const MorePage({
+    this.inbox,
+    this.debtsLine,
+    this.wide = false,
+    super.key,
+  });
 
   /// The way to the inbox, as wide as the tiles.
   final Component? inbox;
+
+  /// What others owe and what the person owes, under «Долги», once the
+  /// debts are read; what the page is for until then (ADR 0029).
+  final String? debtsLine;
 
   /// Whether the page is wide.
   final bool wide;
@@ -54,6 +63,18 @@ class MorePage extends StatelessComponent {
               ),
               title: t.tags.title,
               href: 'tags/',
+              trailing: const span(classes: 'more__end', [
+                BirkaIcon(BirkaGlyph.chevron),
+              ]),
+            ),
+            GlassListRow(
+              leading: const GlyphBadge(
+                glyph: BirkaGlyph.people,
+                color: 'var(--color-accent)',
+              ),
+              title: t.debts.title,
+              subtitle: debtsLine ?? t.debts.moreHint,
+              href: 'debts/',
               trailing: const span(classes: 'more__end', [
                 BirkaIcon(BirkaGlyph.chevron),
               ]),

@@ -83,8 +83,9 @@ final class DebtTermsState {
 /// Changes the name, the day and the reminder of debt [_id].
 final class DebtTermsCubit extends Cubit<DebtTermsState> {
   /// Creates the form on [_repository].
-  DebtTermsCubit(this._repository, this._id)
-    : super(
+  DebtTermsCubit(this._repository, this._id, {bool reminders = true})
+    : _reminders = reminders,
+      super(
         DebtTermsState(
           status: DebtTermsStatus.loading,
           today: _repository.today(),
@@ -95,6 +96,10 @@ final class DebtTermsCubit extends Cubit<DebtTermsState> {
 
   final DebtsRepository _repository;
   final String _id;
+
+  /// Whether this device reminds of debts: the site does not, so a day
+  /// picked there turns no reminder on.
+  final bool _reminders;
 
   Future<void> _load() async {
     try {
@@ -127,7 +132,8 @@ final class DebtTermsCubit extends Cubit<DebtTermsState> {
   void dueChanged(CivilDate? dueOn) => emit(
     state.copyWith(
       dueOn: () => dueOn,
-      reminds: dueOn != null && (state.dueOn == null || state.reminds),
+      reminds:
+          dueOn != null && (state.dueOn == null ? _reminders : state.reminds),
     ),
   );
 

@@ -12,10 +12,14 @@ import 'package:transactions_jaspr/src/presentation/components/operation_day_gro
 /// It needs a [TagOperationsCubit] above it.
 class TagOperations extends StatelessComponent {
   /// Creates the list.
-  const TagOperations({required this.hrefOf, super.key});
+  const TagOperations({required this.hrefOf, this.hrefOfDebt, super.key});
 
   /// Where the operation with this id opens.
   final String Function(String id) hrefOf;
+
+  /// Where the debt that an operation moves opens, by the id of the debt,
+  /// in place of the operation (ADR 0029). Without it the operation opens.
+  final String Function(String id)? hrefOfDebt;
 
   @override
   Component build(BuildContext context) {
@@ -30,6 +34,7 @@ class TagOperations extends StatelessComponent {
               day: day,
               today: state.today,
               hrefOf: hrefOf,
+              hrefOfDebt: hrefOfDebt,
             ),
           if (state.hasMore)
             div(classes: 'tag-operations__more', [

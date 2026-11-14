@@ -12,6 +12,7 @@ class OperationDayGroup extends StatelessComponent {
     required this.day,
     required this.today,
     required this.hrefOf,
+    this.hrefOfDebt,
     this.accountId,
     this.picked,
     super.key,
@@ -25,6 +26,10 @@ class OperationDayGroup extends StatelessComponent {
 
   /// Where the operation with this id opens.
   final String Function(String id) hrefOf;
+
+  /// Where the debt that an operation moves opens, by the id of the debt,
+  /// in place of the operation (ADR 0029). Without it the operation opens.
+  final String Function(String id)? hrefOfDebt;
 
   /// The account that the amounts are about.
   final String? accountId;
@@ -50,7 +55,10 @@ class OperationDayGroup extends StatelessComponent {
             OperationRow(
               key: ValueKey(operation.id),
               operation: operation,
-              href: hrefOf(operation.id),
+              href: switch ((operation.debt, hrefOfDebt)) {
+                (final debt?, final debtHref?) => debtHref(debt.id),
+                _ => hrefOf(operation.id),
+              },
               accountId: accountId,
               picked: operation.id == picked,
             ),

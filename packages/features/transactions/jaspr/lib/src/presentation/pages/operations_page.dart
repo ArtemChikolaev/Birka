@@ -24,6 +24,7 @@ class OperationsPage extends StatefulComponent {
   const OperationsPage({
     required this.addHref,
     required this.hrefOf,
+    this.hrefOfDebt,
     this.note,
     this.side,
     this.picked,
@@ -36,6 +37,10 @@ class OperationsPage extends StatefulComponent {
 
   /// Where the operation with this id opens.
   final String Function(String id) hrefOf;
+
+  /// Where the debt that an operation moves opens, by the id of the debt,
+  /// in place of the operation (ADR 0029). Without it the operation opens.
+  final String Function(String id)? hrefOfDebt;
 
   /// A quiet line under the list, such as where the data lives.
   final String? note;
@@ -149,6 +154,7 @@ class _OperationsPageState extends State<OperationsPage> {
                   day: day,
                   today: state.today,
                   hrefOf: component.hrefOf,
+                  hrefOfDebt: component.hrefOfDebt,
                   picked: component.picked,
                 ),
             ],

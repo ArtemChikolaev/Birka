@@ -140,7 +140,10 @@ class _TagsIslandState extends DataIslandState<TagsIsland> {
         onBack: closeForm,
         editHref: '$_address#$_edit$view',
         closes: closes,
-        operations: TagOperations(hrefOf: (id) => 'operations/#$id'),
+        operations: TagOperations(
+          hrefOf: (id) => 'operations/#$id',
+          hrefOfDebt: (id) => 'debts/#$id',
+        ),
       ),
     );
   }

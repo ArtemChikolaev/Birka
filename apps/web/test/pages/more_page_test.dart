@@ -62,7 +62,7 @@ void main() {
   });
 
   testComponents('leads to the accounts, the categories, the import, the data, '
-      'the метки and help', (
+      'the метки, the debts and help', (
     tester,
   ) async {
     pump(tester);
@@ -82,6 +82,7 @@ void main() {
         'import/',
         'data/',
         'tags/',
+        'debts/',
         'help/',
         'https://github.com/ArtemChikolaev/Birka',
         'https://www.cbr-xml-daily.ru/',

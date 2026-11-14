@@ -18,6 +18,7 @@ class AccountPage extends StatelessComponent {
     required this.onClose,
     required this.editHref,
     required this.hrefOf,
+    this.hrefOfDebt,
     this.wide = false,
     super.key,
   });
@@ -30,6 +31,10 @@ class AccountPage extends StatelessComponent {
 
   /// Where the operation with this id opens.
   final String Function(String id) hrefOf;
+
+  /// Where the debt that an operation moves opens, by the id of the debt,
+  /// in place of the operation (ADR 0029). Without it the operation opens.
+  final String Function(String id)? hrefOfDebt;
 
   /// Whether the page is wide.
   final bool wide;
@@ -163,6 +168,7 @@ class AccountPage extends StatelessComponent {
               day: day,
               today: state.today,
               hrefOf: hrefOf,
+              hrefOfDebt: hrefOfDebt,
               accountId: accountId,
             ),
         ]),

@@ -80,6 +80,16 @@
 10. The phone reminds of the day of a debt in the next change, with the
     notices of the bell; until then the switch «Напомнить в срок» keeps what
     the person chose.
+11. The site has the same pages (`debts_jaspr`) at `debts/`, with the card
+    at `debts/#<id>`, more money at `debts/#more-<id>`, the terms at
+    `debts/#edit-<id>` and a new debt at `debts/#new`. A wide window keeps
+    the list and puts how the debts work, a card or a form beside it; a
+    narrow one shows them in place of the list. The return opens in a fold
+    under the actions of the card. The site has no reminders, so its forms
+    have no switch, a day picked there turns none on, and one set on a phone
+    stays. «Ещё» shows the totals under «Долги», and the operations lead to
+    the card of a debt. The site kit gets `InitialBadge`, `CardArt.tint` and
+    `GlassActionTile`, which the page of an operation drew on its own.
 
 ## Options considered
 

@@ -29,6 +29,10 @@ dependencies:
     path: ../../packages/features/categories/jaspr
   database:
     path: ../../packages/core/database
+  debts_common:
+    path: ../../packages/features/debts/common
+  debts_jaspr:
+    path: ../../packages/features/debts/jaspr
   design_jaspr:
     path: ../../packages/design/jaspr
   drift: ^2.31.0

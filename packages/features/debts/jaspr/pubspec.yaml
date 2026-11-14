@@ -1,0 +1,26 @@
+name: debts_jaspr
+description: >-
+  Debts of Birka in Jaspr: the list of who owes whom, the card of a person
+  with its return, and the forms of a new debt and of its terms, on the site.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  debts_common:
+    path: ../common
+  design_jaspr:
+    path: ../../../design/jaspr
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  money:
+    path: ../../../core/money
+
+dev_dependencies:
+  jaspr_test: ^0.22.3

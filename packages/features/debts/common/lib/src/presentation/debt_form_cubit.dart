@@ -221,7 +221,9 @@ final class DebtFormCubit extends Cubit<DebtFormState> {
     this._repository, {
     String? debtId,
     DebtSide side = DebtSide.lent,
+    bool reminders = true,
   }) : _debtId = debtId,
+       _reminders = reminders,
        super(
          DebtFormState(
            status: DebtFormStatus.loading,
@@ -236,6 +238,10 @@ final class DebtFormCubit extends Cubit<DebtFormState> {
 
   final DebtsRepository _repository;
   final String? _debtId;
+
+  /// Whether this device reminds of debts: the site does not, so a day
+  /// picked there turns no reminder on.
+  final bool _reminders;
 
   Future<void> _load() async {
     try {
@@ -286,7 +292,8 @@ final class DebtFormCubit extends Cubit<DebtFormState> {
   void dueChanged(CivilDate? dueOn) => emit(
     state.copyWith(
       dueOn: () => dueOn,
-      reminds: dueOn != null && (state.dueOn == null || state.reminds),
+      reminds:
+          dueOn != null && (state.dueOn == null ? _reminders : state.reminds),
     ),
   );
 
