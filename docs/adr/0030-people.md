@@ -34,6 +34,17 @@
    carries the people.
 4. The number belongs to the person and stays on the device and in the
    copies that the person makes; the CSV of the operations leaves it out.
+5. On the phone, someone new can come from the system window of the
+   contacts (`CNContactPickerViewController` on iOS, `ACTION_PICK` of a
+   phone number on Android). The window runs apart from Birka and gives it
+   the contact picked alone, so Birka asks for no access to the address
+   book. The first name becomes the name, and the person picks one of the
+   numbers.
+6. «Напомнить» on a debt owed to the person opens a ready text that the
+   person may change, and hands it to an SMS to the number or to the window
+   of sharing. Birka sends nothing itself. Both windows sit behind the port
+   `PeoplePhone`, which the app answers over the channel `birka/people`
+   with a few lines of its own code, and no new package.
 
 ## Options considered
 
@@ -42,6 +53,8 @@
 | The name, who they are and the number on each debt | the two debts of one person would each keep their own, and a new name would reach only one of them |
 | Finding a person by the name typed, as before | a neighbour and a colleague of one name would share one debt |
 | Keeping a link to the contact instead of its number | the ids of contacts differ between phones and platforms, and the site has none |
+| A package that reads the address book | it asks for access to every contact, where the system window needs none |
+| Sending the SMS from Birka | it needs a permission to send and a carrier; the person would not see what goes out |
 
 ## Consequences
 

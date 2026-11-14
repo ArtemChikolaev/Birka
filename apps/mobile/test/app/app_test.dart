@@ -11,8 +11,14 @@ import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
 import 'package:debts_common/debts_common.dart'
-    show DebtFormCubit, DebtReturnCubit, DebtTermsCubit, DebtsCubit;
-import 'package:debts_common/testing.dart' show FakeDebtsRepository;
+    show
+        DebtFormCubit,
+        DebtReturnCubit,
+        DebtTermsCubit,
+        DebtsCubit,
+        PeoplePhone;
+import 'package:debts_common/testing.dart'
+    show FakeDebtsRepository, FakePeoplePhone;
 import 'package:debts_flutter/debts_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
@@ -655,6 +661,7 @@ void main() {
       )
       ..registerSingleton<SettingsStore>(settings)
       ..registerSingleton<HelpLinks>(links)
+      ..registerSingleton<PeoplePhone>(FakePeoplePhone())
       ..registerSingleton<StatementFiles>(statements)
       ..registerFactory(
         () => SettingsCubit(

@@ -7,6 +7,7 @@ import 'package:backup_flutter/backup_flutter.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:database/database.dart';
 import 'package:debts_common/debts_common.dart';
+import 'package:debts_flutter/debts_flutter.dart' show ChannelPeoplePhone;
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:help_common/help_common.dart';
@@ -79,6 +80,7 @@ void registerDependencies(
     ..registerSingleton<BackupFiles>(const FilePickerBackupFiles())
     ..registerSingleton<StatementFiles>(const FilePickerStatementFiles())
     ..registerSingleton<HelpLinks>(const UrlLauncherHelpLinks())
+    ..registerSingleton<PeoplePhone>(ChannelPeoplePhone())
     ..registerSingleton<ReminderChannel>(_reminders)
     ..registerSingleton<ReminderCalendar>(DeviceReminderCalendar(settings));
   registerAccounts(getIt);

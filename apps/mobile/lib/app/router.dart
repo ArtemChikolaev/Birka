@@ -12,7 +12,12 @@ import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:categories_flutter/categories_flutter.dart';
 import 'package:debts_common/debts_common.dart'
-    show DebtFormCubit, DebtReturnCubit, DebtTermsCubit, DebtsCubit;
+    show
+        DebtFormCubit,
+        DebtReturnCubit,
+        DebtTermsCubit,
+        DebtsCubit,
+        PeoplePhone;
 import 'package:debts_flutter/debts_flutter.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
@@ -617,6 +622,7 @@ GoRouter buildRouter(
                   onMore: () => context.push(Paths.debtMore(id)),
                   onOpenStep: (operation) =>
                       context.push(Paths.operation(operation)),
+                  phone: getIt<PeoplePhone>(),
                 ),
               );
             },
@@ -651,8 +657,10 @@ GoRouter buildRouter(
                       param1: state.pathParameters['id'],
                     ),
                     child: Builder(
-                      builder: (context) =>
-                          DebtTermsPage(onClose: () => context.pop()),
+                      builder: (context) => DebtTermsPage(
+                        onClose: () => context.pop(),
+                        phone: getIt<PeoplePhone>(),
+                      ),
                     ),
                   ),
                 ),
@@ -816,7 +824,8 @@ Page<String?> _debtFormPage(GetIt getIt, {String? id}) => BirkaSheetPage(
   child: BlocProvider(
     create: (_) => getIt<DebtFormCubit>(param1: id),
     child: Builder(
-      builder: (context) => DebtFormPage(onClose: context.pop),
+      builder: (context) =>
+          DebtFormPage(onClose: context.pop, phone: getIt<PeoplePhone>()),
     ),
   ),
 );

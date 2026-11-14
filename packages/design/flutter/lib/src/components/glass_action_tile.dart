@@ -57,7 +57,12 @@ class GlassActionTile extends StatelessWidget {
           duration: BirkaMotion.reduced(context)
               ? Duration.zero
               : BirkaMotion.fast,
+          // Narrow side padding leaves room for three tiles in a row.
           child: GlassSurface(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BirkaTokens.spaceXs,
+              vertical: BirkaTokens.spaceMd,
+            ),
             child: Column(
               children: [
                 BirkaIcon(glyph, color: ink),

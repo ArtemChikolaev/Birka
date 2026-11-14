@@ -965,6 +965,47 @@ void main() {
 
       expect(find.text('₽'), findsOneWidget);
     });
+
+    testWidgets('ends with a chip, takes several lines and glows for a '
+        'moment', (tester) async {
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+      var tapped = 0;
+      Widget field({required bool highlighted}) => app(
+        BirkaTextField(
+          label: 'Phone',
+          controller: controller,
+          minLines: 3,
+          maxLines: 6,
+          highlighted: highlighted,
+          trailing: BirkaChip(
+            label: 'mobile',
+            selected: false,
+            compact: true,
+            onTap: () => tapped++,
+          ),
+        ),
+      );
+      double glow() => tester
+          .widget<AnimatedOpacity>(
+            find.descendant(
+              of: find.byType(BirkaTextField),
+              matching: find.byType(AnimatedOpacity),
+            ),
+          )
+          .opacity;
+      await tester.pumpWidget(field(highlighted: false));
+
+      await tester.tap(find.text('mobile'));
+      expect(tapped, 1);
+      final text = tester.widget<TextField>(find.byType(TextField));
+      expect(text.minLines, 3);
+      expect(text.maxLines, 6);
+      expect(glow(), 0);
+
+      await tester.pumpWidget(field(highlighted: true));
+      expect(glow(), 1);
+    });
   });
 
   group('showFieldSheet', () {

@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:debts_common/debts_common.dart';
 import 'package:debts_flutter/src/presentation/widgets/debt_badge.dart';
+import 'package:debts_flutter/src/presentation/widgets/remind_sheet.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 
-/// The card of a debt (ADR 0029): what is left of what, the bar of what came
-/// back, its day, the return and more money, and its steps.
+/// The card of a debt (ADR 0029): the person and who they are, what is left
+/// of what, the bar of what came back, its day, the return, more money and a
+/// reminder by message (ADR 0030), and its steps.
 ///
 /// It needs a [DebtsCubit] above it. A debt that goes takes the page back.
 class DebtPage extends StatelessWidget {
@@ -19,6 +23,7 @@ class DebtPage extends StatelessWidget {
     required this.onReturn,
     required this.onMore,
     required this.onOpenStep,
+    this.phone,
     super.key,
   });
 
@@ -39,6 +44,10 @@ class DebtPage extends StatelessWidget {
 
   /// Opens the operation of a step, by its id.
   final ValueChanged<String> onOpenStep;
+
+  /// The messages of the phone, which a reminder opens, or `null` where
+  /// there are none.
+  final PeoplePhone? phone;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +99,7 @@ class DebtPage extends StatelessWidget {
                         context,
                       ).body.copyWith(color: BirkaColors.of(context).textMuted),
                     ),
-                  if (debt != null) ..._card(context, debt, state.today),
+                  if (debt != null) ..._card(context, debt, state),
                 ],
               );
             },
@@ -100,11 +109,14 @@ class DebtPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _card(BuildContext context, Debt debt, CivilDate today) {
+  List<Widget> _card(BuildContext context, Debt debt, DebtsState state) {
     const gap = SizedBox(height: BirkaTokens.spaceLg);
+    final today = state.today;
     final lent = debt.side == DebtSide.lent;
+    final person = state.personOf(debt);
+    final phone = this.phone;
     return [
-      _Summary(debt: debt, today: today),
+      _Summary(debt: debt, about: person?.about.trim() ?? '', today: today),
       gap,
       _Settled(debt: debt, today: today),
       const SizedBox(height: BirkaTokens.spaceMd),
@@ -132,6 +144,26 @@ class DebtPage extends StatelessWidget {
               onTap: onMore,
             ),
           ),
+          // Money owed to the person can be reminded of with a message
+          // that they send themselves.
+          if (lent && !debt.closed && phone != null) ...[
+            const SizedBox(width: BirkaTokens.spaceSm),
+            Expanded(
+              child: GlassActionTile(
+                glyph: BirkaGlyph.message,
+                label: t.debts.remind.action,
+                onTap: () => unawaited(
+                  showRemindSheet(
+                    context,
+                    debt: debt,
+                    person: person,
+                    phone: phone,
+                    today: today,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
       gap,
@@ -152,11 +184,16 @@ class DebtPage extends StatelessWidget {
   }
 }
 
-/// The person, what is left and of what.
+/// The person and who they are, what is left and of what.
 class _Summary extends StatelessWidget {
-  const _Summary({required this.debt, required this.today});
+  const _Summary({
+    required this.debt,
+    required this.about,
+    required this.today,
+  });
 
   final Debt debt;
+  final String about;
   final CivilDate today;
 
   @override
@@ -207,6 +244,21 @@ class _Summary extends StatelessWidget {
           debt.name,
           textAlign: TextAlign.center,
           style: styles.heading.copyWith(color: colors.text),
+        ),
+        AnimatedSize(
+          duration: reduced ? Duration.zero : BirkaMotion.base,
+          curve: BirkaMotion.standardCurve,
+          alignment: Alignment.topCenter,
+          child: about.isEmpty
+              ? const SizedBox(width: double.infinity)
+              : Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: FadingText(
+                    about,
+                    textAlign: TextAlign.center,
+                    style: styles.body.copyWith(color: colors.textMuted),
+                  ),
+                ),
         ),
         const SizedBox(height: BirkaTokens.spaceXs),
         FittedBox(

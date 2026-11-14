@@ -133,7 +133,13 @@ enum BirkaGlyph {
   tag,
 
   /// Two people, for the debts between them (ADR 0029).
-  people
+  people,
+
+  /// A bubble of speech, for a message to someone (ADR 0030).
+  message,
+
+  /// A person in a circle, for a contact of the phone (ADR 0030).
+  contact
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

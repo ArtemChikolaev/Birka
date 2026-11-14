@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:debts_common/debts_common.dart';
 import 'package:debts_flutter/src/presentation/widgets/debt_choices.dart';
+import 'package:debts_flutter/src/presentation/widgets/person_sheet.dart';
 import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,17 +12,22 @@ import 'package:money/money.dart';
 
 /// The form of a new debt, or of more money on one (ADR 0029): whether the
 /// person lends or borrows, who, how much, from or to which account, when,
-/// by what day, a note and the reminder of that day.
+/// by what day, a note and the reminder of that day. Someone new comes from
+/// a sheet of their own, which can take them from the contacts of [phone]
+/// (ADR 0030).
 ///
 /// It needs a [DebtFormCubit] above it. Once saved, it says what it wrote in
 /// a toast, and gives the id of the debt to [onClose].
 class DebtFormPage extends StatelessWidget {
   /// Creates the form.
-  const DebtFormPage({required this.onClose, super.key});
+  const DebtFormPage({required this.onClose, this.phone, super.key});
 
   /// Closes the form, with the id of the debt that the save wrote, or
   /// `null`.
   final ValueChanged<String?> onClose;
+
+  /// The contacts of the phone, or `null` where there are none.
+  final PeoplePhone? phone;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +38,7 @@ class DebtFormPage extends StatelessWidget {
           child: BlocBuilder<DebtFormCubit, DebtFormState>(
             builder: (context, state) => switch (state.status) {
               DebtFormStatus.loading => const SizedBox.shrink(),
-              _ => _Form(state: state, onClose: onClose),
+              _ => _Form(state: state, onClose: onClose, phone: phone),
             },
           ),
         ),
@@ -42,10 +48,15 @@ class DebtFormPage extends StatelessWidget {
 }
 
 class _Form extends StatelessWidget {
-  const _Form({required this.state, required this.onClose});
+  const _Form({
+    required this.state,
+    required this.onClose,
+    required this.phone,
+  });
 
   final DebtFormState state;
   final ValueChanged<String?> onClose;
+  final PeoplePhone? phone;
 
   String get _title {
     if (!state.fixed) return t.debts.newDebt;
@@ -115,7 +126,7 @@ class _Form extends StatelessWidget {
                   const SizedBox(height: BirkaTokens.spaceLg),
                   SectionLabel(form.who),
                   const SizedBox(height: BirkaTokens.spaceXs),
-                  _People(state: state),
+                  _People(state: state, phone: phone),
                   if (state.nameMissing) ...[
                     const SizedBox(height: BirkaTokens.spaceXs),
                     Text(
@@ -328,18 +339,24 @@ class _Form extends StatelessWidget {
   }
 }
 
-/// The people of the debts as chips, and one more for someone new, whose
-/// name the person types (ADR 0030). A chip of a namesake says who they are.
+/// The people of the debts as chips, and one more for someone new, who comes
+/// from a sheet of their own (ADR 0030). A chip of a namesake says who they
+/// are.
 class _People extends StatelessWidget {
-  const _People({required this.state});
+  const _People({required this.state, required this.phone});
 
   final DebtFormState state;
+  final PeoplePhone? phone;
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<DebtFormCubit>();
     final typed = state.name.trim();
-    final other = typed.isNotEmpty && state.personId == null;
+    final fresh = typed.isNotEmpty && state.personId == null
+        ? Person(id: '', name: typed, about: state.about)
+        : null;
+    // Someone new of a name that is there makes both chips say who they are.
+    final everyone = fresh == null ? state.people : [...state.people, fresh];
     return Wrap(
       spacing: BirkaTokens.spaceXs,
       runSpacing: BirkaTokens.spaceXs,
@@ -347,16 +364,16 @@ class _People extends StatelessWidget {
         for (final person in state.chips)
           BirkaChip(
             key: ValueKey('person-${person.id}'),
-            label: debtPersonLabel(person, state.people),
+            label: debtPersonLabel(person, everyone),
             selected: state.personId == person.id,
             onTap: () => cubit.personPicked(person),
           ),
-        if (other)
+        if (fresh != null)
           BirkaChip(
             key: const ValueKey('typed'),
-            label: typed,
+            label: debtPersonLabel(fresh, everyone),
             selected: true,
-            onTap: () => unawaited(_name(context)),
+            onTap: () => unawaited(_person(context)),
           ),
         BirkaChip(
           key: const ValueKey('other'),
@@ -364,22 +381,27 @@ class _People extends StatelessWidget {
           glyph: BirkaGlyph.plus,
           dashed: true,
           selected: false,
-          onTap: () => unawaited(_name(context)),
+          onTap: () => unawaited(_person(context)),
         ),
       ],
     );
   }
 
-  Future<void> _name(BuildContext context) async {
+  Future<void> _person(BuildContext context) async {
     final cubit = context.read<DebtFormCubit>();
     final typed = state.name.trim();
-    final name = await showFieldSheet(
+    final person = await showPersonSheet(
       context,
-      label: t.debts.form.name,
-      hint: t.debts.form.nameHint,
-      done: t.debts.done,
-      initial: state.personId == null ? typed : '',
+      people: state.people,
+      phone: phone,
+      initial: typed.isNotEmpty && state.personId == null
+          ? (name: typed, about: state.about, phone: state.phone)
+          : null,
     );
-    if (name != null && name.trim().isNotEmpty) cubit.nameChanged(name);
+    if (person == null || person.name.isEmpty) return;
+    cubit
+      ..nameChanged(person.name)
+      ..aboutChanged(person.about)
+      ..phoneChanged(person.phone);
   }
 }

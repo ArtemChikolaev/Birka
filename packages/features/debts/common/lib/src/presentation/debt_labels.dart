@@ -1,4 +1,5 @@
 import 'package:debts_common/src/domain/debt.dart';
+import 'package:debts_common/src/domain/people_phone.dart';
 import 'package:debts_common/src/presentation/debt_form_cubit.dart';
 import 'package:debts_common/src/presentation/debt_return_cubit.dart';
 import 'package:debts_common/src/presentation/debts_cubit.dart';
@@ -235,6 +236,13 @@ String debtPersonLabel(Person person, Iterable<Person> people) {
     (other) => other.id != person.id && other.name.trim().toLowerCase() == key,
   );
   return namesake && about.isNotEmpty ? '${person.name} · $about' : person.name;
+}
+
+/// `Мобильный`: what the address book calls [number], or else the number.
+String debtNumberKind(ContactNumber number) {
+  final label = number.label.trim();
+  if (label.isEmpty) return number.number;
+  return label[0].toUpperCase() + label.substring(1);
 }
 
 /// What the form says when someone new has the name of [twin], who is there

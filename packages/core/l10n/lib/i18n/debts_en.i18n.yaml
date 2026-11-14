@@ -120,10 +120,33 @@ move:
   borrowed: Borrowed
   repaid: Repaid
 person:
+  newTitle: Someone new
+  fromContacts: Pick from the contacts
+  fromContactsNote: The name and the number fill in
+  about: Who it is
+  aboutHint: Optional · a colleague, a neighbour
+  phone: Phone
+  optional: Optional
+  number: Number
+  noNumber: No number
+  noNumberNote: A reminder can go through another app
+  hint: The name shows in the list and in reminders. «Who it is» tells namesakes apart.
+  fromContact: "From the contacts: $contact. Birka took this contact alone and keeps the number on this phone."
+  contactsRow: Take the number from the contacts
+  shared: The name, who it is and the number are the same for every debt of this person. The number stays on this phone and in your copies.
   twin: "$name is here already, $about. Say who this one is, to tell them apart."
   twinPlain: "$name is here already. Say who this one is, to tell them apart."
   twinPick: "$name is here already, $about. If it is the same person, pick them above; if not, say who this one is."
   twinPickPlain: "$name is here already. If it is the same person, pick them above; if not, say who this one is."
 remind:
+  action: Remind
+  title: Remind
+  message: Message
+  sms: Send an SMS
+  otherApp: Another app
+  share: Share
+  caption: Birka only opens the message; you send it. The text can be changed.
+  captionShare: "Birka opens the window of sharing: pick where to write. The text can be changed."
+  noPhone: No number · add it in «Edit»
   text: "Hi! A reminder about $amount: we said it would come back by $day."
   textNoDue: "Hi! A reminder about $amount."
