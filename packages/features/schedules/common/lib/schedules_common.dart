@@ -21,4 +21,3 @@ export 'src/presentation/reminders_cubit.dart';
 export 'src/presentation/schedule_form_cubit.dart';
 export 'src/presentation/schedule_labels.dart';
 export 'src/presentation/schedules_cubit.dart';
-export 'src/presentation/typed_amount.dart';

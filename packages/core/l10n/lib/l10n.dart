@@ -12,3 +12,4 @@ export 'src/format_money.dart';
 export 'src/generated/strings.g.dart';
 export 'src/help_questions.dart';
 export 'src/search_key.dart';
+export 'src/typed_amount.dart';

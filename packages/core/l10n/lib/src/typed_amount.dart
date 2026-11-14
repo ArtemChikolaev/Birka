@@ -1,7 +1,7 @@
-import 'package:l10n/l10n.dart';
+import 'package:l10n/src/format_money.dart';
 import 'package:money/money.dart';
 
-/// [amount] as a person would type it: `45000` or `799,90`.
+/// [amount] as a person would type it into a field: `45000` or `799,90`.
 String typedAmount(Money amount) {
   final digits = amount.currency.decimalDigits;
   var unit = 1;
