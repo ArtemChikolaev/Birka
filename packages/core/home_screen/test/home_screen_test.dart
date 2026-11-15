@@ -68,6 +68,21 @@ void main() {
         'share': 0.36,
       },
     ]);
+    expect(read['words'], isEmpty);
+  });
+
+  test('the words of the widgets go along, hidden amounts or not', () {
+    final snapshot = WidgetSnapshot(
+      days: [day('1 124 ₽')],
+      sums: true,
+      words: const {'expense': 'Расход'},
+    );
+
+    expect(
+      (jsonDecode(snapshot.encode()) as Map<String, Object?>)['words'],
+      {'expense': 'Расход'},
+    );
+    expect(snapshot.masked().words, {'expense': 'Расход'});
   });
 
   test('figures are equal when they say the same', () {

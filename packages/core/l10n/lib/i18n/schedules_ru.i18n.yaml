@@ -398,3 +398,7 @@ widget:
   spentTodayShort: Потратили
   today: сегодня
   noPayday: Укажите день зарплаты — покажем, сколько можно
+  expense: Расход
+  income: Доход
+  newOperation: Новая операция
+  open: Откройте Birka, чтобы обновить

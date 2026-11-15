@@ -156,6 +156,14 @@ void main() {
     expect(tomorrow.of, 'из ${formatMoney(rub(1814))} на день');
     expect(tomorrow.spent, 'Потратили ${formatMoney(rub(0))}');
     expect(tomorrow.share, 0);
+    expect(snapshot.words, {
+      'expense': 'Расход',
+      'income': 'Доход',
+      'newOperation': 'Новая операция',
+      'label': 'Можно тратить сегодня',
+      'labelShort': 'Можно сегодня',
+      'open': 'Откройте Birka, чтобы обновить',
+    });
     expect(screen.shown, isNotEmpty);
   });
 
@@ -240,6 +248,7 @@ void main() {
     );
     expect(english.days.first.figure, formatMoney(rub(1124)));
     expect(english.days.first.of, 'of ${formatMoney(rub(1744))} a day');
+    expect(english.words['expense'], 'Expense');
   });
 
   test('after a night the figures start from the new day', () async {

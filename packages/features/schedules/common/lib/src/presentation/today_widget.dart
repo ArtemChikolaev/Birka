@@ -16,7 +16,9 @@ import 'package:schedules_common/src/presentation/schedules_cubit.dart';
 /// are written out: `HomeWidgets` hides them when the person asks.
 WidgetSnapshot todayWidgetSnapshot(SchedulesView view) {
   final base = view.base;
-  if (base == null) return const WidgetSnapshot(days: [], sums: true);
+  if (base == null) {
+    return WidgetSnapshot(days: const [], sums: true, words: _words());
+  }
   final zero = Money(0, base);
   final plan = view.plan;
   if (plan == null) {
@@ -39,10 +41,12 @@ WidgetSnapshot todayWidgetSnapshot(SchedulesView view) {
         _spentDay(view.today, spent),
         _spentDay(view.today.addDays(1), zero),
       ],
+      words: _words(),
     );
   }
   return WidgetSnapshot(
     sums: true,
+    words: _words(),
     days: [
       _planDay(
         plan.today,
@@ -109,6 +113,19 @@ WidgetDay _spentDay(CivilDate day, Money spent) {
     spentShort: '',
     share: 0,
   );
+}
+
+/// The words of the widgets themselves, in the language of the app.
+Map<String, String> _words() {
+  final words = t.schedules.widget;
+  return {
+    'expense': words.expense,
+    'income': words.income,
+    'newOperation': words.newOperation,
+    'label': t.schedules.canSpend,
+    'labelShort': words.canSpendShort,
+    'open': words.open,
+  };
 }
 
 /// [amount] in whole units of its currency, which a widget rolls to.

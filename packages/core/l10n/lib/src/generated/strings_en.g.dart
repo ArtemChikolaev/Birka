@@ -5170,6 +5170,18 @@ class Translations$schedules$widget$en {
 
   /// en: 'Set your payday to see what you can spend'
   String get noPayday => 'Set your payday to see what you can spend';
+
+  /// en: 'Expense'
+  String get expense => 'Expense';
+
+  /// en: 'Income'
+  String get income => 'Income';
+
+  /// en: 'New operation'
+  String get newOperation => 'New operation';
+
+  /// en: 'Open Birka to update'
+  String get open => 'Open Birka to update';
 }
 
 // Path: tags.steps
@@ -7841,6 +7853,10 @@ extension on Translations {
           'schedules.widget.today' => 'today',
           'schedules.widget.noPayday' =>
             'Set your payday to see what you can spend',
+          'schedules.widget.expense' => 'Expense',
+          'schedules.widget.income' => 'Income',
+          'schedules.widget.newOperation' => 'New operation',
+          'schedules.widget.open' => 'Open Birka to update',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -8115,13 +8131,13 @@ extension on Translations {
           'transactions.monthNames.3' => 'April',
           'transactions.monthNames.4' => 'May',
           'transactions.monthNames.5' => 'June',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.monthNames.6' => 'July',
           'transactions.monthNames.7' => 'August',
           'transactions.monthNames.8' => 'September',
           'transactions.monthNames.9' => 'October',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.monthNames.10' => 'November',
           'transactions.monthNames.11' => 'December',
           'transactions.allOperations' =>
