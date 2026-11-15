@@ -75,6 +75,7 @@ void registerDependencies(
   final rates = RatesRepository(database);
   final kept = Settings.readFrom(settings);
   final baseCurrency = BaseCurrency(kept.baseCurrency);
+  final widgetSums = WidgetSums(shown: kept.widgetSums);
   getIt
     ..registerSingleton(database, dispose: (database) => database.close())
     ..registerSingleton(ledger)
@@ -91,11 +92,15 @@ void registerDependencies(
     ..registerSingleton<ReminderChannel>(_reminders)
     ..registerSingleton(_homeScreen)
     // The widgets show the money of the person, never that of the demo.
+    ..registerSingleton(widgetSums)
     ..registerSingleton(
-      HomeWidgets(_homeScreen, forwards: !demoStateIn(settings).isOn),
+      HomeWidgets(
+        _homeScreen,
+        widgetSums,
+        forwards: !demoStateIn(settings).isOn,
+      ),
       dispose: (widgets) => widgets.close(),
     )
-    ..registerSingleton(WidgetSums(shown: kept.widgetSums))
     ..registerSingleton<ReminderCalendar>(DeviceReminderCalendar(settings));
   registerAccounts(getIt);
   registerAsk(getIt);

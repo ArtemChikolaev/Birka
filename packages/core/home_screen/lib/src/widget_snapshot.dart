@@ -68,6 +68,21 @@ final class WidgetDay {
   /// The part of the share of the day that is spent, from 0 to 1.
   final double share;
 
+  /// The day with the digits of its amounts hidden.
+  WidgetDay masked() => WidgetDay(
+    day: day,
+    kind: kind,
+    label: label,
+    labelShort: labelShort,
+    figure: maskAmounts(figure),
+    value: null,
+    of: maskAmounts(of),
+    ofShort: maskAmounts(ofShort),
+    spent: maskAmounts(spent),
+    spentShort: maskAmounts(spentShort),
+    share: share,
+  );
+
   /// The figures as the widgets read them.
   Map<String, Object?> toJson() => {
     'day': day,
@@ -101,6 +116,13 @@ final class WidgetSnapshot {
 
   /// Whether the amounts are shown, or hidden behind dots.
   final bool sums;
+
+  /// The figures with the digits of their amounts hidden, as the widgets get
+  /// them while «Суммы в виджетах» is off.
+  WidgetSnapshot masked() => WidgetSnapshot(
+    days: [for (final day in days) day.masked()],
+    sums: false,
+  );
 
   /// The figures as the widgets read them.
   Map<String, Object?> toJson() => {

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:device_settings/device_settings.dart';
 import 'package:home_screen/home_screen.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
@@ -11,17 +10,15 @@ import 'package:schedules_common/src/presentation/schedules_cubit.dart';
 import 'package:schedules_common/src/presentation/today_widget.dart';
 
 /// Keeps the widgets of the home screen in step with the money of the day
-/// (ADR 0031). It follows what the plan of the day reads, the choice of the
-/// amounts and the language, and hands the figures of today and tomorrow to
-/// [HomeWidgets] whenever they change. The widgets never read the ledger.
+/// (ADR 0031). It follows what the plan of the day reads and the language,
+/// and hands the figures of today and tomorrow to [HomeWidgets] whenever
+/// they change. The widgets never read the ledger.
 final class TodayWidgetFeed {
-  /// Creates the feed of [_repository] into [_widgets], which shows the
-  /// amounts as [_sums] says.
-  TodayWidgetFeed(this._repository, this._widgets, this._sums);
+  /// Creates the feed of [_repository] into [_widgets].
+  TodayWidgetFeed(this._repository, this._widgets);
 
   final SchedulesRepository _repository;
   final HomeWidgets _widgets;
-  final WidgetSums _sums;
   final _subscriptions = <StreamSubscription<void>>[];
   CivilDate? _today;
   List<Schedule>? _schedules;
@@ -87,7 +84,6 @@ final class TodayWidgetFeed {
         _monthStart = day;
         _publish();
       }, onError: ignore),
-      _sums.watch().listen((_) => _publish()),
       LocaleSettings.getLocaleStream().listen((_) => _publish()),
     ]);
   }
@@ -120,7 +116,6 @@ final class TodayWidgetFeed {
           todays: todays,
           monthStart: monthStart,
         ),
-        sums: _sums.shown,
       );
       _work = _work.then((_) => _show(snapshot));
     }

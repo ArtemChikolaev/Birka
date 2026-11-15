@@ -38,8 +38,10 @@
    share it says so and tells the share of tomorrow. Without a salary to
    count until it shows what today took and asks for the payday.
 4. The switch «Суммы в виджетах», a setting of the device that is on by
-   default, hides the amounts behind dots before they leave the app. On the
-   lock screen of iOS the amount stays hidden until Face ID.
+   default, hides the amounts behind dots before they leave the app:
+   `HomeWidgets` keeps the figures as they are for the page of the widgets,
+   which blurs them as the app does, and hands only dots to the platform. On
+   the lock screen of iOS the amount stays hidden until Face ID.
 5. What opens Birka from outside its window is one of six actions
    (`HomeAction`): the overview, the payday, a new expense, income or
    transfer, and a question. The platform keeps the action that launched

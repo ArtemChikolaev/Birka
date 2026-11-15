@@ -91,7 +91,7 @@ void main() {
 
   test('new figures reach the widgets once, and the page sees them', () async {
     final screen = _Screen();
-    final widgets = HomeWidgets(screen);
+    final widgets = HomeWidgets(screen, WidgetSums(shown: true));
     addTearDown(widgets.close);
     final seen = <WidgetSnapshot>[];
     final watching = widgets.watch().listen(seen.add);
@@ -114,12 +114,74 @@ void main() {
 
   test('a demo keeps its figures off the home screen', () async {
     final screen = _Screen();
-    final widgets = HomeWidgets(screen, forwards: false);
+    final widgets = HomeWidgets(
+      screen,
+      WidgetSums(shown: true),
+      forwards: false,
+    );
     addTearDown(widgets.close);
 
     await widgets.show(WidgetSnapshot(days: [day('1 124 ₽')], sums: true));
 
     expect(screen.shown, isEmpty);
     expect(widgets.last?.days.single.figure, '1 124 ₽');
+  });
+
+  test('hidden amounts leave the app as dots alone', () async {
+    final screen = _Screen();
+    final sums = WidgetSums(shown: false);
+    final widgets = HomeWidgets(screen, sums);
+    addTearDown(widgets.close);
+
+    await widgets.show(WidgetSnapshot(days: [day('1 124 ₽')], sums: true));
+
+    final sent = screen.shown.single;
+    expect(sent.sums, isFalse);
+    final hidden = sent.days.single;
+    expect(hidden.figure, '••• ₽');
+    expect(hidden.value, isNull);
+    expect(hidden.of, 'из ••• ₽ на день');
+    expect(hidden.ofShort, 'из ••• ₽');
+    expect(hidden.spent, 'Потратили ••• ₽');
+    expect(hidden.spentShort, 'потратили ••• ₽');
+    expect(hidden.label, 'Можно тратить сегодня');
+    expect(hidden.share, 0.36);
+    // The page of the widgets keeps the figures, to blur them itself.
+    expect(widgets.last?.days.single.figure, '1 124 ₽');
+  });
+
+  test('a turn of the switch hands the figures over again', () async {
+    final screen = _Screen();
+    final sums = WidgetSums(shown: true);
+    final widgets = HomeWidgets(screen, sums);
+    addTearDown(widgets.close);
+    await widgets.show(WidgetSnapshot(days: [day('1 124 ₽')], sums: true));
+
+    sums.show(shown: false);
+    await pumpEventQueue();
+    sums.show(shown: true);
+    await pumpEventQueue();
+
+    expect(screen.shown.map((it) => it.days.single.figure), [
+      '1 124 ₽',
+      '••• ₽',
+      '1 124 ₽',
+    ]);
+  });
+
+  test('the widgets follow the choice of their amounts', () async {
+    final sums = WidgetSums(shown: true);
+    final seen = <bool>[];
+    final watching = sums.watch().listen(seen.add);
+    addTearDown(watching.cancel);
+
+    sums
+      ..show(shown: false)
+      ..show(shown: false)
+      ..show(shown: true);
+    await pumpEventQueue();
+
+    expect(seen, [true, false, true]);
+    expect(sums.shown, isTrue);
   });
 }

@@ -6,3 +6,4 @@ export 'src/home_action.dart';
 export 'src/home_screen.dart';
 export 'src/home_widgets.dart';
 export 'src/widget_snapshot.dart';
+export 'src/widget_sums.dart';

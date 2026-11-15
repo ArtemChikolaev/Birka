@@ -149,20 +149,4 @@ void main() {
 
     expect(languageLabel(null), 'Как на устройстве');
   });
-
-  test('the widgets follow the choice of their amounts', () async {
-    final sums = WidgetSums(shown: true);
-    final seen = <bool>[];
-    final watching = sums.watch().listen(seen.add);
-    addTearDown(watching.cancel);
-
-    sums
-      ..show(shown: false)
-      ..show(shown: false)
-      ..show(shown: true);
-    await Future<void>.delayed(Duration.zero);
-
-    expect(seen, [true, false, true]);
-    expect(sums.shown, isTrue);
-  });
 }

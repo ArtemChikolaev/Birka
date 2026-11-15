@@ -122,9 +122,9 @@ void main() {
     );
     await spend(620);
     screen = _Screen();
-    widgets = HomeWidgets(screen);
     sums = WidgetSums(shown: true);
-    feed = TodayWidgetFeed(repository, widgets, sums)..start();
+    widgets = HomeWidgets(screen, sums);
+    feed = TodayWidgetFeed(repository, widgets)..start();
   });
 
   tearDown(() async {
@@ -189,8 +189,10 @@ void main() {
     await shown();
 
     sums.show(shown: false);
+    await pumpEventQueue();
 
-    final hidden = await shown((it) => !it.sums);
+    final hidden = screen.shown.last;
+    expect(hidden.sums, isFalse);
     for (final day in hidden.days) {
       expect(day.value, isNull);
       for (final words in [

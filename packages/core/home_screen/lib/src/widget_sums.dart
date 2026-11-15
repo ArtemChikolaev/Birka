@@ -1,8 +1,7 @@
 import 'dart:async';
 
-/// Whether the widgets of the home screen show amounts, which the widgets
-/// follow as it changes. It lives with the settings of the device
-/// (ADR 0031).
+/// Whether the widgets of the home screen show amounts, which they follow
+/// as it changes. The settings of the device keep it (ADR 0031).
 final class WidgetSums {
   /// Creates the choice, [shown] or not.
   WidgetSums({required bool shown}) : _shown = shown;
