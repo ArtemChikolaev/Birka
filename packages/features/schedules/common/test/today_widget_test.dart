@@ -144,7 +144,7 @@ void main() {
     expect(today.label, 'Можно тратить сегодня');
     expect(today.labelShort, 'Можно сегодня');
     expect(today.figure, formatMoney(rub(1124)));
-    expect(today.value, 1124);
+    expect(today.minor, 112400);
     expect(today.of, 'из ${formatMoney(rub(1744))} на день');
     expect(today.ofShort, 'из ${formatMoney(rub(1744))}');
     expect(today.spent, 'Потратили ${formatMoney(rub(620))}');
@@ -172,7 +172,7 @@ void main() {
 
     await spend(370);
 
-    final after = await shown((it) => it.days.first.value == 754);
+    final after = await shown((it) => it.days.first.minor == 75400);
     expect(after.days.first.figure, formatMoney(rub(754)));
     expect(after.days.first.spent, 'Потратили ${formatMoney(rub(990))}');
   });
@@ -202,7 +202,7 @@ void main() {
     final hidden = screen.shown.last;
     expect(hidden.sums, isFalse);
     for (final day in hidden.days) {
-      expect(day.value, isNull);
+      expect(day.minor, isNull);
       for (final words in [
         day.figure,
         day.of,
