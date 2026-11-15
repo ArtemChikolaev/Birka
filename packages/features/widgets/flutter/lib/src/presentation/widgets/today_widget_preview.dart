@@ -122,7 +122,7 @@ class _Body extends StatelessWidget {
                   const SizedBox(height: BirkaTokens.spaceXxs),
                   AmountText(
                     day?.figure ?? '—',
-                    value: day?.value,
+                    value: day?.minor,
                     rise: spentOnly ? AmountRise.bad : AmountRise.good,
                     tone: over ? AmountTone.negative : AmountTone.neutral,
                     style: styles.title,
