@@ -10,6 +10,10 @@ import UserNotifications
   /// and the window of sharing.
   private var people: PeopleChannel?
 
+  /// The widgets of the home screen and what opens Birka from outside
+  /// (ADR 0031).
+  private var home: HomeChannel?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -22,7 +26,43 @@ import UserNotifications
         self?.window?.rootViewController
       }
     }
+    if let registrar = registrar(forPlugin: "BirkaHome") {
+      home = HomeChannel(messenger: registrar.messenger())
+    }
+    // A button of a widget, the control and Siri open the app and run here.
+    if #available(iOS 18.0, *) {
+      BirkaIntents.handler = { [weak self] action in
+        self?.home?.deliver(action)
+      }
+    }
+    // An action of the icon that launched Birka waits for Dart.
+    if let item = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem {
+      home?.deliver(item.type)
+    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  /// An action of the icon while Birka runs (ADR 0031).
+  override func application(
+    _ application: UIApplication,
+    performActionFor shortcutItem: UIApplicationShortcutItem,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    home?.deliver(shortcutItem.type)
+    completionHandler(true)
+  }
+
+  /// `birka://<action>` from a widget, the control or Siri (ADR 0031).
+  override func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    if url.scheme == "birka", let action = url.host, !action.isEmpty {
+      home?.deliver(action)
+      return true
+    }
+    return super.application(app, open: url, options: options)
   }
 }
 

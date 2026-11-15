@@ -22,14 +22,60 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>io.github.artemchikolaev.birka</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>birka</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Birka keeps your regular payments in a calendar of its own, «Birka», so that the calendar reminds you of them. Birka does not read your other events.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Birka keeps your regular payments in a calendar of its own, «Birka», so that the calendar reminds you of them. Birka does not read your other events.</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>minus</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>shortcut.expense</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>expense</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>plus</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>shortcut.income</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>income</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>arrow.left.arrow.right</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>shortcut.transfer</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>transfer</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>magnifyingglass</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>shortcut.ask</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>ask</string>
+		</dict>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

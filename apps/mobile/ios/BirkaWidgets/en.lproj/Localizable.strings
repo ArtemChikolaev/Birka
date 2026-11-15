@@ -1,0 +1,22 @@
+/* The widgets of Birka (ADR 0031). */
+"today.name" = "Today";
+"today.description" = "What you can still spend today, and a new operation in one tap.";
+"record.name" = "Record";
+"record.description" = "A new operation in one tap, with no amounts.";
+"control.title" = "Record";
+"control.description" = "Opens a new operation in Birka.";
+"newOperation" = "New operation";
+"expense" = "Expense";
+"income" = "Income";
+"stale.label" = "You can spend today";
+"stale.labelShort" = "Left today";
+"stale.line" = "Open Birka to update";
+"sample.label" = "You can spend today";
+"sample.labelShort" = "Left today";
+"sample.figure" = "₽1,124";
+"sample.of" = "of ₽1,744 a day";
+"sample.ofShort" = "of ₽1,744";
+"sample.spent" = "Spent ₽620";
+"sample.spentShort" = "spent ₽620";
+"intent.expense" = "New expense";
+"intent.income" = "New income";

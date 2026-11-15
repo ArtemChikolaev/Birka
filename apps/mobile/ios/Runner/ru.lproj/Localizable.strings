@@ -1,0 +1,4 @@
+/* Что открывает Birka снаружи (ADR 0031). */
+"intent.expense" = "Новый расход";
+"intent.income" = "Новый доход";
+"shortcut.record" = "Записать трату";

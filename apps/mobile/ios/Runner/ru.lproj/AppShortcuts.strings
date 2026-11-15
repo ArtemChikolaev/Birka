@@ -1,0 +1,2 @@
+/* Siri (ADR 0031). */
+"Record an expense in ${applicationName}" = "Записать трату в ${applicationName}";

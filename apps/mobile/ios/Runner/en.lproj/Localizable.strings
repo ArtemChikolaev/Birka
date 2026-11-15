@@ -1,0 +1,4 @@
+/* What opens Birka from outside its window (ADR 0031). */
+"intent.expense" = "New expense";
+"intent.income" = "New income";
+"shortcut.record" = "Record an expense";
