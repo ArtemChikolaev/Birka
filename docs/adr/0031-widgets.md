@@ -26,8 +26,9 @@
 1. The widgets never read the ledger. The app works out the figures of the
    day with the plan of [ADR 0023](0023-regular-payments.md) and hands them
    over as a snapshot (`WidgetSnapshot` in the core package `home_screen`):
-   JSON of version 1, with the words already in the language of the app and
-   the amounts already written. The platform keeps it where its widgets read
+   JSON of version 1, with the words of the figures and of the widgets
+   themselves already in the language of the app, and the amounts already
+   written. The platform keeps it where its widgets read
    it: an App Group on iOS, the preferences of the app on Android.
 2. A snapshot holds today and tomorrow, as if nothing more is spent today,
    so that the widgets turn to the next day at midnight on their own. A day

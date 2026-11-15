@@ -347,3 +347,7 @@ widget:
   spentTodayShort: Spent
   today: today
   noPayday: Set your payday to see what you can spend
+  expense: Expense
+  income: Income
+  newOperation: New operation
+  open: Open Birka to update
