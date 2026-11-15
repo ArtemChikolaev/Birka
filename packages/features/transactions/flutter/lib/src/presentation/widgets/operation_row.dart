@@ -4,14 +4,16 @@ import 'package:l10n/l10n.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/src/presentation/widgets/operation_badge.dart';
 
-/// An operation in a list, with what can be done to it behind the row.
+/// An operation in a list, with what can be done to it behind the row, or
+/// without anything behind it, such as in a sheet.
 class OperationRow extends StatelessWidget {
-  /// Creates a row of [operation].
+  /// Creates a row of [operation]. Without [onDelete] nothing stands behind
+  /// it.
   const OperationRow({
     required this.operation,
     required this.onOpen,
-    required this.onRepeat,
-    required this.onDelete,
+    this.onRepeat,
+    this.onDelete,
     this.accountId,
     super.key,
   });
@@ -23,10 +25,10 @@ class OperationRow extends StatelessWidget {
   final VoidCallback onOpen;
 
   /// Called by the button that records it once more.
-  final VoidCallback onRepeat;
+  final VoidCallback? onRepeat;
 
   /// Called by the button that deletes it.
-  final VoidCallback onDelete;
+  final VoidCallback? onDelete;
 
   /// The account that the amount is about, on the page of that account.
   final String? accountId;
@@ -40,9 +42,32 @@ class OperationRow extends StatelessWidget {
     // A transfer of a debt speaks of the account of the person, as its label
     // does (ADR 0029).
     final shown = accountId ?? operation.ownAccount?.id;
+    final onRepeat = this.onRepeat;
+    final onDelete = this.onDelete;
+    final row = GlassListRow(
+      title: operationTitle(operation),
+      subtitle: operationSubtitle(operation),
+      leading: OperationBadge(operation),
+      trailing: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _amountWidth),
+        child: AmountText(
+          accountId == null
+              ? operationAmount(operation)
+              : operationAmountOn(operation, accountId),
+          value: (shown == null ? operation.amount : operation.amountOn(shown))
+              .minorUnits,
+          rise: operationRise(operation, accountId: accountId),
+          tone: accountId == null
+              ? operationTone(operation)
+              : operationToneOn(operation, accountId),
+        ),
+      ),
+      onTap: onOpen,
+    );
+    if (onDelete == null) return row;
     return GlassSwipeRow(
       actions: [
-        if (operation.canChange)
+        if (operation.canChange && onRepeat != null)
           GlassSwipeAction(
             glyph: BirkaGlyph.copy,
             label: t.transactions.repeat,
@@ -55,27 +80,7 @@ class OperationRow extends StatelessWidget {
           onPressed: onDelete,
         ),
       ],
-      child: GlassListRow(
-        title: operationTitle(operation),
-        subtitle: operationSubtitle(operation),
-        leading: OperationBadge(operation),
-        trailing: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: _amountWidth),
-          child: AmountText(
-            accountId == null
-                ? operationAmount(operation)
-                : operationAmountOn(operation, accountId),
-            value:
-                (shown == null ? operation.amount : operation.amountOn(shown))
-                    .minorUnits,
-            rise: operationRise(operation, accountId: accountId),
-            tone: accountId == null
-                ? operationTone(operation)
-                : operationToneOn(operation, accountId),
-          ),
-        ),
-        onTap: onOpen,
-      ),
+      child: row,
     );
   }
 }

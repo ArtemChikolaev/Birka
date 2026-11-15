@@ -5693,6 +5693,13 @@ class Translations$transactions$receipt$en {
   /// en: 'Open settings'
   String get openSettings => 'Open settings';
 
+  /// en: 'The camera did not open'
+  String get cameraFailed => 'The camera did not open';
+
+  /// en: 'Enter the operation by hand, with the sum and the time from the receipt.'
+  String get cameraFailedText =>
+      'Enter the operation by hand, with the sum and the time from the receipt.';
+
   /// en: 'The receipt is in rubles, so pick an account in rubles'
   String get needsRubles =>
       'The receipt is in rubles, so pick an account in rubles';
@@ -8423,6 +8430,9 @@ extension on Translations {
           'transactions.receipt.noCameraText' =>
             'Allow the camera for Birka in the settings of the phone, so that it can read the QR code of a receipt.',
           'transactions.receipt.openSettings' => 'Open settings',
+          'transactions.receipt.cameraFailed' => 'The camera did not open',
+          'transactions.receipt.cameraFailedText' =>
+            'Enter the operation by hand, with the sum and the time from the receipt.',
           'transactions.receipt.needsRubles' =>
             'The receipt is in rubles, so pick an account in rubles',
           'transactions.receipt.group' => 'Receipt',

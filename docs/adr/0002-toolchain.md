@@ -28,6 +28,7 @@
 | Storage | drift, drift_dev, drift_flutter, sqlite3 | 2.31.0 with a fix ([ADR 0015](0015-drift-closed-tabs.md)), 2.31.0, 0.2.8, 2.9.4 |
 | Settings of a device | shared_preferences | 2.5.5 |
 | Files | file_picker | 13.3.2 |
+| Receipts by their QR code | mobile_scanner | 7.5.0 |
 | Statements | archive, xml | 4.5.2, 6.6.1 |
 | Help | url_launcher, package_info_plus, device_info_plus | 6.3.2, 10.2.2, 13.3.0 |
 | Reminders | flutter_local_notifications, timezone, flutter_timezone, device_calendar_plus, device_calendar_plus_platform_interface | 22.3.3, 0.11.2, 5.1.1, 0.8.1, 0.7.0 |

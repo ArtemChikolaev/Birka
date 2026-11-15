@@ -161,8 +161,13 @@ final class FakeRepository implements TransactionsRepository {
     amended[id] = draft;
   }
 
+  /// The operations made from receipts, by the fiscal drive, document and
+  /// sign of the receipt.
+  final receiptOperations = <String, Operation>{};
+
   @override
-  Future<Operation?> operationOfReceipt(Receipt receipt) async => null;
+  Future<Operation?> operationOfReceipt(Receipt receipt) async =>
+      receiptOperations['${receipt.drive}/${receipt.document}/${receipt.sign}'];
 
   @override
   Future<Transaction?> lastOfTill(String drive) async => null;
@@ -216,10 +221,12 @@ Operation testOperation(
   String note = '',
   TransactionSource source = TransactionSource.manual,
   Map<String, TagMark> tags = const {},
+  Receipt? receipt,
 }) => Operation(
   transaction: Transaction(
     id: id,
     tags: tags,
+    receipt: receipt,
     kind:
         kind ??
         (amount.isNegative ? TransactionKind.expense : TransactionKind.income),

@@ -54,6 +54,19 @@
 7. A statement of the bank does not record the purchase twice: the import
    already finds an operation of the same amount on the same day or a day
    apart ([ADR 0021](0021-statements.md)).
+8. On the phone the chip «Чек» in the header of a new operation opens the
+   scanner, which fades in over quick add. The scanner is a page of Birka
+   drawn by the kit over the camera of `mobile_scanner`: AVFoundation and
+   Apple Vision on iOS, CameraX with the bundled model of ML Kit on
+   Android, so a code reads offline and without the services of Google. It
+   reads QR codes only. A receipt snaps the frame to the code, and the
+   scanner closes itself a moment later; the sum of the receipt rolls into
+   quick add.
+9. The question about the camera says why Birka asks and that no picture
+   is kept («Камера нужна, чтобы прочитать QR-код чека…»). A refusal shows
+   what to do instead: «Открыть настройки», through the channel
+   `birka/settings` of the app, and quick add by hand. A camera that does
+   not open, such as that of a simulator, offers quick add by hand.
 
 ## Consequences
 
@@ -62,6 +75,11 @@
 - Items and shop names are not there, and the operation page says so.
 - Format 11 of the copy is new: an older Birka refuses a copy from this one,
   as with every format before.
+- The model of ML Kit makes the APK 3–10 MB bigger. The model of Google
+  Play services would cost 0.6 MB, but would not read a code on a phone
+  without them.
+- The site has no scanner: a computer seldom has the receipt and a camera
+  together. It shows the source «Из чека» like the phone.
 
 ## Options considered
 

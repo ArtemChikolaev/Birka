@@ -7,3 +7,6 @@
 "shortcut.income" = "Income";
 "shortcut.transfer" = "Transfer";
 "shortcut.ask" = "Ask";
+
+/* The camera for the QR code of a receipt (ADR 0032). */
+"NSCameraUsageDescription" = "The camera reads the QR code of a receipt. Birka keeps no pictures and sends nothing anywhere.";

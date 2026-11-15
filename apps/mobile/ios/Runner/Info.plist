@@ -39,6 +39,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera reads the QR code of a receipt. Birka keeps no pictures and sends nothing anywhere.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Birka keeps your regular payments in a calendar of its own, «Birka», so that the calendar reminds you of them. Birka does not read your other events.</string>
 	<key>NSCalendarsUsageDescription</key>

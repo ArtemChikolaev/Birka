@@ -14,6 +14,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   l10n:
     path: ../../../core/l10n
+  mobile_scanner: ^7.5.0
   transactions_common:
     path: ../common
 

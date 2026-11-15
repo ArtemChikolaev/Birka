@@ -4807,6 +4807,11 @@ class _Translations$transactions$receipt$ru
   @override
   String get openSettings => 'Открыть настройки';
   @override
+  String get cameraFailed => 'Камера не открылась';
+  @override
+  String get cameraFailedText =>
+      'Запишите операцию вручную — сумму и время можно взять с чека.';
+  @override
   String get needsRubles => 'Чек в рублях — выберите счёт в рублях';
   @override
   String get group => 'Чек';
@@ -7723,6 +7728,9 @@ extension on TranslationsRu {
           'transactions.receipt.noCameraText' =>
             'Разрешите камеру для Birka в настройках телефона — тогда она прочитает QR-код чека.',
           'transactions.receipt.openSettings' => 'Открыть настройки',
+          'transactions.receipt.cameraFailed' => 'Камера не открылась',
+          'transactions.receipt.cameraFailedText' =>
+            'Запишите операцию вручную — сумму и время можно взять с чека.',
           'transactions.receipt.needsRubles' =>
             'Чек в рублях — выберите счёт в рублях',
           'transactions.receipt.group' => 'Чек',

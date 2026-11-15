@@ -129,6 +129,8 @@ receipt:
   noCamera: No access to the camera
   noCameraText: Allow the camera for Birka in the settings of the phone, so that it can read the QR code of a receipt.
   openSettings: Open settings
+  cameraFailed: The camera did not open
+  cameraFailedText: Enter the operation by hand, with the sum and the time from the receipt.
   needsRubles: The receipt is in rubles, so pick an account in rubles
   group: Receipt
   document: Number (FD)

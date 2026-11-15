@@ -54,6 +54,16 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+        // The settings of Birka, where its camera can be allowed (ADR 0032).
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "birka/settings")
+            .setMethodCallHandler { call, result ->
+                if (call.method == "open") {
+                    openSettings()
+                    result.success(null)
+                } else {
+                    result.notImplemented()
+                }
+            }
         widgets = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "birka/widgets").apply {
             setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -171,6 +181,20 @@ class MainActivity : FlutterActivity() {
     private fun share(text: String) {
         val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
         startActivity(Intent.createChooser(send, null))
+    }
+
+    // The page of Birka in the settings of the phone, where its camera can be
+    // allowed (ADR 0032).
+    private fun openSettings() {
+        val intent = Intent(
+            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null),
+        )
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            // A phone without the page of the app keeps the scanner open.
+        }
     }
 
     private companion object {
