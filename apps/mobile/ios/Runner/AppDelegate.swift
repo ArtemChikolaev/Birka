@@ -14,6 +14,9 @@ import UserNotifications
   /// (ADR 0031).
   private var home: HomeChannel?
 
+  /// The settings of Birka, where its camera can be allowed (ADR 0032).
+  private var settings: FlutterMethodChannel?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -28,6 +31,20 @@ import UserNotifications
     }
     if let registrar = registrar(forPlugin: "BirkaHome") {
       home = HomeChannel(messenger: registrar.messenger())
+    }
+    if let registrar = registrar(forPlugin: "BirkaSettings") {
+      settings = FlutterMethodChannel(
+        name: "birka/settings", binaryMessenger: registrar.messenger())
+      settings?.setMethodCallHandler { call, result in
+        guard call.method == "open",
+          let url = URL(string: UIApplication.openSettingsURLString)
+        else {
+          result(FlutterMethodNotImplemented)
+          return
+        }
+        UIApplication.shared.open(url)
+        result(nil)
+      }
     }
     // A button of a widget, the control and Siri open the app and run here.
     if #available(iOS 18.0, *) {

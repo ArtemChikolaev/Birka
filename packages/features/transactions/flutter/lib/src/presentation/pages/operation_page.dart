@@ -74,6 +74,10 @@ class OperationPage extends StatelessWidget {
                     const SizedBox(height: BirkaTokens.spaceLg),
                     _Facts(operation: operation, today: state.today),
                     const SizedBox(height: BirkaTokens.spaceLg),
+                    if (operation.transaction.receipt case final receipt?) ...[
+                      _Receipt(receipt: receipt),
+                      const SizedBox(height: BirkaTokens.spaceLg),
+                    ],
                     tags,
                     schedule,
                     if (state.deleteFailed) ...[
@@ -224,6 +228,46 @@ class _Facts extends StatelessWidget {
   static String _accountLine(Account account) {
     final digits = account.lastDigits;
     return digits == null ? account.name : '${account.name} · •• $digits';
+  }
+}
+
+/// The fiscal receipt that the operation was made from, and what its code
+/// does not hold (ADR 0032).
+class _Receipt extends StatelessWidget {
+  const _Receipt({required this.receipt});
+
+  final Receipt receipt;
+
+  @override
+  Widget build(BuildContext context) {
+    final words = t.transactions.receipt;
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SectionLabel(words.group),
+        const SizedBox(height: BirkaTokens.spaceXs),
+        GlassListGroup(
+          children: [
+            _Fact(label: words.document, value: receipt.document),
+            _Fact(label: words.drive, value: fiscalDriveLabel(receipt.drive)),
+            _Fact(label: words.sign, value: receipt.sign),
+            _Fact(label: words.kind, value: receiptKindLabel(receipt.kind)),
+          ],
+        ),
+        const SizedBox(height: BirkaTokens.spaceXs),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: BirkaTokens.spaceXxs,
+          ),
+          child: Text(
+            words.footnote,
+            style: styles.caption.copyWith(color: colors.textMuted),
+          ),
+        ),
+      ],
+    );
   }
 }
 

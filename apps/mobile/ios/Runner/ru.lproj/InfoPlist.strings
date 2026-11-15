@@ -7,3 +7,6 @@
 "shortcut.income" = "Доход";
 "shortcut.transfer" = "Перевод";
 "shortcut.ask" = "Спросить";
+
+/* Камера для QR-кода чека (ADR 0032). */
+"NSCameraUsageDescription" = "Камера нужна, чтобы прочитать QR-код чека. Снимки не сохраняются и никуда не уходят.";

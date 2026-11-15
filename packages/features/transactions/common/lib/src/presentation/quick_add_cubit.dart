@@ -75,6 +75,7 @@ final class QuickAddState {
     this.receiptAt,
     this.knownTill = false,
     this.taughtTill = false,
+    this.scanning = false,
   });
 
   /// How many categories stand on the sheet before the button for the rest.
@@ -156,6 +157,10 @@ final class QuickAddState {
   /// Whether the save taught Birka the category of a new till, which the
   /// sheet says as it closes.
   final bool taughtTill;
+
+  /// Whether the scanner of receipts is open over the sheet, so that the sum
+  /// of a receipt rolls in from what the sheet shows now.
+  final bool scanning;
 
   /// The метки that the operation is to wear, in the order of [tags].
   List<Tag> get picked => [
@@ -278,6 +283,7 @@ final class QuickAddState {
     DateTime? Function()? receiptAt,
     bool? knownTill,
     bool? taughtTill,
+    bool? scanning,
   }) {
     return QuickAddState(
       status: status ?? this.status,
@@ -304,6 +310,7 @@ final class QuickAddState {
       receiptAt: receiptAt == null ? this.receiptAt : receiptAt(),
       knownTill: knownTill ?? this.knownTill,
       taughtTill: taughtTill ?? this.taughtTill,
+      scanning: scanning ?? this.scanning,
     );
   }
 
@@ -489,10 +496,17 @@ class QuickAddCubit extends Cubit<QuickAddState> {
             receipt: () => read.receipt,
             receiptAt: () => read.at,
             knownTill: known,
+            scanning: false,
           )
           .withTripsOfTheDay(),
     );
   }
+
+  /// Marks that the scanner of receipts opened over the sheet.
+  void scanStarted() => emit(state.copyWith(scanning: true));
+
+  /// Marks that the scanner closed without a receipt.
+  void scanStopped() => emit(state.copyWith(scanning: false));
 
   /// The account of the sheet when it holds [currency], else the first one
   /// that does, else the account of the sheet all the same.

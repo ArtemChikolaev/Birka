@@ -17,6 +17,7 @@ class QuickAddPage extends StatelessWidget {
     required this.onAddAccount,
     required this.onAddCategories,
     this.onPickTags,
+    this.onScanReceipt,
     super.key,
   });
 
@@ -34,6 +35,10 @@ class QuickAddPage extends StatelessWidget {
   /// sheet offers no метки.
   final Future<Set<String>?> Function(BuildContext context, Set<String> picked)?
   onPickTags;
+
+  /// Opens the scanner of receipts and completes with the receipt it read,
+  /// or with none (ADR 0032). Without it the sheet offers no scanner.
+  final Future<ReceiptQr?> Function(BuildContext context)? onScanReceipt;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +71,9 @@ class QuickAddPage extends StatelessWidget {
                 state: state,
                 onClose: onClose,
                 onPickTags: onPickTags,
+                onScan: onScanReceipt == null || state.changesExisting
+                    ? null
+                    : () => _scan(context),
                 onAddAccount: () => _addThenRefresh(context, onAddAccount),
                 onAddCategories: () =>
                     _addThenRefresh(context, onAddCategories),
@@ -75,6 +83,17 @@ class QuickAddPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _scan(BuildContext context) async {
+    final cubit = context.read<QuickAddCubit>()..scanStarted();
+    final read = await onScanReceipt!(context);
+    if (cubit.isClosed) return;
+    if (read == null) {
+      cubit.scanStopped();
+    } else {
+      await cubit.receiptRead(read);
+    }
   }
 
   static Future<void> _addThenRefresh(
@@ -143,12 +162,15 @@ class _Notice extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onClose, this.title});
+  const _Header({required this.onClose, this.title, this.onScan});
 
   final VoidCallback onClose;
 
   /// The heading, by default the one of a new operation.
   final String? title;
+
+  /// Opens the scanner of receipts, when the sheet offers it.
+  final VoidCallback? onScan;
 
   @override
   Widget build(BuildContext context) {
@@ -163,6 +185,18 @@ class _Header extends StatelessWidget {
             ),
           ),
         ),
+        if (onScan case final onScan?)
+          Semantics(
+            label: t.transactions.receipt.scanLabel,
+            excludeSemantics: true,
+            button: true,
+            child: BirkaChip(
+              label: t.transactions.receipt.scan,
+              glyph: BirkaGlyph.qr,
+              selected: false,
+              onTap: onScan,
+            ),
+          ),
         GlassIconButton(
           glyph: BirkaGlyph.close,
           label: t.app.close,
@@ -181,6 +215,7 @@ class _Sheet extends StatelessWidget {
     required this.onAddAccount,
     required this.onAddCategories,
     required this.onPickTags,
+    this.onScan,
   });
 
   final QuickAddState state;
@@ -188,6 +223,7 @@ class _Sheet extends StatelessWidget {
   final VoidCallback onAddAccount;
   final VoidCallback onAddCategories;
   final Future<Set<String>?> Function(BuildContext, Set<String>)? onPickTags;
+  final VoidCallback? onScan;
 
   static const List<TransactionKind> _kinds = [
     TransactionKind.expense,
@@ -221,6 +257,7 @@ class _Sheet extends StatelessWidget {
               children: [
                 _Header(
                   onClose: onClose,
+                  onScan: onScan,
                   title: state.changesExisting
                       ? t.transactions.editOperation
                       : null,
@@ -284,7 +321,7 @@ class _Sheet extends StatelessWidget {
                   label: _saveLabel,
                   onPressed: state.canSave ? cubit.save : null,
                   done: state.status == QuickAddStatus.saved,
-                  onDone: onClose,
+                  onDone: () => _done(context),
                 ),
               ],
             ),
@@ -292,6 +329,15 @@ class _Sheet extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _done(BuildContext context) {
+    // The first receipt of a till says where the next ones go (ADR 0032).
+    final category = state.category;
+    if (state.taughtTill && category != null) {
+      showGlassToast(context, tillTaughtToast(category.name));
+    }
+    onClose();
   }
 
   String get _saveLabel {
@@ -313,6 +359,12 @@ class _Amount extends StatelessWidget {
   /// The height of the line with the sum, which stays when it is empty, so
   /// that the sheet does not jump.
   static const double _sumHeight = 20;
+
+  /// When the receipt of the operation was paid, after a scan (ADR 0032).
+  String get _receiptLine {
+    final at = state.receiptAt;
+    return at == null ? '' : receiptLine(at, knownTill: state.knownTill);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -358,13 +410,22 @@ class _Amount extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: styles.body.copyWith(color: colors.textMuted),
                 )
-              : null,
+              : FadingText(
+                  _receiptLine,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: styles.body.copyWith(color: colors.textMuted),
+                ),
         ),
         FittedBox(
           fit: BoxFit.scaleDown,
           child: AmountText(
             amountLabel(state.kind, state.sent, account.currency),
             alwaysShown: true,
+            // The sum of a receipt rolls in; typed digits only change.
+            value: state.scanning || state.receipt != null
+                ? state.amount?.minorUnits ?? 0
+                : null,
             style: styles.display.copyWith(color: colors.text),
           ),
         ),

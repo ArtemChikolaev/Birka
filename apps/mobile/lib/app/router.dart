@@ -7,6 +7,7 @@ import 'package:ask_flutter/ask_flutter.dart';
 import 'package:backup_common/backup_common.dart'
     show BackupCubit, SettingsStore, demoStateIn;
 import 'package:backup_flutter/backup_flutter.dart';
+import 'package:birka_mobile/app/app_settings.dart';
 import 'package:birka_mobile/app/app_shell.dart';
 import 'package:birka_mobile/app/more_page.dart';
 import 'package:categories_common/categories_common.dart';
@@ -89,6 +90,9 @@ abstract final class Paths {
 
   /// The sheet that adds an operation, over any tab.
   static const quickAdd = '/quick-add';
+
+  /// The scanner of the QR codes of receipts, over quick add (ADR 0032).
+  static const receiptScanner = '/receipt-scanner';
 
   /// The sheet of a new operation of [kind], as a widget of the home screen
   /// opens it (ADR 0031).
@@ -759,6 +763,26 @@ GoRouter buildRouter(
                 onAddCategories: () => context.push<void>(Paths.categories),
                 onPickTags: (context, picked) =>
                     _pickTags(context, getIt, picked),
+                onScanReceipt: (context) =>
+                    context.push<ReceiptQr>(Paths.receiptScanner),
+              ),
+            ),
+          ),
+        ),
+      ),
+      // The camera fades in over quick add and gives back the receipt it
+      // read; a receipt already recorded leads to its operation instead.
+      GoRoute(
+        path: Paths.receiptScanner,
+        parentNavigatorKey: rootKey,
+        pageBuilder: (context, state) => BirkaFadePage(
+          child: BlocProvider(
+            create: (_) => getIt<ReceiptScanCubit>(),
+            child: Builder(
+              builder: (context) => ReceiptScannerPage(
+                onClose: (read) => context.pop(read),
+                onOpenOperation: (id) => context.go(Paths.operation(id)),
+                onOpenSettings: () => unawaited(openAppSettings()),
               ),
             ),
           ),

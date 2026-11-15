@@ -149,7 +149,19 @@ enum BirkaGlyph {
   widgets,
 
   /// Bars of a voice, for Siri (ADR 0031).
-  wave
+  wave,
+
+  /// A frame around the squares of a code, for scanning a receipt (ADR 0032).
+  qr,
+
+  /// A strip of paper with a torn end, for a fiscal receipt (ADR 0032).
+  receipt,
+
+  /// A torch, for the light of the camera (ADR 0032).
+  torch,
+
+  /// A camera, for its access (ADR 0032).
+  camera
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

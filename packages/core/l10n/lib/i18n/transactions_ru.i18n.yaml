@@ -132,6 +132,8 @@ receipt:
   noCamera: Нет доступа к камере
   noCameraText: Разрешите камеру для Birka в настройках телефона — тогда она прочитает QR-код чека.
   openSettings: Открыть настройки
+  cameraFailed: Камера не открылась
+  cameraFailedText: Запишите операцию вручную — сумму и время можно взять с чека.
   group: Чек
   document: Номер (ФД)
   drive: ФН
