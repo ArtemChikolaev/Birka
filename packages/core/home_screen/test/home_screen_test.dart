@@ -30,7 +30,7 @@ WidgetDay day(String figure, {String date = '2026-11-18'}) => WidgetDay(
   label: 'Можно тратить сегодня',
   labelShort: 'Можно сегодня',
   figure: figure,
-  value: 1124,
+  minor: 112400,
   of: 'из 1 744 ₽ на день',
   ofShort: 'из 1 744 ₽',
   spent: 'Потратили 620 ₽',
@@ -60,7 +60,7 @@ void main() {
         'label': 'Можно тратить сегодня',
         'labelShort': 'Можно сегодня',
         'figure': '1 124 ₽',
-        'value': 1124,
+        'minor': 112400,
         'of': 'из 1 744 ₽ на день',
         'ofShort': 'из 1 744 ₽',
         'spent': 'Потратили 620 ₽',
@@ -154,7 +154,7 @@ void main() {
     expect(sent.sums, isFalse);
     final hidden = sent.days.single;
     expect(hidden.figure, '••• ₽');
-    expect(hidden.value, isNull);
+    expect(hidden.minor, isNull);
     expect(hidden.of, 'из ••• ₽ на день');
     expect(hidden.ofShort, 'из ••• ₽');
     expect(hidden.spent, 'Потратили ••• ₽');

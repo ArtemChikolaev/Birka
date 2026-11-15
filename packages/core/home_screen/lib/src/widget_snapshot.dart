@@ -26,7 +26,7 @@ final class WidgetDay {
     required this.label,
     required this.labelShort,
     required this.figure,
-    required this.value,
+    required this.minor,
     required this.of,
     required this.ofShort,
     required this.spent,
@@ -49,9 +49,9 @@ final class WidgetDay {
   /// The figure, such as «1 124 ₽», or dots when the amounts are hidden.
   final String figure;
 
-  /// The figure as a number, which the widget rolls to, or `null` when the
-  /// amounts are hidden.
-  final double? value;
+  /// The figure in minor units of its currency, which the widget rolls to,
+  /// or `null` when the amounts are hidden.
+  final int? minor;
 
   /// The line under the figure, such as «из 1 744 ₽ на день».
   final String of;
@@ -75,7 +75,7 @@ final class WidgetDay {
     label: label,
     labelShort: labelShort,
     figure: maskAmounts(figure),
-    value: null,
+    minor: null,
     of: maskAmounts(of),
     ofShort: maskAmounts(ofShort),
     spent: maskAmounts(spent),
@@ -90,7 +90,7 @@ final class WidgetDay {
     'label': label,
     'labelShort': labelShort,
     'figure': figure,
-    'value': value,
+    'minor': minor,
     'of': of,
     'ofShort': ofShort,
     'spent': spent,

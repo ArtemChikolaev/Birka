@@ -53,7 +53,7 @@ WidgetSnapshot snapshotOf(String figure) => WidgetSnapshot(
       label: 'Можно тратить сегодня',
       labelShort: 'Можно сегодня',
       figure: figure,
-      value: 1124,
+      minor: 112400,
       of: 'из 1 744 ₽ на день',
       ofShort: 'из 1 744 ₽',
       spent: 'Потратили 620 ₽',

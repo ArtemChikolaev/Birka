@@ -137,7 +137,7 @@ private struct Figure: View {
     Text(verbatim: day?.figure ?? "—")
       .font(Look.figure(size))
       .foregroundStyle(day?.over == true ? Look.coral : Look.ink)
-      .contentTransition(.numericText(value: day?.value ?? 0))
+      .contentTransition(.numericText(value: Double(day?.minor ?? 0)))
       .lineLimit(1)
       .minimumScaleFactor(0.6)
       .privacySensitive()
@@ -303,7 +303,7 @@ private struct TodayLock: View {
         .font(Look.figure(22))
         .lineLimit(1)
         .minimumScaleFactor(0.7)
-        .contentTransition(.numericText(value: day?.value ?? 0))
+        .contentTransition(.numericText(value: Double(day?.minor ?? 0)))
         .privacySensitive()
       if let day, !day.spentOnly {
         ProgressView(value: min(max(day.share, 0), 1))

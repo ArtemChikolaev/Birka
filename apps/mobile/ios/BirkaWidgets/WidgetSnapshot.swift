@@ -9,7 +9,7 @@ struct WidgetDay: Decodable, Hashable {
   let label: String
   let labelShort: String
   let figure: String
-  let value: Double?
+  let minor: Int?
   let of: String
   let ofShort: String
   let spent: String
@@ -36,7 +36,7 @@ struct WidgetDay: Decodable, Hashable {
       label: String(localized: "sample.label"),
       labelShort: String(localized: "sample.labelShort"),
       figure: String(localized: "sample.figure"),
-      value: 1124,
+      minor: 112400,
       of: String(localized: "sample.of"),
       ofShort: String(localized: "sample.ofShort"),
       spent: String(localized: "sample.spent"),
