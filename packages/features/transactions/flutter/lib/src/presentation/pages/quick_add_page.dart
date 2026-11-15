@@ -241,6 +241,12 @@ class _Sheet extends StatelessWidget {
       QuickAddStatus.failedToRead => t.transactions.failedToRead,
       _ => null,
     };
+    // Why the button waits: a receipt in rubles on an account in another
+    // currency (ADR 0032).
+    final caution = state.receiptNeedsRubles
+        ? t.transactions.receipt.needsRubles
+        : null;
+    final colors = BirkaColors.of(context);
     return CustomScrollView(
       slivers: [
         SliverFillRemaining(
@@ -305,16 +311,30 @@ class _Sheet extends StatelessWidget {
                   ),
                 ),
                 _gap,
-                if (failure != null) ...[
-                  Text(
-                    failure,
-                    textAlign: TextAlign.center,
-                    style: BirkaTextStyles.of(
-                      context,
-                    ).caption.copyWith(color: BirkaColors.of(context).negative),
-                  ),
-                  const SizedBox(height: BirkaTokens.spaceXs),
-                ],
+                AnimatedSize(
+                  duration: BirkaMotion.reduced(context)
+                      ? Duration.zero
+                      : BirkaMotion.base,
+                  curve: BirkaMotion.standardCurve,
+                  alignment: Alignment.bottomCenter,
+                  child: switch (failure ?? caution) {
+                    null => const SizedBox(width: double.infinity),
+                    final line => Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: BirkaTokens.spaceXs,
+                      ),
+                      child: FadingText(
+                        line,
+                        textAlign: TextAlign.center,
+                        style: BirkaTextStyles.of(context).caption.copyWith(
+                          color: failure != null
+                              ? colors.negative
+                              : const Color(BirkaTokens.colorPaletteAmber),
+                        ),
+                      ),
+                    ),
+                  },
+                ),
                 // Once saved, the button turns into a check mark and closes
                 // the sheet.
                 BirkaButton(

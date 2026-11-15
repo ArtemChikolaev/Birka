@@ -119,6 +119,24 @@ void main() {
       await tester.pumpAndSettle();
     });
 
+    testWidgets('says why a ruble receipt waits on an account in dollars', (
+      tester,
+    ) async {
+      repository.accountList = [testAccount('Доллары', currency: Currency.usd)];
+      await pump(tester);
+      await tester.tap(find.text('Чек'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Продукты'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Чек в рублях — выберите счёт в рублях'),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('СОХРАНИТЬ · ПРОДУКТЫ'));
+      await tester.pumpAndSettle();
+      expect(repository.recorded, isEmpty);
+    });
+
     testWidgets('a change of an operation offers no scanner', (tester) async {
       repository.operations = [
         testOperation('coffee', amount: rub(-25000), account: card),
@@ -194,6 +212,16 @@ void main() {
       await tester.pumpAndSettle();
       expect(closedWith.single?.receipt, groceries);
       expect(closedWith.single?.sum, rub(62000));
+    });
+
+    testWidgets('closes once when ✕ comes while a read shows', (tester) async {
+      await pump(tester);
+      await tester.tap(find.text('receipt'));
+      await tester.pump();
+      await tester.tap(find.bySemanticsLabel('Закрыть'));
+      await tester.pump(const Duration(milliseconds: 800));
+      await tester.pumpAndSettle();
+      expect(closedWith, [null]);
     });
 
     testWidgets('opens the operation of a receipt the ledger has', (

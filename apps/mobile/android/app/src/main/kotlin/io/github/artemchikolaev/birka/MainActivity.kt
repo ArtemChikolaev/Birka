@@ -129,18 +129,6 @@ class MainActivity : FlutterActivity() {
 
     // A number of a contact: the window gives Birka that one alone, so Birka
     // asks for no access to the address book.
-    private fun openSettings() {
-        val intent = Intent(
-            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", packageName, null),
-        )
-        try {
-            startActivity(intent)
-        } catch (_: ActivityNotFoundException) {
-            // A phone without the page of the app keeps the scanner open.
-        }
-    }
-
     private fun pickContact(result: MethodChannel.Result) {
         if (picking != null) return result.success(null)
         picking = result
@@ -193,6 +181,20 @@ class MainActivity : FlutterActivity() {
     private fun share(text: String) {
         val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
         startActivity(Intent.createChooser(send, null))
+    }
+
+    // The page of Birka in the settings of the phone, where its camera can be
+    // allowed (ADR 0032).
+    private fun openSettings() {
+        val intent = Intent(
+            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null),
+        )
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            // A phone without the page of the app keeps the scanner open.
+        }
     }
 
     private companion object {

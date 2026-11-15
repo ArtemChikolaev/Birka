@@ -81,6 +81,7 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
   bool _reduced = false;
   Timer? _flashTimer;
   Timer? _closeTimer;
+  bool _closed = false;
   AppLifecycleListener? _lifecycle;
 
   @override
@@ -167,9 +168,7 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
         unawaited(HapticFeedback.mediumImpact());
         _found();
         final read = state.read;
-        _closeTimer = Timer(_shown, () {
-          if (mounted) widget.onClose(read);
-        });
+        _closeTimer = Timer(_shown, () => _close(read));
       case ReceiptScanStatus.twice:
         unawaited(HapticFeedback.mediumImpact());
         _found();
@@ -185,6 +184,15 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
           cubit.lookAgain();
         }
     }
+  }
+
+  /// Leaves the scanner once: ✕ or «Ввести вручную» in the moment a read
+  /// shows must not let the read close quick add under it as well.
+  void _close(ReceiptQr? read) {
+    _closeTimer?.cancel();
+    if (_closed || !mounted) return;
+    _closed = true;
+    widget.onClose(read);
   }
 
   void _found() {
@@ -240,20 +248,20 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
                 ),
                 child: Column(
                   children: [
-                    _TopBar(onClose: () => widget.onClose(null)),
+                    _TopBar(onClose: () => _close(null)),
                     if (_camera == _Camera.working) ...[
                       const Spacer(),
                       _Bottom(
                         torch: _torchAvailable ? _torch : null,
                         onTorch: () => unawaited(_controller?.toggleTorch()),
-                        onByHand: () => widget.onClose(null),
+                        onByHand: () => _close(null),
                       ),
                     ] else
                       Expanded(
                         child: _NoCamera(
                           refused: _camera == _Camera.refused,
                           onOpenSettings: widget.onOpenSettings,
-                          onByHand: () => widget.onClose(null),
+                          onByHand: () => _close(null),
                         ),
                       ),
                   ],
