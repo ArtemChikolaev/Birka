@@ -8,9 +8,9 @@
 "newOperation" = "Новая операция";
 "expense" = "Расход";
 "income" = "Доход";
-"stale.label" = "Можно тратить сегодня";
-"stale.labelShort" = "Можно сегодня";
-"stale.line" = "Откройте Birka, чтобы обновить";
+"label" = "Можно тратить сегодня";
+"labelShort" = "Можно сегодня";
+"open" = "Откройте Birka, чтобы обновить";
 "sample.label" = "Можно тратить сегодня";
 "sample.labelShort" = "Можно сегодня";
 "sample.figure" = "1 124 ₽";

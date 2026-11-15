@@ -59,6 +59,12 @@
 8. On iOS one widget extension holds the widgets and the control, and needs
    iOS 18, so that buttons inside the widgets and the control need no
    checks of the version; the app keeps iOS 14 and has no widgets below 18.
+   A tap on a widget opens `birka://<action>`. The buttons, the control and
+   Siri run one of two intents of the app, «Новый расход» and «Новый
+   доход», which open it and run there: an intent that only returned an
+   address to open did not open the app from a widget, and a parameter did
+   not survive the way from the widget to the app. The quick actions of the
+   icon are static items of the app.
    On Android two `AppWidgetProvider`s draw `RemoteViews`, the shortcuts of
    the icon are static, and the page «Виджеты» adds «Сегодня» with
    `requestPinAppWidget`.

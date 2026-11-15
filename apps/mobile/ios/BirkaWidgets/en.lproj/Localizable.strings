@@ -8,9 +8,9 @@
 "newOperation" = "New operation";
 "expense" = "Expense";
 "income" = "Income";
-"stale.label" = "You can spend today";
-"stale.labelShort" = "Left today";
-"stale.line" = "Open Birka to update";
+"label" = "You can spend today";
+"labelShort" = "Left today";
+"open" = "Open Birka to update";
 "sample.label" = "You can spend today";
 "sample.labelShort" = "Left today";
 "sample.figure" = "₽1,124";

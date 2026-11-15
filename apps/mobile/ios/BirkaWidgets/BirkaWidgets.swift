@@ -52,6 +52,7 @@ private struct Ground: View {
 struct TodayEntry: TimelineEntry {
   let date: Date
   let day: WidgetDay?
+  let words: Words
 
   /// Where a tap on the widget leads: the overview, or the payday while no
   /// salary is set.
@@ -63,18 +64,22 @@ struct TodayEntry: TimelineEntry {
   /// Birka.
   static func at(_ date: Date, in snapshot: WidgetSnapshot?) -> TodayEntry {
     let key = WidgetDay.key(of: date)
-    return TodayEntry(date: date, day: snapshot?.days.first { $0.day == key })
+    return TodayEntry(
+      date: date, day: snapshot?.days.first { $0.day == key },
+      words: WidgetSnapshot.words(of: snapshot))
   }
 }
 
 struct TodayProvider: TimelineProvider {
   func placeholder(in context: Context) -> TodayEntry {
-    TodayEntry(date: .now, day: .sample)
+    TodayEntry(date: .now, day: .sample, words: Words(given: [:]))
   }
 
   func getSnapshot(in context: Context, completion: @escaping (TodayEntry) -> Void) {
     let entry = TodayEntry.at(.now, in: WidgetSnapshot.read())
-    completion(context.isPreview && entry.day == nil ? TodayEntry(date: .now, day: .sample) : entry)
+    completion(
+      context.isPreview && entry.day == nil
+        ? TodayEntry(date: .now, day: .sample, words: entry.words) : entry)
   }
 
   // Today now, and the next days at their midnights, so that the widget turns
@@ -203,13 +208,13 @@ private struct PlusCircle: View {
 
 private struct Pill: View {
   let symbol: String
-  let title: LocalizedStringKey
+  let title: String
   let main: Bool
 
   var body: some View {
     HStack(spacing: 6) {
       Image(systemName: symbol).font(.system(size: 15, weight: .bold))
-      Text(title).font(.system(size: 15, weight: .bold)).lineLimit(1).minimumScaleFactor(0.8)
+      Text(verbatim: title).font(.system(size: 15, weight: .bold)).lineLimit(1).minimumScaleFactor(0.8)
     }
     .foregroundStyle(main ? Look.onAccent : Look.ink)
     .frame(maxWidth: .infinity, minHeight: 52)
@@ -224,9 +229,9 @@ private struct TodaySmall: View {
   var body: some View {
     let day = entry.day
     VStack(alignment: .leading, spacing: 2) {
-      Heading(text: day?.labelShort ?? String(localized: "stale.labelShort"), size: 11)
+      Heading(text: day?.labelShort ?? entry.words("labelShort"), size: 11)
       Figure(day: day, size: 28)
-      Line(text: day?.ofShort ?? String(localized: "stale.line"), size: 12, lines: 2)
+      Line(text: day?.ofShort ?? entry.words("open"), size: 12, lines: 2)
       if let spent = day?.spentShort, !spent.isEmpty {
         Line(text: spent, size: 12)
       }
@@ -241,7 +246,7 @@ private struct TodaySmall: View {
           PlusCircle(size: 40)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(Text("newOperation"))
+        .accessibilityLabel(Text(verbatim: entry.words("newOperation")))
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -256,9 +261,9 @@ private struct TodayMedium: View {
     let day = entry.day
     HStack(alignment: .center, spacing: 14) {
       VStack(alignment: .leading, spacing: 3) {
-        Heading(text: day?.label ?? String(localized: "stale.label"), size: 12)
+        Heading(text: day?.label ?? entry.words("label"), size: 12)
         Figure(day: day, size: 32)
-        Line(text: day?.of ?? String(localized: "stale.line"), size: 13, lines: 2)
+        Line(text: day?.of ?? entry.words("open"), size: 13, lines: 2)
         Spacer(minLength: 0)
         if let day, !day.spentOnly {
           ShareBar(day: day, height: 6)
@@ -269,11 +274,11 @@ private struct TodayMedium: View {
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
       VStack(spacing: 10) {
         Button(intent: RecordExpenseIntent()) {
-          Pill(symbol: "minus", title: "expense", main: true)
+          Pill(symbol: "minus", title: entry.words("expense"), main: true)
         }
         .buttonStyle(.plain)
         Button(intent: RecordIncomeIntent()) {
-          Pill(symbol: "plus", title: "income", main: false)
+          Pill(symbol: "plus", title: entry.words("income"), main: false)
         }
         .buttonStyle(.plain)
       }
@@ -290,7 +295,7 @@ private struct TodayLock: View {
   var body: some View {
     let day = entry.day
     VStack(alignment: .leading, spacing: 2) {
-      Text(verbatim: day?.labelShort ?? String(localized: "stale.labelShort"))
+      Text(verbatim: day?.labelShort ?? entry.words("labelShort"))
         .font(.system(size: 14, weight: .semibold))
         .lineLimit(1)
         .widgetAccentable()
@@ -315,24 +320,31 @@ private struct TodayLock: View {
 
 struct RecordEntry: TimelineEntry {
   let date: Date
+  let words: Words
+
+  static var now: RecordEntry {
+    RecordEntry(date: .now, words: WidgetSnapshot.words(of: WidgetSnapshot.read()))
+  }
 }
 
 struct RecordProvider: TimelineProvider {
-  func placeholder(in context: Context) -> RecordEntry { RecordEntry(date: .now) }
+  func placeholder(in context: Context) -> RecordEntry {
+    RecordEntry(date: .now, words: Words(given: [:]))
+  }
 
   func getSnapshot(in context: Context, completion: @escaping (RecordEntry) -> Void) {
-    completion(RecordEntry(date: .now))
+    completion(.now)
   }
 
   func getTimeline(in context: Context, completion: @escaping (Timeline<RecordEntry>) -> Void) {
-    completion(Timeline(entries: [RecordEntry(date: .now)], policy: .never))
+    completion(Timeline(entries: [.now], policy: .never))
   }
 }
 
 struct RecordWidget: Widget {
   var body: some WidgetConfiguration {
-    StaticConfiguration(kind: "BirkaRecord", provider: RecordProvider()) { _ in
-      RecordView()
+    StaticConfiguration(kind: "BirkaRecord", provider: RecordProvider()) { entry in
+      RecordView(words: entry.words)
     }
     .configurationDisplayName("record.name")
     .description("record.description")
@@ -342,6 +354,7 @@ struct RecordWidget: Widget {
 
 struct RecordView: View {
   @Environment(\.widgetFamily) private var family
+  let words: Words
 
   var body: some View {
     if family == .accessoryCircular {
@@ -349,13 +362,13 @@ struct RecordView: View {
         AccessoryWidgetBackground()
         Image(systemName: "plus").font(.system(size: 26, weight: .bold))
       }
-      .accessibilityLabel(Text("newOperation"))
+      .accessibilityLabel(Text(verbatim: words("newOperation")))
       .widgetURL(URL(string: "birka://expense"))
       .containerBackground(for: .widget) { Color.clear }
     } else {
       VStack(spacing: 12) {
         PlusCircle(size: 64)
-        Text("newOperation")
+        Text(verbatim: words("newOperation"))
           .font(.system(size: 14, weight: .semibold))
           .foregroundStyle(Look.ink)
           .lineLimit(1)

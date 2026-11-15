@@ -46,11 +46,27 @@ struct WidgetDay: Decodable, Hashable {
   }
 }
 
-/// What the app handed over last: today and tomorrow.
+/// The words of the widgets themselves: the ones the app handed over, in
+/// its language, or those of the phone.
+struct Words {
+  let given: [String: String]
+
+  func callAsFunction(_ key: String) -> String {
+    given[key] ?? String(localized: String.LocalizationValue(key))
+  }
+}
+
+/// What the app handed over last: today and tomorrow, and the words.
 struct WidgetSnapshot: Decodable {
   let v: Int
   let sums: Bool
   let days: [WidgetDay]
+  let words: [String: String]?
+
+  /// The words of [snapshot], or those of the phone without one.
+  static func words(of snapshot: WidgetSnapshot?) -> Words {
+    Words(given: snapshot?.words ?? [:])
+  }
 
   /// The snapshot in the App Group, if the app has written one this widget
   /// can read.
