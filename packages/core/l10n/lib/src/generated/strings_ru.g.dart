@@ -3009,6 +3009,9 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String get previewNext => 'Следующие разы';
   @override
   String get cancel => 'Отмена';
+  @override
+  late final _Translations$schedules$widget$ru widget =
+      _Translations$schedules$widget$ru._(_root);
 }
 
 // Path: settings
@@ -4338,6 +4341,48 @@ class _Translations$onboarding$categories$ru
       );
   @override
   String get finish => 'Готово';
+}
+
+// Path: schedules.widget
+class _Translations$schedules$widget$ru
+    extends Translations$schedules$widget$en {
+  _Translations$schedules$widget$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get canSpendShort => 'Можно сегодня';
+  @override
+  String get overShort => 'Больше дневного';
+  @override
+  String of({required Object amount}) => 'из ${amount}';
+  @override
+  String spent({required Object amount}) => 'Потратили ${amount}';
+  @override
+  String spentShort({required Object amount}) => 'потратили ${amount}';
+  @override
+  String tomorrow({required Object amount}) => 'Завтра можно ${amount} в день';
+  @override
+  String tomorrowShort({required Object amount}) => 'завтра ${amount}';
+  @override
+  String get spentToday => 'Потратили сегодня';
+  @override
+  String get spentTodayShort => 'Потратили';
+  @override
+  String get today => 'сегодня';
+  @override
+  String get noPayday => 'Укажите день зарплаты — покажем, сколько можно';
+  @override
+  String get expense => 'Расход';
+  @override
+  String get income => 'Доход';
+  @override
+  String get newOperation => 'Новая операция';
+  @override
+  String get open => 'Откройте Birka, чтобы обновить';
 }
 
 // Path: tags.steps
@@ -7124,6 +7169,26 @@ extension on TranslationsRu {
           'schedules.previewTitle' => 'В списке платежей',
           'schedules.previewNext' => 'Следующие разы',
           'schedules.cancel' => 'Отмена',
+          'schedules.widget.canSpendShort' => 'Можно сегодня',
+          'schedules.widget.overShort' => 'Больше дневного',
+          'schedules.widget.of' => ({required Object amount}) => 'из ${amount}',
+          'schedules.widget.spent' =>
+            ({required Object amount}) => 'Потратили ${amount}',
+          'schedules.widget.spentShort' =>
+            ({required Object amount}) => 'потратили ${amount}',
+          'schedules.widget.tomorrow' =>
+            ({required Object amount}) => 'Завтра можно ${amount} в день',
+          'schedules.widget.tomorrowShort' =>
+            ({required Object amount}) => 'завтра ${amount}',
+          'schedules.widget.spentToday' => 'Потратили сегодня',
+          'schedules.widget.spentTodayShort' => 'Потратили',
+          'schedules.widget.today' => 'сегодня',
+          'schedules.widget.noPayday' =>
+            'Укажите день зарплаты — покажем, сколько можно',
+          'schedules.widget.expense' => 'Расход',
+          'schedules.widget.income' => 'Доход',
+          'schedules.widget.newOperation' => 'Новая операция',
+          'schedules.widget.open' => 'Откройте Birka, чтобы обновить',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -7420,6 +7485,9 @@ extension on TranslationsRu {
           'transactions.monthNames.3' => 'Апрель',
           'transactions.monthNames.4' => 'Май',
           'transactions.monthNames.5' => 'Июнь',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.monthNames.6' => 'Июль',
           'transactions.monthNames.7' => 'Август',
           'transactions.monthNames.8' => 'Сентябрь',

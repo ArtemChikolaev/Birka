@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:home_screen/home_screen.dart';
 import 'package:l10n/l10n.dart';
 import 'package:onboarding_common/onboarding_common.dart' show OnboardingCubit;
 import 'package:schedules_common/schedules_common.dart'
     show DebtReminderTap, PaymentReminderTap, ReminderChannel, ReminderTap;
 import 'package:settings_common/settings_common.dart';
+import 'package:transactions_common/transactions_common.dart'
+    show TransactionKind;
 
 /// The root widget of the Flutter app.
 ///
@@ -55,6 +58,7 @@ class _BirkaAppState extends State<BirkaApp> {
   );
   late final StreamSubscription<AppLocale> _languages;
   late final StreamSubscription<ReminderTap> _reminders;
+  late final StreamSubscription<HomeAction> _homeActions;
 
   @override
   void initState() {
@@ -75,6 +79,34 @@ class _BirkaAppState extends State<BirkaApp> {
         }),
       );
     });
+    _homeActions = widget.getIt<HomeScreen>().actions.listen(_onHomeAction);
+  }
+
+  /// A widget, an action of the icon, a control or Siri opened Birka
+  /// (ADR 0031). An operation opens over whatever stands open, once; the
+  /// steps of a new device stay.
+  void _onHomeAction(HomeAction action) {
+    if (_onboarding != null) return;
+    TransactionKind? kind;
+    switch (action) {
+      case HomeAction.overview:
+        _router.go(Paths.overview);
+        return;
+      case HomeAction.payday:
+        unawaited(_router.push(Paths.payday));
+        return;
+      case HomeAction.ask:
+        unawaited(_router.push(Paths.ask));
+        return;
+      case HomeAction.expense:
+        kind = TransactionKind.expense;
+      case HomeAction.income:
+        kind = TransactionKind.income;
+      case HomeAction.transfer:
+        kind = TransactionKind.transfer;
+    }
+    if (_router.state.uri.path == Paths.quickAdd) return;
+    unawaited(_router.push(Paths.newOperation(kind)));
   }
 
   /// `t` is not reactive (ADR 0010), so a new language takes new widgets. A
@@ -96,6 +128,7 @@ class _BirkaAppState extends State<BirkaApp> {
   void dispose() {
     unawaited(_languages.cancel());
     unawaited(_reminders.cancel());
+    unawaited(_homeActions.cancel());
     unawaited(_onboarding?.close());
     _router.dispose();
     _hiddenAmounts.dispose();

@@ -386,3 +386,19 @@ failed: Не удалось прочитать платежи.
 previewTitle: В списке платежей
 previewNext: Следующие разы
 cancel: Отмена
+widget:
+  canSpendShort: Можно сегодня
+  overShort: Больше дневного
+  of: из $amount
+  spent: Потратили $amount
+  spentShort: потратили $amount
+  tomorrow: Завтра можно $amount в день
+  tomorrowShort: завтра $amount
+  spentToday: Потратили сегодня
+  spentTodayShort: Потратили
+  today: сегодня
+  noPayday: Укажите день зарплаты — покажем, сколько можно
+  expense: Расход
+  income: Доход
+  newOperation: Новая операция
+  open: Откройте Birka, чтобы обновить

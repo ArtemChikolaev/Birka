@@ -42,6 +42,19 @@ void main() {
   });
 
   group('opening', () {
+    test('a widget of the home screen can start it as an income', () async {
+      final cubit = QuickAddCubit(
+        repository,
+        now: () => now,
+        kind: TransactionKind.income,
+      );
+      addTearDown(cubit.close);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(cubit.state.kind, TransactionKind.income);
+      expect(cubit.state.categories.map((it) => it.id), ['salary']);
+    });
+
     test('starts on an expense today, on the first account', () async {
       final form = await open();
 

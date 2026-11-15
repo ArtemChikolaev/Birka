@@ -224,6 +224,16 @@ final class SchedulesView {
   };
 }
 
+/// The currency of the totals: the [picked] one, or that of the first of
+/// the [accounts] that is not archived. `null` without such an account.
+Currency? totalsCurrency(Currency? picked, List<AccountBalance> accounts) =>
+    picked ??
+    accounts
+        .where((row) => !row.account.archived)
+        .firstOrNull
+        ?.account
+        .currency;
+
 /// What the regular payments show.
 @immutable
 sealed class SchedulesState {
@@ -436,7 +446,6 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           final history?,
           final dismissed?,
         )) {
-      final first = accounts.where((row) => !row.account.archived).firstOrNull;
       emit(
         SchedulesLoaded(
           SchedulesView(
@@ -447,7 +456,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
               for (final category in [...expenses, ...incomes])
                 category.id: category,
             },
-            base: picked ?? first?.account.currency,
+            base: totalsCurrency(picked, accounts),
             settings: settings,
             todays: todays,
             imports: imports,

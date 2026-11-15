@@ -335,3 +335,19 @@ failed: Could not read the payments.
 previewTitle: In the list of payments
 previewNext: The next times
 cancel: Cancel
+widget:
+  canSpendShort: Left today
+  overShort: Over today
+  of: of $amount
+  spent: Spent $amount
+  spentShort: spent $amount
+  tomorrow: Tomorrow $amount a day
+  tomorrowShort: tomorrow $amount
+  spentToday: Spent today
+  spentTodayShort: Spent
+  today: today
+  noPayday: Set your payday to see what you can spend
+  expense: Expense
+  income: Income
+  newOperation: New operation
+  open: Open Birka to update

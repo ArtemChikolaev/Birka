@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rates/rates.dart';
 import 'package:schedules_common/schedules_common.dart'
-    show ReminderNotices, ReminderScheduler;
+    show ReminderNotices, ReminderScheduler, TodayWidgetFeed;
 import 'package:settings_common/settings_common.dart';
 
 /// The app on the ledger of the device or on its demo. A turn of the demo
@@ -49,16 +49,26 @@ class _BirkaRootState extends State<BirkaRoot> {
 
   StreamSubscription<Currency?>? _baseCurrencies;
 
+  /// Starts the money of the day of the widgets anew after a night in the
+  /// background.
+  late final AppLifecycleListener _lifecycle;
+
   @override
   void initState() {
     super.initState();
     _followRates();
     _followReminders();
+    _followWidgets();
+    _lifecycle = AppLifecycleListener(
+      onResume: () =>
+          unawaited(widget.getIt<TodayWidgetFeed>().calendarChecked()),
+    );
   }
 
   @override
   void dispose() {
     unawaited(_baseCurrencies?.cancel());
+    _lifecycle.dispose();
     super.dispose();
   }
 
@@ -85,6 +95,13 @@ class _BirkaRootState extends State<BirkaRoot> {
     widget.getIt<ReminderScheduler>().start();
   }
 
+  /// Keeps the widgets of the home screen in step with the money of the day
+  /// (ADR 0031). The demo works out its figures for the page of the widgets
+  /// alone.
+  void _followWidgets() {
+    widget.getIt<TodayWidgetFeed>().start();
+  }
+
   Future<void> _turnDemo({required bool on}) async {
     // The app of the old ledger goes before the ledger does.
     setState(() => _turning = true);
@@ -95,6 +112,7 @@ class _BirkaRootState extends State<BirkaRoot> {
     if (!mounted) return;
     _followRates();
     _followReminders();
+    _followWidgets();
     setState(() {
       _onboarding = onboarding;
       _opening++;

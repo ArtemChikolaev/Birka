@@ -304,14 +304,17 @@ final class QuickAddState {
 /// Fills in and saves a transaction: a new one, or the one [QuickAddSource]
 /// names.
 class QuickAddCubit extends Cubit<QuickAddState> {
-  /// Creates quick add and loads its choices. [now] tells the time in tests.
+  /// Creates quick add and loads its choices. A new operation starts as
+  /// [kind], such as an income from a widget of the home screen (ADR 0031).
+  /// [now] tells the time in tests.
   QuickAddCubit(
     this._repository, {
     DateTime Function()? now,
     QuickAddSource? source,
+    TransactionKind kind = TransactionKind.expense,
   }) : _now = now ?? DateTime.now,
        _source = source,
-       super(_initial((now ?? DateTime.now)())) {
+       super(_initial((now ?? DateTime.now)(), kind)) {
     unawaited(refresh());
   }
 
@@ -325,11 +328,11 @@ class QuickAddCubit extends Cubit<QuickAddState> {
   /// The operation that a save changes.
   Operation? _changing;
 
-  static QuickAddState _initial(DateTime now) {
+  static QuickAddState _initial(DateTime now, TransactionKind kind) {
     final today = CivilDate.of(now);
     return QuickAddState(
       status: QuickAddStatus.loading,
-      kind: TransactionKind.expense,
+      kind: kind,
       today: today,
       yesterday: CivilDate.of(DateTime(now.year, now.month, now.day - 1)),
       day: today,

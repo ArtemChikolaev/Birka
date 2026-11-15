@@ -3,7 +3,7 @@
 
 # Pure-Dart packages that must behave the same on the VM, dart2js and dart2wasm.
 CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
-	packages/core/rates packages/core/device_settings \
+	packages/core/rates packages/core/device_settings packages/core/home_screen \
 	packages/features/accounts/common packages/features/ask/common \
 	packages/features/backup/common \
 	packages/features/categories/common packages/features/debts/common \

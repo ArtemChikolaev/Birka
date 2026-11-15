@@ -15,6 +15,7 @@ void main() {
     expect(settings.hideAmountsOnLaunch, isFalse);
     expect(settings.onboarded, isFalse);
     expect(settings.monthStart, 1);
+    expect(settings.widgetSums, isTrue);
   });
 
   test('comes back the way it was kept', () async {
@@ -26,10 +27,12 @@ void main() {
       baseCurrency: Currency.eur,
       onboarded: true,
       monthStart: 25,
+      widgetSums: false,
     ).writeTo(store);
     final settings = Settings.readFrom(store);
 
     expect(settings.monthStart, 25);
+    expect(settings.widgetSums, isFalse);
     expect(settings.language, AppLocale.ru);
     expect(settings.hideAmountsOnLaunch, isTrue);
     expect(settings.baseCurrency, Currency.eur);

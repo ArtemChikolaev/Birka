@@ -10,6 +10,7 @@ workspace:
   - apps/web
   - packages/core/database
   - packages/core/device_settings
+  - packages/core/home_screen
   - packages/core/l10n
   - packages/core/ledger
   - packages/core/money
