@@ -4462,6 +4462,14 @@ class _Translations$schedules$widget$ru
   String get today => 'сегодня';
   @override
   String get noPayday => 'Укажите день зарплаты — покажем, сколько можно';
+  @override
+  String get expense => 'Расход';
+  @override
+  String get income => 'Доход';
+  @override
+  String get newOperation => 'Новая операция';
+  @override
+  String get open => 'Откройте Birka, чтобы обновить';
 }
 
 // Path: tags.steps
@@ -7264,6 +7272,10 @@ extension on TranslationsRu {
           'schedules.widget.today' => 'сегодня',
           'schedules.widget.noPayday' =>
             'Укажите день зарплаты — покажем, сколько можно',
+          'schedules.widget.expense' => 'Расход',
+          'schedules.widget.income' => 'Доход',
+          'schedules.widget.newOperation' => 'Новая операция',
+          'schedules.widget.open' => 'Откройте Birka, чтобы обновить',
           'settings.general' => 'Основное',
           'settings.language' => 'Язык',
           'settings.deviceLanguage' => 'Как на устройстве',
@@ -7560,13 +7572,13 @@ extension on TranslationsRu {
           'transactions.monthNames.3' => 'Апрель',
           'transactions.monthNames.4' => 'Май',
           'transactions.monthNames.5' => 'Июнь',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.monthNames.6' => 'Июль',
           'transactions.monthNames.7' => 'Август',
           'transactions.monthNames.8' => 'Сентябрь',
           'transactions.monthNames.9' => 'Октябрь',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.monthNames.10' => 'Ноябрь',
           'transactions.monthNames.11' => 'Декабрь',
           'transactions.allOperations' =>

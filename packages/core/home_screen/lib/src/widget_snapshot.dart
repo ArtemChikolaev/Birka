@@ -105,8 +105,13 @@ final class WidgetDay {
 /// asks the person to open Birka.
 @immutable
 final class WidgetSnapshot {
-  /// Creates the figures of [days], whose amounts are shown with [sums].
-  const WidgetSnapshot({required this.days, required this.sums});
+  /// Creates the figures of [days], whose amounts are shown with [sums],
+  /// and the [words] of the widgets.
+  const WidgetSnapshot({
+    required this.days,
+    required this.sums,
+    this.words = const {},
+  });
 
   /// The version of [encode] that the widgets read.
   static const version = 1;
@@ -117,11 +122,19 @@ final class WidgetSnapshot {
   /// Whether the amounts are shown, or hidden behind dots.
   final bool sums;
 
+  /// The words of the widgets themselves in the language of the app, so that
+  /// a widget speaks one language with its figures: `expense` and `income`
+  /// on the buttons, `newOperation` of «Запись», and `label`, `labelShort`
+  /// and `open` for a day that is not there. A word that is missing comes in
+  /// the language of the phone.
+  final Map<String, String> words;
+
   /// The figures with the digits of their amounts hidden, as the widgets get
   /// them while «Суммы в виджетах» is off.
   WidgetSnapshot masked() => WidgetSnapshot(
     days: [for (final day in days) day.masked()],
     sums: false,
+    words: words,
   );
 
   /// The figures as the widgets read them.
@@ -129,6 +142,7 @@ final class WidgetSnapshot {
     'v': version,
     'sums': sums,
     'days': [for (final day in days) day.toJson()],
+    'words': words,
   };
 
   /// [toJson] as text, which the host hands to the widgets.
