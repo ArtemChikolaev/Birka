@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The colors of the widgets, after packages/design/tokens (ADR 0031). -->
+<resources>
+    <color name="widget_ground">#FF050706</color>
+    <color name="widget_glow">#57248A56</color>
+    <color name="widget_ink">#FFF4F4F2</color>
+    <color name="widget_muted">#FFA3A3A3</color>
+    <color name="widget_accent">#FF3DDC97</color>
+    <color name="widget_on_accent">#FF02130B</color>
+    <color name="widget_coral">#FFFF8E7F</color>
+    <color name="widget_track">#1AFFFFFF</color>
+</resources>

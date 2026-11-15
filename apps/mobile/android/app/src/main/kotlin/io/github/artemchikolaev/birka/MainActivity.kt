@@ -1,9 +1,14 @@
 package io.github.artemchikolaev.birka
 
 import android.app.Activity
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.provider.ContactsContract.CommonDataKinds.Phone
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -11,6 +16,23 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     private var picking: MethodChannel.Result? = null
+
+    // The widgets of the home screen and what opens Birka from outside its
+    // window (ADR 0031): the action waits here until Dart asks for it, and
+    // the later ones go to Dart as they come.
+    private var widgets: MethodChannel? = null
+    private var pendingAction: String? = null
+    private var listening = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        take(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        take(intent)
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -32,6 +54,67 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+        widgets = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "birka/widgets").apply {
+            setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "show" -> {
+                        (call.arguments as? String)?.let { keep(it) }
+                        result.success(null)
+                    }
+                    "canPin" -> result.success(canPin())
+                    "pin" -> result.success(pin())
+                    "takeAction" -> {
+                        listening = true
+                        result.success(pendingAction)
+                        pendingAction = null
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+        }
+    }
+
+    // `birka://<action>` from a widget or a shortcut of the icon, and
+    // `birka://pinned` once the launcher added «Сегодня».
+    private fun take(intent: Intent?) {
+        val uri = intent?.data ?: return
+        if (uri.scheme != "birka") return
+        val action = uri.host ?: return
+        when {
+            action == PINNED -> widgets?.invokeMethod("pinned", null)
+            listening -> widgets?.invokeMethod("open", action)
+            else -> pendingAction = action
+        }
+    }
+
+    // The figures of the day go where the widgets read them, and they draw
+    // them at once.
+    private fun keep(snapshot: String) {
+        getSharedPreferences(WidgetSnapshot.PREFERENCES, MODE_PRIVATE).edit()
+            .putString(WidgetSnapshot.KEY, snapshot).apply()
+        TodayWidgetProvider.drawAll(this)
+        RecordWidgetProvider.drawAll(this)
+    }
+
+    private fun canPin(): Boolean =
+        Build.VERSION.SDK_INT >= 26 && AppWidgetManager.getInstance(this).isRequestPinAppWidgetSupported
+
+    // Asks the launcher to add «Сегодня»; it comes back as birka://pinned
+    // once it did.
+    private fun pin(): Boolean {
+        if (!canPin()) return false
+        val callback = PendingIntent.getActivity(
+            this,
+            PINNED.hashCode(),
+            Intent(Intent.ACTION_VIEW, Uri.parse("birka://$PINNED"), this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        return AppWidgetManager.getInstance(this).requestPinAppWidget(
+            ComponentName(this, TodayWidgetProvider::class.java),
+            null,
+            callback,
+        )
     }
 
     // A number of a contact: the window gives Birka that one alone, so Birka
@@ -92,5 +175,8 @@ class MainActivity : FlutterActivity() {
 
     private companion object {
         const val PICK_CONTACT = 4130
+
+        // What the launcher says once it added «Сегодня» (ADR 0031).
+        const val PINNED = "pinned"
     }
 }

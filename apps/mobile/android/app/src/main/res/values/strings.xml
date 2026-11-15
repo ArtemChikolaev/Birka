@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The widgets of the home screen (ADR 0031). -->
+    <string name="widget_today_name">Today</string>
+    <string name="widget_today_description">What you can still spend today, and a new operation in one tap.</string>
+    <string name="widget_record_name">Record</string>
+    <string name="widget_record_description">A new operation in one tap, with no amounts.</string>
+    <string name="widget_label">You can spend today</string>
+    <string name="widget_open">Open Birka to update</string>
+    <string name="widget_expense">Expense</string>
+    <string name="widget_income">Income</string>
+    <string name="widget_new_operation">New operation</string>
+    <string name="widget_sample_figure">₽1,124</string>
+    <string name="widget_sample_of">of ₽1,744 a day</string>
+    <string name="widget_sample_spent">Spent ₽620</string>
+    <!-- The shortcuts of the icon. -->
+    <string name="shortcut_expense">Expense</string>
+    <string name="shortcut_income">Income</string>
+    <string name="shortcut_transfer">Transfer</string>
+    <string name="shortcut_ask">Ask</string>
+</resources>

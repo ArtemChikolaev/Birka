@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- «Запись», 2 × 1 (ADR 0031): one button, no amounts. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/record_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_ground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp">
+
+    <ImageView
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:background="@drawable/widget_circle"
+        android:contentDescription="@null"
+        android:padding="11dp"
+        android:src="@drawable/ic_widget_plus_dark" />
+
+    <TextView
+        android:id="@+id/record_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:text="@string/widget_new_operation"
+        android:textColor="@color/widget_ink"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+</LinearLayout>

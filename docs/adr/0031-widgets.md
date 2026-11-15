@@ -67,7 +67,11 @@
    icon are static items of the app.
    On Android two `AppWidgetProvider`s draw `RemoteViews`, the shortcuts of
    the icon are static, and the page «Виджеты» adds «Сегодня» with
-   `requestPinAppWidget`.
+   `requestPinAppWidget`, whose answer comes back as `birka://pinned`. The
+   widgets look at the date every half an hour, so «Сегодня» turns to the
+   next day within half an hour after midnight. On both platforms
+   `birka://<action>` reaches the activity or the app delegate, and the deep
+   links of Flutter are off, so that the router never takes it as a path.
 
 ## Options considered
 
