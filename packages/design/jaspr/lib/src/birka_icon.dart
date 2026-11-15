@@ -233,6 +233,22 @@ enum BirkaGlyph {
   contact(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.6 18.3c1.2-2 3.1-3.1 5.4-3.1s4.2 1.1 5.4 3.1"/></svg>',
   ),
+
+  /// A dash, for an expense among the actions of the home screen (ADR 0031).
+  minus(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>',
+  ),
+
+  /// A wide tile over two small ones, for the widgets of the home screen
+  /// (ADR 0031).
+  widgets(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="8" rx="2.5"/><rect x="3.5" y="14" width="7.5" height="6.5" rx="2"/><rect x="13" y="14" width="7.5" height="6.5" rx="2"/></svg>',
+  ),
+
+  /// Bars of a voice, for Siri (ADR 0031).
+  wave(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg>',
+  ),
   ;
 
   const BirkaGlyph(this.svg);

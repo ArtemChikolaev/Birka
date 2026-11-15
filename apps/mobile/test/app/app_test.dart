@@ -106,6 +106,8 @@ import 'package:tags_common/testing.dart'
 import 'package:tags_flutter/tags_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
+import 'package:widgets_common/widgets_common.dart' show WidgetsCubit;
+import 'package:widgets_flutter/widgets_flutter.dart';
 
 /// The settings in memory: the app under test needs no device.
 final class _Settings implements SettingsStore {
@@ -650,6 +652,10 @@ void main() {
       ..registerFactory(() => SchedulesCubit(_NoSchedules()))
       ..registerSingleton<ReminderChannel>(reminders)
       ..registerSingleton<HomeScreen>(home)
+      ..registerFactory(() {
+        final sums = WidgetSums(shown: true);
+        return WidgetsCubit(settings, sums, HomeWidgets(home, sums), home);
+      })
       ..registerFactory(
         () => RemindersCubit(_NoSchedules(), reminders, _NoCalendar()),
       )
@@ -739,6 +745,21 @@ void main() {
   });
 
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
+
+  /// Scrolls «Ещё» until [finder] is built and in the middle of the page.
+  Future<void> scrollMoreTo(WidgetTester tester, Finder finder) async {
+    await tester.scrollUntilVisible(
+      finder,
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(MorePage),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+  }
 
   testWidgets('opens on the overview', (tester) async {
     await tester.pumpWidget(BirkaApp(getIt: getIt));
@@ -1041,6 +1062,7 @@ void main() {
 
     await tester.tap(find.text(t.app.more));
     await tester.pumpAndSettle();
+    await scrollMoreTo(tester, find.text(t.settings.hideAmounts));
     final hide = find.descendant(
       of: find.ancestor(
         of: find.text(t.settings.hideAmounts),
@@ -1048,8 +1070,6 @@ void main() {
       ),
       matching: find.byType(Switch),
     );
-    await tester.ensureVisible(hide);
-    await tester.pumpAndSettle();
     await tester.tap(hide);
     await tester.pumpAndSettle();
     await tester.tap(find.text(t.app.operations));
@@ -1068,7 +1088,7 @@ void main() {
     await tester.tap(find.text(t.app.more));
     await tester.pumpAndSettle();
     // The row of the language comes up from under the tabs first.
-    await tester.ensureVisible(find.text(t.settings.language));
+    await scrollMoreTo(tester, find.text(t.settings.language));
     await tester.pumpAndSettle();
     await tester.tap(find.text(t.settings.language));
     await tester.pumpAndSettle();
@@ -1080,6 +1100,8 @@ void main() {
     // The bar, and the page that stands open.
     expect(find.text('Обзор'), findsOneWidget);
     expect(find.text('Ещё'), findsNWidgets(2));
+    // The new page of «Ещё» starts at its top.
+    await scrollMoreTo(tester, find.text('Язык'));
     expect(find.text('Язык'), findsOneWidget);
     expect(find.text('Русский'), findsOneWidget);
     expect(find.byType(MorePage), findsOneWidget);
@@ -1273,6 +1295,25 @@ void main() {
     expect(find.byType(QuickAddPage), findsOneWidget);
     expect(find.text('Казань'), findsOneWidget);
     expect(find.text('+ ${t.transactions.addTag}'), findsNothing);
+  });
+
+  testWidgets('the widgets open from the more tab, over the bar', (
+    tester,
+  ) async {
+    await tester.pumpWidget(BirkaApp(getIt: getIt));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.app.more));
+    await tester.pumpAndSettle();
+
+    await scrollMoreTo(tester, find.text(t.widgets.title));
+    await tester.tap(find.text(t.widgets.title));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(WidgetsPage), findsOneWidget);
+    expect(find.byType(GlassNavBar), findsNothing);
+    await tester.tap(find.bySemanticsLabel(t.widgets.back));
+    await tester.pumpAndSettle();
+    expect(find.byType(MorePage), findsOneWidget);
   });
 
   testWidgets('help opens from the more tab, over the bar', (tester) async {

@@ -64,6 +64,8 @@ import 'package:tags_common/tags_common.dart'
 import 'package:tags_flutter/tags_flutter.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
+import 'package:widgets_common/widgets_common.dart' show WidgetsCubit;
+import 'package:widgets_flutter/widgets_flutter.dart';
 
 /// The paths of the app.
 abstract final class Paths {
@@ -121,6 +123,9 @@ abstract final class Paths {
 
   /// Help and feedback.
   static const help = '/help';
+
+  /// The widgets of the home screen (ADR 0031).
+  static const widgets = '/widgets';
 
   /// What waits for a decision after an import.
   static const inbox = '/inbox';
@@ -458,6 +463,14 @@ GoRouter buildRouter(
         builder: (context, state) => BlocProvider(
           create: (_) => getIt<HelpCubit>(),
           child: HelpPage(onBack: () => context.pop()),
+        ),
+      ),
+      GoRoute(
+        path: Paths.widgets,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<WidgetsCubit>(),
+          child: WidgetsPage(onBack: () => context.pop()),
         ),
       ),
       GoRoute(

@@ -83,6 +83,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$tags$en tags = Translations$tags$en.internal(_root);
   late final Translations$transactions$en transactions =
       Translations$transactions$en.internal(_root);
+  late final Translations$widgets$en widgets = Translations$widgets$en.internal(
+    _root,
+  );
 }
 
 // Path: accounts
@@ -3930,6 +3933,113 @@ class Translations$transactions$en {
         one: 'All ${n} operation',
         other: 'All ${n} operations',
       );
+}
+
+// Path: widgets
+class Translations$widgets$en {
+  Translations$widgets$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Widgets'
+  String get title => 'Widgets';
+
+  /// en: 'Back'
+  String get back => 'Back';
+
+  /// en: 'On the Home and the Lock Screen'
+  String get moreLine => 'On the Home and the Lock Screen';
+
+  /// en: 'On the home screen and in shortcuts'
+  String get moreLineAndroid => 'On the home screen and in shortcuts';
+
+  /// en: '«Today» comes small and medium, «Record» small, and two widgets fit the Lock Screen'
+  String get kinds =>
+      '«Today» comes small and medium, «Record» small, and two widgets fit the Lock Screen';
+
+  /// en: '«Today» is 4 × 2, «Record» 2 × 1'
+  String get kindsAndroid => '«Today» is 4 × 2, «Record» 2 × 1';
+
+  /// en: 'This is how «Today» looks now'
+  String get preview => 'This is how «Today» looks now';
+
+  /// en: 'Add an account, and the figures of the day will show here'
+  String get previewEmpty =>
+      'Add an account, and the figures of the day will show here';
+
+  /// en: 'Amounts in widgets'
+  String get sums => 'Amounts in widgets';
+
+  /// en: 'On the Lock Screen amounts show only after Face ID.'
+  String get sumsOn => 'On the Lock Screen amounts show only after Face ID.';
+
+  /// en: 'Amounts show on the home screen. Turn this off to see dots instead.'
+  String get sumsOnAndroid =>
+      'Amounts show on the home screen. Turn this off to see dots instead.';
+
+  /// en: 'Dots instead of amounts; the buttons work as before.'
+  String get sumsOff => 'Dots instead of amounts; the buttons work as before.';
+
+  /// en: 'How to add'
+  String get howTitle => 'How to add';
+
+  List<String> get how => [
+    'Touch and hold an empty spot of the Home Screen',
+    'Tap «Edit», then «Add Widget»',
+    'Find Birka and pick a size',
+  ];
+  List<String> get howAndroid => [
+    'Touch and hold an empty spot of the home screen',
+    'Tap «Widgets»',
+    'Find Birka and drag the widget onto the screen',
+  ];
+
+  /// en: 'Add to the home screen'
+  String get pin => 'Add to the home screen';
+
+  /// en: 'Android asks where to put it. You can also hold an empty spot of the screen and pick «Widgets».'
+  String get pinNote =>
+      'Android asks where to put it. You can also hold an empty spot of the screen and pick «Widgets».';
+
+  /// en: 'The widget is on the home screen'
+  String get pinned => 'The widget is on the home screen';
+
+  /// en: 'Even faster'
+  String get fasterTitle => 'Even faster';
+
+  /// en: 'Touch and hold the Birka icon'
+  String get iconTitle => 'Touch and hold the Birka icon';
+
+  /// en: 'Expense, Income, Transfer, Ask'
+  String get iconText => 'Expense, Income, Transfer, Ask';
+
+  /// en: 'The «Record» button'
+  String get controlTitle => 'The «Record» button';
+
+  /// en: 'In Control Center, on the Lock Screen and on the Action button'
+  String get controlText =>
+      'In Control Center, on the Lock Screen and on the Action button';
+
+  /// en: 'Siri and Shortcuts'
+  String get siriTitle => 'Siri and Shortcuts';
+
+  /// en: '«Record an expense in Birka»'
+  String get siriText => '«Record an expense in Birka»';
+
+  /// en: 'A shortcut on the home screen'
+  String get shortcutTitle => 'A shortcut on the home screen';
+
+  /// en: 'Drag «Expense» out of the icon menu, and it becomes a button'
+  String get shortcutText =>
+      'Drag «Expense» out of the icon menu, and it becomes a button';
+
+  /// en: 'Expense'
+  String get expense => 'Expense';
+
+  /// en: 'Income'
+  String get income => 'Income';
 }
 
 // Path: accounts.form
@@ -8132,6 +8242,49 @@ extension on Translations {
                   one: 'All ${n} operation',
                   other: 'All ${n} operations',
                 ),
+          'widgets.title' => 'Widgets',
+          'widgets.back' => 'Back',
+          'widgets.moreLine' => 'On the Home and the Lock Screen',
+          'widgets.moreLineAndroid' => 'On the home screen and in shortcuts',
+          'widgets.kinds' =>
+            '«Today» comes small and medium, «Record» small, and two widgets fit the Lock Screen',
+          'widgets.kindsAndroid' => '«Today» is 4 × 2, «Record» 2 × 1',
+          'widgets.preview' => 'This is how «Today» looks now',
+          'widgets.previewEmpty' =>
+            'Add an account, and the figures of the day will show here',
+          'widgets.sums' => 'Amounts in widgets',
+          'widgets.sumsOn' =>
+            'On the Lock Screen amounts show only after Face ID.',
+          'widgets.sumsOnAndroid' =>
+            'Amounts show on the home screen. Turn this off to see dots instead.',
+          'widgets.sumsOff' =>
+            'Dots instead of amounts; the buttons work as before.',
+          'widgets.howTitle' => 'How to add',
+          'widgets.how.0' => 'Touch and hold an empty spot of the Home Screen',
+          'widgets.how.1' => 'Tap «Edit», then «Add Widget»',
+          'widgets.how.2' => 'Find Birka and pick a size',
+          'widgets.howAndroid.0' =>
+            'Touch and hold an empty spot of the home screen',
+          'widgets.howAndroid.1' => 'Tap «Widgets»',
+          'widgets.howAndroid.2' =>
+            'Find Birka and drag the widget onto the screen',
+          'widgets.pin' => 'Add to the home screen',
+          'widgets.pinNote' =>
+            'Android asks where to put it. You can also hold an empty spot of the screen and pick «Widgets».',
+          'widgets.pinned' => 'The widget is on the home screen',
+          'widgets.fasterTitle' => 'Even faster',
+          'widgets.iconTitle' => 'Touch and hold the Birka icon',
+          'widgets.iconText' => 'Expense, Income, Transfer, Ask',
+          'widgets.controlTitle' => 'The «Record» button',
+          'widgets.controlText' =>
+            'In Control Center, on the Lock Screen and on the Action button',
+          'widgets.siriTitle' => 'Siri and Shortcuts',
+          'widgets.siriText' => '«Record an expense in Birka»',
+          'widgets.shortcutTitle' => 'A shortcut on the home screen',
+          'widgets.shortcutText' =>
+            'Drag «Expense» out of the icon menu, and it becomes a button',
+          'widgets.expense' => 'Expense',
+          'widgets.income' => 'Income',
           _ => null,
         };
   }

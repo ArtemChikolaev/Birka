@@ -1,0 +1,35 @@
+title: Widgets
+back: Back
+moreLine: On the Home and the Lock Screen
+moreLineAndroid: On the home screen and in shortcuts
+kinds: «Today» comes small and medium, «Record» small, and two widgets fit the Lock Screen
+kindsAndroid: «Today» is 4 × 2, «Record» 2 × 1
+preview: This is how «Today» looks now
+previewEmpty: Add an account, and the figures of the day will show here
+sums: Amounts in widgets
+sumsOn: On the Lock Screen amounts show only after Face ID.
+sumsOnAndroid: Amounts show on the home screen. Turn this off to see dots instead.
+sumsOff: Dots instead of amounts; the buttons work as before.
+howTitle: How to add
+how:
+  - Touch and hold an empty spot of the Home Screen
+  - Tap «Edit», then «Add Widget»
+  - Find Birka and pick a size
+howAndroid:
+  - Touch and hold an empty spot of the home screen
+  - Tap «Widgets»
+  - Find Birka and drag the widget onto the screen
+pin: Add to the home screen
+pinNote: Android asks where to put it. You can also hold an empty spot of the screen and pick «Widgets».
+pinned: The widget is on the home screen
+fasterTitle: Even faster
+iconTitle: Touch and hold the Birka icon
+iconText: Expense, Income, Transfer, Ask
+controlTitle: The «Record» button
+controlText: In Control Center, on the Lock Screen and on the Action button
+siriTitle: Siri and Shortcuts
+siriText: «Record an expense in Birka»
+shortcutTitle: A shortcut on the home screen
+shortcutText: Drag «Expense» out of the icon menu, and it becomes a button
+expense: Expense
+income: Income

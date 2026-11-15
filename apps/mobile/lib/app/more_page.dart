@@ -9,6 +9,7 @@ import 'package:inbox_flutter/inbox_flutter.dart';
 import 'package:l10n/l10n.dart';
 import 'package:schedules_flutter/schedules_flutter.dart';
 import 'package:settings_flutter/settings_flutter.dart';
+import 'package:widgets_flutter/widgets_flutter.dart';
 
 /// The tab with everything that has no tab of its own, and the settings.
 ///
@@ -101,6 +102,10 @@ class MorePage extends StatelessWidget {
                 onTap: () => context.push(Paths.tags),
               ),
               DebtsMoreRow(onOpen: () => context.push(Paths.debts)),
+              // The widgets of the home screen live on phones (ADR 0031).
+              if (Theme.of(context).platform
+                  case TargetPlatform.iOS || TargetPlatform.android)
+                WidgetsMoreRow(onOpen: () => context.push(Paths.widgets)),
             ],
           ),
           const SizedBox(height: BirkaTokens.spaceLg),

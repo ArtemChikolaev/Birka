@@ -1,0 +1,28 @@
+name: widgets_flutter
+description: >-
+  The page of the widgets of the home screen in Flutter, and its row in
+  «Ещё».
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  home_screen:
+    path: ../../../core/home_screen
+  l10n:
+    path: ../../../core/l10n
+  widgets_common:
+    path: ../common
+
+dev_dependencies:
+  device_settings:
+    path: ../../../core/device_settings
+  flutter_test:
+    sdk: flutter
