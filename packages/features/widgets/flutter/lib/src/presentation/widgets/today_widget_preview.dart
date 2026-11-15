@@ -108,11 +108,16 @@ class _Body extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  FadingText(
-                    (day?.label ?? t.schedules.canSpend).toUpperCase(),
-                    style: styles.label.copyWith(color: colors.textMuted),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  // The label shrinks before it loses a word, as on the
+                  // phone.
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: FadingText(
+                      (day?.label ?? t.schedules.canSpend).toUpperCase(),
+                      style: styles.label.copyWith(color: colors.textMuted),
+                      maxLines: 1,
+                    ),
                   ),
                   const SizedBox(height: BirkaTokens.spaceXxs),
                   AmountText(
