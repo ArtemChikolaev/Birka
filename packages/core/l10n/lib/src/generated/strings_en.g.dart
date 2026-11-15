@@ -3511,6 +3511,9 @@ class Translations$schedules$en {
 
   /// en: 'Cancel'
   String get cancel => 'Cancel';
+
+  late final Translations$schedules$widget$en widget =
+      Translations$schedules$widget$en.internal(_root);
 }
 
 // Path: settings
@@ -5125,6 +5128,48 @@ class Translations$onboarding$categories$en {
 
   /// en: 'Done'
   String get finish => 'Done';
+}
+
+// Path: schedules.widget
+class Translations$schedules$widget$en {
+  Translations$schedules$widget$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Left today'
+  String get canSpendShort => 'Left today';
+
+  /// en: 'Over today'
+  String get overShort => 'Over today';
+
+  /// en: 'of $amount'
+  String of({required Object amount}) => 'of ${amount}';
+
+  /// en: 'Spent $amount'
+  String spent({required Object amount}) => 'Spent ${amount}';
+
+  /// en: 'spent $amount'
+  String spentShort({required Object amount}) => 'spent ${amount}';
+
+  /// en: 'Tomorrow $amount a day'
+  String tomorrow({required Object amount}) => 'Tomorrow ${amount} a day';
+
+  /// en: 'tomorrow $amount'
+  String tomorrowShort({required Object amount}) => 'tomorrow ${amount}';
+
+  /// en: 'Spent today'
+  String get spentToday => 'Spent today';
+
+  /// en: 'Spent'
+  String get spentTodayShort => 'Spent';
+
+  /// en: 'today'
+  String get today => 'today';
+
+  /// en: 'Set your payday to see what you can spend'
+  String get noPayday => 'Set your payday to see what you can spend';
 }
 
 // Path: tags.steps
@@ -7780,6 +7825,22 @@ extension on Translations {
           'schedules.previewTitle' => 'In the list of payments',
           'schedules.previewNext' => 'The next times',
           'schedules.cancel' => 'Cancel',
+          'schedules.widget.canSpendShort' => 'Left today',
+          'schedules.widget.overShort' => 'Over today',
+          'schedules.widget.of' => ({required Object amount}) => 'of ${amount}',
+          'schedules.widget.spent' =>
+            ({required Object amount}) => 'Spent ${amount}',
+          'schedules.widget.spentShort' =>
+            ({required Object amount}) => 'spent ${amount}',
+          'schedules.widget.tomorrow' =>
+            ({required Object amount}) => 'Tomorrow ${amount} a day',
+          'schedules.widget.tomorrowShort' =>
+            ({required Object amount}) => 'tomorrow ${amount}',
+          'schedules.widget.spentToday' => 'Spent today',
+          'schedules.widget.spentTodayShort' => 'Spent',
+          'schedules.widget.today' => 'today',
+          'schedules.widget.noPayday' =>
+            'Set your payday to see what you can spend',
           'settings.general' => 'General',
           'settings.language' => 'Language',
           'settings.deviceLanguage' => 'Same as the device',
@@ -8058,6 +8119,9 @@ extension on Translations {
           'transactions.monthNames.7' => 'August',
           'transactions.monthNames.8' => 'September',
           'transactions.monthNames.9' => 'October',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.monthNames.10' => 'November',
           'transactions.monthNames.11' => 'December',
           'transactions.allOperations' =>

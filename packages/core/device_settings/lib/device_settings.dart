@@ -5,3 +5,4 @@ export 'src/month_start.dart';
 export 'src/settings.dart';
 export 'src/settings_labels.dart';
 export 'src/settings_store.dart';
+export 'src/widget_sums.dart';

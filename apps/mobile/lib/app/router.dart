@@ -88,6 +88,13 @@ abstract final class Paths {
   /// The sheet that adds an operation, over any tab.
   static const quickAdd = '/quick-add';
 
+  /// The sheet of a new operation of [kind], as a widget of the home screen
+  /// opens it (ADR 0031).
+  static String newOperation(TransactionKind kind) =>
+      kind == TransactionKind.expense
+      ? quickAdd
+      : '$quickAdd?kind=${kind.name}';
+
   /// The sheet with operation [id] to change.
   static String editOperation(String id) => '$quickAdd?edit=$id';
 
@@ -728,8 +735,10 @@ GoRouter buildRouter(
         parentNavigatorKey: rootKey,
         pageBuilder: (context, state) => BirkaSheetPage(
           child: BlocProvider(
-            create: (_) =>
-                getIt<QuickAddCubit>(param1: _quickAddSource(state.uri)),
+            create: (_) => getIt<QuickAddCubit>(
+              param1: _quickAddSource(state.uri),
+              param2: _quickAddKind(state.uri),
+            ),
             child: Builder(
               builder: (context) => QuickAddPage(
                 onClose: () => context.pop(),
@@ -745,6 +754,15 @@ GoRouter buildRouter(
     ],
   );
 }
+
+/// The kind that a new operation starts as, when the address names one.
+TransactionKind? _quickAddKind(Uri uri) =>
+    switch (uri.queryParameters['kind']) {
+      'income' => TransactionKind.income,
+      'transfer' => TransactionKind.transfer,
+      'expense' => TransactionKind.expense,
+      _ => null,
+    };
 
 QuickAddSource? _quickAddSource(Uri uri) {
   final edit = uri.queryParameters['edit'];

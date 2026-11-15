@@ -25,8 +25,14 @@ void registerTransactions(GetIt getIt) {
     ..registerFactoryParam<OperationCubit, String, void>(
       (id, _) => OperationCubit(getIt(), id),
     )
-    ..registerFactoryParam<QuickAddCubit, QuickAddSource?, void>(
-      (source, _) => QuickAddCubit(getIt(), source: source),
+    // A new operation starts as an expense, or as the kind that a widget
+    // of the home screen asks for (ADR 0031).
+    ..registerFactoryParam<QuickAddCubit, QuickAddSource?, TransactionKind?>(
+      (source, kind) => QuickAddCubit(
+        getIt(),
+        source: source,
+        kind: kind ?? TransactionKind.expense,
+      ),
     )
     ..registerFactoryParam<TagOperationsCubit, String, void>(
       (id, _) => TagOperationsCubit(getIt(), id),

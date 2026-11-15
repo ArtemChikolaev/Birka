@@ -46,6 +46,8 @@ dependencies:
     path: ../../packages/features/help/common
   help_flutter:
     path: ../../packages/features/help/flutter
+  home_screen:
+    path: ../../packages/core/home_screen
   http: ^1.6.0
   import_common:
     path: ../../packages/features/import/common

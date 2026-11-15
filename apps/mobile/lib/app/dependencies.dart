@@ -4,6 +4,7 @@ import 'package:accounts_common/accounts_common.dart';
 import 'package:ask_common/ask_common.dart';
 import 'package:backup_common/backup_common.dart';
 import 'package:backup_flutter/backup_flutter.dart';
+import 'package:birka_mobile/app/channel_home_screen.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:database/database.dart';
 import 'package:debts_common/debts_common.dart';
@@ -12,6 +13,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:help_common/help_common.dart';
 import 'package:help_flutter/help_flutter.dart';
+import 'package:home_screen/home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:import_common/import_common.dart';
 import 'package:import_flutter/import_flutter.dart';
@@ -34,6 +36,11 @@ import 'package:transactions_common/transactions_common.dart';
 /// a ledger opens anew, so that the tap that opened the app opens the
 /// payments once (ADR 0025).
 final ReminderChannel _reminders = LocalReminderChannel();
+
+/// The home screen of the phone: its widgets and the actions that open
+/// Birka. One serves the whole life of the app, as a ledger opens anew, so
+/// that the action that launched the app opens once (ADR 0031).
+final HomeScreen _homeScreen = ChannelHomeScreen();
 
 /// The language that the device reports.
 String deviceLanguage() => PlatformDispatcher.instance.locale.languageCode;
@@ -82,6 +89,13 @@ void registerDependencies(
     ..registerSingleton<HelpLinks>(const UrlLauncherHelpLinks())
     ..registerSingleton<PeoplePhone>(ChannelPeoplePhone())
     ..registerSingleton<ReminderChannel>(_reminders)
+    ..registerSingleton(_homeScreen)
+    // The widgets show the money of the person, never that of the demo.
+    ..registerSingleton(
+      HomeWidgets(_homeScreen, forwards: !demoStateIn(settings).isOn),
+      dispose: (widgets) => widgets.close(),
+    )
+    ..registerSingleton(WidgetSums(shown: kept.widgetSums))
     ..registerSingleton<ReminderCalendar>(DeviceReminderCalendar(settings));
   registerAccounts(getIt);
   registerAsk(getIt);

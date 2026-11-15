@@ -8,10 +8,12 @@ import 'package:schedules_common/src/presentation/reminder_scheduler.dart';
 import 'package:schedules_common/src/presentation/reminders_cubit.dart';
 import 'package:schedules_common/src/presentation/schedule_form_cubit.dart';
 import 'package:schedules_common/src/presentation/schedules_cubit.dart';
+import 'package:schedules_common/src/presentation/today_widget_feed.dart';
 
 /// Registers the feature in [getIt], which has to know the `LedgerRepository`,
-/// the `BaseCurrency`, the `MonthStart`, the `ReminderChannel` and the
-/// `ReminderCalendar` of the host, on the [store] of the host.
+/// the `BaseCurrency`, the `MonthStart`, the `ReminderChannel`, the
+/// `ReminderCalendar`, the `HomeWidgets` and the `WidgetSums` of the host, on
+/// the [store] of the host.
 void registerSchedules(GetIt getIt, SettingsStore store) {
   getIt
     ..registerLazySingleton<SchedulesRepository>(
@@ -27,6 +29,10 @@ void registerSchedules(GetIt getIt, SettingsStore store) {
       dispose: (notices) => notices.stop(),
     )
     ..registerFactory(() => RemindersCubit(getIt(), getIt(), getIt()))
+    ..registerLazySingleton(
+      () => TodayWidgetFeed(getIt(), getIt(), getIt()),
+      dispose: (feed) => feed.stop(),
+    )
     // A new payment starts empty, as a salary, or from an operation.
     ..registerFactoryParam<
       ScheduleFormCubit,

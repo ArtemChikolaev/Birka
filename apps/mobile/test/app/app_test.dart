@@ -28,6 +28,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:help_common/help_common.dart';
 import 'package:help_flutter/help_flutter.dart';
+import 'package:home_screen/home_screen.dart';
 import 'package:import_common/import_common.dart'
     show ChosenStatement, StatementFiles;
 import 'package:inbox_common/inbox_common.dart'
@@ -173,6 +174,26 @@ final class _NoReminders implements ReminderChannel {
 
   @override
   Stream<ReminderTap> get opened => taps.stream;
+}
+
+/// A home screen whose actions a test makes (ADR 0031).
+final class _Home implements HomeScreen {
+  final opened = StreamController<HomeAction>.broadcast();
+
+  @override
+  Future<void> show(WidgetSnapshot snapshot) async {}
+
+  @override
+  Future<bool> canPin() async => false;
+
+  @override
+  Future<bool> pin() async => false;
+
+  @override
+  Stream<HomeAction> get actions => opened.stream;
+
+  @override
+  Stream<void> get pinned => const Stream.empty();
 }
 
 /// A calendar that the phone never gives.
@@ -588,6 +609,7 @@ void main() {
   late _Links links;
   late _Statements statements;
   late _NoReminders reminders;
+  late _Home home;
   late List<String?> forms;
 
   setUp(() {
@@ -596,6 +618,7 @@ void main() {
     links = _Links();
     statements = _Statements();
     reminders = _NoReminders();
+    home = _Home();
     forms = [];
     accounts = _Accounts();
     final CategoriesRepository categories = _NoCategories();
@@ -626,6 +649,7 @@ void main() {
       ..registerFactory(() => ReportsCubit(_NoReports()))
       ..registerFactory(() => SchedulesCubit(_NoSchedules()))
       ..registerSingleton<ReminderChannel>(reminders)
+      ..registerSingleton<HomeScreen>(home)
       ..registerFactory(
         () => RemindersCubit(_NoSchedules(), reminders, _NoCalendar()),
       )
@@ -678,8 +702,12 @@ void main() {
       ..registerFactoryParam<OperationCubit, String, void>(
         (id, _) => OperationCubit(transactions, id),
       )
-      ..registerFactoryParam<QuickAddCubit, QuickAddSource?, void>(
-        (source, _) => QuickAddCubit(transactions, source: source),
+      ..registerFactoryParam<QuickAddCubit, QuickAddSource?, TransactionKind?>(
+        (source, kind) => QuickAddCubit(
+          transactions,
+          source: source,
+          kind: kind ?? TransactionKind.expense,
+        ),
       )
       ..registerFactory(() => TagsCubit(tags))
       ..registerFactoryParam<TagReportCubit, String, void>(
@@ -1273,6 +1301,52 @@ void main() {
     await tester.tap(find.bySemanticsLabel(t.help.back));
     await tester.pumpAndSettle();
     expect(find.byType(GlassNavBar), findsOneWidget);
+  });
+
+  group('an action of the home screen', () {
+    QuickAddCubit sheet(WidgetTester tester) => BlocProvider.of<QuickAddCubit>(
+      tester.element(find.byType(QuickAddPage)),
+    );
+
+    testWidgets('opens a new income over the page', (tester) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.app.more));
+      await tester.pumpAndSettle();
+
+      home.opened.add(HomeAction.income);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(QuickAddPage), findsOneWidget);
+      expect(sheet(tester).state.kind, TransactionKind.income);
+    });
+
+    testWidgets('opens one sheet, however often it comes', (tester) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt));
+      await tester.pumpAndSettle();
+
+      home.opened
+        ..add(HomeAction.expense)
+        ..add(HomeAction.transfer);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(QuickAddPage), findsOneWidget);
+      expect(sheet(tester).state.kind, TransactionKind.expense);
+    });
+
+    testWidgets('of the overview goes back to it', (tester) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.app.more));
+      await tester.pumpAndSettle();
+      expect(find.byType(MorePage), findsOneWidget);
+
+      home.opened.add(HomeAction.overview);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OverviewPage), findsOneWidget);
+      expect(find.byType(MorePage), findsNothing);
+    });
   });
 
   group('a tapped reminder', () {

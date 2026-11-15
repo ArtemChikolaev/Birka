@@ -1,0 +1,15 @@
+name: home_screen
+description: >-
+  What Birka shows and hears outside its window: the widgets of the home
+  screen and the actions that open it (ADR 0031).
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  meta: ^1.17.0
+
+dev_dependencies:
+  test: ^1.26.3

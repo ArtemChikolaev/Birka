@@ -14,6 +14,8 @@ dependencies:
   device_settings:
     path: ../../../core/device_settings
   get_it: ^9.3.0
+  home_screen:
+    path: ../../../core/home_screen
   l10n:
     path: ../../../core/l10n
   ledger:

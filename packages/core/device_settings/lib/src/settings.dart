@@ -13,6 +13,7 @@ final class Settings {
     this.baseCurrency,
     this.onboarded = false,
     this.monthStart = 1,
+    this.widgetSums = true,
   });
 
   /// Reads the settings from [store]. What is missing or unknown stays at its
@@ -33,6 +34,7 @@ final class Settings {
       monthStart: monthStart != null && monthStart >= 1 && monthStart <= 28
           ? monthStart
           : 1,
+      widgetSums: store.read(_widgetSumsKey) != _off,
     );
   }
 
@@ -41,6 +43,7 @@ final class Settings {
   static const _baseCurrencyKey = 'base-currency';
   static const _onboardedKey = 'onboarded';
   static const _monthStartKey = 'month-start';
+  static const _widgetSumsKey = 'widget-sums';
   static const _sameAsDevice = 'device';
   static const _firstAccount = 'first-account';
   static const _on = 'on';
@@ -64,6 +67,10 @@ final class Settings {
   /// starts on, from 1 to 28 (ADR 0024).
   final int monthStart;
 
+  /// Whether the widgets of the home screen show amounts, or dots
+  /// (ADR 0031).
+  final bool widgetSums;
+
   /// A copy with the given fields changed. [language] and [baseCurrency] are
   /// in records, because `null` is a choice for them.
   Settings copyWith({
@@ -72,6 +79,7 @@ final class Settings {
     (Currency?,)? baseCurrency,
     bool? onboarded,
     int? monthStart,
+    bool? widgetSums,
   }) {
     return Settings(
       language: language == null ? this.language : language.$1,
@@ -79,6 +87,7 @@ final class Settings {
       baseCurrency: baseCurrency == null ? this.baseCurrency : baseCurrency.$1,
       onboarded: onboarded ?? this.onboarded,
       monthStart: monthStart ?? this.monthStart,
+      widgetSums: widgetSums ?? this.widgetSums,
     );
   }
 
@@ -89,6 +98,7 @@ final class Settings {
     await store.write(_baseCurrencyKey, baseCurrency?.code ?? _firstAccount);
     await store.write(_onboardedKey, onboarded ? _on : _off);
     await store.write(_monthStartKey, '$monthStart');
+    await store.write(_widgetSumsKey, widgetSums ? _on : _off);
   }
 
   /// Turns the strings to [language], or to [device] when none is picked.
