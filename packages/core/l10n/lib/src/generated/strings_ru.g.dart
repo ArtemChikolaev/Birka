@@ -4807,6 +4807,8 @@ class _Translations$transactions$receipt$ru
   @override
   String get openSettings => 'Открыть настройки';
   @override
+  String get needsRubles => 'Чек в рублях — выберите счёт в рублях';
+  @override
   String get group => 'Чек';
   @override
   String get document => 'Номер (ФД)';
@@ -7721,6 +7723,8 @@ extension on TranslationsRu {
           'transactions.receipt.noCameraText' =>
             'Разрешите камеру для Birka в настройках телефона — тогда она прочитает QR-код чека.',
           'transactions.receipt.openSettings' => 'Открыть настройки',
+          'transactions.receipt.needsRubles' =>
+            'Чек в рублях — выберите счёт в рублях',
           'transactions.receipt.group' => 'Чек',
           'transactions.receipt.document' => 'Номер (ФД)',
           'transactions.receipt.drive' => 'ФН',

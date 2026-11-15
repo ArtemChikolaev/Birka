@@ -237,9 +237,21 @@ final class QuickAddState {
       return false;
     }
     if (account == null || !(amount?.isPositive ?? false)) return false;
+    if (receiptNeedsRubles) return false;
     return kind == TransactionKind.transfer
         ? toAccount != null && (receivedAmount?.isPositive ?? false)
         : category != null;
+  }
+
+  /// Whether the sum of a receipt, which is in rubles, stands on an account
+  /// in another currency, where it would turn into the same number of that
+  /// currency; the sheet does not save it there (ADR 0032).
+  bool get receiptNeedsRubles {
+    final account = this.account;
+    return receipt != null &&
+        kind != TransactionKind.transfer &&
+        account != null &&
+        account.currency.code != Currency.rub.code;
   }
 
   Account? _accountWith(String? id) {

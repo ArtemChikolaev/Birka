@@ -5693,6 +5693,10 @@ class Translations$transactions$receipt$en {
   /// en: 'Open settings'
   String get openSettings => 'Open settings';
 
+  /// en: 'The receipt is in rubles, so pick an account in rubles'
+  String get needsRubles =>
+      'The receipt is in rubles, so pick an account in rubles';
+
   /// en: 'Receipt'
   String get group => 'Receipt';
 
@@ -8419,6 +8423,8 @@ extension on Translations {
           'transactions.receipt.noCameraText' =>
             'Allow the camera for Birka in the settings of the phone, so that it can read the QR code of a receipt.',
           'transactions.receipt.openSettings' => 'Open settings',
+          'transactions.receipt.needsRubles' =>
+            'The receipt is in rubles, so pick an account in rubles',
           'transactions.receipt.group' => 'Receipt',
           'transactions.receipt.document' => 'Number (FD)',
           'transactions.receipt.drive' => 'FN',

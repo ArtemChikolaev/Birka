@@ -46,7 +46,9 @@
    and deleting it forgets the till. The first receipt of a till says as
    quick add closes that the next ones go to its category.
 5. The sum comes in on the account of the sheet when it holds rubles, else on
-   the first account in rubles.
+   the first account in rubles. On an account in another currency the sheet
+   does not save it, as the same number would become another currency, and
+   says that the receipt is in rubles.
 6. The moment of the receipt stays while the day of the operation is the day
    of the receipt; another day drops it.
 7. A statement of the bank does not record the purchase twice: the import

@@ -132,6 +132,7 @@ receipt:
   noCamera: Нет доступа к камере
   noCameraText: Разрешите камеру для Birka в настройках телефона — тогда она прочитает QR-код чека.
   openSettings: Открыть настройки
+  needsRubles: Чек в рублях — выберите счёт в рублях
   group: Чек
   document: Номер (ФД)
   drive: ФН
