@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The ground of the widgets: black with an emerald glow, as in the app. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="28dp" />
+            <solid android:color="@color/widget_ground" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="28dp" />
+            <gradient
+                android:centerX="0"
+                android:centerY="0"
+                android:endColor="#00248A56"
+                android:gradientRadius="260dp"
+                android:startColor="@color/widget_glow"
+                android:type="radial" />
+        </shape>
+    </item>
+</layer-list>

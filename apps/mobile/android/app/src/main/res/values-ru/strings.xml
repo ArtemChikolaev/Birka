@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Виджеты главного экрана (ADR 0031). -->
+    <string name="widget_today_name">Сегодня</string>
+    <string name="widget_today_description">Сколько ещё можно тратить сегодня, и новая операция в одно касание.</string>
+    <string name="widget_record_name">Запись</string>
+    <string name="widget_record_description">Новая операция в одно касание, без сумм.</string>
+    <string name="widget_label">Можно тратить сегодня</string>
+    <string name="widget_open">Откройте Birka, чтобы обновить</string>
+    <string name="widget_expense">Расход</string>
+    <string name="widget_income">Доход</string>
+    <string name="widget_new_operation">Новая операция</string>
+    <string name="widget_sample_figure">1 124 ₽</string>
+    <string name="widget_sample_of">из 1 744 ₽ на день</string>
+    <string name="widget_sample_spent">Потратили 620 ₽</string>
+    <!-- Ярлыки иконки. -->
+    <string name="shortcut_expense">Расход</string>
+    <string name="shortcut_income">Доход</string>
+    <string name="shortcut_transfer">Перевод</string>
+    <string name="shortcut_ask">Спросить</string>
+</resources>

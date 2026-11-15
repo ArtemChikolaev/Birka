@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The shortcuts of the icon (ADR 0031). -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_expense"
+        android:shortcutId="expense"
+        android:shortcutShortLabel="@string/shortcut_expense">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="birka://expense"
+            android:targetClass="io.github.artemchikolaev.birka.MainActivity"
+            android:targetPackage="io.github.artemchikolaev.birka" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_income"
+        android:shortcutId="income"
+        android:shortcutShortLabel="@string/shortcut_income">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="birka://income"
+            android:targetClass="io.github.artemchikolaev.birka.MainActivity"
+            android:targetPackage="io.github.artemchikolaev.birka" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_transfer"
+        android:shortcutId="transfer"
+        android:shortcutShortLabel="@string/shortcut_transfer">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="birka://transfer"
+            android:targetClass="io.github.artemchikolaev.birka.MainActivity"
+            android:targetPackage="io.github.artemchikolaev.birka" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_ask"
+        android:shortcutId="ask"
+        android:shortcutShortLabel="@string/shortcut_ask">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="birka://ask"
+            android:targetClass="io.github.artemchikolaev.birka.MainActivity"
+            android:targetPackage="io.github.artemchikolaev.birka" />
+    </shortcut>
+</shortcuts>

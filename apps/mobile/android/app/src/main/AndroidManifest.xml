@@ -33,7 +33,39 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- The shortcuts of the icon (ADR 0031). -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+            <!-- birka://<action> of the widgets and the shortcuts goes to Dart
+                 over the channel birka/widgets, not to the router (ADR 0031). -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false" />
         </activity>
+        <!-- The widgets of the home screen (ADR 0031). -->
+        <receiver
+            android:name=".TodayWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_today_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_today_info" />
+        </receiver>
+        <receiver
+            android:name=".RecordWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_record_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_record_info" />
+        </receiver>
         <!-- The reminders of the payments, which the phone shows on time and
              sets again after a restart or an update (ADR 0025). -->
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
