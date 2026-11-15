@@ -1,0 +1,2 @@
+// The widgets carry the version of the app (ADR 0031).
+#include "../Flutter/Generated.xcconfig"

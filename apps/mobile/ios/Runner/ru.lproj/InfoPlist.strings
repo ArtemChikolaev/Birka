@@ -1,3 +1,9 @@
 /* Календарь «Birka» для напоминаний (ADR 0025). */
 "NSCalendarsFullAccessUsageDescription" = "Birka ведёт свой календарь «Birka» с регулярными платежами, чтобы календарь напоминал о них. Чужие события Birka не читает.";
 "NSCalendarsUsageDescription" = "Birka ведёт свой календарь «Birka» с регулярными платежами, чтобы календарь напоминал о них. Чужие события Birka не читает.";
+
+/* Действия иконки (ADR 0031). */
+"shortcut.expense" = "Расход";
+"shortcut.income" = "Доход";
+"shortcut.transfer" = "Перевод";
+"shortcut.ask" = "Спросить";

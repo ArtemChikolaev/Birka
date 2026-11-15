@@ -1,0 +1,22 @@
+/* Виджеты Birka (ADR 0031). */
+"today.name" = "Сегодня";
+"today.description" = "Сколько ещё можно тратить сегодня, и новая операция в одно касание.";
+"record.name" = "Запись";
+"record.description" = "Новая операция в одно касание, без сумм.";
+"control.title" = "Записать";
+"control.description" = "Открывает новую операцию в Birka.";
+"newOperation" = "Новая операция";
+"expense" = "Расход";
+"income" = "Доход";
+"label" = "Можно тратить сегодня";
+"labelShort" = "Можно сегодня";
+"open" = "Откройте Birka, чтобы обновить";
+"sample.label" = "Можно тратить сегодня";
+"sample.labelShort" = "Можно сегодня";
+"sample.figure" = "1 124 ₽";
+"sample.of" = "из 1 744 ₽ на день";
+"sample.ofShort" = "из 1 744 ₽";
+"sample.spent" = "Потратили 620 ₽";
+"sample.spentShort" = "потратили 620 ₽";
+"intent.expense" = "Новый расход";
+"intent.income" = "Новый доход";
