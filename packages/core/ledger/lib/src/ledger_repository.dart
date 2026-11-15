@@ -10,6 +10,7 @@ import 'package:ledger/src/ledger_import.dart';
 import 'package:ledger/src/ledger_totals.dart';
 import 'package:ledger/src/notice.dart';
 import 'package:ledger/src/person.dart';
+import 'package:ledger/src/receipt.dart';
 import 'package:ledger/src/schedule.dart';
 import 'package:ledger/src/tag.dart';
 import 'package:ledger/src/transaction.dart';
@@ -805,6 +806,10 @@ final class LedgerRepository {
               status: draft.status.name,
               source: draft.source.name,
               importId: Value(importId),
+              receiptDrive: Value(draft.receipt?.drive),
+              receiptDocument: Value(draft.receipt?.document),
+              receiptSign: Value(draft.receipt?.sign),
+              receiptKind: Value(draft.receipt?.kind.name),
             ),
           );
       await _log(_db.transactions, id, 'insert', at);
@@ -832,6 +837,10 @@ final class LedgerRepository {
               note: Value(draft.note),
               status: Value(draft.status.name),
               source: Value(draft.source.name),
+              receiptDrive: Value(draft.receipt?.drive),
+              receiptDocument: Value(draft.receipt?.document),
+              receiptSign: Value(draft.receipt?.sign),
+              receiptKind: Value(draft.receipt?.kind.name),
             ),
           );
       if (updated == 0) throw LedgerException('No transaction $id');
@@ -2526,6 +2535,37 @@ final class LedgerRepository {
     );
   }
 
+  /// The transaction that was made from [receipt], if one was, so that a
+  /// receipt goes into the ledger once (ADR 0032).
+  Future<Transaction?> transactionOfReceipt(Receipt receipt) async {
+    final query = _db.select(_db.transactions)
+      ..where(
+        (row) =>
+            row.receiptDrive.equals(receipt.drive) &
+            row.receiptDocument.equals(receipt.document) &
+            row.receiptSign.equals(receipt.sign) &
+            row.deletedAt.isNull(),
+      )
+      ..orderBy([(row) => OrderingTerm.desc(row.createdAt)])
+      ..limit(1);
+    return (await _withLegs(await query.get())).firstOrNull;
+  }
+
+  /// The latest transaction made from a receipt of the till whose fiscal
+  /// drive is [drive], whose category the next receipt of the till takes
+  /// (ADR 0032).
+  Future<Transaction?> lastOfTill(String drive) async {
+    final query = _db.select(_db.transactions)
+      ..where((row) => row.receiptDrive.equals(drive) & row.deletedAt.isNull())
+      ..orderBy([
+        (row) => OrderingTerm.desc(row.occurredOn),
+        (row) => OrderingTerm.desc(row.occurredAt),
+        (row) => OrderingTerm.desc(row.createdAt),
+      ])
+      ..limit(1);
+    return (await _withLegs(await query.get())).firstOrNull;
+  }
+
   /// The first days of the months that have transactions, the latest first,
   /// when months start on day [start] of the calendar (ADR 0024).
   Future<List<CivilDate>> months({int start = 1}) async {
@@ -2930,8 +2970,25 @@ final class LedgerRepository {
           allocations: allocations[row.id] ?? const [],
           importId: row.importId,
           tags: tags[row.id] ?? const {},
+          receipt: _receiptOf(row),
         ),
     ];
+  }
+
+  Receipt? _receiptOf(TransactionRow row) {
+    final drive = row.receiptDrive;
+    final document = row.receiptDocument;
+    final sign = row.receiptSign;
+    final kind = row.receiptKind;
+    if (drive == null || document == null || sign == null || kind == null) {
+      return null;
+    }
+    return Receipt(
+      drive: drive,
+      document: document,
+      sign: sign,
+      kind: ReceiptKind.values.byName(kind),
+    );
   }
 
   Currency _currency(String code, int decimalDigits) =>

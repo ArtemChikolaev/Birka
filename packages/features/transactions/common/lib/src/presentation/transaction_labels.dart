@@ -71,7 +71,33 @@ String sourceLabel(TransactionSource source) => switch (source) {
   TransactionSource.notification => t.transactions.sources.notification,
   TransactionSource.recurring => t.transactions.sources.recurring,
   TransactionSource.bank => t.transactions.sources.bank,
+  TransactionSource.receipt => t.transactions.sources.receipt,
 };
+
+/// What a fiscal receipt says happened, as the receipt prints it (ADR 0032).
+String receiptKindLabel(ReceiptKind kind) => switch (kind) {
+  ReceiptKind.sale => t.transactions.receipt.kinds.sale,
+  ReceiptKind.saleReturn => t.transactions.receipt.kinds.saleReturn,
+  ReceiptKind.payout => t.transactions.receipt.kinds.payout,
+  ReceiptKind.payoutReturn => t.transactions.receipt.kinds.payoutReturn,
+};
+
+/// The line over the sum of quick add after a scan: the moment of the
+/// receipt, and whether its till gave the category (ADR 0032).
+String receiptLine(DateTime at, {required bool knownTill}) {
+  final line = t.transactions.receipt.from(time: timeLabel(at));
+  return knownTill ? '$line · ${t.transactions.receipt.knownTill}' : line;
+}
+
+/// What quick add says as it closes after the first receipt of a till.
+String tillTaughtToast(String category) =>
+    t.transactions.receipt.taught(category: category);
+
+/// The number of a fiscal drive in groups of four digits, as easier to read.
+String fiscalDriveLabel(String drive) => [
+  for (var start = 0; start < drive.length; start += 4)
+    drive.substring(start, start + 4 > drive.length ? drive.length : start + 4),
+].join(' ');
 
 /// [amounts] in one line, with a plus before money that comes in. Amounts in
 /// different currencies stay apart until exchange rates can add them up.

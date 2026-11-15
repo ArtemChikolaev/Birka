@@ -13,6 +13,7 @@ import 'generated/schema_v11.dart' as v11;
 import 'generated/schema_v12.dart' as v12;
 import 'generated/schema_v13.dart' as v13;
 import 'generated/schema_v14.dart' as v14;
+import 'generated/schema_v15.dart' as v15;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -718,6 +719,45 @@ void main() {
             'masha-borrowed': 'masha',
             'sasha': 'sasha',
           });
+        },
+      );
+    },
+  );
+
+  test(
+    'a transaction keeps its rows and comes from no receipt in v15',
+    () async {
+      const at = '2026-11-18T06:12:00.000Z';
+      await verifier.testWithDataIntegrity(
+        oldVersion: 14,
+        newVersion: 15,
+        createOld: v14.DatabaseAtV14.new,
+        createNew: v15.DatabaseAtV15.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch.insert(
+            old.transactions,
+            v14.TransactionsCompanion.insert(
+              id: 'groceries',
+              createdAt: at,
+              updatedAt: at,
+              kind: 'expense',
+              occurredOn: '2026-11-18',
+              status: 'cleared',
+              source: 'manual',
+            ),
+          );
+        },
+        validateItems: (migrated) async {
+          final transaction = await migrated
+              .select(migrated.transactions)
+              .getSingle();
+          expect(transaction.occurredOn, '2026-11-18');
+          expect(transaction.source, 'manual');
+          expect(transaction.receiptDrive, isNull);
+          expect(transaction.receiptDocument, isNull);
+          expect(transaction.receiptSign, isNull);
+          expect(transaction.receiptKind, isNull);
         },
       );
     },

@@ -439,6 +439,12 @@ final class _Transactions implements TransactionsRepository {
 
   @override
   Future<void> delete(String id) async {}
+
+  @override
+  Future<Operation?> operationOfReceipt(Receipt receipt) async => null;
+
+  @override
+  Future<Transaction?> lastOfTill(String drive) async => null;
 }
 
 final class _Overview implements OverviewRepository {

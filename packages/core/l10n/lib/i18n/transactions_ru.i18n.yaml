@@ -68,6 +68,7 @@ sources:
   notification: Из уведомления
   recurring: Регулярная
   bank: Из банка
+  receipt: Из чека
 keys:
   point: Запятая
   add: Плюс
@@ -108,3 +109,38 @@ allOperations(n):
   few: Все $n операции
   many: Все $n операций
   other: Все $n операции
+receipt:
+  scan: Чек
+  scanLabel: Сканировать чек
+  title: Чек по QR
+  look: Наведите камеру на QR-код чека
+  lookHint: Сумма, дата и время встанут сами
+  notReceipt: Это не QR-код чека
+  notReceiptHint: Нужен квадратный код внизу чека
+  read: Чек прочитан
+  readHint: Сумма, дата и время уже в операции
+  torch: Фонарик
+  byHand: Ввести вручную
+  code: QR-код чека в кадре
+  from: Из чека, $time
+  knownTill: знакомая касса
+  taught: Записали. Чеки этой кассы сразу пойдут в «$category»
+  twiceTitle: Этот чек уже в Birka
+  twiceText: Тот же чек второй раз не запишем.
+  openOperation: Открыть операцию
+  scanAnother: Сканировать другой
+  noCamera: Нет доступа к камере
+  noCameraText: Разрешите камеру для Birka в настройках телефона — тогда она прочитает QR-код чека.
+  openSettings: Открыть настройки
+  needsRubles: Чек в рублях — выберите счёт в рублях
+  group: Чек
+  document: Номер (ФД)
+  drive: ФН
+  sign: ФП
+  kind: Вид
+  kinds:
+    sale: Приход
+    saleReturn: Возврат прихода
+    payout: Расход
+    payoutReturn: Возврат расхода
+  footnote: В QR-коде нет позиций и названия магазина — только сумма, время и номера чека. Выписка банка эту покупку не задвоит.

@@ -126,6 +126,7 @@ class Categories extends Table with SyncedRow {
 @DataClassName('TransactionRow')
 @TableIndex(name: 'transactions_occurred_on', columns: {#occurredOn})
 @TableIndex(name: 'transactions_import', columns: {#importId})
+@TableIndex(name: 'transactions_receipt', columns: {#receiptDrive})
 class Transactions extends Table with SyncedRow {
   /// One of the names of `TransactionKind` in the ledger.
   TextColumn get kind => text()();
@@ -147,6 +148,19 @@ class Transactions extends Table with SyncedRow {
 
   /// The import that brought the transaction (ADR 0021).
   TextColumn get importId => text().nullable().references(Imports, #id)();
+
+  /// The fiscal drive («ФН») of the receipt that the transaction was made
+  /// from, which names its till (ADR 0032).
+  TextColumn get receiptDrive => text().nullable()();
+
+  /// The number of the fiscal document («ФД») of the receipt.
+  TextColumn get receiptDocument => text().nullable()();
+
+  /// The fiscal sign («ФП») of the receipt.
+  TextColumn get receiptSign => text().nullable()();
+
+  /// One of the names of `ReceiptKind` in the ledger.
+  TextColumn get receiptKind => text().nullable()();
 }
 
 /// How a transaction moves money on an account.

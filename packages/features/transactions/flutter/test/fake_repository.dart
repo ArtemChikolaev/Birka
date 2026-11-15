@@ -162,6 +162,12 @@ final class FakeRepository implements TransactionsRepository {
   }
 
   @override
+  Future<Operation?> operationOfReceipt(Receipt receipt) async => null;
+
+  @override
+  Future<Transaction?> lastOfTill(String drive) async => null;
+
+  @override
   Future<void> delete(String id) async {
     if (failure case final failure?) throw failure;
     operations = [

@@ -48,6 +48,16 @@ final class FakeTransactionsRepository implements TransactionsRepository {
   /// The months with operations.
   List<CivilDate> monthList = const [];
 
+  /// The operations made from receipts, by the fiscal drive, document and
+  /// sign of the receipt.
+  final receiptOperations = <String, Operation>{};
+
+  /// The latest transaction of each till, by its fiscal drive.
+  final tills = <String, Transaction>{};
+
+  /// The error of the next question about a receipt.
+  Exception? receiptFailure;
+
   /// The accounts with what they hold.
   List<AccountBalance> balances = const [];
 
@@ -186,6 +196,18 @@ final class FakeTransactionsRepository implements TransactionsRepository {
   }
 
   @override
+  Future<Operation?> operationOfReceipt(Receipt receipt) async {
+    if (receiptFailure case final failure?) throw failure;
+    return receiptOperations['${receipt.drive}/${receipt.document}/${receipt.sign}'];
+  }
+
+  @override
+  Future<Transaction?> lastOfTill(String drive) async {
+    if (receiptFailure case final failure?) throw failure;
+    return tills[drive];
+  }
+
+  @override
   Future<void> delete(String id) async {
     if (failure case final failure?) throw failure;
     operations = [
@@ -238,6 +260,7 @@ Operation testOperation(
   TransactionStatus status = TransactionStatus.cleared,
   TransactionSource source = TransactionSource.manual,
   Map<String, TagMark> tags = const {},
+  Receipt? receipt,
 }) {
   final from = account ?? testAccount('card', currency: amount.currency);
   final picked =
@@ -262,6 +285,7 @@ Operation testOperation(
           Allocation(categoryId: category.id, amount: amount.abs()),
       ],
       tags: tags,
+      receipt: receipt,
     ),
     account: from,
     toAccount: toAccount,

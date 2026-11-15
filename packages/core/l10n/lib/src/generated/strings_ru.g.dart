@@ -3356,6 +3356,9 @@ class _Translations$transactions$ru extends Translations$transactions$en {
         many: 'Все ${n} операций',
         other: 'Все ${n} операции',
       );
+  @override
+  late final _Translations$transactions$receipt$ru receipt =
+      _Translations$transactions$receipt$ru._(_root);
 }
 
 // Path: widgets
@@ -4719,6 +4722,8 @@ class _Translations$transactions$sources$ru
   String get recurring => 'Регулярная';
   @override
   String get bank => 'Из банка';
+  @override
+  String get receipt => 'Из чека';
 }
 
 // Path: transactions.keys
@@ -4745,6 +4750,82 @@ class _Translations$transactions$keys$ru
   String get backspace => 'Стереть';
 }
 
+// Path: transactions.receipt
+class _Translations$transactions$receipt$ru
+    extends Translations$transactions$receipt$en {
+  _Translations$transactions$receipt$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get scan => 'Чек';
+  @override
+  String get scanLabel => 'Сканировать чек';
+  @override
+  String get title => 'Чек по QR';
+  @override
+  String get look => 'Наведите камеру на QR-код чека';
+  @override
+  String get lookHint => 'Сумма, дата и время встанут сами';
+  @override
+  String get notReceipt => 'Это не QR-код чека';
+  @override
+  String get notReceiptHint => 'Нужен квадратный код внизу чека';
+  @override
+  String get read => 'Чек прочитан';
+  @override
+  String get readHint => 'Сумма, дата и время уже в операции';
+  @override
+  String get torch => 'Фонарик';
+  @override
+  String get byHand => 'Ввести вручную';
+  @override
+  String get code => 'QR-код чека в кадре';
+  @override
+  String from({required Object time}) => 'Из чека, ${time}';
+  @override
+  String get knownTill => 'знакомая касса';
+  @override
+  String taught({required Object category}) =>
+      'Записали. Чеки этой кассы сразу пойдут в «${category}»';
+  @override
+  String get twiceTitle => 'Этот чек уже в Birka';
+  @override
+  String get twiceText => 'Тот же чек второй раз не запишем.';
+  @override
+  String get openOperation => 'Открыть операцию';
+  @override
+  String get scanAnother => 'Сканировать другой';
+  @override
+  String get noCamera => 'Нет доступа к камере';
+  @override
+  String get noCameraText =>
+      'Разрешите камеру для Birka в настройках телефона — тогда она прочитает QR-код чека.';
+  @override
+  String get openSettings => 'Открыть настройки';
+  @override
+  String get needsRubles => 'Чек в рублях — выберите счёт в рублях';
+  @override
+  String get group => 'Чек';
+  @override
+  String get document => 'Номер (ФД)';
+  @override
+  String get drive => 'ФН';
+  @override
+  String get sign => 'ФП';
+  @override
+  String get kind => 'Вид';
+  @override
+  late final _Translations$transactions$receipt$kinds$ru kinds =
+      _Translations$transactions$receipt$kinds$ru._(_root);
+  @override
+  String get footnote =>
+      'В QR-коде нет позиций и названия магазина — только сумма, время и номера чека. Выписка банка эту покупку не задвоит.';
+}
+
 // Path: debts.form.dueChoices
 class _Translations$debts$form$dueChoices$ru
     extends Translations$debts$form$dueChoices$en {
@@ -4765,6 +4846,26 @@ class _Translations$debts$form$dueChoices$ru
   String get month => 'Через месяц';
   @override
   String get pick => 'Выбрать день';
+}
+
+// Path: transactions.receipt.kinds
+class _Translations$transactions$receipt$kinds$ru
+    extends Translations$transactions$receipt$kinds$en {
+  _Translations$transactions$receipt$kinds$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get sale => 'Приход';
+  @override
+  String get saleReturn => 'Возврат прихода';
+  @override
+  String get payout => 'Расход';
+  @override
+  String get payoutReturn => 'Возврат расхода';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -7546,6 +7647,7 @@ extension on TranslationsRu {
           'transactions.sources.notification' => 'Из уведомления',
           'transactions.sources.recurring' => 'Регулярная',
           'transactions.sources.bank' => 'Из банка',
+          'transactions.sources.receipt' => 'Из чека',
           'transactions.keys.point' => 'Запятая',
           'transactions.keys.add' => 'Плюс',
           'transactions.keys.subtract' => 'Минус',
@@ -7571,10 +7673,10 @@ extension on TranslationsRu {
           'transactions.monthNames.2' => 'Март',
           'transactions.monthNames.3' => 'Апрель',
           'transactions.monthNames.4' => 'Май',
-          'transactions.monthNames.5' => 'Июнь',
           _ => null,
         } ??
         switch (path) {
+          'transactions.monthNames.5' => 'Июнь',
           'transactions.monthNames.6' => 'Июль',
           'transactions.monthNames.7' => 'Август',
           'transactions.monthNames.8' => 'Сентябрь',
@@ -7592,6 +7694,48 @@ extension on TranslationsRu {
                   many: 'Все ${n} операций',
                   other: 'Все ${n} операции',
                 ),
+          'transactions.receipt.scan' => 'Чек',
+          'transactions.receipt.scanLabel' => 'Сканировать чек',
+          'transactions.receipt.title' => 'Чек по QR',
+          'transactions.receipt.look' => 'Наведите камеру на QR-код чека',
+          'transactions.receipt.lookHint' => 'Сумма, дата и время встанут сами',
+          'transactions.receipt.notReceipt' => 'Это не QR-код чека',
+          'transactions.receipt.notReceiptHint' =>
+            'Нужен квадратный код внизу чека',
+          'transactions.receipt.read' => 'Чек прочитан',
+          'transactions.receipt.readHint' =>
+            'Сумма, дата и время уже в операции',
+          'transactions.receipt.torch' => 'Фонарик',
+          'transactions.receipt.byHand' => 'Ввести вручную',
+          'transactions.receipt.code' => 'QR-код чека в кадре',
+          'transactions.receipt.from' =>
+            ({required Object time}) => 'Из чека, ${time}',
+          'transactions.receipt.knownTill' => 'знакомая касса',
+          'transactions.receipt.taught' =>
+            ({required Object category}) =>
+                'Записали. Чеки этой кассы сразу пойдут в «${category}»',
+          'transactions.receipt.twiceTitle' => 'Этот чек уже в Birka',
+          'transactions.receipt.twiceText' =>
+            'Тот же чек второй раз не запишем.',
+          'transactions.receipt.openOperation' => 'Открыть операцию',
+          'transactions.receipt.scanAnother' => 'Сканировать другой',
+          'transactions.receipt.noCamera' => 'Нет доступа к камере',
+          'transactions.receipt.noCameraText' =>
+            'Разрешите камеру для Birka в настройках телефона — тогда она прочитает QR-код чека.',
+          'transactions.receipt.openSettings' => 'Открыть настройки',
+          'transactions.receipt.needsRubles' =>
+            'Чек в рублях — выберите счёт в рублях',
+          'transactions.receipt.group' => 'Чек',
+          'transactions.receipt.document' => 'Номер (ФД)',
+          'transactions.receipt.drive' => 'ФН',
+          'transactions.receipt.sign' => 'ФП',
+          'transactions.receipt.kind' => 'Вид',
+          'transactions.receipt.kinds.sale' => 'Приход',
+          'transactions.receipt.kinds.saleReturn' => 'Возврат прихода',
+          'transactions.receipt.kinds.payout' => 'Расход',
+          'transactions.receipt.kinds.payoutReturn' => 'Возврат расхода',
+          'transactions.receipt.footnote' =>
+            'В QR-коде нет позиций и названия магазина — только сумма, время и номера чека. Выписка банка эту покупку не задвоит.',
           'widgets.title' => 'Виджеты',
           'widgets.back' => 'Назад',
           'widgets.moreLine' => 'На экране «Домой» и блокировки',

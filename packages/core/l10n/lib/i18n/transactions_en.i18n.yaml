@@ -68,6 +68,7 @@ sources:
   notification: From a notification
   recurring: Recurring
   bank: From the bank
+  receipt: From a receipt
 keys:
   point: Point
   add: Plus
@@ -105,3 +106,38 @@ monthNames:
 allOperations(n):
   one: All $n operation
   other: All $n operations
+receipt:
+  scan: Receipt
+  scanLabel: Scan a receipt
+  title: Receipt QR
+  look: Point the camera at the QR code of the receipt
+  lookHint: The sum, the date and the time fill in by themselves
+  notReceipt: This is not the QR code of a receipt
+  notReceiptHint: Look for the square code at the bottom of the receipt
+  read: Receipt read
+  readHint: The sum, the date and the time are in the operation
+  torch: Torch
+  byHand: Enter by hand
+  code: QR code of the receipt in the frame
+  from: From a receipt, $time
+  knownTill: a known till
+  taught: Saved. Receipts of this till will go to «$category» at once
+  twiceTitle: This receipt is already in Birka
+  twiceText: The same receipt does not go in twice.
+  openOperation: Open the operation
+  scanAnother: Scan another
+  noCamera: No access to the camera
+  noCameraText: Allow the camera for Birka in the settings of the phone, so that it can read the QR code of a receipt.
+  openSettings: Open settings
+  needsRubles: The receipt is in rubles, so pick an account in rubles
+  group: Receipt
+  document: Number (FD)
+  drive: FN
+  sign: FP
+  kind: Kind
+  kinds:
+    sale: Sale
+    saleReturn: Sale return
+    payout: Payout
+    payoutReturn: Payout return
+  footnote: The QR code holds no items and no shop, only the sum, the time and the numbers of the receipt. A bank statement will not record this purchase twice.
