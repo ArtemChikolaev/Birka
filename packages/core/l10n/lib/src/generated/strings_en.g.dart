@@ -5700,6 +5700,10 @@ class Translations$transactions$receipt$en {
   String get cameraFailedText =>
       'Enter the operation by hand, with the sum and the time from the receipt.';
 
+  /// en: 'The receipt is in rubles, so pick an account in rubles'
+  String get needsRubles =>
+      'The receipt is in rubles, so pick an account in rubles';
+
   /// en: 'Receipt'
   String get group => 'Receipt';
 
@@ -8429,6 +8433,8 @@ extension on Translations {
           'transactions.receipt.cameraFailed' => 'The camera did not open',
           'transactions.receipt.cameraFailedText' =>
             'Enter the operation by hand, with the sum and the time from the receipt.',
+          'transactions.receipt.needsRubles' =>
+            'The receipt is in rubles, so pick an account in rubles',
           'transactions.receipt.group' => 'Receipt',
           'transactions.receipt.document' => 'Number (FD)',
           'transactions.receipt.drive' => 'FN',

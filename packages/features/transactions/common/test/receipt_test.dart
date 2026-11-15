@@ -218,6 +218,22 @@ void main() {
       },
     );
 
+    test('a ruble receipt waits for an account in rubles', () async {
+      repository.accountList = [testAccount('usd', currency: Currency.usd)];
+      final cubit = await open();
+      await cubit.receiptRead(ReceiptQr.parse(code)!);
+      cubit.categoryChanged('food');
+      expect(cubit.state.accountId, 'usd');
+      expect(cubit.state.receiptNeedsRubles, isTrue);
+      expect(cubit.state.canSave, isFalse);
+      await cubit.save();
+      expect(repository.recorded, isEmpty);
+      expect(
+        t.transactions.receipt.needsRubles,
+        'Чек в рублях — выберите счёт в рублях',
+      );
+    });
+
     test('a refund comes in as an income', () async {
       final cubit = await open();
       await cubit.receiptRead(

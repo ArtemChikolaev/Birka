@@ -4812,6 +4812,8 @@ class _Translations$transactions$receipt$ru
   String get cameraFailedText =>
       'Запишите операцию вручную — сумму и время можно взять с чека.';
   @override
+  String get needsRubles => 'Чек в рублях — выберите счёт в рублях';
+  @override
   String get group => 'Чек';
   @override
   String get document => 'Номер (ФД)';
@@ -7729,6 +7731,8 @@ extension on TranslationsRu {
           'transactions.receipt.cameraFailed' => 'Камера не открылась',
           'transactions.receipt.cameraFailedText' =>
             'Запишите операцию вручную — сумму и время можно взять с чека.',
+          'transactions.receipt.needsRubles' =>
+            'Чек в рублях — выберите счёт в рублях',
           'transactions.receipt.group' => 'Чек',
           'transactions.receipt.document' => 'Номер (ФД)',
           'transactions.receipt.drive' => 'ФН',

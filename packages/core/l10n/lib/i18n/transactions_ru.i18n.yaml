@@ -134,6 +134,7 @@ receipt:
   openSettings: Открыть настройки
   cameraFailed: Камера не открылась
   cameraFailedText: Запишите операцию вручную — сумму и время можно взять с чека.
+  needsRubles: Чек в рублях — выберите счёт в рублях
   group: Чек
   document: Номер (ФД)
   drive: ФН
