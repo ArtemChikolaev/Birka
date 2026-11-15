@@ -81,6 +81,7 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
   bool _reduced = false;
   Timer? _flashTimer;
   Timer? _closeTimer;
+  AppLifecycleListener? _lifecycle;
 
   @override
   void initState() {
@@ -89,7 +90,16 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
       _controller = MobileScannerController(
         formats: const [BarcodeFormat.qrCode],
       )..addListener(_followCamera);
+      // The camera of the package restarts on its own only while it is
+      // allowed; one allowed in the settings meanwhile starts here.
+      _lifecycle = AppLifecycleListener(onResume: _retry);
     }
+  }
+
+  void _retry() {
+    final controller = _controller;
+    if (controller == null || _camera == _Camera.working) return;
+    unawaited(controller.start().catchError((Object _) {}));
   }
 
   @override
@@ -108,6 +118,7 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
   void dispose() {
     _flashTimer?.cancel();
     _closeTimer?.cancel();
+    _lifecycle?.dispose();
     _breath.dispose();
     _snap.dispose();
     final controller = _controller?..removeListener(_followCamera);
@@ -206,8 +217,10 @@ class _ReceiptScannerPageState extends State<ReceiptScannerPage>
         body: Stack(
           fit: StackFit.expand,
           children: [
+            // The camera stays under the page without it, so that it can
+            // start again once it is allowed.
+            _preview(context),
             if (_camera == _Camera.working) ...[
-              _preview(context),
               _Frame(
                 breath: _breath,
                 snap: _snap,
@@ -646,7 +659,7 @@ class _NoCamera extends StatelessWidget {
           BirkaButton(label: words.openSettings, onPressed: onOpenSettings),
           const SizedBox(height: BirkaTokens.spaceXs),
         ],
-        BirkaButton(label: words.byHand, quiet: !refused, onPressed: onByHand),
+        BirkaButton(label: words.byHand, quiet: refused, onPressed: onByHand),
       ],
     );
   }
