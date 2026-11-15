@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 import 'package:transactions_common/src/domain/amount_expression.dart';
 import 'package:transactions_common/src/domain/operation.dart';
+import 'package:transactions_common/src/domain/receipt_qr.dart';
 import 'package:transactions_common/src/domain/transactions_repository.dart';
 
 /// Where quick add stands.
@@ -70,6 +71,10 @@ final class QuickAddState {
     this.tagIds = const {},
     this.tagsPicked = false,
     this.keptTags = const {},
+    this.receipt,
+    this.receiptAt,
+    this.knownTill = false,
+    this.taughtTill = false,
   });
 
   /// How many categories stand on the sheet before the button for the rest.
@@ -136,6 +141,21 @@ final class QuickAddState {
   /// How the operation being changed wears its метки, which a change keeps
   /// unless the person picks others.
   final Map<String, TagMark> keptTags;
+
+  /// The fiscal receipt that the operation is made from, after a scan
+  /// (ADR 0032).
+  final Receipt? receipt;
+
+  /// When the receipt was paid, as it says.
+  final DateTime? receiptAt;
+
+  /// Whether the till of [receipt] gave the category and the note of its last
+  /// receipt.
+  final bool knownTill;
+
+  /// Whether the save taught Birka the category of a new till, which the
+  /// sheet says as it closes.
+  final bool taughtTill;
 
   /// The метки that the operation is to wear, in the order of [tags].
   List<Tag> get picked => [
@@ -232,8 +252,9 @@ final class QuickAddState {
   Money? _value(AmountExpression expression, Account? account) =>
       account == null ? null : expression.valueIn(account.currency);
 
-  /// A copy with the given fields changed. [toAccountId] and [categoryId]
-  /// take functions, so they can also become `null`.
+  /// A copy with the given fields changed. [toAccountId], [categoryId],
+  /// [receipt] and [receiptAt] take functions, so they can also become
+  /// `null`.
   QuickAddState copyWith({
     QuickAddStatus? status,
     TransactionKind? kind,
@@ -253,6 +274,10 @@ final class QuickAddState {
     Set<String>? tagIds,
     bool? tagsPicked,
     Map<String, TagMark>? keptTags,
+    Receipt? Function()? receipt,
+    DateTime? Function()? receiptAt,
+    bool? knownTill,
+    bool? taughtTill,
   }) {
     return QuickAddState(
       status: status ?? this.status,
@@ -275,6 +300,10 @@ final class QuickAddState {
       tagIds: tagIds ?? this.tagIds,
       tagsPicked: tagsPicked ?? this.tagsPicked,
       keptTags: keptTags ?? this.keptTags,
+      receipt: receipt == null ? this.receipt : receipt(),
+      receiptAt: receiptAt == null ? this.receiptAt : receiptAt(),
+      knownTill: knownTill ?? this.knownTill,
+      taughtTill: taughtTill ?? this.taughtTill,
     );
   }
 
@@ -422,6 +451,62 @@ class QuickAddCubit extends Cubit<QuickAddState> {
     ];
   }
 
+  /// Fills the sheet from the receipt that the scanner read (ADR 0032): its
+  /// sum on an account in its currency, its day and moment, and whether it
+  /// spent money or brought it. A till that a receipt came from before gives
+  /// the category and the note of its last one.
+  Future<void> receiptRead(ReceiptQr read) async {
+    final kind = read.receipt.kind.spends
+        ? TransactionKind.expense
+        : TransactionKind.income;
+    Transaction? last;
+    try {
+      last = await _repository.lastOfTill(read.receipt.drive);
+    } on Exception {
+      last = null;
+    }
+    if (isClosed) return;
+    final categories = kind == TransactionKind.income
+        ? state.incomeCategories
+        : state.expenseCategories;
+    final remembered = last?.kind == kind
+        ? last?.allocations.firstOrNull?.categoryId
+        : null;
+    final known =
+        remembered != null &&
+        categories.any((category) => category.id == remembered);
+    emit(
+      state
+          .copyWith(
+            kind: kind,
+            day: CivilDate.of(read.at),
+            sent: AmountExpression.of(read.sum),
+            accountId: _accountIn(read.sum.currency),
+            categoryId: () => known
+                ? remembered
+                : (state.kind == kind ? state.categoryId : null),
+            note: known ? last!.note : null,
+            receipt: () => read.receipt,
+            receiptAt: () => read.at,
+            knownTill: known,
+          )
+          .withTripsOfTheDay(),
+    );
+  }
+
+  /// The account of the sheet when it holds [currency], else the first one
+  /// that does, else the account of the sheet all the same.
+  String? _accountIn(Currency currency) {
+    final current = state.account;
+    if (current == null || current.currency.code == currency.code) {
+      return state.accountId;
+    }
+    for (final account in state.accounts) {
+      if (account.currency.code == currency.code) return account.id;
+    }
+    return state.accountId;
+  }
+
   /// Sets the kind. The category belongs to the old kind and goes with it.
   void kindChanged(TransactionKind value) {
     if (value == state.kind) return;
@@ -506,7 +591,16 @@ class QuickAddCubit extends Cubit<QuickAddState> {
       } else {
         await _repository.amend(changing.id, draft);
       }
-      if (!isClosed) emit(state.copyWith(status: QuickAddStatus.saved));
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: QuickAddStatus.saved,
+            // The first receipt of a till teaches its category.
+            taughtTill:
+                changing == null && draft.receipt != null && !state.knownTill,
+          ),
+        );
+      }
     } on Exception {
       if (!isClosed) emit(state.copyWith(status: QuickAddStatus.failed));
     }
@@ -517,9 +611,18 @@ class QuickAddCubit extends Cubit<QuickAddState> {
     final day = state.day;
     final kept = _changing?.transaction;
     final status = kept?.status ?? TransactionStatus.cleared;
-    final source = kept?.source ?? TransactionSource.manual;
-    // The moment is known only for what happens now, and stays with its day.
-    final at = kept?.occurredOn == day
+    final receipt = state.receipt ?? kept?.receipt;
+    final source =
+        kept?.source ??
+        (receipt == null
+            ? TransactionSource.manual
+            : TransactionSource.receipt);
+    // The moment is known only for what happens now and for a receipt, and
+    // stays with its day.
+    final receiptAt = state.receiptAt;
+    final at = receiptAt != null && CivilDate.of(receiptAt) == day
+        ? receiptAt
+        : kept?.occurredOn == day
         ? kept?.occurredAt
         : (day == state.today ? _now() : null);
     if (state.kind == TransactionKind.transfer) {
@@ -532,7 +635,8 @@ class QuickAddCubit extends Cubit<QuickAddState> {
         occurredAt: at,
         note: note,
         status: status,
-        source: source,
+        // A transfer is never a receipt, whatever was scanned before.
+        source: kept?.source ?? TransactionSource.manual,
       );
     }
     // The form saves an expense or an income only once it has a category.
@@ -540,7 +644,7 @@ class QuickAddCubit extends Cubit<QuickAddState> {
     final allocations = [
       Allocation(categoryId: categoryId, amount: state.amount!),
     ];
-    return state.kind == TransactionKind.income
+    final draft = state.kind == TransactionKind.income
         ? TransactionDraft.income(
             accountId: state.accountId!,
             allocations: allocations,
@@ -559,6 +663,7 @@ class QuickAddCubit extends Cubit<QuickAddState> {
             status: status,
             source: source,
           );
+    return draft.withReceipt(receipt);
   }
 
   void _type(

@@ -2954,6 +2954,50 @@ class $TransactionsTable extends Transactions
       'REFERENCES imports (id)',
     ),
   );
+  static const VerificationMeta _receiptDriveMeta = const VerificationMeta(
+    'receiptDrive',
+  );
+  @override
+  late final GeneratedColumn<String> receiptDrive = GeneratedColumn<String>(
+    'receipt_drive',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _receiptDocumentMeta = const VerificationMeta(
+    'receiptDocument',
+  );
+  @override
+  late final GeneratedColumn<String> receiptDocument = GeneratedColumn<String>(
+    'receipt_document',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _receiptSignMeta = const VerificationMeta(
+    'receiptSign',
+  );
+  @override
+  late final GeneratedColumn<String> receiptSign = GeneratedColumn<String>(
+    'receipt_sign',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _receiptKindMeta = const VerificationMeta(
+    'receiptKind',
+  );
+  @override
+  late final GeneratedColumn<String> receiptKind = GeneratedColumn<String>(
+    'receipt_kind',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2967,6 +3011,10 @@ class $TransactionsTable extends Transactions
     status,
     source,
     importId,
+    receiptDrive,
+    receiptDocument,
+    receiptSign,
+    receiptKind,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3057,6 +3105,42 @@ class $TransactionsTable extends Transactions
         importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
       );
     }
+    if (data.containsKey('receipt_drive')) {
+      context.handle(
+        _receiptDriveMeta,
+        receiptDrive.isAcceptableOrUnknown(
+          data['receipt_drive']!,
+          _receiptDriveMeta,
+        ),
+      );
+    }
+    if (data.containsKey('receipt_document')) {
+      context.handle(
+        _receiptDocumentMeta,
+        receiptDocument.isAcceptableOrUnknown(
+          data['receipt_document']!,
+          _receiptDocumentMeta,
+        ),
+      );
+    }
+    if (data.containsKey('receipt_sign')) {
+      context.handle(
+        _receiptSignMeta,
+        receiptSign.isAcceptableOrUnknown(
+          data['receipt_sign']!,
+          _receiptSignMeta,
+        ),
+      );
+    }
+    if (data.containsKey('receipt_kind')) {
+      context.handle(
+        _receiptKindMeta,
+        receiptKind.isAcceptableOrUnknown(
+          data['receipt_kind']!,
+          _receiptKindMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3110,6 +3194,22 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}import_id'],
       ),
+      receiptDrive: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_drive'],
+      ),
+      receiptDocument: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_document'],
+      ),
+      receiptSign: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_sign'],
+      ),
+      receiptKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_kind'],
+      ),
     );
   }
 
@@ -3152,6 +3252,19 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
 
   /// The import that brought the transaction (ADR 0021).
   final String? importId;
+
+  /// The fiscal drive («ФН») of the receipt that the transaction was made
+  /// from, which names its till (ADR 0032).
+  final String? receiptDrive;
+
+  /// The number of the fiscal document («ФД») of the receipt.
+  final String? receiptDocument;
+
+  /// The fiscal sign («ФП») of the receipt.
+  final String? receiptSign;
+
+  /// One of the names of `ReceiptKind` in the ledger.
+  final String? receiptKind;
   const TransactionRow({
     required this.id,
     required this.createdAt,
@@ -3164,6 +3277,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     required this.status,
     required this.source,
     this.importId,
+    this.receiptDrive,
+    this.receiptDocument,
+    this.receiptSign,
+    this.receiptKind,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3184,6 +3301,18 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     map['source'] = Variable<String>(source);
     if (!nullToAbsent || importId != null) {
       map['import_id'] = Variable<String>(importId);
+    }
+    if (!nullToAbsent || receiptDrive != null) {
+      map['receipt_drive'] = Variable<String>(receiptDrive);
+    }
+    if (!nullToAbsent || receiptDocument != null) {
+      map['receipt_document'] = Variable<String>(receiptDocument);
+    }
+    if (!nullToAbsent || receiptSign != null) {
+      map['receipt_sign'] = Variable<String>(receiptSign);
+    }
+    if (!nullToAbsent || receiptKind != null) {
+      map['receipt_kind'] = Variable<String>(receiptKind);
     }
     return map;
   }
@@ -3207,6 +3336,18 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       importId: importId == null && nullToAbsent
           ? const Value.absent()
           : Value(importId),
+      receiptDrive: receiptDrive == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receiptDrive),
+      receiptDocument: receiptDocument == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receiptDocument),
+      receiptSign: receiptSign == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receiptSign),
+      receiptKind: receiptKind == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receiptKind),
     );
   }
 
@@ -3227,6 +3368,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       status: serializer.fromJson<String>(json['status']),
       source: serializer.fromJson<String>(json['source']),
       importId: serializer.fromJson<String?>(json['importId']),
+      receiptDrive: serializer.fromJson<String?>(json['receiptDrive']),
+      receiptDocument: serializer.fromJson<String?>(json['receiptDocument']),
+      receiptSign: serializer.fromJson<String?>(json['receiptSign']),
+      receiptKind: serializer.fromJson<String?>(json['receiptKind']),
     );
   }
   @override
@@ -3244,6 +3389,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       'status': serializer.toJson<String>(status),
       'source': serializer.toJson<String>(source),
       'importId': serializer.toJson<String?>(importId),
+      'receiptDrive': serializer.toJson<String?>(receiptDrive),
+      'receiptDocument': serializer.toJson<String?>(receiptDocument),
+      'receiptSign': serializer.toJson<String?>(receiptSign),
+      'receiptKind': serializer.toJson<String?>(receiptKind),
     };
   }
 
@@ -3259,6 +3408,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     String? status,
     String? source,
     Value<String?> importId = const Value.absent(),
+    Value<String?> receiptDrive = const Value.absent(),
+    Value<String?> receiptDocument = const Value.absent(),
+    Value<String?> receiptSign = const Value.absent(),
+    Value<String?> receiptKind = const Value.absent(),
   }) => TransactionRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -3271,6 +3424,12 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     status: status ?? this.status,
     source: source ?? this.source,
     importId: importId.present ? importId.value : this.importId,
+    receiptDrive: receiptDrive.present ? receiptDrive.value : this.receiptDrive,
+    receiptDocument: receiptDocument.present
+        ? receiptDocument.value
+        : this.receiptDocument,
+    receiptSign: receiptSign.present ? receiptSign.value : this.receiptSign,
+    receiptKind: receiptKind.present ? receiptKind.value : this.receiptKind,
   );
   TransactionRow copyWithCompanion(TransactionsCompanion data) {
     return TransactionRow(
@@ -3289,6 +3448,18 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       status: data.status.present ? data.status.value : this.status,
       source: data.source.present ? data.source.value : this.source,
       importId: data.importId.present ? data.importId.value : this.importId,
+      receiptDrive: data.receiptDrive.present
+          ? data.receiptDrive.value
+          : this.receiptDrive,
+      receiptDocument: data.receiptDocument.present
+          ? data.receiptDocument.value
+          : this.receiptDocument,
+      receiptSign: data.receiptSign.present
+          ? data.receiptSign.value
+          : this.receiptSign,
+      receiptKind: data.receiptKind.present
+          ? data.receiptKind.value
+          : this.receiptKind,
     );
   }
 
@@ -3305,7 +3476,11 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           ..write('note: $note, ')
           ..write('status: $status, ')
           ..write('source: $source, ')
-          ..write('importId: $importId')
+          ..write('importId: $importId, ')
+          ..write('receiptDrive: $receiptDrive, ')
+          ..write('receiptDocument: $receiptDocument, ')
+          ..write('receiptSign: $receiptSign, ')
+          ..write('receiptKind: $receiptKind')
           ..write(')'))
         .toString();
   }
@@ -3323,6 +3498,10 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     status,
     source,
     importId,
+    receiptDrive,
+    receiptDocument,
+    receiptSign,
+    receiptKind,
   );
   @override
   bool operator ==(Object other) =>
@@ -3338,7 +3517,11 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           other.note == this.note &&
           other.status == this.status &&
           other.source == this.source &&
-          other.importId == this.importId);
+          other.importId == this.importId &&
+          other.receiptDrive == this.receiptDrive &&
+          other.receiptDocument == this.receiptDocument &&
+          other.receiptSign == this.receiptSign &&
+          other.receiptKind == this.receiptKind);
 }
 
 class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
@@ -3353,6 +3536,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
   final Value<String> status;
   final Value<String> source;
   final Value<String?> importId;
+  final Value<String?> receiptDrive;
+  final Value<String?> receiptDocument;
+  final Value<String?> receiptSign;
+  final Value<String?> receiptKind;
   final Value<int> rowid;
   const TransactionsCompanion({
     this.id = const Value.absent(),
@@ -3366,6 +3553,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.status = const Value.absent(),
     this.source = const Value.absent(),
     this.importId = const Value.absent(),
+    this.receiptDrive = const Value.absent(),
+    this.receiptDocument = const Value.absent(),
+    this.receiptSign = const Value.absent(),
+    this.receiptKind = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TransactionsCompanion.insert({
@@ -3380,6 +3571,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     required String status,
     required String source,
     this.importId = const Value.absent(),
+    this.receiptDrive = const Value.absent(),
+    this.receiptDocument = const Value.absent(),
+    this.receiptSign = const Value.absent(),
+    this.receiptKind = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -3400,6 +3595,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Expression<String>? status,
     Expression<String>? source,
     Expression<String>? importId,
+    Expression<String>? receiptDrive,
+    Expression<String>? receiptDocument,
+    Expression<String>? receiptSign,
+    Expression<String>? receiptKind,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3414,6 +3613,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       if (status != null) 'status': status,
       if (source != null) 'source': source,
       if (importId != null) 'import_id': importId,
+      if (receiptDrive != null) 'receipt_drive': receiptDrive,
+      if (receiptDocument != null) 'receipt_document': receiptDocument,
+      if (receiptSign != null) 'receipt_sign': receiptSign,
+      if (receiptKind != null) 'receipt_kind': receiptKind,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3430,6 +3633,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Value<String>? status,
     Value<String>? source,
     Value<String?>? importId,
+    Value<String?>? receiptDrive,
+    Value<String?>? receiptDocument,
+    Value<String?>? receiptSign,
+    Value<String?>? receiptKind,
     Value<int>? rowid,
   }) {
     return TransactionsCompanion(
@@ -3444,6 +3651,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
       status: status ?? this.status,
       source: source ?? this.source,
       importId: importId ?? this.importId,
+      receiptDrive: receiptDrive ?? this.receiptDrive,
+      receiptDocument: receiptDocument ?? this.receiptDocument,
+      receiptSign: receiptSign ?? this.receiptSign,
+      receiptKind: receiptKind ?? this.receiptKind,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3484,6 +3695,18 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
     if (importId.present) {
       map['import_id'] = Variable<String>(importId.value);
     }
+    if (receiptDrive.present) {
+      map['receipt_drive'] = Variable<String>(receiptDrive.value);
+    }
+    if (receiptDocument.present) {
+      map['receipt_document'] = Variable<String>(receiptDocument.value);
+    }
+    if (receiptSign.present) {
+      map['receipt_sign'] = Variable<String>(receiptSign.value);
+    }
+    if (receiptKind.present) {
+      map['receipt_kind'] = Variable<String>(receiptKind.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3504,6 +3727,10 @@ class TransactionsCompanion extends UpdateCompanion<TransactionRow> {
           ..write('status: $status, ')
           ..write('source: $source, ')
           ..write('importId: $importId, ')
+          ..write('receiptDrive: $receiptDrive, ')
+          ..write('receiptDocument: $receiptDocument, ')
+          ..write('receiptSign: $receiptSign, ')
+          ..write('receiptKind: $receiptKind, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -8707,6 +8934,10 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     'transactions_import',
     'CREATE INDEX transactions_import ON transactions (import_id)',
   );
+  late final Index transactionsReceipt = Index(
+    'transactions_receipt',
+    'CREATE INDEX transactions_receipt ON transactions (receipt_drive)',
+  );
   late final Index entriesTransaction = Index(
     'entries_transaction',
     'CREATE INDEX entries_transaction ON entries (transaction_id)',
@@ -8763,6 +8994,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     transactionTags,
     transactionsOccurredOn,
     transactionsImport,
+    transactionsReceipt,
     entriesTransaction,
     entriesAccount,
     allocationsTransaction,
@@ -11195,6 +11427,10 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       required String status,
       required String source,
       Value<String?> importId,
+      Value<String?> receiptDrive,
+      Value<String?> receiptDocument,
+      Value<String?> receiptSign,
+      Value<String?> receiptKind,
       Value<int> rowid,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
@@ -11210,6 +11446,10 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<String> status,
       Value<String> source,
       Value<String?> importId,
+      Value<String?> receiptDrive,
+      Value<String?> receiptDocument,
+      Value<String?> receiptSign,
+      Value<String?> receiptKind,
       Value<int> rowid,
     });
 
@@ -11361,6 +11601,26 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<String> get source => $composableBuilder(
     column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptDrive => $composableBuilder(
+    column: $table.receiptDrive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptDocument => $composableBuilder(
+    column: $table.receiptDocument,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptSign => $composableBuilder(
+    column: $table.receiptSign,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptKind => $composableBuilder(
+    column: $table.receiptKind,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11522,6 +11782,26 @@ class $$TransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get receiptDrive => $composableBuilder(
+    column: $table.receiptDrive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get receiptDocument => $composableBuilder(
+    column: $table.receiptDocument,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get receiptSign => $composableBuilder(
+    column: $table.receiptSign,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get receiptKind => $composableBuilder(
+    column: $table.receiptKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ImportsTableOrderingComposer get importId {
     final $$ImportsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -11588,6 +11868,26 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get receiptDrive => $composableBuilder(
+    column: $table.receiptDrive,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get receiptDocument => $composableBuilder(
+    column: $table.receiptDocument,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get receiptSign => $composableBuilder(
+    column: $table.receiptSign,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get receiptKind => $composableBuilder(
+    column: $table.receiptKind,
+    builder: (column) => column,
+  );
 
   $$ImportsTableAnnotationComposer get importId {
     final $$ImportsTableAnnotationComposer composer = $composerBuilder(
@@ -11732,6 +12032,10 @@ class $$TransactionsTableTableManager
                 Value<String> status = const Value.absent(),
                 Value<String> source = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
+                Value<String?> receiptDrive = const Value.absent(),
+                Value<String?> receiptDocument = const Value.absent(),
+                Value<String?> receiptSign = const Value.absent(),
+                Value<String?> receiptKind = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion(
                 id: id,
@@ -11745,6 +12049,10 @@ class $$TransactionsTableTableManager
                 status: status,
                 source: source,
                 importId: importId,
+                receiptDrive: receiptDrive,
+                receiptDocument: receiptDocument,
+                receiptSign: receiptSign,
+                receiptKind: receiptKind,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -11760,6 +12068,10 @@ class $$TransactionsTableTableManager
                 required String status,
                 required String source,
                 Value<String?> importId = const Value.absent(),
+                Value<String?> receiptDrive = const Value.absent(),
+                Value<String?> receiptDocument = const Value.absent(),
+                Value<String?> receiptSign = const Value.absent(),
+                Value<String?> receiptKind = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TransactionsCompanion.insert(
                 id: id,
@@ -11773,6 +12085,10 @@ class $$TransactionsTableTableManager
                 status: status,
                 source: source,
                 importId: importId,
+                receiptDrive: receiptDrive,
+                receiptDocument: receiptDocument,
+                receiptSign: receiptSign,
+                receiptKind: receiptKind,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

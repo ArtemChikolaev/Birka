@@ -12,6 +12,8 @@ export 'package:ledger/ledger.dart'
         ChartPeriod,
         CivilDate,
         DayChange,
+        Receipt,
+        ReceiptKind,
         TransactionKind;
 
 export 'src/di/register_transactions.dart';
@@ -19,10 +21,12 @@ export 'src/domain/amount_expression.dart';
 export 'src/domain/operation.dart';
 export 'src/domain/operations_focus.dart';
 export 'src/domain/rank_categories.dart';
+export 'src/domain/receipt_qr.dart';
 export 'src/domain/transactions_repository.dart';
 export 'src/presentation/account_cubit.dart';
 export 'src/presentation/operation_cubit.dart';
 export 'src/presentation/operations_cubit.dart';
 export 'src/presentation/quick_add_cubit.dart';
+export 'src/presentation/receipt_scan_cubit.dart';
 export 'src/presentation/tag_operations_cubit.dart';
 export 'src/presentation/transaction_labels.dart';

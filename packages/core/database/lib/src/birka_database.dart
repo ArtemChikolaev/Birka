@@ -29,7 +29,7 @@ class BirkaDatabase extends _$BirkaDatabase {
   BirkaDatabase(super.e);
 
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -139,6 +139,14 @@ class BirkaDatabase extends _$BirkaDatabase {
             [person, id],
           );
         }
+      },
+      from14To15: (m, schema) async {
+        final transactions = schema.transactions;
+        await m.addColumn(transactions, transactions.receiptDrive);
+        await m.addColumn(transactions, transactions.receiptDocument);
+        await m.addColumn(transactions, transactions.receiptSign);
+        await m.addColumn(transactions, transactions.receiptKind);
+        await m.createIndex(schema.transactionsReceipt);
       },
     ),
     beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),

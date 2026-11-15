@@ -1,4 +1,5 @@
 import 'package:ledger/src/civil_date.dart';
+import 'package:ledger/src/receipt.dart';
 import 'package:ledger/src/transaction.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
@@ -21,6 +22,7 @@ final class TransactionDraft {
     required this.status,
     required this.source,
     this.tags,
+    this.receipt,
   });
 
   /// Money spent from [accountId], which is the sum of [allocations].
@@ -161,6 +163,9 @@ final class TransactionDraft {
   /// them on, and a changed one keeps what it wore.
   final Set<String>? tags;
 
+  /// The fiscal receipt it is made from, if it is (ADR 0032).
+  final Receipt? receipt;
+
   /// The same draft with the метки that the person picked. A trip whose days
   /// would put it on and that is not among them stays off the transaction.
   TransactionDraft withTags(Iterable<String> tags) => TransactionDraft._(
@@ -173,6 +178,21 @@ final class TransactionDraft {
     status: status,
     source: source,
     tags: Set.unmodifiable(tags),
+    receipt: receipt,
+  );
+
+  /// The same draft made from [receipt], or from none.
+  TransactionDraft withReceipt(Receipt? receipt) => TransactionDraft._(
+    kind: kind,
+    entries: entries,
+    allocations: allocations,
+    occurredOn: occurredOn,
+    occurredAt: occurredAt,
+    note: note,
+    status: status,
+    source: source,
+    tags: tags,
+    receipt: receipt,
   );
 
   static Money _sumOf(List<Allocation> allocations) {

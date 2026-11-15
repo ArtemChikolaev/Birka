@@ -33,3 +33,4 @@
 | [0029](0029-debts.md) | Debts between people | accepted 2026-11-14 |
 | [0030](0030-people.md) | The people of the debts | accepted 2026-11-14 |
 | [0031](0031-widgets.md) | Widgets and quick actions | accepted 2026-11-15 |
+| [0032](0032-receipts.md) | Receipts by their QR code | accepted 2026-11-15 |

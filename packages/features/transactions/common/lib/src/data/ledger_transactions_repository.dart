@@ -72,6 +72,15 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   );
 
   @override
+  Future<Operation?> operationOfReceipt(Receipt receipt) async {
+    final transaction = await _ledger.transactionOfReceipt(receipt);
+    return transaction == null ? null : watchOperation(transaction.id).first;
+  }
+
+  @override
+  Future<Transaction?> lastOfTill(String drive) => _ledger.lastOfTill(drive);
+
+  @override
   Stream<AccountBalance?> watchAccount(String id) => _ledger
       .watchAccountBalances(includeArchived: true, includeDebts: true)
       .map(

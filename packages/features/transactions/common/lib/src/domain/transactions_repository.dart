@@ -55,4 +55,12 @@ abstract interface class TransactionsRepository {
 
   /// Deletes operation [id].
   Future<void> delete(String id);
+
+  /// The operation that the ledger made from [receipt], if it did, so that a
+  /// receipt goes in once (ADR 0032).
+  Future<Operation?> operationOfReceipt(Receipt receipt);
+
+  /// The latest transaction made from a receipt of the till whose fiscal
+  /// drive is [drive], whose category its next receipt takes (ADR 0032).
+  Future<Transaction?> lastOfTill(String drive);
 }

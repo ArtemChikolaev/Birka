@@ -3933,6 +3933,9 @@ class Translations$transactions$en {
         one: 'All ${n} operation',
         other: 'All ${n} operations',
       );
+
+  late final Translations$transactions$receipt$en receipt =
+      Translations$transactions$receipt$en.internal(_root);
 }
 
 // Path: widgets
@@ -5581,6 +5584,9 @@ class Translations$transactions$sources$en {
 
   /// en: 'From the bank'
   String get bank => 'From the bank';
+
+  /// en: 'From a receipt'
+  String get receipt => 'From a receipt';
 }
 
 // Path: transactions.keys
@@ -5610,6 +5616,106 @@ class Translations$transactions$keys$en {
   String get backspace => 'Erase';
 }
 
+// Path: transactions.receipt
+class Translations$transactions$receipt$en {
+  Translations$transactions$receipt$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Receipt'
+  String get scan => 'Receipt';
+
+  /// en: 'Scan a receipt'
+  String get scanLabel => 'Scan a receipt';
+
+  /// en: 'Receipt QR'
+  String get title => 'Receipt QR';
+
+  /// en: 'Point the camera at the QR code of the receipt'
+  String get look => 'Point the camera at the QR code of the receipt';
+
+  /// en: 'The sum, the date and the time fill in by themselves'
+  String get lookHint => 'The sum, the date and the time fill in by themselves';
+
+  /// en: 'This is not the QR code of a receipt'
+  String get notReceipt => 'This is not the QR code of a receipt';
+
+  /// en: 'Look for the square code at the bottom of the receipt'
+  String get notReceiptHint =>
+      'Look for the square code at the bottom of the receipt';
+
+  /// en: 'Receipt read'
+  String get read => 'Receipt read';
+
+  /// en: 'The sum, the date and the time are in the operation'
+  String get readHint => 'The sum, the date and the time are in the operation';
+
+  /// en: 'Torch'
+  String get torch => 'Torch';
+
+  /// en: 'Enter by hand'
+  String get byHand => 'Enter by hand';
+
+  /// en: 'QR code of the receipt in the frame'
+  String get code => 'QR code of the receipt in the frame';
+
+  /// en: 'From a receipt, $time'
+  String from({required Object time}) => 'From a receipt, ${time}';
+
+  /// en: 'a known till'
+  String get knownTill => 'a known till';
+
+  /// en: 'Saved. Receipts of this till will go to «$category» at once'
+  String taught({required Object category}) =>
+      'Saved. Receipts of this till will go to «${category}» at once';
+
+  /// en: 'This receipt is already in Birka'
+  String get twiceTitle => 'This receipt is already in Birka';
+
+  /// en: 'The same receipt does not go in twice.'
+  String get twiceText => 'The same receipt does not go in twice.';
+
+  /// en: 'Open the operation'
+  String get openOperation => 'Open the operation';
+
+  /// en: 'Scan another'
+  String get scanAnother => 'Scan another';
+
+  /// en: 'No access to the camera'
+  String get noCamera => 'No access to the camera';
+
+  /// en: 'Allow the camera for Birka in the settings of the phone, so that it can read the QR code of a receipt.'
+  String get noCameraText =>
+      'Allow the camera for Birka in the settings of the phone, so that it can read the QR code of a receipt.';
+
+  /// en: 'Open settings'
+  String get openSettings => 'Open settings';
+
+  /// en: 'Receipt'
+  String get group => 'Receipt';
+
+  /// en: 'Number (FD)'
+  String get document => 'Number (FD)';
+
+  /// en: 'FN'
+  String get drive => 'FN';
+
+  /// en: 'FP'
+  String get sign => 'FP';
+
+  /// en: 'Kind'
+  String get kind => 'Kind';
+
+  late final Translations$transactions$receipt$kinds$en kinds =
+      Translations$transactions$receipt$kinds$en.internal(_root);
+
+  /// en: 'The QR code holds no items and no shop, only the sum, the time and the numbers of the receipt. A bank statement will not record this purchase twice.'
+  String get footnote =>
+      'The QR code holds no items and no shop, only the sum, the time and the numbers of the receipt. A bank statement will not record this purchase twice.';
+}
+
 // Path: debts.form.dueChoices
 class Translations$debts$form$dueChoices$en {
   Translations$debts$form$dueChoices$en.internal(this._root);
@@ -5632,6 +5738,27 @@ class Translations$debts$form$dueChoices$en {
 
   /// en: 'Pick a day'
   String get pick => 'Pick a day';
+}
+
+// Path: transactions.receipt.kinds
+class Translations$transactions$receipt$kinds$en {
+  Translations$transactions$receipt$kinds$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Sale'
+  String get sale => 'Sale';
+
+  /// en: 'Sale return'
+  String get saleReturn => 'Sale return';
+
+  /// en: 'Payout'
+  String get payout => 'Payout';
+
+  /// en: 'Payout return'
+  String get payoutReturn => 'Payout return';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -8215,6 +8342,7 @@ extension on Translations {
           'transactions.sources.notification' => 'From a notification',
           'transactions.sources.recurring' => 'Recurring',
           'transactions.sources.bank' => 'From the bank',
+          'transactions.sources.receipt' => 'From a receipt',
           'transactions.keys.point' => 'Point',
           'transactions.keys.add' => 'Plus',
           'transactions.keys.subtract' => 'Minus',
@@ -8240,10 +8368,10 @@ extension on Translations {
           'transactions.monthNames.2' => 'March',
           'transactions.monthNames.3' => 'April',
           'transactions.monthNames.4' => 'May',
-          'transactions.monthNames.5' => 'June',
           _ => null,
         } ??
         switch (path) {
+          'transactions.monthNames.5' => 'June',
           'transactions.monthNames.6' => 'July',
           'transactions.monthNames.7' => 'August',
           'transactions.monthNames.8' => 'September',
@@ -8258,6 +8386,50 @@ extension on Translations {
                   one: 'All ${n} operation',
                   other: 'All ${n} operations',
                 ),
+          'transactions.receipt.scan' => 'Receipt',
+          'transactions.receipt.scanLabel' => 'Scan a receipt',
+          'transactions.receipt.title' => 'Receipt QR',
+          'transactions.receipt.look' =>
+            'Point the camera at the QR code of the receipt',
+          'transactions.receipt.lookHint' =>
+            'The sum, the date and the time fill in by themselves',
+          'transactions.receipt.notReceipt' =>
+            'This is not the QR code of a receipt',
+          'transactions.receipt.notReceiptHint' =>
+            'Look for the square code at the bottom of the receipt',
+          'transactions.receipt.read' => 'Receipt read',
+          'transactions.receipt.readHint' =>
+            'The sum, the date and the time are in the operation',
+          'transactions.receipt.torch' => 'Torch',
+          'transactions.receipt.byHand' => 'Enter by hand',
+          'transactions.receipt.code' => 'QR code of the receipt in the frame',
+          'transactions.receipt.from' =>
+            ({required Object time}) => 'From a receipt, ${time}',
+          'transactions.receipt.knownTill' => 'a known till',
+          'transactions.receipt.taught' =>
+            ({required Object category}) =>
+                'Saved. Receipts of this till will go to «${category}» at once',
+          'transactions.receipt.twiceTitle' =>
+            'This receipt is already in Birka',
+          'transactions.receipt.twiceText' =>
+            'The same receipt does not go in twice.',
+          'transactions.receipt.openOperation' => 'Open the operation',
+          'transactions.receipt.scanAnother' => 'Scan another',
+          'transactions.receipt.noCamera' => 'No access to the camera',
+          'transactions.receipt.noCameraText' =>
+            'Allow the camera for Birka in the settings of the phone, so that it can read the QR code of a receipt.',
+          'transactions.receipt.openSettings' => 'Open settings',
+          'transactions.receipt.group' => 'Receipt',
+          'transactions.receipt.document' => 'Number (FD)',
+          'transactions.receipt.drive' => 'FN',
+          'transactions.receipt.sign' => 'FP',
+          'transactions.receipt.kind' => 'Kind',
+          'transactions.receipt.kinds.sale' => 'Sale',
+          'transactions.receipt.kinds.saleReturn' => 'Sale return',
+          'transactions.receipt.kinds.payout' => 'Payout',
+          'transactions.receipt.kinds.payoutReturn' => 'Payout return',
+          'transactions.receipt.footnote' =>
+            'The QR code holds no items and no shop, only the sum, the time and the numbers of the receipt. A bank statement will not record this purchase twice.',
           'widgets.title' => 'Widgets',
           'widgets.back' => 'Back',
           'widgets.moreLine' => 'On the Home and the Lock Screen',

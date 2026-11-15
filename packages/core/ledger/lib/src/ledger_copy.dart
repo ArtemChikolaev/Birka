@@ -5,6 +5,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:ledger/src/account.dart';
 import 'package:ledger/src/category.dart';
 import 'package:ledger/src/civil_date.dart';
+import 'package:ledger/src/receipt.dart';
 import 'package:ledger/src/schedule.dart';
 import 'package:ledger/src/tag.dart';
 import 'package:ledger/src/transaction.dart';
@@ -132,9 +133,10 @@ final class LedgerCopy {
   /// to their last times, version 5 their advances, version 6 the
   /// transactions they were made from, version 7 the amounts of advances of
   /// their own (ADR 0023), version 8 метки and trips (ADR 0027), version 9
-  /// the terms of debts (ADR 0029), and version 10 the people of the debts
-  /// (ADR 0030).
-  static const version = 10;
+  /// the terms of debts (ADR 0029), version 10 the people of the debts
+  /// (ADR 0030), and version 11 the receipts that transactions were made from
+  /// (ADR 0032).
+  static const version = 11;
 
   static const _format = 'birka-copy';
 
@@ -275,6 +277,15 @@ final class LedgerCopy {
             'status': row.status,
             'source': row.source,
             'importId': row.importId,
+            'receipt': switch (row.receiptDrive) {
+              final drive? => {
+                'drive': drive,
+                'document': row.receiptDocument,
+                'sign': row.receiptSign,
+                'kind': row.receiptKind,
+              },
+              null => null,
+            },
             'entries': [
               for (final entry in entries[row.id] ?? const <EntryRow>[])
                 {
@@ -657,6 +668,8 @@ void _checkParent(CategoryRow category, Map<String, CategoryRow> categories) {
 
 TransactionRow _transaction(Map<String, Object?> json) {
   final occurredOn = _string(json, 'occurredOn');
+  // Copies before version 11 have no receipts.
+  final receipt = _field<Map<String, Object?>?>(json, 'receipt');
   _obeying('$occurredOn is not a date', () => CivilDate.parse(occurredOn));
   return TransactionRow(
     id: _id(json),
@@ -669,6 +682,12 @@ TransactionRow _transaction(Map<String, Object?> json) {
     status: _name(json, 'status', TransactionStatus.values),
     source: _name(json, 'source', TransactionSource.values),
     importId: _field<String?>(json, 'importId'),
+    receiptDrive: receipt == null ? null : _string(receipt, 'drive'),
+    receiptDocument: receipt == null ? null : _string(receipt, 'document'),
+    receiptSign: receipt == null ? null : _string(receipt, 'sign'),
+    receiptKind: receipt == null
+        ? null
+        : _name(receipt, 'kind', ReceiptKind.values),
   );
 }
 

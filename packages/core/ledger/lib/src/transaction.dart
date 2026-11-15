@@ -1,4 +1,5 @@
 import 'package:ledger/src/civil_date.dart';
+import 'package:ledger/src/receipt.dart';
 import 'package:ledger/src/tag.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
@@ -49,6 +50,9 @@ enum TransactionSource {
 
   /// A connection to a bank.
   bank,
+
+  /// A fiscal receipt that the person scanned (ADR 0032).
+  receipt,
 }
 
 /// How a transaction moves money on an account.
@@ -94,6 +98,7 @@ final class Transaction {
     this.occurredAt,
     this.importId,
     this.tags = const {},
+    this.receipt,
   });
 
   /// The id.
@@ -130,6 +135,9 @@ final class Transaction {
   /// метка that the person took off a transaction of its days stays here as
   /// [TagMark.off].
   final Map<String, TagMark> tags;
+
+  /// The fiscal receipt it was made from, if it was (ADR 0032).
+  final Receipt? receipt;
 
   /// The метки it wears.
   Iterable<String> get tagIds => [
