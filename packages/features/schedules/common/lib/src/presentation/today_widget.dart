@@ -85,7 +85,7 @@ WidgetDay _planDay(
     label: over ? t.schedules.overToday : t.schedules.canSpend,
     labelShort: over ? words.overShort : words.canSpendShort,
     figure: formatMoney(left),
-    value: _units(left),
+    minor: left.minorUnits,
     of: t.schedules.ofPerDay(amount: formatMoney(perDay)),
     ofShort: words.of(amount: formatMoney(perDay)),
     spent: over
@@ -106,7 +106,7 @@ WidgetDay _spentDay(CivilDate day, Money spent) {
     label: words.spentToday,
     labelShort: words.spentTodayShort,
     figure: formatMoney(spent),
-    value: _units(spent),
+    minor: spent.minorUnits,
     of: words.noPayday,
     ofShort: words.today,
     spent: '',
@@ -127,7 +127,3 @@ Map<String, String> _words() {
     'open': words.open,
   };
 }
-
-/// [amount] in whole units of its currency, which a widget rolls to.
-double _units(Money amount) =>
-    amount.minorUnits / math.pow(10, amount.currency.decimalDigits);
