@@ -31,6 +31,7 @@ import 'package:schedules_flutter/schedules_flutter.dart'
 import 'package:settings_common/settings_common.dart';
 import 'package:tags_common/tags_common.dart';
 import 'package:transactions_common/transactions_common.dart';
+import 'package:widgets_common/widgets_common.dart';
 
 /// The notifications of the phone. One serves the whole life of the app, as
 /// a ledger opens anew, so that the tap that opened the app opens the
@@ -118,4 +119,5 @@ void registerDependencies(
   registerSettings(getIt, settings, deviceLanguage: deviceLanguage);
   registerTags(getIt);
   registerTransactions(getIt);
+  registerWidgets(getIt, settings);
 }

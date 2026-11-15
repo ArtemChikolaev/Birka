@@ -13,7 +13,7 @@ CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/features/onboarding/common packages/features/overview/common \
 	packages/features/reports/common \
 	packages/features/settings/common packages/features/tags/common \
-	packages/features/transactions/common
+	packages/features/transactions/common packages/features/widgets/common
 
 # Our Dart code. third_party holds code of others as it was published.
 OUR_DART := apps packages tools
@@ -137,6 +137,7 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/tags/jaspr && dart test
 	cd packages/features/transactions/flutter && flutter test
 	cd packages/features/transactions/jaspr && dart test
+	cd packages/features/widgets/flutter && flutter test
 
 test-web: ## Tests of the Jaspr host
 	cd apps/web && dart test

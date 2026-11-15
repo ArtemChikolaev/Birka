@@ -105,6 +105,10 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$transactions$ru transactions =
       _Translations$transactions$ru._(_root);
+  @override
+  late final _Translations$widgets$ru widgets = _Translations$widgets$ru._(
+    _root,
+  );
 }
 
 // Path: accounts
@@ -3352,6 +3356,89 @@ class _Translations$transactions$ru extends Translations$transactions$en {
         many: 'Все ${n} операций',
         other: 'Все ${n} операции',
       );
+}
+
+// Path: widgets
+class _Translations$widgets$ru extends Translations$widgets$en {
+  _Translations$widgets$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Виджеты';
+  @override
+  String get back => 'Назад';
+  @override
+  String get moreLine => 'На экране «Домой» и блокировки';
+  @override
+  String get moreLineAndroid => 'На главном экране и в ярлыках';
+  @override
+  String get kinds =>
+      '«Сегодня» — маленький и средний, «Запись» — маленький, и два виджета для экрана блокировки';
+  @override
+  String get kindsAndroid => '«Сегодня» — 4 × 2, «Запись» — 2 × 1';
+  @override
+  String get preview => 'Так виджет «Сегодня» выглядит сейчас';
+  @override
+  String get previewEmpty => 'Добавьте счёт, и здесь появятся цифры дня';
+  @override
+  String get sums => 'Суммы в виджетах';
+  @override
+  String get sumsOn =>
+      'На экране блокировки суммы откроются только после Face ID.';
+  @override
+  String get sumsOnAndroid =>
+      'Суммы видны на главном экране. Выключите, и вместо них будут точки.';
+  @override
+  String get sumsOff => 'Вместо сумм точки, кнопки работают как раньше.';
+  @override
+  String get howTitle => 'Как добавить';
+  @override
+  List<String> get how => [
+    'Удерживайте пустое место на экране «Домой»',
+    'Нажмите «Изменить», затем «Добавить виджет»',
+    'Найдите Birka и выберите размер',
+  ];
+  @override
+  List<String> get howAndroid => [
+    'Удерживайте пустое место на главном экране',
+    'Нажмите «Виджеты»',
+    'Найдите Birka и перетащите виджет на экран',
+  ];
+  @override
+  String get pin => 'Добавить на главный экран';
+  @override
+  String get pinNote =>
+      'Android спросит, куда его поставить. Ещё можно удержать пустое место на экране и выбрать «Виджеты».';
+  @override
+  String get pinned => 'Виджет на главном экране';
+  @override
+  String get fasterTitle => 'Ещё быстрее';
+  @override
+  String get iconTitle => 'Удерживайте иконку Birka';
+  @override
+  String get iconText => 'Расход, Доход, Перевод, Спросить';
+  @override
+  String get controlTitle => 'Кнопка «Записать»';
+  @override
+  String get controlText =>
+      'В Пункте управления, на экране блокировки и на кнопке действия';
+  @override
+  String get siriTitle => 'Siri и Команды';
+  @override
+  String get siriText => '«Записать трату в Birka»';
+  @override
+  String get shortcutTitle => 'Ярлык на главный экран';
+  @override
+  String get shortcutText =>
+      'Перетащите «Расход» из меню иконки, и он станет кнопкой';
+  @override
+  String get expense => 'Расход';
+  @override
+  String get income => 'Доход';
 }
 
 // Path: accounts.form
@@ -7505,6 +7592,47 @@ extension on TranslationsRu {
                   many: 'Все ${n} операций',
                   other: 'Все ${n} операции',
                 ),
+          'widgets.title' => 'Виджеты',
+          'widgets.back' => 'Назад',
+          'widgets.moreLine' => 'На экране «Домой» и блокировки',
+          'widgets.moreLineAndroid' => 'На главном экране и в ярлыках',
+          'widgets.kinds' =>
+            '«Сегодня» — маленький и средний, «Запись» — маленький, и два виджета для экрана блокировки',
+          'widgets.kindsAndroid' => '«Сегодня» — 4 × 2, «Запись» — 2 × 1',
+          'widgets.preview' => 'Так виджет «Сегодня» выглядит сейчас',
+          'widgets.previewEmpty' => 'Добавьте счёт, и здесь появятся цифры дня',
+          'widgets.sums' => 'Суммы в виджетах',
+          'widgets.sumsOn' =>
+            'На экране блокировки суммы откроются только после Face ID.',
+          'widgets.sumsOnAndroid' =>
+            'Суммы видны на главном экране. Выключите, и вместо них будут точки.',
+          'widgets.sumsOff' => 'Вместо сумм точки, кнопки работают как раньше.',
+          'widgets.howTitle' => 'Как добавить',
+          'widgets.how.0' => 'Удерживайте пустое место на экране «Домой»',
+          'widgets.how.1' => 'Нажмите «Изменить», затем «Добавить виджет»',
+          'widgets.how.2' => 'Найдите Birka и выберите размер',
+          'widgets.howAndroid.0' =>
+            'Удерживайте пустое место на главном экране',
+          'widgets.howAndroid.1' => 'Нажмите «Виджеты»',
+          'widgets.howAndroid.2' =>
+            'Найдите Birka и перетащите виджет на экран',
+          'widgets.pin' => 'Добавить на главный экран',
+          'widgets.pinNote' =>
+            'Android спросит, куда его поставить. Ещё можно удержать пустое место на экране и выбрать «Виджеты».',
+          'widgets.pinned' => 'Виджет на главном экране',
+          'widgets.fasterTitle' => 'Ещё быстрее',
+          'widgets.iconTitle' => 'Удерживайте иконку Birka',
+          'widgets.iconText' => 'Расход, Доход, Перевод, Спросить',
+          'widgets.controlTitle' => 'Кнопка «Записать»',
+          'widgets.controlText' =>
+            'В Пункте управления, на экране блокировки и на кнопке действия',
+          'widgets.siriTitle' => 'Siri и Команды',
+          'widgets.siriText' => '«Записать трату в Birka»',
+          'widgets.shortcutTitle' => 'Ярлык на главный экран',
+          'widgets.shortcutText' =>
+            'Перетащите «Расход» из меню иконки, и он станет кнопкой',
+          'widgets.expense' => 'Расход',
+          'widgets.income' => 'Доход',
           _ => null,
         };
   }

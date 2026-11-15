@@ -66,6 +66,8 @@ workspace:
   - packages/features/transactions/common
   - packages/features/transactions/flutter
   - packages/features/transactions/jaspr
+  - packages/features/widgets/common
+  - packages/features/widgets/flutter
   - tools
 
 dev_dependencies:

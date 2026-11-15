@@ -139,7 +139,17 @@ enum BirkaGlyph {
   message,
 
   /// A person in a circle, for a contact of the phone (ADR 0030).
-  contact
+  contact,
+
+  /// A dash, for an expense among the actions of the home screen (ADR 0031).
+  minus,
+
+  /// A wide tile over two small ones, for the widgets of the home screen
+  /// (ADR 0031).
+  widgets,
+
+  /// Bars of a voice, for Siri (ADR 0031).
+  wave
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer
