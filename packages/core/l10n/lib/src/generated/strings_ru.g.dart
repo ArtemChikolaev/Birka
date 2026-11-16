@@ -1845,6 +1845,7 @@ class _Translations$limits$ru extends Translations$limits$en {
   String overCount({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'превышено ${n}',
         one: 'превышен ${n}',
         few: 'превышено ${n}',
         many: 'превышено ${n}',
@@ -1856,6 +1857,7 @@ class _Translations$limits$ru extends Translations$limits$en {
   String days({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} дней',
         one: '${n} день',
         few: '${n} дня',
         many: '${n} дней',
@@ -1887,6 +1889,7 @@ class _Translations$limits$ru extends Translations$limits$en {
   String overNote({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: '${n} превышено',
         one: '${n} превышен',
         few: '${n} превышено',
         many: '${n} превышено',
@@ -4598,6 +4601,7 @@ class _Translations$limits$suggestions$ru
   String rare({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'траты были в ${n} месяцах из 3',
         one: 'траты были в ${n} месяце из 3',
         few: 'траты были в ${n} месяцах из 3',
         many: 'траты были в ${n} месяцах из 3',
@@ -4612,6 +4616,7 @@ class _Translations$limits$suggestions$ru
   String put({required num n}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Поставить ${n} лимитов',
         one: 'Поставить ${n} лимит',
         few: 'Поставить ${n} лимита',
         many: 'Поставить ${n} лимитов',
@@ -4623,6 +4628,7 @@ class _Translations$limits$suggestions$ru
   String done({required num n, required Object month}) =>
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
         n,
+        zero: 'Поставили ${n} лимитов на ${month}',
         one: 'Поставили ${n} лимит на ${month}',
         few: 'Поставили ${n} лимита на ${month}',
         many: 'Поставили ${n} лимитов на ${month}',
@@ -6747,6 +6753,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'превышено ${n}',
                   one: 'превышен ${n}',
                   few: 'превышено ${n}',
                   many: 'превышено ${n}',
@@ -6758,6 +6765,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} дней',
                   one: '${n} день',
                   few: '${n} дня',
                   many: '${n} дней',
@@ -6786,6 +6794,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: '${n} превышено',
                   one: '${n} превышен',
                   few: '${n} превышено',
                   many: '${n} превышено',
@@ -6878,6 +6887,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'траты были в ${n} месяцах из 3',
                   one: 'траты были в ${n} месяце из 3',
                   few: 'траты были в ${n} месяцах из 3',
                   many: 'траты были в ${n} месяцах из 3',
@@ -6891,6 +6901,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Поставить ${n} лимитов',
                   one: 'Поставить ${n} лимит',
                   few: 'Поставить ${n} лимита',
                   many: 'Поставить ${n} лимитов',
@@ -6902,6 +6913,7 @@ extension on TranslationsRu {
                 (_root.$meta.cardinalResolver ??
                 PluralResolvers.cardinal('ru'))(
                   n,
+                  zero: 'Поставили ${n} лимитов на ${month}',
                   one: 'Поставили ${n} лимит на ${month}',
                   few: 'Поставили ${n} лимита на ${month}',
                   many: 'Поставили ${n} лимитов на ${month}',

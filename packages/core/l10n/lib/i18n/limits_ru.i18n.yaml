@@ -15,12 +15,14 @@ months:
   - декабрь
 all(n): Все лимиты · $n
 overCount(n):
+  zero: превышено $n
   one: превышен $n
   few: превышено $n
   many: превышено $n
   other: превышено $n
 allWithin: всё в лимите
 days(n):
+  zero: $n дней
   one: $n день
   few: $n дня
   many: $n дней
@@ -36,6 +38,7 @@ lastsUntilShort: хватит примерно до $day
 withinTitle: В лимите
 withinValue: $within из $all
 overNote(n):
+  zero: $n превышено
   one: $n превышен
   few: $n превышено
   many: $n превышено
@@ -90,6 +93,7 @@ suggestions:
   average: в среднем $amount
   jumps: 'скачут: от $least до $most'
   rare(n):
+    zero: траты были в $n месяцах из 3
     one: траты были в $n месяце из 3
     few: траты были в $n месяцах из 3
     many: траты были в $n месяцах из 3
@@ -97,12 +101,14 @@ suggestions:
   regular: это регулярные платежи
   later: Сумму любого лимита можно поменять потом, на странице «Лимиты».
   put(n):
+    zero: Поставить $n лимитов
     one: Поставить $n лимит
     few: Поставить $n лимита
     many: Поставить $n лимитов
     other: Поставить $n лимита
   none: Ничего не отмечено
   done(n):
+    zero: Поставили $n лимитов на $month
     one: Поставили $n лимит на $month
     few: Поставили $n лимита на $month
     many: Поставили $n лимитов на $month
