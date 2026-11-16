@@ -281,4 +281,18 @@ void main() {
       eur(261),
     );
   });
+
+  test('an average is in whole units of its currency', () {
+    final cafe = category('Кафе');
+    // 350 ₽ in October alone make 116,67 ₽ a month; the average says 117 ₽.
+    final suggestion = suggestLimit(
+      cafe,
+      [CategoryDayTotal(cafe, CivilDate(2026, 10, 3), rub(350))],
+      rates,
+      currency: Currency.rub,
+      month: month,
+    );
+    expect(suggestion!.average, rub(117));
+    expect(suggestion.offer, rub(500));
+  });
 }
