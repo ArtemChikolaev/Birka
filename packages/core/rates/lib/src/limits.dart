@@ -238,7 +238,12 @@ LimitSuggestion? suggestLimit(
   ];
   final total = months.fold(0, (sum, m) => sum + m.minorUnits);
   if (total <= 0) return null;
-  final average = Money((total / months.length).round(), currency);
+  // The average is about a month, so it is in whole units of its currency.
+  final unit = BigInt.from(10).pow(currency.decimalDigits).toInt();
+  final average = Money(
+    (total / months.length / unit).round() * unit,
+    currency,
+  );
   final step = limitStep(rates, currency).minorUnits;
   final offer = Money((average.minorUnits / step).ceil() * step, currency);
   final spending = months.where((m) => m.isPositive).toList();
