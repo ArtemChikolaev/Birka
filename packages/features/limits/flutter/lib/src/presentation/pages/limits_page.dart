@@ -226,7 +226,10 @@ class _LimitRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: BirkaTokens.spaceSm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: BirkaTokens.spaceMd,
+            vertical: BirkaTokens.spaceSm,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

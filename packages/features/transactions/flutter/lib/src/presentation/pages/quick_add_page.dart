@@ -343,12 +343,14 @@ class _Sheet extends StatelessWidget {
                       padding: const EdgeInsets.only(
                         bottom: BirkaTokens.spaceXs,
                       ),
-                      child: FadingText(
-                        line,
-                        textAlign: TextAlign.center,
-                        style: BirkaTextStyles.of(
-                          context,
-                        ).caption.copyWith(color: lineColor),
+                      child: Center(
+                        child: FadingText(
+                          line,
+                          textAlign: TextAlign.center,
+                          style: BirkaTextStyles.of(
+                            context,
+                          ).caption.copyWith(color: lineColor),
+                        ),
                       ),
                     ),
                   },
