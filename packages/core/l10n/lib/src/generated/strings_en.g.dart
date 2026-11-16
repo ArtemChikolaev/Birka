@@ -67,6 +67,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$inbox$en inbox = Translations$inbox$en.internal(
     _root,
   );
+  late final Translations$limits$en limits = Translations$limits$en.internal(
+    _root,
+  );
   late final Translations$notifications$en notifications =
       Translations$notifications$en.internal(_root);
   late final Translations$onboarding$en onboarding =
@@ -2068,6 +2071,163 @@ class Translations$inbox$en {
 
   /// en: 'Clear'
   String get unpick => 'Clear';
+}
+
+// Path: limits
+class Translations$limits$en {
+  Translations$limits$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Limits'
+  String get title => 'Limits';
+
+  /// en: 'Limits for $month'
+  String monthOf({required Object month}) => 'Limits for ${month}';
+
+  List<String> get months => [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  /// en: 'All limits · $n'
+  String all({required Object n}) => 'All limits · ${n}';
+
+  /// en: '(one) {$n over} (other) {$n over}'
+  String overCount({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} over',
+        other: '${n} over',
+      );
+
+  /// en: 'all within'
+  String get allWithin => 'all within';
+
+  /// en: '(one) {$n day} (other) {$n days}'
+  String days({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} day',
+        other: '${n} days',
+      );
+
+  /// en: '$spent of $limit'
+  String spentOf({required Object spent, required Object limit}) =>
+      '${spent} of ${limit}';
+
+  /// en: 'of $limit'
+  String ofLimit({required Object limit}) => 'of ${limit}';
+
+  /// en: '≈ $amount'
+  String about({required Object amount}) => '≈ ${amount}';
+
+  /// en: '$amount left'
+  String left({required Object amount}) => '${amount} left';
+
+  /// en: '$amount over the limit'
+  String over({required Object amount}) => '${amount} over the limit';
+
+  /// en: '$amount over'
+  String overShort({required Object amount}) => '${amount} over';
+
+  /// en: 'At this pace it lasts until $day'
+  String lastsUntil({required Object day}) =>
+      'At this pace it lasts until ${day}';
+
+  /// en: 'lasts until about $day'
+  String lastsUntilShort({required Object day}) => 'lasts until about ${day}';
+
+  /// en: 'Within'
+  String get withinTitle => 'Within';
+
+  /// en: '$within of $all'
+  String withinValue({required Object within, required Object all}) =>
+      '${within} of ${all}';
+
+  /// en: '(one) {$n over} (other) {$n over}'
+  String overNote({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} over',
+        other: '${n} over',
+      );
+
+  /// en: 'none over'
+  String get nothingOver => 'none over';
+
+  /// en: 'Until the month ends'
+  String get monthEndTitle => 'Until the month ends';
+
+  /// en: 'anew on $day'
+  String restartsOn({required Object day}) => 'anew on ${day}';
+
+  /// en: '$category: $percent % of the limit spent'
+  String meter({required Object category, required Object percent}) =>
+      '${category}: ${percent} % of the limit spent';
+
+  /// en: 'Spending in another currency counts at the rate of the Bank of Russia on the day of the operation.'
+  String get footnote =>
+      'Spending in another currency counts at the rate of the Bank of Russia on the day of the operation.';
+
+  /// en: 'Some spending has no rate for its day and is left out.'
+  String get unrated =>
+      'Some spending has no rate for its day and is left out.';
+
+  /// en: 'No limit'
+  String get noLimit => 'No limit';
+
+  /// en: 'Set'
+  String get set => 'Set';
+
+  /// en: '$amount $month'
+  String spentIn({required Object amount, required Object month}) =>
+      '${amount} ${month}';
+
+  /// en: 'regular payments'
+  String get regular => 'regular payments';
+
+  /// en: 'Suggest from averages'
+  String get suggest => 'Suggest from averages';
+
+  /// en: 'From the spending of $from to $to'
+  String suggestFrom({required Object from, required Object to}) =>
+      'From the spending of ${from} to ${to}';
+
+  /// en: 'No limits yet'
+  String get emptyTitle => 'No limits yet';
+
+  /// en: 'Set a monthly limit on a category, and Birka shows what is left and says so early when it runs low.'
+  String get emptyText =>
+      'Set a monthly limit on a category, and Birka shows what is left and says so early when it runs low.';
+
+  /// en: 'Set one by hand'
+  String get manual => 'Set one by hand';
+
+  /// en: 'Limits'
+  String get inviteTitle => 'Limits';
+
+  /// en: 'Suggest from what you spend'
+  String get inviteAction => 'Suggest from what you spend';
+
+  late final Translations$limits$form$en form =
+      Translations$limits$form$en.internal(_root);
+  late final Translations$limits$suggestions$en suggestions =
+      Translations$limits$suggestions$en.internal(_root);
+  late final Translations$limits$quickAdd$en quickAdd =
+      Translations$limits$quickAdd$en.internal(_root);
 }
 
 // Path: notifications
@@ -5173,6 +5333,195 @@ class Translations$demo$debtNotes$en {
   String get concert => 'for the concert';
 }
 
+// Path: limits.form
+class Translations$limits$form$en {
+  Translations$limits$form$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'New limit'
+  String get newTitle => 'New limit';
+
+  /// en: 'Limit on «$category»'
+  String editTitle({required Object category}) => 'Limit on «${category}»';
+
+  /// en: 'Category'
+  String get category => 'Category';
+
+  /// en: '$n more'
+  String more({required Object n}) => '${n} more';
+
+  /// en: 'Per month'
+  String get perMonth => 'Per month';
+
+  /// en: 'Not set'
+  String get notSet => 'Not set';
+
+  /// en: 'Amount per month'
+  String get amountHint => 'Amount per month';
+
+  /// en: 'Currency of the limit'
+  String get currency => 'Currency of the limit';
+
+  /// en: 'On average in 3 months'
+  String get average => 'On average in 3 months';
+
+  /// en: 'No spending in 3 months'
+  String get noAverage => 'No spending in 3 months';
+
+  /// en: 'Take $amount'
+  String take({required Object amount}) => 'Take ${amount}';
+
+  /// en: 'rounded up'
+  String get taken => 'rounded up';
+
+  /// en: 'as now'
+  String get same => 'as now';
+
+  /// en: 'Say so early'
+  String get warn => 'Say so early';
+
+  /// en: 'We say so once 80 % is gone — $amount.'
+  String warnAt({required Object amount}) =>
+      'We say so once 80 % is gone — ${amount}.';
+
+  /// en: 'We say so once 80 % of the limit is gone.'
+  String get warnLater => 'We say so once 80 % of the limit is gone.';
+
+  /// en: 'The limit shows only on the page «Limits» and on the overview.'
+  String get warnOff =>
+      'The limit shows only on the page «Limits» and on the overview.';
+
+  /// en: '$month — $spent of $limit'
+  String spentNow({
+    required Object month,
+    required Object spent,
+    required Object limit,
+  }) => '${month} — ${spent} of ${limit}';
+
+  /// en: 'The limit runs from the 1st to the last day of the month and starts anew every month.'
+  String get calendarMonth =>
+      'The limit runs from the 1st to the last day of the month and starts anew every month.';
+
+  /// en: 'The limit runs from day $day to day $day of the next month and starts anew.'
+  String ownMonth({required Object day}) =>
+      'The limit runs from day ${day} to day ${day} of the next month and starts anew.';
+
+  /// en: 'Spending in other currencies counts toward this limit at the rate of the Bank of Russia on the day of the operation.'
+  String get otherCurrencies =>
+      'Spending in other currencies counts toward this limit at the rate of the Bank of Russia on the day of the operation.';
+
+  /// en: 'Remove the limit'
+  String get remove => 'Remove the limit';
+
+  /// en: 'Limit on «$category» — $amount a month'
+  String saved({required Object category, required Object amount}) =>
+      'Limit on «${category}» — ${amount} a month';
+
+  /// en: 'Limit on «$category» — now $amount'
+  String changed({required Object category, required Object amount}) =>
+      'Limit on «${category}» — now ${amount}';
+
+  /// en: 'The limit on «$category» is gone'
+  String removed({required Object category}) =>
+      'The limit on «${category}» is gone';
+
+  /// en: 'Could not save. Please try again.'
+  String get failed => 'Could not save. Please try again.';
+}
+
+// Path: limits.suggestions
+class Translations$limits$suggestions$en {
+  Translations$limits$suggestions$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Limits from averages'
+  String get title => 'Limits from averages';
+
+  /// en: 'The average spending of $from to $to, rounded up to $step. Checked are the categories whose spending is alike every month.'
+  String text({
+    required Object from,
+    required Object to,
+    required Object step,
+  }) =>
+      'The average spending of ${from} to ${to}, rounded up to ${step}. Checked are the categories whose spending is alike every month.';
+
+  /// en: '$amount on average'
+  String average({required Object amount}) => '${amount} on average';
+
+  /// en: 'jumps: from $least to $most'
+  String jumps({required Object least, required Object most}) =>
+      'jumps: from ${least} to ${most}';
+
+  /// en: '(one) {spending came in $n month of 3} (other) {spending came in $n months of 3}'
+  String rare({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'spending came in ${n} month of 3',
+        other: 'spending came in ${n} months of 3',
+      );
+
+  /// en: 'these are regular payments'
+  String get regular => 'these are regular payments';
+
+  /// en: 'You can change any limit later, on the page «Limits».'
+  String get later => 'You can change any limit later, on the page «Limits».';
+
+  /// en: '(one) {Set $n limit} (other) {Set $n limits}'
+  String put({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Set ${n} limit',
+        other: 'Set ${n} limits',
+      );
+
+  /// en: 'Nothing is checked'
+  String get none => 'Nothing is checked';
+
+  /// en: '(one) {Set $n limit for $month} (other) {Set $n limits for $month}'
+  String done({required num n, required Object month}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: 'Set ${n} limit for ${month}',
+        other: 'Set ${n} limits for ${month}',
+      );
+
+  /// en: 'Every category that spends already has a limit.'
+  String get nothing => 'Every category that spends already has a limit.';
+
+  /// en: 'Not much history yet'
+  String get shortTitle => 'Not much history yet';
+
+  /// en: 'Averages come after the first full month with spending — $day. You can set a limit by hand now.'
+  String shortText({required Object day}) =>
+      'Averages come after the first full month with spending — ${day}. You can set a limit by hand now.';
+}
+
+// Path: limits.quickAdd
+class Translations$limits$quickAdd$en {
+  Translations$limits$quickAdd$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: '$category: $left of $limit left'
+  String left({
+    required Object category,
+    required Object left,
+    required Object limit,
+  }) => '${category}: ${left} of ${limit} left';
+
+  /// en: '$category: $amount over the limit'
+  String over({required Object category, required Object amount}) =>
+      '${category}: ${amount} over the limit';
+}
+
 // Path: onboarding.welcome
 class Translations$onboarding$welcome$en {
   Translations$onboarding$welcome$en.internal(this._root);
@@ -7220,6 +7569,192 @@ extension on Translations {
             ({required Object first, required Object second}) =>
                 '${first} and ${second}',
           'inbox.unpick' => 'Clear',
+          'limits.title' => 'Limits',
+          'limits.monthOf' =>
+            ({required Object month}) => 'Limits for ${month}',
+          'limits.months.0' => 'January',
+          'limits.months.1' => 'February',
+          'limits.months.2' => 'March',
+          'limits.months.3' => 'April',
+          'limits.months.4' => 'May',
+          'limits.months.5' => 'June',
+          'limits.months.6' => 'July',
+          'limits.months.7' => 'August',
+          'limits.months.8' => 'September',
+          'limits.months.9' => 'October',
+          'limits.months.10' => 'November',
+          'limits.months.11' => 'December',
+          'limits.all' => ({required Object n}) => 'All limits · ${n}',
+          'limits.overCount' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} over',
+                  other: '${n} over',
+                ),
+          'limits.allWithin' => 'all within',
+          'limits.days' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} day',
+                  other: '${n} days',
+                ),
+          'limits.spentOf' =>
+            ({required Object spent, required Object limit}) =>
+                '${spent} of ${limit}',
+          'limits.ofLimit' => ({required Object limit}) => 'of ${limit}',
+          'limits.about' => ({required Object amount}) => '≈ ${amount}',
+          'limits.left' => ({required Object amount}) => '${amount} left',
+          'limits.over' =>
+            ({required Object amount}) => '${amount} over the limit',
+          'limits.overShort' => ({required Object amount}) => '${amount} over',
+          'limits.lastsUntil' =>
+            ({required Object day}) => 'At this pace it lasts until ${day}',
+          'limits.lastsUntilShort' =>
+            ({required Object day}) => 'lasts until about ${day}',
+          'limits.withinTitle' => 'Within',
+          'limits.withinValue' =>
+            ({required Object within, required Object all}) =>
+                '${within} of ${all}',
+          'limits.overNote' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} over',
+                  other: '${n} over',
+                ),
+          'limits.nothingOver' => 'none over',
+          'limits.monthEndTitle' => 'Until the month ends',
+          'limits.restartsOn' => ({required Object day}) => 'anew on ${day}',
+          'limits.meter' =>
+            ({required Object category, required Object percent}) =>
+                '${category}: ${percent} % of the limit spent',
+          'limits.footnote' =>
+            'Spending in another currency counts at the rate of the Bank of Russia on the day of the operation.',
+          'limits.unrated' =>
+            'Some spending has no rate for its day and is left out.',
+          'limits.noLimit' => 'No limit',
+          'limits.set' => 'Set',
+          'limits.spentIn' =>
+            ({required Object amount, required Object month}) =>
+                '${amount} ${month}',
+          'limits.regular' => 'regular payments',
+          'limits.suggest' => 'Suggest from averages',
+          'limits.suggestFrom' =>
+            ({required Object from, required Object to}) =>
+                'From the spending of ${from} to ${to}',
+          'limits.emptyTitle' => 'No limits yet',
+          'limits.emptyText' =>
+            'Set a monthly limit on a category, and Birka shows what is left and says so early when it runs low.',
+          'limits.manual' => 'Set one by hand',
+          'limits.inviteTitle' => 'Limits',
+          'limits.inviteAction' => 'Suggest from what you spend',
+          'limits.form.newTitle' => 'New limit',
+          'limits.form.editTitle' =>
+            ({required Object category}) => 'Limit on «${category}»',
+          'limits.form.category' => 'Category',
+          'limits.form.more' => ({required Object n}) => '${n} more',
+          'limits.form.perMonth' => 'Per month',
+          'limits.form.notSet' => 'Not set',
+          'limits.form.amountHint' => 'Amount per month',
+          'limits.form.currency' => 'Currency of the limit',
+          'limits.form.average' => 'On average in 3 months',
+          'limits.form.noAverage' => 'No spending in 3 months',
+          'limits.form.take' => ({required Object amount}) => 'Take ${amount}',
+          'limits.form.taken' => 'rounded up',
+          'limits.form.same' => 'as now',
+          'limits.form.warn' => 'Say so early',
+          'limits.form.warnAt' =>
+            ({required Object amount}) =>
+                'We say so once 80 % is gone — ${amount}.',
+          'limits.form.warnLater' =>
+            'We say so once 80 % of the limit is gone.',
+          'limits.form.warnOff' =>
+            'The limit shows only on the page «Limits» and on the overview.',
+          'limits.form.spentNow' =>
+            ({
+              required Object month,
+              required Object spent,
+              required Object limit,
+            }) => '${month} — ${spent} of ${limit}',
+          'limits.form.calendarMonth' =>
+            'The limit runs from the 1st to the last day of the month and starts anew every month.',
+          'limits.form.ownMonth' =>
+            ({required Object day}) =>
+                'The limit runs from day ${day} to day ${day} of the next month and starts anew.',
+          'limits.form.otherCurrencies' =>
+            'Spending in other currencies counts toward this limit at the rate of the Bank of Russia on the day of the operation.',
+          'limits.form.remove' => 'Remove the limit',
+          'limits.form.saved' =>
+            ({required Object category, required Object amount}) =>
+                'Limit on «${category}» — ${amount} a month',
+          'limits.form.changed' =>
+            ({required Object category, required Object amount}) =>
+                'Limit on «${category}» — now ${amount}',
+          'limits.form.removed' =>
+            ({required Object category}) =>
+                'The limit on «${category}» is gone',
+          'limits.form.failed' => 'Could not save. Please try again.',
+          'limits.suggestions.title' => 'Limits from averages',
+          'limits.suggestions.text' =>
+            ({
+              required Object from,
+              required Object to,
+              required Object step,
+            }) =>
+                'The average spending of ${from} to ${to}, rounded up to ${step}. Checked are the categories whose spending is alike every month.',
+          'limits.suggestions.average' =>
+            ({required Object amount}) => '${amount} on average',
+          'limits.suggestions.jumps' =>
+            ({required Object least, required Object most}) =>
+                'jumps: from ${least} to ${most}',
+          'limits.suggestions.rare' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'spending came in ${n} month of 3',
+                  other: 'spending came in ${n} months of 3',
+                ),
+          'limits.suggestions.regular' => 'these are regular payments',
+          'limits.suggestions.later' =>
+            'You can change any limit later, on the page «Limits».',
+          'limits.suggestions.put' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Set ${n} limit',
+                  other: 'Set ${n} limits',
+                ),
+          'limits.suggestions.none' => 'Nothing is checked',
+          'limits.suggestions.done' =>
+            ({required num n, required Object month}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: 'Set ${n} limit for ${month}',
+                  other: 'Set ${n} limits for ${month}',
+                ),
+          'limits.suggestions.nothing' =>
+            'Every category that spends already has a limit.',
+          'limits.suggestions.shortTitle' => 'Not much history yet',
+          'limits.suggestions.shortText' =>
+            ({required Object day}) =>
+                'Averages come after the first full month with spending — ${day}. You can set a limit by hand now.',
+          'limits.quickAdd.left' =>
+            ({
+              required Object category,
+              required Object left,
+              required Object limit,
+            }) => '${category}: ${left} of ${limit} left',
+          'limits.quickAdd.over' =>
+            ({required Object category, required Object amount}) =>
+                '${category}: ${amount} over the limit',
           'notifications.title' => 'Notifications',
           'notifications.back' => 'Back',
           'notifications.bell' => 'Notifications',
@@ -7337,6 +7872,9 @@ extension on Translations {
             'New ones stand on top; read ones go to the history, day by day.',
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
+          _ => null,
+        } ??
+        switch (path) {
           'onboarding.failed' => 'Could not save. Try again.',
           'onboarding.welcome.title' => 'All your money\nin one place',
           'onboarding.welcome.text' =>
@@ -7445,9 +7983,6 @@ extension on Translations {
           'reports.monthsShort.9' => 'Oct',
           'reports.monthsShort.10' => 'Nov',
           'reports.monthsShort.11' => 'Dec',
-          _ => null,
-        } ??
-        switch (path) {
           'reports.monthReport.0' => 'Report for January',
           'reports.monthReport.1' => 'Report for February',
           'reports.monthReport.2' => 'Report for March',
@@ -8283,6 +8818,9 @@ extension on Translations {
           'transactions.adjustment' => 'Correction',
           'transactions.today' => 'Today',
           'transactions.yesterday' => 'Yesterday',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.pickDay' => 'Pick a day',
           'transactions.note' => 'Note',
           'transactions.addNote' => 'Note',
@@ -8379,9 +8917,6 @@ extension on Translations {
           'transactions.monthNames.2' => 'March',
           'transactions.monthNames.3' => 'April',
           'transactions.monthNames.4' => 'May',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.monthNames.5' => 'June',
           'transactions.monthNames.6' => 'July',
           'transactions.monthNames.7' => 'August',

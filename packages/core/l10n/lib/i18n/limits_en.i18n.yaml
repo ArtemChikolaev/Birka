@@ -1,0 +1,103 @@
+title: Limits
+monthOf: Limits for $month
+months:
+  - January
+  - February
+  - March
+  - April
+  - May
+  - June
+  - July
+  - August
+  - September
+  - October
+  - November
+  - December
+all(n): All limits · $n
+overCount(n):
+  one: $n over
+  other: $n over
+allWithin: all within
+days(n):
+  one: $n day
+  other: $n days
+spentOf: $spent of $limit
+ofLimit: of $limit
+about: ≈ $amount
+left: $amount left
+over: $amount over the limit
+overShort: $amount over
+lastsUntil: At this pace it lasts until $day
+lastsUntilShort: lasts until about $day
+withinTitle: Within
+withinValue: $within of $all
+overNote(n):
+  one: $n over
+  other: $n over
+nothingOver: none over
+monthEndTitle: Until the month ends
+restartsOn: anew on $day
+meter: '$category: $percent % of the limit spent'
+footnote: Spending in another currency counts at the rate of the Bank of Russia on the day of the operation.
+unrated: Some spending has no rate for its day and is left out.
+noLimit: No limit
+set: Set
+spentIn: $amount $month
+regular: regular payments
+suggest: Suggest from averages
+suggestFrom: From the spending of $from to $to
+emptyTitle: No limits yet
+emptyText: Set a monthly limit on a category, and Birka shows what is left and says so early when it runs low.
+manual: Set one by hand
+inviteTitle: Limits
+inviteAction: Suggest from what you spend
+form:
+  newTitle: New limit
+  editTitle: Limit on «$category»
+  category: Category
+  more(n): $n more
+  perMonth: Per month
+  notSet: Not set
+  amountHint: Amount per month
+  currency: Currency of the limit
+  average: On average in 3 months
+  noAverage: No spending in 3 months
+  take: Take $amount
+  taken: rounded up
+  same: as now
+  warn: Say so early
+  warnAt: We say so once 80 % is gone — $amount.
+  warnLater: We say so once 80 % of the limit is gone.
+  warnOff: The limit shows only on the page «Limits» and on the overview.
+  spentNow: $month — $spent of $limit
+  calendarMonth: The limit runs from the 1st to the last day of the month and starts anew every month.
+  ownMonth: The limit runs from day $day to day $day of the next month and starts anew.
+  otherCurrencies: Spending in other currencies counts toward this limit at the rate of the Bank of Russia on the day of the operation.
+  remove: Remove the limit
+  saved: Limit on «$category» — $amount a month
+  changed: Limit on «$category» — now $amount
+  removed: The limit on «$category» is gone
+  failed: Could not save. Please try again.
+suggestions:
+  title: Limits from averages
+  text: The average spending of $from to $to, rounded up to $step. Checked are the categories whose spending is alike every month.
+  average: $amount on average
+  jumps: 'jumps: from $least to $most'
+  rare(n):
+    one: spending came in $n month of 3
+    other: spending came in $n months of 3
+  regular: these are regular payments
+  later: You can change any limit later, on the page «Limits».
+  put(n):
+    one: Set $n limit
+    other: Set $n limits
+  none: Nothing is checked
+  done(n):
+    one: Set $n limit for $month
+    other: Set $n limits for $month
+  nothing: Every category that spends already has a limit.
+  shortTitle: Not much history yet
+  shortText: Averages come after the first full month with spending — $day. You can set a limit by hand now.
+quickAdd:
+  left: '$category: $left of $limit left'
+  over: '$category: $amount over the limit'

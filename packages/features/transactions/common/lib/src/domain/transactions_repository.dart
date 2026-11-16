@@ -1,4 +1,5 @@
 import 'package:ledger/ledger.dart';
+import 'package:transactions_common/src/domain/month_spending.dart';
 import 'package:transactions_common/src/domain/operation.dart';
 
 /// Where the feature reads operations and the choices of quick add, and writes
@@ -63,4 +64,9 @@ abstract interface class TransactionsRepository {
   /// The latest transaction made from a receipt of the till whose fiscal
   /// drive is [drive], whose category its next receipt takes (ADR 0032).
   Future<Transaction?> lastOfTill(String drive);
+
+  /// The expenses of the month that [day] falls in, as the month start sets
+  /// it, with the rates that count them in the currency of a limit
+  /// (ADR 0033).
+  Future<MonthSpending> monthSpending(CivilDate day);
 }

@@ -2,6 +2,7 @@ import 'package:database/database.dart';
 import 'package:drift/drift.dart';
 import 'package:ledger/src/account.dart';
 import 'package:ledger/src/category.dart';
+import 'package:ledger/src/category_limit.dart';
 import 'package:ledger/src/civil_date.dart';
 import 'package:ledger/src/ledger_copy.dart';
 import 'package:ledger/src/ledger_exception.dart';
@@ -749,9 +750,50 @@ final class LedgerRepository {
               color: color,
               archived: Value.absentIfNull(archived),
               sortOrder: Value.absentIfNull(sortOrder),
+              limitMinor: parent != null
+                  ? const Value(null)
+                  : const Value.absent(),
+              limitCurrency: parent != null
+                  ? const Value(null)
+                  : const Value.absent(),
+              limitDigits: parent != null
+                  ? const Value(null)
+                  : const Value.absent(),
             ),
           );
       if (updated == 0) throw LedgerException('No category $id');
+      await _log(_db.categories, id, 'update', at);
+    });
+  }
+
+  /// Sets the monthly limit of the expense category [id], or takes it away
+  /// with `null` (ADR 0033). Only a top category of expenses takes one, and a
+  /// limit is more than zero.
+  Future<void> setCategoryLimit(String id, CategoryLimit? limit) {
+    return _db.transaction(() async {
+      final category = await this.category(id);
+      if (category == null) throw LedgerException('No category $id');
+      if (limit != null) {
+        if (category.kind != CategoryKind.expense ||
+            category.parentId != null) {
+          throw LedgerException('Category ${category.name} takes no limit');
+        }
+        if (!limit.amount.isPositive) {
+          throw const LedgerException('A limit is more than zero');
+        }
+      }
+      final at = _timestamp();
+      await (_db.update(
+        _db.categories,
+      )..where((row) => row.id.equals(id) & row.deletedAt.isNull())).write(
+        CategoriesCompanion(
+          updatedAt: Value(at),
+          limitMinor: Value(limit?.amount.minorUnits),
+          limitCurrency: Value(limit?.amount.currency.code),
+          limitDigits: Value(limit?.amount.currency.decimalDigits),
+          limitWarn: Value(limit?.warnEarly ?? true),
+        ),
+      );
       await _log(_db.categories, id, 'update', at);
     });
   }
@@ -3030,5 +3072,12 @@ final class LedgerRepository {
     color: row.color,
     archived: row.archived,
     sortOrder: row.sortOrder,
+    limit: switch ((row.limitMinor, row.limitCurrency, row.limitDigits)) {
+      (final minor?, final code?, final digits?) => CategoryLimit(
+        Money(minor, _currency(code, digits)),
+        warnEarly: row.limitWarn,
+      ),
+      _ => null,
+    },
   );
 }

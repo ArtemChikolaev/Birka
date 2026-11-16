@@ -14,6 +14,7 @@ import 'generated/schema_v12.dart' as v12;
 import 'generated/schema_v13.dart' as v13;
 import 'generated/schema_v14.dart' as v14;
 import 'generated/schema_v15.dart' as v15;
+import 'generated/schema_v16.dart' as v16;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
@@ -758,6 +759,55 @@ void main() {
           expect(transaction.receiptDocument, isNull);
           expect(transaction.receiptSign, isNull);
           expect(transaction.receiptKind, isNull);
+        },
+      );
+    },
+  );
+
+  test(
+    'a category keeps its rows and has no limit in v16, a notice no category',
+    () async {
+      const at = '2026-11-18T06:12:00.000Z';
+      await verifier.testWithDataIntegrity(
+        oldVersion: 15,
+        newVersion: 16,
+        createOld: v15.DatabaseAtV15.new,
+        createNew: v16.DatabaseAtV16.new,
+        openTestedDatabase: BirkaDatabase.new,
+        createItems: (batch, old) {
+          batch
+            ..insert(
+              old.categories,
+              v15.CategoriesCompanion.insert(
+                id: 'cafe',
+                createdAt: at,
+                updatedAt: at,
+                kind: 'expense',
+                name: 'Кафе',
+              ),
+            )
+            ..insert(
+              old.notices,
+              v15.NoticesCompanion.insert(
+                id: 'import',
+                source: 'import',
+                createdAt: at,
+              ),
+            );
+        },
+        validateItems: (migrated) async {
+          final category = await migrated
+              .select(migrated.categories)
+              .getSingle();
+          expect(category.name, 'Кафе');
+          expect(category.limitMinor, isNull);
+          expect(category.limitCurrency, isNull);
+          expect(category.limitDigits, isNull);
+          expect(category.limitWarn, 1);
+          final notice = await migrated.select(migrated.notices).getSingle();
+          expect(notice.source, 'import');
+          expect(notice.categoryId, isNull);
+          expect(notice.limitShare, isNull);
         },
       );
     },

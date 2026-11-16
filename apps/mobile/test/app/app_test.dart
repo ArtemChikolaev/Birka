@@ -445,6 +445,10 @@ final class _Transactions implements TransactionsRepository {
 
   @override
   Future<Transaction?> lastOfTill(String drive) async => null;
+
+  @override
+  Future<MonthSpending> monthSpending(CivilDate day) async =>
+      MonthSpending(month: day.monthStart());
 }
 
 final class _Overview implements OverviewRepository {

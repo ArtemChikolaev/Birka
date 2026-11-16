@@ -1,5 +1,8 @@
+import 'package:device_settings/device_settings.dart';
 import 'package:ledger/ledger.dart';
+import 'package:rates/rates.dart';
 import 'package:transactions_common/src/data/combine_latest.dart';
+import 'package:transactions_common/src/domain/month_spending.dart';
 import 'package:transactions_common/src/domain/operation.dart';
 import 'package:transactions_common/src/domain/rank_categories.dart';
 import 'package:transactions_common/src/domain/transactions_repository.dart';
@@ -7,10 +10,18 @@ import 'package:transactions_common/src/domain/transactions_repository.dart';
 /// Reads operations and the choices of quick add from the ledger, and writes
 /// to it.
 final class LedgerTransactionsRepository implements TransactionsRepository {
-  /// Creates a repository on [_ledger].
-  const LedgerTransactionsRepository(this._ledger);
+  /// Creates a repository on [_ledger]; [rates] and [monthStart] count the
+  /// month of a limit.
+  const LedgerTransactionsRepository(
+    this._ledger, {
+    RatesRepository? rates,
+    MonthStart? monthStart,
+  }) : _rates = rates,
+       _monthStart = monthStart;
 
   final LedgerRepository _ledger;
+  final RatesRepository? _rates;
+  final MonthStart? _monthStart;
 
   @override
   Future<List<Account>> accounts() => _ledger.watchAccounts().first;
@@ -136,6 +147,24 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
     ),
     _Names.new,
   );
+
+  @override
+  Future<MonthSpending> monthSpending(CivilDate day) async {
+    final month = day.monthStart(_monthStart?.day ?? 1);
+    final rows = await _ledger
+        .watchCategoryDays(
+          CategoryKind.expense,
+          from: month,
+          to: month.addMonths(1).addDays(-1),
+        )
+        .first;
+    final rates = await _rates?.watchRates().first;
+    return MonthSpending(
+      month: month,
+      rows: rows,
+      rates: rates ?? const RateBook.empty(),
+    );
+  }
 }
 
 /// What operations name.

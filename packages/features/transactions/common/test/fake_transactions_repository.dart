@@ -207,6 +207,13 @@ final class FakeTransactionsRepository implements TransactionsRepository {
     return tills[drive];
   }
 
+  /// The expenses of the month that quick add counts a limit against.
+  MonthSpending? spending;
+
+  @override
+  Future<MonthSpending> monthSpending(CivilDate day) async =>
+      spending ?? MonthSpending(month: day.monthStart());
+
   @override
   Future<void> delete(String id) async {
     if (failure case final failure?) throw failure;
