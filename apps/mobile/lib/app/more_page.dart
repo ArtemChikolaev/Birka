@@ -101,6 +101,21 @@ class MorePage extends StatelessWidget {
                 ),
                 onTap: () => context.push(Paths.tags),
               ),
+              GlassListRow(
+                leading: ExcludeSemantics(
+                  child: GlyphBadge(
+                    glyph: BirkaGlyph.gauge,
+                    color: colors.accent,
+                  ),
+                ),
+                title: t.limits.title,
+                trailing: BirkaIcon(
+                  BirkaGlyph.chevron,
+                  size: 18,
+                  color: colors.textSubtle,
+                ),
+                onTap: () => context.push(Paths.limits),
+              ),
               DebtsMoreRow(onOpen: () => context.push(Paths.debts)),
               // The widgets of the home screen live on phones (ADR 0031).
               if (Theme.of(context).platform

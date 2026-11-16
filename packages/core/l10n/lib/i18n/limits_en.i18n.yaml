@@ -1,3 +1,4 @@
+back: Back
 title: Limits
 monthOf: Limits for $month
 months:
@@ -58,6 +59,7 @@ form:
   more(n): $n more
   perMonth: Per month
   notSet: Not set
+  done: Done
   amountHint: Amount per month
   currency: Currency of the limit
   average: On average in 3 months

@@ -256,50 +256,12 @@ class _Bar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BirkaColors.of(context);
-    final reduced = BirkaMotion.reduced(context);
     final perDay = plan.perDay.minorUnits;
     final spent = plan.spentToday.minorUnits;
-    final share = perDay > 0
-        ? (spent / perDay).clamp(0.0, 1.0)
-        : (spent > 0 ? 1.0 : 0.0);
-    final color = plan.over ? colors.negative : colors.accent;
-    return Semantics(
+    return BirkaMeter(
+      value: perDay > 0 ? spent / perDay : (spent > 0 ? 1 : 0),
+      color: plan.over ? colors.negative : colors.accent,
       label: t.schedules.canSpend,
-      value: '${(share * 100).round()}%',
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(4)),
-        child: SizedBox(
-          height: 8,
-          child: ColoredBox(
-            color: colors.surfaceRaised,
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(end: share),
-              duration: reduced ? Duration.zero : BirkaMotion.roll,
-              curve: BirkaMotion.standardCurve,
-              builder: (context, value, _) => Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: FractionallySizedBox(
-                  widthFactor: value,
-                  heightFactor: 1,
-                  child: TweenAnimationBuilder<Color?>(
-                    tween: ColorTween(end: color),
-                    duration: BirkaMotion.slow,
-                    curve: BirkaMotion.fadeCurve,
-                    builder: (context, ink, _) => DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: ink,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(4),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

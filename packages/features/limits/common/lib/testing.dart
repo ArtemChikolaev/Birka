@@ -242,10 +242,15 @@ final class MemoryLimitsRepository implements LimitsRepository {
   /// Tells the cubits that something changed.
   void changed() => _changes.add(null);
 
+  // The cancel does not wait for the inner subscription: `Stream.first`
+  // completes only once its cancel does, which a widget test never lets the
+  // inner cancel do.
   Stream<T> _watch<T>(T Function() read) => Stream.multi((controller) {
     controller.add(read());
     final subscription = _changes.stream.listen((_) => controller.add(read()));
-    controller.onCancel = subscription.cancel;
+    controller.onCancel = () {
+      unawaited(subscription.cancel());
+    };
   });
 
   @override

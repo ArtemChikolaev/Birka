@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart' hide Category;
+import 'package:ledger/ledger.dart' as ledger show Category;
 import 'package:money/money.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/transactions_flutter.dart';
@@ -135,6 +136,43 @@ void main() {
       await tester.tap(find.text('СОХРАНИТЬ · ПРОДУКТЫ'));
       await tester.pumpAndSettle();
       expect(repository.recorded, isEmpty);
+    });
+
+    testWidgets('says what an expense leaves of the limit of its category', (
+      tester,
+    ) async {
+      final limited = ledger.Category(
+        id: 'Кафе',
+        kind: CategoryKind.expense,
+        name: 'Кафе',
+        archived: false,
+        sortOrder: 0,
+        limit: CategoryLimit(rub(1200000)),
+      );
+      repository
+        ..expenses = [limited, food]
+        ..spending = MonthSpending(
+          month: CivilDate(2026, 10, 1),
+          rows: [
+            CategoryDayTotal(limited, CivilDate(2026, 10, 3), rub(1015000)),
+          ],
+        );
+      await pump(tester);
+      await tester.tap(find.text('Кафе'));
+      for (final digit in ['1', '2', '5', '0']) {
+        await tester.tap(find.text(digit).last);
+      }
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Кафе: останется 600\u00A0₽ из 12\u00A0000\u00A0₽'),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('0').last);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Кафе: больше лимита на 10\u00A0650\u00A0₽'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('a change of an operation offers no scanner', (tester) async {

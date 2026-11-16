@@ -57,6 +57,8 @@ import 'package:ledger/ledger.dart'
         TransactionDraft,
         TransactionSource,
         TransactionStatus;
+import 'package:limits_common/limits_common.dart';
+import 'package:limits_common/testing.dart';
 import 'package:money/money.dart';
 import 'package:notifications_common/notifications_common.dart'
     show NotificationsCubit, NotificationsRepository, NotificationsSummaryCubit;
@@ -726,6 +728,23 @@ void main() {
         ),
       )
       ..registerFactory(() => TagsCubit(tags))
+      // A ledger without limits: the overview invites to set some.
+      ..registerFactory(
+        () => LimitsCubit(
+          MemoryLimitsRepository(categories: const [], spending: const []),
+        ),
+      )
+      ..registerFactoryParam<LimitFormCubit, String?, void>(
+        (id, _) => LimitFormCubit(
+          MemoryLimitsRepository(categories: const [], spending: const []),
+          categoryId: id,
+        ),
+      )
+      ..registerFactory(
+        () => LimitSuggestCubit(
+          MemoryLimitsRepository(categories: const [], spending: const []),
+        ),
+      )
       ..registerFactoryParam<TagReportCubit, String, void>(
         (id, _) => TagReportCubit(tags, id),
       )
@@ -1531,6 +1550,8 @@ void main() {
     await tester.tap(find.text(t.app.more));
     await tester.pumpAndSettle();
     expect(find.byType(DebtsMoreRow), findsOneWidget);
+    await tester.ensureVisible(find.text(t.debts.title));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(t.debts.title));
     await tester.pumpAndSettle();
     expect(find.byType(DebtsPage), findsOneWidget);

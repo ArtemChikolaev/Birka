@@ -2081,6 +2081,9 @@ class Translations$limits$en {
 
   // Translations
 
+  /// en: 'Back'
+  String get back => 'Back';
+
   /// en: 'Limits'
   String get title => 'Limits';
 
@@ -5359,6 +5362,9 @@ class Translations$limits$form$en {
   /// en: 'Not set'
   String get notSet => 'Not set';
 
+  /// en: 'Done'
+  String get done => 'Done';
+
   /// en: 'Amount per month'
   String get amountHint => 'Amount per month';
 
@@ -7569,6 +7575,7 @@ extension on Translations {
             ({required Object first, required Object second}) =>
                 '${first} and ${second}',
           'inbox.unpick' => 'Clear',
+          'limits.back' => 'Back',
           'limits.title' => 'Limits',
           'limits.monthOf' =>
             ({required Object month}) => 'Limits for ${month}',
@@ -7660,6 +7667,7 @@ extension on Translations {
           'limits.form.more' => ({required Object n}) => '${n} more',
           'limits.form.perMonth' => 'Per month',
           'limits.form.notSet' => 'Not set',
+          'limits.form.done' => 'Done',
           'limits.form.amountHint' => 'Amount per month',
           'limits.form.currency' => 'Currency of the limit',
           'limits.form.average' => 'On average in 3 months',
@@ -7870,11 +7878,11 @@ extension on Translations {
           'notifications.how.2' => '«Birka»: what is new in Birka itself.',
           'notifications.how.3' =>
             'New ones stand on top; read ones go to the history, day by day.',
-          'onboarding.skip' => 'Skip',
-          'onboarding.back' => 'Back',
           _ => null,
         } ??
         switch (path) {
+          'onboarding.skip' => 'Skip',
+          'onboarding.back' => 'Back',
           'onboarding.failed' => 'Could not save. Try again.',
           'onboarding.welcome.title' => 'All your money\nin one place',
           'onboarding.welcome.text' =>
@@ -8816,11 +8824,11 @@ extension on Translations {
           'transactions.income' => 'Income',
           'transactions.transfer' => 'Transfer',
           'transactions.adjustment' => 'Correction',
-          'transactions.today' => 'Today',
-          'transactions.yesterday' => 'Yesterday',
           _ => null,
         } ??
         switch (path) {
+          'transactions.today' => 'Today',
+          'transactions.yesterday' => 'Yesterday',
           'transactions.pickDay' => 'Pick a day',
           'transactions.note' => 'Note',
           'transactions.addNote' => 'Note',

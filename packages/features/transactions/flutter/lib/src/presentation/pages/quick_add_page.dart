@@ -4,6 +4,7 @@ import 'package:design_flutter/design_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:l10n/l10n.dart';
+import 'package:rates/rates.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_flutter/src/presentation/widgets/quick_add_tile.dart';
 
@@ -246,7 +247,19 @@ class _Sheet extends StatelessWidget {
     final caution = state.receiptNeedsRubles
         ? t.transactions.receipt.needsRubles
         : null;
+    // What the expense leaves of the limit of its category (ADR 0033).
+    final limit = state.limitLine;
     final colors = BirkaColors.of(context);
+    const amber = Color(BirkaTokens.colorPaletteAmber);
+    final lineColor = failure != null
+        ? colors.negative
+        : caution != null
+        ? amber
+        : switch (limit?.state) {
+            LimitState.over => colors.negative,
+            LimitState.near => amber,
+            _ => colors.textMuted,
+          };
     return CustomScrollView(
       slivers: [
         SliverFillRemaining(
@@ -317,19 +330,26 @@ class _Sheet extends StatelessWidget {
                       : BirkaMotion.base,
                   curve: BirkaMotion.standardCurve,
                   alignment: Alignment.bottomCenter,
-                  child: switch (failure ?? caution) {
+                  child: switch (failure ??
+                      caution ??
+                      (limit == null
+                          ? null
+                          : HiddenAmounts.mask(
+                              context,
+                              limitLineLabel(limit),
+                            ))) {
                     null => const SizedBox(width: double.infinity),
                     final line => Padding(
                       padding: const EdgeInsets.only(
                         bottom: BirkaTokens.spaceXs,
                       ),
-                      child: FadingText(
-                        line,
-                        textAlign: TextAlign.center,
-                        style: BirkaTextStyles.of(context).caption.copyWith(
-                          color: failure != null
-                              ? colors.negative
-                              : const Color(BirkaTokens.colorPaletteAmber),
+                      child: Center(
+                        child: FadingText(
+                          line,
+                          textAlign: TextAlign.center,
+                          style: BirkaTextStyles.of(
+                            context,
+                          ).caption.copyWith(color: lineColor),
                         ),
                       ),
                     ),
