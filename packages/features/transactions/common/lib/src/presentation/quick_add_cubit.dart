@@ -4,7 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 import 'package:transactions_common/src/domain/amount_expression.dart';
+import 'package:transactions_common/src/domain/month_spending.dart';
 import 'package:transactions_common/src/domain/operation.dart';
 import 'package:transactions_common/src/domain/receipt_qr.dart';
 import 'package:transactions_common/src/domain/transactions_repository.dart';
@@ -67,6 +69,7 @@ final class QuickAddState {
     this.categoryId,
     this.note = '',
     this.changesExisting = false,
+    this.spending,
     this.tags = const [],
     this.tagIds = const {},
     this.tagsPicked = false,
@@ -128,6 +131,10 @@ final class QuickAddState {
 
   /// Whether a save changes an operation instead of adding one.
   final bool changesExisting;
+
+  /// The expenses of the month of [day], for the limit of the category
+  /// (ADR 0033).
+  final MonthSpending? spending;
 
   /// The метки there are, to name the picked ones (ADR 0027).
   final List<Tag> tags;
@@ -269,6 +276,38 @@ final class QuickAddState {
   Money? _value(AmountExpression expression, Account? account) =>
       account == null ? null : expression.valueIn(account.currency);
 
+  /// What this expense leaves of the monthly limit of its category, or of
+  /// the category above it, or `null` when there is none (ADR 0033). A
+  /// change of an operation says nothing, as the month already counts it.
+  LimitProgress? get limitLine {
+    final picked = category;
+    final amount = this.amount;
+    final spending = this.spending;
+    if (kind != TransactionKind.expense ||
+        changesExisting ||
+        picked == null ||
+        amount == null ||
+        !amount.isPositive ||
+        spending == null ||
+        !spending.covers(day)) {
+      return null;
+    }
+    final top = picked.parentId == null
+        ? picked
+        : expenseCategories
+              .where((category) => category.id == picked.parentId)
+              .firstOrNull;
+    if (top == null || top.limit == null) return null;
+    return limitWith(
+      top,
+      spending.rows,
+      spending.rates,
+      month: spending.month,
+      amount: amount,
+      day: day,
+    );
+  }
+
   /// A copy with the given fields changed. [toAccountId], [categoryId],
   /// [receipt] and [receiptAt] take functions, so they can also become
   /// `null`.
@@ -287,6 +326,7 @@ final class QuickAddState {
     String? Function()? categoryId,
     String? note,
     bool? changesExisting,
+    MonthSpending? spending,
     List<Tag>? tags,
     Set<String>? tagIds,
     bool? tagsPicked,
@@ -314,6 +354,7 @@ final class QuickAddState {
       categoryId: categoryId == null ? this.categoryId : categoryId(),
       note: note ?? this.note,
       changesExisting: changesExisting ?? this.changesExisting,
+      spending: spending ?? this.spending,
       tags: tags ?? this.tags,
       tagIds: tagIds ?? this.tagIds,
       tagsPicked: tagsPicked ?? this.tagsPicked,
@@ -431,6 +472,7 @@ class QuickAddCubit extends Cubit<QuickAddState> {
       final income = await _repository.categories(CategoryKind.income);
       final last = await _repository.lastAccountId();
       final tags = await _repository.tags();
+      final spending = await _repository.monthSpending(state.day);
       if (isClosed) return;
       final current = state.accountId ?? last;
       final kept = [changing?.category];
@@ -439,6 +481,7 @@ class QuickAddCubit extends Cubit<QuickAddState> {
             .copyWith(
               status: QuickAddStatus.editing,
               tags: tags,
+              spending: spending,
               accounts: accounts,
               expenseCategories: changing?.kind == TransactionKind.expense
                   ? _withKept(expenses, kept, (category) => category.id)
@@ -581,9 +624,23 @@ class QuickAddCubit extends Cubit<QuickAddState> {
   /// Sets the category.
   void categoryChanged(String id) => emit(state.copyWith(categoryId: () => id));
 
-  /// Sets the day.
-  void dayChanged(CivilDate value) =>
-      emit(state.copyWith(day: value).withTripsOfTheDay());
+  /// Sets the day, and reads the month of a limit again when the day leaves
+  /// it.
+  void dayChanged(CivilDate value) {
+    emit(state.copyWith(day: value).withTripsOfTheDay());
+    if (state.spending?.covers(value) ?? true) return;
+    unawaited(_readMonth(value));
+  }
+
+  Future<void> _readMonth(CivilDate day) async {
+    try {
+      final spending = await _repository.monthSpending(day);
+      if (isClosed || state.day != day) return;
+      emit(state.copyWith(spending: spending));
+    } on Exception {
+      // Without the month, quick add says nothing of the limit.
+    }
+  }
 
   /// Puts on the метки that the person picked, from then on whatever the day,
   /// and reads the метки again, since the picker can make a new one. A

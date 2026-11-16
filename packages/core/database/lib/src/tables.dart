@@ -120,6 +120,19 @@ class Categories extends Table with SyncedRow {
   /// The import that created the category, which takes it away again if
   /// nothing else uses it (ADR 0021).
   TextColumn get importId => text().nullable().references(Imports, #id)();
+
+  /// The most an expense category may take in a month, in minor units of
+  /// [limitCurrency], or `null` without a limit (ADR 0033).
+  IntColumn get limitMinor => integer().nullable()();
+
+  /// The code of the currency of the limit, such as `RUB`.
+  TextColumn get limitCurrency => text().nullable()();
+
+  /// The number of decimal digits of that currency.
+  IntColumn get limitDigits => integer().nullable()();
+
+  /// Whether Birka says so once 80 % of the limit is gone.
+  BoolColumn get limitWarn => boolean().withDefault(const Constant(true))();
 }
 
 /// What happened: an expense, an income, a transfer or an adjustment.
@@ -371,6 +384,11 @@ class Changes extends Table {
   columns: {#debtId, #timeOn},
   unique: true,
 )
+@TableIndex(
+  name: 'notices_limit',
+  columns: {#categoryId, #timeOn, #limitShare},
+  unique: true,
+)
 class Notices extends Table {
   /// A UUIDv7 string created on the device.
   TextColumn get id => text()();
@@ -437,6 +455,15 @@ class Notices extends Table {
   /// [timeOn] keeps the day, and [name] and [amountMinor] what was owed when
   /// the notice came.
   TextColumn get debtId => text().nullable()();
+
+  /// The category of a notice of its limit, by its id alone, as for
+  /// [scheduleId] (ADR 0033): [timeOn] keeps the first day of the month,
+  /// [name] the name of the category then, [amountMinor] what was left of the
+  /// limit or went over it, and [importId] the statement that crossed it.
+  TextColumn get categoryId => text().nullable()();
+
+  /// The share of the limit that a notice of a limit tells of: 80 or 100.
+  IntColumn get limitShare => integer().nullable()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

@@ -14,7 +14,11 @@ import 'package:transactions_common/src/presentation/tag_operations_cubit.dart';
 void registerTransactions(GetIt getIt) {
   getIt
     ..registerLazySingleton<TransactionsRepository>(
-      () => LedgerTransactionsRepository(getIt()),
+      () => LedgerTransactionsRepository(
+        getIt(),
+        rates: getIt(),
+        monthStart: getIt(),
+      ),
     )
     // The list of an answer of «Спросить» starts focused on its operations.
     ..registerFactoryParam<OperationsCubit, OperationsFocus?, void>(

@@ -2244,6 +2244,54 @@ class $CategoriesTable extends Categories
       'REFERENCES imports (id)',
     ),
   );
+  static const VerificationMeta _limitMinorMeta = const VerificationMeta(
+    'limitMinor',
+  );
+  @override
+  late final GeneratedColumn<int> limitMinor = GeneratedColumn<int>(
+    'limit_minor',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _limitCurrencyMeta = const VerificationMeta(
+    'limitCurrency',
+  );
+  @override
+  late final GeneratedColumn<String> limitCurrency = GeneratedColumn<String>(
+    'limit_currency',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _limitDigitsMeta = const VerificationMeta(
+    'limitDigits',
+  );
+  @override
+  late final GeneratedColumn<int> limitDigits = GeneratedColumn<int>(
+    'limit_digits',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _limitWarnMeta = const VerificationMeta(
+    'limitWarn',
+  );
+  @override
+  late final GeneratedColumn<bool> limitWarn = GeneratedColumn<bool>(
+    'limit_warn',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("limit_warn" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2258,6 +2306,10 @@ class $CategoriesTable extends Categories
     archived,
     sortOrder,
     importId,
+    limitMinor,
+    limitCurrency,
+    limitDigits,
+    limitWarn,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2350,6 +2402,36 @@ class $CategoriesTable extends Categories
         importId.isAcceptableOrUnknown(data['import_id']!, _importIdMeta),
       );
     }
+    if (data.containsKey('limit_minor')) {
+      context.handle(
+        _limitMinorMeta,
+        limitMinor.isAcceptableOrUnknown(data['limit_minor']!, _limitMinorMeta),
+      );
+    }
+    if (data.containsKey('limit_currency')) {
+      context.handle(
+        _limitCurrencyMeta,
+        limitCurrency.isAcceptableOrUnknown(
+          data['limit_currency']!,
+          _limitCurrencyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('limit_digits')) {
+      context.handle(
+        _limitDigitsMeta,
+        limitDigits.isAcceptableOrUnknown(
+          data['limit_digits']!,
+          _limitDigitsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('limit_warn')) {
+      context.handle(
+        _limitWarnMeta,
+        limitWarn.isAcceptableOrUnknown(data['limit_warn']!, _limitWarnMeta),
+      );
+    }
     return context;
   }
 
@@ -2407,6 +2489,22 @@ class $CategoriesTable extends Categories
         DriftSqlType.string,
         data['${effectivePrefix}import_id'],
       ),
+      limitMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}limit_minor'],
+      ),
+      limitCurrency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}limit_currency'],
+      ),
+      limitDigits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}limit_digits'],
+      ),
+      limitWarn: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}limit_warn'],
+      )!,
     );
   }
 
@@ -2453,6 +2551,19 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
   /// The import that created the category, which takes it away again if
   /// nothing else uses it (ADR 0021).
   final String? importId;
+
+  /// The most an expense category may take in a month, in minor units of
+  /// [limitCurrency], or `null` without a limit (ADR 0033).
+  final int? limitMinor;
+
+  /// The code of the currency of the limit, such as `RUB`.
+  final String? limitCurrency;
+
+  /// The number of decimal digits of that currency.
+  final int? limitDigits;
+
+  /// Whether Birka says so once 80 % of the limit is gone.
+  final bool limitWarn;
   const CategoryRow({
     required this.id,
     required this.createdAt,
@@ -2466,6 +2577,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     required this.archived,
     required this.sortOrder,
     this.importId,
+    this.limitMinor,
+    this.limitCurrency,
+    this.limitDigits,
+    required this.limitWarn,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2492,6 +2607,16 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     if (!nullToAbsent || importId != null) {
       map['import_id'] = Variable<String>(importId);
     }
+    if (!nullToAbsent || limitMinor != null) {
+      map['limit_minor'] = Variable<int>(limitMinor);
+    }
+    if (!nullToAbsent || limitCurrency != null) {
+      map['limit_currency'] = Variable<String>(limitCurrency);
+    }
+    if (!nullToAbsent || limitDigits != null) {
+      map['limit_digits'] = Variable<int>(limitDigits);
+    }
+    map['limit_warn'] = Variable<bool>(limitWarn);
     return map;
   }
 
@@ -2517,6 +2642,16 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       importId: importId == null && nullToAbsent
           ? const Value.absent()
           : Value(importId),
+      limitMinor: limitMinor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limitMinor),
+      limitCurrency: limitCurrency == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limitCurrency),
+      limitDigits: limitDigits == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limitDigits),
+      limitWarn: Value(limitWarn),
     );
   }
 
@@ -2538,6 +2673,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       archived: serializer.fromJson<bool>(json['archived']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       importId: serializer.fromJson<String?>(json['importId']),
+      limitMinor: serializer.fromJson<int?>(json['limitMinor']),
+      limitCurrency: serializer.fromJson<String?>(json['limitCurrency']),
+      limitDigits: serializer.fromJson<int?>(json['limitDigits']),
+      limitWarn: serializer.fromJson<bool>(json['limitWarn']),
     );
   }
   @override
@@ -2556,6 +2695,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       'archived': serializer.toJson<bool>(archived),
       'sortOrder': serializer.toJson<int>(sortOrder),
       'importId': serializer.toJson<String?>(importId),
+      'limitMinor': serializer.toJson<int?>(limitMinor),
+      'limitCurrency': serializer.toJson<String?>(limitCurrency),
+      'limitDigits': serializer.toJson<int?>(limitDigits),
+      'limitWarn': serializer.toJson<bool>(limitWarn),
     };
   }
 
@@ -2572,6 +2715,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     bool? archived,
     int? sortOrder,
     Value<String?> importId = const Value.absent(),
+    Value<int?> limitMinor = const Value.absent(),
+    Value<String?> limitCurrency = const Value.absent(),
+    Value<int?> limitDigits = const Value.absent(),
+    bool? limitWarn,
   }) => CategoryRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -2585,6 +2732,12 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     archived: archived ?? this.archived,
     sortOrder: sortOrder ?? this.sortOrder,
     importId: importId.present ? importId.value : this.importId,
+    limitMinor: limitMinor.present ? limitMinor.value : this.limitMinor,
+    limitCurrency: limitCurrency.present
+        ? limitCurrency.value
+        : this.limitCurrency,
+    limitDigits: limitDigits.present ? limitDigits.value : this.limitDigits,
+    limitWarn: limitWarn ?? this.limitWarn,
   );
   CategoryRow copyWithCompanion(CategoriesCompanion data) {
     return CategoryRow(
@@ -2600,6 +2753,16 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       archived: data.archived.present ? data.archived.value : this.archived,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       importId: data.importId.present ? data.importId.value : this.importId,
+      limitMinor: data.limitMinor.present
+          ? data.limitMinor.value
+          : this.limitMinor,
+      limitCurrency: data.limitCurrency.present
+          ? data.limitCurrency.value
+          : this.limitCurrency,
+      limitDigits: data.limitDigits.present
+          ? data.limitDigits.value
+          : this.limitDigits,
+      limitWarn: data.limitWarn.present ? data.limitWarn.value : this.limitWarn,
     );
   }
 
@@ -2617,7 +2780,11 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ..write('color: $color, ')
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('importId: $importId')
+          ..write('importId: $importId, ')
+          ..write('limitMinor: $limitMinor, ')
+          ..write('limitCurrency: $limitCurrency, ')
+          ..write('limitDigits: $limitDigits, ')
+          ..write('limitWarn: $limitWarn')
           ..write(')'))
         .toString();
   }
@@ -2636,6 +2803,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     archived,
     sortOrder,
     importId,
+    limitMinor,
+    limitCurrency,
+    limitDigits,
+    limitWarn,
   );
   @override
   bool operator ==(Object other) =>
@@ -2652,7 +2823,11 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           other.color == this.color &&
           other.archived == this.archived &&
           other.sortOrder == this.sortOrder &&
-          other.importId == this.importId);
+          other.importId == this.importId &&
+          other.limitMinor == this.limitMinor &&
+          other.limitCurrency == this.limitCurrency &&
+          other.limitDigits == this.limitDigits &&
+          other.limitWarn == this.limitWarn);
 }
 
 class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
@@ -2668,6 +2843,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   final Value<bool> archived;
   final Value<int> sortOrder;
   final Value<String?> importId;
+  final Value<int?> limitMinor;
+  final Value<String?> limitCurrency;
+  final Value<int?> limitDigits;
+  final Value<bool> limitWarn;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.id = const Value.absent(),
@@ -2682,6 +2861,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.importId = const Value.absent(),
+    this.limitMinor = const Value.absent(),
+    this.limitCurrency = const Value.absent(),
+    this.limitDigits = const Value.absent(),
+    this.limitWarn = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
@@ -2697,6 +2880,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.archived = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.importId = const Value.absent(),
+    this.limitMinor = const Value.absent(),
+    this.limitCurrency = const Value.absent(),
+    this.limitDigits = const Value.absent(),
+    this.limitWarn = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -2716,6 +2903,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Expression<bool>? archived,
     Expression<int>? sortOrder,
     Expression<String>? importId,
+    Expression<int>? limitMinor,
+    Expression<String>? limitCurrency,
+    Expression<int>? limitDigits,
+    Expression<bool>? limitWarn,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2731,6 +2922,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       if (archived != null) 'archived': archived,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (importId != null) 'import_id': importId,
+      if (limitMinor != null) 'limit_minor': limitMinor,
+      if (limitCurrency != null) 'limit_currency': limitCurrency,
+      if (limitDigits != null) 'limit_digits': limitDigits,
+      if (limitWarn != null) 'limit_warn': limitWarn,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2748,6 +2943,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Value<bool>? archived,
     Value<int>? sortOrder,
     Value<String?>? importId,
+    Value<int?>? limitMinor,
+    Value<String?>? limitCurrency,
+    Value<int?>? limitDigits,
+    Value<bool>? limitWarn,
     Value<int>? rowid,
   }) {
     return CategoriesCompanion(
@@ -2763,6 +2962,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       archived: archived ?? this.archived,
       sortOrder: sortOrder ?? this.sortOrder,
       importId: importId ?? this.importId,
+      limitMinor: limitMinor ?? this.limitMinor,
+      limitCurrency: limitCurrency ?? this.limitCurrency,
+      limitDigits: limitDigits ?? this.limitDigits,
+      limitWarn: limitWarn ?? this.limitWarn,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2806,6 +3009,18 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     if (importId.present) {
       map['import_id'] = Variable<String>(importId.value);
     }
+    if (limitMinor.present) {
+      map['limit_minor'] = Variable<int>(limitMinor.value);
+    }
+    if (limitCurrency.present) {
+      map['limit_currency'] = Variable<String>(limitCurrency.value);
+    }
+    if (limitDigits.present) {
+      map['limit_digits'] = Variable<int>(limitDigits.value);
+    }
+    if (limitWarn.present) {
+      map['limit_warn'] = Variable<bool>(limitWarn.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2827,6 +3042,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
           ..write('archived: $archived, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('importId: $importId, ')
+          ..write('limitMinor: $limitMinor, ')
+          ..write('limitCurrency: $limitCurrency, ')
+          ..write('limitDigits: $limitDigits, ')
+          ..write('limitWarn: $limitWarn, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -6942,6 +7161,28 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _limitShareMeta = const VerificationMeta(
+    'limitShare',
+  );
+  @override
+  late final GeneratedColumn<int> limitShare = GeneratedColumn<int>(
+    'limit_share',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -6963,6 +7204,8 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
     foundBy,
     importId,
     debtId,
+    categoryId,
+    limitShare,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -7102,6 +7345,18 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
         debtId.isAcceptableOrUnknown(data['debt_id']!, _debtIdMeta),
       );
     }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('limit_share')) {
+      context.handle(
+        _limitShareMeta,
+        limitShare.isAcceptableOrUnknown(data['limit_share']!, _limitShareMeta),
+      );
+    }
     return context;
   }
 
@@ -7191,6 +7446,14 @@ class $NoticesTable extends Notices with TableInfo<$NoticesTable, NoticeRow> {
         DriftSqlType.string,
         data['${effectivePrefix}debt_id'],
       ),
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      ),
+      limitShare: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}limit_share'],
+      ),
     );
   }
 
@@ -7266,6 +7529,15 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
   /// [timeOn] keeps the day, and [name] and [amountMinor] what was owed when
   /// the notice came.
   final String? debtId;
+
+  /// The category of a notice of its limit, by its id alone, as for
+  /// [scheduleId] (ADR 0033): [timeOn] keeps the first day of the month,
+  /// [name] the name of the category then, [amountMinor] what was left of the
+  /// limit or went over it, and [importId] the statement that crossed it.
+  final String? categoryId;
+
+  /// The share of the limit that a notice of a limit tells of: 80 or 100.
+  final int? limitShare;
   const NoticeRow({
     required this.id,
     required this.source,
@@ -7286,6 +7558,8 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     this.foundBy,
     this.importId,
     this.debtId,
+    this.categoryId,
+    this.limitShare,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -7337,6 +7611,12 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     if (!nullToAbsent || debtId != null) {
       map['debt_id'] = Variable<String>(debtId);
     }
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<String>(categoryId);
+    }
+    if (!nullToAbsent || limitShare != null) {
+      map['limit_share'] = Variable<int>(limitShare);
+    }
     return map;
   }
 
@@ -7385,6 +7665,12 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       debtId: debtId == null && nullToAbsent
           ? const Value.absent()
           : Value(debtId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      limitShare: limitShare == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limitShare),
     );
   }
 
@@ -7413,6 +7699,8 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       foundBy: serializer.fromJson<String?>(json['foundBy']),
       importId: serializer.fromJson<String?>(json['importId']),
       debtId: serializer.fromJson<String?>(json['debtId']),
+      categoryId: serializer.fromJson<String?>(json['categoryId']),
+      limitShare: serializer.fromJson<int?>(json['limitShare']),
     );
   }
   @override
@@ -7438,6 +7726,8 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       'foundBy': serializer.toJson<String?>(foundBy),
       'importId': serializer.toJson<String?>(importId),
       'debtId': serializer.toJson<String?>(debtId),
+      'categoryId': serializer.toJson<String?>(categoryId),
+      'limitShare': serializer.toJson<int?>(limitShare),
     };
   }
 
@@ -7461,6 +7751,8 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     Value<String?> foundBy = const Value.absent(),
     Value<String?> importId = const Value.absent(),
     Value<String?> debtId = const Value.absent(),
+    Value<String?> categoryId = const Value.absent(),
+    Value<int?> limitShare = const Value.absent(),
   }) => NoticeRow(
     id: id ?? this.id,
     source: source ?? this.source,
@@ -7483,6 +7775,8 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     foundBy: foundBy.present ? foundBy.value : this.foundBy,
     importId: importId.present ? importId.value : this.importId,
     debtId: debtId.present ? debtId.value : this.debtId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    limitShare: limitShare.present ? limitShare.value : this.limitShare,
   );
   NoticeRow copyWithCompanion(NoticesCompanion data) {
     return NoticeRow(
@@ -7513,6 +7807,12 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
       foundBy: data.foundBy.present ? data.foundBy.value : this.foundBy,
       importId: data.importId.present ? data.importId.value : this.importId,
       debtId: data.debtId.present ? data.debtId.value : this.debtId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      limitShare: data.limitShare.present
+          ? data.limitShare.value
+          : this.limitShare,
     );
   }
 
@@ -7537,13 +7837,15 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
           ..write('nextOn: $nextOn, ')
           ..write('foundBy: $foundBy, ')
           ..write('importId: $importId, ')
-          ..write('debtId: $debtId')
+          ..write('debtId: $debtId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('limitShare: $limitShare')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     source,
     createdAt,
@@ -7563,7 +7865,9 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
     foundBy,
     importId,
     debtId,
-  );
+    categoryId,
+    limitShare,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -7586,7 +7890,9 @@ class NoticeRow extends DataClass implements Insertable<NoticeRow> {
           other.nextOn == this.nextOn &&
           other.foundBy == this.foundBy &&
           other.importId == this.importId &&
-          other.debtId == this.debtId);
+          other.debtId == this.debtId &&
+          other.categoryId == this.categoryId &&
+          other.limitShare == this.limitShare);
 }
 
 class NoticesCompanion extends UpdateCompanion<NoticeRow> {
@@ -7609,6 +7915,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
   final Value<String?> foundBy;
   final Value<String?> importId;
   final Value<String?> debtId;
+  final Value<String?> categoryId;
+  final Value<int?> limitShare;
   final Value<int> rowid;
   const NoticesCompanion({
     this.id = const Value.absent(),
@@ -7630,6 +7938,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     this.foundBy = const Value.absent(),
     this.importId = const Value.absent(),
     this.debtId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.limitShare = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   NoticesCompanion.insert({
@@ -7652,6 +7962,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     this.foundBy = const Value.absent(),
     this.importId = const Value.absent(),
     this.debtId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.limitShare = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        source = Value(source),
@@ -7676,6 +7988,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     Expression<String>? foundBy,
     Expression<String>? importId,
     Expression<String>? debtId,
+    Expression<String>? categoryId,
+    Expression<int>? limitShare,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -7698,6 +8012,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
       if (foundBy != null) 'found_by': foundBy,
       if (importId != null) 'import_id': importId,
       if (debtId != null) 'debt_id': debtId,
+      if (categoryId != null) 'category_id': categoryId,
+      if (limitShare != null) 'limit_share': limitShare,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -7722,6 +8038,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     Value<String?>? foundBy,
     Value<String?>? importId,
     Value<String?>? debtId,
+    Value<String?>? categoryId,
+    Value<int?>? limitShare,
     Value<int>? rowid,
   }) {
     return NoticesCompanion(
@@ -7744,6 +8062,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
       foundBy: foundBy ?? this.foundBy,
       importId: importId ?? this.importId,
       debtId: debtId ?? this.debtId,
+      categoryId: categoryId ?? this.categoryId,
+      limitShare: limitShare ?? this.limitShare,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -7808,6 +8128,12 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
     if (debtId.present) {
       map['debt_id'] = Variable<String>(debtId.value);
     }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (limitShare.present) {
+      map['limit_share'] = Variable<int>(limitShare.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -7836,6 +8162,8 @@ class NoticesCompanion extends UpdateCompanion<NoticeRow> {
           ..write('foundBy: $foundBy, ')
           ..write('importId: $importId, ')
           ..write('debtId: $debtId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('limitShare: $limitShare, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -8966,6 +9294,10 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     'notices_debt_day',
     'CREATE UNIQUE INDEX notices_debt_day ON notices (debt_id, time_on)',
   );
+  late final Index noticesLimit = Index(
+    'notices_limit',
+    'CREATE UNIQUE INDEX notices_limit ON notices (category_id, time_on, limit_share)',
+  );
   late final Index transactionTagsTransaction = Index(
     'transaction_tags_transaction',
     'CREATE INDEX transaction_tags_transaction ON transaction_tags (transaction_id)',
@@ -9002,6 +9334,7 @@ abstract class _$BirkaDatabase extends GeneratedDatabase {
     schedulesNextOn,
     noticesCreatedAt,
     noticesDebtDay,
+    noticesLimit,
     transactionTagsTransaction,
     transactionTagsTag,
   ];
@@ -10687,6 +11020,10 @@ typedef $$CategoriesTableCreateCompanionBuilder =
       Value<bool> archived,
       Value<int> sortOrder,
       Value<String?> importId,
+      Value<int?> limitMinor,
+      Value<String?> limitCurrency,
+      Value<int?> limitDigits,
+      Value<bool> limitWarn,
       Value<int> rowid,
     });
 typedef $$CategoriesTableUpdateCompanionBuilder =
@@ -10703,6 +11040,10 @@ typedef $$CategoriesTableUpdateCompanionBuilder =
       Value<bool> archived,
       Value<int> sortOrder,
       Value<String?> importId,
+      Value<int?> limitMinor,
+      Value<String?> limitCurrency,
+      Value<int?> limitDigits,
+      Value<bool> limitWarn,
       Value<int> rowid,
     });
 
@@ -10842,6 +11183,26 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get limitMinor => $composableBuilder(
+    column: $table.limitMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get limitCurrency => $composableBuilder(
+    column: $table.limitCurrency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get limitDigits => $composableBuilder(
+    column: $table.limitDigits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get limitWarn => $composableBuilder(
+    column: $table.limitWarn,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11001,6 +11362,26 @@ class $$CategoriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get limitMinor => $composableBuilder(
+    column: $table.limitMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get limitCurrency => $composableBuilder(
+    column: $table.limitCurrency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get limitDigits => $composableBuilder(
+    column: $table.limitDigits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get limitWarn => $composableBuilder(
+    column: $table.limitWarn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CategoriesTableOrderingComposer get parentId {
     final $$CategoriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -11086,6 +11467,24 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<int> get limitMinor => $composableBuilder(
+    column: $table.limitMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get limitCurrency => $composableBuilder(
+    column: $table.limitCurrency,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get limitDigits => $composableBuilder(
+    column: $table.limitDigits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get limitWarn =>
+      $composableBuilder(column: $table.limitWarn, builder: (column) => column);
 
   $$CategoriesTableAnnotationComposer get parentId {
     final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
@@ -11229,6 +11628,10 @@ class $$CategoriesTableTableManager
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
+                Value<int?> limitMinor = const Value.absent(),
+                Value<String?> limitCurrency = const Value.absent(),
+                Value<int?> limitDigits = const Value.absent(),
+                Value<bool> limitWarn = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion(
                 id: id,
@@ -11243,6 +11646,10 @@ class $$CategoriesTableTableManager
                 archived: archived,
                 sortOrder: sortOrder,
                 importId: importId,
+                limitMinor: limitMinor,
+                limitCurrency: limitCurrency,
+                limitDigits: limitDigits,
+                limitWarn: limitWarn,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -11259,6 +11666,10 @@ class $$CategoriesTableTableManager
                 Value<bool> archived = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
+                Value<int?> limitMinor = const Value.absent(),
+                Value<String?> limitCurrency = const Value.absent(),
+                Value<int?> limitDigits = const Value.absent(),
+                Value<bool> limitWarn = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 id: id,
@@ -11273,6 +11684,10 @@ class $$CategoriesTableTableManager
                 archived: archived,
                 sortOrder: sortOrder,
                 importId: importId,
+                limitMinor: limitMinor,
+                limitCurrency: limitCurrency,
+                limitDigits: limitDigits,
+                limitWarn: limitWarn,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -14386,6 +14801,8 @@ typedef $$NoticesTableCreateCompanionBuilder =
       Value<String?> foundBy,
       Value<String?> importId,
       Value<String?> debtId,
+      Value<String?> categoryId,
+      Value<int?> limitShare,
       Value<int> rowid,
     });
 typedef $$NoticesTableUpdateCompanionBuilder =
@@ -14409,6 +14826,8 @@ typedef $$NoticesTableUpdateCompanionBuilder =
       Value<String?> foundBy,
       Value<String?> importId,
       Value<String?> debtId,
+      Value<String?> categoryId,
+      Value<int?> limitShare,
       Value<int> rowid,
     });
 
@@ -14513,6 +14932,16 @@ class $$NoticesTableFilterComposer
 
   ColumnFilters<String> get debtId => $composableBuilder(
     column: $table.debtId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get limitShare => $composableBuilder(
+    column: $table.limitShare,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -14620,6 +15049,16 @@ class $$NoticesTableOrderingComposer
     column: $table.debtId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get limitShare => $composableBuilder(
+    column: $table.limitShare,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$NoticesTableAnnotationComposer
@@ -14695,6 +15134,16 @@ class $$NoticesTableAnnotationComposer
 
   GeneratedColumn<String> get debtId =>
       $composableBuilder(column: $table.debtId, builder: (column) => column);
+
+  GeneratedColumn<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get limitShare => $composableBuilder(
+    column: $table.limitShare,
+    builder: (column) => column,
+  );
 }
 
 class $$NoticesTableTableManager
@@ -14747,6 +15196,8 @@ class $$NoticesTableTableManager
                 Value<String?> foundBy = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
                 Value<String?> debtId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
+                Value<int?> limitShare = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NoticesCompanion(
                 id: id,
@@ -14768,6 +15219,8 @@ class $$NoticesTableTableManager
                 foundBy: foundBy,
                 importId: importId,
                 debtId: debtId,
+                categoryId: categoryId,
+                limitShare: limitShare,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -14791,6 +15244,8 @@ class $$NoticesTableTableManager
                 Value<String?> foundBy = const Value.absent(),
                 Value<String?> importId = const Value.absent(),
                 Value<String?> debtId = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
+                Value<int?> limitShare = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NoticesCompanion.insert(
                 id: id,
@@ -14812,6 +15267,8 @@ class $$NoticesTableTableManager
                 foundBy: foundBy,
                 importId: importId,
                 debtId: debtId,
+                categoryId: categoryId,
+                limitShare: limitShare,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

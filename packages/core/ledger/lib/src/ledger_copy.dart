@@ -134,9 +134,9 @@ final class LedgerCopy {
   /// transactions they were made from, version 7 the amounts of advances of
   /// their own (ADR 0023), version 8 метки and trips (ADR 0027), version 9
   /// the terms of debts (ADR 0029), version 10 the people of the debts
-  /// (ADR 0030), and version 11 the receipts that transactions were made from
-  /// (ADR 0032).
-  static const version = 11;
+  /// (ADR 0030), version 11 the receipts that transactions were made from
+  /// (ADR 0032), and version 12 the monthly limits of categories (ADR 0033).
+  static const version = 12;
 
   static const _format = 'birka-copy';
 
@@ -261,6 +261,14 @@ final class LedgerCopy {
             'archived': row.archived,
             'sortOrder': row.sortOrder,
             'importId': row.importId,
+            'limit': row.limitMinor == null
+                ? null
+                : {
+                    'minor': row.limitMinor,
+                    'currency': row.limitCurrency,
+                    'decimalDigits': row.limitDigits,
+                    'warn': row.limitWarn,
+                  },
           },
       ],
       'transactions': [
@@ -636,6 +644,22 @@ CategoryRow _category(Map<String, Object?> json) {
   if (color != null && !_color.hasMatch(color)) {
     _damaged('Color $color is not #rrggbb');
   }
+  // A copy older than version 12 has no limits.
+  final limit = _field<Map<String, Object?>?>(json, 'limit');
+  final limitMinor = limit == null ? null : _int(limit, 'minor');
+  final limitCurrency = limit == null ? null : _string(limit, 'currency');
+  final limitDigits = limit == null ? null : _int(limit, 'decimalDigits');
+  if (limit != null) {
+    final amount = _money(
+      limitMinor!,
+      limitCurrency!,
+      limitDigits!,
+      'The limit of category ${json['id']}',
+    );
+    if (!amount.isPositive) {
+      _damaged('A limit of ${json['id']} is not positive');
+    }
+  }
   return CategoryRow(
     id: _id(json),
     createdAt: _moment(json, 'createdAt'),
@@ -648,6 +672,10 @@ CategoryRow _category(Map<String, Object?> json) {
     archived: _field<bool>(json, 'archived'),
     sortOrder: _int(json, 'sortOrder'),
     importId: _field<String?>(json, 'importId'),
+    limitMinor: limitMinor,
+    limitCurrency: limitCurrency,
+    limitDigits: limitDigits,
+    limitWarn: limit == null || _field<bool>(limit, 'warn'),
   );
 }
 

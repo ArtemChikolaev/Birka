@@ -1,6 +1,7 @@
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 import 'package:transactions_common/src/domain/amount_expression.dart';
 import 'package:transactions_common/src/domain/operation.dart';
 import 'package:transactions_common/src/presentation/operations_cubit.dart';
@@ -168,4 +169,23 @@ String operationSubtitle(Operation operation) {
           account,
         ];
   return parts.join(' · ');
+}
+
+/// What an expense leaves of the monthly limit of its category: «Кафе:
+/// останется 600 ₽ из 12 000 ₽», or how far over the limit it goes
+/// (ADR 0033).
+String limitLineLabel(LimitProgress line) {
+  final name = line.category.name;
+  if (line.state == LimitState.over) {
+    return t.limits.quickAdd.over(
+      category: name,
+      amount: formatMoney(-line.left),
+    );
+  }
+  final left = formatMoney(line.left);
+  return t.limits.quickAdd.left(
+    category: name,
+    left: line.approximate ? t.limits.about(amount: left) : left,
+    limit: formatMoney(line.limit.amount),
+  );
 }

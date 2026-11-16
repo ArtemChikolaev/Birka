@@ -128,7 +128,7 @@ void main() {
     await ledger.record(fromReceipt(groceries));
     final copy = LedgerCopy.parse((await ledger.copy()).encode());
     final json = jsonDecode(copy.encode()) as Map<String, Object?>;
-    expect(json['version'], 11);
+    expect(json['version'], LedgerCopy.version);
     final restoredDatabase = BirkaDatabase(NativeDatabase.memory());
     addTearDown(restoredDatabase.close);
     final restored = LedgerRepository(restoredDatabase);

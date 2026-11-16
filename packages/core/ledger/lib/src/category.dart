@@ -1,3 +1,4 @@
+import 'package:ledger/src/category_limit.dart';
 import 'package:meta/meta.dart';
 
 /// Whether a category is for spending or for earning.
@@ -22,6 +23,7 @@ final class Category {
     this.parentId,
     this.icon,
     this.color,
+    this.limit,
   });
 
   /// The id.
@@ -47,6 +49,10 @@ final class Category {
 
   /// The place of the category in lists.
   final int sortOrder;
+
+  /// The most the category may take in a month, or `null` without a limit.
+  /// Only top expense categories have one (ADR 0033).
+  final CategoryLimit? limit;
 }
 
 /// The open categories of [kind] among [categories], in their order, each

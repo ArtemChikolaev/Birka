@@ -1,0 +1,115 @@
+title: Лимиты
+monthOf: Лимиты на $month
+months:
+  - январь
+  - февраль
+  - март
+  - апрель
+  - май
+  - июнь
+  - июль
+  - август
+  - сентябрь
+  - октябрь
+  - ноябрь
+  - декабрь
+all(n): Все лимиты · $n
+overCount(n):
+  one: превышен $n
+  few: превышено $n
+  many: превышено $n
+  other: превышено $n
+allWithin: всё в лимите
+days(n):
+  one: $n день
+  few: $n дня
+  many: $n дней
+  other: $n дня
+spentOf: $spent из $limit
+ofLimit: из $limit
+about: ≈ $amount
+left: осталось $amount
+over: больше лимита на $amount
+overShort: больше на $amount
+lastsUntil: В таком темпе хватит до $day
+lastsUntilShort: хватит примерно до $day
+withinTitle: В лимите
+withinValue: $within из $all
+overNote(n):
+  one: $n превышен
+  few: $n превышено
+  many: $n превышено
+  other: $n превышено
+nothingOver: ни одного сверх
+monthEndTitle: До конца месяца
+restartsOn: с $day заново
+meter: '$category: потрачено $percent % лимита'
+footnote: Траты в другой валюте идут в лимит по курсу ЦБ на день операции.
+unrated: Нет курса на день части трат — они не в лимите.
+noLimit: Без лимита
+set: Поставить
+spentIn: $amount $month
+regular: регулярные платежи
+suggest: Предложить по средним
+suggestFrom: По тратам за $from — $to
+emptyTitle: Лимитов пока нет
+emptyText: Поставьте месячный лимит на категорию — Birka покажет, сколько осталось, и скажет заранее, если он кончается.
+manual: Поставить вручную
+inviteTitle: Лимиты
+inviteAction: Предложить по средним тратам
+form:
+  newTitle: Новый лимит
+  editTitle: Лимит на «$category»
+  category: Категория
+  more(n): Ещё $n
+  perMonth: В месяц
+  notSet: Не задана
+  amountHint: Сумма в месяц
+  currency: Валюта лимита
+  average: В среднем за 3 месяца
+  noAverage: Трат за 3 месяца нет
+  take: Взять $amount
+  taken: округлили вверх
+  same: как сейчас
+  warn: Сказать заранее
+  warnAt: Скажем, когда уйдёт 80 % — $amount.
+  warnLater: Скажем, когда уйдёт 80 % лимита.
+  warnOff: Лимит будет только на странице «Лимиты» и на обзоре.
+  spentNow: $month — $spent из $limit
+  calendarMonth: Лимит считается с 1-го по последнее число месяца и начинается заново каждый месяц.
+  ownMonth: Лимит считается с $day-го числа до $day-го следующего месяца и начинается заново.
+  otherCurrencies: Траты в других валютах идут в этот лимит по курсу ЦБ на день операции.
+  remove: Убрать лимит
+  saved: Лимит на «$category» — $amount в месяц
+  changed: Лимит на «$category» — теперь $amount
+  removed: Лимит на «$category» убрали
+  failed: Не удалось сохранить. Попробуйте ещё раз.
+suggestions:
+  title: Лимиты по средним
+  text: Средние траты за $from — $to, округлили вверх до $step. Отметили категории, где траты каждый месяц похожи.
+  average: в среднем $amount
+  jumps: 'скачут: от $least до $most'
+  rare(n):
+    one: траты были в $n месяце из 3
+    few: траты были в $n месяцах из 3
+    many: траты были в $n месяцах из 3
+    other: траты были в $n месяцах из 3
+  regular: это регулярные платежи
+  later: Сумму любого лимита можно поменять потом, на странице «Лимиты».
+  put(n):
+    one: Поставить $n лимит
+    few: Поставить $n лимита
+    many: Поставить $n лимитов
+    other: Поставить $n лимита
+  none: Ничего не отмечено
+  done(n):
+    one: Поставили $n лимит на $month
+    few: Поставили $n лимита на $month
+    many: Поставили $n лимитов на $month
+    other: Поставили $n лимита на $month
+  nothing: У всех категорий с тратами уже есть лимиты.
+  shortTitle: Пока мало истории
+  shortText: Средние появятся после первого полного месяца с тратами — $day. Лимит можно поставить и сейчас, вручную.
+quickAdd:
+  left: '$category: останется $left из $limit'
+  over: '$category: больше лимита на $amount'

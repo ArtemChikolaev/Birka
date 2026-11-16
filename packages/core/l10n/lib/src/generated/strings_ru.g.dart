@@ -80,6 +80,8 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$inbox$ru inbox = _Translations$inbox$ru._(_root);
   @override
+  late final _Translations$limits$ru limits = _Translations$limits$ru._(_root);
+  @override
   late final _Translations$notifications$ru notifications =
       _Translations$notifications$ru._(_root);
   @override
@@ -1807,6 +1809,138 @@ class _Translations$inbox$ru extends Translations$inbox$en {
       '${first} и ${second}';
   @override
   String get unpick => 'Снять';
+}
+
+// Path: limits
+class _Translations$limits$ru extends Translations$limits$en {
+  _Translations$limits$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Лимиты';
+  @override
+  String monthOf({required Object month}) => 'Лимиты на ${month}';
+  @override
+  List<String> get months => [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+  ];
+  @override
+  String all({required Object n}) => 'Все лимиты · ${n}';
+  @override
+  String overCount({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'превышен ${n}',
+        few: 'превышено ${n}',
+        many: 'превышено ${n}',
+        other: 'превышено ${n}',
+      );
+  @override
+  String get allWithin => 'всё в лимите';
+  @override
+  String days({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} день',
+        few: '${n} дня',
+        many: '${n} дней',
+        other: '${n} дня',
+      );
+  @override
+  String spentOf({required Object spent, required Object limit}) =>
+      '${spent} из ${limit}';
+  @override
+  String ofLimit({required Object limit}) => 'из ${limit}';
+  @override
+  String about({required Object amount}) => '≈ ${amount}';
+  @override
+  String left({required Object amount}) => 'осталось ${amount}';
+  @override
+  String over({required Object amount}) => 'больше лимита на ${amount}';
+  @override
+  String overShort({required Object amount}) => 'больше на ${amount}';
+  @override
+  String lastsUntil({required Object day}) => 'В таком темпе хватит до ${day}';
+  @override
+  String lastsUntilShort({required Object day}) => 'хватит примерно до ${day}';
+  @override
+  String get withinTitle => 'В лимите';
+  @override
+  String withinValue({required Object within, required Object all}) =>
+      '${within} из ${all}';
+  @override
+  String overNote({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: '${n} превышен',
+        few: '${n} превышено',
+        many: '${n} превышено',
+        other: '${n} превышено',
+      );
+  @override
+  String get nothingOver => 'ни одного сверх';
+  @override
+  String get monthEndTitle => 'До конца месяца';
+  @override
+  String restartsOn({required Object day}) => 'с ${day} заново';
+  @override
+  String meter({required Object category, required Object percent}) =>
+      '${category}: потрачено ${percent} % лимита';
+  @override
+  String get footnote =>
+      'Траты в другой валюте идут в лимит по курсу ЦБ на день операции.';
+  @override
+  String get unrated => 'Нет курса на день части трат — они не в лимите.';
+  @override
+  String get noLimit => 'Без лимита';
+  @override
+  String get set => 'Поставить';
+  @override
+  String spentIn({required Object amount, required Object month}) =>
+      '${amount} ${month}';
+  @override
+  String get regular => 'регулярные платежи';
+  @override
+  String get suggest => 'Предложить по средним';
+  @override
+  String suggestFrom({required Object from, required Object to}) =>
+      'По тратам за ${from} — ${to}';
+  @override
+  String get emptyTitle => 'Лимитов пока нет';
+  @override
+  String get emptyText =>
+      'Поставьте месячный лимит на категорию — Birka покажет, сколько осталось, и скажет заранее, если он кончается.';
+  @override
+  String get manual => 'Поставить вручную';
+  @override
+  String get inviteTitle => 'Лимиты';
+  @override
+  String get inviteAction => 'Предложить по средним тратам';
+  @override
+  late final _Translations$limits$form$ru form = _Translations$limits$form$ru._(
+    _root,
+  );
+  @override
+  late final _Translations$limits$suggestions$ru suggestions =
+      _Translations$limits$suggestions$ru._(_root);
+  @override
+  late final _Translations$limits$quickAdd$ru quickAdd =
+      _Translations$limits$quickAdd$ru._(_root);
 }
 
 // Path: notifications
@@ -4363,6 +4497,166 @@ class _Translations$demo$debtNotes$ru extends Translations$demo$debtNotes$en {
   String get concert => 'на концерт';
 }
 
+// Path: limits.form
+class _Translations$limits$form$ru extends Translations$limits$form$en {
+  _Translations$limits$form$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get newTitle => 'Новый лимит';
+  @override
+  String editTitle({required Object category}) => 'Лимит на «${category}»';
+  @override
+  String get category => 'Категория';
+  @override
+  String more({required Object n}) => 'Ещё ${n}';
+  @override
+  String get perMonth => 'В месяц';
+  @override
+  String get notSet => 'Не задана';
+  @override
+  String get amountHint => 'Сумма в месяц';
+  @override
+  String get currency => 'Валюта лимита';
+  @override
+  String get average => 'В среднем за 3 месяца';
+  @override
+  String get noAverage => 'Трат за 3 месяца нет';
+  @override
+  String take({required Object amount}) => 'Взять ${amount}';
+  @override
+  String get taken => 'округлили вверх';
+  @override
+  String get same => 'как сейчас';
+  @override
+  String get warn => 'Сказать заранее';
+  @override
+  String warnAt({required Object amount}) =>
+      'Скажем, когда уйдёт 80 % — ${amount}.';
+  @override
+  String get warnLater => 'Скажем, когда уйдёт 80 % лимита.';
+  @override
+  String get warnOff => 'Лимит будет только на странице «Лимиты» и на обзоре.';
+  @override
+  String spentNow({
+    required Object month,
+    required Object spent,
+    required Object limit,
+  }) => '${month} — ${spent} из ${limit}';
+  @override
+  String get calendarMonth =>
+      'Лимит считается с 1-го по последнее число месяца и начинается заново каждый месяц.';
+  @override
+  String ownMonth({required Object day}) =>
+      'Лимит считается с ${day}-го числа до ${day}-го следующего месяца и начинается заново.';
+  @override
+  String get otherCurrencies =>
+      'Траты в других валютах идут в этот лимит по курсу ЦБ на день операции.';
+  @override
+  String get remove => 'Убрать лимит';
+  @override
+  String saved({required Object category, required Object amount}) =>
+      'Лимит на «${category}» — ${amount} в месяц';
+  @override
+  String changed({required Object category, required Object amount}) =>
+      'Лимит на «${category}» — теперь ${amount}';
+  @override
+  String removed({required Object category}) => 'Лимит на «${category}» убрали';
+  @override
+  String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
+}
+
+// Path: limits.suggestions
+class _Translations$limits$suggestions$ru
+    extends Translations$limits$suggestions$en {
+  _Translations$limits$suggestions$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Лимиты по средним';
+  @override
+  String text({
+    required Object from,
+    required Object to,
+    required Object step,
+  }) =>
+      'Средние траты за ${from} — ${to}, округлили вверх до ${step}. Отметили категории, где траты каждый месяц похожи.';
+  @override
+  String average({required Object amount}) => 'в среднем ${amount}';
+  @override
+  String jumps({required Object least, required Object most}) =>
+      'скачут: от ${least} до ${most}';
+  @override
+  String rare({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'траты были в ${n} месяце из 3',
+        few: 'траты были в ${n} месяцах из 3',
+        many: 'траты были в ${n} месяцах из 3',
+        other: 'траты были в ${n} месяцах из 3',
+      );
+  @override
+  String get regular => 'это регулярные платежи';
+  @override
+  String get later =>
+      'Сумму любого лимита можно поменять потом, на странице «Лимиты».';
+  @override
+  String put({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Поставить ${n} лимит',
+        few: 'Поставить ${n} лимита',
+        many: 'Поставить ${n} лимитов',
+        other: 'Поставить ${n} лимита',
+      );
+  @override
+  String get none => 'Ничего не отмечено';
+  @override
+  String done({required num n, required Object month}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        one: 'Поставили ${n} лимит на ${month}',
+        few: 'Поставили ${n} лимита на ${month}',
+        many: 'Поставили ${n} лимитов на ${month}',
+        other: 'Поставили ${n} лимита на ${month}',
+      );
+  @override
+  String get nothing => 'У всех категорий с тратами уже есть лимиты.';
+  @override
+  String get shortTitle => 'Пока мало истории';
+  @override
+  String shortText({required Object day}) =>
+      'Средние появятся после первого полного месяца с тратами — ${day}. Лимит можно поставить и сейчас, вручную.';
+}
+
+// Path: limits.quickAdd
+class _Translations$limits$quickAdd$ru extends Translations$limits$quickAdd$en {
+  _Translations$limits$quickAdd$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String left({
+    required Object category,
+    required Object left,
+    required Object limit,
+  }) => '${category}: останется ${left} из ${limit}';
+  @override
+  String over({required Object category, required Object amount}) =>
+      '${category}: больше лимита на ${amount}';
+}
+
 // Path: onboarding.welcome
 class _Translations$onboarding$welcome$ru
     extends Translations$onboarding$welcome$en {
@@ -6433,6 +6727,201 @@ extension on TranslationsRu {
             ({required Object first, required Object second}) =>
                 '${first} и ${second}',
           'inbox.unpick' => 'Снять',
+          'limits.title' => 'Лимиты',
+          'limits.monthOf' => ({required Object month}) => 'Лимиты на ${month}',
+          'limits.months.0' => 'январь',
+          'limits.months.1' => 'февраль',
+          'limits.months.2' => 'март',
+          'limits.months.3' => 'апрель',
+          'limits.months.4' => 'май',
+          'limits.months.5' => 'июнь',
+          'limits.months.6' => 'июль',
+          'limits.months.7' => 'август',
+          'limits.months.8' => 'сентябрь',
+          'limits.months.9' => 'октябрь',
+          'limits.months.10' => 'ноябрь',
+          'limits.months.11' => 'декабрь',
+          'limits.all' => ({required Object n}) => 'Все лимиты · ${n}',
+          'limits.overCount' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'превышен ${n}',
+                  few: 'превышено ${n}',
+                  many: 'превышено ${n}',
+                  other: 'превышено ${n}',
+                ),
+          'limits.allWithin' => 'всё в лимите',
+          'limits.days' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} день',
+                  few: '${n} дня',
+                  many: '${n} дней',
+                  other: '${n} дня',
+                ),
+          'limits.spentOf' =>
+            ({required Object spent, required Object limit}) =>
+                '${spent} из ${limit}',
+          'limits.ofLimit' => ({required Object limit}) => 'из ${limit}',
+          'limits.about' => ({required Object amount}) => '≈ ${amount}',
+          'limits.left' => ({required Object amount}) => 'осталось ${amount}',
+          'limits.over' =>
+            ({required Object amount}) => 'больше лимита на ${amount}',
+          'limits.overShort' =>
+            ({required Object amount}) => 'больше на ${amount}',
+          'limits.lastsUntil' =>
+            ({required Object day}) => 'В таком темпе хватит до ${day}',
+          'limits.lastsUntilShort' =>
+            ({required Object day}) => 'хватит примерно до ${day}',
+          'limits.withinTitle' => 'В лимите',
+          'limits.withinValue' =>
+            ({required Object within, required Object all}) =>
+                '${within} из ${all}',
+          'limits.overNote' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: '${n} превышен',
+                  few: '${n} превышено',
+                  many: '${n} превышено',
+                  other: '${n} превышено',
+                ),
+          'limits.nothingOver' => 'ни одного сверх',
+          'limits.monthEndTitle' => 'До конца месяца',
+          'limits.restartsOn' => ({required Object day}) => 'с ${day} заново',
+          'limits.meter' =>
+            ({required Object category, required Object percent}) =>
+                '${category}: потрачено ${percent} % лимита',
+          'limits.footnote' =>
+            'Траты в другой валюте идут в лимит по курсу ЦБ на день операции.',
+          'limits.unrated' => 'Нет курса на день части трат — они не в лимите.',
+          'limits.noLimit' => 'Без лимита',
+          'limits.set' => 'Поставить',
+          'limits.spentIn' =>
+            ({required Object amount, required Object month}) =>
+                '${amount} ${month}',
+          'limits.regular' => 'регулярные платежи',
+          'limits.suggest' => 'Предложить по средним',
+          'limits.suggestFrom' =>
+            ({required Object from, required Object to}) =>
+                'По тратам за ${from} — ${to}',
+          'limits.emptyTitle' => 'Лимитов пока нет',
+          'limits.emptyText' =>
+            'Поставьте месячный лимит на категорию — Birka покажет, сколько осталось, и скажет заранее, если он кончается.',
+          'limits.manual' => 'Поставить вручную',
+          'limits.inviteTitle' => 'Лимиты',
+          'limits.inviteAction' => 'Предложить по средним тратам',
+          'limits.form.newTitle' => 'Новый лимит',
+          'limits.form.editTitle' =>
+            ({required Object category}) => 'Лимит на «${category}»',
+          'limits.form.category' => 'Категория',
+          'limits.form.more' => ({required Object n}) => 'Ещё ${n}',
+          'limits.form.perMonth' => 'В месяц',
+          'limits.form.notSet' => 'Не задана',
+          'limits.form.amountHint' => 'Сумма в месяц',
+          'limits.form.currency' => 'Валюта лимита',
+          'limits.form.average' => 'В среднем за 3 месяца',
+          'limits.form.noAverage' => 'Трат за 3 месяца нет',
+          'limits.form.take' => ({required Object amount}) => 'Взять ${amount}',
+          'limits.form.taken' => 'округлили вверх',
+          'limits.form.same' => 'как сейчас',
+          'limits.form.warn' => 'Сказать заранее',
+          'limits.form.warnAt' =>
+            ({required Object amount}) =>
+                'Скажем, когда уйдёт 80 % — ${amount}.',
+          'limits.form.warnLater' => 'Скажем, когда уйдёт 80 % лимита.',
+          'limits.form.warnOff' =>
+            'Лимит будет только на странице «Лимиты» и на обзоре.',
+          'limits.form.spentNow' =>
+            ({
+              required Object month,
+              required Object spent,
+              required Object limit,
+            }) => '${month} — ${spent} из ${limit}',
+          'limits.form.calendarMonth' =>
+            'Лимит считается с 1-го по последнее число месяца и начинается заново каждый месяц.',
+          'limits.form.ownMonth' =>
+            ({required Object day}) =>
+                'Лимит считается с ${day}-го числа до ${day}-го следующего месяца и начинается заново.',
+          'limits.form.otherCurrencies' =>
+            'Траты в других валютах идут в этот лимит по курсу ЦБ на день операции.',
+          'limits.form.remove' => 'Убрать лимит',
+          'limits.form.saved' =>
+            ({required Object category, required Object amount}) =>
+                'Лимит на «${category}» — ${amount} в месяц',
+          'limits.form.changed' =>
+            ({required Object category, required Object amount}) =>
+                'Лимит на «${category}» — теперь ${amount}',
+          'limits.form.removed' =>
+            ({required Object category}) => 'Лимит на «${category}» убрали',
+          'limits.form.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
+          'limits.suggestions.title' => 'Лимиты по средним',
+          'limits.suggestions.text' =>
+            ({
+              required Object from,
+              required Object to,
+              required Object step,
+            }) =>
+                'Средние траты за ${from} — ${to}, округлили вверх до ${step}. Отметили категории, где траты каждый месяц похожи.',
+          'limits.suggestions.average' =>
+            ({required Object amount}) => 'в среднем ${amount}',
+          'limits.suggestions.jumps' =>
+            ({required Object least, required Object most}) =>
+                'скачут: от ${least} до ${most}',
+          'limits.suggestions.rare' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'траты были в ${n} месяце из 3',
+                  few: 'траты были в ${n} месяцах из 3',
+                  many: 'траты были в ${n} месяцах из 3',
+                  other: 'траты были в ${n} месяцах из 3',
+                ),
+          'limits.suggestions.regular' => 'это регулярные платежи',
+          'limits.suggestions.later' =>
+            'Сумму любого лимита можно поменять потом, на странице «Лимиты».',
+          'limits.suggestions.put' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Поставить ${n} лимит',
+                  few: 'Поставить ${n} лимита',
+                  many: 'Поставить ${n} лимитов',
+                  other: 'Поставить ${n} лимита',
+                ),
+          'limits.suggestions.none' => 'Ничего не отмечено',
+          'limits.suggestions.done' =>
+            ({required num n, required Object month}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  one: 'Поставили ${n} лимит на ${month}',
+                  few: 'Поставили ${n} лимита на ${month}',
+                  many: 'Поставили ${n} лимитов на ${month}',
+                  other: 'Поставили ${n} лимита на ${month}',
+                ),
+          'limits.suggestions.nothing' =>
+            'У всех категорий с тратами уже есть лимиты.',
+          'limits.suggestions.shortTitle' => 'Пока мало истории',
+          'limits.suggestions.shortText' =>
+            ({required Object day}) =>
+                'Средние появятся после первого полного месяца с тратами — ${day}. Лимит можно поставить и сейчас, вручную.',
+          'limits.quickAdd.left' =>
+            ({
+              required Object category,
+              required Object left,
+              required Object limit,
+            }) => '${category}: останется ${left} из ${limit}',
+          'limits.quickAdd.over' =>
+            ({required Object category, required Object amount}) =>
+                '${category}: больше лимита на ${amount}',
           'notifications.title' => 'Уведомления',
           'notifications.back' => 'Назад',
           'notifications.bell' => 'Уведомления',
@@ -6561,6 +7050,9 @@ extension on TranslationsRu {
             'Новые стоят сверху; прочитанные уходят в историю по дням.',
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
+          _ => null,
+        } ??
+        switch (path) {
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
           'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
           'onboarding.welcome.text' =>
@@ -6674,9 +7166,6 @@ extension on TranslationsRu {
           'reports.monthsShort.9' => 'Окт',
           'reports.monthsShort.10' => 'Ноя',
           'reports.monthsShort.11' => 'Дек',
-          _ => null,
-        } ??
-        switch (path) {
           'reports.monthReport.0' => 'Отчёт за январь',
           'reports.monthReport.1' => 'Отчёт за февраль',
           'reports.monthReport.2' => 'Отчёт за март',
@@ -7581,6 +8070,9 @@ extension on TranslationsRu {
           'transactions.adjustment' => 'Корректировка',
           'transactions.today' => 'Сегодня',
           'transactions.yesterday' => 'Вчера',
+          _ => null,
+        } ??
+        switch (path) {
           'transactions.pickDay' => 'Выбрать день',
           'transactions.note' => 'Заметка',
           'transactions.addNote' => 'Заметка',
@@ -7678,9 +8170,6 @@ extension on TranslationsRu {
           'transactions.monthNames.2' => 'Март',
           'transactions.monthNames.3' => 'Апрель',
           'transactions.monthNames.4' => 'Май',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.monthNames.5' => 'Июнь',
           'transactions.monthNames.6' => 'Июль',
           'transactions.monthNames.7' => 'Август',

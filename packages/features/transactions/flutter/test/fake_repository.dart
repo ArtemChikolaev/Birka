@@ -173,6 +173,10 @@ final class FakeRepository implements TransactionsRepository {
   Future<Transaction?> lastOfTill(String drive) async => null;
 
   @override
+  Future<MonthSpending> monthSpending(CivilDate day) async =>
+      MonthSpending(month: day.monthStart());
+
+  @override
   Future<void> delete(String id) async {
     if (failure case final failure?) throw failure;
     operations = [
