@@ -1,0 +1,30 @@
+name: limits_flutter
+description: >-
+  The screens of the monthly limits of categories on the phone: the part of
+  the overview, the page, the form and limits offered from averages.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_flutter:
+    path: ../../../design/flutter
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  limits_common:
+    path: ../common
+  money:
+    path: ../../../core/money
+  rates:
+    path: ../../../core/rates
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

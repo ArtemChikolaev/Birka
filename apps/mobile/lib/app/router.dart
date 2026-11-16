@@ -34,6 +34,8 @@ import 'package:inbox_common/inbox_common.dart'
     show InboxCubit, InboxSummaryCubit;
 import 'package:inbox_flutter/inbox_flutter.dart';
 import 'package:ledger/ledger.dart' show TagMarking;
+import 'package:limits_common/limits_common.dart';
+import 'package:limits_flutter/limits_flutter.dart';
 import 'package:notifications_common/notifications_common.dart'
     show NoticePlace, NotificationsCubit, NotificationsSummaryCubit;
 import 'package:notifications_flutter/notifications_flutter.dart';
@@ -184,6 +186,20 @@ abstract final class Paths {
   /// The form of метка [id].
   static String editTag(String id) => '/tags/$id/edit';
 
+  /// The monthly limits of categories (ADR 0033).
+  static const limits = '/limits';
+
+  /// The form of a new limit, of category [categoryId] when given.
+  static String newLimit({String? categoryId}) => categoryId == null
+      ? '/limits/new'
+      : '/limits/new?category=${Uri.encodeQueryComponent(categoryId)}';
+
+  /// The limits offered from averages.
+  static const suggestLimits = '/limits/suggest';
+
+  /// The form of the limit of category [categoryId].
+  static String limit(String categoryId) => '/limits/$categoryId';
+
   /// The debts between the person and others (ADR 0029).
   static const debts = '/debts';
 
@@ -245,6 +261,7 @@ GoRouter buildRouter(
                     BlocProvider(
                       create: (_) => getIt<NotificationsSummaryCubit>(),
                     ),
+                    BlocProvider(create: (_) => getIt<LimitsCubit>()),
                   ],
                   child: OverviewPage(
                     onAddAccount: () => context.push(Paths.newAccount),
@@ -264,6 +281,10 @@ GoRouter buildRouter(
                         ),
                         InboxCard(onOpen: () => context.push(Paths.inbox)),
                       ],
+                    ),
+                    limits: LimitsOverviewPart(
+                      onOpen: () => context.push(Paths.limits),
+                      onSuggest: () => context.push(Paths.suggestLimits),
                     ),
                   ),
                 ),
@@ -555,6 +576,51 @@ GoRouter buildRouter(
             parentNavigatorKey: rootKey,
             pageBuilder: (context, state) =>
                 _scheduleFormPage(getIt, id: state.pathParameters['id']),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: Paths.limits,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<LimitsCubit>(),
+          child: LimitsPage(
+            onBack: () => context.pop(),
+            onAdd: (categoryId) =>
+                context.push(Paths.newLimit(categoryId: categoryId)),
+            onOpen: (categoryId) => context.push(Paths.limit(categoryId)),
+            onSuggest: () => context.push(Paths.suggestLimits),
+          ),
+        ),
+        routes: [
+          GoRoute(
+            path: 'new',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) => _limitFormPage(
+              getIt,
+              categoryId: state.uri.queryParameters['category'],
+            ),
+          ),
+          GoRoute(
+            path: 'suggest',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) => BirkaSheetPage(
+              child: BlocProvider(
+                create: (_) => getIt<LimitSuggestCubit>(),
+                child: Builder(
+                  builder: (context) => LimitSuggestPage(
+                    onClose: context.pop,
+                    onManual: () => context.pushReplacement(Paths.newLimit()),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: ':id',
+            parentNavigatorKey: rootKey,
+            pageBuilder: (context, state) =>
+                _limitFormPage(getIt, categoryId: state.pathParameters['id']),
           ),
         ],
       ),
@@ -873,6 +939,17 @@ Page<TagMarking?> _tagFormPage(GetIt getIt, {String? id, String? name}) =>
         ),
       ),
     );
+
+/// The form of the limit of category [categoryId], or of a new limit
+/// (ADR 0033).
+Page<void> _limitFormPage(GetIt getIt, {String? categoryId}) => BirkaSheetPage(
+  child: BlocProvider(
+    create: (_) => getIt<LimitFormCubit>(param1: categoryId),
+    child: Builder(
+      builder: (context) => LimitFormPage(onClose: context.pop),
+    ),
+  ),
+);
 
 /// The form of a new debt, or of more money on debt [id] (ADR 0029).
 Page<String?> _debtFormPage(GetIt getIt, {String? id}) => BirkaSheetPage(

@@ -1,3 +1,4 @@
+back: Назад
 title: Лимиты
 monthOf: Лимиты на $month
 months:
@@ -64,6 +65,7 @@ form:
   more(n): Ещё $n
   perMonth: В месяц
   notSet: Не задана
+  done: Готово
   amountHint: Сумма в месяц
   currency: Валюта лимита
   average: В среднем за 3 месяца

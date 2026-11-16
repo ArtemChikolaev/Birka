@@ -161,7 +161,11 @@ enum BirkaGlyph {
   torch,
 
   /// A camera, for its access (ADR 0032).
-  camera
+  camera,
+
+  /// A gauge with its needle, for the monthly limits of categories
+  /// (ADR 0033).
+  gauge
   ;
 
   /// The glyph called [name], or a neutral one for a name from a newer

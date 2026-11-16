@@ -20,6 +20,7 @@ export 'src/components/birka_checkbox.dart';
 export 'src/components/birka_chip.dart';
 export 'src/components/birka_icon.dart';
 export 'src/components/birka_line_chart.dart';
+export 'src/components/birka_meter.dart';
 export 'src/components/birka_ring.dart';
 export 'src/components/birka_step_bars.dart';
 export 'src/components/birka_text_field.dart';

@@ -19,6 +19,7 @@ import 'package:import_common/import_common.dart';
 import 'package:import_flutter/import_flutter.dart';
 import 'package:inbox_common/inbox_common.dart';
 import 'package:ledger/ledger.dart';
+import 'package:limits_common/limits_common.dart';
 import 'package:notifications_common/notifications_common.dart';
 import 'package:onboarding_common/onboarding_common.dart'
     show OnboardingRepository, onboardingNeeded, registerOnboarding;
@@ -118,6 +119,7 @@ void registerDependencies(
   registerSchedules(getIt, settings);
   registerSettings(getIt, settings, deviceLanguage: deviceLanguage);
   registerTags(getIt);
+  registerLimits(getIt);
   registerTransactions(getIt);
   registerWidgets(getIt, settings);
 }

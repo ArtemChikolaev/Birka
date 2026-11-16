@@ -20,6 +20,7 @@ class OverviewPage extends StatefulWidget {
     this.notice,
     this.ask,
     this.bell,
+    this.limits,
     super.key,
   });
 
@@ -45,6 +46,10 @@ class OverviewPage extends StatefulWidget {
   /// What stands in the header before the eye, such as the bell of the
   /// notices.
   final Widget? bell;
+
+  /// What stands at the bottom of the card of the spending of the month,
+  /// under a line: the monthly limits of categories (ADR 0033).
+  final Widget? limits;
 
   @override
   State<OverviewPage> createState() => _OverviewPageState();
@@ -121,6 +126,7 @@ class _OverviewPageState extends State<OverviewPage> {
                   _SpendingCard(
                     spending: state.spending,
                     today: state.month,
+                    limits: widget.limits,
                   ),
                 ],
               },
@@ -337,81 +343,101 @@ class _Accounts extends StatelessWidget {
 
 /// The ring of the month, its total and its biggest categories.
 class _SpendingCard extends StatelessWidget {
-  const _SpendingCard({required this.spending, required this.today});
+  const _SpendingCard({
+    required this.spending,
+    required this.today,
+    this.limits,
+  });
 
   final Spending spending;
   final CivilDate today;
+  final Widget? limits;
 
   @override
   Widget build(BuildContext context) {
+    final limits = this.limits;
+    final spending = _spending(context);
+    if (limits == null) return GlassSurface(child: spending);
+    final colors = BirkaColors.of(context);
+    return GlassSurface(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          spending,
+          const SizedBox(height: BirkaTokens.spaceMd),
+          SizedBox(height: 1, child: ColoredBox(color: colors.hairline)),
+          const SizedBox(height: BirkaTokens.spaceSm),
+          limits,
+        ],
+      ),
+    );
+  }
+
+  Widget _spending(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
     final title = SectionLabel(spendingTitle(today), color: colors.textMuted);
     final total = spending.total;
     if (total == null) {
-      return GlassSurface(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            title,
-            const SizedBox(height: BirkaTokens.spaceXs),
-            Text(
-              t.overview.noSpending,
-              style: styles.body.copyWith(color: colors.textMuted),
-            ),
-          ],
-        ),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          title,
+          const SizedBox(height: BirkaTokens.spaceXs),
+          Text(
+            t.overview.noSpending,
+            style: styles.body.copyWith(color: colors.textMuted),
+          ),
+        ],
       );
     }
-    return GlassSurface(
-      child: Row(
-        children: [
-          BirkaRing(
-            label: t.overview.ring,
-            slices: [
-              for (final CategoryTotal(:category, total: amount)
-                  in spending.categories)
-                RingSlice(
-                  amount.minorUnits.toDouble(),
-                  _colorOf(category, colors),
-                  id: categoryKey(category),
+    return Row(
+      children: [
+        BirkaRing(
+          label: t.overview.ring,
+          slices: [
+            for (final CategoryTotal(:category, total: amount)
+                in spending.categories)
+              RingSlice(
+                amount.minorUnits.toDouble(),
+                _colorOf(category, colors),
+                id: categoryKey(category),
+              ),
+          ],
+        ),
+        const SizedBox(width: BirkaTokens.spaceMd),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              title,
+              const SizedBox(height: BirkaTokens.spaceXxs),
+              AmountText(
+                formatMoney(-total),
+                value: total.minorUnits,
+                rise: AmountRise.bad,
+                style: styles.heading.copyWith(color: colors.text),
+              ),
+              const SizedBox(height: BirkaTokens.spaceXs),
+              AnimatedColumn(
+                children: [
+                  for (final row in spending.top)
+                    _CategoryLine(
+                      key: ValueKey(categoryKey(row.category)),
+                      row: row,
+                    ),
+                ],
+              ),
+              if (spending.others.isNotEmpty)
+                AmountText(
+                  spending.others.map(formatMoney).join(' · '),
+                  tone: AmountTone.muted,
+                  style: styles.caption,
                 ),
             ],
           ),
-          const SizedBox(width: BirkaTokens.spaceMd),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                title,
-                const SizedBox(height: BirkaTokens.spaceXxs),
-                AmountText(
-                  formatMoney(-total),
-                  value: total.minorUnits,
-                  rise: AmountRise.bad,
-                  style: styles.heading.copyWith(color: colors.text),
-                ),
-                const SizedBox(height: BirkaTokens.spaceXs),
-                AnimatedColumn(
-                  children: [
-                    for (final row in spending.top)
-                      _CategoryLine(
-                        key: ValueKey(categoryKey(row.category)),
-                        row: row,
-                      ),
-                  ],
-                ),
-                if (spending.others.isNotEmpty)
-                  AmountText(
-                    spending.others.map(formatMoney).join(' · '),
-                    tone: AmountTone.muted,
-                    style: styles.caption,
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

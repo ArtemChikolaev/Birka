@@ -15,6 +15,8 @@ dependencies:
   l10n:
     path: ../../../core/l10n
   mobile_scanner: ^7.5.0
+  rates:
+    path: ../../../core/rates
   transactions_common:
     path: ../common
 

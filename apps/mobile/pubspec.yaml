@@ -61,6 +61,10 @@ dependencies:
     path: ../../packages/core/l10n
   ledger:
     path: ../../packages/core/ledger
+  limits_common:
+    path: ../../packages/features/limits/common
+  limits_flutter:
+    path: ../../packages/features/limits/flutter
   notifications_common:
     path: ../../packages/features/notifications/common
   notifications_flutter:

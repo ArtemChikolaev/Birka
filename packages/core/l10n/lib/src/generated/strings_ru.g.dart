@@ -1821,6 +1821,8 @@ class _Translations$limits$ru extends Translations$limits$en {
 
   // Translations
   @override
+  String get back => 'Назад';
+  @override
   String get title => 'Лимиты';
   @override
   String monthOf({required Object month}) => 'Лимиты на ${month}';
@@ -4519,6 +4521,8 @@ class _Translations$limits$form$ru extends Translations$limits$form$en {
   @override
   String get notSet => 'Не задана';
   @override
+  String get done => 'Готово';
+  @override
   String get amountHint => 'Сумма в месяц';
   @override
   String get currency => 'Валюта лимита';
@@ -6727,6 +6731,7 @@ extension on TranslationsRu {
             ({required Object first, required Object second}) =>
                 '${first} и ${second}',
           'inbox.unpick' => 'Снять',
+          'limits.back' => 'Назад',
           'limits.title' => 'Лимиты',
           'limits.monthOf' => ({required Object month}) => 'Лимиты на ${month}',
           'limits.months.0' => 'январь',
@@ -6823,6 +6828,7 @@ extension on TranslationsRu {
           'limits.form.more' => ({required Object n}) => 'Ещё ${n}',
           'limits.form.perMonth' => 'В месяц',
           'limits.form.notSet' => 'Не задана',
+          'limits.form.done' => 'Готово',
           'limits.form.amountHint' => 'Сумма в месяц',
           'limits.form.currency' => 'Валюта лимита',
           'limits.form.average' => 'В среднем за 3 месяца',
@@ -7048,11 +7054,11 @@ extension on TranslationsRu {
           'notifications.how.2' => '«Birka» — что нового в самой Birka.',
           'notifications.how.3' =>
             'Новые стоят сверху; прочитанные уходят в историю по дням.',
-          'onboarding.skip' => 'Пропустить',
-          'onboarding.back' => 'Назад',
           _ => null,
         } ??
         switch (path) {
+          'onboarding.skip' => 'Пропустить',
+          'onboarding.back' => 'Назад',
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
           'onboarding.welcome.title' => 'Все деньги —\nв одном месте',
           'onboarding.welcome.text' =>
@@ -8068,11 +8074,11 @@ extension on TranslationsRu {
           'transactions.income' => 'Доход',
           'transactions.transfer' => 'Перевод',
           'transactions.adjustment' => 'Корректировка',
-          'transactions.today' => 'Сегодня',
-          'transactions.yesterday' => 'Вчера',
           _ => null,
         } ??
         switch (path) {
+          'transactions.today' => 'Сегодня',
+          'transactions.yesterday' => 'Вчера',
           'transactions.pickDay' => 'Выбрать день',
           'transactions.note' => 'Заметка',
           'transactions.addNote' => 'Заметка',
