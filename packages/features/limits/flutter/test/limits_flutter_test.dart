@@ -134,6 +134,26 @@ void main() {
       expect(opened, 1);
     });
 
+    testWidgets('draws its line only once the limits are counted', (
+      tester,
+    ) async {
+      Finder line() => find.byWidgetPredicate(
+        (widget) =>
+            widget is ColoredBox && widget.color == BirkaColors.dark.hairline,
+      );
+      tester.view.physicalSize = const Size(780, 1688);
+      tester.view.devicePixelRatio = 2;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(theme: BirkaTheme.dark(), home: part()),
+      );
+      // The limits are still being counted: the card ends with the spending.
+      expect(line(), findsNothing);
+      await tester.pumpAndSettle();
+      expect(line(), findsOneWidget);
+      expect(find.text('ЛИМИТЫ НА НОЯБРЬ'), findsOneWidget);
+    });
+
     testWidgets('invites to set limits while there are none', (tester) async {
       repository.categories = [
         for (final category in boardCategories) withLimit(category, null),

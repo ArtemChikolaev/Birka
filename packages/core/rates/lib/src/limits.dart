@@ -239,7 +239,7 @@ LimitSuggestion? suggestLimit(
   final total = months.fold(0, (sum, m) => sum + m.minorUnits);
   if (total <= 0) return null;
   // The average is about a month, so it is in whole units of its currency.
-  final unit = BigInt.from(10).pow(currency.decimalDigits).toInt();
+  final unit = currency.minorUnitsPerMajor;
   final average = Money(
     (total / months.length / unit).round() * unit,
     currency,
@@ -309,7 +309,7 @@ List<LimitSuggestion> suggestLimits(
 Money limitStep(RateBook rates, Currency currency) {
   final rubles = Money(50000, Currency.rub);
   final there = rates.convert(rubles, currency);
-  final unit = BigInt.from(10).pow(currency.decimalDigits).toInt();
+  final unit = currency.minorUnitsPerMajor;
   if (there == null) return Money(unit, currency);
   final whole = there.minorUnits / unit;
   var step = 1.0;

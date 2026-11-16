@@ -47,8 +47,9 @@ class OverviewPage extends StatefulWidget {
   /// notices.
   final Widget? bell;
 
-  /// What stands at the bottom of the card of the spending of the month,
-  /// under a line: the monthly limits of categories (ADR 0033).
+  /// What stands at the bottom of the card of the spending of the month: the
+  /// monthly limits of categories (ADR 0033), which draw the line above
+  /// them.
   final Widget? limits;
 
   @override
@@ -358,17 +359,12 @@ class _SpendingCard extends StatelessWidget {
     final limits = this.limits;
     final spending = _spending(context);
     if (limits == null) return GlassSurface(child: spending);
-    final colors = BirkaColors.of(context);
+    // The part under the spending draws its own line once it has something
+    // to show, so that the card never ends in a line with nothing under it.
     return GlassSurface(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          spending,
-          const SizedBox(height: BirkaTokens.spaceMd),
-          SizedBox(height: 1, child: ColoredBox(color: colors.hairline)),
-          const SizedBox(height: BirkaTokens.spaceSm),
-          limits,
-        ],
+        children: [spending, limits],
       ),
     );
   }

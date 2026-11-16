@@ -8,7 +8,8 @@ import 'package:rates/rates.dart';
 
 /// The limits of the month at the bottom of the card «Траты в ноябре» of the
 /// overview (ADR 0033): the three that need the person most, over first, or
-/// an invitation while there are none.
+/// an invitation while there are none. It draws the line above itself once
+/// the limits are counted, and grows into the card.
 ///
 /// It needs a [LimitsCubit] above it, and counts again when the app comes
 /// back, as a new day may have come.
@@ -49,74 +50,94 @@ class _LimitsOverviewPartState extends State<LimitsOverviewPart> {
 
   @override
   Widget build(BuildContext context) {
-    final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
     return BlocBuilder<LimitsCubit, LimitsState>(
-      builder: (context, state) {
-        if (state.status != LimitsStatus.ready) return const SizedBox.shrink();
-        if (state.limits.isEmpty) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionLabel(t.limits.inviteTitle, color: colors.textMuted),
-              const SizedBox(height: BirkaTokens.spaceXs),
-              Text(
-                t.limits.emptyText,
-                style: styles.body.copyWith(color: colors.textSecondary),
+      builder: (context, state) => AnimatedSize(
+        duration: BirkaMotion.reduced(context)
+            ? Duration.zero
+            : BirkaMotion.base,
+        curve: BirkaMotion.standardCurve,
+        alignment: Alignment.topCenter,
+        child: state.status != LimitsStatus.ready
+            ? const SizedBox.shrink()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: BirkaTokens.spaceMd),
+                  SizedBox(
+                    height: 1,
+                    child: ColoredBox(color: colors.hairline),
+                  ),
+                  const SizedBox(height: BirkaTokens.spaceSm),
+                  _part(context, state),
+                ],
               ),
-              AccentLink(
-                label: t.limits.inviteAction,
-                onTap: widget.onSuggest,
-                expand: true,
-              ),
-            ],
-          );
-        }
-        return Semantics(
-          button: true,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: widget.onOpen,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+      ),
+    );
+  }
+
+  Widget _part(BuildContext context, LimitsState state) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    if (state.limits.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SectionLabel(t.limits.inviteTitle, color: colors.textMuted),
+          const SizedBox(height: BirkaTokens.spaceXs),
+          Text(
+            t.limits.emptyText,
+            style: styles.body.copyWith(color: colors.textSecondary),
+          ),
+          AccentLink(
+            label: t.limits.inviteAction,
+            onTap: widget.onSuggest,
+            expand: true,
+          ),
+        ],
+      );
+    }
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onOpen,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: SectionLabel(
-                        limitsTitle(state.today),
-                        color: colors.textMuted,
-                      ),
-                    ),
-                    FadingText(
-                      limitsSummary(state),
-                      style: styles.caption.copyWith(
-                        color: state.over > 0
-                            ? colors.negative
-                            : colors.textMuted,
-                      ),
-                    ),
-                  ],
+                Expanded(
+                  child: SectionLabel(
+                    limitsTitle(state.today),
+                    color: colors.textMuted,
+                  ),
                 ),
-                AnimatedColumn(
-                  children: [
-                    for (final progress in state.limits.take(3))
-                      _Limit(
-                        key: ValueKey(progress.category.id),
-                        progress: progress,
-                      ),
-                  ],
-                ),
-                AccentLink(
-                  label: t.limits.all(n: state.limits.length),
-                  onTap: widget.onOpen,
-                  expand: true,
+                FadingText(
+                  limitsSummary(state),
+                  style: styles.caption.copyWith(
+                    color: state.over > 0 ? colors.negative : colors.textMuted,
+                  ),
                 ),
               ],
             ),
-          ),
-        );
-      },
+            AnimatedColumn(
+              children: [
+                for (final progress in state.limits.take(3))
+                  _Limit(
+                    key: ValueKey(progress.category.id),
+                    progress: progress,
+                  ),
+              ],
+            ),
+            AccentLink(
+              label: t.limits.all(n: state.limits.length),
+              onTap: widget.onOpen,
+              expand: true,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
