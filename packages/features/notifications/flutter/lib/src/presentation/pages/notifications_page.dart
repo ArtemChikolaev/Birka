@@ -267,6 +267,11 @@ class _NoticeRow extends StatelessWidget {
         glyph: BirkaGlyph.people,
         color: _debts,
       ),
+      // A limit wears the color of going over it, as its board draws it.
+      NoticeSource.limit => GlyphBadge(
+        glyph: BirkaGlyph.gauge,
+        color: colors.negative,
+      ),
       NoticeSource.import => const GlyphBadge(
         glyph: BirkaGlyph.download,
         color: _imports,
@@ -289,6 +294,7 @@ class _NoticeRow extends StatelessWidget {
               NoticeTone.done => colors.positive,
               NoticeTone.waits => _waits,
               NoticeTone.left => colors.textSubtle,
+              NoticeTone.over => colors.negative,
               NoticeTone.plain => null,
             },
       leading: fresh

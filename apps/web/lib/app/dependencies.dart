@@ -33,12 +33,16 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   final rates = RatesRepository(database);
   final settings = Settings.readFrom(const BrowserSettingsStore());
   final baseCurrency = BaseCurrency(settings.baseCurrency);
+  final monthStart = MonthStart(settings.monthStart);
   getIt
     ..registerSingleton(database)
     ..registerSingleton(ledger)
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)
-    ..registerSingleton(MonthStart(settings.monthStart))
+    ..registerSingleton(monthStart)
+    ..registerSingleton(
+      LimitNotices(ledger, rates, monthStart: () => monthStart.day),
+    )
     ..registerSingleton<SettingsStore>(const BrowserSettingsStore())
     ..registerSingleton<BackupFiles>(const BrowserBackupFiles())
     ..registerSingleton<StatementFiles>(const BrowserStatementFiles())

@@ -65,11 +65,13 @@
    wait. «Прочитать все» reads them all, and they close into the days of the
    history. Chips narrow the feed to one source while it has two. The days of
    the debts came later as a source of their own, «Долги»
-   ([ADR 0029](0029-debts.md)).
+   ([ADR 0029](0029-debts.md)), and so did the limits of the categories,
+   «Лимиты», which lead to the page of the limits
+   ([ADR 0033](0033-limits.md)).
 6. A line of the history says what became of the notice in the color of the
    news: green when it went through, amber while it waits for the person,
-   grey when it was skipped or undone. A new one says when its time comes,
-   as the reminder did.
+   grey when it was skipped or undone, coral when a limit went over. A new
+   one says when its time comes, as the reminder did.
 7. The bell stands in the header of the overview before the eye, a
    `GlassIconButton` with the count of the new notices on its corner. The
    count jumps when it grows and shrinks away at nought.

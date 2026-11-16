@@ -462,4 +462,48 @@ void main() {
       hasLength(1),
     );
   });
+
+  test(
+    'payments that post themselves tell the limits they take over',
+    () async {
+      final subscriptions = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Подписки',
+      );
+      await ledger.setCategoryLimit(subscriptions.id, CategoryLimit(rub(1000)));
+      await ledger.addSchedule(
+        kind: TransactionKind.expense,
+        name: 'YouTube',
+        accountId: card.id,
+        categoryId: subscriptions.id,
+        amount: rub(1200),
+        every: ScheduleEvery.month,
+        next: today,
+        onDay: ScheduleOnDay.post,
+      );
+      final posting = LedgerSchedulesRepository(
+        ledger,
+        BaseCurrency(null),
+        MonthStart(1),
+        store,
+        limits: LimitNotices(
+          ledger,
+          RatesRepository(database),
+          monthStart: () => 1,
+          now: () => DateTime(2026, 11, 18, 12),
+        ),
+        now: () => DateTime(2026, 11, 18, 12),
+      );
+
+      expect(await posting.postDue(), hasLength(1));
+
+      final notice = (await ledger.watchNotices().first)
+          .whereType<LimitNotice>()
+          .single;
+      expect(notice.name, 'Подписки');
+      expect(notice.share, LimitNotice.overShare);
+      expect(notice.amount, rub(200));
+      expect(notice.importId, isNull);
+    },
+  );
 }

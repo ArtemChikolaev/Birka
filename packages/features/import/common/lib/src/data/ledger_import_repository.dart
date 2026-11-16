@@ -2,13 +2,17 @@ import 'package:import_common/src/domain/import_plan.dart';
 import 'package:import_common/src/domain/import_repository.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 
 /// The import on the ledger of the device (ADR 0021).
 final class LedgerImportRepository implements ImportRepository {
-  /// Creates the repository.
-  const LedgerImportRepository(this._ledger);
+  /// Creates the repository, which tells [limits] what a statement did to
+  /// the limits of the categories (ADR 0033).
+  const LedgerImportRepository(this._ledger, {LimitNotices? limits})
+    : _limits = limits;
 
   final LedgerRepository _ledger;
+  final LimitNotices? _limits;
 
   @override
   Future<List<Account>> accounts() =>
@@ -52,14 +56,14 @@ final class LedgerImportRepository implements ImportRepository {
     required String fileName,
     String? format,
     void Function(int done, int total)? progress,
-  }) {
+  }) async {
     final operations = plan.added.toList();
     final first = plan.statement.from;
     final last = plan.statement.to;
     if (operations.isEmpty || first == null || last == null) {
       throw StateError('The plan adds nothing');
     }
-    return _ledger.atomically(() async {
+    final id = await _ledger.atomically(() async {
       final id = await _ledger.addImport(
         fileName: fileName,
         format: format,
@@ -182,6 +186,13 @@ final class LedgerImportRepository implements ImportRepository {
       }
       return id;
     });
+    try {
+      await _limits?.afterImport(id);
+    } on Object {
+      // What the statement did to the limits is news about the ledger, not
+      // the ledger: the import stands without it.
+    }
+    return id;
   }
 
   @override

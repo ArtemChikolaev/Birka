@@ -1015,6 +1015,13 @@ final class LedgerRepository {
           foundBy: Value(null),
         ),
       );
+      // What the statement did to the limits goes with it (ADR 0033).
+      await (_db.delete(_db.notices)..where(
+            (row) =>
+                row.source.equals(NoticeSource.limit.name) &
+                row.importId.equals(id),
+          ))
+          .go();
       final accounts =
           await (_db.select(_db.accounts)..where(
                 (row) => row.importId.equals(id) & row.deletedAt.isNull(),
@@ -1580,6 +1587,38 @@ final class LedgerRepository {
     });
   }
 
+  /// Puts into the notices that the limit of category [categoryId] went past
+  /// [share] % in the month that starts on [month] (ADR 0033): 80 with
+  /// [amount] left, or 100 with [amount] over it. [name] is what the category
+  /// is called now, and [importId] the import whose statement did it, or
+  /// `null` for a regular payment that posted itself. A limit keeps one
+  /// notice of each share in a month: one that has it already keeps it.
+  Future<void> noteLimit({
+    required String categoryId,
+    required String name,
+    required CivilDate month,
+    required int share,
+    required Money amount,
+    String? importId,
+  }) => _db
+      .into(_db.notices)
+      .insert(
+        NoticesCompanion.insert(
+          id: _newId(),
+          source: NoticeSource.limit.name,
+          createdAt: _timestamp(),
+          categoryId: Value(categoryId),
+          timeOn: Value(month.toString()),
+          name: Value(name),
+          limitShare: Value(share),
+          amountMinor: Value(amount.minorUnits),
+          currency: Value(amount.currency.code),
+          decimalDigits: Value(amount.currency.decimalDigits),
+          importId: Value(importId),
+        ),
+        mode: InsertMode.insertOrIgnore,
+      );
+
   /// Marks read the notices of debt [debtId] that are new, as when the
   /// person settled it: what they did is no news to them.
   Future<void> readDebtNotices(String debtId) async {
@@ -1853,6 +1892,36 @@ final class LedgerRepository {
           note: round?.note ?? '',
           settledOn: round?.settledOn,
           gone: round == null,
+        );
+      case NoticeSource.limit:
+        final NoticeRow(
+          :categoryId,
+          :timeOn,
+          :name,
+          :limitShare,
+          :amountMinor,
+          :currency,
+          :decimalDigits,
+        ) = notice;
+        if (categoryId == null ||
+            timeOn == null ||
+            name == null ||
+            limitShare == null ||
+            amountMinor == null ||
+            currency == null ||
+            decimalDigits == null) {
+          return null;
+        }
+        return LimitNotice(
+          id: notice.id,
+          at: notice.createdAt,
+          readAt: notice.readAt,
+          categoryId: categoryId,
+          name: name,
+          month: CivilDate.parse(timeOn),
+          share: limitShare,
+          amount: Money(amountMinor, _currency(currency, decimalDigits)),
+          importId: notice.importId,
         );
       case NoticeSource.import:
         final fileName = row.read<String?>('import_file_name');
@@ -2688,11 +2757,17 @@ final class LedgerRepository {
   /// ends included: one row for each category, day and currency, the earliest
   /// first. A subcategory counts towards its parent, and what waits for a
   /// category has a row without one.
+  ///
+  /// [importId] keeps only the transactions of that import, and
+  /// [transactions] only those transactions: what they added to the days.
   Stream<List<CategoryDayTotal>> watchCategoryDays(
     CategoryKind kind, {
     required CivilDate from,
     required CivilDate to,
+    String? importId,
+    Iterable<String>? transactions,
   }) {
+    final only = transactions?.toSet().toList();
     return _db
         .customSelect(
           '''
@@ -2709,6 +2784,8 @@ final class LedgerRepository {
             AND t.status <> ?
             AND t.occurred_on BETWEEN ? AND ?
             AND COALESCE(top.kind, t.kind) = ?
+            ${importId == null ? '' : 'AND t.import_id = ?'}
+            ${only == null ? '' : 'AND t.id IN (${List.filled(only.length, '?').join(', ')})'}
           GROUP BY top.id, t.occurred_on, a.currency, a.decimal_digits
           ORDER BY t.occurred_on, a.currency, top.sort_order
           ''',
@@ -2717,6 +2794,9 @@ final class LedgerRepository {
             Variable.withString(from.toString()),
             Variable.withString(to.toString()),
             Variable.withString(kind.name),
+            if (importId != null) Variable.withString(importId),
+            if (only != null)
+              for (final id in only) Variable.withString(id),
           ],
           readsFrom: {
             _db.allocations,

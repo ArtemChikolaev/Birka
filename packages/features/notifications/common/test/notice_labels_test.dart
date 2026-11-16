@@ -254,6 +254,51 @@ void main() {
       expect(noticePlace(debt(gone: true), today: today), isNull);
     });
 
+    test('how far a limit went and what took it there', () {
+      LimitNotice limit({
+        String name = 'Досуг',
+        int share = LimitNotice.overShare,
+        int rubles = 1300,
+        String? importId = 'alfa',
+      }) => LimitNotice(
+        id: '$name $share',
+        at: DateTime(2026, 11, 24, 21, 40),
+        categoryId: name,
+        name: name,
+        month: CivilDate(2026, 11, 1),
+        share: share,
+        amount: rub(rubles),
+        importId: importId,
+      );
+
+      expect(noticeTitle(limit(), today: today), 'Досуг · больше лимита');
+      expect(
+        noticeLine(limit(), today: today),
+        ('На ${nb('1 300 ₽')} · после выписки', NoticeTone.over),
+      );
+      final near = limit(
+        name: 'Кафе',
+        share: LimitNotice.nearShare,
+        rubles: 2400,
+      );
+      expect(noticeTitle(near, today: today), 'Кафе · 80 % лимита');
+      // It tells of its moment, so the new one reads as the read one.
+      for (final fresh in [true, false]) {
+        expect(
+          noticeLine(near, today: today, fresh: fresh),
+          ('Осталось ${nb('2 400 ₽')} · после выписки', NoticeTone.waits),
+        );
+      }
+      expect(
+        noticeLine(limit(rubles: 500, importId: null), today: today).$1,
+        'На ${nb('500 ₽')} · после регулярного платежа',
+      );
+      expect(
+        noticePlace(limit(), today: today),
+        (place: NoticePlace.limits, id: null),
+      );
+    });
+
     test('when it came and where a tap leads', () {
       expect(noticeMoment(payment(), today: today), '9:00');
       expect(noticeMoment(import(), today: today), 'вчера');

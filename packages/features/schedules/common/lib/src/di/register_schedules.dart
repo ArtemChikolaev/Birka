@@ -11,13 +11,19 @@ import 'package:schedules_common/src/presentation/schedules_cubit.dart';
 import 'package:schedules_common/src/presentation/today_widget_feed.dart';
 
 /// Registers the feature in [getIt], which has to know the `LedgerRepository`,
-/// the `BaseCurrency`, the `MonthStart`, the `ReminderChannel`, the
-/// `ReminderCalendar` and the `HomeWidgets` of the host, on the [store] of
-/// the host.
+/// the `BaseCurrency`, the `MonthStart`, the `LimitNotices`, the
+/// `ReminderChannel`, the `ReminderCalendar` and the `HomeWidgets` of the
+/// host, on the [store] of the host.
 void registerSchedules(GetIt getIt, SettingsStore store) {
   getIt
     ..registerLazySingleton<SchedulesRepository>(
-      () => LedgerSchedulesRepository(getIt(), getIt(), getIt(), store),
+      () => LedgerSchedulesRepository(
+        getIt(),
+        getIt(),
+        getIt(),
+        store,
+        limits: getIt(),
+      ),
     )
     ..registerFactory(() => SchedulesCubit(getIt()))
     ..registerLazySingleton(

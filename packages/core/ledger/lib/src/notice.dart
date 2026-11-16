@@ -12,6 +12,10 @@ enum NoticeSource {
   /// The day of a debt (ADR 0029).
   debt,
 
+  /// A limit of a category that an operation the person did not type took
+  /// past 80 % or over (ADR 0033).
+  limit,
+
   /// An import of a statement.
   import,
 }
@@ -331,4 +335,86 @@ final class DebtNotice extends Notice {
           : settledOn == null
           ? 'open'
           : 'settled $settledOn'})';
+}
+
+/// A limit of a category that an import of a statement or a regular payment
+/// that posts itself took past 80 % or over (ADR 0033), as it stood then.
+final class LimitNotice extends Notice {
+  /// Creates the notice of the limit of category [categoryId] in the month
+  /// that starts on [month].
+  const LimitNotice({
+    required super.id,
+    required super.at,
+    required this.categoryId,
+    required this.name,
+    required this.month,
+    required this.share,
+    required this.amount,
+    super.readAt,
+    this.importId,
+  });
+
+  /// The share of the limit that a notice of a limit near its end tells of.
+  static const nearShare = 80;
+
+  /// The share of the limit that a notice of a limit gone over tells of.
+  static const overShare = 100;
+
+  /// The category.
+  final String categoryId;
+
+  /// What the category was called then.
+  final String name;
+
+  /// The first day of the month of the limit.
+  final CivilDate month;
+
+  /// The share of the limit that went: [nearShare], or [overShare] once the
+  /// month took more than the limit.
+  final int share;
+
+  /// What was left of the limit near its end, or how far the month went over
+  /// it, in the currency of the limit.
+  final Money amount;
+
+  /// The import whose statement did it, or `null` for a regular payment that
+  /// posted itself.
+  final String? importId;
+
+  /// Whether the month went over the limit, rather than near its end.
+  bool get over => share >= overShare;
+
+  @override
+  NoticeSource get source => NoticeSource.limit;
+
+  @override
+  bool operator ==(Object other) =>
+      other is LimitNotice &&
+      other.id == id &&
+      other.at == at &&
+      other.readAt == readAt &&
+      other.categoryId == categoryId &&
+      other.name == name &&
+      other.month == month &&
+      other.share == share &&
+      other.amount == amount &&
+      other.importId == importId;
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    at,
+    readAt,
+    categoryId,
+    name,
+    month,
+    share,
+    amount,
+    importId,
+  );
+
+  @override
+  String toString() =>
+      'LimitNotice($name, $month, $share %, $amount'
+      '${importId == null ? '' : ', import'})';
 }

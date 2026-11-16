@@ -156,6 +156,17 @@ final class _Notices implements NotificationsRepository {
       settledOn: notice.settledOn,
       gone: notice.gone,
     ),
+    LimitNotice() => LimitNotice(
+      id: notice.id,
+      at: notice.at,
+      readAt: _now,
+      categoryId: notice.categoryId,
+      name: notice.name,
+      month: notice.month,
+      share: notice.share,
+      amount: notice.amount,
+      importId: notice.importId,
+    ),
     ImportNotice() => ImportNotice(
       id: notice.id,
       at: notice.at,
@@ -400,6 +411,67 @@ void main() {
       expect(_withClasses('glass-row glass-row--entering'), findsNothing);
       expect(find.text('Новые · 1'), findsOneComponent);
     });
+  });
+
+  testComponents('a limit reads as on the phone and leads nowhere yet', (
+    tester,
+  ) async {
+    final notices = _Notices([
+      LimitNotice(
+        id: 'leisure',
+        at: DateTime(2026, 11, 24, 21, 40),
+        categoryId: 'leisure',
+        name: 'Досуг',
+        month: CivilDate(2026, 11, 1),
+        share: LimitNotice.overShare,
+        amount: _rub(1300),
+        importId: 'alfa',
+      ),
+      LimitNotice(
+        id: 'cafe',
+        at: DateTime(2026, 11, 12, 20, 5),
+        readAt: DateTime(2026, 11, 12, 21),
+        categoryId: 'cafe',
+        name: 'Кафе',
+        month: CivilDate(2026, 11, 1),
+        share: LimitNotice.nearShare,
+        amount: _rub(2400),
+        importId: 'tbank',
+      ),
+      LimitNotice(
+        id: 'home',
+        at: DateTime(2026, 11, 2, 9),
+        readAt: DateTime(2026, 11, 2, 12),
+        categoryId: 'home',
+        name: 'Дом',
+        month: CivilDate(2026, 11, 1),
+        share: LimitNotice.overShare,
+        amount: _rub(500),
+      ),
+    ]);
+    final opened = pump(tester, notices);
+    await tester.pump();
+
+    expect(find.text('Досуг · больше лимита'), findsOneComponent);
+    expect(
+      find.text('На ${_nb('1 300 ₽')} · после выписки'),
+      findsOneComponent,
+    );
+    expect(find.text('Кафе · 80 % лимита'), findsOneComponent);
+    expect(
+      _colorOf('Осталось ${_nb('2 400 ₽')} · после выписки'),
+      'var(--color-palette-amber)',
+    );
+    expect(
+      _colorOf('На ${_nb('500 ₽')} · после регулярного платежа'),
+      'var(--color-negative)',
+    );
+
+    await tester.click(_buttonOf('Досуг · больше лимита'));
+    await tester.pump();
+
+    expect(notices.read_, ['leisure']);
+    expect(opened, isEmpty);
   });
 
   testComponents('narrows the feed to one source', (tester) async {

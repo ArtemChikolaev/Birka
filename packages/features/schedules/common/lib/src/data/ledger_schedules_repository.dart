@@ -14,19 +14,24 @@ import 'package:schedules_common/src/domain/schedules_repository.dart';
 /// settings of the money until the salary and the dismissed finds on the
 /// [_store] of the device.
 final class LedgerSchedulesRepository implements SchedulesRepository {
-  /// Creates a repository. [now] tells the time in tests.
+  /// Creates a repository, which tells [limits] what the payments that post
+  /// themselves did to the limits of the categories (ADR 0033). [now] tells
+  /// the time in tests.
   LedgerSchedulesRepository(
     this._ledger,
     this._baseCurrency,
     this._monthStart,
     this._store, {
+    LimitNotices? limits,
     DateTime Function()? now,
-  }) : _now = now ?? DateTime.now,
+  }) : _limits = limits,
+       _now = now ?? DateTime.now,
        _settings = PaydaySettings.read(_store),
        _reminders = ReminderSettings.read(_store),
        _dismissed = _readDismissed(_store);
 
   final LedgerRepository _ledger;
+  final LimitNotices? _limits;
   final BaseCurrency _baseCurrency;
   final MonthStart _monthStart;
   final SettingsStore _store;
@@ -163,7 +168,16 @@ final class LedgerSchedulesRepository implements SchedulesRepository {
   Future<void> skip(String id) => _ledger.skipSchedule(id);
 
   @override
-  Future<List<String>> postDue() => _ledger.postDueSchedules(today());
+  Future<List<String>> postDue() async {
+    final posted = await _ledger.postDueSchedules(today());
+    try {
+      await _limits?.afterPayments(posted);
+    } on Object {
+      // What the payments did to the limits is news about the ledger, not
+      // the ledger: they stand posted without it.
+    }
+    return posted;
+  }
 
   @override
   Future<void> noteReminders(List<PlannedReminder> reminders) =>

@@ -809,6 +809,7 @@ GoRouter buildRouter(
               NoticePlace.inbox => Paths.inbox,
               NoticePlace.debt when id != null => Paths.debt(id),
               NoticePlace.debt => Paths.debts,
+              NoticePlace.limits => Paths.limits,
             }),
           ),
         ),

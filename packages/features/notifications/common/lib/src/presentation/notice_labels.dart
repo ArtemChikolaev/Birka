@@ -16,6 +16,9 @@ enum NoticeTone {
 
   /// It was skipped or taken back.
   left,
+
+  /// It went over a limit (ADR 0033).
+  over,
 }
 
 /// Where a tap on a notice leads.
@@ -31,12 +34,17 @@ enum NoticePlace {
 
   /// The card of a debt, which its day opens (ADR 0029).
   debt,
+
+  /// The limits of the categories (ADR 0033).
+  limits,
 }
 
-/// `Аренда · 45 000 ₽`, `Срок сегодня · Маша, 3 000 ₽` or `Альфа-Банк ·
-/// ноябрь`: what [notice] is about on [today]. A time of a payment reads as
-/// the reminders name it (ADR 0025), the day of a debt by the person and what
-/// was owed then (ADR 0029), and an import by its bank and its months.
+/// `Аренда · 45 000 ₽`, `Срок сегодня · Маша, 3 000 ₽`, `Досуг · больше
+/// лимита` or `Альфа-Банк · ноябрь`: what [notice] is about on [today]. A
+/// time of a payment reads as the reminders name it (ADR 0025), the day of a
+/// debt by the person and what was owed then (ADR 0029), a limit by its
+/// category and how far it went (ADR 0033), and an import by its bank and
+/// its months.
 String noticeTitle(Notice notice, {required CivilDate today}) =>
     switch (notice) {
       PaymentNotice(:final name, :final advance, :final amount, :final kind) =>
@@ -49,6 +57,10 @@ String noticeTitle(Notice notice, {required CivilDate today}) =>
                 amount: formatMoney(owed),
               )
             : t.notifications.debtTitle(name: name, amount: formatMoney(owed)),
+      LimitNotice(:final name, :final over) =>
+        over
+            ? t.notifications.limitOverTitle(category: name)
+            : t.notifications.limitNearTitle(category: name),
       ImportNotice(
         :final format,
         :final fileName,
@@ -71,6 +83,7 @@ String noticeTitle(Notice notice, {required CivilDate today}) =>
 }) => switch (notice) {
   PaymentNotice() => _paymentLine(notice, today: today, fresh: fresh),
   DebtNotice() => _debtLine(notice, today: today, fresh: fresh),
+  LimitNotice() => _limitLine(notice),
   ImportNotice(undone: true) => (
     t.notifications.importUndone,
     NoticeTone.left,
@@ -197,6 +210,25 @@ String noticeTitle(Notice notice, {required CivilDate today}) =>
   );
 }
 
+/// The line under the notice of a limit (ADR 0033): how far the month went
+/// over it, or what was left near its end, and what did it. It tells of
+/// that moment, so it reads the same new and in the history.
+(String, NoticeTone) _limitLine(LimitNotice notice) {
+  final amount = formatMoney(notice.amount);
+  final cause = notice.importId == null
+      ? t.notifications.limitAfterPayment
+      : t.notifications.limitAfterImport;
+  return notice.over
+      ? (
+          t.notifications.limitOver(amount: amount, cause: cause),
+          NoticeTone.over,
+        )
+      : (
+          t.notifications.limitLeft(amount: amount, cause: cause),
+          NoticeTone.waits,
+        );
+}
+
 /// `сегодня`, `вчера` or `2 ноября`: [day] in a line on [today].
 String _dayWord(CivilDate day, CivilDate today) {
   if (day == today) return t.notifications.today;
@@ -219,6 +251,7 @@ String _dayWord(CivilDate day, CivilDate today) {
     id: debtId,
   ),
   DebtNotice() => null,
+  LimitNotice() => (place: NoticePlace.limits, id: null),
   ImportNotice(undone: false, :final waiting) when waiting > 0 => (
     place: NoticePlace.inbox,
     id: null,

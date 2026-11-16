@@ -63,10 +63,18 @@
    already are, so that quick add and the limits share it without one
    feature depending on another. The screens are the feature `limits`.
 10. A notice of the bell comes when an operation that the person did not
-    type crosses 80 % or the limit: an import of a statement or a regular
-    payment. The notices table keeps the category and the share, one notice
-    for each in a month. What the person types they see in quick add as
-    they type it.
+    type takes a limit past 80 % or over it in the month of today: an import
+    of a statement, or a regular payment that posts itself. The month is
+    counted without those operations and with them, and the notice tells the
+    share it went past: «Досуг · больше лимита · На 1 300 ₽ · после
+    выписки», or «Кафе · 80 % лимита · Осталось 2 400 ₽» for a limit that
+    says so early. A limit gone straight over tells only that. The notices
+    table keeps the category, the first day of the month and the share, one
+    notice for each in a month, and the undo of an import takes its notices
+    away. What the person types, or posts from a reminder, they see as they
+    do it. The counting is `LimitNotices` in `rates`, which the import and
+    the regular payments call once their operations are in; a notice that
+    fails to come never fails them.
 
 ## Consequences
 
@@ -87,3 +95,7 @@
   budget of every month and more care than a limit, so it is left for later.
 - **A table of limits by month:** would keep the history of past limits, but
   a limit seldom changes, and the past months are counted from operations.
+- **A watcher of the ledger that tells every limit past 80 %:** simpler to
+  wire, but it cannot tell what the person typed from what came by itself,
+  so a limit the person took past 80 % would ring after the next change
+  of any kind.
