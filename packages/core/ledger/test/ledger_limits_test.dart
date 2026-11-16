@@ -138,4 +138,153 @@ void main() {
       throwsA(isA<LedgerCopyException>()),
     );
   });
+
+  group('notices of limits', () {
+    final november = CivilDate(2026, 11, 1);
+
+    Future<List<LimitNotice>> limitNotices() async =>
+        (await ledger.watchNotices().first).whereType<LimitNotice>().toList();
+
+    test('keep what they say, once for each share in a month', () async {
+      await ledger.noteLimit(
+        categoryId: cafe.id,
+        name: 'Кафе',
+        month: november,
+        share: LimitNotice.nearShare,
+        amount: rub(240000),
+        importId: 'statement',
+      );
+      // The same share of the month again keeps the first one.
+      await ledger.noteLimit(
+        categoryId: cafe.id,
+        name: 'Кафе',
+        month: november,
+        share: LimitNotice.nearShare,
+        amount: rub(100000),
+      );
+      await ledger.noteLimit(
+        categoryId: cafe.id,
+        name: 'Кафе',
+        month: november,
+        share: LimitNotice.overShare,
+        amount: rub(130000),
+      );
+      final notices = await limitNotices();
+      expect(notices, hasLength(2));
+      final [over, near] = notices;
+      expect(over.over, isTrue);
+      expect(over.amount, rub(130000));
+      expect(over.importId, isNull);
+      expect(near.over, isFalse);
+      expect(near.categoryId, cafe.id);
+      expect(near.name, 'Кафе');
+      expect(near.month, november);
+      expect(near.amount, rub(240000));
+      expect(near.importId, 'statement');
+      expect(near.isNew, isTrue);
+      expect(near.source, NoticeSource.limit);
+    });
+
+    test('a new month says it again', () async {
+      for (final month in [november, CivilDate(2026, 12, 1)]) {
+        await ledger.noteLimit(
+          categoryId: cafe.id,
+          name: 'Кафе',
+          month: month,
+          share: LimitNotice.overShare,
+          amount: rub(10000),
+        );
+      }
+      expect(await limitNotices(), hasLength(2));
+    });
+
+    test('go with the import whose statement did it', () async {
+      final card = await ledger.addAccount(
+        name: 'Карта',
+        type: AccountType.debit,
+        openingBalance: rub(0),
+      );
+      final importId = await ledger.addImport(
+        fileName: 'tbank.pdf',
+        firstDay: november,
+        lastDay: CivilDate(2026, 11, 17),
+      );
+      await ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: cafe.id, amount: rub(150000))],
+          occurredOn: CivilDate(2026, 11, 17),
+          source: TransactionSource.import,
+        ),
+        importId: importId,
+      );
+      await ledger.noteLimit(
+        categoryId: cafe.id,
+        name: 'Кафе',
+        month: november,
+        share: LimitNotice.overShare,
+        amount: rub(130000),
+        importId: importId,
+      );
+      await ledger.noteLimit(
+        categoryId: cafe.id,
+        name: 'Кафе',
+        month: november,
+        share: LimitNotice.nearShare,
+        amount: rub(240000),
+      );
+      await ledger.undoImport(importId);
+      final notices = await limitNotices();
+      expect(notices.single.share, LimitNotice.nearShare);
+      // The notice of the import itself stays, as taken back.
+      expect(
+        (await ledger.watchNotices().first).whereType<ImportNotice>().single,
+        isA<ImportNotice>().having((it) => it.undone, 'undone', isTrue),
+      );
+    });
+
+    test('the days of one import or of some transactions', () async {
+      final card = await ledger.addAccount(
+        name: 'Карта',
+        type: AccountType.debit,
+        openingBalance: rub(0),
+      );
+      Future<String> spend(int minor, {String? importId}) => ledger.record(
+        TransactionDraft.expense(
+          accountId: card.id,
+          allocations: [Allocation(categoryId: cafe.id, amount: rub(minor))],
+          occurredOn: CivilDate(2026, 11, 17),
+        ),
+        importId: importId,
+      );
+      final importId = await ledger.addImport(
+        fileName: 'tbank.pdf',
+        firstDay: november,
+        lastDay: CivilDate(2026, 11, 17),
+      );
+      await spend(100000);
+      final imported = await spend(30000, importId: importId);
+      final other = await spend(5000);
+      Future<List<Money>> totals({
+        String? importId,
+        Iterable<String>? transactions,
+      }) async => [
+        for (final row
+            in await ledger
+                .watchCategoryDays(
+                  CategoryKind.expense,
+                  from: november,
+                  to: CivilDate(2026, 11, 30),
+                  importId: importId,
+                  transactions: transactions,
+                )
+                .first)
+          row.total,
+      ];
+      expect(await totals(), [rub(135000)]);
+      expect(await totals(importId: importId), [rub(30000)]);
+      expect(await totals(transactions: [imported, other]), [rub(35000)]);
+      expect(await totals(transactions: const []), isEmpty);
+    });
+  });
 }

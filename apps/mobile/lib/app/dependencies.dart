@@ -77,13 +77,17 @@ void registerDependencies(
   final rates = RatesRepository(database);
   final kept = Settings.readFrom(settings);
   final baseCurrency = BaseCurrency(kept.baseCurrency);
+  final monthStart = MonthStart(kept.monthStart);
   final widgetSums = WidgetSums(shown: kept.widgetSums);
   getIt
     ..registerSingleton(database, dispose: (database) => database.close())
     ..registerSingleton(ledger)
     ..registerSingleton(rates)
     ..registerSingleton(baseCurrency)
-    ..registerSingleton(MonthStart(kept.monthStart))
+    ..registerSingleton(monthStart)
+    ..registerSingleton(
+      LimitNotices(ledger, rates, monthStart: () => monthStart.day),
+    )
     ..registerSingleton(
       RatesUpdater(rates, CbrMirror(http.Client()), ledger, baseCurrency),
     )

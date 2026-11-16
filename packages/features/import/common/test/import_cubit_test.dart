@@ -11,6 +11,7 @@ import 'package:import_common/import_common.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 import 'package:test/test.dart';
 
 /// The window of files, with the file that the person chooses in it.
@@ -74,7 +75,15 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.ru);
     database = BirkaDatabase(NativeDatabase.memory());
     ledger = LedgerRepository(database);
-    repository = LedgerImportRepository(ledger);
+    repository = LedgerImportRepository(
+      ledger,
+      limits: LimitNotices(
+        ledger,
+        RatesRepository(database),
+        monthStart: () => 1,
+        now: () => DateTime(2026, 10, 31, 12),
+      ),
+    );
     files = _Files();
     store = _Store();
     card = await ledger.addAccount(
@@ -371,6 +380,32 @@ void main() {
       expect(cubit.state.undone, isTrue);
       expect(await october(card.id), isEmpty);
     });
+
+    test(
+      'tells a limit it took near its end, and its undo takes that back',
+      () async {
+        await ledger.setCategoryLimit(
+          home.id,
+          CategoryLimit(Money(700000, Currency.rub)),
+        );
+        await cubit.read(_fileName, _october());
+        await planned();
+        await cubit.write();
+
+        Future<List<LimitNotice>> limits() async =>
+            (await ledger.watchNotices().first)
+                .whereType<LimitNotice>()
+                .toList();
+        final notice = (await limits()).single;
+        expect(notice.categoryId, home.id);
+        expect(notice.share, LimitNotice.nearShare);
+        expect(notice.amount, Money(15470, Currency.rub));
+        expect(notice.importId, cubit.state.importId);
+
+        await cubit.undo();
+        expect(await limits(), isEmpty);
+      },
+    );
 
     test('of a new card adds its account', () async {
       await cubit.read(_fileName, _october(card: '7777'));

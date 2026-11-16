@@ -141,6 +141,17 @@ final class FakeNotificationsRepository implements NotificationsRepository {
       settledOn: notice.settledOn,
       gone: notice.gone,
     ),
+    LimitNotice() => LimitNotice(
+      id: notice.id,
+      at: notice.at,
+      readAt: clock,
+      categoryId: notice.categoryId,
+      name: notice.name,
+      month: notice.month,
+      share: notice.share,
+      amount: notice.amount,
+      importId: notice.importId,
+    ),
     ImportNotice() => ImportNotice(
       id: notice.id,
       at: notice.at,
@@ -305,6 +316,67 @@ void main() {
     await tester.pumpAndSettle();
     expect(opened, [(NoticePlace.debt, 'dima')]);
     expect(repository.read_, ['dima']);
+  });
+
+  testWidgets('a limit says how far it went and what did it, and opens the '
+      'limits', (tester) async {
+    final repository = FakeNotificationsRepository([
+      ...boardNotices(),
+      LimitNotice(
+        id: 'leisure',
+        at: DateTime(2026, 11, 24, 21, 40),
+        categoryId: 'leisure',
+        name: 'Досуг',
+        month: CivilDate(2026, 11, 1),
+        share: LimitNotice.overShare,
+        amount: rub(1300),
+        importId: 'alfa',
+      ),
+      LimitNotice(
+        id: 'home',
+        at: DateTime(2026, 11, 20, 9),
+        readAt: DateTime(2026, 11, 20, 12),
+        categoryId: 'home',
+        name: 'Дом',
+        month: CivilDate(2026, 11, 1),
+        share: LimitNotice.overShare,
+        amount: rub(500),
+      ),
+      LimitNotice(
+        id: 'cafe',
+        at: DateTime(2026, 11, 12, 20, 5),
+        readAt: DateTime(2026, 11, 12, 21),
+        categoryId: 'cafe',
+        name: 'Кафе',
+        month: CivilDate(2026, 11, 1),
+        share: LimitNotice.nearShare,
+        amount: rub(2400),
+        importId: 'tbank',
+      ),
+    ]);
+    final opened = await pump(tester, repository);
+
+    expect(find.text('НОВЫЕ · 3'), findsOneWidget);
+    expect(find.text('Досуг · больше лимита'), findsOneWidget);
+    expect(
+      find.text('На ${nb('1 300 ₽')} · после выписки'),
+      findsOneWidget,
+    );
+    final kafe = 'Осталось ${nb('2 400 ₽')} · после выписки';
+    expect(find.text('Кафе · 80 % лимита'), findsOneWidget);
+    expect(colorOf(tester, kafe), const Color(BirkaTokens.colorPaletteAmber));
+    final home = 'На ${nb('500 ₽')} · после регулярного платежа';
+    expect(colorOf(tester, home), BirkaColors.dark.negative);
+
+    await tester.tap(find.text('Лимиты'));
+    await tester.pumpAndSettle();
+    expect(find.text('Аренда · ${nb('45 000 ₽')}'), findsNothing);
+    expect(find.text('НОВЫЕ · 1'), findsOneWidget);
+
+    await tester.tap(find.text('Досуг · больше лимита'));
+    await tester.pumpAndSettle();
+    expect(opened, [(NoticePlace.limits, null)]);
+    expect(repository.read_, ['leisure']);
   });
 
   testWidgets('says that it is quiet while nothing came', (tester) async {

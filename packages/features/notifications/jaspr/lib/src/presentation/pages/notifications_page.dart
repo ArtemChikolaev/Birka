@@ -559,6 +559,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         NoticeTone.done => 'var(--color-positive)',
         NoticeTone.waits => _waits,
         NoticeTone.left => 'var(--color-text-subtle)',
+        NoticeTone.over => 'var(--color-negative)',
         NoticeTone.plain => null,
       },
       leading: _tile(notice),
@@ -578,6 +579,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
     NoticeSource.debt => const GlyphBadge(
       glyph: BirkaGlyph.people,
       color: _debts,
+    ),
+    // A limit wears the color of going over it, as its board draws it.
+    NoticeSource.limit => const GlyphBadge(
+      glyph: BirkaGlyph.gauge,
+      color: 'var(--color-negative)',
     ),
     NoticeSource.import => const GlyphBadge(
       glyph: BirkaGlyph.download,

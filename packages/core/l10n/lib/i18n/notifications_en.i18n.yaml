@@ -14,10 +14,11 @@ filters(map):
   all: All
   payment: Payments
   debt: Debts
+  limit: Limits
   import: Imports
 filtersLabel: Whose notifications
 emptyTitle: All quiet
-emptyText: Reminders of your payments and of the days of your debts, and the results of imports, come here.
+emptyText: Reminders of your payments and of the days of your debts, warnings about your limits and the results of imports come here.
 emptyImports: The results of your statement imports come here.
 failed: Could not read the notifications.
 keeps: Birka keeps notifications for 90 days
@@ -40,6 +41,12 @@ importAdded(n):
   one: Added $count operation
   other: Added $count operations
 importUndone: Import undone
+limitOverTitle: "$category · over the limit"
+limitNearTitle: "$category · 80 % of the limit"
+limitOver: "By $amount · $cause"
+limitLeft: "$amount left · $cause"
+limitAfterImport: after a statement
+limitAfterPayment: after a regular payment
 debtTitle: "Due · $name, $amount"
 debtTitleToday: "Due today · $name, $amount"
 debtSince: since $date
@@ -68,6 +75,7 @@ months:
 howTitle: What comes here
 how:
   - "«Payments»: a regular payment that waits for your «Post»."
+  - "«Limits»: a statement or a payment that posted itself took a category to 80 % of its limit, or over it."
   - "«Imports»: what a statement brought, and what waits in the «Inbox»."
   - "«Birka»: what is new in Birka itself."
   - "New ones stand on top; read ones go to the history, day by day."

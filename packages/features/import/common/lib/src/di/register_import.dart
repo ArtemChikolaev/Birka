@@ -10,12 +10,13 @@ import 'package:money/money.dart';
 import 'package:rates/rates.dart';
 
 /// Registers the feature in [getIt], which has to know the `LedgerRepository`,
-/// the [BaseCurrency] and the `StatementFiles` of the host, on the [store]
-/// of the host, which keeps what the next file of a format reuses.
+/// the [BaseCurrency], the [LimitNotices] and the `StatementFiles` of the
+/// host, on the [store] of the host, which keeps what the next file of a
+/// format reuses.
 void registerImport(GetIt getIt, SettingsStore store) {
   getIt
     ..registerLazySingleton<ImportRepository>(
-      () => LedgerImportRepository(getIt()),
+      () => LedgerImportRepository(getIt(), limits: getIt()),
     )
     ..registerLazySingleton<StatementReader>(() => const FileStatementReader())
     ..registerFactory(

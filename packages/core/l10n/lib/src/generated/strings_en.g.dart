@@ -2279,6 +2279,7 @@ class Translations$notifications$en {
     'all': 'All',
     'payment': 'Payments',
     'debt': 'Debts',
+    'limit': 'Limits',
     'import': 'Imports',
   };
 
@@ -2288,9 +2289,9 @@ class Translations$notifications$en {
   /// en: 'All quiet'
   String get emptyTitle => 'All quiet';
 
-  /// en: 'Reminders of your payments and of the days of your debts, and the results of imports, come here.'
+  /// en: 'Reminders of your payments and of the days of your debts, warnings about your limits and the results of imports come here.'
   String get emptyText =>
-      'Reminders of your payments and of the days of your debts, and the results of imports, come here.';
+      'Reminders of your payments and of the days of your debts, warnings about your limits and the results of imports come here.';
 
   /// en: 'The results of your statement imports come here.'
   String get emptyImports => 'The results of your statement imports come here.';
@@ -2357,6 +2358,28 @@ class Translations$notifications$en {
   /// en: 'Import undone'
   String get importUndone => 'Import undone';
 
+  /// en: '$category · over the limit'
+  String limitOverTitle({required Object category}) =>
+      '${category} · over the limit';
+
+  /// en: '$category · 80 % of the limit'
+  String limitNearTitle({required Object category}) =>
+      '${category} · 80 % of the limit';
+
+  /// en: 'By $amount · $cause'
+  String limitOver({required Object amount, required Object cause}) =>
+      'By ${amount} · ${cause}';
+
+  /// en: '$amount left · $cause'
+  String limitLeft({required Object amount, required Object cause}) =>
+      '${amount} left · ${cause}';
+
+  /// en: 'after a statement'
+  String get limitAfterImport => 'after a statement';
+
+  /// en: 'after a regular payment'
+  String get limitAfterPayment => 'after a regular payment';
+
   /// en: 'Due · $name, $amount'
   String debtTitle({required Object name, required Object amount}) =>
       'Due · ${name}, ${amount}';
@@ -2420,6 +2443,7 @@ class Translations$notifications$en {
 
   List<String> get how => [
     '«Payments»: a regular payment that waits for your «Post».',
+    '«Limits»: a statement or a payment that posted itself took a category to 80 % of its limit, or over it.',
     '«Imports»: what a statement brought, and what waits in the «Inbox».',
     '«Birka»: what is new in Birka itself.',
     'New ones stand on top; read ones go to the history, day by day.',
@@ -7789,11 +7813,12 @@ extension on Translations {
           'notifications.filters.all' => 'All',
           'notifications.filters.payment' => 'Payments',
           'notifications.filters.debt' => 'Debts',
+          'notifications.filters.limit' => 'Limits',
           'notifications.filters.import' => 'Imports',
           'notifications.filtersLabel' => 'Whose notifications',
           'notifications.emptyTitle' => 'All quiet',
           'notifications.emptyText' =>
-            'Reminders of your payments and of the days of your debts, and the results of imports, come here.',
+            'Reminders of your payments and of the days of your debts, warnings about your limits and the results of imports come here.',
           'notifications.emptyImports' =>
             'The results of your statement imports come here.',
           'notifications.failed' => 'Could not read the notifications.',
@@ -7833,6 +7858,18 @@ extension on Translations {
                   other: 'Added ${count} operations',
                 ),
           'notifications.importUndone' => 'Import undone',
+          'notifications.limitOverTitle' =>
+            ({required Object category}) => '${category} · over the limit',
+          'notifications.limitNearTitle' =>
+            ({required Object category}) => '${category} · 80 % of the limit',
+          'notifications.limitOver' =>
+            ({required Object amount, required Object cause}) =>
+                'By ${amount} · ${cause}',
+          'notifications.limitLeft' =>
+            ({required Object amount, required Object cause}) =>
+                '${amount} left · ${cause}',
+          'notifications.limitAfterImport' => 'after a statement',
+          'notifications.limitAfterPayment' => 'after a regular payment',
           'notifications.debtTitle' =>
             ({required Object name, required Object amount}) =>
                 'Due · ${name}, ${amount}',
@@ -7868,19 +7905,21 @@ extension on Translations {
           'notifications.months.7' => 'August',
           'notifications.months.8' => 'September',
           'notifications.months.9' => 'October',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.months.10' => 'November',
           'notifications.months.11' => 'December',
           'notifications.howTitle' => 'What comes here',
           'notifications.how.0' =>
             '«Payments»: a regular payment that waits for your «Post».',
           'notifications.how.1' =>
+            '«Limits»: a statement or a payment that posted itself took a category to 80 % of its limit, or over it.',
+          'notifications.how.2' =>
             '«Imports»: what a statement brought, and what waits in the «Inbox».',
-          'notifications.how.2' => '«Birka»: what is new in Birka itself.',
-          'notifications.how.3' =>
+          'notifications.how.3' => '«Birka»: what is new in Birka itself.',
+          'notifications.how.4' =>
             'New ones stand on top; read ones go to the history, day by day.',
-          _ => null,
-        } ??
-        switch (path) {
           'onboarding.skip' => 'Skip',
           'onboarding.back' => 'Back',
           'onboarding.failed' => 'Could not save. Try again.',
@@ -8815,6 +8854,9 @@ extension on Translations {
             'Type a name: a trip, a renovation or a holiday. A tag gathers what they took in every currency.',
           'tags.row.add' => 'Add a tag',
           'tags.row.addText' => 'A trip, a renovation or a holiday',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.row.trip' => ({required Object days}) => 'Trip · ${days}',
           'tags.row.byDays' =>
             ({required Object days}) => 'Trip · ${days} · by its dates',
@@ -8824,9 +8866,6 @@ extension on Translations {
           'transactions.income' => 'Income',
           'transactions.transfer' => 'Transfer',
           'transactions.adjustment' => 'Correction',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.today' => 'Today',
           'transactions.yesterday' => 'Yesterday',
           'transactions.pickDay' => 'Pick a day',

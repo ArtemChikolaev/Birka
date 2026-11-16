@@ -96,6 +96,37 @@ void main() {
       expect(summary.state, 0);
     });
 
+    test('a limit has its chip between the payments and the imports', () async {
+      await remind(
+        await add('Аренда', CivilDate(2026, 11, 25)),
+        DateTime(2026, 11, 25, 9),
+      );
+      await ledger.addImport(
+        fileName: 'alfa.xlsx',
+        format: 'alfa',
+        firstDay: CivilDate(2026, 11, 1),
+        lastDay: CivilDate(2026, 11, 23),
+      );
+      await ledger.noteLimit(
+        categoryId: 'leisure',
+        name: 'Досуг',
+        month: CivilDate(2026, 11, 1),
+        share: LimitNotice.overShare,
+        amount: rub(1300),
+      );
+      final cubit = NotificationsCubit(repository);
+      addTearDown(cubit.close);
+      await pumpEventQueue();
+
+      expect(cubit.state.sources, [
+        NoticeSource.payment,
+        NoticeSource.limit,
+        NoticeSource.import,
+      ]);
+      final limit = cubit.state.fresh.whereType<LimitNotice>().single;
+      expect(await cubit.open(limit), (place: NoticePlace.limits, id: null));
+    });
+
     test('marks the notice it opens and says where it leads', () async {
       final rent = await add('Аренда', CivilDate(2026, 11, 25));
       await remind(rent, DateTime(2026, 11, 25, 9));

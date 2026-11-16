@@ -1994,6 +1994,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
     'all': 'Все',
     'payment': 'Платежи',
     'debt': 'Долги',
+    'limit': 'Лимиты',
     'import': 'Импорт',
   };
   @override
@@ -2002,7 +2003,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   String get emptyTitle => 'Пока тихо';
   @override
   String get emptyText =>
-      'Здесь появятся напоминания о платежах и сроках долгов и итоги импорта.';
+      'Здесь появятся напоминания о платежах и сроках долгов, предупреждения о лимитах и итоги импорта.';
   @override
   String get emptyImports => 'Здесь появятся итоги импорта выписок.';
   @override
@@ -2057,6 +2058,22 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   @override
   String get importUndone => 'Импорт отменён';
   @override
+  String limitOverTitle({required Object category}) =>
+      '${category} · больше лимита';
+  @override
+  String limitNearTitle({required Object category}) =>
+      '${category} · 80 % лимита';
+  @override
+  String limitOver({required Object amount, required Object cause}) =>
+      'На ${amount} · ${cause}';
+  @override
+  String limitLeft({required Object amount, required Object cause}) =>
+      'Осталось ${amount} · ${cause}';
+  @override
+  String get limitAfterImport => 'после выписки';
+  @override
+  String get limitAfterPayment => 'после регулярного платежа';
+  @override
   String debtTitle({required Object name, required Object amount}) =>
       'Срок · ${name}, ${amount}';
   @override
@@ -2107,6 +2124,7 @@ class _Translations$notifications$ru extends Translations$notifications$en {
   @override
   List<String> get how => [
     '«Платежи» — регулярный платёж, который ждёт вашего «Провести».',
+    '«Лимиты» — выписка или платёж, который провёлся сам, довели категорию до 80 % лимита или вывели за него.',
     '«Импорт» — итоги выписок: что добавили и что ждёт во «Входящих».',
     '«Birka» — что нового в самой Birka.',
     'Новые стоят сверху; прочитанные уходят в историю по дням.',
@@ -6972,11 +6990,12 @@ extension on TranslationsRu {
           'notifications.filters.all' => 'Все',
           'notifications.filters.payment' => 'Платежи',
           'notifications.filters.debt' => 'Долги',
+          'notifications.filters.limit' => 'Лимиты',
           'notifications.filters.import' => 'Импорт',
           'notifications.filtersLabel' => 'Чьи уведомления',
           'notifications.emptyTitle' => 'Пока тихо',
           'notifications.emptyText' =>
-            'Здесь появятся напоминания о платежах и сроках долгов и итоги импорта.',
+            'Здесь появятся напоминания о платежах и сроках долгов, предупреждения о лимитах и итоги импорта.',
           'notifications.emptyImports' =>
             'Здесь появятся итоги импорта выписок.',
           'notifications.failed' => 'Не удалось прочитать уведомления.',
@@ -7022,6 +7041,18 @@ extension on TranslationsRu {
                   other: 'Добавили ${count} операции',
                 ),
           'notifications.importUndone' => 'Импорт отменён',
+          'notifications.limitOverTitle' =>
+            ({required Object category}) => '${category} · больше лимита',
+          'notifications.limitNearTitle' =>
+            ({required Object category}) => '${category} · 80 % лимита',
+          'notifications.limitOver' =>
+            ({required Object amount, required Object cause}) =>
+                'На ${amount} · ${cause}',
+          'notifications.limitLeft' =>
+            ({required Object amount, required Object cause}) =>
+                'Осталось ${amount} · ${cause}',
+          'notifications.limitAfterImport' => 'после выписки',
+          'notifications.limitAfterPayment' => 'после регулярного платежа',
           'notifications.debtTitle' =>
             ({required Object name, required Object amount}) =>
                 'Срок · ${name}, ${amount}',
@@ -7056,19 +7087,21 @@ extension on TranslationsRu {
           'notifications.months.7' => 'август',
           'notifications.months.8' => 'сентябрь',
           'notifications.months.9' => 'октябрь',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.months.10' => 'ноябрь',
           'notifications.months.11' => 'декабрь',
           'notifications.howTitle' => 'Что сюда приходит',
           'notifications.how.0' =>
             '«Платежи» — регулярный платёж, который ждёт вашего «Провести».',
           'notifications.how.1' =>
+            '«Лимиты» — выписка или платёж, который провёлся сам, довели категорию до 80 % лимита или вывели за него.',
+          'notifications.how.2' =>
             '«Импорт» — итоги выписок: что добавили и что ждёт во «Входящих».',
-          'notifications.how.2' => '«Birka» — что нового в самой Birka.',
-          'notifications.how.3' =>
+          'notifications.how.3' => '«Birka» — что нового в самой Birka.',
+          'notifications.how.4' =>
             'Новые стоят сверху; прочитанные уходят в историю по дням.',
-          _ => null,
-        } ??
-        switch (path) {
           'onboarding.skip' => 'Пропустить',
           'onboarding.back' => 'Назад',
           'onboarding.failed' => 'Не удалось сохранить. Попробуйте ещё раз.',
@@ -8077,6 +8110,9 @@ extension on TranslationsRu {
             'Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.',
           'tags.row.add' => 'Добавить метку',
           'tags.row.addText' => 'Поездка, ремонт или праздник',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.row.trip' => ({required Object days}) => 'Поездка · ${days}',
           'tags.row.byDays' =>
             ({required Object days}) => 'Поездка · ${days} · по датам',
@@ -8086,9 +8122,6 @@ extension on TranslationsRu {
           'transactions.income' => 'Доход',
           'transactions.transfer' => 'Перевод',
           'transactions.adjustment' => 'Корректировка',
-          _ => null,
-        } ??
-        switch (path) {
           'transactions.today' => 'Сегодня',
           'transactions.yesterday' => 'Вчера',
           'transactions.pickDay' => 'Выбрать день',
