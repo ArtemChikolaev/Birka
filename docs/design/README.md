@@ -29,9 +29,20 @@ The fonts, icons, brand art and mockups are not copied: they are published
 from `packages/design/jaspr/lib/fonts/`, `packages/design/flutter/icons/`,
 `packages/design/brand/` and `mockups/`.
 
+## Design canvas
+
+The boards of every feature, for the phone and for the site, are on the
+Claude Design canvas
+[Birka · Ночь](https://claude.ai/artifact/HWbDNV7NtL5RoBHrLiXqhf). Its source
+is [canvas/](canvas/), laid out as the canvas's `project/` folder: the index
+`canvas.json` and one `.dc.html` per board. The first canvas lived in an
+account that is gone; [canvas/README.md](canvas/README.md) says what was
+recovered and what was lost.
+
 Design work done on claude.ai, in Claude Design or in an artifact, comes back
 into this folder in the same pull request: new mockups as PNGs into
-`mockups/`, changes of the system into `system/`. When a token or a component
+`mockups/`, changes of the system into `system/`, new and changed boards into
+`canvas/`. When a token or a component
 of the kit changes, update `system/` and publish it again.
 
 ## Design language

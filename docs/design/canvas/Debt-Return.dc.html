@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Возврат · Маша</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; overflow: hidden; transform-origin: 50% 0%; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000; transform: {{page.t}}; border-radius: {{page.r}}; transition: {{page.tr}}">
+    <div style="display: flex; flex-direction: column; gap: 18px; padding: 20px 20px 40px">
+      <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr) 96px; align-items: center; height: 44px"><a href="Debts-List.dc.html" aria-label="Назад" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a><h1 style="margin: 0; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Долг</h1><span style="justify-self: end; display: flex"><a href="Debt-Form.dc.html" style="height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; background: rgba(255,255,255,0.08); color: #F4F4F2; text-decoration: none; font-size: 15px; font-weight: 600">Изменить</a></span></div>
+
+      <section aria-label="Долг" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 2px; text-align: center">
+        <span style="position: relative; display: flex">
+          <span aria-hidden="true" style="width: 72px; height: 72px; border-radius: 22px; background: {{who.tint}}; color: {{who.ink}}; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 30px">{{who.letter}}</span>
+          <span aria-hidden="true" style="position: absolute; right: -6px; bottom: -6px; width: 26px; height: 26px; border-radius: 13px; background: #3DDC97; color: #04130B; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 3px #000; opacity: {{closed.o}}; transform: scale({{closed.s}}); transition: {{closed.tr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+        </span>
+        <span style="font-size: 20px; font-weight: 700">{{who.name}}</span>
+        <span style="font-family: Manrope, Inter, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">{{left}}</span>
+        <span style="display: grid; font-size: 15px; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{line.oa}}; transition: {{line.tr}}">{{line.a}}</span><span style="grid-area: 1 / 1; opacity: {{line.ob}}; transition: {{line.tr}}">{{line.b}}</span></span>
+      </section>
+
+      <section aria-label="Сколько вернули" style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+          <span style="font-weight: 600">{{progress.title}}</span>
+          <span style="font-size: 13px; color: #A3A3A3; font-variant-numeric: tabular-nums">{{progress.share}}</span>
+        </div>
+        <span aria-hidden="true" style="height: 8px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden">
+          <span style="display: block; height: 8px; width: {{progress.width}}; border-radius: 4px; background: #3DDC97; transform-origin: 0 50%; transform: scaleX({{grow}}); transition: transform 520ms cubic-bezier(0.2, 0, 0, 1), width 520ms cubic-bezier(0.2, 0, 0, 1)"></span>
+        </span>
+        <span style="display: flex; align-items: center; gap: 8px; padding-top: 4px; font-size: 14px; color: {{dueInk}}; transition: color 220ms cubic-bezier(0.4, 0, 0.2, 1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15.5 6 9.5z"></path><path d="M10 20.5a2.2 2.2 0 0 0 4 0"></path></svg><span style="display: grid; "><span style="grid-area: 1 / 1; opacity: {{due.oa}}; transition: {{due.tr}}">{{due.a}}</span><span style="grid-area: 1 / 1; opacity: {{due.ob}}; transition: {{due.tr}}">{{due.b}}</span></span></span>
+      </section>
+
+      <div style="display: flex; gap: 12px">
+        <a href="Debt-Return.dc.html" style="flex: 1 1 0; min-width: 0; height: 84px; box-sizing: border-box; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-weight: 600; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); color: #3DDC97"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"></path><path d="M7 10l5 5 5-5"></path><path d="M5 20h14"></path></svg><span>{{actions.main}}</span></a>
+        <a href="Debt-Form.dc.html" style="flex: 1 1 0; min-width: 0; height: 84px; box-sizing: border-box; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-weight: 600; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); color: #F4F4F2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span>{{actions.more}}</span></a>
+      </div>
+
+      <section aria-label="История" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">История</h2>
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)"><sc-for list="{{history}}" as="h" hint-placeholder-count="2"><div style="display: grid; grid-template-rows: {{h.rows}}; opacity: {{h.o}}; transition: {{h.tr}}"><div style="overflow: hidden; min-height: 0"><div style="display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border-bottom: {{h.divider}}"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: {{h.tint}}; color: {{h.ink}}; display: grid"><span style="grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; opacity: {{h.outO}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V9"></path><path d="M7 14l5-5 5 5"></path><path d="M5 4h14"></path></svg></span><span style="grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; opacity: {{h.inO}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"></path><path d="M7 10l5 5 5-5"></path><path d="M5 20h14"></path></svg></span></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{h.title}}</span><span style="font-size: 13px; line-height: 1.35; color: #A3A3A3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{h.line}}</span></span><span style="flex: 0 0 auto; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{h.color}}">{{h.amount}}</span></div></div></div></sc-for></div>
+      </section>
+    </div>
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: #000000; opacity: {{shade.o}}; pointer-events: none; transition: {{shade.tr}}"></div>
+  </div>
+
+  <div role="dialog" aria-modal="true" aria-label="Возврат · Маша" style="position: absolute; left: 0; right: 0; top: 52px; bottom: 0; box-sizing: border-box; border-radius: 22px 22px 0 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); border-bottom: 0; background: radial-gradient(70% 30% at 100% 0%, rgba(36,138,86,0.26) 0%, transparent 72%), radial-gradient(60% 26% at 0% 100%, rgba(36,138,86,0.22) 0%, transparent 72%), #050706; box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transform: {{sheet.t}}; transition: {{sheet.tr}}">
+    <div style="position: absolute; left: 20px; right: 12px; top: 20px; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Возврат · Маша</h1>
+      <a href="Debt-Person.dc.html" aria-label="Закрыть" style="flex: 0 0 44px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #F4F4F2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    </div>
+
+    <div style="position: absolute; left: 0; right: 0; top: 76px; bottom: 0; overflow-y: auto; scrollbar-width: none">
+      <div style="display: flex; flex-direction: column; gap: 18px; padding: 4px 20px 170px">
+        <div style="position: relative; display: flex; gap: 8px">
+          <span aria-hidden="true" style="position: absolute; top: 0; left: {{pill.l}}; width: {{pill.w}}; height: 40px; border-radius: 20px; background: #F4F4F2; transition: {{pill.tr}}"></span>
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="2">
+            <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="position: relative; height: 40px; padding: 0 16px; border: 0; border-radius: 20px; background: transparent; color: {{c.fg}}; font: inherit; font-weight: 600; white-space: nowrap; cursor: pointer; transition: color 220ms cubic-bezier(0.2, 0, 0, 1)">{{c.label}}</button>
+          </sc-for>
+        </div>
+
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <div style="height: {{part.h}}; opacity: {{part.o}}; overflow: hidden; transition: {{part.tr}}">
+            <div style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.06)"><span style="flex: 1 1 auto">Сумма</span><span style="font-weight: 600">1 000 ₽</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg></div>
+          </div>
+          <div style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.06)"><span style="flex: 1 1 auto">На счёт</span><span style="font-weight: 600">Зарплатная карта</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg></div>
+          <div style="min-height: 56px; display: flex; align-items: center; gap: 12px"><span style="flex: 1 1 auto">Когда</span><span style="font-weight: 600">Сегодня</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg></div>
+        </div>
+
+        <span style="display: grid; padding: 0 4px; font-size: 13px; line-height: 1.45; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{caption.oa}}; transition: {{caption.tr}}">{{caption.a}}</span><span style="grid-area: 1 / 1; opacity: {{caption.ob}}; transition: {{caption.tr}}">{{caption.b}}</span></span>
+      </div>
+    </div>
+    <div style="position: absolute; left: 20px; right: 20px; bottom: 52px; height: 56px">
+      <button type="button" aria-label="Сохранить" onClick="{{saveNow}}" style="position: absolute; top: 0; left: {{save.l}}; width: {{save.w}}; height: 56px; padding: 0; border: 0; border-radius: 28px; overflow: hidden; background: #3DDC97; color: #04130B; box-shadow: 0 10px 30px rgba(61,220,151,0.28); cursor: pointer; transition: {{save.tr}}">
+        <span style="position: absolute; left: 0; right: 0; top: 0; height: 56px; display: flex; align-items: center; justify-content: center; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; white-space: nowrap; opacity: {{save.textO}}; transition: {{save.textTr}}">СОХРАНИТЬ</span>
+        <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 56px; display: flex; align-items: center; justify-content: center; opacity: {{save.checkO}}; transform: {{save.checkT}}; transition: {{save.checkTr}}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+      </button>
+    </div>
+  </div>
+
+  <div role="status" style="position: absolute; left: 20px; right: 20px; bottom: 24px; display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 18px; background: rgba(32,32,34,0.88); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 12px 32px rgba(0,0,0,0.55); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); opacity: {{toast.o}}; transform: translateY({{toast.y}}); transition: {{toast.tr}}; pointer-events: {{toast.events}}">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 20px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+    <span style="flex: 1 1 auto; font-size: 14px; line-height: 1.4">{{toast.text}}</span>
+    <sc-if value="{{toast.hasAction}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{toast.act}}" style="flex: 0 0 auto; height: 32px; padding: 0 12px; border: 0; border-radius: 16px; background: rgba(255,255,255,0.10); color: #3DDC97; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{toast.action}}</button></sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["Всё", "Часть"], "default": "Всё"}, "$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh(props.state);
+    this.lines = {};
+    this.timers = [];
+    this.box = null;
+  }
+  fresh(mode) {
+    return { phase: 'sheet', toast: 'hidden', all: mode !== 'Часть', done: false };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      this.stop();
+      this.lines = {};
+      this.setState(this.fresh(this.props.state));
+    }
+  }
+
+  stop() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, change) {
+    this.timers.push(setTimeout(() => this.setState(change), ms));
+  }
+
+  componentWillUnmount() {
+    this.stop();
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  renderVals() {
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const sheetCurve = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+    // «Всё» takes the 3 000 ₽ that are left; «Часть» opens the row of the
+    // sum. The return comes onto an account but is not income. Behind the
+    // sheet the card rolls to what is left once the sheet is down.
+    const all = st.all;
+    const open = st.phase === 'sheet' || st.phase === 'saving';
+    const saving = st.phase === 'saving';
+    const save = {
+      l: saving && !reduced ? '147px' : '0px',
+      w: saving && !reduced ? '56px' : '350px',
+      tr: 'left 320ms ' + ease + ', width 320ms ' + ease,
+      textO: saving ? '0' : '1',
+      textTr: 'opacity 150ms ' + fade,
+      checkO: saving ? '1' : '0',
+      checkT: saving || reduced ? 'scale(1)' : 'scale(0.4)',
+      checkTr: saving ? 'opacity 220ms ' + fade + ' 180ms, transform 320ms ' + spring + ' 180ms' : 'none'
+    };
+    const toasts = {
+      hidden: { o: '0', y: reduced ? '0px' : '120px', tr: 'none' },
+      shown: { o: '1', y: '0px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 560ms ' + spring + ', opacity 200ms ' + fade },
+      gone: { o: '0', y: reduced ? '0px' : '16px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 220ms ' + ease + ', opacity 220ms ' + fade }
+    };
+
+    const chips = [['all', 'Всё · 3 000 ₽'], ['part', 'Часть']];
+    const picked = all ? 0 : 1;
+    const closedAll = st.done && all;
+    const share = st.done ? (all ? 100 : 60) : 40;
+    const row = (title, line, value, color, back, shown) => ({
+      title, line, amount: value, color,
+      outO: back ? '0' : '1', inO: back ? '1' : '0',
+      tint: back ? 'rgba(61,220,151,0.14)' : 'rgba(255,255,255,0.08)', ink: back ? '#3DDC97' : '#D6D6D4',
+      rows: shown ? '1fr' : '0fr', o: shown ? '1' : '0',
+      tr: reduced ? 'opacity 220ms ' + fade : 'grid-template-rows 320ms ' + ease + ', opacity 220ms ' + fade + ' 80ms'
+    });
+    const history = [
+      row('Возврат', 'Сегодня · на Зарплатную карту', all ? '+3 000 ₽' : '+1 000 ₽', '#3DDC97', true, st.done),
+      row('Возврат', '10 ноября · на Зарплатную карту', '+2 000 ₽', '#3DDC97', true, true),
+      row('В долг', '3 ноября · с Наличных · на билеты', '−5 000 ₽', '#F4F4F2', false, true)
+    ];
+    return {
+      chips: chips.map(([id, label], i) => ({
+        label,
+        pick: () => this.setState({ all: id === 'all' }),
+        pressed: i === picked ? 'true' : 'false',
+        fg: i === picked ? '#0A0A0A' : '#D6D6D4'
+      })),
+      // ChipSwitch: the pill slides under the picked chip over duration.slow.
+      pill: { l: picked === 0 ? '0px' : '138px', w: picked === 0 ? '130px' : '76px', tr: reduced ? 'none' : 'left 320ms ' + ease + ', width 320ms ' + ease },
+      part: { h: all ? '0px' : '57px', o: all ? '0' : '1', tr: reduced ? 'opacity 220ms ' + fade : 'height 320ms ' + ease + ', opacity 220ms ' + fade },
+      caption: this.fading('caption', all
+        ? 'Долг закроется, и напоминание о нём уйдёт. Деньги придут на карту, но не в доходы.'
+        : 'Останется 2 000 ₽ до 1 декабря. Деньги придут на карту, но не в доходы.', reduced),
+      // The card behind: once the sheet is down the bar grows to what came
+      // back, the line and the due change, and the return folds into the
+      // history on top.
+      who: { name: 'Маша', letter: 'М', tint: 'rgba(74,222,128,0.16)', ink: '#4ADE80' },
+      left: closedAll ? '0 ₽' : st.done ? '2 000 ₽' : '3 000 ₽',
+      line: this.fading('line', closedAll ? 'вернули всё · сегодня' : 'осталось вернуть вам из 5 000 ₽', reduced),
+      closed: { o: closedAll ? '1' : '0', s: closedAll || reduced ? '1' : '0.4', tr: reduced ? 'opacity 220ms ' + fade : 'opacity 220ms ' + fade + ', transform 320ms ' + spring },
+      progress: { title: closedAll ? 'Вернули 5 000 ₽' : st.done ? 'Вернули 3 000 ₽' : 'Вернули 2 000 ₽', share: share + '%', width: share + '%' },
+      grow: '1',
+      due: this.fading('due', closedAll ? 'Долг закрыт · напоминание снято' : 'Срок 1 декабря · напомним в этот день', reduced),
+      dueInk: closedAll ? '#A3A3A3' : '#C9C9C7',
+      actions: { main: 'Возврат', more: closedAll ? 'Новый долг' : 'Ещё в долг' },
+      history: history.map((h, i) => ({ ...h, divider: i < history.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0' })),
+      save,
+      toast: {
+        text: all ? 'Маша: долг закрыт' : 'Возврат 1 000 ₽ · осталось 2 000 ₽',
+        hasAction: false,
+        action: '',
+        act: () => {},
+        events: st.toast === 'shown' ? 'auto' : 'none',
+        ...toasts[st.toast]
+      },
+      saveNow: () => {
+        if (st.phase !== 'sheet') return;
+        this.setState({ phase: 'saving' });
+        this.later(1000, { phase: 'closed' });
+        this.later(1200, { done: true });
+        this.later(1340, { toast: 'shown' });
+        this.later(5340, { toast: 'gone' });
+      },
+      sheet: { t: open ? 'translateY(0px)' : 'translateY(105%)', tr: 'transform ' + (open ? 460 : 300) + 'ms ' + sheetCurve },
+      page: {
+        t: open ? 'translateY(10px) scale(0.92)' : 'translateY(0px) scale(1)',
+        r: open ? '24px' : '0px',
+        tr: 'transform ' + (open ? 460 : 300) + 'ms ' + sheetCurve + ', border-radius ' + (open ? 460 : 300) + 'ms ' + sheetCurve
+      },
+      shade: { o: open ? '0.45' : '0', tr: 'opacity ' + (open ? 460 : 300) + 'ms ' + sheetCurve }
+    };
+  }
+}
+</script>
+</body>
+</html>

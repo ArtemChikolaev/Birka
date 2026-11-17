@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Категории банка на телефоне</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="position: absolute; inset: 0; overflow-y: auto">
+    <div style="display: flex; flex-direction: column; gap: 18px; padding: 20px 20px 160px">
+
+      <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px">
+        <a href="Import-Phone.dc.html" aria-label="Назад" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Категории банка</h1>
+        <span aria-hidden="true"></span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.06)">
+        <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: rgba(255,142,127,0.14); color: #FF8E7F; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-weight: 800">А</span>
+        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-weight: 600">alfa-2026-10.xlsx</span><span style="font-size: 13px; color: #A3A3A3">Альфа-Банк · 10 категорий в выписке</span></span>
+      </div>
+
+      <sc-if value="{{matched}}" hint-placeholder-val="{{ true }}">
+        <p style="margin: 0; color: #C9C9C7; line-height: 1.45">8 из 10 узнали по названиям. Операции сразу встанут в ваши категории, а без выбора подождут во «Входящих».</p>
+      </sc-if>
+      <sc-if value="{{remembered}}" hint-placeholder-val="{{ false }}">
+        <p style="margin: 0; color: #C9C9C7; line-height: 1.45">Взяли ваш выбор с прошлой выписки Альфа-Банка. Поменяйте, если что-то теперь иначе.</p>
+      </sc-if>
+
+      <section aria-label="Расходы" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 4px">
+          <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Расходы</h2>
+          <span style="font-size: 12px; color: #8A8A8A; white-space: nowrap">208 операций</span>
+        </div>
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+          <sc-for list="{{expense}}" as="k" hint-placeholder-count="7">
+            <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: {{k.divider}}">
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{k.bank}}</span><span style="font-size: 13px; color: #8A8A8A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{k.count}}</span></span>
+              <button type="button" aria-haspopup="dialog" aria-label="Категория для «{{k.bank}}»: {{k.ours}}" onClick="{{k.open}}" style="flex: 0 1 auto; min-width: 0; max-width: 200px; height: 36px; box-sizing: border-box; padding: 0 10px 0 12px; border-radius: 18px; border: 1px solid {{k.line}}; background: {{k.fill}}; color: {{k.ink}}; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 200ms ease, color 200ms ease, border-color 200ms ease"><span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{k.dot}}; transition: background 200ms ease"></span><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{k.ours}}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 14px"><path d="M6 9l6 6 6-6"></path></svg></button>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section aria-label="Поступления" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 4px">
+          <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Поступления</h2>
+          <span style="font-size: 12px; color: #8A8A8A; white-space: nowrap">4 операции</span>
+        </div>
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+          <sc-for list="{{income}}" as="k" hint-placeholder-count="3">
+            <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: {{k.divider}}">
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{k.bank}}</span><span style="font-size: 13px; color: #8A8A8A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{k.count}}</span></span>
+              <button type="button" aria-haspopup="dialog" aria-label="Категория для «{{k.bank}}»: {{k.ours}}" onClick="{{k.open}}" style="flex: 0 1 auto; min-width: 0; max-width: 200px; height: 36px; box-sizing: border-box; padding: 0 10px 0 12px; border-radius: 18px; border: 1px solid {{k.line}}; background: {{k.fill}}; color: {{k.ink}}; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 200ms ease, color 200ms ease, border-color 200ms ease"><span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{k.dot}}; transition: background 200ms ease"></span><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{k.ours}}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 14px"><path d="M6 9l6 6 6-6"></path></svg></button>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 10px; padding: 40px 20px 22px; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.86) 34%, #000000 100%); pointer-events: none">
+    <a href="Import-Phone.dc.html" style="pointer-events: auto; height: 52px; box-sizing: border-box; border-radius: 26px; background: #3DDC97; color: #02130B; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 8px 24px rgba(36,138,86,0.45)">{{doneLabel}}</a>
+    <span style="text-align: center; font-size: 12px; color: #8A8A8A">Выбор запомним для выписок Альфа-Банка</span>
+  </div>
+
+  <div style="position: absolute; inset: 0; pointer-events: {{sheet.events}}">
+    <button type="button" aria-label="Закрыть" onClick="{{closeSheet}}" style="position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(0,0,0,0.62); opacity: {{sheet.shade}}; transition: opacity 260ms ease; cursor: pointer"></button>
+    <div role="dialog" aria-modal="true" aria-label="Категория для «{{sheet.bank}}»" style="position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 16px; border-radius: 30px; background: rgba(26,26,28,0.96); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 -10px 40px rgba(0,0,0,0.6); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); transform: translateY({{sheet.y}}); transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1)">
+      <span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.24)"></span>
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
+        <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Категория для «{{sheet.bank}}»</h2>
+        <p style="margin: 0; font-size: 13px; color: #A3A3A3">{{sheet.line}}</p>
+      </div>
+      <div style="max-height: 470px; overflow-y: auto; border-radius: 22px; padding: 2px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08)">
+        <button type="button" onClick="{{pickInbox}}" style="width: 100%; min-height: 58px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; border-bottom: 1px solid rgba(255,255,255,0.06); color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; text-align: left; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px; margin-left: -4px"><path d="M3 13l3-8h12l3 8"></path><path d="M3 13v6a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6h-5l-2 3h-4l-2-3z"></path></svg><span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 1px"><span>Решу во «Входящих»</span><span style="font-size: 12px; color: #8A8A8A">операции подождут без категории</span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px; opacity: {{sheet.inboxMark}}; transition: opacity 200ms ease"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+        <sc-for list="{{cats}}" as="c" hint-placeholder-count="9">
+          <button type="button" onClick="{{c.pick}}" style="width: 100%; min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; border-bottom: 1px solid rgba(255,255,255,0.06); color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; text-align: left; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 10px; height: 10px; border-radius: 5px; background: {{c.dot}}"></span><span style="flex: 1 1 auto">{{c.name}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px; opacity: {{c.mark}}; transition: opacity 200ms ease"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+        </sc-for>
+        <sc-if value="{{sheet.canCreate}}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{pickNew}}" style="width: 100%; min-height: 58px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; color: #3DDC97; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" style="flex: 0 0 16px; margin-left: -3px"><path d="M12 5v14M5 12h14"></path></svg><span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 1px"><span>Новая: {{sheet.bank}}</span><span style="font-size: 12px; font-weight: 400; color: #8A8A8A">появится при импорте</span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px; opacity: {{sheet.newMark}}; transition: opacity 200ms ease"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["Узнали сами","Выбор категории","Как в прошлый раз"],"default":"Узнали сами"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+  }
+
+  fresh() {
+    return { picks: {}, sheet: undefined };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) this.setState(this.fresh());
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'Узнали сами';
+    const st = this.state;
+    const remembered = mode === 'Как в прошлый раз';
+    const colors = {
+      'Продукты': '#4ADE80',
+      'Кафе': '#FBBF24',
+      'Транспорт': '#60A5FA',
+      'Дом': '#22D3EE',
+      'Одежда': '#E879F9',
+      'Здоровье': '#F87171',
+      'Подписки': '#A78BFA',
+      'Покупки': '#FB923C',
+      'Подарки': '#F472B6',
+      'Переводы': '#94A3B8',
+      'Зарплата': '#4ADE80',
+      'Подработка': '#60A5FA',
+      'Проценты': '#22D3EE'
+    };
+    const ours = {
+      expense: ['Продукты', 'Кафе', 'Транспорт', 'Дом', 'Одежда', 'Здоровье', 'Подписки', 'Покупки', 'Подарки'].concat(remembered ? ['Переводы'] : []),
+      income: ['Зарплата', 'Подработка', 'Проценты', 'Подарки']
+    };
+    const bank = [
+      { id: 'market', kind: 'expense', name: 'Супермаркеты', n: 64, auto: 'cat:Продукты' },
+      { id: 'cafe', kind: 'expense', name: 'Рестораны и кафе', n: 41, auto: 'cat:Кафе' },
+      { id: 'transport', kind: 'expense', name: 'Транспорт', n: 37, auto: 'cat:Транспорт' },
+      { id: 'clothes', kind: 'expense', name: 'Одежда и обувь', n: 34, auto: 'cat:Одежда' },
+      { id: 'drugs', kind: 'expense', name: 'Аптеки', n: 12, auto: 'cat:Здоровье' },
+      { id: 'house', kind: 'expense', name: 'ЖКХ', n: 6, auto: 'cat:Дом' },
+      { id: 'transfers', kind: 'expense', name: 'Переводы', n: 14, auto: remembered ? 'cat:Переводы' : 'inbox' },
+      { id: 'salary', kind: 'income', name: 'Зарплата', n: 2, auto: 'cat:Зарплата' },
+      { id: 'interest', kind: 'income', name: 'Проценты', n: 1, auto: 'cat:Проценты' },
+      { id: 'topup', kind: 'income', name: 'Пополнения', n: 1, auto: 'inbox' }
+    ];
+    const ops = (n) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? 'операция' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'операции' : 'операций');
+    const choiceOf = (b) => st.picks[b.id] ?? b.auto;
+    const row = (b, i, list) => {
+      const choice = choiceOf(b);
+      const inbox = choice === 'inbox';
+      const made = choice === 'new';
+      const name = choice.startsWith('cat:') ? choice.slice(4) : b.name;
+      return {
+        bank: b.name,
+        count: made ? ops(b.n) + ' · новая категория' : ops(b.n),
+        ours: inbox ? 'Решу во «Входящих»' : name,
+        dot: inbox ? 'rgba(255,255,255,0.24)' : made ? '#3DDC97' : colors[name] ?? '#A3A3A3',
+        ink: inbox ? '#C9C9C7' : '#F4F4F2',
+        fill: inbox ? 'transparent' : 'rgba(255,255,255,0.08)',
+        line: inbox ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.18)',
+        divider: i < list.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0',
+        open: () => this.setState({ sheet: b.id })
+      };
+    };
+    const waiting = bank.filter((b) => choiceOf(b) === 'inbox').reduce((sum, b) => sum + b.n, 0);
+    const sheetFor = st.sheet !== undefined ? st.sheet : mode === 'Выбор категории' ? 'transfers' : null;
+    const target = bank.find((b) => b.id === sheetFor) ?? null;
+    const current = target ? choiceOf(target) : null;
+    const pick = (value) => () => {
+      if (target) this.setState({ picks: { ...st.picks, [target.id]: value }, sheet: null });
+    };
+    return {
+      matched: !remembered,
+      remembered,
+      expense: bank.filter((b) => b.kind === 'expense').map(row),
+      income: bank.filter((b) => b.kind === 'income').map(row),
+      doneLabel: waiting > 0 ? 'Готово · ' + waiting + ' во «Входящих»' : 'Готово',
+      sheet: {
+        events: target ? 'auto' : 'none',
+        shade: target ? '1' : '0',
+        y: target ? '0' : '112%',
+        bank: target ? target.name : '',
+        line: target ? ops(target.n) + ' · ' + (target.kind === 'expense' ? 'расход' : 'поступление') : '',
+        inboxMark: current === 'inbox' ? '1' : '0',
+        newMark: current === 'new' ? '1' : '0',
+        canCreate: target ? !ours[target.kind].includes(target.name) : true
+      },
+      cats: (target ? ours[target.kind] : ours.expense).map((name) => ({
+        name,
+        dot: colors[name] ?? '#A3A3A3',
+        mark: current === 'cat:' + name ? '1' : '0',
+        pick: pick('cat:' + name)
+      })),
+      pickInbox: pick('inbox'),
+      pickNew: pick('new'),
+      closeSheet: () => this.setState({ sheet: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

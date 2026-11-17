@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Быстрый ввод · метка поездки</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; overflow: hidden; transform-origin: 50% 0%; transform: translateY(10px) scale(0.92); border-radius: 24px; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000">
+    <div style="padding: 24px 20px; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em">Обзор</div>
+    <div style="position: absolute; inset: 0; background: #000000; opacity: 0.45"></div>
+  </div>
+
+  <div role="dialog" aria-modal="true" aria-label="Новая операция" style="position: absolute; left: 0; right: 0; top: 52px; bottom: 0; box-sizing: border-box; border-radius: 22px 22px 0 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); border-bottom: 0; background: radial-gradient(70% 30% at 100% 0%, rgba(36,138,86,0.26) 0%, transparent 72%), radial-gradient(60% 26% at 0% 100%, rgba(36,138,86,0.22) 0%, transparent 72%), #050706; box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transform: {{sheet.t}}; transition: {{sheet.tr}}">
+    <div style="position: absolute; inset: 0; box-sizing: border-box; padding: 12px 20px 30px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 44px; margin-right: -10px">
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Новая операция</h1>
+        <span aria-label="Закрыть" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></span>
+      </div>
+
+      <div role="group" aria-label="Тип операции" style="flex: 0 0 52px; height: 52px; box-sizing: border-box; padding: 4px; border-radius: 22px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px">
+        <sc-for list="{{kinds}}" as="k" hint-placeholder-count="3">
+          <button type="button" onClick="{{k.pick}}" aria-pressed="{{k.pressed}}" style="border: 0; border-radius: 16px; background: {{k.bg}}; color: {{k.fg}}; font: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), color 150ms cubic-bezier(0.2, 0, 0, 1)">{{k.label}}</button>
+        </sc-for>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <span style="height: 20px; font-size: 15px; color: #A3A3A3; font-variant-numeric: tabular-nums">{{exprLine}}</span>
+        <span style="font-family: Manrope, Inter, sans-serif; font-size: 46px; line-height: 1.1; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap">{{amount}}</span>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <span style="height: 44px; box-sizing: border-box; border-radius: 22px; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; padding: 0 16px; background: #161617; color: #C9C9C7; cursor: default"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M3 10h18"></path><path d="M16 14.5h2"></path></svg>Карта в лари</span>
+        <sc-for list="{{days}}" as="d" hint-placeholder-count="2">
+          <button type="button" onClick="{{d.pick}}" aria-pressed="{{d.pressed}}" style="height: 44px; box-sizing: border-box; border-radius: 22px; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; padding: 0 16px; border: 0; background: {{d.bg}}; color: {{d.fg}}; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), color 150ms cubic-bezier(0.2, 0, 0, 1)">{{d.label}}</button>
+        </sc-for>
+        <sc-if value="{{earlier}}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{pickToday}}" style="height: 44px; box-sizing: border-box; border-radius: 22px; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; padding: 0 16px; border: 0; background: #F4F4F2; color: #000000"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"></rect><path d="M3.5 10h17"></path><path d="M8 3v4M16 3v4"></path></svg>2 ноября</button>
+        </sc-if>
+        <sc-if value="{{notEarlier}}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{pickEarlier}}" aria-label="Другой день" style="width: 44px; height: 44px; padding: 0; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); border-radius: 22px; box-sizing: border-box; color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"></rect><path d="M3.5 10h17"></path><path d="M8 3v4M16 3v4"></path></svg></button>
+        </sc-if>
+        <a href="Tags-Picker.dc.html" aria-label="{{tag.aria}}" style="display: grid; width: {{tag.w}}; text-decoration: none; transition: {{tag.wTr}}">
+          <span style="grid-area: 1 / 1; justify-self: start; height: 44px; box-sizing: border-box; border-radius: 22px; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; padding: 0 16px; background: #F4F4F2; color: #000000; opacity: {{tag.on}}; transform: scale({{tag.scale}}); transition: {{tag.tr}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5v6.1a1.6 1.6 0 0 0 .47 1.13l8.3 8.3a1.6 1.6 0 0 0 2.26 0l6-6a1.6 1.6 0 0 0 0-2.26l-8.3-8.3A1.6 1.6 0 0 0 11.1 3.5H5A1.5 1.5 0 0 0 3.5 5z"></path><circle cx="8" cy="8" r="1.4"></circle></svg>Тбилиси</span>
+          <span style="grid-area: 1 / 1; justify-self: start; height: 44px; box-sizing: border-box; border-radius: 22px; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; padding: 0 16px; border: 1px dashed #4A4A4C; color: #A3A3A3; opacity: {{tag.off}}; transition: {{tag.tr}}">+ Метка</span>
+        </a>
+        <span style="height: 44px; box-sizing: border-box; border-radius: 22px; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; text-decoration: none; padding: 0 16px; border: 1px dashed #4A4A4C; color: #A3A3A3; cursor: default">+ Заметка</span>
+      </div>
+
+      <sc-if value="{{notTransfer}}" hint-placeholder-val="{{ true }}">
+        <div role="group" aria-label="Категория" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+          <button type="button" onClick="{{pick.cafe}}" aria-pressed="{{on.cafe}}" aria-label="Кафе" style="height: 68px; box-sizing: border-box; border-radius: 16px; border: {{edge.cafe}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 4px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; color: #FBBF24"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h12v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"></path><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"></path><path d="M9 3v2.5M13 3v2.5"></path></svg></span><span style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Кафе</span></button><button type="button" onClick="{{pick.groceries}}" aria-pressed="{{on.groceries}}" aria-label="Продукты" style="height: 68px; box-sizing: border-box; border-radius: 16px; border: {{edge.groceries}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 4px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; color: #4ADE80"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10.2l2-8H6.2"></path><circle cx="9.5" cy="19" r="1.4"></circle><circle cx="16.5" cy="19" r="1.4"></circle></svg></span><span style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Продукты</span></button><button type="button" onClick="{{pick.transport}}" aria-pressed="{{on.transport}}" aria-label="Транспорт" style="height: 68px; box-sizing: border-box; border-radius: 16px; border: {{edge.transport}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 4px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; color: #60A5FA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="13" rx="3"></rect><path d="M5 11h14"></path><path d="M8 17v3M16 17v3"></path><path d="M8.5 14h.01M15.5 14h.01"></path></svg></span><span style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Транспорт</span></button><button type="button" onClick="{{pick.travel}}" aria-pressed="{{on.travel}}" aria-label="Поездки" style="height: 68px; box-sizing: border-box; border-radius: 16px; border: {{edge.travel}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 4px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; color: #60A5FA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 3 10.5l7 3 3 7z"></path><path d="M10 13.5 21 3"></path></svg></span><span style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Поездки</span></button><button type="button" onClick="{{pick.leisure}}" aria-pressed="{{on.leisure}}" aria-label="Досуг" style="height: 68px; box-sizing: border-box; border-radius: 16px; border: {{edge.leisure}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 4px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; color: #FB923C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"></rect><path d="M9 6v12M15 6v12"></path></svg></span><span style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Досуг</span></button><button type="button" onClick="{{pick.gifts}}" aria-pressed="{{on.gifts}}" aria-label="Подарки" style="height: 68px; box-sizing: border-box; border-radius: 16px; border: {{edge.gifts}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 4px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; color: #FB7185"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="11" rx="2"></rect><path d="M12 9v11M4 13h16"></path><path d="M12 9S10.5 4 8 4.5 7.5 9 12 9zm0 0s1.5-5 4-4.5S16.5 9 12 9z"></path></svg></span><span style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Подарки</span></button><button type="button" onClick="{{pick.subs}}" aria-pressed="{{on.subs}}" aria-label="Подписки" style="height: 68px; box-sizing: border-box; border-radius: 16px; border: {{edge.subs}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 4px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; color: #22D3EE"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="12.5" rx="2.5"></rect><path d="M10.2 8.9v5l4.2-2.5z"></path><path d="M8 20.5h8"></path></svg></span><span style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Подписки</span></button><span style="height: 68px; box-sizing: border-box; border-radius: 16px; border: 1px solid rgba(255,255,255,0.09); background: #0E0E0F; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px"><span style="display: flex; color: #A3A3A3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="1.3"></circle><circle cx="12" cy="12" r="1.3"></circle><circle cx="18" cy="12" r="1.3"></circle></svg></span>Ещё</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{transfer}}" hint-placeholder-val="{{ false }}">
+        <div role="group" aria-label="Куда" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; height: 144px; align-content: start">
+          <span style="height: 68px; box-sizing: border-box; border-radius: 16px; border: 2px solid #3DDC97; background: #0E0E0F; padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; gap: 2px"><span style="font-size: 13px; color: #A3A3A3">Куда</span><span style="font-weight: 600">Наличные лари</span></span>
+          <span style="height: 68px; box-sizing: border-box; border-radius: 16px; border: 1px solid rgba(255,255,255,0.09); background: #0E0E0F; padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; gap: 2px"><span style="font-size: 13px; color: #A3A3A3">Куда</span><span style="font-weight: 600">Долларовая</span></span>
+        </div>
+      </sc-if>
+
+      <div role="group" aria-label="Клавиатура" style="flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 8px">
+        <sc-for list="{{keys}}" as="key" hint-placeholder-count="16">
+          <button type="button" onClick="{{key.press}}" aria-label="{{key.name}}" style="border: 0; border-radius: 16px; background: {{key.bg}}; color: {{key.fg}}; font: inherit; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 700; cursor: pointer">{{key.label}}</button>
+        </sc-for>
+      </div>
+
+      <div style="position: relative; flex: 0 0 56px; height: 56px">
+        <button type="button" onClick="{{saveNow}}" style="position: absolute; top: 0; left: {{save.l}}; width: {{save.w}}; height: 56px; padding: 0; border: 0; border-radius: 28px; overflow: hidden; background: #3DDC97; color: #04130B; box-shadow: 0 10px 30px rgba(61,220,151,0.28); cursor: pointer; transition: {{save.tr}}">
+          <span style="position: absolute; left: 0; right: 0; top: 0; height: 56px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; white-space: nowrap; opacity: {{save.textO}}; transition: {{save.textTr}}">{{saveLabel}}</span>
+          <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 56px; display: flex; align-items: center; justify-content: center; opacity: {{save.checkO}}; transform: {{save.checkT}}; transition: {{save.checkTr}}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["Идёт поездка", "Без поездки"], "default": "Идёт поездка"}, "$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+    this.lines = {};
+    this.timers = [];
+  }
+
+  fresh() {
+    return { kind: 'expense', expr: '46', cat: 'cafe', day: 'today', phase: 'open' };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      this.stop();
+      this.setState(this.fresh());
+    }
+  }
+
+  stop() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, change) {
+    this.timers.push(setTimeout(() => this.setState(change), ms));
+  }
+
+  componentWillUnmount() {
+    this.stop();
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  evaluate(expr) {
+    const tokens = expr.match(/\d+(,\d*)?|[+−×÷]/g) || ['0'];
+    const values = [];
+    const ops = [];
+    for (const token of tokens) {
+      if ('+−×÷'.includes(token)) ops.push(token);
+      else values.push(parseFloat(token.replace(',', '.')) || 0);
+    }
+    for (let i = 0; i < ops.length; ) {
+      if (ops[i] === '×' || ops[i] === '÷') {
+        const right = values[i + 1] ?? 0;
+        values[i] = ops[i] === '×' ? values[i] * right : (right === 0 ? 0 : values[i] / right);
+        values.splice(i + 1, 1);
+        ops.splice(i, 1);
+      } else i++;
+    }
+    let total = values[0] ?? 0;
+    ops.forEach((op, i) => {
+      total = op === '+' ? total + (values[i + 1] ?? 0) : total - (values[i + 1] ?? 0);
+    });
+    return total;
+  }
+
+  press(key) {
+    const { expr } = this.state;
+    const last = expr.slice(-1);
+    const isOp = (c) => '+−×÷'.includes(c);
+    let next = expr;
+    if (key === '⌫') next = expr.length > 1 ? expr.slice(0, -1) : '0';
+    else if (isOp(key)) next = isOp(last) ? expr.slice(0, -1) + key : expr + key;
+    else if (key === ',') {
+      const number = expr.split(/[+−×÷]/).pop();
+      if (!number.includes(',')) next = expr + (number === '' ? '0,' : ',');
+    } else next = expr === '0' ? key : expr + key;
+    this.setState({ expr: next });
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'Идёт поездка';
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const sheetCurve = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+    // Today is Thursday, 12 November 2026, the last day of the trip to
+    // Tbilisi (3–12 November). An expense on a day of the trip gets its
+    // метка by itself; a day out of the trip, an income or a transfer
+    // offers «+ Метка» instead. The two chips cross-fade over duration.base.
+    const trip = mode === 'Идёт поездка';
+    const inTrip = trip && st.kind === 'expense' && st.day !== 'earlier';
+    const total = this.evaluate(st.expr);
+    const sign = st.kind === 'expense' ? '−' : st.kind === 'income' ? '+' : '';
+    const names = { cafe: 'Кафе', groceries: 'Продукты', transport: 'Транспорт', travel: 'Поездки', leisure: 'Досуг', gifts: 'Подарки', subs: 'Подписки' };
+    const pick = {};
+    const on = {};
+    const edge = {};
+    for (const id of Object.keys(names)) {
+      pick[id] = () => this.setState({ cat: id });
+      on[id] = st.cat === id ? 'true' : 'false';
+      edge[id] = st.cat === id ? '2px solid #3DDC97' : '1px solid rgba(255,255,255,0.09)';
+    }
+    const kinds = [['expense', 'РАСХОД'], ['income', 'ДОХОД'], ['transfer', 'ПЕРЕВОД']].map(([id, label]) => ({
+      label,
+      pick: () => this.setState({ kind: id }),
+      pressed: st.kind === id ? 'true' : 'false',
+      bg: st.kind === id ? '#1E1E1F' : 'transparent',
+      fg: st.kind === id ? '#F4F4F2' : '#8A8A8A'
+    }));
+    const days = [['today', 'Сегодня'], ['yesterday', 'Вчера']].map(([id, label]) => ({
+      label,
+      pick: () => this.setState({ day: id }),
+      pressed: st.day === id ? 'true' : 'false',
+      bg: st.day === id ? '#F4F4F2' : '#161617',
+      fg: st.day === id ? '#000000' : '#C9C9C7'
+    }));
+    const keyNames = { '÷': 'Разделить', '×': 'Умножить', '−': 'Вычесть', '+': 'Прибавить', ',': 'Запятая', '⌫': 'Стереть' };
+    const keys = ['7', '8', '9', '÷', '4', '5', '6', '×', '1', '2', '3', '−', ',', '0', '⌫', '+'].map((label) => ({
+      label,
+      name: keyNames[label] ?? label,
+      press: () => this.press(label),
+      bg: '+−×÷⌫'.includes(label) ? '#161617' : '#0E0E0F',
+      fg: '+−×÷'.includes(label) ? '#3DDC97' : '#F4F4F2'
+    }));
+    const saving = st.phase === 'saving';
+    const save = {
+      l: saving && !reduced ? '147px' : '0px',
+      w: saving && !reduced ? '56px' : '350px',
+      tr: 'left 320ms ' + ease + ', width 320ms ' + ease,
+      textO: saving ? '0' : '1',
+      textTr: 'opacity 150ms ' + fade,
+      checkO: saving ? '1' : '0',
+      checkT: saving || reduced ? 'scale(1)' : 'scale(0.4)',
+      checkTr: saving ? 'opacity 220ms ' + fade + ' 180ms, transform 320ms ' + spring + ' 180ms' : 'none'
+    };
+    const toasts = {
+      hidden: { o: '0', y: reduced ? '0px' : '120px', tr: 'none' },
+      shown: { o: '1', y: '0px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 560ms ' + spring + ', opacity 200ms ' + fade },
+      gone: { o: '0', y: reduced ? '0px' : '16px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 220ms ' + ease + ', opacity 220ms ' + fade }
+    };
+
+    return {
+      kinds,
+      days,
+      keys,
+      pick,
+      on,
+      edge,
+      transfer: st.kind === 'transfer',
+      notTransfer: st.kind !== 'transfer',
+      earlier: st.day === 'earlier',
+      notEarlier: st.day !== 'earlier',
+      pickEarlier: () => this.setState({ day: 'earlier' }),
+      pickToday: () => this.setState({ day: 'today' }),
+      tag: {
+        on: inTrip ? '1' : '0',
+        off: inTrip ? '0' : '1',
+        scale: inTrip || reduced ? '1' : '0.92',
+        tr: reduced ? 'opacity 220ms ' + fade : 'opacity 220ms ' + ease + ', transform 320ms ' + spring,
+        aria: inTrip ? 'Метка: Тбилиси' : 'Добавить метку',
+        // The place of the chip follows its width, so «+ Заметка» moves up
+        // with it instead of keeping a gap.
+        w: inTrip ? '121px' : '94px',
+        wTr: reduced ? 'none' : 'width 220ms ' + ease
+      },
+      exprLine: /[+−×÷]/.test(st.expr) ? st.expr.replace(/([+−×÷])/g, ' $1 ') : '',
+      amount: sign + total.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' ₾',
+      saveLabel: st.kind === 'transfer' ? 'СОХРАНИТЬ · НАЛИЧНЫЕ ЛАРИ' : 'СОХРАНИТЬ · ' + names[st.cat].toUpperCase(),
+      save,
+      saveNow: () => {
+        if (st.phase !== 'open') return;
+        this.setState({ phase: 'saving' });
+        this.later(900, { phase: 'gone' });
+        this.timers.push(setTimeout(() => this.setState(this.fresh()), 2200));
+      },
+      sheet: {
+        t: st.phase === 'gone' ? 'translateY(105%)' : 'translateY(0px)',
+        tr: 'transform ' + (st.phase === 'gone' ? 300 : 460) + 'ms ' + sheetCurve
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

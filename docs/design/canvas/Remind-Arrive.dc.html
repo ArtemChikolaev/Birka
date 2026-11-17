@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Как приходит напоминание</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(90% 55% at 15% 0%, rgba(59,94,140,0.55) 0%, transparent 70%), radial-gradient(80% 50% at 100% 100%, rgba(36,138,86,0.35) 0%, transparent 70%), #07090C; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 104px">
+    <span style="font-size: 18px; font-weight: 600; color: rgba(244,244,242,0.86)">{{date}}</span>
+    <span style="font-family: Manrope, Inter, sans-serif; font-size: 92px; font-weight: 700; line-height: 1; letter-spacing: -0.03em">9:00</span>
+  </div>
+
+  <div style="position: absolute; left: 12px; right: 12px; top: 318px; display: flex; flex-direction: column; gap: 10px">
+    <sc-if value="{{birka.shown}}" hint-placeholder-val="{{ true }}">
+      <a href="Future-Planned.dc.html" aria-label="Напоминание Birka: {{birka.title}}" style="display: flex; gap: 12px; padding: 12px 14px; border-radius: 22px; background: rgba(38,40,44,0.62); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); border: 1px solid rgba(255,255,255,0.10); color: #F4F4F2; text-decoration: none; opacity: {{birka.o}}; transform: {{birka.t}}; transition: {{birka.tr}}">
+        <img src="birka-app-icon.png" alt="" aria-hidden="true" style="flex: 0 0 38px; width: 38px; height: 38px; border-radius: 9px; display: block">
+        <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+          <span style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: rgba(244,244,242,0.62)"><span>Birka</span><span>сейчас</span></span>
+          <span style="font-weight: 700">{{birka.title}}</span>
+          <span style="font-size: 14px; line-height: 1.35; color: rgba(244,244,242,0.86)">{{birka.body}}</span>
+        </span>
+      </a>
+    </sc-if>
+    <sc-if value="{{calendar.shown}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; gap: 12px; padding: 12px 14px; border-radius: 22px; background: rgba(38,40,44,0.62); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); border: 1px solid rgba(255,255,255,0.10); opacity: {{calendar.o}}; transform: {{calendar.t}}; transition: {{calendar.tr}}">
+        <span aria-hidden="true" style="flex: 0 0 38px; height: 38px; box-sizing: border-box; padding-top: 3px; border-radius: 10px; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; line-height: 1"><span style="font-size: 8px; font-weight: 700; color: #F04438">{{calendar.weekday}}</span><span style="font-size: 20px; font-weight: 600; color: #111111">{{calendar.day}}</span></span>
+        <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+          <span style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: rgba(244,244,242,0.62)"><span>Календарь</span><span>сейчас</span></span>
+          <span style="font-weight: 700">{{calendar.title}}</span>
+          <span style="font-size: 14px; line-height: 1.35; color: rgba(244,244,242,0.86)">{{calendar.body}}</span>
+        </span>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ways":{"editor":"enum","options":["Оба способа","Birka","Календарь"],"default":"Оба способа"},"when":{"editor":"enum","options":["В день платежа","Накануне"],"default":"В день платежа"},"sums":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { entered: false };
+    this.timer = null;
+  }
+
+  componentDidMount() {
+    this.enter();
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.ways !== this.props.ways || prev.when !== this.props.when || prev.sums !== this.props.sums) {
+      this.setState({ entered: false });
+      this.enter();
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  // The banners come down from the top one after another, as the phone
+  // shows them.
+  enter() {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.setState({ entered: true }), 120);
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  renderVals() {
+    const ways = this.props.ways ?? 'Оба способа';
+    const before = (this.props.when ?? 'В день платежа') === 'Накануне';
+    const sums = this.props.sums ?? true;
+    const reduced = this.prefersReduced();
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const title = sums ? 'Аренда · 45 000 ₽' : 'Аренда';
+    const banner = (delay) => ({
+      o: this.state.entered ? '1' : '0',
+      t: this.state.entered || reduced ? 'translateY(0px) scale(1)' : 'translateY(-18px) scale(0.96)',
+      tr: this.state.entered
+        ? (reduced ? 'opacity 220ms ease' : 'transform 560ms ' + spring + ' ' + delay + 'ms, opacity 220ms ease ' + delay + 'ms')
+        : 'none'
+    });
+    return {
+      date: before ? 'Вторник, 24 ноября' : 'Среда, 25 ноября',
+      birka: {
+        shown: ways !== 'Календарь',
+        title,
+        body: before ? 'Завтра, 25 ноября. Нажмите, чтобы открыть платёж.' : 'Сегодня. Нажмите, чтобы провести или пропустить.',
+        ...banner(0)
+      },
+      calendar: {
+        shown: ways !== 'Birka',
+        weekday: before ? 'ВТ' : 'СР',
+        day: before ? '24' : '25',
+        title,
+        body: before ? 'Завтра, 9:00–9:15' : 'Сегодня, 9:00–9:15',
+        ...banner(ways === 'Календарь' ? 0 : 120)
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

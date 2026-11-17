@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Лимиты по средним на сайте · узкий экран</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+:root{--color-palette-black: #000000;
+  --color-palette-white: #ffffff;
+  --color-palette-ink: #f4f4f2;
+  --color-palette-gray900: #0e0e0f;
+  --color-palette-gray850: #161617;
+  --color-palette-gray800: #1e1e1f;
+  --color-palette-gray500: #8a8a8a;
+  --color-palette-gray400: #a3a3a3;
+  --color-palette-gray300: #c9c9c7;
+  --color-palette-emerald400: #3ddc97;
+  --color-palette-emerald700: #248a56;
+  --color-palette-emerald950: #02130b;
+  --color-palette-coral400: #ff8e7f;
+  --color-palette-green: #4ade80;
+  --color-palette-amber: #fbbf24;
+  --color-palette-sky: #60a5fa;
+  --color-palette-violet: #a78bfa;
+  --color-palette-rose: #fb7185;
+  --color-palette-orange: #fb923c;
+  --color-palette-cyan: #22d3ee;
+  --color-palette-slate: #3a3a3c;
+  --color-palette-steel: #6e6e73;
+  --color-palette-sapphire: #2368b3;
+  --color-palette-bronze: #a8650f;
+  --color-palette-iris: #6a4ec4;
+  --color-palette-ruby: #b83a58;
+  --color-background: #000000;
+  --color-surface: #0e0e0f;
+  --color-surface-raised: #161617;
+  --color-surface-selected: #1e1e1f;
+  --color-text: #f4f4f2;
+  --color-text-secondary: #c9c9c7;
+  --color-text-muted: #a3a3a3;
+  --color-text-subtle: #8a8a8a;
+  --color-accent: #3ddc97;
+  --color-on-accent: #02130b;
+  --color-accent-highlight: rgb(255 255 255 / 0.45);
+  --color-accent-soft: rgb(61 220 151 / 0.14);
+  /* The glow in the corners of every screen. */
+  --color-ambient: rgb(36 138 86 / 0.3);
+  --color-positive: #3ddc97;
+  --color-negative: #ff8e7f;
+  --color-hairline: rgb(255 255 255 / 0.09);
+  --color-art-emerald: #248a56;
+  --color-art-graphite: #6e6e73;
+  --color-art-sapphire: #2368b3;
+  --color-art-amber: #a8650f;
+  --color-art-violet: #6a4ec4;
+  --color-art-rose: #b83a58;
+  --color-glass-fill-top: rgb(255 255 255 / 0.1);
+  --color-glass-fill-bottom: rgb(255 255 255 / 0.03);
+  --color-glass-border: rgb(255 255 255 / 0.14);
+  --color-glass-highlight: rgb(255 255 255 / 0.18);
+  --color-nav-fill: rgb(32 32 34 / 0.52);
+  --color-nav-highlight: rgb(255 255 255 / 0.22);
+  --color-nav-lowlight: rgb(255 255 255 / 0.05);
+  --color-nav-bubble: rgb(255 255 255 / 0.13);
+  --color-nav-bubble-highlight: rgb(255 255 255 / 0.28);
+  --color-nav-label: #b4b4b2;
+  --blur-control: 14px;
+  --blur-glass: 18px;
+  --blur-nav: 22px;
+  --saturation-glass: 1.6;
+  --saturation-nav: 1.7;
+  --shadow-glass: 0px 10px 28px 0px rgb(0 0 0 / 0.4);
+  --shadow-nav: 0px 12px 32px 0px rgb(0 0 0 / 0.55);
+  --shadow-nav-bubble: 0px 4px 14px 0px rgb(0 0 0 / 0.35);
+  --shadow-accent-glow: 0px 6px 22px 0px rgb(36 138 86 / 0.55);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 320ms;
+  /* Digits that roll to a new figure, and the parts of a ring that move to their new shares. */
+  --duration-roll: 520ms;
+  /* A card that grows into its page, the longest way anything travels. */
+  --duration-zoom: 420ms;
+  /* The tab bar bubble and switches. */
+  --duration-spring: 560ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  /* Overshoots a little, like a spring. */
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* For opacity: starts and ends gently, so that a cross-fade does not snap. */
+  --easing-fade: cubic-bezier(0.42, 0, 0.58, 1);
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  /* The smallest tap area. */
+  --size-touch-target: 44px;
+  --size-nav-bar: 64px;
+  /* How deep a list fades where it goes under a header or a button that stays in place. */
+  --size-scroll-edge: 48px;
+  /* The height of the count on the corner of a button, such as the new notices on the bell. */
+  --size-badge: 20px;
+  /* Headlines and large amounts. */
+  --font-family-display: Manrope, Inter, system-ui, sans-serif;
+  --font-family-text: Inter, system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;}
+.text-heading{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.22px;
+  line-height: 1.2;}
+.text-body{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-body-strong{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-caption{font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.35;}
+/* Short section labels in capitals,such as ACCOUNTS. */
+.text-label{font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.96px;
+  line-height: 1.2;
+  text-transform: uppercase;}
+.page{box-sizing: border-box;
+        margin: 0 auto;
+        max-width: 520px;
+        padding: max(var(--space-md), env(safe-area-inset-top)) var(--space-lg) max(var(--space-xxl), env(safe-area-inset-bottom));}
+@media (min-width: 901px){.page--wide{max-width: 1160px;}
+}
+.ambient{isolation: isolate;
+        min-height: 100dvh;
+        position: relative;}
+.ambient::before{background: radial-gradient(62% 34% at 0% 0%, var(--color-ambient) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, var(--color-ambient) 0%, transparent 74%), radial-gradient(64% 20% at 0% 72%, var(--color-ambient) 0%, transparent 72%), var(--color-background);
+        content: "";
+        height: 100lvh;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: -1;}
+.amount{font-variant-numeric: tabular-nums;
+        white-space: nowrap;}
+.birka-button{align-items: center;
+        background: var(--color-accent);
+        border: 0;
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-on-accent);
+        cursor: pointer;
+        display: flex;
+        height: 56px;
+        justify-content: center;
+        padding: 0 var(--space-lg);
+        text-decoration: none;
+        transition: opacity var(--duration-fast);
+        width: 100%;}
+.birka-button:disabled{cursor: default;
+        opacity: 0.5;}
+.birka-button--quiet{background: var(--color-surface-raised);
+        color: var(--color-text);}
+.birka-checkbox{align-items: center;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        display: inline-flex;
+        flex: none;
+        height: var(--size-touch-target);
+        justify-content: center;
+        margin: calc(-1 * var(--space-xs));
+        padding: 0;
+        width: var(--size-touch-target);}
+.birka-checkbox__box{align-items: center;
+        border: 2px solid var(--color-text-subtle);
+        border-radius: var(--radius-xs);
+        box-sizing: border-box;
+        color: var(--color-on-accent);
+        display: flex;
+        height: 24px;
+        justify-content: center;
+        transition: background var(--duration-fast) var(--easing-fade), border-color var(--duration-fast) var(--easing-fade);
+        width: 24px;}
+.birka-checkbox--checked .birka-checkbox__box{background: var(--color-accent);
+        border-color: var(--color-accent);}
+.birka-checkbox__box .birka-icon{height: 16px;
+        width: 16px;}
+.birka-checkbox:focus-visible .birka-checkbox__box{outline: 2px solid var(--color-accent);
+        outline-offset: 2px;}
+@media (prefers-reduced-motion: reduce){.birka-checkbox__box{transition: none;}
+}
+.birka-form{display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);}
+.birka-form__header{align-items: center;
+        display: flex;
+        gap: var(--space-sm);}
+.birka-form__title{flex: 1;
+        margin: 0;}
+.birka-form__actions{display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);}
+html{color-scheme: dark;}
+body{margin: 0;
+        background: var(--color-background);
+        color: var(--color-text);
+        -webkit-font-smoothing: antialiased;}
+:focus-visible{outline: 2px solid var(--color-accent);
+        outline-offset: 2px;}
+.birka-icon{display: block;
+        flex: none;
+        height: 22px;
+        width: 22px;}
+.birka-icon svg{display: block;
+        height: 100%;
+        width: 100%;}
+.birka-split{align-items: start;
+        display: grid;
+        gap: var(--space-xl);
+        grid-template-columns: minmax(0, 1fr) var(--birka-split-aside, 300px);}
+.birka-split__main{display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+        min-width: 0;}
+.birka-split__aside{display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        min-width: 0;
+        position: sticky;
+        top: var(--space-lg);}
+@media (min-width: 901px){.birka-narrow-only{display: none;}
+}
+@media (max-width: 900px){.birka-wide-only{display: none;}
+.birka-split{grid-template-columns: minmax(0, 1fr);}
+.birka-split__aside{position: static;}
+}
+.glass.glass-icon-button{align-items: center;
+        border-radius: var(--radius-pill);
+        color: var(--color-text);
+        cursor: pointer;
+        display: flex;
+        flex: none;
+        height: var(--size-touch-target);
+        justify-content: center;
+        padding: 0;
+        position: relative;
+        width: var(--size-touch-target);}
+.glass.glass-list{overflow: hidden;
+        padding: 0;}
+.glass-row{align-items: center;
+        background: none;
+        border: 0;
+        box-sizing: border-box;
+        color: var(--color-text);
+        display: flex;
+        font: inherit;
+        gap: var(--space-sm);
+        min-height: var(--size-touch-target);
+        padding: var(--space-md);
+        position: relative;
+        text-align: left;
+        text-decoration: none;
+        width: 100%;}
+.glass-row + .glass-row::before{background: var(--color-hairline);
+        content: "";
+        height: 1px;
+        left: var(--space-md);
+        position: absolute;
+        right: var(--space-md);
+        top: 0;}
+.glass-row__text{display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-width: 0;}
+.glass-row__line{overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.glass-row__subtitle{color: var(--color-text-muted);}
+.glass-steps{display: flex;
+        flex-direction: column;
+        gap: var(--space-md);}
+.glass-steps__title{color: var(--color-text-muted);}
+.glass-steps__list{display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        list-style: none;
+        margin: 0;
+        padding: 0;}
+.glass-steps__point{align-items: flex-start;
+        display: flex;
+        gap: var(--space-sm);}
+.glass-steps__number{align-items: center;
+        background: var(--color-accent-soft);
+        border-radius: 50%;
+        color: var(--color-accent);
+        display: flex;
+        flex: none;
+        font-weight: var(--font-weight-bold);
+        height: 24px;
+        justify-content: center;
+        width: 24px;}
+.glass-steps__text{color: var(--color-text);}
+.glass{box-sizing: border-box;
+        padding: var(--space-md);
+        border: 1px solid var(--color-glass-border);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(160deg, var(--color-glass-fill-top) 0%, var(--color-glass-fill-bottom) 100%);
+        box-shadow: inset 0 1px 0 var(--color-glass-highlight), var(--shadow-glass);
+        -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));
+        backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));}
+.glyph-badge{align-items: center;
+        border-radius: var(--radius-sm);
+        display: flex;
+        flex: none;
+        justify-content: center;}
+.glyph-badge .birka-icon{height: 60%;
+        width: 60%;}
+.limits__note{color:var(--color-text-muted);margin:0;padding:0 var(--space-xs)}
+.limits__empty{align-items:center;display:flex;flex-direction:column;gap:var(--space-sm);padding:var(--space-xxl) var(--space-lg);text-align:center}
+.limits__empty-title{margin:var(--space-xs) 0 0}
+.limits__empty-text{color:var(--color-text-secondary);margin:0 0 var(--space-xs);max-width:420px}
+.limits__empty .birka-button{width:min(100%,320px)}
+.limit-suggest__text{color:var(--color-text-secondary);margin:0}
+.limit-suggest__offer{flex:none}
+
+</style>
+</helmet>
+<div style="min-height: 860px">
+<sc-if value="{{is0}}" hint-placeholder-val="{{ true }}">
+<div class="ambient text-body"><main class="page page--wide"><div><form class="birka-form" onsubmit="return false"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Лимиты по средним</h1><button class="glass glass-icon-button" type="button" aria-label="Закрыть"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></button></div><div class="birka-split" style="--birka-split-aside: 340px"><div class="birka-split__main"><p class="text-body limit-suggest__text">Средние траты за август — октябрь, округлили вверх до 500 ₽. Отметили категории, где траты каждый месяц похожи.</p><div class="glass glass-list"><sc-for list="{{rows}}" as="r" hint-placeholder-count="7"><div class="glass-row limit-suggest__row"><sc-if value="{{r.on}}" hint-placeholder-val="{{ true }}"><button class="birka-checkbox birka-checkbox--checked" type="button" role="checkbox" aria-checked="true" aria-label="{{r.name}}" onClick="{{r.flip}}"><span class="birka-checkbox__box"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></span></button></sc-if><sc-if value="{{r.off}}" hint-placeholder-val="{{ false }}"><button class="birka-checkbox" type="button" role="checkbox" aria-checked="false" aria-label="{{r.name}}" onClick="{{r.flip}}"><span class="birka-checkbox__box"></span></button></sc-if><span class="glass-row__text"><span class="text-body-strong glass-row__line">{{r.name}}</span><span class="text-caption glass-row__line glass-row__subtitle">{{r.note}}</span></span><span class="text-body-strong amount limit-suggest__offer" style="color: {{r.ink}}">{{r.offer}}</span></div></sc-for></div><p class="text-caption limits__note">Сумму любого лимита можно поменять потом, на странице «Лимиты».</p></div><aside class="birka-split__aside"><div class="birka-wide-only"><div class="glass glass-steps"><span class="text-label glass-steps__title">Как считаем</span><ol class="glass-steps__list"><li class="glass-steps__point"><span class="text-caption glass-steps__number">1</span><span class="text-body glass-steps__text">Берём три полных месяца: август, сентябрь и октябрь.</span></li><li class="glass-steps__point"><span class="text-caption glass-steps__number">2</span><span class="text-body glass-steps__text">Среднее округляем вверх до 500 ₽.</span></li><li class="glass-steps__point"><span class="text-caption glass-steps__number">3</span><span class="text-body glass-steps__text">Не отмечаем категории, где траты скачут, бывают не каждый месяц или идут регулярными платежами.</span></li></ol></div></div><div class="birka-form__actions"><button class="text-label birka-button" type="button" onClick="{{save}}">{{putLabel}}</button></div></aside></div></form></div></main></div>
+</sc-if>
+<sc-if value="{{is1}}" hint-placeholder-val="{{ false }}">
+<div class="ambient text-body"><main class="page page--wide"><div><form class="birka-form" onsubmit="return false"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Лимиты по средним</h1><button class="glass glass-icon-button" type="button" aria-label="Закрыть"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></button></div><div class="birka-split" style="--birka-split-aside: 340px"><div class="birka-split__main"><div class="limits__empty"><div class="glyph-badge" style="background: color-mix(in srgb, var(--color-palette-amber) 16%, transparent); color: var(--color-palette-amber); height: 64px; width: 64px"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17"/><path d="M8 3v4M16 3v4"/></svg></span></div><h2 class="text-heading limits__empty-title">Пока мало истории</h2><p class="text-body limits__empty-text">Средние появятся после первого полного месяца с тратами — 1 декабря. Лимит можно поставить и сейчас, вручную.</p><a class="text-label birka-button birka-button--quiet" href="#">Поставить вручную</a></div></div><aside class="birka-split__aside"></aside></div></form></div></main></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["Есть история", "Мало истории"], "default": "Есть история"}, "$preview": {"width": 520, "height": 860}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { grown: false, picked: null };
+    this.timer = null;
+  }
+
+  componentDidMount() {
+    this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      clearTimeout(this.timer);
+      this.setState({ grown: false, picked: null });
+      this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  flip(name) {
+    const picked = this.state.picked ?? Object.fromEntries([["Продукты", "в среднем 29 640 ₽", "30 000 ₽", true], ["Кафе", "в среднем 11 620 ₽", "12 000 ₽", true], ["Досуг", "в среднем 7 610 ₽", "8 000 ₽", true], ["Транспорт", "в среднем 4 520 ₽", "5 000 ₽", true], ["Дом", "скачут: от 2 100 до 11 400 ₽", "6 500 ₽", false], ["Здоровье", "траты были в 1 месяце из 3", "2 500 ₽", false], ["Подписки", "это регулярные платежи", "2 000 ₽", false]].map((r) => [r[0], r[3]]));
+    this.setState({ picked: { ...picked, [name]: !picked[name] } });
+  }
+
+  renderVals() {
+    const s = this.props.state ?? "Есть история";
+    const widths = {"Есть история": {}, "Мало истории": {}}[s] ?? {};
+    const m = Object.fromEntries(Object.entries(widths).map(([k, v]) => [k, this.state.grown ? v : "0%"]));
+    return { m, is0: s === "Есть история", is1: s === "Мало истории",
+      ...(() => {
+        const picked = this.state.picked ?? Object.fromEntries([["Продукты", "в среднем 29 640 ₽", "30 000 ₽", true], ["Кафе", "в среднем 11 620 ₽", "12 000 ₽", true], ["Досуг", "в среднем 7 610 ₽", "8 000 ₽", true], ["Транспорт", "в среднем 4 520 ₽", "5 000 ₽", true], ["Дом", "скачут: от 2 100 до 11 400 ₽", "6 500 ₽", false], ["Здоровье", "траты были в 1 месяце из 3", "2 500 ₽", false], ["Подписки", "это регулярные платежи", "2 000 ₽", false]].map((r) => [r[0], r[3]]));
+        const n = Object.values(picked).filter(Boolean).length;
+        const forms = (k) => k % 10 === 1 && k % 100 !== 11 ? "лимит" : [2, 3, 4].includes(k % 10) && ![12, 13, 14].includes(k % 100) ? "лимита" : "лимитов";
+        return {
+          rows: [["Продукты", "в среднем 29 640 ₽", "30 000 ₽", true], ["Кафе", "в среднем 11 620 ₽", "12 000 ₽", true], ["Досуг", "в среднем 7 610 ₽", "8 000 ₽", true], ["Транспорт", "в среднем 4 520 ₽", "5 000 ₽", true], ["Дом", "скачут: от 2 100 до 11 400 ₽", "6 500 ₽", false], ["Здоровье", "траты были в 1 месяце из 3", "2 500 ₽", false], ["Подписки", "это регулярные платежи", "2 000 ₽", false]].map((r) => ({ name: r[0], note: r[1], offer: r[2], on: picked[r[0]], off: !picked[r[0]], ink: picked[r[0]] ? "var(--color-text)" : "var(--color-text-muted)", flip: () => this.flip(r[0]) })),
+          putLabel: n === 0 ? "Ничего не отмечено" : `Поставить ${n} ${forms(n)}`,
+          save: () => {},
+        };
+      })() };
+  }
+}
+</script>
+</body>
+</html>

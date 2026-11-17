@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Импорт выписки · счёт</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#3DDC97}a:hover{color:#7CEBBB}
+</style>
+</helmet>
+<div style="min-height: 1080px; box-sizing: border-box; background: radial-gradient(38% 46% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(42% 50% at 100% 100%, rgba(36,138,86,0.26) 0%, transparent 74%), radial-gradient(30% 30% at 72% 28%, rgba(36,138,86,0.10) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 24px">
+
+    <header style="display: flex; align-items: center; gap: 16px">
+      <a href="Import-Columns.dc.html" aria-label="Назад к колонкам" style="flex: 0 0 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">Импорт выписки</h1>
+        <p style="margin: 0; font-size: 13px; color: #A3A3A3">Шаг 4 из 6 · куда записать</p>
+      </div>
+    </header>
+
+    <nav aria-label="Шаги импорта" style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="6">
+        <sc-if value="{{s.done}}" hint-placeholder-val="{{ false }}">
+          <a href="{{s.href}}" style="display: flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; padding: 0 16px 0 8px; border-radius: 20px; text-decoration: none; color: #C9C9C7; font-size: 14px; font-weight: 600; background: rgba(61,220,151,0.10); border: 1px solid rgba(61,220,151,0.24)">
+            <span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 12px; background: #3DDC97; color: #02130B; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+            {{s.label}}
+          </a>
+        </sc-if>
+        <sc-if value="{{s.now}}" hint-placeholder-val="{{ true }}">
+          <span aria-current="step" style="display: flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; padding: 0 16px 0 8px; border-radius: 20px; color: #02130B; font-size: 14px; font-weight: 700; background: #F4F4F2">
+            <span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 12px; background: #02130B; color: #F4F4F2; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{s.number}}</span>
+            {{s.label}}
+          </span>
+        </sc-if>
+        <sc-if value="{{s.later}}" hint-placeholder-val="{{ false }}">
+          <span style="display: flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; padding: 0 16px 0 8px; border-radius: 20px; color: #8A8A8A; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.09)">
+            <span aria-hidden="true" style="width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{s.number}}</span>
+            {{s.label}}
+          </span>
+        </sc-if>
+      </sc-for>
+    </nav>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+
+        <sc-if value="{{card}}" hint-placeholder-val="{{ true }}">
+          <section aria-label="Счёт для карты" style="display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; flex-direction: column; gap: 4px; padding: 0 4px">
+              <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Куда записать операции карты ••4821</h2>
+              <p style="margin: 0; color: #A3A3A3; line-height: 1.45">В файле одна карта в рублях. Выберите её счёт в Birka или заведите новый.</p>
+            </div>
+            <div role="radiogroup" aria-label="Счёт Birka" style="display: flex; flex-direction: column; gap: 10px">
+              <sc-for list="{{accounts}}" as="a" hint-placeholder-count="4">
+                <button type="button" role="radio" aria-checked="{{a.checked}}" aria-disabled="{{a.disabled}}" onClick="{{a.pick}}" style="display: flex; align-items: center; gap: 14px; min-height: 76px; box-sizing: border-box; padding: 14px 16px; border-radius: 22px; text-align: left; font-family: Inter, system-ui, sans-serif; font-size: 15px; color: {{a.ink}}; cursor: {{a.cursor}}; background: {{a.fill}}; border: 1px solid {{a.line}}; box-shadow: inset 0 1px 0 rgba(255,255,255,0.10); transition: background 220ms ease, border-color 220ms ease">
+                  <span aria-hidden="true" style="flex: 0 0 52px; height: 34px; border-radius: 8px; background: {{a.art}}; box-shadow: inset 0 1px 0 rgba(255,255,255,0.22)"></span>
+                  <span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+                    <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><span style="font-weight: 600">{{a.name}}</span><sc-if value="{{a.badge}}" hint-placeholder-val="{{ false }}"><span style="height: 22px; display: flex; align-items: center; padding: 0 8px; border-radius: 11px; background: rgba(61,220,151,0.14); color: #3DDC97; font-size: 12px; font-weight: 700">{{a.badgeText}}</span></sc-if></span>
+                    <span style="font-size: 13px; color: #A3A3A3">{{a.meta}}</span>
+                  </span>
+                  <span style="font-family: Manrope, Inter, sans-serif; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap">{{a.balance}}</span>
+                  <span aria-hidden="true" style="flex: 0 0 22px; height: 22px; box-sizing: border-box; border-radius: 11px; border: 2px solid {{a.ring}}; display: flex; align-items: center; justify-content: center"><span style="width: 10px; height: 10px; border-radius: 5px; background: #3DDC97; opacity: {{a.dot}}; transition: opacity 220ms ease"></span></span>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{fresh}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; padding: 16px; border-radius: 22px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10)">
+                <label style="flex: 2 1 240px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A3A3A3">Название</span><input type="text" value="Альфа ••4821" readonly="readonly" style="height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.16); background: #161617; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px"></label>
+                <label style="flex: 1 1 140px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A3A3A3">Валюта</span><input type="text" value="₽ Рубли — из файла" readonly="readonly" style="height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.03); color: #C9C9C7; font-family: Inter, system-ui, sans-serif; font-size: 15px"></label>
+                <label style="flex: 1 1 160px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A3A3A3">Тип</span><input type="text" value="Дебетовая карта" readonly="readonly" style="height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.16); background: #161617; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px"></label>
+                <p style="flex: 1 1 100%; margin: 0; font-size: 13px; color: #8A8A8A; line-height: 1.45">Начальный остаток возьмём из выписки: 1 октября на карте было 152 144,11 ₽.</p>
+              </div>
+            </sc-if>
+          </section>
+
+          <sc-if value="{{balanced}}" hint-placeholder-val="{{ true }}">
+            <section aria-label="Сверка остатка" style="display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 22px; background: rgba(61,220,151,0.06); border: 1px solid rgba(61,220,151,0.22)">
+              <span aria-hidden="true" style="flex: 0 0 40px; height: 40px; border-radius: 14px; background: rgba(61,220,151,0.16); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0">
+                <span style="font-weight: 600">Остаток сойдётся с банком</span>
+                <dl style="margin: 0; display: flex; flex-wrap: wrap; gap: 8px 32px">
+                  <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 13px; color: #A3A3A3">В выписке на 31 октября</dt><dd style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums">188 913,71 ₽</dd></div>
+                  <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 13px; color: #A3A3A3">В Birka после импорта</dt><dd style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums">188 913,71 ₽</dd></div>
+                </dl>
+              </div>
+            </section>
+          </sc-if>
+          <sc-if value="{{unbalanced}}" hint-placeholder-val="{{ false }}">
+            <section aria-label="Сверка остатка" style="display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 22px; background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.28)">
+              <span aria-hidden="true" style="flex: 0 0 40px; height: 40px; border-radius: 14px; background: rgba(251,191,36,0.14); color: #FBBF24; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4"></path><path d="M12 17.5h.01"></path></svg></span>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0">
+                <span style="font-weight: 600">Остаток разойдётся на 1 200,00 ₽</span>
+                <dl style="margin: 0; display: flex; flex-wrap: wrap; gap: 8px 32px">
+                  <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 13px; color: #A3A3A3">В выписке на 31 октября</dt><dd style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums">188 913,71 ₽</dd></div>
+                  <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 13px; color: #A3A3A3">В Birka после импорта</dt><dd style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; color: #FBBF24">187 713,71 ₽</dd></div>
+                </dl>
+                <p style="margin: 0; color: #C9C9C7; font-size: 14px; line-height: 1.45">Скорее всего, в учёте уже есть трата на 1 200,00 ₽ за октябрь, которой нет в выписке. Импорту это не мешает, разницу покажем во «Входящих».</p>
+              </div>
+            </section>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{zen}}" hint-placeholder-val="{{ false }}">
+          <section aria-label="Счета Дзен-мани" style="display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; flex-direction: column; gap: 4px; padding: 0 4px">
+              <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">В файле 5 счетов Дзен-мани</h2>
+              <p style="margin: 0; color: #A3A3A3; line-height: 1.45">Сопоставьте их со счетами Birka. Недостающие заведём сами, в той же валюте.</p>
+            </div>
+            <div style="border-radius: 22px; padding: 2px 16px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+              <sc-for list="{{zenAccounts}}" as="z" hint-placeholder-count="5">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 68px; padding: 8px 0; box-sizing: border-box; border-bottom: {{z.divider}}">
+                  <span style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-weight: 600">{{z.name}}</span><span style="font-size: 13px; color: #A3A3A3">{{z.meta}}</span></span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+                  <label style="flex: 1 1 240px; display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{z.name}}: счёт Birka</span>
+                    <select value="{{z.target}}" onChange="{{z.change}}" style="width: 100%; height: 40px; box-sizing: border-box; padding: 0 12px; border-radius: 14px; border: 1px solid {{z.line}}; background: #161617; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer">
+                      <sc-for list="{{z.options}}" as="o" hint-placeholder-count="5">
+                        <option value="{{o}}">{{o}}</option>
+                      </sc-for>
+                    </select>
+                  </label>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+          <section aria-label="Что ещё перенесём" style="display: flex; flex-wrap: wrap; gap: 12px">
+            <div style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 22px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10)">
+              <span style="font-weight: 600">34 категории: 28 совпали по названию</span>
+              <span style="font-size: 13px; color: #A3A3A3; line-height: 1.4">Ещё 6 заведём, подкатегории останутся внутри своих:</span>
+              <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px">
+                <li style="height: 28px; display: flex; align-items: center; padding: 0 10px; border-radius: 14px; background: rgba(255,255,255,0.07); font-size: 13px">Подарки</li>
+                <li style="height: 28px; display: flex; align-items: center; padding: 0 10px; border-radius: 14px; background: rgba(255,255,255,0.07); font-size: 13px">Спорт</li>
+                <li style="height: 28px; display: flex; align-items: center; padding: 0 10px; border-radius: 14px; background: rgba(255,255,255,0.07); font-size: 13px">Образование</li>
+                <li style="height: 28px; display: flex; align-items: center; padding: 0 10px; border-radius: 14px; background: rgba(255,255,255,0.07); font-size: 13px">Путешествия / Билеты</li>
+                <li style="height: 28px; display: flex; align-items: center; padding: 0 10px; border-radius: 14px; background: rgba(255,255,255,0.07); font-size: 13px">Путешествия / Жильё</li>
+                <li style="height: 28px; display: flex; align-items: center; padding: 0 10px; border-radius: 14px; background: rgba(255,255,255,0.07); font-size: 13px">Питомцы</li>
+              </ul>
+            </div>
+            <div style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; display: flex; gap: 12px; padding: 16px; border-radius: 22px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10)">
+              <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: rgba(34,211,238,0.14); color: #22D3EE; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4L3 8l4 4"></path><path d="M3 8h14"></path><path d="M17 20l4-4-4-4"></path><path d="M21 16H7"></path></svg></span>
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-weight: 600">412 переводов и обменов</span><span style="font-size: 13px; color: #A3A3A3; line-height: 1.4">Станут переводами Birka, а не парой трат и поступлений. Обмен рублей на доллары сохранит оба курса.</span></span>
+            </div>
+          </section>
+        </sc-if>
+      </main>
+
+      <aside aria-label="Что попадёт в учёт" style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+        <section style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+          <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Что попадёт в учёт</h2>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.05)">
+            <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: {{summary.tint}}; color: {{summary.ink}}; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-weight: 800">{{summary.mark}}</span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-weight: 600; overflow-wrap: anywhere">{{summary.file}}</span><span style="font-size: 13px; color: #A3A3A3">{{summary.format}}</span></span>
+          </div>
+          <dl style="margin: 0; display: flex; flex-direction: column; gap: 10px">
+            <sc-for list="{{summary.rows}}" as="r" hint-placeholder-count="4">
+              <div style="display: flex; justify-content: space-between; gap: 12px"><dt style="color: #A3A3A3">{{r.label}}</dt><dd style="margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums">{{r.value}}</dd></div>
+            </sc-for>
+          </dl>
+        </section>
+        <a href="Import-Duplicates.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 26px; background: #3DDC97; color: #02130B; font-weight: 700; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 8px 24px rgba(36,138,86,0.45)">Дальше: дубликаты<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></a>
+        <a href="Import-Columns.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 24px; color: #F4F4F2; font-weight: 600; text-decoration: none">Назад</a>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"source":{"editor":"enum","options":["Одна карта","Дзен-мани: все счета"],"default":"Одна карта"},"balanced":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":1080}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { account: 'salary', zen: null };
+  }
+
+  renderVals() {
+    const source = this.props.source ?? 'Одна карта';
+    const balanced = this.props.balanced ?? true;
+    const card = source === 'Одна карта';
+    const labels = ['Файл', 'Банк', 'Колонки', 'Счёт', 'Дубликаты', 'Итог'];
+    const boards = ['Import-File.dc.html', 'Import-Bank.dc.html', 'Import-Columns.dc.html', 'Import-Account.dc.html', 'Import-Duplicates.dc.html', 'Import-Done.dc.html'];
+    const current = 3;
+    const picked = this.state.account;
+    const accounts = [
+      { id: 'salary', name: 'Зарплатная карта', meta: 'Рубли · Дебетовая · ••4821', balance: '142 679,81 ₽', art: 'linear-gradient(135deg, #248A56 0%, #0F3D27 100%)', badgeText: 'совпал номер карты' },
+      { id: 'cash', name: 'Наличные', meta: 'Рубли · Наличные', balance: '660,56 ₽', art: 'linear-gradient(135deg, #6E6E73 0%, #2A2A2C 100%)' },
+      { id: 'euro', name: 'Карта в евро', meta: 'Евро · а в файле рубли', balance: '1 240,00 €', art: 'linear-gradient(135deg, #2368B3 0%, #0E2A4A 100%)', off: true },
+      { id: 'new', name: 'Новый счёт', meta: 'Заведём счёт под эту карту', balance: '', art: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.10) 0 6px, rgba(255,255,255,0.03) 6px 12px)' }
+    ].map((a) => {
+      const on = a.id === picked;
+      return {
+        ...a,
+        checked: on ? 'true' : 'false',
+        disabled: a.off ? 'true' : 'false',
+        pick: a.off ? () => {} : () => this.setState({ account: a.id }),
+        badge: !!a.badgeText,
+        badgeText: a.badgeText ?? '',
+        ink: a.off ? '#8A8A8A' : '#F4F4F2',
+        cursor: a.off ? 'not-allowed' : 'pointer',
+        fill: on ? 'linear-gradient(160deg, rgba(61,220,151,0.14) 0%, rgba(61,220,151,0.04) 100%)' : a.off ? 'rgba(255,255,255,0.02)' : 'linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+        line: on ? 'rgba(61,220,151,0.45)' : 'rgba(255,255,255,0.12)',
+        ring: on ? '#3DDC97' : 'rgba(255,255,255,0.28)',
+        dot: on ? 1 : 0
+      };
+    });
+    const zenSource = [
+      { id: 'black', name: 'Тинькофф Black', meta: 'Рубли · 2 140 операций', target: 'Зарплатная карта' },
+      { id: 'cash', name: 'Наличные', meta: 'Рубли · 612 операций', target: 'Наличные' },
+      { id: 'wise', name: 'Wise USD', meta: 'Доллары · 318 операций', target: 'Новый счёт «Wise USD»' },
+      { id: 'piggy', name: 'Копилка', meta: 'Доллары · 46 операций', target: 'Накопления' },
+      { id: 'bog', name: 'Bank of Georgia', meta: 'Лари · 1 194 операции', target: 'Новый счёт «Bank of Georgia»' }
+    ];
+    const zenMap = this.state.zen ?? Object.fromEntries(zenSource.map((z) => [z.id, z.target]));
+    const zenAccounts = zenSource.map((z, i) => ({
+      ...z,
+      target: zenMap[z.id],
+      change: (e) => this.setState({ zen: { ...zenMap, [z.id]: e.target.value } }),
+      options: [...new Set([z.target, 'Зарплатная карта', 'Наличные', 'Накопления', 'Новый счёт «' + z.name + '»', 'Не переносить'])],
+      line: zenMap[z.id] === 'Не переносить' ? 'rgba(255,142,127,0.40)' : 'rgba(255,255,255,0.16)',
+      divider: i < zenSource.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0'
+    }));
+    const fresh = Object.values(zenMap).filter((t) => t.startsWith('Новый')).length;
+    const target = accounts.find((a) => a.id === picked);
+    return {
+      steps: labels.map((label, i) => ({ label, number: String(i + 1), href: boards[i], done: i < current, now: i === current, later: i > current })),
+      card,
+      zen: !card,
+      accounts,
+      fresh: card && picked === 'new',
+      balanced: balanced,
+      unbalanced: !balanced,
+      zenAccounts,
+      summary: card
+        ? { file: 'alfa-2026-10.xlsx', format: 'Альфа-Банк · Excel', mark: 'А', tint: 'rgba(255,142,127,0.14)', ink: '#FF8E7F', rows: [
+            { label: 'Счёт', value: picked === 'new' ? 'Альфа ••4821, новый' : target.name },
+            { label: 'Операций', value: '212' },
+            { label: 'Период', value: '1–31 октября 2026' },
+            { label: 'Остаток после', value: balanced ? '188 913,71 ₽' : '187 713,71 ₽' }
+          ] }
+        : { file: 'zenmoney-export.csv', format: 'Дзен-мани · CSV', mark: 'Д', tint: 'rgba(61,220,151,0.14)', ink: '#3DDC97', rows: [
+            { label: 'Счетов', value: '5, из них новых ' + fresh },
+            { label: 'Операций', value: '4 310' },
+            { label: 'Период', value: 'март 2021 — октябрь 2026' },
+            { label: 'Новых категорий', value: '6' }
+          ] }
+    };
+  }
+}
+</script>
+</body>
+</html>

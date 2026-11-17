@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Регулярные платежи на сайте · широкий экран</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#3DDC97}a:hover{color:#7CEBBB}
+.row:hover{background:rgba(255,255,255,0.03)}
+</style>
+</helmet>
+<div style="min-height: 1440px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(38% 40% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(42% 44% at 100% 100%, rgba(36,138,86,0.26) 0%, transparent 74%), radial-gradient(30% 26% at 72% 30%, rgba(36,138,86,0.10) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="max-width: 1160px; margin: 0 auto; box-sizing: border-box; padding: 32px 20px 64px; display: flex; flex-direction: column; gap: 24px">
+
+    <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+      <a href="Web-Overview-Wide.dc.html" aria-label="Назад" style="flex: 0 0 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+      <div style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">Регулярные платежи</h1>
+        <p style="display: grid; margin: 0; font-size: 13px; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{subtitle.oa}}; transition: {{subtitle.tr}}">{{subtitle.a}}</span><span style="grid-area: 1 / 1; opacity: {{subtitle.ob}}; transition: {{subtitle.tr}}">{{subtitle.b}}</span></p>
+      </div>
+      <a href="Web-Form-Wide.dc.html" style="flex: none; height: 40px; box-sizing: border-box; padding: 0 16px; border-radius: 999px; background: #3DDC97; color: #02130B; display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; text-decoration: none">Новый платёж</a>
+    </header>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start">
+    <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0">
+    <div style="height: {{due.h}}; opacity: {{due.o}}; margin-bottom: {{due.gap}}; overflow: hidden; transition: {{due.tr}}">
+      <section aria-label="Ждёт подтверждения" style="display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; border-radius: 22px; background: linear-gradient(90deg, rgba(251,191,36,0.14), rgba(251,191,36,0.03)); border: 1px solid rgba(251,191,36,0.26)">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #FBBF24">Ждёт подтверждения</span>
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span aria-hidden="true" style="flex: 0 0 40px; height: 40px; border-radius: 14px; background: rgba(251,191,36,0.14); color: #FBBF24; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"></rect><path d="M3.5 10h17"></path><path d="M8 3v4M16 3v4"></path></svg></span>
+          <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 700">Аренда · сегодня</span><span style="font-size: 13px; color: #C9C9C7">Дом · Зарплатная карта</span></span>
+          <span style="font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap">−45&nbsp;000&nbsp;₽</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+          <button type="button" onClick="{{pay}}" style="height: 56px; border-radius: 999px; border: 0; background: #3DDC97; color: #02130B; font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; cursor: pointer">Провести</button>
+          <button type="button" onClick="{{skip}}" style="height: 56px; border-radius: 999px; border: 0; background: #161617; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; cursor: pointer">Пропустить</button>
+        </div>
+        <span style="font-size: 13px; line-height: 1.4; color: #8A8A8A">Придёт в выписке банка — Birka не задвоит его.</span>
+      </section>
+    </div>
+
+    <div style="height: {{found.h}}; opacity: {{found.o}}; margin-bottom: {{found.gap}}; overflow: hidden; transition: {{found.tr}}">
+      <section aria-label="Похоже на регулярные" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 style="display: grid; margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{label.oa}}; transition: {{label.tr}}">{{label.a}}</span><span style="grid-area: 1 / 1; opacity: {{label.ob}}; transition: {{label.tr}}">{{label.b}}</span></h2>
+        <div style="border-radius: 22px; padding: 2px 18px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{finds}}" as="f" hint-placeholder-count="3">
+            <div style="height: {{f.h}}; opacity: {{f.o}}; overflow: hidden; transition: {{f.tr}}">
+              <div style="display: flex; align-items: center; gap: 2px; min-height: 68px; border-bottom: 1px solid {{f.rule}}; transition: border-color 220ms cubic-bezier(0.42, 0, 0.58, 1)">
+                <a href="Web-Form-Wide.dc.html" aria-label="Сделать регулярным: {{f.name}}" style="flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 14px; min-height: 68px; color: #F4F4F2; text-decoration: none">
+                  <span aria-hidden="true" style="flex: 0 0 40px; height: 40px; border-radius: 13px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19l-3-3"></path><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5l3 3"></path></svg></span>
+                  <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.name}}</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.meta}}</span></span>
+                  <span style="flex: 0 0 auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap">{{f.amount}}</span>
+                </a>
+                <button type="button" title="Не регулярный" aria-label="Не регулярный: {{f.name}}" onClick="{{f.drop}}" style="flex: 0 0 44px; width: 44px; height: 44px; margin-right: -12px; padding: 0; border: 0; border-radius: 22px; background: none; color: #8A8A8A; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <span style="padding: 0 4px; font-size: 13px; line-height: 1.4; color: #A3A3A3">Повторялись каждый месяц. Нажмите, чтобы добавить, или ✕, если повтор случайный.</span>
+      </section>
+    </div>
+
+    <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 24px 12px 0; text-align: center">
+        <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 22px; background: rgba(61,220,151,0.12); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19l-3-3"></path><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5l3 3"></path></svg></span>
+        <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Регулярных платежей пока нет</h2>
+        <p style="margin: 0; max-width: 380px; color: #C9C9C7; line-height: 1.45">Аренда, подписки, зарплата: добавьте их один раз, и Birka покажет месяц вперёд и сколько можно тратить в день.</p>
+        <a href="Web-Form-Wide.dc.html" style="align-self: stretch; margin-top: 8px; height: 56px; box-sizing: border-box; border-radius: 999px; background: #3DDC97; color: #02130B; font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; text-decoration: none">Добавить платёж</a>
+        <span style="font-size: 13px; color: #8A8A8A">Или откройте операцию и нажмите «Сделать регулярным»</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
+      <section aria-label="Ближайшие 30 дней" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 4px">
+          <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Ближайшие 30 дней</h2>
+          <span style="font-size: 13px; color: #8A8A8A; white-space: nowrap">до 5 декабря −49&nbsp;949&nbsp;₽</span>
+        </div>
+        <div style="border-radius: 22px; padding: 2px 18px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{upcoming}}" as="p" hint-placeholder-count="6">
+            <div style="height: {{p.h}}; opacity: {{p.o}}; overflow: hidden; transition: {{p.tr}}">
+              <a href="Web-Form-Wide.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 64px; border-bottom: 1px solid {{p.rule}}; color: #F4F4F2; text-decoration: none">
+                <span style="flex: 0 0 52px; display: flex; flex-direction: column; align-items: center; line-height: 1.1"><span style="font-family: Manrope, Inter, sans-serif; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums">{{p.day}}</span><span style="font-size: 12px; color: #8A8A8A; white-space: nowrap">{{p.month}} · {{p.week}}</span></span>
+                <span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{p.dot}}"></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.name}}</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.meta}}</span></span>
+                <span style="flex: 0 0 auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{p.ink}}">{{p.amount}}</span>
+              </a>
+            </div>
+          </sc-for>
+        </div>
+        <span style="padding: 0 4px; font-size: 13px; line-height: 1.4; color: #A3A3A3">К зарплате 5 декабря на счетах останется ≈&nbsp;39&nbsp;651&nbsp;₽, если не считать ежедневных трат.</span>
+      </section>
+
+      <section aria-label="Все регулярные" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 style="display: grid; margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{allLabel.oa}}; transition: {{allLabel.tr}}">{{allLabel.a}}</span><span style="grid-area: 1 / 1; opacity: {{allLabel.ob}}; transition: {{allLabel.tr}}">{{allLabel.b}}</span></h2>
+        <div style="border-radius: 22px; padding: 2px 18px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{all}}" as="r" hint-placeholder-count="7">
+            <div style="height: {{r.h}}; opacity: {{r.o}}; overflow: hidden; transition: {{r.tr}}">
+              <a href="Web-Form-Wide.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 64px; border-bottom: 1px solid {{r.rule}}; color: #F4F4F2; text-decoration: none">
+                <span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{r.dot}}"></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{r.name}}</span><span style="display: grid; font-size: 13px; white-space: nowrap"><span style="grid-area: 1 / 1; overflow: hidden; text-overflow: ellipsis; color: {{r.meta.inkA}}; opacity: {{r.meta.oa}}; transition: {{r.meta.tr}}">{{r.meta.a}}</span><span style="grid-area: 1 / 1; overflow: hidden; text-overflow: ellipsis; color: {{r.meta.inkB}}; opacity: {{r.meta.ob}}; transition: {{r.meta.tr}}">{{r.meta.b}}</span></span></span>
+                <span style="flex: 0 0 auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.ink}}">{{r.amount}}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+              </a>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+    </div>
+    <aside style="position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px">
+      <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
+        <a href="Web-Payday-Wide.dc.html" style="display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); color: #F4F4F2; text-decoration: none">
+          <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; color: #A3A3A3">Можно тратить в день</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+          <span style="margin-top: 4px; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.56px; line-height: 1.1; font-variant-numeric: tabular-nums">1&nbsp;744&nbsp;₽</span>
+          <span style="font-size: 13px; color: #A3A3A3">до зарплаты 5 декабря · 17 дней</span>
+          <span style="margin-top: 6px; font-size: 13px; line-height: 1.4; color: #C9C9C7">Платежи до зарплаты уже вычтены: −49&nbsp;949&nbsp;₽.</span>
+        </a>
+      </sc-if>
+      <section aria-label="Как это устроено" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; color: #A3A3A3">Как это устроено</span>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+          <li style="display: flex; gap: 12px; line-height: 1.4"><span aria-hidden="true" style="flex: 0 0 22px; height: 22px; border-radius: 11px; background: rgba(61,220,151,0.16); color: #3DDC97; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">1</span><span>Платёж стоит в плане на свой день — его уже нет в «Можно тратить сегодня».</span></li>
+          <li style="display: flex; gap: 12px; line-height: 1.4"><span aria-hidden="true" style="flex: 0 0 22px; height: 22px; border-radius: 11px; background: rgba(61,220,151,0.16); color: #3DDC97; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">2</span><span>В день платежа он ждёт вашего «Провести» или проводится сам — как выбрано в платеже.</span></li>
+          <li style="display: flex; gap: 12px; line-height: 1.4"><span aria-hidden="true" style="flex: 0 0 22px; height: 22px; border-radius: 11px; background: rgba(61,220,151,0.16); color: #3DDC97; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">3</span><span>Придёт в выписке банка — Birka не задвоит его.</span></li>
+          <li style="display: flex; gap: 12px; line-height: 1.4"><span aria-hidden="true" style="flex: 0 0 22px; height: 22px; border-radius: 11px; background: rgba(61,220,151,0.16); color: #3DDC97; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">4</span><span>Повторы в операциях Birka находит сама и предлагает добавить.</span></li>
+        </ol>
+      </section>
+    </aside>
+    </div>
+  </div>
+
+  <div role="status" style="position: absolute; left: 50%; bottom: 100px; width: 456px; box-sizing: border-box; min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 6px 8px 6px 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); opacity: {{toast.o}}; transform: translate(-50%, {{toast.y}}); transition: {{toast.tr}}; pointer-events: {{toast.events}}">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 20px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+    <span style="flex: 1 1 auto; min-width: 0; padding: 10px 0; font-size: 15px; line-height: 1.4">{{toast.text}}</span>
+    <sc-if value="{{toast.undo}}" hint-placeholder-val="{{ false }}">
+      <button type="button" onClick="{{undo}}" style="flex: 0 0 auto; height: 37px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(61,220,151,0.14); color: #3DDC97; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">Вернуть</button>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["Нашли три","Добавили","Не регулярный","Сегодня платёж","Пусто"],"default":"Нашли три"},"$preview":{"width":1440,"height":1440}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+    this.lines = {};
+    this.timers = [];
+  }
+
+  fresh() {
+    return { added: false, dropped: null, done: null, toast: 'hidden', kind: null };
+  }
+
+  componentDidMount() {
+    this.play(this.props.state);
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      this.clear();
+      this.lines = {};
+      this.setState(this.fresh());
+      this.play(this.props.state);
+    }
+  }
+
+  componentWillUnmount() {
+    this.clear();
+  }
+
+  clear() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, fn) {
+    this.timers.push(setTimeout(fn, ms));
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // A state of the tweak plays from the three finds, as the person would
+  // see it on the site: the form came back to this page, or ✕ was pressed.
+  play(mode) {
+    if (mode === 'Добавили') this.later(700, () => this.add());
+    if (mode === 'Не регулярный') this.later(700, () => this.drop('cloud'));
+  }
+
+  // The form of the payment was saved and the site came back to this page:
+  // the find leaves, and the payment opens in its lists.
+  add() {
+    this.setState({ added: true });
+    this.toast('added');
+  }
+
+  // ✕ keeps the find from coming back, unless «Вернуть» brings it back
+  // while the toast is up.
+  drop(id) {
+    if (this.state.dropped) return;
+    this.setState({ dropped: id });
+    this.toast('dropped');
+  }
+
+  undo() {
+    this.clear();
+    this.setState({ dropped: null, toast: 'gone' });
+  }
+
+  // The waiting rent is posted or skipped: the card folds away, and its row
+  // in «Все регулярные» says what was done, in the color of the news.
+  settle(how) {
+    if (this.state.done) return;
+    this.setState({ done: how });
+    this.toast(how);
+  }
+
+  // The toast comes up from below with a little bounce, stays four seconds
+  // and goes a little down as it fades, as GlassToast does on the site.
+  toast(kind) {
+    this.clear();
+    this.setState({ toast: 'shown', kind });
+    this.later(4560, () => this.setState({ toast: 'gone' }));
+  }
+
+  // A line that cross-fades into a new one over duration.base, as FadingText
+  // does; `ink` keeps the color of each of its two layers.
+  fading(key, text, reduced, ink) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a', inkA: ink, inkB: ink };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.inkB = ink;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.inkA = ink;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      inkA: s.inkA,
+      inkB: s.inkB,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'Нашли три';
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const empty = mode === 'Пусто';
+    const today = mode === 'Сегодня платёж';
+    // A row of AnimatedColumn: it opens over duration.slow and closes over
+    // duration.base, after a short wait, while its neighbours move.
+    const fold = (open, height) => ({
+      h: open ? height + 'px' : '0px',
+      o: open ? '1' : '0',
+      tr: reduced
+        ? 'opacity 220ms ' + fade
+        : open
+          ? 'height 320ms ' + ease + ', opacity 240ms ' + fade + ' 80ms'
+          : 'height 260ms ' + ease + ' 80ms, opacity 180ms ' + ease
+    });
+    // Rows keep a rule under them only while a row below them is open.
+    const rules = (rows) => rows.map((row, i) => ({
+      ...row,
+      rule: rows.slice(i + 1).some((next) => next.open) ? 'rgba(255,255,255,0.08)' : 'transparent'
+    }));
+
+    // The same day as on the phone: Wednesday 18 November, or the 25th for
+    // the rent that waits. The column is 520 px, as `PageFrame` draws it.
+    const finds = rules([
+      { id: 'plus', name: 'Яндекс Плюс', meta: '12-го · 4 раза подряд', amount: '−449 ₽' },
+      { id: 'zhku', name: 'ЖКУ Москва', meta: 'около 10-го · 3 раза', amount: '≈ −6 800 ₽' },
+      { id: 'cloud', name: 'Облако Mail.ru', meta: '21-го · 3 раза подряд', amount: '−149 ₽' }
+    ].map((f) => ({ ...f, open: !(st.added && f.id === 'plus') && st.dropped !== f.id })))
+      .map((f) => ({ ...f, ...fold(f.open, 69), drop: () => this.drop(f.id) }));
+    const count = finds.filter((f) => f.open).length;
+
+    const ahead = rules([
+      { id: 'rent', day: '25', month: 'ноя', week: 'ср', name: 'Аренда', meta: 'Дом · Зарплатная карта', amount: '−45 000 ₽', ink: '#F4F4F2', dot: '#22D3EE' },
+      { id: 'net', day: '28', month: 'ноя', week: 'сб', name: 'Интернет', meta: 'Дом · Зарплатная карта', amount: '−650 ₽', ink: '#F4F4F2', dot: '#22D3EE' },
+      { id: 'tv', day: '1', month: 'дек', week: 'вт', name: 'Netflix', meta: 'Подписки · проводится сам', amount: '−799 ₽', ink: '#F4F4F2', dot: '#A78BFA' },
+      { id: 'gym', day: '3', month: 'дек', week: 'чт', name: 'Спортзал', meta: 'Здоровье · Зарплатная карта', amount: '−3 500 ₽', ink: '#F4F4F2', dot: '#F87171' },
+      { id: 'pay', day: '5', month: 'дек', week: 'сб', name: 'Зарплата', meta: 'Зарплата · Зарплатная карта', amount: '+120 000 ₽', ink: '#3DDC97', dot: '#4ADE80' },
+      { id: 'plus', day: '12', month: 'дек', week: 'сб', name: 'Яндекс Плюс', meta: 'Подписки · проводится сам', amount: '−449 ₽', ink: '#F4F4F2', dot: '#A78BFA' }
+    ].map((p) => ({ ...p, open: (p.id !== 'plus' || st.added) && !(today && p.id === 'rent') })))
+      .map((p) => ({ ...p, ...fold(p.open, 65) }));
+
+    const grey = '#A3A3A3';
+    const green = '#3DDC97';
+    const rentLine = st.done === 'posted'
+      ? ['проведён сегодня · следующий 25 декабря', green]
+      : st.done === 'skipped'
+        ? ['пропущен · следующий 25 декабря', grey]
+        : ['каждый месяц 25-го · спросить', grey];
+    const all = rules([
+      { id: 'pay', name: 'Зарплата', meta: ['каждый месяц 5-го · Зарплатная карта', grey], amount: '+120 000 ₽', ink: '#3DDC97', dot: '#4ADE80' },
+      { id: 'rent', name: 'Аренда', meta: rentLine, amount: '−45 000 ₽', ink: '#F4F4F2', dot: '#22D3EE' },
+      { id: 'net', name: 'Интернет', meta: ['каждый месяц 28-го · спросить', grey], amount: '−650 ₽', ink: '#F4F4F2', dot: '#22D3EE' },
+      { id: 'tv', name: 'Netflix', meta: ['каждый месяц 1-го · проводится сам', grey], amount: '−799 ₽', ink: '#F4F4F2', dot: '#A78BFA' },
+      { id: 'plus', name: 'Яндекс Плюс', meta: ['каждый месяц 12-го · проводится сам', green], amount: '−449 ₽', ink: '#F4F4F2', dot: '#A78BFA' },
+      { id: 'gym', name: 'Спортзал', meta: ['каждый месяц 3-го · спросить', grey], amount: '−3 500 ₽', ink: '#F4F4F2', dot: '#F87171' },
+      { id: 'car', name: 'Страховка авто', meta: ['раз в год, 12 марта · спросить', grey], amount: '−24 000 ₽', ink: '#F4F4F2', dot: '#FB923C' }
+    ].map((r) => ({ ...r, open: r.id !== 'plus' || st.added })))
+      .map((r) => ({ ...r, ...fold(r.open, 65), meta: this.fading('meta-' + r.id, r.meta[0], reduced, r.meta[1]) }));
+    const total = all.filter((r) => r.open).length;
+
+    const name = { plus: 'Яндекс Плюс', zhku: 'ЖКУ Москва', cloud: 'Облако Mail.ru' }[st.dropped] ?? '';
+    const texts = {
+      added: 'Добавили в регулярные: «Яндекс Плюс»',
+      dropped: 'Не будем предлагать «' + name + '»',
+      posted: 'Провели «Аренда» · −45 000 ₽',
+      skipped: 'Пропустили «Аренда» · спросим 25 декабря'
+    };
+    const toasts = {
+      hidden: { o: '0', y: reduced ? '0px' : '120px', tr: 'none', events: 'none' },
+      shown: { o: '1', y: '0px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 560ms ' + spring + ', opacity 200ms ' + fade, events: 'auto' },
+      gone: { o: '0', y: reduced ? '0px' : '16px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 220ms ' + ease + ', opacity 220ms ' + fade, events: 'none' }
+    };
+    const shownFinds = count > 0;
+    const waiting = today && !st.done;
+    return {
+      empty,
+      some: !empty,
+      subtitle: this.fading('subtitle', empty
+        ? 'Пока ни одного'
+        : today
+          ? 'Сегодня 25 ноября · 1 ждёт подтверждения'
+          : 'Ближайший 25 ноября · ' + total + (total > 4 ? ' платежей' : ' платежа'), reduced),
+      // The card of the waiting rent folds away as AnimatedColumn closes it.
+      due: {
+        h: waiting ? '199.2px' : '0px',
+        o: waiting ? '1' : '0',
+        gap: waiting ? '0px' : '-24px',
+        tr: reduced ? 'none' : 'height 260ms ' + ease + ' 80ms, opacity 180ms ' + ease + ', margin-bottom 260ms ' + ease + ' 80ms'
+      },
+      pay: () => this.settle('posted'),
+      skip: () => this.settle('skipped'),
+      // The whole section closes once nothing is left in it.
+      found: {
+        // The label, the caption and the gaps take 55 px, each open row 69.
+        h: shownFinds ? (55.3 + 69 * count) + 'px' : '0px',
+        o: shownFinds ? '1' : '0',
+        gap: shownFinds ? '0px' : '-24px',
+        tr: reduced ? 'none' : 'height 260ms ' + ease + ' 80ms, opacity 180ms ' + ease + ', margin-bottom 260ms ' + ease + ' 80ms'
+      },
+      label: this.fading('label', (empty ? 'Нашли в ваших операциях · ' : 'Похоже на регулярные · ') + count, reduced),
+      allLabel: this.fading('all', 'Все регулярные · ' + total, reduced),
+      finds,
+      upcoming: ahead,
+      all,
+      toast: {
+        text: texts[st.kind] ?? '',
+        undo: st.kind === 'dropped',
+        ...toasts[st.toast]
+      },
+      undo: () => this.undo()
+    };
+  }
+}
+</script>
+</body>
+</html>

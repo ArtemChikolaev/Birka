@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Метки · выбор</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 52px; bottom: 0; border-radius: 22px 22px 0 0; overflow: hidden; transform-origin: 50% 0%; transform: translateY(-8px) scale(0.94); background: radial-gradient(70% 30% at 100% 0%, rgba(36,138,86,0.26) 0%, transparent 72%), #050706; border: 1px solid rgba(255,255,255,0.12)">
+    <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 10px">
+      <div style="height: 44px; display: flex; align-items: center; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800">Новая операция</div>
+      <div style="height: 52px; border-radius: 22px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09)"></div>
+      <div style="text-align: center; font-family: Manrope, Inter, sans-serif; font-size: 46px; font-weight: 800; letter-spacing: -0.03em">−46 ₾</div>
+    </div>
+    <div style="position: absolute; inset: 0; background: #000000; opacity: 0.5"></div>
+  </div>
+
+  <div role="dialog" aria-modal="true" aria-label="Метки" style="position: absolute; left: 0; right: 0; top: 120px; bottom: 0; box-sizing: border-box; border-radius: 22px 22px 0 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); border-bottom: 0; background: #000000; box-shadow: 0 -12px 40px rgba(0,0,0,0.6)">
+    <div style="position: absolute; left: 20px; right: 10px; top: 16px; height: 44px; display: flex; align-items: center; justify-content: space-between">
+      <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Метки</h1>
+      <a href="Tags-QuickAdd.dc.html" aria-label="Закрыть" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #F4F4F2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    </div>
+    <label style="position: absolute; left: 20px; right: 20px; top: 72px; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 24px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4.2-4.2"></path></svg>
+      <input type="search" aria-label="Найти или создать метку" placeholder="Найти или создать" value="{{query}}" onInput="{{typed}}" style="flex: 1 1 auto; min-width: 0; background: none; border: 0; outline: none; color: #F4F4F2; font: inherit; font-size: 15px">
+    </label>
+
+    <div ref="{{boxRef}}" onScroll="{{scrolled}}" style="position: absolute; left: 0; right: 0; top: 132px; bottom: 0; overflow-y: auto; scrollbar-width: none; -webkit-mask-image: {{edge}}; mask-image: {{edge}}">
+      <div style="display: flex; flex-direction: column; gap: 18px; padding: 8px 20px 40px">
+        <sc-if value="{{creating}}" hint-placeholder-val="{{ false }}">
+          <a href="Tags-Form.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; box-sizing: border-box; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); color: #F4F4F2; text-decoration: none">
+            <span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>
+            <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Новая метка «{{query}}»</span><span style="font-size: 13px; color: #A3A3A3">Поездка с датами или просто метка</span></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+          </a>
+        </sc-if>
+
+        <sc-if value="{{showTrips}}" hint-placeholder-val="{{ true }}">
+          <section aria-label="Поездки" style="display: flex; flex-direction: column; gap: 8px">
+            <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Поездки</h2>
+            <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)"><button type="button" onClick="{{rows.r0.toggle}}" aria-pressed="{{rows.r0.pressed}}" style="width: 100%; display: {{rows.r0.display}}; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,0.06); background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 3 10.5l7 3 3 7z"></path><path d="M10 13.5 21 3"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Тбилиси</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">3–12 ноября · сейчас</span></span><span aria-hidden="true" style="flex: 0 0 24px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 8px; border: {{rows.r0.box}}; background: {{rows.r0.fill}}; color: #02130B; display: flex; align-items: center; justify-content: center; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; opacity: {{rows.r0.checkO}}; transform: scale({{rows.r0.checkS}}); transition: {{rows.r0.tr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span></button><button type="button" onClick="{{rows.r1.toggle}}" aria-pressed="{{rows.r1.pressed}}" style="width: 100%; display: {{rows.r1.display}}; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,0.06); background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 3 10.5l7 3 3 7z"></path><path d="M10 13.5 21 3"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Стамбул</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">2–9 мая</span></span><span aria-hidden="true" style="flex: 0 0 24px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 8px; border: {{rows.r1.box}}; background: {{rows.r1.fill}}; color: #02130B; display: flex; align-items: center; justify-content: center; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; opacity: {{rows.r1.checkO}}; transform: scale({{rows.r1.checkS}}); transition: {{rows.r1.tr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span></button><button type="button" onClick="{{rows.r2.toggle}}" aria-pressed="{{rows.r2.pressed}}" style="width: 100%; display: {{rows.r2.display}}; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border: 0; border-bottom: 0; background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 3 10.5l7 3 3 7z"></path><path d="M10 13.5 21 3"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Ереван</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">12–16 марта</span></span><span aria-hidden="true" style="flex: 0 0 24px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 8px; border: {{rows.r2.box}}; background: {{rows.r2.fill}}; color: #02130B; display: flex; align-items: center; justify-content: center; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; opacity: {{rows.r2.checkO}}; transform: scale({{rows.r2.checkS}}); transition: {{rows.r2.tr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span></button></div>
+            <span style="padding: 0 4px; font-size: 13px; line-height: 1.4; color: #A3A3A3">Пока идёт поездка, её метка сама встаёт на расходы этих дней.</span>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{showTags}}" hint-placeholder-val="{{ true }}">
+          <section aria-label="Метки" style="display: flex; flex-direction: column; gap: 8px">
+            <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Метки</h2>
+            <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)"><button type="button" onClick="{{rows.r3.toggle}}" aria-pressed="{{rows.r3.pressed}}" style="width: 100%; display: {{rows.r3.display}}; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,0.06); background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5v6.1a1.6 1.6 0 0 0 .47 1.13l8.3 8.3a1.6 1.6 0 0 0 2.26 0l6-6a1.6 1.6 0 0 0 0-2.26l-8.3-8.3A1.6 1.6 0 0 0 11.1 3.5H5A1.5 1.5 0 0 0 3.5 5z"></path><circle cx="8" cy="8" r="1.4"></circle></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Ремонт кухни</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">27 операций</span></span><span aria-hidden="true" style="flex: 0 0 24px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 8px; border: {{rows.r3.box}}; background: {{rows.r3.fill}}; color: #02130B; display: flex; align-items: center; justify-content: center; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; opacity: {{rows.r3.checkO}}; transform: scale({{rows.r3.checkS}}); transition: {{rows.r3.tr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span></button><button type="button" onClick="{{rows.r4.toggle}}" aria-pressed="{{rows.r4.pressed}}" style="width: 100%; display: {{rows.r4.display}}; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,0.06); background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5v6.1a1.6 1.6 0 0 0 .47 1.13l8.3 8.3a1.6 1.6 0 0 0 2.26 0l6-6a1.6 1.6 0 0 0 0-2.26l-8.3-8.3A1.6 1.6 0 0 0 11.1 3.5H5A1.5 1.5 0 0 0 3.5 5z"></path><circle cx="8" cy="8" r="1.4"></circle></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Свадьба Кати</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">7 операций</span></span><span aria-hidden="true" style="flex: 0 0 24px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 8px; border: {{rows.r4.box}}; background: {{rows.r4.fill}}; color: #02130B; display: flex; align-items: center; justify-content: center; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; opacity: {{rows.r4.checkO}}; transform: scale({{rows.r4.checkS}}); transition: {{rows.r4.tr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span></button><button type="button" onClick="{{rows.r5.toggle}}" aria-pressed="{{rows.r5.pressed}}" style="width: 100%; display: {{rows.r5.display}}; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border: 0; border-bottom: 0; background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5v6.1a1.6 1.6 0 0 0 .47 1.13l8.3 8.3a1.6 1.6 0 0 0 2.26 0l6-6a1.6 1.6 0 0 0 0-2.26l-8.3-8.3A1.6 1.6 0 0 0 11.1 3.5H5A1.5 1.5 0 0 0 3.5 5z"></path><circle cx="8" cy="8" r="1.4"></circle></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Работа</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">12 операций</span></span><span aria-hidden="true" style="flex: 0 0 24px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 8px; border: {{rows.r5.box}}; background: {{rows.r5.fill}}; color: #02130B; display: flex; align-items: center; justify-content: center; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1)"><span style="display: flex; opacity: {{rows.r5.checkO}}; transform: scale({{rows.r5.checkS}}); transition: {{rows.r5.tr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span></button></div>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{nothing}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 12px 0; text-align: center">
+            <span aria-hidden="true" style="flex: 0 0 56px; width: 56px; height: 56px; border-radius: 18px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5v6.1a1.6 1.6 0 0 0 .47 1.13l8.3 8.3a1.6 1.6 0 0 0 2.26 0l6-6a1.6 1.6 0 0 0 0-2.26l-8.3-8.3A1.6 1.6 0 0 0 11.1 3.5H5A1.5 1.5 0 0 0 3.5 5z"></path><circle cx="8" cy="8" r="1.4"></circle></svg></span>
+            <span style="font-size: 17px; font-weight: 700">Меток пока нет</span>
+            <span style="font-size: 14px; line-height: 1.45; color: #A3A3A3">Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.</span>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["Выбор", "Поиск", "Пусто"], "default": "Выбор"}, "$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh(props.state);
+    this.lines = {};
+    this.timers = [];
+    this.box = null;
+  }
+
+  fresh(mode) {
+    return { picked: { r0: true }, query: mode === 'Поиск' ? 'Батуми' : '', edge: 0 };
+  }
+
+  componentDidMount() {
+    this.fadeEdge();
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      if (this.box) this.box.scrollTop = 0;
+      this.setState(this.fresh(this.props.state));
+    }
+  }
+
+  stop() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, change) {
+    this.timers.push(setTimeout(() => this.setState(change), ms));
+  }
+
+  componentWillUnmount() {
+    this.stop();
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  // The list goes softly under the search field, as ScrollEdgeFade does.
+  fadeEdge() {
+    const edge = this.box ? Math.min(1, Math.max(0, this.box.scrollTop / 48)) : 0;
+    if (edge !== this.state.edge) this.setState({ edge });
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'Выбор';
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const sheetCurve = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+    // A tap checks or unchecks a метка at once; the chip of the quick add
+    // behind follows, and the cross closes the sheet. A check comes in with
+    // a spring over duration.slow and leaves over duration.fast.
+    const empty = mode === 'Пусто';
+    const names = ['Тбилиси', 'Стамбул', 'Ереван', 'Ремонт кухни', 'Свадьба Кати', 'Работа'];
+    const query = st.query.trim().toLowerCase();
+    const rows = {};
+    names.forEach((name, i) => {
+      const id = 'r' + i;
+      const on = Boolean(st.picked[id]);
+      rows[id] = {
+        display: !empty && (query === '' || name.toLowerCase().includes(query)) ? 'flex' : 'none',
+        pressed: on ? 'true' : 'false',
+        box: on ? '0' : '1.5px solid rgba(255,255,255,0.28)',
+        fill: on ? '#3DDC97' : 'transparent',
+        checkO: on ? '1' : '0',
+        checkS: on || reduced ? '1' : '0.5',
+        tr: on ? 'opacity 150ms ' + fade + ', transform 320ms ' + spring : 'opacity 150ms ' + fade + ', transform 150ms ' + ease,
+        toggle: () => this.setState({ picked: { ...st.picked, [id]: !on } })
+      };
+    });
+    const shown = (from, to) => !empty && names.slice(from, to).some((name) => query === '' || name.toLowerCase().includes(query));
+    const exact = names.some((name) => name.toLowerCase() === query);
+    return {
+      rows,
+      query: st.query,
+      typed: (event) => this.setState({ query: event.target.value }),
+      creating: query !== '' && !exact,
+      showTrips: shown(0, 3),
+      showTags: shown(3, 6),
+      nothing: empty && query === '',
+      edge: 'linear-gradient(to bottom, rgba(0,0,0,' + (1 - st.edge).toFixed(2) + ') 0px, #000000 48px)',
+      scrolled: () => this.fadeEdge(),
+      boxRef: (el) => { this.box = el; }
+    };
+  }
+}
+</script>
+</body>
+</html>

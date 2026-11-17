@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Быстрый ввод</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(62% 34% at 0% 0%, {{p.edge}} 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, {{p.edge}} 0%, transparent 74%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; gap: 14px; padding: 12px 16px 20px">
+
+  <div aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #2A2A2B"></div>
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Новая операция</h1>
+    <a href="Main.dc.html" aria-label="Закрыть" style="width: 44px; height: 44px; border-radius: 22px; background: #161617; color: #F4F4F2; display: flex; align-items: center; justify-content: center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </a>
+  </div>
+
+  <div role="group" aria-label="Тип операции" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 16px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09)">
+    <sc-for list="{{kinds}}" as="k" hint-placeholder-count="3">
+      <button type="button" onClick="{{k.pick}}" aria-pressed="{{k.pressed}}" style="height: 40px; border: 0; border-radius: 12px; font: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; background: {{k.bg}}; color: {{k.fg}}">{{k.label}}</button>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 92px">
+    <div style="height: 20px; font-size: 14px; color: #A3A3A3; font-variant-numeric: tabular-nums">{{exprLine}}</div>
+    <div style="font-family: Manrope, Inter, sans-serif; font-size: 54px; line-height: 1.1; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{amountColor}}">{{amount}}</div>
+  </div>
+
+  <div style="display: flex; gap: 8px; flex-wrap: wrap">
+    <button type="button" style="height: 36px; padding: 0 12px; border-radius: 18px; border: 0; background: #161617; color: #F4F4F2; font: inherit; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"></rect><path d="M3 10h18"></path></svg>
+      Зарплатная карта
+    </button>
+    <sc-for list="{{days}}" as="d" hint-placeholder-count="2">
+      <button type="button" onClick="{{d.pick}}" aria-pressed="{{d.pressed}}" style="height: 36px; padding: 0 14px; border-radius: 18px; border: 0; background: {{d.bg}}; color: {{d.fg}}; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{d.label}}</button>
+    </sc-for>
+    <button type="button" aria-label="Другая дата" style="width: 36px; height: 36px; border-radius: 18px; border: 0; background: #161617; color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+    </button>
+    <button type="button" style="height: 36px; padding: 0 12px; border-radius: 18px; border: 1px dashed #3A3A3B; background: none; color: #A3A3A3; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">+ Заметка</button>
+  </div>
+
+  <sc-if value="{{isTransfer}}" hint-placeholder-val="{{ false }}">
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-height: 152px; align-content: start">
+      <button type="button" style="text-align: left; padding: 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.09); background: #0E0E0F; color: #F4F4F2; font: inherit; cursor: pointer">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A">Откуда</div>
+        <div style="margin-top: 6px; font-weight: 700">Зарплатная карта</div>
+      </button>
+      <button type="button" style="text-align: left; padding: 14px; border-radius: 20px; border: 1.5px solid {{p.accent}}; background: #0E0E0F; color: #F4F4F2; font: inherit; cursor: pointer">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A">Куда</div>
+        <div style="margin-top: 6px; font-weight: 700">Накопления</div>
+      </button>
+    </div>
+  </sc-if>
+  <sc-if value="{{hasCategories}}" hint-placeholder-val="{{ true }}">
+    <div role="group" aria-label="Категория" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+      <button type="button" onClick="{{pick.food}}" aria-pressed="{{on.food}}" style="height: 72px; border-radius: 18px; border: 1.5px solid {{edge.food}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ink.food}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.2 10.2a1 1 0 0 0 1 .8h8.6a1 1 0 0 0 1-.8L20 8H6.2"></path><circle cx="9" cy="19" r="1.5"></circle><circle cx="17" cy="19" r="1.5"></circle></svg>
+        Продукты
+      </button>
+      <button type="button" onClick="{{pick.cafe}}" aria-pressed="{{on.cafe}}" style="height: 72px; border-radius: 18px; border: 1.5px solid {{edge.cafe}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ink.cafe}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"></path><path d="M8 3v2M12 3v2"></path></svg>
+        Кафе
+      </button>
+      <button type="button" onClick="{{pick.transport}}" aria-pressed="{{on.transport}}" style="height: 72px; border-radius: 18px; border: 1.5px solid {{edge.transport}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ink.transport}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="3"></rect><path d="M5 11h14M8 20v-3M16 20v-3"></path></svg>
+        Транспорт
+      </button>
+      <button type="button" onClick="{{pick.home}}" aria-pressed="{{on.home}}" style="height: 72px; border-radius: 18px; border: 1.5px solid {{edge.home}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ink.home}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>
+        Дом
+      </button>
+      <button type="button" onClick="{{pick.health}}" aria-pressed="{{on.health}}" style="height: 72px; border-radius: 18px; border: 1.5px solid {{edge.health}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ink.health}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg>
+        Здоровье
+      </button>
+      <button type="button" onClick="{{pick.fun}}" aria-pressed="{{on.fun}}" style="height: 72px; border-radius: 18px; border: 1.5px solid {{edge.fun}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ink.fun}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M8 6v12M16 6v12"></path></svg>
+        Досуг
+      </button>
+      <button type="button" onClick="{{pick.subs}}" aria-pressed="{{on.subs}}" style="height: 72px; border-radius: 18px; border: 1.5px solid {{edge.subs}}; background: #0E0E0F; color: #F4F4F2; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ink.subs}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l3 3-3 3"></path><path d="M4 11V9a4 4 0 0 1 4-4h12"></path><path d="M7 22l-3-3 3-3"></path><path d="M20 13v2a4 4 0 0 1-4 4H4"></path></svg>
+        Подписки
+      </button>
+      <button type="button" style="height: 72px; border-radius: 18px; border: 1.5px solid rgba(255,255,255,0.09); background: #0E0E0F; color: #A3A3A3; font: inherit; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="12" r="1.2"></circle><circle cx="12" cy="12" r="1.2"></circle><circle cx="18" cy="12" r="1.2"></circle></svg>
+        Ещё
+      </button>
+    </div>
+  </sc-if>
+
+  <div role="group" aria-label="Клавиатура" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: auto">
+    <sc-for list="{{keys}}" as="key" hint-placeholder-count="16">
+      <button type="button" onClick="{{key.press}}" aria-label="{{key.name}}" style="height: 52px; border-radius: 16px; border: 0; background: {{key.bg}}; color: {{key.fg}}; font: inherit; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 700; cursor: pointer">{{key.label}}</button>
+    </sc-for>
+  </div>
+
+  <a href="Main.dc.html" style="height: 56px; border-radius: 28px; background: {{p.accent}}; color: #02130B; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase">{{saveLabel}}</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"enum","options":["emerald","teal","violet"],"default":"emerald"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { kind: 'expense', expr: '250+120', cat: 'cafe', day: 'today' };
+  }
+
+  evaluate(expr) {
+    const tokens = expr.match(/\d+(,\d*)?|[+−×÷]/g) || ['0'];
+    const values = [];
+    const ops = [];
+    for (const token of tokens) {
+      if ('+−×÷'.includes(token)) ops.push(token);
+      else values.push(parseFloat(token.replace(',', '.')) || 0);
+    }
+    for (let i = 0; i < ops.length; ) {
+      if (ops[i] === '×' || ops[i] === '÷') {
+        const right = values[i + 1] ?? 0;
+        values[i] = ops[i] === '×' ? values[i] * right : (right === 0 ? 0 : values[i] / right);
+        values.splice(i + 1, 1);
+        ops.splice(i, 1);
+      } else i++;
+    }
+    let total = values[0] ?? 0;
+    ops.forEach((op, i) => {
+      total = op === '+' ? total + (values[i + 1] ?? 0) : total - (values[i + 1] ?? 0);
+    });
+    return total;
+  }
+
+  press(key) {
+    const { expr } = this.state;
+    const last = expr.slice(-1);
+    const isOp = (c) => '+−×÷'.includes(c);
+    let next = expr;
+    if (key === '⌫') next = expr.length > 1 ? expr.slice(0, -1) : '0';
+    else if (isOp(key)) next = isOp(last) ? expr.slice(0, -1) + key : expr + key;
+    else if (key === ',') {
+      const number = expr.split(/[+−×÷]/).pop();
+      if (!number.includes(',')) next = expr + (number === '' ? '0,' : ',');
+    } else next = expr === '0' ? key : expr + key;
+    this.setState({ expr: next });
+  }
+
+  renderVals() {
+    const accents = {
+      emerald: { accent: '#3DDC97', edge: 'rgba(36,138,86,0.30)' },
+      teal: { accent: '#3CD5C8', edge: 'rgba(30,128,132,0.30)' },
+      violet: { accent: '#B79CFF', edge: 'rgba(104,68,214,0.30)' }
+    };
+    const p = accents[this.props.accent] ?? accents.emerald;
+    const { kind, expr, cat, day } = this.state;
+    const total = this.evaluate(expr);
+    const formatted = total.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' ₽';
+    const sign = kind === 'expense' ? '−' : kind === 'income' ? '+' : '';
+    const names = { food: 'Продукты', cafe: 'Кафе', transport: 'Транспорт', home: 'Дом', health: 'Здоровье', fun: 'Досуг', subs: 'Подписки' };
+    const colors = { food: '#4ADE80', cafe: '#FBBF24', transport: '#60A5FA', home: '#A78BFA', health: '#FB7185', fun: '#FB923C', subs: '#22D3EE' };
+    const pick = {};
+    const on = {};
+    const edge = {};
+    const ink = {};
+    for (const id of Object.keys(names)) {
+      pick[id] = () => this.setState({ cat: id });
+      on[id] = cat === id ? 'true' : 'false';
+      edge[id] = cat === id ? p.accent : 'rgba(255,255,255,0.09)';
+      ink[id] = colors[id];
+    }
+    const kinds = [['expense', 'Расход'], ['income', 'Доход'], ['transfer', 'Перевод']].map(([id, label]) => ({
+      label,
+      pick: () => this.setState({ kind: id }),
+      pressed: kind === id ? 'true' : 'false',
+      bg: kind === id ? '#1E1E1F' : 'transparent',
+      fg: kind === id ? '#F4F4F2' : '#8A8A8A'
+    }));
+    const days = [['today', 'Сегодня'], ['yesterday', 'Вчера']].map(([id, label]) => ({
+      label,
+      pick: () => this.setState({ day: id }),
+      pressed: day === id ? 'true' : 'false',
+      bg: day === id ? '#F4F4F2' : '#161617',
+      fg: day === id ? '#000000' : '#F4F4F2'
+    }));
+    const keyNames = { '÷': 'Разделить', '×': 'Умножить', '−': 'Вычесть', '+': 'Прибавить', ',': 'Запятая', '⌫': 'Стереть' };
+    const keys = ['7', '8', '9', '÷', '4', '5', '6', '×', '1', '2', '3', '−', ',', '0', '⌫', '+'].map((label) => ({
+      label,
+      name: keyNames[label] ?? label,
+      press: () => this.press(label),
+      bg: '+−×÷'.includes(label) ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.05)',
+      fg: '+−×÷'.includes(label) ? p.accent : '#F4F4F2'
+    }));
+    return {
+      p,
+      kinds,
+      days,
+      keys,
+      pick,
+      on,
+      edge,
+      ink,
+      exprLine: /[+−×÷]/.test(expr) ? expr.replace(/([+−×÷])/g, ' $1 ') : '',
+      amount: sign + formatted,
+      amountColor: kind === 'income' ? p.accent : '#F4F4F2',
+      isTransfer: kind === 'transfer',
+      hasCategories: kind !== 'transfer',
+      saveLabel: kind === 'transfer' ? 'Сохранить перевод' : 'Сохранить · ' + names[cat]
+    };
+  }
+}
+</script>
+</body>
+</html>

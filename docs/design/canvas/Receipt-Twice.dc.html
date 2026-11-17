@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Чек уже записан</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div aria-hidden="true" style="position: absolute; inset: 0; overflow: hidden; background: radial-gradient(60% 40% at 50% 45%, #3A322B 0%, #1E1A16 60%, #0E0C0A 100%); filter: brightness({{feed.b}}); transition: {{feed.tr}}">
+    <div style="position: absolute; inset: 0; opacity: {{feed.receiptO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"><div style="position: absolute; left: 77px; top: 97px; width: 236px; box-sizing: border-box; padding: 18px 16px 24px; background: linear-gradient(180deg, #ECE9E2 0%, #DCD8CF 100%); color: #262626; font-family: 'Courier New', ui-monospace, monospace; font-size: 9.5px; line-height: 14px; transform-origin: 118px 283px; transform: rotate(-3deg); box-shadow: 0 30px 60px rgba(0,0,0,0.55), 0 2px 0 rgba(255,255,255,0.20) inset">
+      <div style="height: 14px; text-align: center; font-weight: 700">ПРОДУКТЫ У ДОМА</div>
+      <div style="height: 14px; text-align: center">КАССОВЫЙ ЧЕК · ПРИХОД</div>
+      <div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span>18.11.26 09:12</span><span>СМЕНА 214</span></div>
+      <div style="height: 14px"></div>
+      <div style="height: 7px"></div>
+      <div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span style="overflow: hidden">Хлеб бородинский</span><span>64.90</span></div><div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span style="overflow: hidden">Молоко 3,2% 1 л</span><span>98.00</span></div><div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span style="overflow: hidden">Яйца С1, 10 шт</span><span>129.90</span></div><div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span style="overflow: hidden">Сыр 200 г</span><span>189.90</span></div><div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span style="overflow: hidden">Яблоки 1,1 кг</span><span>137.30</span></div>
+      <div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap; height: 18px; font-size: 12px; font-weight: 700; align-items: flex-end"><span>ИТОГ</span><span>≡620.00</span></div>
+      <div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span>КАРТОЙ</span><span>≡620.00</span></div>
+      <div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span>ФН 7380440700076541</span></div>
+      <div style="display: flex; justify-content: space-between; gap: 8px; height: 14px; white-space: nowrap"><span>ФД 24611</span><span>ФП 2531297412</span></div>
+      <div style="display: flex; justify-content: center; margin-top: 10px"><svg width="125" height="125" viewBox="0 0 125 125" aria-hidden="true" style="display: block"><path fill="#151515" d="M0 0h5v5h-5zM5 0h5v5h-5zM10 0h5v5h-5zM15 0h5v5h-5zM20 0h5v5h-5zM25 0h5v5h-5zM30 0h5v5h-5zM50 0h5v5h-5zM55 0h5v5h-5zM60 0h5v5h-5zM75 0h5v5h-5zM90 0h5v5h-5zM95 0h5v5h-5zM100 0h5v5h-5zM105 0h5v5h-5zM110 0h5v5h-5zM115 0h5v5h-5zM120 0h5v5h-5zM0 5h5v5h-5zM30 5h5v5h-5zM45 5h5v5h-5zM50 5h5v5h-5zM75 5h5v5h-5zM80 5h5v5h-5zM90 5h5v5h-5zM120 5h5v5h-5zM0 10h5v5h-5zM10 10h5v5h-5zM15 10h5v5h-5zM20 10h5v5h-5zM30 10h5v5h-5zM45 10h5v5h-5zM50 10h5v5h-5zM55 10h5v5h-5zM70 10h5v5h-5zM75 10h5v5h-5zM80 10h5v5h-5zM90 10h5v5h-5zM100 10h5v5h-5zM105 10h5v5h-5zM110 10h5v5h-5zM120 10h5v5h-5zM0 15h5v5h-5zM10 15h5v5h-5zM15 15h5v5h-5zM20 15h5v5h-5zM30 15h5v5h-5zM45 15h5v5h-5zM50 15h5v5h-5zM65 15h5v5h-5zM75 15h5v5h-5zM80 15h5v5h-5zM90 15h5v5h-5zM100 15h5v5h-5zM105 15h5v5h-5zM110 15h5v5h-5zM120 15h5v5h-5zM0 20h5v5h-5zM10 20h5v5h-5zM15 20h5v5h-5zM20 20h5v5h-5zM30 20h5v5h-5zM50 20h5v5h-5zM55 20h5v5h-5zM70 20h5v5h-5zM90 20h5v5h-5zM100 20h5v5h-5zM105 20h5v5h-5zM110 20h5v5h-5zM120 20h5v5h-5zM0 25h5v5h-5zM30 25h5v5h-5zM50 25h5v5h-5zM60 25h5v5h-5zM65 25h5v5h-5zM70 25h5v5h-5zM75 25h5v5h-5zM80 25h5v5h-5zM90 25h5v5h-5zM120 25h5v5h-5zM0 30h5v5h-5zM5 30h5v5h-5zM10 30h5v5h-5zM15 30h5v5h-5zM20 30h5v5h-5zM25 30h5v5h-5zM30 30h5v5h-5zM40 30h5v5h-5zM50 30h5v5h-5zM60 30h5v5h-5zM70 30h5v5h-5zM80 30h5v5h-5zM90 30h5v5h-5zM95 30h5v5h-5zM100 30h5v5h-5zM105 30h5v5h-5zM110 30h5v5h-5zM115 30h5v5h-5zM120 30h5v5h-5zM45 35h5v5h-5zM70 35h5v5h-5zM20 40h5v5h-5zM25 40h5v5h-5zM30 40h5v5h-5zM40 40h5v5h-5zM45 40h5v5h-5zM60 40h5v5h-5zM70 40h5v5h-5zM80 40h5v5h-5zM85 40h5v5h-5zM105 40h5v5h-5zM115 40h5v5h-5zM120 40h5v5h-5zM25 45h5v5h-5zM35 45h5v5h-5zM40 45h5v5h-5zM45 45h5v5h-5zM50 45h5v5h-5zM65 45h5v5h-5zM80 45h5v5h-5zM85 45h5v5h-5zM90 45h5v5h-5zM100 45h5v5h-5zM115 45h5v5h-5zM0 50h5v5h-5zM5 50h5v5h-5zM10 50h5v5h-5zM15 50h5v5h-5zM25 50h5v5h-5zM30 50h5v5h-5zM35 50h5v5h-5zM45 50h5v5h-5zM75 50h5v5h-5zM85 50h5v5h-5zM90 50h5v5h-5zM105 50h5v5h-5zM110 50h5v5h-5zM115 50h5v5h-5zM15 55h5v5h-5zM45 55h5v5h-5zM50 55h5v5h-5zM65 55h5v5h-5zM90 55h5v5h-5zM100 55h5v5h-5zM0 60h5v5h-5zM30 60h5v5h-5zM45 60h5v5h-5zM50 60h5v5h-5zM55 60h5v5h-5zM75 60h5v5h-5zM85 60h5v5h-5zM95 60h5v5h-5zM100 60h5v5h-5zM110 60h5v5h-5zM115 60h5v5h-5zM35 65h5v5h-5zM45 65h5v5h-5zM75 65h5v5h-5zM80 65h5v5h-5zM95 65h5v5h-5zM120 65h5v5h-5zM15 70h5v5h-5zM30 70h5v5h-5zM55 70h5v5h-5zM65 70h5v5h-5zM80 70h5v5h-5zM90 70h5v5h-5zM95 70h5v5h-5zM115 70h5v5h-5zM120 70h5v5h-5zM10 75h5v5h-5zM20 75h5v5h-5zM25 75h5v5h-5zM40 75h5v5h-5zM45 75h5v5h-5zM55 75h5v5h-5zM65 75h5v5h-5zM75 75h5v5h-5zM80 75h5v5h-5zM90 75h5v5h-5zM95 75h5v5h-5zM100 75h5v5h-5zM110 75h5v5h-5zM115 75h5v5h-5zM25 80h5v5h-5zM30 80h5v5h-5zM45 80h5v5h-5zM50 80h5v5h-5zM60 80h5v5h-5zM75 80h5v5h-5zM80 80h5v5h-5zM85 80h5v5h-5zM90 80h5v5h-5zM95 80h5v5h-5zM100 80h5v5h-5zM105 80h5v5h-5zM115 80h5v5h-5zM120 80h5v5h-5zM55 85h5v5h-5zM60 85h5v5h-5zM65 85h5v5h-5zM70 85h5v5h-5zM80 85h5v5h-5zM100 85h5v5h-5zM120 85h5v5h-5zM0 90h5v5h-5zM5 90h5v5h-5zM10 90h5v5h-5zM15 90h5v5h-5zM20 90h5v5h-5zM25 90h5v5h-5zM30 90h5v5h-5zM45 90h5v5h-5zM60 90h5v5h-5zM65 90h5v5h-5zM75 90h5v5h-5zM80 90h5v5h-5zM90 90h5v5h-5zM100 90h5v5h-5zM0 95h5v5h-5zM30 95h5v5h-5zM50 95h5v5h-5zM80 95h5v5h-5zM100 95h5v5h-5zM105 95h5v5h-5zM110 95h5v5h-5zM0 100h5v5h-5zM10 100h5v5h-5zM15 100h5v5h-5zM20 100h5v5h-5zM30 100h5v5h-5zM65 100h5v5h-5zM80 100h5v5h-5zM85 100h5v5h-5zM90 100h5v5h-5zM95 100h5v5h-5zM100 100h5v5h-5zM105 100h5v5h-5zM110 100h5v5h-5zM0 105h5v5h-5zM10 105h5v5h-5zM15 105h5v5h-5zM20 105h5v5h-5zM30 105h5v5h-5zM45 105h5v5h-5zM55 105h5v5h-5zM65 105h5v5h-5zM80 105h5v5h-5zM90 105h5v5h-5zM105 105h5v5h-5zM110 105h5v5h-5zM0 110h5v5h-5zM10 110h5v5h-5zM15 110h5v5h-5zM20 110h5v5h-5zM30 110h5v5h-5zM40 110h5v5h-5zM55 110h5v5h-5zM70 110h5v5h-5zM80 110h5v5h-5zM95 110h5v5h-5zM115 110h5v5h-5zM0 115h5v5h-5zM30 115h5v5h-5zM40 115h5v5h-5zM45 115h5v5h-5zM55 115h5v5h-5zM60 115h5v5h-5zM70 115h5v5h-5zM100 115h5v5h-5zM105 115h5v5h-5zM0 120h5v5h-5zM5 120h5v5h-5zM10 120h5v5h-5zM15 120h5v5h-5zM20 120h5v5h-5zM25 120h5v5h-5zM30 120h5v5h-5zM40 120h5v5h-5zM60 120h5v5h-5zM65 120h5v5h-5zM70 120h5v5h-5zM75 120h5v5h-5zM85 120h5v5h-5zM95 120h5v5h-5zM100 120h5v5h-5zM120 120h5v5h-5z"></path></svg></div>
+    </div></div>
+    <div style="position: absolute; inset: 0; opacity: {{feed.otherO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"><div style="position: absolute; left: 100px; top: 262px; width: 190px; box-sizing: border-box; padding: 16px 0 14px; border-radius: 18px; background: #F2F0EA; color: #1C1C1C; display: flex; flex-direction: column; align-items: center; gap: 8px; transform: rotate(4deg); box-shadow: 0 24px 50px rgba(0,0,0,0.5)">
+      <span style="font-size: 13px; font-weight: 700">Гостевой Wi‑Fi</span>
+      <svg width="125" height="125" viewBox="0 0 125 125" aria-hidden="true" style="display: block"><path fill="#151515" d="M0 0h5v5h-5zM5 0h5v5h-5zM10 0h5v5h-5zM15 0h5v5h-5zM20 0h5v5h-5zM25 0h5v5h-5zM30 0h5v5h-5zM40 0h5v5h-5zM45 0h5v5h-5zM50 0h5v5h-5zM55 0h5v5h-5zM65 0h5v5h-5zM75 0h5v5h-5zM90 0h5v5h-5zM95 0h5v5h-5zM100 0h5v5h-5zM105 0h5v5h-5zM110 0h5v5h-5zM115 0h5v5h-5zM120 0h5v5h-5zM0 5h5v5h-5zM30 5h5v5h-5zM50 5h5v5h-5zM65 5h5v5h-5zM75 5h5v5h-5zM80 5h5v5h-5zM90 5h5v5h-5zM120 5h5v5h-5zM0 10h5v5h-5zM10 10h5v5h-5zM15 10h5v5h-5zM20 10h5v5h-5zM30 10h5v5h-5zM40 10h5v5h-5zM50 10h5v5h-5zM65 10h5v5h-5zM70 10h5v5h-5zM90 10h5v5h-5zM100 10h5v5h-5zM105 10h5v5h-5zM110 10h5v5h-5zM120 10h5v5h-5zM0 15h5v5h-5zM10 15h5v5h-5zM15 15h5v5h-5zM20 15h5v5h-5zM30 15h5v5h-5zM40 15h5v5h-5zM45 15h5v5h-5zM50 15h5v5h-5zM55 15h5v5h-5zM70 15h5v5h-5zM90 15h5v5h-5zM100 15h5v5h-5zM105 15h5v5h-5zM110 15h5v5h-5zM120 15h5v5h-5zM0 20h5v5h-5zM10 20h5v5h-5zM15 20h5v5h-5zM20 20h5v5h-5zM30 20h5v5h-5zM40 20h5v5h-5zM45 20h5v5h-5zM65 20h5v5h-5zM70 20h5v5h-5zM75 20h5v5h-5zM90 20h5v5h-5zM100 20h5v5h-5zM105 20h5v5h-5zM110 20h5v5h-5zM120 20h5v5h-5zM0 25h5v5h-5zM30 25h5v5h-5zM50 25h5v5h-5zM55 25h5v5h-5zM60 25h5v5h-5zM65 25h5v5h-5zM70 25h5v5h-5zM75 25h5v5h-5zM90 25h5v5h-5zM120 25h5v5h-5zM0 30h5v5h-5zM5 30h5v5h-5zM10 30h5v5h-5zM15 30h5v5h-5zM20 30h5v5h-5zM25 30h5v5h-5zM30 30h5v5h-5zM40 30h5v5h-5zM50 30h5v5h-5zM60 30h5v5h-5zM70 30h5v5h-5zM80 30h5v5h-5zM90 30h5v5h-5zM95 30h5v5h-5zM100 30h5v5h-5zM105 30h5v5h-5zM110 30h5v5h-5zM115 30h5v5h-5zM120 30h5v5h-5zM45 35h5v5h-5zM55 35h5v5h-5zM70 35h5v5h-5zM75 35h5v5h-5zM80 35h5v5h-5zM0 40h5v5h-5zM10 40h5v5h-5zM20 40h5v5h-5zM25 40h5v5h-5zM30 40h5v5h-5zM35 40h5v5h-5zM60 40h5v5h-5zM75 40h5v5h-5zM95 40h5v5h-5zM100 40h5v5h-5zM105 40h5v5h-5zM0 45h5v5h-5zM10 45h5v5h-5zM15 45h5v5h-5zM25 45h5v5h-5zM35 45h5v5h-5zM40 45h5v5h-5zM55 45h5v5h-5zM60 45h5v5h-5zM65 45h5v5h-5zM70 45h5v5h-5zM80 45h5v5h-5zM90 45h5v5h-5zM95 45h5v5h-5zM10 50h5v5h-5zM15 50h5v5h-5zM30 50h5v5h-5zM40 50h5v5h-5zM50 50h5v5h-5zM60 50h5v5h-5zM65 50h5v5h-5zM85 50h5v5h-5zM95 50h5v5h-5zM100 50h5v5h-5zM105 50h5v5h-5zM115 50h5v5h-5zM120 50h5v5h-5zM0 55h5v5h-5zM5 55h5v5h-5zM10 55h5v5h-5zM15 55h5v5h-5zM20 55h5v5h-5zM25 55h5v5h-5zM45 55h5v5h-5zM50 55h5v5h-5zM70 55h5v5h-5zM85 55h5v5h-5zM90 55h5v5h-5zM100 55h5v5h-5zM105 55h5v5h-5zM110 55h5v5h-5zM0 60h5v5h-5zM5 60h5v5h-5zM10 60h5v5h-5zM20 60h5v5h-5zM25 60h5v5h-5zM30 60h5v5h-5zM35 60h5v5h-5zM45 60h5v5h-5zM65 60h5v5h-5zM75 60h5v5h-5zM90 60h5v5h-5zM95 60h5v5h-5zM100 60h5v5h-5zM105 60h5v5h-5zM0 65h5v5h-5zM5 65h5v5h-5zM25 65h5v5h-5zM40 65h5v5h-5zM50 65h5v5h-5zM80 65h5v5h-5zM85 65h5v5h-5zM90 65h5v5h-5zM95 65h5v5h-5zM105 65h5v5h-5zM10 70h5v5h-5zM20 70h5v5h-5zM25 70h5v5h-5zM30 70h5v5h-5zM40 70h5v5h-5zM50 70h5v5h-5zM70 70h5v5h-5zM75 70h5v5h-5zM85 70h5v5h-5zM90 70h5v5h-5zM95 70h5v5h-5zM110 70h5v5h-5zM115 70h5v5h-5zM120 70h5v5h-5zM0 75h5v5h-5zM20 75h5v5h-5zM50 75h5v5h-5zM55 75h5v5h-5zM75 75h5v5h-5zM85 75h5v5h-5zM90 75h5v5h-5zM105 75h5v5h-5zM110 75h5v5h-5zM120 75h5v5h-5zM5 80h5v5h-5zM15 80h5v5h-5zM20 80h5v5h-5zM30 80h5v5h-5zM35 80h5v5h-5zM40 80h5v5h-5zM50 80h5v5h-5zM80 80h5v5h-5zM85 80h5v5h-5zM90 80h5v5h-5zM95 80h5v5h-5zM100 80h5v5h-5zM120 80h5v5h-5zM40 85h5v5h-5zM45 85h5v5h-5zM50 85h5v5h-5zM65 85h5v5h-5zM80 85h5v5h-5zM100 85h5v5h-5zM120 85h5v5h-5zM0 90h5v5h-5zM5 90h5v5h-5zM10 90h5v5h-5zM15 90h5v5h-5zM20 90h5v5h-5zM25 90h5v5h-5zM30 90h5v5h-5zM40 90h5v5h-5zM45 90h5v5h-5zM60 90h5v5h-5zM80 90h5v5h-5zM90 90h5v5h-5zM100 90h5v5h-5zM110 90h5v5h-5zM0 95h5v5h-5zM30 95h5v5h-5zM45 95h5v5h-5zM55 95h5v5h-5zM60 95h5v5h-5zM75 95h5v5h-5zM80 95h5v5h-5zM100 95h5v5h-5zM110 95h5v5h-5zM0 100h5v5h-5zM10 100h5v5h-5zM15 100h5v5h-5zM20 100h5v5h-5zM30 100h5v5h-5zM40 100h5v5h-5zM50 100h5v5h-5zM60 100h5v5h-5zM65 100h5v5h-5zM80 100h5v5h-5zM85 100h5v5h-5zM90 100h5v5h-5zM95 100h5v5h-5zM100 100h5v5h-5zM105 100h5v5h-5zM110 100h5v5h-5zM115 100h5v5h-5zM0 105h5v5h-5zM10 105h5v5h-5zM15 105h5v5h-5zM20 105h5v5h-5zM30 105h5v5h-5zM40 105h5v5h-5zM50 105h5v5h-5zM60 105h5v5h-5zM65 105h5v5h-5zM70 105h5v5h-5zM90 105h5v5h-5zM100 105h5v5h-5zM105 105h5v5h-5zM115 105h5v5h-5zM120 105h5v5h-5zM0 110h5v5h-5zM10 110h5v5h-5zM15 110h5v5h-5zM20 110h5v5h-5zM30 110h5v5h-5zM40 110h5v5h-5zM45 110h5v5h-5zM55 110h5v5h-5zM60 110h5v5h-5zM75 110h5v5h-5zM80 110h5v5h-5zM90 110h5v5h-5zM100 110h5v5h-5zM105 110h5v5h-5zM115 110h5v5h-5zM120 110h5v5h-5zM0 115h5v5h-5zM30 115h5v5h-5zM40 115h5v5h-5zM50 115h5v5h-5zM55 115h5v5h-5zM60 115h5v5h-5zM70 115h5v5h-5zM85 115h5v5h-5zM90 115h5v5h-5zM100 115h5v5h-5zM120 115h5v5h-5zM0 120h5v5h-5zM5 120h5v5h-5zM10 120h5v5h-5zM15 120h5v5h-5zM20 120h5v5h-5zM25 120h5v5h-5zM30 120h5v5h-5zM45 120h5v5h-5zM50 120h5v5h-5zM55 120h5v5h-5zM60 120h5v5h-5zM75 120h5v5h-5zM80 120h5v5h-5zM90 120h5v5h-5zM105 120h5v5h-5zM110 120h5v5h-5z"></path></svg>
+      <span style="font-size: 11px; color: #4A4A4A">Сеть «Кофейня», без пароля</span>
+    </div></div>
+  </div>
+  <div style="position: absolute; left: {{frame.x}}; top: {{frame.y}}; width: {{frame.s}}; height: {{frame.s}}; border-radius: 28px; pointer-events: none; box-shadow: 0 0 0 1400px rgba(0,0,0,{{frame.dim}}); transform: scale({{frame.pulse}}); transition: {{frame.tr}}">
+    <span aria-hidden="true" style="position: absolute; left: -3px; top: -3px; width: 36px; height: 36px; box-sizing: border-box; border-left: 4px solid {{frame.ink}}; border-top: 4px solid {{frame.ink}}; border-top-left-radius: 30px; transition: {{frame.inkTr}}"></span>
+    <span aria-hidden="true" style="position: absolute; right: -3px; top: -3px; width: 36px; height: 36px; box-sizing: border-box; border-right: 4px solid {{frame.ink}}; border-top: 4px solid {{frame.ink}}; border-top-right-radius: 30px; transition: {{frame.inkTr}}"></span>
+    <span aria-hidden="true" style="position: absolute; left: -3px; bottom: -3px; width: 36px; height: 36px; box-sizing: border-box; border-left: 4px solid {{frame.ink}}; border-bottom: 4px solid {{frame.ink}}; border-bottom-left-radius: 30px; transition: {{frame.inkTr}}"></span>
+    <span aria-hidden="true" style="position: absolute; right: -3px; bottom: -3px; width: 36px; height: 36px; box-sizing: border-box; border-right: 4px solid {{frame.ink}}; border-bottom: 4px solid {{frame.ink}}; border-bottom-right-radius: 30px; transition: {{frame.inkTr}}"></span>
+    <span aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 32px; background: #3DDC97; color: #04130B; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(61,220,151,0.35); opacity: {{check.o}}; transform: {{check.t}}; transition: {{check.tr}}"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+  </div>
+  <div style="position: absolute; left: 20px; right: 20px; top: 24px; display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; height: 44px"><span></span><h1 style="margin: 0; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #C9C9C7">Чек по QR</h1><a href="Receipt-QuickAdd.dc.html" aria-label="Закрыть" style="width: 44px; height: 44px; padding: 0; border: 0; background: none; display: flex; align-items: center; justify-content: center; color: #F4F4F2; filter: drop-shadow(0 1px 6px rgba(0,0,0,0.55)); cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: #000000; opacity: {{scrim}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"></div>
+
+  <div role="dialog" aria-modal="true" aria-label="Этот чек уже в Birka" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 12px 20px 34px; border-radius: 22px 22px 0 0; border: 1px solid rgba(255,255,255,0.12); border-bottom: 0; background: radial-gradient(70% 30% at 100% 0%, rgba(36,138,86,0.26) 0%, transparent 72%), radial-gradient(60% 26% at 0% 100%, rgba(36,138,86,0.22) 0%, transparent 72%), #050706; box-shadow: 0 -12px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 14px; transform: translateY({{sheet.y}}); transition: {{sheet.tr}}">
+    <div style="display: flex; align-items: center; justify-content: space-between; height: 44px; margin-right: -10px">
+      <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Этот чек уже в Birka</h2>
+      <a href="Receipt-Scanner.dc.html" aria-label="Закрыть" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #F4F4F2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    </div>
+    <p style="margin: -6px 0 0; font-size: 15px; line-height: 1.45; color: #A3A3A3">Тот же чек второй раз не запишем.</p>
+    <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+      <a href="Receipt-Operation.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 68px; box-sizing: border-box; padding: 12px 0; color: #F4F4F2; text-decoration: none">
+        <span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(74,222,128,0.14); color: #4ADE80; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10.2l2-8H6.2"></path><circle cx="9.5" cy="19" r="1.4"></circle><circle cx="16.5" cy="19" r="1.4"></circle></svg></span>
+        <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Продукты у дома</span>
+          <span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Сегодня, 9:12 · Из чека</span>
+        </span>
+        <span style="flex: 0 0 auto; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap">−620 ₽</span>
+      </a>
+    </div>
+    <a href="Receipt-Operation.dc.html" style="height: 56px; box-sizing: border-box; border-radius: 28px; display: flex; align-items: center; justify-content: center; background: #3DDC97; color: #04130B; box-shadow: 0 10px 30px rgba(61,220,151,0.28); text-decoration: none; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; border: 0; cursor: pointer; margin-top: 6px">ОТКРЫТЬ ОПЕРАЦИЮ</a>
+    <a href="Receipt-Scanner.dc.html" style="height: 56px; box-sizing: border-box; border-radius: 28px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; font-size: 15px; font-weight: 600; cursor: pointer; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">Сканировать другой</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { open: false };
+    this.timers = [];
+  }
+
+  // The code is read and is already in the ledger: the frame stays green on
+  // it and the sheet rises over the camera.
+  componentDidMount() {
+    if (this.prefersReduced()) this.setState({ open: true });
+    else this.later(380, { open: true });
+  }
+
+  stop() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, change) {
+    this.timers.push(setTimeout(() => this.setState(change), ms));
+  }
+
+  componentWillUnmount() {
+    this.stop();
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+
+  renderVals() {
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const sheetCurve = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+    const open = this.state.open;
+    return {
+      scrim: open ? '0.45' : '0',
+      sheet: {
+        y: open || reduced ? '0px' : '105%',
+        tr: reduced ? 'none' : 'transform 460ms ' + sheetCurve
+      },
+      frame: { x: '112px', y: '297px', s: '166px', dim: '0.62', ink: '#3DDC97', pulse: '1', tr: 'none', inkTr: 'none' },
+      check: { o: '0', t: 'scale(1)', tr: 'none' },
+      feed: { b: '1', tr: 'none', receiptO: '1', otherO: '0' }
+    };
+  }
+}
+</script>
+</body>
+</html>

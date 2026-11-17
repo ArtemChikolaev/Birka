@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Напоминания · разрешения</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif">
+  <dc-import name="Remind-Settings" state="{{state}}" hint-size="390px,844px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"sheet":{"editor":"enum","options":["Календарь","Уведомления","Убрать календарь","Нет доступа"],"default":"Календарь"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const states = {
+      'Календарь': 'Лист: календарь',
+      'Уведомления': 'Лист: уведомления',
+      'Убрать календарь': 'Лист: убрать календарь',
+      'Нет доступа': 'Лист: нет доступа'
+    };
+    return { state: states[this.props.sheet ?? 'Календарь'] ?? 'Лист: календарь' };
+  }
+}
+</script>
+</body>
+</html>

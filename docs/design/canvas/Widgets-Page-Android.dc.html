@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Виджеты · Android</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000">
+  <div style="position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none">
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 20px 20px 40px">
+    <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr) 96px; align-items: center; height: 44px"><a href="Widgets-More.dc.html" aria-label="Назад" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a><h1 style="margin: 0; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Виджеты</h1><span style="justify-self: end; display: flex"></span></div>
+    <div style="position: relative; height: 184px; border-radius: 26px; overflow: hidden; background: radial-gradient(70% 45% at 88% 6%, rgba(40,160,170,0.30) 0%, transparent 70%), radial-gradient(70% 50% at 8% 92%, rgba(60,90,200,0.28) 0%, transparent 70%), linear-gradient(170deg, #0B1F22 0%, #0B141C 55%, #151026 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12)"><div style="position: absolute; left: 14px; top: 13px; transform: scale(0.9); transform-origin: 0 0; width: 358px; height: 176px; border-radius: 28px; box-sizing: border-box; overflow: hidden; background: {{k.bg}}; box-shadow: {{k.shadow}}; -webkit-backdrop-filter: {{k.blur}}; backdrop-filter: {{k.blur}}"><a href="{{bodyHref}}" aria-label="{{aria}}" style="position: absolute; inset: 0"></a><div style="position: absolute; left: 20px; top: 18px; bottom: 18px; width: 200px; display: flex; flex-direction: column; gap: 3px; pointer-events: none"><span style="display: grid; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.label}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{label.oa}}; transition: {{label.tr}}">{{label.a}}</span><span style="grid-area: 1 / 1; opacity: {{label.ob}}; transition: {{label.tr}}">{{label.b}}</span></span><span style="position: relative; flex: 0 0 auto; display: grid; height: 40px; overflow: hidden">
+<span style="grid-area: 1 / 1; position: relative; display: flex; height: 40px; overflow: hidden; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 34px; font-weight: 800; line-height: 40px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: {{figA.ink}}; filter: {{figA.veilF}}; opacity: {{figA.veilO}}; transition: {{figA.tr}}">
+<span style="display: flex; transform: translateY({{figA.inY}}); opacity: {{figA.inO}}; transition: {{figA.layerTr}}">
+<sc-for list="{{figA.slots}}" as="c" hint-placeholder-count="7">
+<sc-if value="{{c.digit}}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 1ch; height: 40px; overflow: hidden"><span style="display: block; transform: translateY({{c.y}}); transition: {{c.tr}}"><sc-for list="{{digits}}" as="d" hint-placeholder-count="10"><span style="display: block; height: 40px">{{d}}</span></sc-for></span></span></sc-if>
+<sc-if value="{{c.still}}" hint-placeholder-val="{{ false }}"><span>{{c.ch}}</span></sc-if>
+</sc-for>
+</span>
+<span aria-hidden="true" style="position: absolute; left: 0; top: 0; transform: translateY({{figA.outY}}); opacity: {{figA.outO}}; transition: {{figA.layerTr}}">{{figA.old}}</span>
+</span>
+<span aria-hidden="true" style="grid-area: 1 / 1; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 34px; font-weight: 800; line-height: 40px; letter-spacing: -0.02em; color: {{figA.dotsInk}}; opacity: {{figA.dotsO}}; transition: {{figA.dotsTr}}">{{figA.dots}}</span>
+</span><span style="display: grid; font-size: 13px; line-height: 17px; color: {{k.sub}}"><span style="grid-area: 1 / 1; opacity: {{of.oa}}; transition: {{of.tr}}">{{of.a}}</span><span style="grid-area: 1 / 1; opacity: {{of.ob}}; transition: {{of.tr}}">{{of.b}}</span></span><span style="flex: 1 1 auto"></span><span aria-hidden="true" style="display: block; height: 6px; border-radius: 3.0px; background: {{k.track}}; overflow: hidden; opacity: {{barO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"><span style="display: block; height: 100%; width: {{bar}}; border-radius: 3.0px; background: {{barFill}}; transition: width 520ms cubic-bezier(0.2, 0, 0, 1), background 320ms cubic-bezier(0.42, 0, 0.58, 1)"></span></span><span style="display: grid; margin-top: 6px; font-size: 13px; line-height: 17px; color: {{k.sub}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{spent.oa}}; transition: {{spent.tr}}">{{spent.a}}</span><span style="grid-area: 1 / 1; opacity: {{spent.ob}}; transition: {{spent.tr}}">{{spent.b}}</span></span></div><div style="position: absolute; right: 16px; top: 18px; bottom: 18px; width: 116px; display: flex; flex-direction: column; justify-content: center; gap: 12px"><a href="QuickAdd.dc.html" style="height: 56px; border-radius: 28px; background: {{k.btn}}; color: {{k.btnInk}}; box-shadow: {{k.glow}}; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>Расход</a><a href="QuickAdd.dc.html" style="height: 56px; border-radius: 28px; background: {{k.btn2}}; color: {{k.btn2Ink}}; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Доход</a></div></div></div>
+    <span style="margin-top: -6px; padding: 0 4px; font-size: 13px; line-height: 1.4; color: #A3A3A3; text-align: center">«Сегодня» — 4 × 2, «Запись» — 2 × 1</span>
+    <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px">
+        <span style="font-weight: 600">Суммы в виджетах</span>
+        <button type="button" role="switch" aria-checked="{{sums.checked}}" aria-label="Суммы в виджетах" onClick="{{sums.flip}}" style="position: relative; flex: 0 0 52px; height: 32px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.16); background: {{sums.track}}; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); cursor: pointer; transition: background 220ms cubic-bezier(0.42, 0, 0.58, 1)">
+          <span aria-hidden="true" style="position: absolute; top: 2px; left: {{sums.knob}}; width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: left 380ms cubic-bezier(0.34, 1.56, 0.64, 1)"></span>
+        </button>
+      </div>
+    </div>
+    <span style="display: grid; margin-top: -8px; padding: 0 4px; font-size: 13px; line-height: 1.4; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{sumsNote.oa}}; transition: {{sumsNote.tr}}">{{sumsNote.a}}</span><span style="grid-area: 1 / 1; opacity: {{sumsNote.ob}}; transition: {{sumsNote.tr}}">{{sumsNote.b}}</span></span>
+    <section aria-label="Как добавить" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Как добавить</h2>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+      <button type="button" onClick="{{pin}}" style="height: 56px; border: 0; border-radius: 28px; background: #3DDC97; color: #04130B; font: inherit; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; box-shadow: 0 10px 30px rgba(61,220,151,0.28); cursor: pointer">ДОБАВИТЬ НА ГЛАВНЫЙ ЭКРАН</button>
+      <span style="padding: 0 4px; font-size: 13px; line-height: 1.4; color: #A3A3A3">Android спросит, куда его поставить. Ещё можно удержать пустое место на экране и выбрать «Виджеты».</span>
+    </div>
+    </section>
+    <section aria-label="Ещё быстрее" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Ещё быстрее</h2>
+      <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)"><a href="Widgets-Android-Shortcuts.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); color: #F4F4F2; text-decoration: none"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"></rect></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Удерживайте иконку Birka</span><span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Расход, Доход, Перевод, Спросить</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg></a><a href="Widgets-Android-Shortcuts.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border-bottom: 0; color: #F4F4F2; text-decoration: none"><span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.14); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg></span><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Ярлык на главный экран</span><span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Перетащите «Расход» из меню иконки, и он станет кнопкой</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg></a></div>
+    </section>
+  </div>
+  </div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); opacity: {{dialog.scrimO}}; transition: {{dialog.scrimTr}}; pointer-events: none"></div>
+  <div role="dialog" aria-label="Добавить виджет" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 24px 20px 28px; border-radius: 28px 28px 0 0; background: #1C1F1E; box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transform: translateY({{dialog.y}}); transition: {{dialog.tr}}; display: flex; flex-direction: column; gap: 18px">
+    <span style="font-size: 22px; font-weight: 600">Добавить виджет?</span>
+    <div style="position: relative; height: 158px; border-radius: 22px; overflow: hidden; background: radial-gradient(70% 45% at 88% 6%, rgba(40,160,170,0.30) 0%, transparent 70%), radial-gradient(70% 50% at 8% 92%, rgba(60,90,200,0.28) 0%, transparent 70%), linear-gradient(170deg, #0B1F22 0%, #0B141C 55%, #151026 100%)"><div style="position: absolute; left: 14px; top: -3px; transform: scale(0.9); transform-origin: 0 0; width: 358px; height: 176px; border-radius: 28px; box-sizing: border-box; overflow: hidden; background: {{k.bg}}; box-shadow: {{k.shadow}}; -webkit-backdrop-filter: {{k.blur}}; backdrop-filter: {{k.blur}}"><a href="{{bodyHref}}" aria-label="{{aria}}" style="position: absolute; inset: 0"></a><div style="position: absolute; left: 20px; top: 18px; bottom: 18px; width: 200px; display: flex; flex-direction: column; gap: 3px; pointer-events: none"><span style="display: grid; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.label}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{label.oa}}; transition: {{label.tr}}">{{label.a}}</span><span style="grid-area: 1 / 1; opacity: {{label.ob}}; transition: {{label.tr}}">{{label.b}}</span></span><span style="position: relative; flex: 0 0 auto; display: grid; height: 40px; overflow: hidden">
+<span style="grid-area: 1 / 1; position: relative; display: flex; height: 40px; overflow: hidden; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 34px; font-weight: 800; line-height: 40px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: {{figD.ink}}; filter: {{figD.veilF}}; opacity: {{figD.veilO}}; transition: {{figD.tr}}">
+<span style="display: flex; transform: translateY({{figD.inY}}); opacity: {{figD.inO}}; transition: {{figD.layerTr}}">
+<sc-for list="{{figD.slots}}" as="c" hint-placeholder-count="7">
+<sc-if value="{{c.digit}}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 1ch; height: 40px; overflow: hidden"><span style="display: block; transform: translateY({{c.y}}); transition: {{c.tr}}"><sc-for list="{{digits}}" as="d" hint-placeholder-count="10"><span style="display: block; height: 40px">{{d}}</span></sc-for></span></span></sc-if>
+<sc-if value="{{c.still}}" hint-placeholder-val="{{ false }}"><span>{{c.ch}}</span></sc-if>
+</sc-for>
+</span>
+<span aria-hidden="true" style="position: absolute; left: 0; top: 0; transform: translateY({{figD.outY}}); opacity: {{figD.outO}}; transition: {{figD.layerTr}}">{{figD.old}}</span>
+</span>
+<span aria-hidden="true" style="grid-area: 1 / 1; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 34px; font-weight: 800; line-height: 40px; letter-spacing: -0.02em; color: {{figD.dotsInk}}; opacity: {{figD.dotsO}}; transition: {{figD.dotsTr}}">{{figD.dots}}</span>
+</span><span style="display: grid; font-size: 13px; line-height: 17px; color: {{k.sub}}"><span style="grid-area: 1 / 1; opacity: {{of.oa}}; transition: {{of.tr}}">{{of.a}}</span><span style="grid-area: 1 / 1; opacity: {{of.ob}}; transition: {{of.tr}}">{{of.b}}</span></span><span style="flex: 1 1 auto"></span><span aria-hidden="true" style="display: block; height: 6px; border-radius: 3.0px; background: {{k.track}}; overflow: hidden; opacity: {{barO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"><span style="display: block; height: 100%; width: {{bar}}; border-radius: 3.0px; background: {{barFill}}; transition: width 520ms cubic-bezier(0.2, 0, 0, 1), background 320ms cubic-bezier(0.42, 0, 0.58, 1)"></span></span><span style="display: grid; margin-top: 6px; font-size: 13px; line-height: 17px; color: {{k.sub}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{spent.oa}}; transition: {{spent.tr}}">{{spent.a}}</span><span style="grid-area: 1 / 1; opacity: {{spent.ob}}; transition: {{spent.tr}}">{{spent.b}}</span></span></div><div style="position: absolute; right: 16px; top: 18px; bottom: 18px; width: 116px; display: flex; flex-direction: column; justify-content: center; gap: 12px"><a href="QuickAdd.dc.html" style="height: 56px; border-radius: 28px; background: {{k.btn}}; color: {{k.btnInk}}; box-shadow: {{k.glow}}; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>Расход</a><a href="QuickAdd.dc.html" style="height: 56px; border-radius: 28px; background: {{k.btn2}}; color: {{k.btn2Ink}}; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Доход</a></div></div></div>
+    <span style="font-size: 14px; line-height: 1.4; color: #C9C9C7">Birka · «Сегодня», 4 × 2. Его можно перетащить на любой экран.</span>
+    <div style="display: flex; justify-content: flex-end; gap: 8px">
+      <button type="button" onClick="{{dialog.cancel}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 22px; background: none; color: #3DDC97; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Отмена</button>
+      <button type="button" onClick="{{dialog.add}}" style="height: 44px; padding: 0 22px; border: 0; border-radius: 22px; background: #3DDC97; color: #04130B; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Добавить</button>
+    </div>
+  </div>
+  <div role="status" style="position: absolute; left: 20px; right: 20px; bottom: 24px; display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 18px; background: rgba(32,32,34,0.88); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 12px 32px rgba(0,0,0,0.55); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); opacity: {{toast.o}}; transform: translateY({{toast.y}}); transition: {{toast.tr}}; pointer-events: {{toast.events}}">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 20px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+    <span style="flex: 1 1 auto; font-size: 14px; line-height: 1.4">{{toast.text}}</span>
+    <sc-if value="{{toast.hasAction}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{toast.act}}" style="flex: 0 0 auto; height: 32px; padding: 0 12px; border: 0; border-radius: 16px; background: rgba(255,255,255,0.10); color: #3DDC97; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{toast.action}}</button></sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.timers = [];
+    this.lines = {};
+    this.figs = {};
+    this.stopped = false;
+    this.state = { sums: true, dialog: false, toast: 'hidden' };
+  }
+
+  stop() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, change) {
+    this.timers.push(setTimeout(() => {
+      if (!this.stopped) this.setState(change);
+    }, ms));
+  }
+
+  componentWillUnmount() {
+    this.stopped = true;
+    this.stop();
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Renders again as a figure goes through its roll.
+  wake() {
+    for (const ms of [30, 540, 640]) {
+      this.timers.push(setTimeout(() => {
+        if (!this.stopped) this.forceUpdate();
+      }, ms));
+    }
+  }
+
+  rub(n) {
+    return String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+  }
+
+  // The digits go and the sign and the currency stay, as HiddenAmounts.masked.
+  mask(text) {
+    return text.replace(/\d[\d ]*\d|\d/g, '•••');
+  }
+
+  // A figure as AmountText shows it: the digits that differ roll, or the old
+  // figure rolls out when the shape changes. It takes the color of the news
+  // (goodUp says whether growing is good) and turns back once it settles.
+  // Hidden, it blurs out under the dots, as on the «Суммы» board.
+  figure(key, text, value, ink, h, reduced, goodUp, hidden) {
+    const now = Date.now();
+    const seen = this.figs[key];
+    if (!seen) {
+      this.figs[key] = { text, value, from: '', swap: false, up: true, at: -100000, news: null };
+    } else if (seen.text !== text) {
+      const shape = (s) => s.replace(/[0-9]/g, '0');
+      const up = value > seen.value;
+      this.figs[key] = { text, value, from: seen.text, swap: shape(seen.text) !== shape(text), up, at: now, news: up === goodUp ? '#3DDC97' : '#FF8E7F' };
+      this.wake();
+    }
+    const f = this.figs[key];
+    const age = now - f.at;
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const swapping = f.swap && !reduced && age < 620;
+    const entering = swapping && age < 30;
+    const news = f.news && age < 520;
+    const veilTr = reduced ? 'opacity 220ms ' + fade : 'filter 260ms ' + ease + ', opacity 260ms ' + ease;
+    return {
+      slots: Array.from(text).map((ch) => {
+        const digit = ch >= '0' && ch <= '9';
+        return { digit, still: !digit, ch, y: digit ? -Number(ch) * h + 'px' : '0px', tr: reduced || f.swap ? 'none' : 'transform 520ms ' + ease };
+      }),
+      old: swapping ? f.from : '',
+      inY: entering ? (f.up ? h : -h) + 'px' : '0px',
+      inO: entering ? '0' : '1',
+      outY: swapping && !entering ? (f.up ? -h : h) + 'px' : '0px',
+      outO: entering ? '1' : '0',
+      layerTr: entering ? 'none' : 'transform 520ms ' + ease + ', opacity 220ms ' + fade,
+      ink: news ? f.news : ink,
+      tr: (news ? 'color 150ms ' : 'color 320ms ') + fade + ', ' + veilTr,
+      veilF: hidden && !reduced ? 'blur(8px)' : 'blur(0px)',
+      veilO: hidden ? '0' : '1',
+      dots: this.mask(text),
+      dotsInk: ink,
+      dotsO: hidden ? '1' : '0',
+      dotsTr: veilTr
+    };
+  }
+
+  // A line that cross-fades into a new one over duration.base, as FadingText
+  // does; once the fade is over the old line goes, so its height goes too.
+  fading(key, text, reduced) {
+    const now = Date.now();
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a', at: -100000 };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+      seen.at = now;
+      this.timers.push(setTimeout(() => {
+        if (!this.stopped) this.forceUpdate();
+      }, 260));
+    }
+    const s = this.lines[key];
+    const settled = now - s.at > 240;
+    return {
+      a: s.front === 'a' || !settled ? s.a : '',
+      b: s.front === 'b' || !settled ? s.b : '',
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  // The day of the story: 1 744 ₽ a day, 17 days to the salary.
+  story(mode) {
+    const perDay = 1744;
+    const spentBy = { 'Обычный день': 620, 'После записи': 990, 'Потратили больше': 2100, 'Нет дня зарплаты': 620, 'Суммы скрыты': 620 };
+    const spent = spentBy[mode] ?? 620;
+    const left = perDay - spent;
+    return { perDay, spent, left, over: left < 0, payday: mode !== 'Нет дня зарплаты', hidden: mode === 'Суммы скрыты' };
+  }
+
+  // The widget follows the look of Birka; in the clear look of iOS 26 the
+  // system takes the color away and the glass shows the wallpaper.
+  skin(look) {
+    if (look === 'Прозрачный · iOS 26') {
+      return {
+        bg: 'rgba(255,255,255,0.10)', shadow: 'inset 0 1px 0 rgba(255,255,255,0.34), inset 0 0 0 1px rgba(255,255,255,0.14)',
+        blur: 'blur(24px) saturate(170%)', label: 'rgba(255,255,255,0.74)', ink: '#FFFFFF', sub: 'rgba(255,255,255,0.74)',
+        track: 'rgba(255,255,255,0.24)', fill: '#FFFFFF', over: '#FFFFFF', btn: 'rgba(255,255,255,0.26)', btnInk: '#FFFFFF',
+        btn2: 'rgba(255,255,255,0.14)', btn2Ink: '#FFFFFF', glow: 'none'
+      };
+    }
+    return {
+      bg: 'radial-gradient(90% 70% at 0% 0%, rgba(36,138,86,0.34) 0%, transparent 72%), radial-gradient(80% 60% at 100% 100%, rgba(36,138,86,0.20) 0%, transparent 72%), #050706',
+      shadow: 'inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 30px rgba(0,0,0,0.45)', blur: 'none',
+      label: '#A3A3A3', ink: '#F4F4F2', sub: '#A3A3A3', track: 'rgba(255,255,255,0.10)', fill: '#3DDC97', over: '#FF8E7F',
+      btn: '#3DDC97', btnInk: '#02130B', btn2: 'rgba(255,255,255,0.10)', btn2Ink: '#F4F4F2', glow: '0 8px 24px rgba(61,220,151,0.30)'
+    };
+  }
+
+  // What the «Сегодня» widgets show in a state of the day.
+  today(mode, look, reduced, hiddenNow) {
+    const s = this.story(mode);
+    const k = this.skin(look);
+    const hidden = hiddenNow ?? s.hidden;
+    const rub = (n) => this.rub(n);
+    const shown = (text) => (hidden ? this.mask(text) : text);
+    const text = s.payday ? (s.over ? '−' : '') + rub(s.left) : rub(s.spent);
+    const value = s.payday ? s.left : s.spent;
+    const ink = s.payday && s.over ? k.over : k.ink;
+    const share = s.payday ? Math.min(100, Math.round((s.spent / s.perDay) * 100)) : 0;
+    return {
+      k,
+      digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      bodyHref: s.payday ? 'Future-Overview.dc.html' : 'Future-Payday.dc.html',
+      aria: s.payday ? 'Можно тратить сегодня: ' + shown(text) + '. Открыть обзор' : 'Потратили сегодня: ' + shown(text) + '. Указать день зарплаты',
+      label: this.fading('label', s.payday ? (s.over ? 'Сегодня больше дневного' : 'Можно тратить сегодня') : 'Потратили сегодня', reduced),
+      small: this.fading('small', s.payday ? (s.over ? 'Больше дневного' : 'Можно сегодня') : 'Потратили', reduced),
+      figM: this.figure('figM', text, value, ink, 38, reduced, s.payday, hidden),
+      figS: this.figure('figS', text, value, ink, 34, reduced, s.payday, hidden),
+      figA: this.figure('figA', text, value, ink, 40, reduced, s.payday, hidden),
+      of: this.fading('of', s.payday ? shown('из ' + rub(s.perDay) + ' на день') : 'Укажите день зарплаты — покажем, сколько можно', reduced),
+      ofSmall: this.fading('ofSmall', s.payday ? shown('из ' + rub(s.perDay)) : 'сегодня', reduced),
+      spent: this.fading('spent', s.payday ? shown(s.over ? 'Завтра можно ' + rub(1721) + ' в день' : 'Потратили ' + rub(s.spent)) : '', reduced),
+      spentSmall: this.fading('spentSmall', s.payday ? shown(s.over ? 'завтра ' + rub(1721) : 'потратили ' + rub(s.spent)) : '', reduced),
+      bar: share + '%',
+      barFill: s.over ? k.over : k.fill,
+      barO: s.payday ? '1' : '0'
+    };
+  }
+
+  renderVals() {
+    const reduced = this.prefersReduced();
+    const st = this.state;
+    const android = true;
+    const on = st.sums;
+    return {
+      ...this.today('Обычный день', 'Тёмный', reduced, !on),
+      sums: {
+        checked: on ? 'true' : 'false',
+        track: on ? '#3DDC97' : 'rgba(255,255,255,0.14)',
+        knob: on ? '22px' : '2px',
+        flip: () => this.setState({ sums: !on })
+      },
+      sumsNote: this.fading('sumsNote', on
+        ? (android ? 'Суммы видны на главном экране. Выключите, и вместо них будут точки.' : 'На экране блокировки суммы откроются только после Face ID.')
+        : 'Вместо сумм точки, кнопки работают как раньше.', reduced),
+      figD: this.figure('figD', '1 124 ₽', 1124, '#F4F4F2', 40, reduced, true, !on),
+      pin: () => {
+        this.stop();
+        this.setState({ dialog: true, toast: 'hidden' });
+      },
+      dialog: {
+        y: st.dialog ? '0px' : '110%',
+        tr: reduced ? 'none' : 'transform 320ms cubic-bezier(0.32, 0.72, 0, 1)',
+        scrimO: st.dialog ? '1' : '0',
+        scrimTr: 'opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)',
+        cancel: () => this.setState({ dialog: false }),
+        add: () => {
+          this.setState({ dialog: false });
+          this.later(380, { toast: 'shown' });
+          this.later(4380, { toast: 'gone' });
+        }
+      },
+      toast: (() => {
+        const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+        const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+        const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+        const looks = {
+          hidden: { o: '0', y: reduced ? '0px' : '120px', tr: 'none' },
+          shown: { o: '1', y: '0px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 560ms ' + spring + ', opacity 200ms ' + fade },
+          gone: { o: '0', y: reduced ? '0px' : '16px', tr: reduced ? 'opacity 220ms ' + fade : 'transform 220ms ' + ease + ', opacity 220ms ' + fade }
+        };
+        return { text: 'Виджет на главном экране', hasAction: false, action: '', act: () => {}, events: st.toast === 'shown' ? 'auto' : 'none', ...looks[st.toast] };
+      })()
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Быстрое добавление с лимитом на сайте · узкий экран</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+:root{--color-palette-black: #000000;
+  --color-palette-white: #ffffff;
+  --color-palette-ink: #f4f4f2;
+  --color-palette-gray900: #0e0e0f;
+  --color-palette-gray850: #161617;
+  --color-palette-gray800: #1e1e1f;
+  --color-palette-gray500: #8a8a8a;
+  --color-palette-gray400: #a3a3a3;
+  --color-palette-gray300: #c9c9c7;
+  --color-palette-emerald400: #3ddc97;
+  --color-palette-emerald700: #248a56;
+  --color-palette-emerald950: #02130b;
+  --color-palette-coral400: #ff8e7f;
+  --color-palette-green: #4ade80;
+  --color-palette-amber: #fbbf24;
+  --color-palette-sky: #60a5fa;
+  --color-palette-violet: #a78bfa;
+  --color-palette-rose: #fb7185;
+  --color-palette-orange: #fb923c;
+  --color-palette-cyan: #22d3ee;
+  --color-palette-slate: #3a3a3c;
+  --color-palette-steel: #6e6e73;
+  --color-palette-sapphire: #2368b3;
+  --color-palette-bronze: #a8650f;
+  --color-palette-iris: #6a4ec4;
+  --color-palette-ruby: #b83a58;
+  --color-background: #000000;
+  --color-surface: #0e0e0f;
+  --color-surface-raised: #161617;
+  --color-surface-selected: #1e1e1f;
+  --color-text: #f4f4f2;
+  --color-text-secondary: #c9c9c7;
+  --color-text-muted: #a3a3a3;
+  --color-text-subtle: #8a8a8a;
+  --color-accent: #3ddc97;
+  --color-on-accent: #02130b;
+  --color-accent-highlight: rgb(255 255 255 / 0.45);
+  --color-accent-soft: rgb(61 220 151 / 0.14);
+  /* The glow in the corners of every screen. */
+  --color-ambient: rgb(36 138 86 / 0.3);
+  --color-positive: #3ddc97;
+  --color-negative: #ff8e7f;
+  --color-hairline: rgb(255 255 255 / 0.09);
+  --color-art-emerald: #248a56;
+  --color-art-graphite: #6e6e73;
+  --color-art-sapphire: #2368b3;
+  --color-art-amber: #a8650f;
+  --color-art-violet: #6a4ec4;
+  --color-art-rose: #b83a58;
+  --color-glass-fill-top: rgb(255 255 255 / 0.1);
+  --color-glass-fill-bottom: rgb(255 255 255 / 0.03);
+  --color-glass-border: rgb(255 255 255 / 0.14);
+  --color-glass-highlight: rgb(255 255 255 / 0.18);
+  --color-nav-fill: rgb(32 32 34 / 0.52);
+  --color-nav-highlight: rgb(255 255 255 / 0.22);
+  --color-nav-lowlight: rgb(255 255 255 / 0.05);
+  --color-nav-bubble: rgb(255 255 255 / 0.13);
+  --color-nav-bubble-highlight: rgb(255 255 255 / 0.28);
+  --color-nav-label: #b4b4b2;
+  --blur-control: 14px;
+  --blur-glass: 18px;
+  --blur-nav: 22px;
+  --saturation-glass: 1.6;
+  --saturation-nav: 1.7;
+  --shadow-glass: 0px 10px 28px 0px rgb(0 0 0 / 0.4);
+  --shadow-nav: 0px 12px 32px 0px rgb(0 0 0 / 0.55);
+  --shadow-nav-bubble: 0px 4px 14px 0px rgb(0 0 0 / 0.35);
+  --shadow-accent-glow: 0px 6px 22px 0px rgb(36 138 86 / 0.55);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 320ms;
+  /* Digits that roll to a new figure, and the parts of a ring that move to their new shares. */
+  --duration-roll: 520ms;
+  /* A card that grows into its page, the longest way anything travels. */
+  --duration-zoom: 420ms;
+  /* The tab bar bubble and switches. */
+  --duration-spring: 560ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  /* Overshoots a little, like a spring. */
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* For opacity: starts and ends gently, so that a cross-fade does not snap. */
+  --easing-fade: cubic-bezier(0.42, 0, 0.58, 1);
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  /* The smallest tap area. */
+  --size-touch-target: 44px;
+  --size-nav-bar: 64px;
+  /* How deep a list fades where it goes under a header or a button that stays in place. */
+  --size-scroll-edge: 48px;
+  /* The height of the count on the corner of a button, such as the new notices on the bell. */
+  --size-badge: 20px;
+  /* Headlines and large amounts. */
+  --font-family-display: Manrope, Inter, system-ui, sans-serif;
+  --font-family-text: Inter, system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;}
+.text-display{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 46px;
+  font-weight: 800;
+  letter-spacing: -1.6px;
+  line-height: 1.02;
+  font-variant-numeric: tabular-nums;}
+.text-heading{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.22px;
+  line-height: 1.2;}
+.text-amount{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.44px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;}
+.text-body{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-body-strong{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-caption{font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.35;}
+/* Short section labels in capitals,such as ACCOUNTS. */
+.text-label{font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.96px;
+  line-height: 1.2;
+  text-transform: uppercase;}
+.page{box-sizing: border-box;
+        margin: 0 auto;
+        max-width: 520px;
+        padding: max(var(--space-md), env(safe-area-inset-top)) var(--space-lg) max(var(--space-xxl), env(safe-area-inset-bottom));}
+@media (min-width: 901px){.page--wide{max-width: 1160px;}
+}
+.ambient{isolation: isolate;
+        min-height: 100dvh;
+        position: relative;}
+.ambient::before{background: radial-gradient(62% 34% at 0% 0%, var(--color-ambient) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, var(--color-ambient) 0%, transparent 74%), radial-gradient(64% 20% at 0% 72%, var(--color-ambient) 0%, transparent 72%), var(--color-background);
+        content: "";
+        height: 100lvh;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: -1;}
+.amount{font-variant-numeric: tabular-nums;
+        white-space: nowrap;}
+.birka-button{align-items: center;
+        background: var(--color-accent);
+        border: 0;
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-on-accent);
+        cursor: pointer;
+        display: flex;
+        height: 56px;
+        justify-content: center;
+        padding: 0 var(--space-lg);
+        text-decoration: none;
+        transition: opacity var(--duration-fast);
+        width: 100%;}
+.birka-button:disabled{cursor: default;
+        opacity: 0.5;}
+.birka-chip{align-items: center;
+        background: var(--color-surface-raised);
+        border: 0;
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        display: inline-flex;
+        gap: var(--space-xs);
+        height: var(--size-touch-target);
+        max-width: 100%;
+        padding: 0 var(--space-md);
+        text-decoration: none;
+        transition: background var(--duration-fast), color var(--duration-fast);}
+.birka-chip:disabled{cursor: default;}
+.birka-chip--selected{background: var(--color-text);
+        color: var(--color-background);}
+.birka-chip--dashed{background: none;
+        border: 1px dashed var(--color-text-subtle);}
+.birka-chip__room{display: flex;
+        flex: none;
+        margin-left: calc(-1 * var(--space-xs));
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-width var(--duration-slow) var(--easing-standard), margin-left var(--duration-slow) var(--easing-standard), opacity var(--duration-base) var(--easing-fade);}
+@media (prefers-reduced-motion: reduce){.birka-chip__room{transition: none;}
+}
+.birka-chip .birka-icon{height: 20px;
+        width: 20px;}
+.birka-chip__label{min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.birka-chip-field{background: none;
+        border: 1px dashed var(--color-text-subtle);
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        caret-color: var(--color-accent);
+        color: var(--color-text);
+        flex: 1 1 120px;
+        font-size: max(1em, 16px);
+        height: var(--size-touch-target);
+        min-width: 0;
+        padding: 0 var(--space-md);
+        transition: background var(--duration-fast), border-color var(--duration-fast);}
+.birka-chip-field::placeholder{color: var(--color-text-secondary);
+        opacity: 1;}
+.birka-chip-field:not(:placeholder-shown){background: var(--color-surface-raised);
+        border-color: transparent;}
+.birka-chip-field:focus{border: 1px solid var(--color-accent);
+        outline: none;}
+.birka-date-chip{position: relative;}
+.birka-date-chip--icon{justify-content: center;
+        padding: 0;
+        width: var(--size-touch-target);}
+.birka-date-chip__input{border: 0;
+        cursor: pointer;
+        height: 100%;
+        inset: 0;
+        margin: 0;
+        opacity: 0;
+        padding: 0;
+        position: absolute;
+        width: 100%;}
+.birka-date-chip__input::-webkit-calendar-picker-indicator{cursor: pointer;
+        height: 100%;
+        inset: 0;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        width: 100%;}
+.birka-date-chip:has(input:focus-visible){outline: 2px solid var(--color-accent);
+        outline-offset: 2px;}
+.birka-fold{--birka-fold-gap: var(--space-lg);
+        display: grid;
+        grid-template-rows: 0fr;
+        margin-top: calc(-1 * var(--birka-fold-gap));
+        opacity: 0;
+        transition: grid-template-rows var(--duration-base) var(--easing-standard), opacity var(--duration-fast) var(--easing-standard);}
+.birka-fold__inner{min-height: 0;
+        overflow: hidden;}
+.birka-fold__body{display: flex;
+        flex-direction: column;
+        gap: var(--birka-fold-gap);
+        padding-top: var(--birka-fold-gap);}
+@media (prefers-reduced-motion: reduce){.birka-fold{transition: opacity var(--duration-base) var(--easing-fade);}
+}
+.birka-form{display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);}
+.birka-form__header{align-items: center;
+        display: flex;
+        gap: var(--space-sm);}
+.birka-form__title{flex: 1;
+        margin: 0;}
+.birka-form__actions{display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);}
+html{color-scheme: dark;}
+body{margin: 0;
+        background: var(--color-background);
+        color: var(--color-text);
+        -webkit-font-smoothing: antialiased;}
+:focus-visible{outline: 2px solid var(--color-accent);
+        outline-offset: 2px;}
+.birka-icon{display: block;
+        flex: none;
+        height: 22px;
+        width: 22px;}
+.birka-icon svg{display: block;
+        height: 100%;
+        width: 100%;}
+@media (min-width: 901px){.birka-narrow-only{display: none;}
+}
+@media (max-width: 900px){.birka-wide-only{display: none;}
+}
+.glass.glass-icon-button{align-items: center;
+        border-radius: var(--radius-pill);
+        color: var(--color-text);
+        cursor: pointer;
+        display: flex;
+        flex: none;
+        height: var(--size-touch-target);
+        justify-content: center;
+        padding: 0;
+        position: relative;
+        width: var(--size-touch-target);}
+.glass-keypad{display: grid;
+        gap: var(--space-xs);
+        grid-template-columns: repeat(4, minmax(0, 1fr));}
+.glass-keypad__key{align-items: center;
+        background: var(--color-surface);
+        border: 0;
+        border-radius: var(--radius-md);
+        color: var(--color-text);
+        cursor: pointer;
+        display: flex;
+        height: 52px;
+        justify-content: center;
+        padding: 0;
+        touch-action: manipulation;
+        transition: background var(--duration-fast);}
+.glass-keypad__key--raised{background: var(--color-surface-raised);
+        color: var(--color-accent);}
+.glass-keypad__key:active{background: var(--color-surface-selected);}
+@media (hover: hover){.glass-keypad__key:hover{background: var(--color-surface-selected);}
+}
+.glass.glass-search{align-items: center;
+        border-radius: var(--radius-pill);
+        color: var(--color-text-muted);
+        display: flex;
+        gap: var(--space-sm);
+        height: var(--size-touch-target);
+        padding: 0 var(--space-xs) 0 var(--space-md);
+        transition: border-color var(--duration-fast);}
+.glass.glass-search:focus-within{border-color: var(--color-accent);}
+.glass-search .birka-icon{height: 20px;
+        width: 20px;}
+.glass-search__input{background: none;
+        border: 0;
+        caret-color: var(--color-accent);
+        color: var(--color-text);
+        flex: 1;
+        font-size: max(1em, 16px);
+        min-width: 0;
+        outline: none;
+        padding: 0;}
+.glass-search__input::placeholder{color: var(--color-text-subtle);}
+.glass-segmented{background: var(--color-surface);
+        border: 1px solid var(--color-hairline);
+        border-radius: var(--radius-lg);
+        box-sizing: border-box;
+        display: flex;
+        height: 52px;
+        padding: var(--space-xxs);
+        width: 100%;}
+.glass-segmented__option{background: none;
+        border: 0;
+        border-radius: var(--radius-md);
+        color: var(--color-text-subtle);
+        cursor: pointer;
+        flex: 1;
+        min-width: 0;
+        transition: background var(--duration-fast), color var(--duration-fast);}
+.glass-segmented__option--selected{background: var(--color-surface-selected);
+        color: var(--color-text);}
+.glass{box-sizing: border-box;
+        padding: var(--space-md);
+        border: 1px solid var(--color-glass-border);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(160deg, var(--color-glass-fill-top) 0%, var(--color-glass-fill-bottom) 100%);
+        box-shadow: inset 0 1px 0 var(--color-glass-highlight), var(--shadow-glass);
+        -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));
+        backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));}
+.glass.tag-picker{display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);}
+.tag-picker__note{color: var(--color-text-muted);
+        margin: 0;}
+.quick-add-tile{align-items: center;
+        background: var(--color-surface);
+        border: 1px solid var(--color-hairline);
+        border-radius: var(--radius-md);
+        box-sizing: border-box;
+        color: var(--color-text);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xxs);
+        height: 68px;
+        justify-content: center;
+        min-width: 0;
+        padding: 0 var(--space-xxs);
+        transition: border-color var(--duration-fast), box-shadow var(--duration-fast);}
+.quick-add-tile--selected{border-color: var(--color-accent);
+        box-shadow: inset 0 0 0 1px var(--color-accent);}
+.quick-add-tile__label{max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.quick-add-tiles{display: grid;
+        gap: var(--space-xs);
+        grid-template-columns: repeat(4, minmax(0, 1fr));}
+.quick-add .birka-form{gap: var(--space-sm);}
+.quick-add__amount{align-items: center;
+        color: var(--color-text);
+        display: flex;
+        flex-direction: column;
+        text-align: center;}
+.quick-add__sum{color: var(--color-text-muted);
+        max-width: 100%;
+        min-height: 20px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.quick-add__amount .amount{overflow-wrap: anywhere;
+        white-space: normal;}
+.quick-add__details{align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs);}
+.quick-add__picture{color: var(--color-text-muted);}
+.quick-add__limit{color:var(--color-text-muted);margin:0;text-align:center}
+.quick-add__limit--near{color:var(--color-palette-amber)}
+.quick-add__limit--over{color:var(--color-negative)}
+
+</style>
+</helmet>
+<div style="min-height: 900px">
+<sc-if value="{{is0}}" hint-placeholder-val="{{ true }}">
+<div class="ambient text-body">
+      <main class="page page--wide">
+        <!--@operations_island--><div><div class="quick-add"><form class="birka-form"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Новая операция</h1><button class="glass glass-icon-button" aria-label="Закрыть" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></span></button></div><div class="glass-segmented"><button class="text-label glass-segmented__option glass-segmented__option--selected" aria-pressed="true" type="button">Расход</button><button class="text-label glass-segmented__option" aria-pressed="false" type="button">Доход</button><button class="text-label glass-segmented__option" aria-pressed="false" type="button">Перевод</button></div><div class="quick-add__amount"><span class="text-body quick-add__sum"></span><span class="text-display amount amount--neutral">−1 250 ₽</span></div><div class="quick-add__details"><button class="text-body-strong birka-chip" aria-pressed="false" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="6" width="17" height="13" rx="3"></rect><path d="M3.5 10h17"></path><path d="M15.5 14.5h2"></path></svg></span><span class="birka-chip__label">Зарплатная карта</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--selected" aria-pressed="true" type="button"><span class="birka-chip__label">Сегодня</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip" aria-pressed="false" type="button"><span class="birka-chip__label">Вчера</span><span class="birka-chip__room"></span></button><label class="text-body-strong birka-chip birka-date-chip birka-date-chip--icon"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"></rect><path d="M3.5 10h17"></path><path d="M8 3v4M16 3v4"></path></svg></span><input class="birka-date-chip__input" aria-label="Выбрать день" max="2026-11-16" min="2000-01-01" type="date"></label><button class="text-body-strong birka-chip birka-chip--dashed" aria-expanded="false" type="button"><span class="birka-chip__label">+ Метка</span><span class="birka-chip__room"></span></button><input class="text-body-strong birka-chip-field" aria-label="+ Заметка" autocapitalize="sentences" autocomplete="off" placeholder="+ Заметка" type="text"></div><div class="birka-fold" style="--birka-fold-gap: var(--space-sm)" inert="" aria-hidden="true"><div class="birka-fold__inner"><div class="birka-fold__body"><div class="glass tag-picker"><div class="glass glass-search"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.8-3.8"></path></svg></span><input class="text-body glass-search__input" aria-label="Найти или создать" autocapitalize="sentences" autocomplete="off" enterkeyhint="search" placeholder="Найти или создать" type="text"></div><p class="text-caption tag-picker__note">Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.</p></div></div></div></div><div class="quick-add-tiles"><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #60a5fa"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="13" rx="3"></rect><path d="M5 11h14"></path><path d="M8 17v3M16 17v3"></path><path d="M8.5 14h.01M15.5 14h.01"></path></svg></span></span><span class="quick-add-tile__label">Транспорт</span></button><button class="text-caption quick-add-tile quick-add-tile--selected" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #4ade80"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.2l2-8H6.2"></path><circle cx="9.5" cy="19" r="1.4"></circle><circle cx="16.5" cy="19" r="1.4"></circle></svg></span></span><span class="quick-add-tile__label">Продукты</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fbbf24"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h12v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"></path><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"></path><path d="M9 3v2.5M13 3v2.5"></path></svg></span></span><span class="quick-add-tile__label">Кафе</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #22d3ee"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19l-3-3"></path><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5l3 3"></path></svg></span></span><span class="quick-add-tile__label">Подписки</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fb923c"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"></rect><path d="M9 6v12M15 6v12"></path></svg></span></span><span class="quick-add-tile__label">Досуг</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fb7185"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"></path></svg></span></span><span class="quick-add-tile__label">Здоровье</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #a78bfa"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg></span></span><span class="quick-add-tile__label">Дом</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></span></span><span class="quick-add-tile__label">Ещё</span></button></div><div class="glass-keypad"><button class="text-amount glass-keypad__key" aria-label="7" tabindex="-1" type="button">7</button><button class="text-amount glass-keypad__key" aria-label="8" tabindex="-1" type="button">8</button><button class="text-amount glass-keypad__key" aria-label="9" tabindex="-1" type="button">9</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Разделить" tabindex="-1" type="button">÷</button><button class="text-amount glass-keypad__key" aria-label="4" tabindex="-1" type="button">4</button><button class="text-amount glass-keypad__key" aria-label="5" tabindex="-1" type="button">5</button><button class="text-amount glass-keypad__key" aria-label="6" tabindex="-1" type="button">6</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Умножить" tabindex="-1" type="button">×</button><button class="text-amount glass-keypad__key" aria-label="1" tabindex="-1" type="button">1</button><button class="text-amount glass-keypad__key" aria-label="2" tabindex="-1" type="button">2</button><button class="text-amount glass-keypad__key" aria-label="3" tabindex="-1" type="button">3</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Минус" tabindex="-1" type="button">−</button><button class="text-amount glass-keypad__key" aria-label="Запятая" tabindex="-1" type="button">,</button><button class="text-amount glass-keypad__key" aria-label="0" tabindex="-1" type="button">0</button><button class="text-amount glass-keypad__key" aria-label="Стереть" tabindex="-1" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"></path><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"></path></svg></span></button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Плюс" tabindex="-1" type="button">+</button></div><div class="birka-form__actions"><p class="text-caption quick-add__limit">Продукты: останется 10 110 ₽ из 30 000 ₽</p><button class="text-label birka-button" type="submit">Сохранить</button></div></form></div></div><!--/@operations_island-->
+      </main>
+    </div>
+</sc-if>
+<sc-if value="{{is1}}" hint-placeholder-val="{{ false }}">
+<div class="ambient text-body">
+      <main class="page page--wide">
+        <!--@operations_island--><div><div class="quick-add"><form class="birka-form"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Новая операция</h1><button class="glass glass-icon-button" aria-label="Закрыть" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></span></button></div><div class="glass-segmented"><button class="text-label glass-segmented__option glass-segmented__option--selected" aria-pressed="true" type="button">Расход</button><button class="text-label glass-segmented__option" aria-pressed="false" type="button">Доход</button><button class="text-label glass-segmented__option" aria-pressed="false" type="button">Перевод</button></div><div class="quick-add__amount"><span class="text-body quick-add__sum"></span><span class="text-display amount amount--neutral">−1 250 ₽</span></div><div class="quick-add__details"><button class="text-body-strong birka-chip" aria-pressed="false" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="6" width="17" height="13" rx="3"></rect><path d="M3.5 10h17"></path><path d="M15.5 14.5h2"></path></svg></span><span class="birka-chip__label">Зарплатная карта</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--selected" aria-pressed="true" type="button"><span class="birka-chip__label">Сегодня</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip" aria-pressed="false" type="button"><span class="birka-chip__label">Вчера</span><span class="birka-chip__room"></span></button><label class="text-body-strong birka-chip birka-date-chip birka-date-chip--icon"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"></rect><path d="M3.5 10h17"></path><path d="M8 3v4M16 3v4"></path></svg></span><input class="birka-date-chip__input" aria-label="Выбрать день" max="2026-11-16" min="2000-01-01" type="date"></label><button class="text-body-strong birka-chip birka-chip--dashed" aria-expanded="false" type="button"><span class="birka-chip__label">+ Метка</span><span class="birka-chip__room"></span></button><input class="text-body-strong birka-chip-field" aria-label="+ Заметка" autocapitalize="sentences" autocomplete="off" placeholder="+ Заметка" type="text"></div><div class="birka-fold" style="--birka-fold-gap: var(--space-sm)" inert="" aria-hidden="true"><div class="birka-fold__inner"><div class="birka-fold__body"><div class="glass tag-picker"><div class="glass glass-search"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.8-3.8"></path></svg></span><input class="text-body glass-search__input" aria-label="Найти или создать" autocapitalize="sentences" autocomplete="off" enterkeyhint="search" placeholder="Найти или создать" type="text"></div><p class="text-caption tag-picker__note">Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.</p></div></div></div></div><div class="quick-add-tiles"><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #60a5fa"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="13" rx="3"></rect><path d="M5 11h14"></path><path d="M8 17v3M16 17v3"></path><path d="M8.5 14h.01M15.5 14h.01"></path></svg></span></span><span class="quick-add-tile__label">Транспорт</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #4ade80"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.2l2-8H6.2"></path><circle cx="9.5" cy="19" r="1.4"></circle><circle cx="16.5" cy="19" r="1.4"></circle></svg></span></span><span class="quick-add-tile__label">Продукты</span></button><button class="text-caption quick-add-tile quick-add-tile--selected" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fbbf24"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h12v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"></path><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"></path><path d="M9 3v2.5M13 3v2.5"></path></svg></span></span><span class="quick-add-tile__label">Кафе</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #22d3ee"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19l-3-3"></path><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5l3 3"></path></svg></span></span><span class="quick-add-tile__label">Подписки</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fb923c"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"></rect><path d="M9 6v12M15 6v12"></path></svg></span></span><span class="quick-add-tile__label">Досуг</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fb7185"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"></path></svg></span></span><span class="quick-add-tile__label">Здоровье</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #a78bfa"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg></span></span><span class="quick-add-tile__label">Дом</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></span></span><span class="quick-add-tile__label">Ещё</span></button></div><div class="glass-keypad"><button class="text-amount glass-keypad__key" aria-label="7" tabindex="-1" type="button">7</button><button class="text-amount glass-keypad__key" aria-label="8" tabindex="-1" type="button">8</button><button class="text-amount glass-keypad__key" aria-label="9" tabindex="-1" type="button">9</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Разделить" tabindex="-1" type="button">÷</button><button class="text-amount glass-keypad__key" aria-label="4" tabindex="-1" type="button">4</button><button class="text-amount glass-keypad__key" aria-label="5" tabindex="-1" type="button">5</button><button class="text-amount glass-keypad__key" aria-label="6" tabindex="-1" type="button">6</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Умножить" tabindex="-1" type="button">×</button><button class="text-amount glass-keypad__key" aria-label="1" tabindex="-1" type="button">1</button><button class="text-amount glass-keypad__key" aria-label="2" tabindex="-1" type="button">2</button><button class="text-amount glass-keypad__key" aria-label="3" tabindex="-1" type="button">3</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Минус" tabindex="-1" type="button">−</button><button class="text-amount glass-keypad__key" aria-label="Запятая" tabindex="-1" type="button">,</button><button class="text-amount glass-keypad__key" aria-label="0" tabindex="-1" type="button">0</button><button class="text-amount glass-keypad__key" aria-label="Стереть" tabindex="-1" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"></path><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"></path></svg></span></button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Плюс" tabindex="-1" type="button">+</button></div><div class="birka-form__actions"><p class="text-caption quick-add__limit quick-add__limit--near">Кафе: останется 600 ₽ из 12 000 ₽</p><button class="text-label birka-button" type="submit">Сохранить</button></div></form></div></div><!--/@operations_island-->
+      </main>
+    </div>
+</sc-if>
+<sc-if value="{{is2}}" hint-placeholder-val="{{ false }}">
+<div class="ambient text-body">
+      <main class="page page--wide">
+        <!--@operations_island--><div><div class="quick-add"><form class="birka-form"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Новая операция</h1><button class="glass glass-icon-button" aria-label="Закрыть" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></span></button></div><div class="glass-segmented"><button class="text-label glass-segmented__option glass-segmented__option--selected" aria-pressed="true" type="button">Расход</button><button class="text-label glass-segmented__option" aria-pressed="false" type="button">Доход</button><button class="text-label glass-segmented__option" aria-pressed="false" type="button">Перевод</button></div><div class="quick-add__amount"><span class="text-body quick-add__sum"></span><span class="text-display amount amount--neutral">−1 250 ₽</span></div><div class="quick-add__details"><button class="text-body-strong birka-chip" aria-pressed="false" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="6" width="17" height="13" rx="3"></rect><path d="M3.5 10h17"></path><path d="M15.5 14.5h2"></path></svg></span><span class="birka-chip__label">Зарплатная карта</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--selected" aria-pressed="true" type="button"><span class="birka-chip__label">Сегодня</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip" aria-pressed="false" type="button"><span class="birka-chip__label">Вчера</span><span class="birka-chip__room"></span></button><label class="text-body-strong birka-chip birka-date-chip birka-date-chip--icon"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"></rect><path d="M3.5 10h17"></path><path d="M8 3v4M16 3v4"></path></svg></span><input class="birka-date-chip__input" aria-label="Выбрать день" max="2026-11-16" min="2000-01-01" type="date"></label><button class="text-body-strong birka-chip birka-chip--dashed" aria-expanded="false" type="button"><span class="birka-chip__label">+ Метка</span><span class="birka-chip__room"></span></button><input class="text-body-strong birka-chip-field" aria-label="+ Заметка" autocapitalize="sentences" autocomplete="off" placeholder="+ Заметка" type="text"></div><div class="birka-fold" style="--birka-fold-gap: var(--space-sm)" inert="" aria-hidden="true"><div class="birka-fold__inner"><div class="birka-fold__body"><div class="glass tag-picker"><div class="glass glass-search"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.8-3.8"></path></svg></span><input class="text-body glass-search__input" aria-label="Найти или создать" autocapitalize="sentences" autocomplete="off" enterkeyhint="search" placeholder="Найти или создать" type="text"></div><p class="text-caption tag-picker__note">Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.</p></div></div></div></div><div class="quick-add-tiles"><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #60a5fa"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="13" rx="3"></rect><path d="M5 11h14"></path><path d="M8 17v3M16 17v3"></path><path d="M8.5 14h.01M15.5 14h.01"></path></svg></span></span><span class="quick-add-tile__label">Транспорт</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #4ade80"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.2l2-8H6.2"></path><circle cx="9.5" cy="19" r="1.4"></circle><circle cx="16.5" cy="19" r="1.4"></circle></svg></span></span><span class="quick-add-tile__label">Продукты</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fbbf24"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h12v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"></path><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"></path><path d="M9 3v2.5M13 3v2.5"></path></svg></span></span><span class="quick-add-tile__label">Кафе</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #22d3ee"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19l-3-3"></path><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5l3 3"></path></svg></span></span><span class="quick-add-tile__label">Подписки</span></button><button class="text-caption quick-add-tile quick-add-tile--selected" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fb923c"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"></rect><path d="M9 6v12M15 6v12"></path></svg></span></span><span class="quick-add-tile__label">Досуг</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #fb7185"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"></path></svg></span></span><span class="quick-add-tile__label">Здоровье</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture" style="color: #a78bfa"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg></span></span><span class="quick-add-tile__label">Дом</span></button><button class="text-caption quick-add-tile" aria-pressed="false" type="button"><span class="quick-add__picture"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></span></span><span class="quick-add-tile__label">Ещё</span></button></div><div class="glass-keypad"><button class="text-amount glass-keypad__key" aria-label="7" tabindex="-1" type="button">7</button><button class="text-amount glass-keypad__key" aria-label="8" tabindex="-1" type="button">8</button><button class="text-amount glass-keypad__key" aria-label="9" tabindex="-1" type="button">9</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Разделить" tabindex="-1" type="button">÷</button><button class="text-amount glass-keypad__key" aria-label="4" tabindex="-1" type="button">4</button><button class="text-amount glass-keypad__key" aria-label="5" tabindex="-1" type="button">5</button><button class="text-amount glass-keypad__key" aria-label="6" tabindex="-1" type="button">6</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Умножить" tabindex="-1" type="button">×</button><button class="text-amount glass-keypad__key" aria-label="1" tabindex="-1" type="button">1</button><button class="text-amount glass-keypad__key" aria-label="2" tabindex="-1" type="button">2</button><button class="text-amount glass-keypad__key" aria-label="3" tabindex="-1" type="button">3</button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Минус" tabindex="-1" type="button">−</button><button class="text-amount glass-keypad__key" aria-label="Запятая" tabindex="-1" type="button">,</button><button class="text-amount glass-keypad__key" aria-label="0" tabindex="-1" type="button">0</button><button class="text-amount glass-keypad__key" aria-label="Стереть" tabindex="-1" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"></path><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"></path></svg></span></button><button class="text-amount glass-keypad__key glass-keypad__key--raised" aria-label="Плюс" tabindex="-1" type="button">+</button></div><div class="birka-form__actions"><p class="text-caption quick-add__limit quick-add__limit--over">Досуг: больше лимита на 2 550 ₽</p><button class="text-label birka-button" type="submit">Сохранить</button></div></form></div></div><!--/@operations_island-->
+      </main>
+    </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["В лимите", "Почти всё", "Больше лимита"], "default": "В лимите"}, "$preview": {"width": 520, "height": 900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { grown: false, picked: null };
+    this.timer = null;
+  }
+
+  componentDidMount() {
+    this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      clearTimeout(this.timer);
+      this.setState({ grown: false, picked: null });
+      this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  renderVals() {
+    const s = this.props.state ?? "В лимите";
+    const widths = {"В лимите": {}, "Почти всё": {}, "Больше лимита": {}}[s] ?? {};
+    const m = Object.fromEntries(Object.entries(widths).map(([k, v]) => [k, this.state.grown ? v : "0%"]));
+    return { m, is0: s === "В лимите", is1: s === "Почти всё", is2: s === "Больше лимита" };
+  }
+}
+</script>
+</body>
+</html>

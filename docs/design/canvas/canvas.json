@@ -1,0 +1,1682 @@
+{
+ "v": 3,
+ "attachments": {},
+ "boards": {
+  "Import-Phone.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Импорт на телефоне · короткий путь",
+   "w": 390,
+   "x": 1520,
+   "y": 10200
+  },
+  "Inbox-Phone.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Входящие на телефоне",
+   "w": 390,
+   "x": 1990,
+   "y": 10200
+  },
+  "Import-Columns-Phone.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Импорт на телефоне · колонки",
+   "w": 390,
+   "x": 2460,
+   "y": 10200
+  },
+  "Inbox-Entry.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Вход во «Входящие» · обзор и «Ещё»",
+   "w": 390,
+   "x": 2930,
+   "y": 10200
+  },
+  "Import-Categories-Phone.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Импорт на телефоне · категории банка",
+   "w": 390,
+   "x": 3400,
+   "y": 10200
+  },
+  "Import-Problems-Phone.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Импорт на телефоне · нечитаемые строки",
+   "w": 390,
+   "x": 3870,
+   "y": 10200
+  },
+  "Inbox.dc.html": {
+   "expand": "fill",
+   "h": 1160,
+   "is_interactive": true,
+   "title": "Входящие",
+   "w": 1440,
+   "x": 0,
+   "y": 10200
+  },
+  "Import-Done.dc.html": {
+   "expand": "fill",
+   "h": 1080,
+   "is_interactive": true,
+   "title": "Импорт · итог и отмена",
+   "w": 1440,
+   "x": 3040,
+   "y": 8700
+  },
+  "Import-Duplicates.dc.html": {
+   "expand": "fill",
+   "h": 1080,
+   "is_interactive": true,
+   "title": "Импорт · дубликаты",
+   "w": 1440,
+   "x": 1520,
+   "y": 8700
+  },
+  "Import-Account.dc.html": {
+   "expand": "fill",
+   "h": 1080,
+   "is_interactive": true,
+   "title": "Импорт · счёт и сверка остатка",
+   "w": 1440,
+   "x": 0,
+   "y": 8700
+  },
+  "Import-Columns.dc.html": {
+   "expand": "fill",
+   "h": 1300,
+   "is_interactive": true,
+   "title": "Импорт · колонки и живое превью",
+   "w": 1440,
+   "x": 3040,
+   "y": 7280
+  },
+  "Import-Bank.dc.html": {
+   "expand": "fill",
+   "h": 1040,
+   "is_interactive": true,
+   "title": "Импорт · банк и формат",
+   "w": 1440,
+   "x": 1520,
+   "y": 7280
+  },
+  "Import-File.dc.html": {
+   "expand": "fill",
+   "h": 1040,
+   "is_interactive": true,
+   "title": "Импорт · файл",
+   "w": 1440,
+   "x": 0,
+   "y": 7280
+  },
+  "Accounts.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Счета",
+   "w": 390,
+   "x": 1410,
+   "y": 1264
+  },
+  "Data.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Данные: копия и экспорт",
+   "w": 390,
+   "x": 0,
+   "y": 3488
+  },
+  "Help.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Помощь и отзыв",
+   "w": 390,
+   "x": 470,
+   "y": 3488
+  },
+  "Icon.dc.html": {
+   "h": 560,
+   "title": "Иконка приложения: три варианта",
+   "w": 1100,
+   "x": 0,
+   "y": 2508
+  },
+  "Main.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Обзор",
+   "w": 390,
+   "x": 0,
+   "y": 0
+  },
+  "More.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Ещё и настройки",
+   "w": 390,
+   "x": 1880,
+   "y": 1264
+  },
+  "Motion-EditInPlace.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Изменить счёт · правка на месте",
+   "w": 390,
+   "x": 470,
+   "y": 4752
+  },
+  "Motion-EditNow.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Изменить счёт · сейчас",
+   "w": 390,
+   "x": 0,
+   "y": 4752
+  },
+  "Motion-Push.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Вглубь · системный переход",
+   "w": 390,
+   "x": 1410,
+   "y": 4752
+  },
+  "Motion-Sheet.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Новый счёт · лист",
+   "w": 390,
+   "x": 940,
+   "y": 4752
+  },
+  "Motion-Zoom.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Карточка → страница · потом",
+   "w": 390,
+   "x": 1880,
+   "y": 4752
+  },
+  "Onboarding.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Онбординг",
+   "w": 390,
+   "x": 2350,
+   "y": 1264
+  },
+  "Operations.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Операции",
+   "w": 390,
+   "x": 0,
+   "y": 1264
+  },
+  "Overview-Glass.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Обзор · Liquid Glass",
+   "w": 390,
+   "x": 470,
+   "y": 0
+  },
+  "QuickAdd.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Быстрый ввод",
+   "w": 390,
+   "x": 940,
+   "y": 0
+  },
+  "Reports.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Отчёты",
+   "w": 390,
+   "x": 940,
+   "y": 1264
+  },
+  "Transaction.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Детали операции",
+   "w": 390,
+   "x": 470,
+   "y": 1264
+  },
+  "Anim-Amounts.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Суммы: докрутка и скрытие",
+   "w": 390,
+   "x": 0,
+   "y": 6016
+  },
+  "Anim-List.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Операции: появление и удаление",
+   "w": 390,
+   "x": 470,
+   "y": 6016
+  },
+  "Anim-Chart.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "График: смена периода",
+   "w": 390,
+   "x": 940,
+   "y": 6016
+  },
+  "Anim-Month.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Отчёты: смена месяца",
+   "w": 390,
+   "x": 1410,
+   "y": 6016
+  },
+  "Anim-Form.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Новый счёт: ввод и сохранение",
+   "w": 390,
+   "x": 1880,
+   "y": 6016
+  },
+  "Anim-Toast.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Уведомление после действия",
+   "w": 390,
+   "x": 2350,
+   "y": 6016
+  },
+  "Future-Overview.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Обзор · можно тратить сегодня",
+   "w": 390,
+   "x": 0,
+   "y": 11780
+  },
+  "Future-Planned.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Регулярные платежи",
+   "w": 390,
+   "x": 470,
+   "y": 11780
+  },
+  "Future-Form.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Регулярный платёж · форма",
+   "w": 390,
+   "x": 940,
+   "y": 11780
+  },
+  "Future-Payday.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Деньги до зарплаты",
+   "w": 390,
+   "x": 1410,
+   "y": 11780
+  },
+  "Salary-Form.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Зарплата с авансом · форма",
+   "w": 390,
+   "x": 0,
+   "y": 13044
+  },
+  "Salary-Payday.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Деньги до зарплаты · с авансом",
+   "w": 390,
+   "x": 470,
+   "y": 13044
+  },
+  "Salary-Planned.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Регулярные платежи · с авансом",
+   "w": 390,
+   "x": 940,
+   "y": 13044
+  },
+  "Remind-Settings.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Напоминания в «Ещё»",
+   "w": 390,
+   "x": 0,
+   "y": 14308
+  },
+  "Remind-Sheet.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Напоминания · разрешения",
+   "w": 390,
+   "x": 470,
+   "y": 14308
+  },
+  "Remind-Form.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Платёж · когда напомнить",
+   "w": 390,
+   "x": 940,
+   "y": 14308
+  },
+  "Remind-Arrive.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Как приходит напоминание",
+   "w": 390,
+   "x": 1410,
+   "y": 14308
+  },
+  "Notify-Overview.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "w": 390,
+   "y": 15572,
+   "title": "Обзор · колокольчик",
+   "x": 0
+  },
+  "Notify-Feed.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "w": 390,
+   "y": 15572,
+   "title": "Уведомления · новые и история",
+   "x": 470
+  },
+  "Notify-History.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "w": 390,
+   "y": 15572,
+   "title": "Уведомления · история",
+   "x": 940
+  },
+  "Notify-Tap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "w": 390,
+   "y": 15572,
+   "title": "Тап по новому · регулярные платежи",
+   "x": 1410
+  },
+  "Notify-Web.dc.html": {
+   "expand": "fill",
+   "h": 1110,
+   "is_interactive": true,
+   "title": "Уведомления на сайте",
+   "w": 1440,
+   "x": 1880,
+   "y": 15572
+  },
+  "Repeat-Operation.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Операция → регулярный платёж",
+   "w": 390,
+   "x": 0,
+   "y": 16836
+  },
+  "Import-Found-Phone.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Импорт на телефоне · нашли регулярные",
+   "w": 390,
+   "x": 470,
+   "y": 16836
+  },
+  "Salary-Split.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Зарплата · аванс своей суммой",
+   "w": 390,
+   "x": 940,
+   "y": 16836
+  },
+  "Found-Planned.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Регулярные платежи · похоже на регулярные",
+   "w": 390,
+   "x": 0,
+   "y": 18100
+  },
+  "Found-Form.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Похоже на регулярный · форма",
+   "w": 390,
+   "x": 470,
+   "y": 18100
+  },
+  "Found-Import.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Импорт · похоже на регулярные",
+   "w": 390,
+   "x": 940,
+   "y": 18100
+  },
+  "Forecast-Overview.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Обзор · прогноз как обычно",
+   "w": 390,
+   "x": 1410,
+   "y": 18100
+  },
+  "Forecast-Payday.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Деньги до зарплаты · как обычно",
+   "w": 390,
+   "x": 1880,
+   "y": 18100
+  },
+  "Web-Overview-Wide.dc.html": {
+   "expand": "fill",
+   "h": 1030,
+   "is_interactive": true,
+   "title": "Обзор на сайте · широкий экран",
+   "w": 1440,
+   "x": 0,
+   "y": 19364
+  },
+  "Web-Planned-Wide.dc.html": {
+   "expand": "fill",
+   "h": 1440,
+   "is_interactive": true,
+   "title": "Регулярные платежи на сайте · широкий экран",
+   "w": 1440,
+   "x": 1520,
+   "y": 19364
+  },
+  "Web-Form-Wide.dc.html": {
+   "expand": "fill",
+   "h": 900,
+   "is_interactive": true,
+   "title": "Регулярный платёж на сайте · форма, широкий экран",
+   "w": 1440,
+   "x": 3040,
+   "y": 19364
+  },
+  "Web-Payday-Wide.dc.html": {
+   "expand": "fill",
+   "h": 840,
+   "is_interactive": true,
+   "title": "Деньги до зарплаты на сайте · широкий экран",
+   "w": 1440,
+   "x": 4560,
+   "y": 19364
+  },
+  "Web-Overview.dc.html": {
+   "expand": "fill",
+   "h": 1400,
+   "is_interactive": true,
+   "title": "Обзор на сайте · узкий экран",
+   "w": 520,
+   "x": 0,
+   "y": 21264
+  },
+  "Web-Planned.dc.html": {
+   "expand": "fill",
+   "h": 1480,
+   "is_interactive": true,
+   "title": "Регулярные платежи на сайте · узкий экран",
+   "w": 520,
+   "x": 1520,
+   "y": 21264
+  },
+  "Web-Form.dc.html": {
+   "expand": "fill",
+   "h": 1080,
+   "is_interactive": true,
+   "title": "Регулярный платёж на сайте · форма, узкий экран",
+   "w": 520,
+   "x": 3040,
+   "y": 21264
+  },
+  "Web-Payday.dc.html": {
+   "expand": "fill",
+   "h": 1320,
+   "is_interactive": true,
+   "title": "Деньги до зарплаты на сайте · узкий экран",
+   "w": 520,
+   "x": 4560,
+   "y": 21264
+  },
+  "Web-Operations-Wide.dc.html": {
+   "expand": "fill",
+   "h": 1540,
+   "is_interactive": true,
+   "title": "Операции на сайте · широкий экран",
+   "w": 1440,
+   "x": 0,
+   "y": 23204
+  },
+  "Web-Notifications-Wide.dc.html": {
+   "expand": "fill",
+   "h": 1110,
+   "is_interactive": true,
+   "title": "Уведомления на сайте · широкий экран",
+   "w": 1440,
+   "x": 3040,
+   "y": 24904
+  },
+  "Web-Repeat-Operation-Wide.dc.html": {
+   "h": 1540,
+   "is_interactive": true,
+   "title": "Операция на сайте · сделать регулярным, широкий экран",
+   "w": 1440,
+   "x": 0,
+   "y": 26480,
+   "expand": "fill"
+  },
+  "Web-Advance-Payday-Wide.dc.html": {
+   "h": 880,
+   "is_interactive": true,
+   "title": "Деньги до зарплаты на сайте · прогноз с авансом, широкий экран",
+   "w": 1440,
+   "x": 3040,
+   "y": 26480,
+   "expand": "fill"
+  },
+  "Advance-Payday.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "title": "Деньги до зарплаты · прогноз с авансом",
+   "w": 390,
+   "x": 4560,
+   "y": 26480,
+   "radius": 40
+  },
+  "Web-Repeat-Operation.dc.html": {
+   "h": 900,
+   "is_interactive": true,
+   "title": "Операция на сайте · сделать регулярным, узкий экран",
+   "w": 520,
+   "x": 0,
+   "y": 28480,
+   "expand": "fill"
+  },
+  "Web-Advance-Payday.dc.html": {
+   "h": 1360,
+   "is_interactive": true,
+   "title": "Деньги до зарплаты на сайте · прогноз с авансом, узкий экран",
+   "w": 520,
+   "x": 3040,
+   "y": 28480,
+   "expand": "fill"
+  },
+  "Tags-QuickAdd.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Быстрый ввод · метка поездки",
+   "w": 390,
+   "x": 0,
+   "y": 30440
+  },
+  "Tags-Picker.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Метки · выбор",
+   "w": 390,
+   "x": 470,
+   "y": 30440
+  },
+  "Tags-Operation.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Операция · метка",
+   "w": 390,
+   "x": 940,
+   "y": 30440
+  },
+  "Tags-Trip.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Поездка · итог",
+   "w": 390,
+   "x": 1410,
+   "y": 30440
+  },
+  "Tags-List.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Метки",
+   "w": 390,
+   "x": 1880,
+   "y": 30440
+  },
+  "Tags-Form.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Новая метка · поездка",
+   "w": 390,
+   "x": 2350,
+   "y": 30440
+  },
+  "Ask-Start.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Спросить · начало",
+   "w": 390,
+   "x": 470,
+   "y": 35724
+  },
+  "Ask-Answer.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Спросить · траты на кафе",
+   "w": 390,
+   "x": 940,
+   "y": 35724
+  },
+  "Ask-Period.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Спросить · период ответа",
+   "w": 390,
+   "x": 1410,
+   "y": 35724
+  },
+  "Ask-Trip.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Спросить · траты в поездке",
+   "w": 390,
+   "x": 1880,
+   "y": 35724
+  },
+  "Ask-Facts.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Спросить · можно тратить сегодня",
+   "w": 390,
+   "x": 2350,
+   "y": 35724
+  },
+  "Ask-Help.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Спросить · справка и экраны",
+   "w": 390,
+   "x": 2820,
+   "y": 35724
+  },
+  "Ask-Refuse.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Спросить · не по теме",
+   "w": 390,
+   "x": 3290,
+   "y": 35724
+  },
+  "Debts-More.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Ещё · вход в долги",
+   "w": 390,
+   "x": 0,
+   "y": 40328
+  },
+  "Debts-List.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Долги · кто кому должен",
+   "w": 390,
+   "x": 470,
+   "y": 40328
+  },
+  "Debt-Form.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Новый долг · одолжить или занять",
+   "w": 390,
+   "x": 940,
+   "y": 40328
+  },
+  "Debt-Person.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Долг · карточка человека",
+   "w": 390,
+   "x": 1410,
+   "y": 40328
+  },
+  "Debt-Return.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Возврат · всё или часть",
+   "w": 390,
+   "x": 1880,
+   "y": 40328
+  },
+  "Debt-Operations.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Операции · долги среди переводов",
+   "w": 390,
+   "x": 2350,
+   "y": 40328
+  },
+  "Debt-Remind.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Уведомления · срок долга",
+   "w": 390,
+   "x": 2820,
+   "y": 40328
+  },
+  "Web-Debts-Wide.dc.html": {
+   "h": 1100,
+   "is_interactive": true,
+   "title": "Долги на сайте · широкий экран",
+   "w": 1440,
+   "x": 0,
+   "y": 41632,
+   "expand": "fill"
+  },
+  "Web-Debts.dc.html": {
+   "h": 1040,
+   "is_interactive": true,
+   "title": "Долги на сайте · список, узкий экран",
+   "w": 520,
+   "x": 0,
+   "y": 43192,
+   "expand": "fill"
+  },
+  "People-New.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Новый человек · из контактов",
+   "w": 390,
+   "x": 0,
+   "y": 44832
+  },
+  "People-Card.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Долг · «кто это» и «Напомнить»",
+   "w": 390,
+   "x": 470,
+   "y": 44832
+  },
+  "People-Remind.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Напомнить · готовое сообщение",
+   "w": 390,
+   "x": 940,
+   "y": 44832
+  },
+  "People-Edit.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Изменить долг · человек и номер",
+   "w": 390,
+   "x": 1410,
+   "y": 44832
+  },
+  "Widgets-More.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Ещё · вход в виджеты",
+   "w": 390,
+   "x": 0,
+   "y": 49216
+  },
+  "Widgets-Page.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Виджеты · что есть и как добавить",
+   "w": 390,
+   "x": 470,
+   "y": 49216
+  },
+  "Widgets-Home.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Экран «Домой» · «Сегодня» и «Запись»",
+   "w": 390,
+   "x": 940,
+   "y": 49216
+  },
+  "Widgets-Lock.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Экран блокировки · суммы после Face ID",
+   "w": 390,
+   "x": 1410,
+   "y": 49216
+  },
+  "Widgets-Actions.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Иконка Birka · быстрые действия",
+   "w": 390,
+   "x": 1880,
+   "y": 49216
+  },
+  "Widgets-Android-Home.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Android · главный экран с виджетами",
+   "w": 390,
+   "x": 0,
+   "y": 50520
+  },
+  "Widgets-Android-Shortcuts.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Android · ярлыки на иконке",
+   "w": 390,
+   "x": 470,
+   "y": 50520
+  },
+  "Widgets-Page-Android.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Android · страница «Виджеты»",
+   "w": 390,
+   "x": 940,
+   "y": 50520
+  },
+  "Receipt-QuickAdd.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Быстрый ввод · кнопка «Чек»",
+   "w": 390,
+   "x": 0,
+   "y": 51824
+  },
+  "Receipt-Scanner.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Сканер чека",
+   "w": 390,
+   "x": 470,
+   "y": 51824
+  },
+  "Receipt-Filled.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Быстрый ввод · из чека",
+   "w": 390,
+   "x": 940,
+   "y": 51824
+  },
+  "Receipt-Twice.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Чек уже записан",
+   "w": 390,
+   "x": 1410,
+   "y": 51824
+  },
+  "Receipt-Camera.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Доступ к камере",
+   "w": 390,
+   "x": 1880,
+   "y": 51824
+  },
+  "Receipt-Operation.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Операция из чека",
+   "w": 390,
+   "x": 2350,
+   "y": 51824
+  },
+  "Limits-Overview.dc.html": {
+   "x": 0,
+   "y": 53128,
+   "w": 390,
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Обзор · лимиты на ноябрь"
+  },
+  "Limits-Page.dc.html": {
+   "x": 470,
+   "y": 53128,
+   "w": 390,
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Лимиты · что осталось в каждой"
+  },
+  "Limits-Form.dc.html": {
+   "x": 940,
+   "y": 53128,
+   "w": 390,
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Лимит на месяц"
+  },
+  "Limits-Suggest.dc.html": {
+   "x": 1410,
+   "y": 53128,
+   "w": 390,
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Лимиты по средним за 3 месяца"
+  },
+  "Limits-QuickAdd.dc.html": {
+   "x": 1880,
+   "y": 53128,
+   "w": 390,
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Быстрый ввод · сколько останется"
+  },
+  "Limits-Notice.dc.html": {
+   "x": 2350,
+   "y": 53128,
+   "w": 390,
+   "h": 844,
+   "is_interactive": true,
+   "radius": 40,
+   "title": "Уведомления · лимит после выписки"
+  },
+  "Web-Limits-Overview-Wide.dc.html": {
+   "h": 1300,
+   "is_interactive": true,
+   "title": "Обзор на сайте · лимиты на ноябрь, широкий экран",
+   "w": 1440,
+   "x": 0,
+   "y": 54512,
+   "expand": "fill"
+  },
+  "Web-Limits-Overview.dc.html": {
+   "h": 1480,
+   "is_interactive": true,
+   "title": "Обзор на сайте · лимиты на ноябрь, узкий экран",
+   "w": 520,
+   "x": 0,
+   "y": 56352,
+   "expand": "fill"
+  },
+  "Web-Limits-Page-Wide.dc.html": {
+   "h": 900,
+   "is_interactive": true,
+   "title": "Лимиты на сайте · что осталось в каждой, широкий экран",
+   "w": 1440,
+   "x": 1520,
+   "y": 54512,
+   "expand": "fill"
+  },
+  "Web-Limits-Page.dc.html": {
+   "h": 1120,
+   "is_interactive": true,
+   "title": "Лимиты на сайте · что осталось в каждой, узкий экран",
+   "w": 520,
+   "x": 1520,
+   "y": 56352,
+   "expand": "fill"
+  },
+  "Web-Limits-Form-Wide.dc.html": {
+   "h": 600,
+   "is_interactive": true,
+   "title": "Лимит на месяц на сайте, широкий экран",
+   "w": 1440,
+   "x": 3040,
+   "y": 54512,
+   "expand": "fill"
+  },
+  "Web-Limits-Form.dc.html": {
+   "h": 780,
+   "is_interactive": true,
+   "title": "Лимит на месяц на сайте, узкий экран",
+   "w": 520,
+   "x": 3040,
+   "y": 56352,
+   "expand": "fill"
+  },
+  "Web-Limits-Suggest-Wide.dc.html": {
+   "h": 760,
+   "is_interactive": true,
+   "title": "Лимиты по средним на сайте, широкий экран",
+   "w": 1440,
+   "x": 4560,
+   "y": 54512,
+   "expand": "fill"
+  },
+  "Web-Limits-Suggest.dc.html": {
+   "h": 860,
+   "is_interactive": true,
+   "title": "Лимиты по средним на сайте, узкий экран",
+   "w": 520,
+   "x": 4560,
+   "y": 56352,
+   "expand": "fill"
+  },
+  "Web-Limits-QuickAdd-Wide.dc.html": {
+   "h": 1000,
+   "is_interactive": true,
+   "title": "Быстрый ввод на сайте · сколько останется, широкий экран",
+   "w": 1440,
+   "x": 6080,
+   "y": 54512,
+   "expand": "fill"
+  },
+  "Web-Limits-QuickAdd.dc.html": {
+   "h": 900,
+   "is_interactive": true,
+   "title": "Быстрый ввод на сайте · сколько останется, узкий экран",
+   "w": 520,
+   "x": 6080,
+   "y": 56352,
+   "expand": "fill"
+  },
+  "Web-Limits-Notice-Wide.dc.html": {
+   "h": 860,
+   "is_interactive": true,
+   "title": "Уведомления на сайте · лимит после выписки, широкий экран",
+   "w": 1440,
+   "x": 7600,
+   "y": 54512,
+   "expand": "fill"
+  },
+  "Web-Limits-Notice.dc.html": {
+   "h": 920,
+   "is_interactive": true,
+   "title": "Уведомления на сайте · лимит после выписки, узкий экран",
+   "w": 520,
+   "x": 7600,
+   "y": 56352,
+   "expand": "fill"
+  }
+ },
+ "createdOnFiles": {
+  "at": "2026-10-30T07:30:00Z",
+  "v": 1
+ },
+ "designSystems": [],
+ "launch": {
+  "view": "canvas"
+ },
+ "noteOrder": [
+  "overview",
+  "screens",
+  "icons",
+  "mvpClose",
+  "motion",
+  "elements",
+  "importWizard",
+  "inboxPhone",
+  "futureMoney",
+  "salaryAdvance",
+  "reminders",
+  "notifications",
+  "futureLeftovers",
+  "foundForecast",
+  "futureMoneyWeb",
+  "futureMoneyWebNarrow",
+  "siteWide",
+  "deferredWide",
+  "deferredNarrow",
+  "tagsPhone",
+  "tagsWide",
+  "tagsNarrow",
+  "askPhone",
+  "askWide",
+  "askNarrow",
+  "debtsPhone",
+  "debtsWide",
+  "debtsNarrow",
+  "peoplePhone",
+  "peopleWide",
+  "peopleNarrow",
+  "widgetsPhone",
+  "widgetsAndroid",
+  "receiptsPhone",
+  "limitsPhone",
+  "limitsWebWide",
+  "limitsWebNarrow"
+ ],
+ "notes": {
+  "icons": {
+   "kind": "title1",
+   "maxW": 1100,
+   "text": "Образ: стеклянная монета",
+   "w": 240,
+   "x": 0,
+   "y": 2208
+  },
+  "motion": {
+   "kind": "title1",
+   "maxW": 2270,
+   "text": "Переходы: как открываются экраны",
+   "w": 240,
+   "x": 0,
+   "y": 4452
+  },
+  "mvpClose": {
+   "kind": "title1",
+   "maxW": 860,
+   "text": "Закрываем MVP: данные и помощь",
+   "w": 240,
+   "x": 0,
+   "y": 3188
+  },
+  "overview": {
+   "kind": "title1",
+   "maxW": 1330,
+   "text": "Ночь: чёрный с изумрудом",
+   "w": 240,
+   "x": 0,
+   "y": -300
+  },
+  "screens": {
+   "kind": "title1",
+   "maxW": 2740,
+   "text": "Экраны MVP · Liquid Glass",
+   "w": 240,
+   "x": 0,
+   "y": 964
+  },
+  "elements": {
+   "kind": "title1",
+   "maxW": 2740,
+   "text": "Анимации элементов",
+   "w": 240,
+   "x": 0,
+   "y": 5716
+  },
+  "importWizard": {
+   "kind": "title1",
+   "maxW": 4480,
+   "text": "Импорт выписки: мастер на сайте",
+   "w": 240,
+   "x": 0,
+   "y": 6980
+  },
+  "inboxPhone": {
+   "kind": "title1",
+   "maxW": 4260,
+   "text": "Входящие и импорт на телефоне",
+   "w": 240,
+   "x": 0,
+   "y": 9900
+  },
+  "futureMoney": {
+   "kind": "title1",
+   "maxW": 1800,
+   "text": "Будущие деньги на телефоне",
+   "w": 240,
+   "x": 0,
+   "y": 11480
+  },
+  "salaryAdvance": {
+   "kind": "title1",
+   "maxW": 1330,
+   "text": "Зарплата с авансом",
+   "w": 240,
+   "x": 0,
+   "y": 12744
+  },
+  "reminders": {
+   "kind": "title1",
+   "maxW": 1800,
+   "text": "Напоминания: Birka и календарь",
+   "w": 240,
+   "x": 0,
+   "y": 14008
+  },
+  "notifications": {
+   "kind": "title1",
+   "maxW": 3320,
+   "text": "Уведомления: колокольчик и лента",
+   "w": 240,
+   "x": 0,
+   "y": 15272
+  },
+  "futureLeftovers": {
+   "kind": "title1",
+   "maxW": 1330,
+   "text": "Будущие деньги: доделки",
+   "w": 240,
+   "x": 0,
+   "y": 16536
+  },
+  "foundForecast": {
+   "kind": "title1",
+   "maxW": 2270,
+   "text": "Находки в операциях и прогноз",
+   "w": 240,
+   "x": 0,
+   "y": 17800
+  },
+  "futureMoneyWeb": {
+   "kind": "title1",
+   "maxW": 6000,
+   "text": "Будущие деньги на сайте · широкий экран",
+   "w": 240,
+   "x": 0,
+   "y": 19064
+  },
+  "futureMoneyWebNarrow": {
+   "kind": "title1",
+   "maxW": 5080,
+   "text": "Будущие деньги на сайте · узкий экран, до 900 px",
+   "w": 240,
+   "x": 0,
+   "y": 20964
+  },
+  "siteWide": {
+   "kind": "title1",
+   "maxW": 7520,
+   "text": "Сайт: широкие версии страниц",
+   "w": 240,
+   "x": 0,
+   "y": 22904
+  },
+  "deferredWide": {
+   "kind": "title1",
+   "maxW": 4950,
+   "text": "Отложенное: из операции, итог импорта, прогноз с авансом · широкий экран",
+   "w": 240,
+   "x": 0,
+   "y": 26180
+  },
+  "deferredNarrow": {
+   "kind": "title1",
+   "maxW": 3560,
+   "text": "Отложенное · узкий экран, до 900 px",
+   "w": 240,
+   "x": 0,
+   "y": 28180
+  },
+  "tagsPhone": {
+   "kind": "title1",
+   "maxW": 2740,
+   "text": "Метки и поездки на телефоне",
+   "w": 240,
+   "x": 0,
+   "y": 30140
+  },
+  "tagsWide": {
+   "kind": "title1",
+   "maxW": 3280,
+   "text": "Метки и поездки на сайте · широкий экран",
+   "w": 240,
+   "x": 0,
+   "y": 31444
+  },
+  "tagsNarrow": {
+   "kind": "title1",
+   "maxW": 2360,
+   "text": "Метки и поездки на сайте · узкий экран, до 900 px",
+   "w": 240,
+   "x": 0,
+   "y": 33004
+  },
+  "askPhone": {
+   "kind": "title1",
+   "maxW": 4160,
+   "text": "Спросить на телефоне: вопрос словами, ответ считает само приложение",
+   "w": 240,
+   "x": 0,
+   "y": 35424
+  },
+  "askWide": {
+   "kind": "title1",
+   "maxW": 3290,
+   "text": "Спросить на сайте · широкий экран",
+   "w": 240,
+   "x": 0,
+   "y": 36728
+  },
+  "askNarrow": {
+   "kind": "title1",
+   "maxW": 1730,
+   "text": "Спросить на сайте · узкий экран, до 900 px",
+   "w": 240,
+   "x": 0,
+   "y": 38368
+  },
+  "debtsPhone": {
+   "kind": "title1",
+   "maxW": 3220,
+   "text": "Долги на телефоне: кто кому должен и до какого дня",
+   "w": 240,
+   "x": 0,
+   "y": 40028
+  },
+  "debtsWide": {
+   "kind": "title1",
+   "maxW": 1450,
+   "text": "Долги на сайте · широкий экран",
+   "w": 240,
+   "x": 0,
+   "y": 41332
+  },
+  "debtsNarrow": {
+   "kind": "title1",
+   "maxW": 1730,
+   "text": "Долги на сайте · узкий экран, до 900 px",
+   "w": 240,
+   "x": 0,
+   "y": 42892
+  },
+  "peoplePhone": {
+   "kind": "title1",
+   "maxW": 1800,
+   "text": "Люди в долгах: из контактов, «кто это» и напоминание сообщением",
+   "w": 240,
+   "x": 0,
+   "y": 44532
+  },
+  "peopleWide": {
+   "kind": "title1",
+   "maxW": 1450,
+   "text": "Люди в долгах на сайте · широкий экран",
+   "w": 240,
+   "x": 0,
+   "y": 45836
+  },
+  "peopleNarrow": {
+   "kind": "title1",
+   "maxW": 1120,
+   "text": "Люди в долгах на сайте · узкий экран, до 900 px",
+   "w": 240,
+   "x": 0,
+   "y": 47396
+  },
+  "widgetsPhone": {
+   "kind": "title1",
+   "maxW": 2270,
+   "text": "Виджеты и быстрые действия на iPhone",
+   "w": 240,
+   "x": 0,
+   "y": 48916
+  },
+  "widgetsAndroid": {
+   "kind": "title1",
+   "maxW": 1330,
+   "text": "Виджеты и ярлыки на Android",
+   "w": 240,
+   "x": 0,
+   "y": 50220
+  },
+  "receiptsPhone": {
+   "kind": "title1",
+   "maxW": 2740,
+   "text": "Чек по QR: сумма и время с кассового чека",
+   "w": 240,
+   "x": 0,
+   "y": 51524
+  },
+  "limitsPhone": {
+   "x": 0,
+   "y": 52828,
+   "text": "Лимиты по категориям: сколько осталось в каждой, в любой валюте",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "limitsWebWide": {
+   "kind": "title1",
+   "maxW": 9040,
+   "text": "Лимиты на сайте · широкий экран",
+   "w": 240,
+   "x": 0,
+   "y": 54212
+  },
+  "limitsWebNarrow": {
+   "kind": "title1",
+   "maxW": 9040,
+   "text": "Лимиты на сайте · узкий экран, до 900 px",
+   "w": 240,
+   "x": 0,
+   "y": 56052
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "Overview-Glass.dc.html",
+  "QuickAdd.dc.html",
+  "Operations.dc.html",
+  "Transaction.dc.html",
+  "Reports.dc.html",
+  "Accounts.dc.html",
+  "More.dc.html",
+  "Onboarding.dc.html",
+  "Icon.dc.html",
+  "Data.dc.html",
+  "Help.dc.html",
+  "Motion-EditNow.dc.html",
+  "Motion-EditInPlace.dc.html",
+  "Motion-Sheet.dc.html",
+  "Motion-Push.dc.html",
+  "Motion-Zoom.dc.html",
+  "Anim-Amounts.dc.html",
+  "Anim-List.dc.html",
+  "Anim-Chart.dc.html",
+  "Anim-Month.dc.html",
+  "Anim-Form.dc.html",
+  "Anim-Toast.dc.html",
+  "Import-File.dc.html",
+  "Import-Bank.dc.html",
+  "Import-Columns.dc.html",
+  "Import-Account.dc.html",
+  "Import-Duplicates.dc.html",
+  "Import-Done.dc.html",
+  "Inbox.dc.html",
+  "Import-Phone.dc.html",
+  "Inbox-Phone.dc.html",
+  "Import-Columns-Phone.dc.html",
+  "Inbox-Entry.dc.html",
+  "Import-Categories-Phone.dc.html",
+  "Import-Problems-Phone.dc.html",
+  "Future-Overview.dc.html",
+  "Future-Planned.dc.html",
+  "Future-Form.dc.html",
+  "Future-Payday.dc.html",
+  "Salary-Form.dc.html",
+  "Salary-Payday.dc.html",
+  "Salary-Planned.dc.html",
+  "Remind-Settings.dc.html",
+  "Remind-Sheet.dc.html",
+  "Remind-Form.dc.html",
+  "Remind-Arrive.dc.html",
+  "Notify-Overview.dc.html",
+  "Notify-Feed.dc.html",
+  "Notify-History.dc.html",
+  "Notify-Tap.dc.html",
+  "Notify-Web.dc.html",
+  "Repeat-Operation.dc.html",
+  "Import-Found-Phone.dc.html",
+  "Salary-Split.dc.html",
+  "Found-Planned.dc.html",
+  "Found-Form.dc.html",
+  "Found-Import.dc.html",
+  "Forecast-Overview.dc.html",
+  "Forecast-Payday.dc.html",
+  "Web-Overview-Wide.dc.html",
+  "Web-Planned-Wide.dc.html",
+  "Web-Form-Wide.dc.html",
+  "Web-Payday-Wide.dc.html",
+  "Web-Overview.dc.html",
+  "Web-Planned.dc.html",
+  "Web-Form.dc.html",
+  "Web-Payday.dc.html",
+  "Web-Operations-Wide.dc.html",
+  "Web-Notifications-Wide.dc.html",
+  "Web-Repeat-Operation-Wide.dc.html",
+  "Web-Advance-Payday-Wide.dc.html",
+  "Advance-Payday.dc.html",
+  "Web-Repeat-Operation.dc.html",
+  "Web-Advance-Payday.dc.html",
+  "Tags-QuickAdd.dc.html",
+  "Tags-Picker.dc.html",
+  "Tags-Operation.dc.html",
+  "Tags-Trip.dc.html",
+  "Tags-List.dc.html",
+  "Tags-Form.dc.html",
+  "Ask-Start.dc.html",
+  "Ask-Answer.dc.html",
+  "Ask-Period.dc.html",
+  "Ask-Trip.dc.html",
+  "Ask-Facts.dc.html",
+  "Ask-Help.dc.html",
+  "Ask-Refuse.dc.html",
+  "Debts-More.dc.html",
+  "Debts-List.dc.html",
+  "Debt-Form.dc.html",
+  "Debt-Person.dc.html",
+  "Debt-Return.dc.html",
+  "Debt-Operations.dc.html",
+  "Debt-Remind.dc.html",
+  "Web-Debts-Wide.dc.html",
+  "Web-Debts.dc.html",
+  "People-New.dc.html",
+  "People-Card.dc.html",
+  "People-Remind.dc.html",
+  "People-Edit.dc.html",
+  "Widgets-More.dc.html",
+  "Widgets-Page.dc.html",
+  "Widgets-Home.dc.html",
+  "Widgets-Lock.dc.html",
+  "Widgets-Actions.dc.html",
+  "Widgets-Android-Home.dc.html",
+  "Widgets-Android-Shortcuts.dc.html",
+  "Widgets-Page-Android.dc.html",
+  "Receipt-QuickAdd.dc.html",
+  "Receipt-Scanner.dc.html",
+  "Receipt-Filled.dc.html",
+  "Receipt-Twice.dc.html",
+  "Receipt-Camera.dc.html",
+  "Receipt-Operation.dc.html",
+  "Limits-Overview.dc.html",
+  "Limits-Page.dc.html",
+  "Limits-Form.dc.html",
+  "Limits-Suggest.dc.html",
+  "Limits-QuickAdd.dc.html",
+  "Limits-Notice.dc.html",
+  "Web-Limits-Overview-Wide.dc.html",
+  "Web-Limits-Overview.dc.html",
+  "Web-Limits-Page-Wide.dc.html",
+  "Web-Limits-Page.dc.html",
+  "Web-Limits-Form-Wide.dc.html",
+  "Web-Limits-Form.dc.html",
+  "Web-Limits-Suggest-Wide.dc.html",
+  "Web-Limits-Suggest.dc.html",
+  "Web-Limits-QuickAdd-Wide.dc.html",
+  "Web-Limits-QuickAdd.dc.html",
+  "Web-Limits-Notice-Wide.dc.html",
+  "Web-Limits-Notice.dc.html"
+ ],
+ "pages": [],
+ "title": "Birka · Ночь"
+}

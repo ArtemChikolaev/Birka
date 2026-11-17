@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Отчёты</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(70% 22% at 100% 58%, rgba(36,138,86,0.22) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 20px 20px 130px">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
+      <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em">Отчёты</h1>
+      <button type="button" style="height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.07); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: #F4F4F2; font: inherit; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer">
+        Октябрь
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+    </div>
+
+    <div role="group" aria-label="Что показать" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px)">
+      <sc-for list="{{modes}}" as="mo" hint-placeholder-count="2">
+        <button type="button" onClick="{{mo.pick}}" aria-pressed="{{mo.pressed}}" style="height: 38px; border: 0; border-radius: 14px; background: {{mo.bg}}; color: {{mo.fg}}; box-shadow: {{mo.shadow}}; font: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer">{{mo.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="position: relative; align-self: center; width: 220px; height: 220px">
+      <sc-if value="{{isSpend}}" hint-placeholder-val="{{ true }}">
+        <svg width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="Расходы по категориям: продукты 28%, дом 20%, кафе 15%, досуг 9%, транспорт 7%, здоровье 6%, подписки 5%, другое 10%">
+          <circle cx="110" cy="110" r="88" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="18"></circle>
+          <g transform="rotate(-90 110 110)" fill="none" stroke-width="18">
+            <circle cx="110" cy="110" r="88" stroke="#4ADE80" stroke-dasharray="150.82 552.92" stroke-dashoffset="0"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#A78BFA" stroke-dasharray="106.58 552.92" stroke-dashoffset="-154.82"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#FBBF24" stroke-dasharray="78.94 552.92" stroke-dashoffset="-265.40"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#FB923C" stroke-dasharray="45.76 552.92" stroke-dashoffset="-348.34"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#60A5FA" stroke-dasharray="34.70 552.92" stroke-dashoffset="-398.10"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#FB7185" stroke-dasharray="29.18 552.92" stroke-dashoffset="-436.80"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#22D3EE" stroke-dasharray="23.65 552.92" stroke-dashoffset="-469.98"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#3A3A3C" stroke-dasharray="51.29 552.92" stroke-dashoffset="-497.63"></circle>
+          </g>
+        </svg>
+      </sc-if>
+      <sc-if value="{{isIncome}}" hint-placeholder-val="{{ false }}">
+        <svg width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="Доходы: зарплата 89%, проценты по вкладу 8%, кэшбэк 3%">
+          <circle cx="110" cy="110" r="88" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="18"></circle>
+          <g transform="rotate(-90 110 110)" fill="none" stroke-width="18">
+            <circle cx="110" cy="110" r="88" stroke="#3DDC97" stroke-dasharray="488.10 552.92" stroke-dashoffset="0"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#A78BFA" stroke-dasharray="40.23 552.92" stroke-dashoffset="-492.10"></circle>
+            <circle cx="110" cy="110" r="88" stroke="#22D3EE" stroke-dasharray="12.59 552.92" stroke-dashoffset="-536.33"></circle>
+          </g>
+        </svg>
+      </sc-if>
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">{{centerLabel}}</div>
+        <div style="font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{total}}</div>
+        <div style="font-size: 13px; font-weight: 600; color: {{totalDeltaColor}}">{{totalDelta}}</div>
+      </div>
+    </div>
+
+    <div style="border-radius: 22px; padding: 6px 16px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+        <div style="display: flex; flex-direction: column; gap: 7px; padding: 11px 0; border-bottom: {{r.divider}}">
+          <div style="display: flex; align-items: baseline; gap: 10px">
+            <span aria-hidden="true" style="flex: 0 0 10px; height: 10px; border-radius: 5px; background: {{r.color}}; align-self: center"></span>
+            <span style="flex: 1 1 auto; font-weight: 600">{{r.name}}</span>
+            <span style="font-size: 12px; font-weight: 700; color: {{r.deltaColor}}; font-variant-numeric: tabular-nums">{{r.delta}}</span>
+            <span style="min-width: 86px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums">{{r.amount}}</span>
+          </div>
+          <div aria-hidden="true" style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden">
+            <div style="height: 4px; width: {{r.share}}; border-radius: 2px; background: {{r.color}}"></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="border-radius: 22px; padding: 16px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">По месяцам</h2>
+        <span style="font-size: 12px; color: #A3A3A3">в среднем {{average}}</span>
+      </div>
+      <div role="img" aria-label="{{barsLabel}}" style="margin-top: 14px; height: 120px; display: flex; align-items: flex-end; gap: 10px">
+        <sc-for list="{{bars}}" as="b" hint-placeholder-count="6">
+          <div style="flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 120px">
+            <span style="font-size: 11px; font-weight: 700; color: {{b.valueColor}}; font-variant-numeric: tabular-nums">{{b.value}}</span>
+            <div style="width: 100%; height: {{b.height}}; border-radius: 10px; background: {{b.fill}}; box-shadow: {{b.glow}}"></div>
+            <span style="font-size: 11px; font-weight: 600; color: {{b.labelColor}}">{{b.month}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <nav aria-label="Разделы" style="position: absolute; left: 32px; right: 32px; bottom: 24px; height: 64px; box-sizing: border-box; padding: 5px; border-radius: 32px; background: rgba(32,32,34,0.52); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 12px 32px rgba(0,0,0,0.55); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+    <div aria-hidden="true" style="position: absolute; top: 5px; bottom: 5px; left: 193.4px; width: 62.8px; border-radius: 26px; background: rgba(255,255,255,0.13); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28)"></div>
+    <a href="Main.dc.html" style="position: relative; height: 52px; color: #B4B4B2; text-decoration: none; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Обзор</a>
+    <a href="Operations.dc.html" style="position: relative; height: 52px; color: #B4B4B2; text-decoration: none; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"></path><circle cx="4.5" cy="6" r="1"></circle><circle cx="4.5" cy="12" r="1"></circle><circle cx="4.5" cy="18" r="1"></circle></svg>Операции</a>
+    <a href="QuickAdd.dc.html" aria-label="Новая операция" style="justify-self: center; position: relative; width: 50px; height: 50px; border-radius: 25px; background: #3DDC97; color: #02130B; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 6px 22px rgba(36,138,86,0.55)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+    <a href="Reports.dc.html" aria-current="page" style="position: relative; height: 52px; color: #3DDC97; text-decoration: none; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg>Отчёты</a>
+    <a href="More.dc.html" style="position: relative; height: 52px; color: #B4B4B2; text-decoration: none; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"></rect></svg>Ещё</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 'spend' };
+  }
+
+  renderVals() {
+    const spend = this.state.mode !== 'income';
+    const accent = '#3DDC97';
+    const coral = '#FF8E7F';
+    const money = (v) => v.toLocaleString('ru-RU') + ' ₽';
+    const spendRows = [
+      ['Продукты', 24300, '#4ADE80', -4],
+      ['Дом', 17280, '#A78BFA', 0],
+      ['Кафе', 12850, '#FBBF24', 35],
+      ['Досуг', 7780, '#FB923C', 12],
+      ['Транспорт', 6200, '#60A5FA', -8]
+    ];
+    const incomeRows = [
+      ['Зарплата', 210000, accent, 0],
+      ['Проценты по вкладу', 18400, '#A78BFA', 6],
+      ['Кэшбэк', 7100, '#22D3EE', -10]
+    ];
+    const rows = spend ? spendRows : incomeRows;
+    const top = rows[0][1];
+    const delta = (d) => (d === 0 ? '0%' : (d > 0 ? '+' : '−') + Math.abs(d) + '%');
+    const deltaColor = (d) => (d === 0 ? '#A3A3A3' : (d > 0) === spend ? coral : accent);
+    const spendBars = [['Май', 78], ['Июн', 92], ['Июл', 81], ['Авг', 95], ['Сен', 74], ['Окт', 86]];
+    const incomeBars = [['Май', 228], ['Июн', 231], ['Июл', 229], ['Авг', 240], ['Сен', 233], ['Окт', 236]];
+    const bars = spend ? spendBars : incomeBars;
+    const max = Math.max(...bars.map((b) => b[1]));
+    const avg = Math.round(bars.reduce((sum, b) => sum + b[1], 0) / bars.length);
+    const modes = [['spend', 'Расходы'], ['income', 'Доходы']].map(([id, label]) => ({
+      label,
+      pick: () => this.setState({ mode: id }),
+      pressed: this.state.mode === id ? 'true' : 'false',
+      bg: this.state.mode === id ? 'rgba(255,255,255,0.14)' : 'transparent',
+      fg: this.state.mode === id ? '#F4F4F2' : '#8A8A8A',
+      shadow: this.state.mode === id ? 'inset 0 1px 0 rgba(255,255,255,0.22)' : 'none'
+    }));
+    return {
+      modes,
+      isSpend: spend,
+      isIncome: !spend,
+      centerLabel: spend ? 'Расходы' : 'Доходы',
+      total: spend ? '86 420 ₽' : '235 500 ₽',
+      totalDelta: spend ? '+16% к сентябрю' : '+1% к сентябрю',
+      totalDeltaColor: spend ? coral : accent,
+      rows: rows.map(([name, value, color, d], i) => ({
+        name,
+        color,
+        amount: money(value),
+        delta: delta(d),
+        deltaColor: deltaColor(d),
+        share: Math.round((value / top) * 100) + '%',
+        divider: i < rows.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0'
+      })),
+      average: avg + ' тыс. ₽',
+      barsLabel: (spend ? 'Расходы' : 'Доходы') + ' по месяцам, тысяч рублей: ' + bars.map((b) => b[0] + ' ' + b[1]).join(', '),
+      bars: bars.map(([month, value], i) => {
+        const current = i === bars.length - 1;
+        return {
+          month,
+          value: value + 'k',
+          height: Math.round((value / max) * 78) + 'px',
+          fill: current ? 'linear-gradient(180deg, #3DDC97 0%, rgba(61,220,151,0.55) 100%)' : 'rgba(255,255,255,0.14)',
+          glow: current ? '0 0 18px rgba(61,220,151,0.35)' : 'none',
+          valueColor: current ? accent : '#8A8A8A',
+          labelColor: current ? '#F4F4F2' : '#8A8A8A'
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

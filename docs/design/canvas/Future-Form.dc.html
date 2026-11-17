@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Регулярный платёж на телефоне</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+
+  <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; overflow: hidden; transform-origin: 50% 0%; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000; transform: {{page.t}}; border-radius: {{page.r}}; transition: {{page.tr}}">
+    <div style="display: flex; flex-direction: column; gap: 18px; padding: 20px 20px 48px">
+      <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px">
+        <a href="Future-Overview.dc.html" aria-label="Назад" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Регулярные платежи</h1>
+        <button type="button" aria-label="Новый платёж" onClick="{{reopen}}" style="width: 44px; height: 44px; box-sizing: border-box; padding: 0; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #3DDC97; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+      </div>
+
+      <section aria-label="Все регулярные" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 style="margin: 0; padding: 0 4px; display: grid; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">
+          <span style="grid-area: 1 / 1; opacity: {{count.oa}}; transition: {{count.tr}}">{{count.a}}</span>
+          <span style="grid-area: 1 / 1; opacity: {{count.ob}}; transition: {{count.tr}}">{{count.b}}</span>
+        </h2>
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <div style="height: {{r.h}}; opacity: {{r.o}}; overflow: hidden; transition: {{r.tr}}">
+              <div style="display: flex; align-items: center; gap: 12px; height: 60px; box-sizing: border-box; border-bottom: {{r.divider}}">
+                <span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{r.dot}}"></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{r.name}}</span><span style="display: grid; font-size: 12px; color: #8A8A8A"><span style="grid-area: 1 / 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{r.oa}}; transition: {{r.metaTr}}">{{r.a}}</span><span style="grid-area: 1 / 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: {{r.ob}}; transition: {{r.metaTr}}">{{r.b}}</span></span></span>
+                <span style="flex: 0 0 auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.ink}}">{{r.amount}}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: #000000; opacity: {{shade.o}}; pointer-events: {{shade.events}}; transition: {{shade.tr}}"></div>
+  </div>
+
+  <div role="dialog" aria-modal="true" aria-label="{{form.title}}" style="position: absolute; left: 0; right: 0; top: 52px; bottom: 0; box-sizing: border-box; border-radius: 22px 22px 0 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); border-bottom: 0; background: radial-gradient(70% 30% at 100% 0%, rgba(36,138,86,0.26) 0%, transparent 72%), radial-gradient(60% 26% at 0% 100%, rgba(36,138,86,0.22) 0%, transparent 72%), #050706; box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transform: {{sheet.t}}; transition: {{sheet.tr}}">
+    <div style="position: absolute; left: 20px; right: 12px; top: 20px; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <h1 style="margin: 0; min-width: 0; font-family: Manrope, Inter, sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{form.title}}</h1>
+      <button type="button" aria-label="Закрыть" onClick="{{close}}" style="flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 0; background: none; color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </div>
+
+    <div style="position: absolute; left: 0; right: 0; top: 76px; bottom: 0; overflow-y: auto">
+      <div style="display: flex; flex-direction: column; gap: 18px; padding: 4px 20px 170px">
+        <sc-if value="{{form.fromOperation}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.06)">
+            <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: rgba(167,139,250,0.14); color: #A78BFA; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19l-3-3"></path><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5l3 3"></path></svg></span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-weight: 600">Из операции 1 ноября</span><span style="font-size: 13px; color: #A3A3A3">Netflix · −799 ₽ · Подписки</span></span>
+          </div>
+        </sc-if>
+
+        <div role="group" aria-label="Что за платёж" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 4px; border-radius: 22px; background: rgba(255,255,255,0.06)">
+          <sc-for list="{{kinds}}" as="o" hint-placeholder-count="3">
+            <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="height: 38px; border-radius: 19px; border: 0; background: {{o.bg}}; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 150ms cubic-bezier(0.42, 0, 0.58, 1), color 150ms cubic-bezier(0.42, 0, 0.58, 1)">{{o.label}}</button>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0 2px">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Сумма</span>
+          <span style="font-family: Manrope, Inter, sans-serif; font-size: 44px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: {{form.amountInk}}; transition: color 220ms cubic-bezier(0.42, 0, 0.58, 1)">{{form.amount}}</span>
+        </div>
+
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{fields}}" as="f" hint-placeholder-count="3">
+            <button type="button" style="width: 100%; min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; border-bottom: {{f.divider}}; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; text-align: left; cursor: pointer">
+              <span style="flex: 1 1 auto; display: grid; color: #C9C9C7"><span style="grid-area: 1 / 1; opacity: {{f.label.oa}}; transition: {{f.label.tr}}">{{f.label.a}}</span><span style="grid-area: 1 / 1; opacity: {{f.label.ob}}; transition: {{f.label.tr}}">{{f.label.b}}</span></span>
+              <span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{f.dot}}; opacity: {{f.dotShown}}; transition: background 220ms cubic-bezier(0.42, 0, 0.58, 1), opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"></span>
+              <span style="display: grid; justify-items: end; font-weight: 600; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{f.value.oa}}; transition: {{f.value.tr}}">{{f.value.a}}</span><span style="grid-area: 1 / 1; opacity: {{f.value.ob}}; transition: {{f.value.tr}}">{{f.value.b}}</span></span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+            </button>
+          </sc-for>
+        </div>
+
+        <section aria-label="Когда" style="display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: #A3A3A3">Повторять каждый</span>
+            <div role="group" aria-label="Повторять каждый" style="position: relative; height: 40px">
+              <sc-for list="{{every.items}}" as="o" hint-placeholder-count="3">
+                <span aria-hidden="true" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+              </sc-for>
+              <span aria-hidden="true" style="position: absolute; top: 0; left: {{every.pill.left}}; width: {{every.pill.width}}; height: 40px; border-radius: 20px; background: #F4F4F2; transition: {{every.pill.tr}}"></span>
+              <sc-for list="{{every.items}}" as="o" hint-placeholder-count="3">
+                <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; padding: 0; border: 0; border-radius: 20px; background: transparent; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: color 200ms ease">{{o.label}}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px">
+            <span style="display: grid; font-size: 13px; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{when.label.oa}}; transition: {{when.label.tr}}">{{when.label.a}}</span><span style="grid-area: 1 / 1; opacity: {{when.label.ob}}; transition: {{when.label.tr}}">{{when.label.b}}</span></span>
+            <span style="display: grid; justify-items: end; font-weight: 600"><span style="grid-area: 1 / 1; opacity: {{when.day.oa}}; transition: {{when.day.tr}}">{{when.day.a}}</span><span style="grid-area: 1 / 1; opacity: {{when.day.ob}}; transition: {{when.day.tr}}">{{when.day.b}}</span></span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px">
+            <span style="font-size: 13px; color: #A3A3A3">Следующий раз</span>
+            <span style="display: grid; justify-items: end; font-weight: 600"><span style="grid-area: 1 / 1; opacity: {{when.next.oa}}; transition: {{when.next.tr}}">{{when.next.a}}</span><span style="grid-area: 1 / 1; opacity: {{when.next.ob}}; transition: {{when.next.tr}}">{{when.next.b}}</span></span>
+          </div>
+        </section>
+
+        <section aria-label="В день платежа" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <span style="font-size: 13px; color: #A3A3A3">В день платежа</span>
+          <div role="group" aria-label="В день платежа" style="position: relative; height: 40px">
+            <sc-for list="{{onDay.items}}" as="o" hint-placeholder-count="2">
+              <span aria-hidden="true" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+            </sc-for>
+            <span aria-hidden="true" style="position: absolute; top: 0; left: {{onDay.pill.left}}; width: {{onDay.pill.width}}; height: 40px; border-radius: 20px; background: #F4F4F2; transition: {{onDay.pill.tr}}"></span>
+            <sc-for list="{{onDay.items}}" as="o" hint-placeholder-count="2">
+              <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; padding: 0; border: 0; border-radius: 20px; background: transparent; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: color 200ms ease">{{o.label}}</button>
+            </sc-for>
+          </div>
+          <span style="display: grid; font-size: 13px; line-height: 1.4; color: #C9C9C7"><span style="grid-area: 1 / 1; opacity: {{onDayNote.oa}}; transition: {{onDayNote.tr}}">{{onDayNote.a}}</span><span style="grid-area: 1 / 1; opacity: {{onDayNote.ob}}; transition: {{onDayNote.tr}}">{{onDayNote.b}}</span></span>
+        </section>
+
+        <section aria-label="Напомнить" style="display: flex; flex-direction: column; gap: 8px">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Напомнить</h2>
+          <div role="group" aria-label="Напомнить" style="position: relative; height: 40px">
+            <sc-for list="{{remind.items}}" as="o" hint-placeholder-count="3">
+              <span aria-hidden="true" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+            </sc-for>
+            <span aria-hidden="true" style="position: absolute; top: 0; left: {{remind.pill.left}}; width: {{remind.pill.width}}; height: 40px; border-radius: 20px; background: #F4F4F2; transition: {{remind.pill.tr}}"></span>
+            <sc-for list="{{remind.items}}" as="o" hint-placeholder-count="3">
+              <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; padding: 0; border: 0; border-radius: 20px; background: transparent; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: color 200ms ease">{{o.label}}</button>
+            </sc-for>
+          </div>
+        </section>
+
+        <sc-if value="{{form.deletable}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 4px">
+            <button type="button" style="height: 44px; padding: 0 18px; border-radius: 22px; border: 0; background: none; color: #FF8E7F; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">Удалить платёж</button>
+            <span style="font-size: 12px; color: #8A8A8A">Прошлые операции останутся</span>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 150px; background: linear-gradient(180deg, rgba(5,7,6,0) 0%, rgba(5,7,6,0.88) 38%, #050706 100%); pointer-events: none"></div>
+    <div style="position: absolute; left: 20px; right: 20px; bottom: 52px; height: 56px">
+      <button type="button" aria-label="{{save.label}}" onClick="{{saveNow}}" style="position: absolute; top: 0; left: {{save.l}}; width: {{save.w}}; height: 56px; padding: 0; border: 0; border-radius: 28px; overflow: hidden; background: #3DDC97; color: #04130B; box-shadow: 0 10px 30px rgba(61,220,151,0.28); cursor: pointer; transition: {{save.tr}}">
+        <span style="position: absolute; left: 0; right: 0; top: 0; height: 56px; display: flex; align-items: center; justify-content: center; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; white-space: nowrap; opacity: {{save.textO}}; transition: {{save.textTr}}">{{save.text}}</span>
+        <span aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 56px; display: flex; align-items: center; justify-content: center; opacity: {{save.checkO}}; transform: {{save.checkT}}; transition: {{save.checkTr}}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+      </button>
+    </div>
+    <span style="position: absolute; left: 20px; right: 20px; bottom: 22px; text-align: center; font-size: 12px; color: #8A8A8A; opacity: {{save.textO}}; transition: {{save.textTr}}">{{form.saveNote}}</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["Новый","Из операции","Изменить"],"default":"Новый"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+    this.lines = {};
+    this.timer = null;
+  }
+
+  fresh() {
+    return { kind: null, every: null, onDay: null, remind: null, saving: false, closed: false, saved: false };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      clearTimeout(this.timer);
+      this.lines = {};
+      this.setState(this.fresh());
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // A line that cross-fades into a new one over duration.base, as FadingText
+  // does: the new text goes into the layer behind, which then comes forward.
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  // A ChipSwitch of the app: chips as wide as their labels, and a white pill
+  // that slides to the picked one over duration.spring with a little bounce.
+  chips(list, current, key, reduced) {
+    let left = 0;
+    const items = list.map(([id, label, width]) => {
+      const on = id === current;
+      const item = { id, label, left: left + 'px', width: width + 'px', fg: on ? '#0A0A0A' : '#D6D6D4', pressed: on ? 'true' : 'false', pick: () => this.setState({ [key]: id }) };
+      left += width + 8;
+      return item;
+    });
+    const picked = items.find((item) => item.id === current) ?? items[0];
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    return { items, pill: { left: picked.left, width: picked.width, tr: reduced ? 'none' : 'left 560ms ' + spring + ', width 560ms ' + spring } };
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'Новый';
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const sheetCurve = 'cubic-bezier(0.32, 0.72, 0, 1)';
+    const bases = {
+      'Новый': { id: 'rent', title: 'Новый платёж', amount: '45 000 ₽', name: 'Аренда', category: 'Дом', dot: '#22D3EE', day: 25, weekday: 'по средам', date: '25 ноября', next: '25 ноября, ср', onDay: 'ask', remind: 'day' },
+      'Из операции': { id: 'tv', title: 'Новый платёж', amount: '799 ₽', name: 'Netflix', category: 'Подписки', dot: '#A78BFA', day: 1, weekday: 'по вторникам', date: '1 декабря', next: '1 декабря, вт', onDay: 'post', remind: 'none' },
+      'Изменить': { id: 'rent', title: 'Аренда', amount: '45 000 ₽', name: 'Аренда', category: 'Дом', dot: '#22D3EE', day: 25, weekday: 'по средам', date: '25 ноября', next: '25 ноября, ср', onDay: 'ask', remind: 'before' }
+    };
+    const base = bases[mode] ?? bases['Новый'];
+    const editing = mode === 'Изменить';
+    const kind = st.kind ?? 'expense';
+    const every = st.every ?? 'month';
+    const onDay = st.onDay ?? base.onDay;
+    const remind = st.remind ?? base.remind;
+
+    // The form. A kind is a GlassSegmented, as in the form of an operation.
+    const kinds = [['expense', 'Расход'], ['income', 'Поступление'], ['transfer', 'Перевод']].map(([id, label]) => ({
+      label,
+      bg: kind === id ? '#F4F4F2' : 'rgba(255,255,255,0.07)',
+      fg: kind === id ? '#000000' : '#C9C9C7',
+      pressed: kind === id ? 'true' : 'false',
+      pick: () => this.setState({ kind: id })
+    }));
+    const fields = [
+      { key: 'name', label: 'Название', value: base.name, dot: 'transparent', dotShown: '0' },
+      { key: 'category', label: kind === 'transfer' ? 'Куда' : 'Категория', value: kind === 'transfer' ? 'Накопительный' : kind === 'income' ? 'Зарплата' : base.category, dot: kind === 'income' ? '#4ADE80' : base.dot, dotShown: kind === 'transfer' ? '0' : '1' },
+      { key: 'account', label: kind === 'transfer' ? 'Откуда' : kind === 'income' ? 'На счёт' : 'Счёт', value: 'Зарплатная карта', dot: 'transparent', dotShown: '0' }
+    ].map((f, i, list) => ({
+      ...f,
+      label: this.fading('label-' + f.key, f.label, reduced),
+      value: this.fading('value-' + f.key, f.value, reduced),
+      divider: i < list.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0'
+    }));
+    const when = {
+      month: { label: 'Какого числа', day: base.day + '-го', next: base.next, meta: 'каждый месяц ' + base.day + '-го' },
+      week: { label: 'Какой день недели', day: base.weekday, next: base.next, meta: 'каждую неделю, ' + base.weekday },
+      year: { label: 'Какого дня', day: base.date, next: base.date + ' 2026', meta: 'раз в год, ' + base.date }
+    }[every];
+    const notes = {
+      ask: 'Подойдёт, если сумма меняется, как у ЖКХ: в этот день платёж подождёт вашего «Провести».',
+      post: 'Для подписок с одной суммой. Придёт в выписке банка — копии не будет.'
+    };
+
+    // Saving: the pill shrinks into a check over duration.slow, the check
+    // stands for a moment, then the sheet goes down and the page comes back.
+    const saving = st.saving;
+    const closed = st.closed;
+    const save = {
+      label: editing ? 'Сохранить изменения' : 'Сохранить',
+      text: 'СОХРАНИТЬ',
+      l: saving && !reduced ? '147px' : '0px',
+      w: saving && !reduced ? '56px' : '350px',
+      tr: 'left 320ms ' + ease + ', width 320ms ' + ease,
+      textO: saving ? '0' : '1',
+      textTr: 'opacity 150ms ' + fade,
+      checkO: saving ? '1' : '0',
+      checkT: saving || reduced ? 'scale(1)' : 'scale(0.4)',
+      checkTr: saving ? 'opacity 220ms ' + fade + ' 180ms, transform 320ms ' + spring + ' 180ms' : 'none'
+    };
+    const saveNow = () => {
+      if (st.saving || st.closed) return;
+      this.setState({ saving: true });
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => this.setState({ closed: true, saved: true }), 1000);
+    };
+
+    // The list under the sheet. A new payment opens in it once the sheet has
+    // gone, as a new account opens in the list of accounts.
+    const meta = when.meta + ' · ' + (onDay === 'post' ? 'проводится сам' : 'спросить');
+    const all = [
+      { id: 'pay', name: 'Зарплата', meta: 'каждый месяц 5-го · Зарплатная карта', amount: '+120 000 ₽', ink: '#3DDC97', dot: '#4ADE80' },
+      { id: 'rent', name: 'Аренда', meta: 'каждый месяц 25-го · спросить', amount: '−45 000 ₽', ink: '#F4F4F2', dot: '#22D3EE' },
+      { id: 'net', name: 'Интернет', meta: 'каждый месяц 28-го · спросить', amount: '−650 ₽', ink: '#F4F4F2', dot: '#22D3EE' },
+      { id: 'tv', name: 'Netflix', meta: 'каждый месяц 1-го · проводится сам', amount: '−799 ₽', ink: '#F4F4F2', dot: '#A78BFA' },
+      { id: 'gym', name: 'Спортзал', meta: 'каждый месяц 3-го · спросить', amount: '−3 500 ₽', ink: '#F4F4F2', dot: '#F87171' },
+      { id: 'car', name: 'Страховка авто', meta: 'раз в год, 12 марта · напомнить за неделю', amount: '−24 000 ₽', ink: '#F4F4F2', dot: '#FB923C' }
+    ];
+    const added = st.saved && closed;
+    const rows = all.map((r, i) => {
+      const fresh = !editing && r.id === base.id;
+      const shown = !fresh || added;
+      const changed = r.id === base.id && st.saved;
+      const sign = kind === 'income' ? '+' : '−';
+      return {
+        ...r,
+        amount: r.id === base.id ? sign + base.amount : r.amount,
+        ink: r.id === base.id && kind === 'income' ? '#3DDC97' : r.ink,
+        ...this.fading('meta-' + r.id, changed ? meta : r.meta, reduced),
+        metaTr: reduced ? 'none' : 'opacity 220ms ' + ease,
+        h: shown ? '60px' : '0px',
+        o: shown ? '1' : '0',
+        tr: reduced ? 'opacity 220ms ' + ease : 'height 320ms ' + ease + ' 120ms, opacity 240ms ' + ease + ' 200ms',
+        divider: i < all.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0'
+      };
+    });
+    const count = all.length - (editing || added ? 0 : 1);
+
+    return {
+      form: {
+        title: base.title,
+        fromOperation: mode === 'Из операции',
+        deletable: editing,
+        amount: (kind === 'income' ? '+' : '') + base.amount,
+        amountInk: kind === 'income' ? '#3DDC97' : '#F4F4F2',
+        saveNote: editing ? 'Изменится со следующего раза: ' + base.next : 'Появится в «Ближайших платежах» и в «Можно тратить сегодня»'
+      },
+      kinds,
+      fields,
+      every: this.chips([['month', 'Месяц', 76], ['week', 'Неделю', 84], ['year', 'Год', 56]], every, 'every', reduced),
+      when: {
+        label: this.fading('when-label', when.label, reduced),
+        day: this.fading('when-day', when.day, reduced),
+        next: this.fading('when-next', when.next, reduced)
+      },
+      onDay: this.chips([['ask', 'Спросить меня', 134], ['post', 'Провести само', 132]], onDay, 'onDay', reduced),
+      onDayNote: this.fading('note', notes[onDay], reduced),
+      remind: this.chips([['day', 'В день', 76], ['before', 'За день', 83], ['none', 'Не напоминать', 135]], remind, 'remind', reduced),
+      save,
+      saveNow,
+      close: () => {
+        clearTimeout(this.timer);
+        this.setState({ closed: true });
+      },
+      reopen: () => {
+        clearTimeout(this.timer);
+        this.lines = {};
+        this.setState(this.fresh());
+      },
+      sheet: {
+        t: closed ? 'translateY(105%)' : 'translateY(0px)',
+        tr: 'transform ' + (closed ? 300 : 460) + 'ms ' + sheetCurve
+      },
+      page: {
+        t: closed ? 'translateY(0px) scale(1)' : 'translateY(10px) scale(0.92)',
+        r: closed ? '0px' : '24px',
+        tr: 'transform ' + (closed ? 300 : 460) + 'ms ' + sheetCurve + ', border-radius ' + (closed ? 300 : 460) + 'ms ' + sheetCurve
+      },
+      shade: {
+        o: closed ? '0' : '0.45',
+        events: closed ? 'none' : 'auto',
+        tr: 'opacity ' + (closed ? 300 : 460) + 'ms ' + sheetCurve
+      },
+      count: this.fading('count', 'Все регулярные · ' + count, reduced),
+      rows
+    };
+  }
+}
+</script>
+</body>
+</html>
