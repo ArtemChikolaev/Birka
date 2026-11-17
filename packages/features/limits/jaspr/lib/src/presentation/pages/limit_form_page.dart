@@ -197,7 +197,6 @@ class _LimitFormPageState extends State<LimitFormPage> {
     final suggestion = state.suggestion;
     final spentNow = limitSpentNow(state);
     final spent = state.spent;
-    final amount = state.amount;
     final parts = <Component>[
       TintedBox(
         color: 'var(--color-accent)',
@@ -237,10 +236,11 @@ class _LimitFormPageState extends State<LimitFormPage> {
         ],
       ),
     ];
-    if (state.editing && spentNow != null && spent != null && amount != null) {
-      final share = amount.isPositive
-          ? spent.minorUnits / amount.minorUnits
-          : 0.0;
+    final limit = state.category?.limit?.amount;
+    if (state.editing && spentNow != null && spent != null && limit != null) {
+      // The month against the limit as it is saved, as the line above says,
+      // whatever the field holds now.
+      final share = limit.isPositive ? limitShare(spent, limit) : 0.0;
       parts.add(
         div(classes: 'glass limit-form__month', [
           span(classes: 'text-caption limit-form__month-label', [
@@ -248,8 +248,8 @@ class _LimitFormPageState extends State<LimitFormPage> {
           ]),
           BirkaMeter(
             value: share,
-            label: spentNow,
-            color: limitColor(_stateOf(share)),
+            label: mask(spentNow),
+            color: limitColor(limitStateOf(share)),
             height: 6,
           ),
         ]),
@@ -258,13 +258,6 @@ class _LimitFormPageState extends State<LimitFormPage> {
     return div(classes: 'limit-form__side', parts);
   }
 }
-
-/// Where a month that took [share] of its limit stands.
-LimitState _stateOf(double share) => share > 1
-    ? LimitState.over
-    : share >= LimitProgress.nearShare
-    ? LimitState.near
-    : LimitState.ok;
 
 /// The sum of the field as the cubit holds it.
 String _shown(Money? amount) =>
