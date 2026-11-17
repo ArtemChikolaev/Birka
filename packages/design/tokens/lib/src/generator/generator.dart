@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:design_tokens/src/generator/design_token.dart';
 import 'package:design_tokens/src/generator/emit_css.dart';
 import 'package:design_tokens/src/generator/emit_dart.dart';
+import 'package:design_tokens/src/generator/emit_design_system.dart';
 import 'package:design_tokens/src/generator/parse.dart';
 import 'package:path/path.dart' as p;
 
@@ -12,6 +13,10 @@ const dartOutput = 'lib/src/tokens.g.dart';
 
 /// Where the CSS goes, relative to the package root.
 const cssOutput = 'lib/css/tokens.css';
+
+/// Where the tokens of the Design System artifact go, relative to the
+/// package root: next to the rest of it in docs/design/system.
+const designSystemOutput = '../../../docs/design/system/tokens.json';
 
 /// Reads every `tokens/*.tokens.json` under the package [root] into one
 /// document. A top-level group may live in one file only.
@@ -39,7 +44,8 @@ Map<String, Object?> readTokenDocument(Directory root) {
   return document;
 }
 
-/// Generates the Dart and CSS outputs from the token files under [root].
+/// Generates the Dart, CSS and design system outputs from the token files
+/// under [root].
 ///
 /// Writes them, or with [check] writes nothing and returns the outputs that
 /// are out of date.
@@ -48,6 +54,7 @@ Future<List<String>> generate(Directory root, {bool check = false}) async {
   final outputs = {
     dartOutput: await formatDart(emitDart(tokens)),
     cssOutput: emitCss(tokens),
+    designSystemOutput: emitDesignSystem(tokens),
   };
   final stale = <String>[];
   for (final MapEntry(key: path, value: content) in outputs.entries) {

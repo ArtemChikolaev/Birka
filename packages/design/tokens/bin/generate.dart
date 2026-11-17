@@ -3,7 +3,7 @@ import 'dart:isolate';
 
 import 'package:design_tokens/src/generator/generator.dart';
 
-/// Regenerates the Dart constants and the CSS from `tokens/*.tokens.json`.
+/// Regenerates the Dart constants, the CSS and the design system tokens from `tokens/*.tokens.json`.
 ///
 /// With `--check`, writes nothing and fails when an output is out of date.
 Future<void> main(List<String> args) async {
@@ -21,7 +21,9 @@ Future<void> main(List<String> args) async {
     check: check,
   );
   if (!check) {
-    stdout.writeln('Generated $dartOutput and $cssOutput.');
+    stdout.writeln(
+      'Generated $dartOutput, $cssOutput and $designSystemOutput.',
+    );
   } else if (stale.isEmpty) {
     stdout.writeln('Design tokens are up to date.');
   } else {
