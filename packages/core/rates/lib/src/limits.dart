@@ -58,18 +58,27 @@ final class LimitProgress {
   Money get left => limit.amount - spent;
 
   /// What part of the limit the month took, above 1 once it is over.
-  double get share => spent.minorUnits / limit.amount.minorUnits;
+  double get share => limitShare(spent, limit.amount);
 
   /// Where the month stands.
-  LimitState get state => share > 1
-      ? LimitState.over
-      : share >= nearShare
-      ? LimitState.near
-      : LimitState.ok;
+  LimitState get state => limitStateOf(share);
 
   /// The share from which a limit is near its end.
   static const nearShare = 0.8;
 }
+
+/// What part of [limit] the month took when it [spent] that much, above 1
+/// once it is over. Both are in the currency of the limit.
+double limitShare(Money spent, Money limit) =>
+    spent.minorUnits / limit.minorUnits;
+
+/// Where a month that took [share] of its limit stands: near its end from
+/// [LimitProgress.nearShare] and over once it took more than the whole.
+LimitState limitStateOf(double share) => share > 1
+    ? LimitState.over
+    : share >= LimitProgress.nearShare
+    ? LimitState.near
+    : LimitState.ok;
 
 /// The progress of the limit of [category] in the month that starts on
 /// [month], counted on [today] from [rows]: the expenses of the month by day,

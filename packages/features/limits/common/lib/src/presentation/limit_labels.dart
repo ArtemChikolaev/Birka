@@ -115,6 +115,20 @@ String suggestionsFrom(CivilDate month) {
   );
 }
 
+/// `Берём три полных месяца: август, сентябрь и октябрь.`: the months that
+/// the averages of [state] come from, as the site tells how they count.
+String suggestionsMonths(LimitSuggestState state) {
+  final names = [for (final month in state.months) limitMonthName(month)];
+  return t.limits.suggestions.howMonths(
+    first: names.take(names.length - 1).join(', '),
+    last: names.last,
+  );
+}
+
+/// `Среднее округляем вверх до 500 ₽.`: the step of the limits of [state].
+String suggestionsStep(LimitSuggestState state) =>
+    t.limits.suggestions.howStep(step: formatMoney(state.step));
+
 /// Why a limit is offered checked or not.
 String suggestionNote(LimitSuggestion suggestion) =>
     switch (suggestion.reason) {

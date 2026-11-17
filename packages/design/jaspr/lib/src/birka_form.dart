@@ -8,7 +8,8 @@ import 'package:jaspr/jaspr.dart';
 /// A form that stays on its page: a heading with a cross, the [children] and
 /// a button that saves. That button or the Enter key in a field calls
 /// [onSubmit]. With an [aside], a wide page shows it beside the fields, with
-/// the button under it, in a `BirkaSplit`.
+/// the button under it, in a `BirkaSplit`. Without a [submitLabel] it has no
+/// button, as a page of it that only says why there is nothing to save.
 class BirkaForm extends StatelessComponent {
   /// Creates a form.
   const BirkaForm({
@@ -25,6 +26,8 @@ class BirkaForm extends StatelessComponent {
     this.aside,
     this.asideWidth = 340,
     this.note,
+    this.caution,
+    this.secondary,
     super.key,
   });
 
@@ -37,11 +40,11 @@ class BirkaForm extends StatelessComponent {
   /// Called by the cross.
   final VoidCallback onClose;
 
-  /// The label of the button that saves.
-  final String submitLabel;
+  /// The label of the button that saves, or `null` for none.
+  final String? submitLabel;
 
   /// Called on a submit.
-  final VoidCallback onSubmit;
+  final VoidCallback? onSubmit;
 
   /// The fields.
   final List<Component> children;
@@ -68,13 +71,25 @@ class BirkaForm extends StatelessComponent {
   /// What the button does, in a quiet line under it.
   final String? note;
 
+  /// A line over the button that says what a save will do, such as what an
+  /// expense leaves of the limit of its category (ADR 0033). A [failure]
+  /// takes its place.
+  final Component? caution;
+
+  /// A second action under the button, such as taking a limit away.
+  final Component? secondary;
+
   @override
   Component build(BuildContext context) {
     final failure = this.failure;
     final actions = div(classes: 'birka-form__actions', [
       if (failure != null)
-        p(classes: 'text-caption birka-form__failure', [.text(failure)]),
-      BirkaButton(label: submitLabel, submits: ready && !submitting),
+        p(classes: 'text-caption birka-form__failure', [.text(failure)])
+      else
+        ?caution,
+      if (submitLabel case final label?)
+        BirkaButton(label: label, submits: ready && !submitting),
+      ?secondary,
       if (note case final note?)
         p(classes: 'text-caption birka-form__note', [.text(note)]),
     ]);
@@ -83,7 +98,7 @@ class BirkaForm extends StatelessComponent {
       events: {
         'submit': (event) {
           event.preventDefault();
-          onSubmit();
+          onSubmit?.call();
         },
       },
       [

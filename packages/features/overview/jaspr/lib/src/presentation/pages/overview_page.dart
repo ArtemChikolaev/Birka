@@ -22,6 +22,7 @@ class OverviewPage extends StatelessComponent {
     this.ask,
     this.bell,
     this.side,
+    this.limits,
     super.key,
   });
 
@@ -51,6 +52,10 @@ class OverviewPage extends StatelessComponent {
   /// What stands beside the page on a wide screen and under the capital on a
   /// narrow one, such as the card of the money of the day.
   final Component? side;
+
+  /// What stands at the bottom of the card of the spending of the month: the
+  /// monthly limits of categories (ADR 0033), which draw the line over them.
+  final Component? limits;
 
   @override
   Component build(BuildContext context) {
@@ -224,37 +229,47 @@ class OverviewPage extends StatelessComponent {
     final total = spending.total;
     if (total == null) {
       return GlassSurface(
-        child: div(classes: 'overview__month', [
-          title,
-          span(classes: 'text-body overview__caption', [
-            .text(t.overview.noSpending),
+        child: _withLimits(
+          div(classes: 'overview__month', [
+            title,
+            span(classes: 'text-body overview__caption', [
+              .text(t.overview.noSpending),
+            ]),
           ]),
-        ]),
+        ),
       );
     }
     return GlassSurface(
-      child: div(classes: 'overview__spending', [
-        BirkaRing(
-          label: t.overview.ring,
-          slices: [
-            for (final CategoryTotal(:category, total: amount)
-                in spending.categories)
-              RingSlice(amount.minorUnits.toDouble(), _colorOf(category)),
-          ],
-        ),
-        div(classes: 'overview__month', [
-          title,
-          AmountText(formatMoney(-total), textClass: 'text-heading'),
-          for (final row in spending.top) _categoryLine(row),
-          if (spending.others.isNotEmpty)
-            AmountText(
-              spending.others.map(formatMoney).join(' · '),
-              tone: AmountTone.muted,
-              textClass: 'text-caption',
-            ),
+      child: _withLimits(
+        div(classes: 'overview__spending', [
+          BirkaRing(
+            label: t.overview.ring,
+            slices: [
+              for (final CategoryTotal(:category, total: amount)
+                  in spending.categories)
+                RingSlice(amount.minorUnits.toDouble(), _colorOf(category)),
+            ],
+          ),
+          div(classes: 'overview__month', [
+            title,
+            AmountText(formatMoney(-total), textClass: 'text-heading'),
+            for (final row in spending.top) _categoryLine(row),
+            if (spending.others.isNotEmpty)
+              AmountText(
+                spending.others.map(formatMoney).join(' · '),
+                tone: AmountTone.muted,
+                textClass: 'text-caption',
+              ),
+          ]),
         ]),
-      ]),
+      ),
     );
+  }
+
+  /// [body] with the limits of the month under it, when the page has them.
+  Component _withLimits(Component body) {
+    final limits = this.limits;
+    return limits == null ? body : div([body, limits]);
   }
 
   static String _colorOf(Category? category) =>

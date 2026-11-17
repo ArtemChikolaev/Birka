@@ -116,6 +116,14 @@ void main() {
     });
   });
 
+  test('a share of a limit stands near its end from 80 % and over past it', () {
+    expect(limitShare(rub(9600), rub(12000)), 0.8);
+    expect(limitStateOf(limitShare(rub(9599), rub(12000))), LimitState.ok);
+    expect(limitStateOf(limitShare(rub(9600), rub(12000))), LimitState.near);
+    expect(limitStateOf(limitShare(rub(12000), rub(12000))), LimitState.near);
+    expect(limitStateOf(limitShare(rub(12001), rub(12000))), LimitState.over);
+  });
+
   test('the limits go over first, then nearest to their end', () {
     final progress = limitsProgress(
       [

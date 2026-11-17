@@ -98,6 +98,10 @@ suggestions:
     one: Set $n limit for $month
     other: Set $n limits for $month
   nothing: Every category that spends already has a limit.
+  howTitle: How we count
+  howMonths: 'We take three full months: $first and $last.'
+  howStep: The average is rounded up to $step.
+  howUnchecked: We leave unchecked the categories whose spending jumps, comes in some months only or goes to regular payments.
   shortTitle: Not much history yet
   shortText: Averages come after the first full month with spending — $day. You can set a limit by hand now.
 quickAdd:

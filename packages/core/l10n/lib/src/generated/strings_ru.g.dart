@@ -4659,6 +4659,17 @@ class _Translations$limits$suggestions$ru
   @override
   String get nothing => 'У всех категорий с тратами уже есть лимиты.';
   @override
+  String get howTitle => 'Как считаем';
+  @override
+  String howMonths({required Object first, required Object last}) =>
+      'Берём три полных месяца: ${first} и ${last}.';
+  @override
+  String howStep({required Object step}) =>
+      'Среднее округляем вверх до ${step}.';
+  @override
+  String get howUnchecked =>
+      'Не отмечаем категории, где траты скачут, бывают не каждый месяц или идут регулярными платежами.';
+  @override
   String get shortTitle => 'Пока мало истории';
   @override
   String shortText({required Object day}) =>
@@ -6945,6 +6956,14 @@ extension on TranslationsRu {
                 ),
           'limits.suggestions.nothing' =>
             'У всех категорий с тратами уже есть лимиты.',
+          'limits.suggestions.howTitle' => 'Как считаем',
+          'limits.suggestions.howMonths' =>
+            ({required Object first, required Object last}) =>
+                'Берём три полных месяца: ${first} и ${last}.',
+          'limits.suggestions.howStep' =>
+            ({required Object step}) => 'Среднее округляем вверх до ${step}.',
+          'limits.suggestions.howUnchecked' =>
+            'Не отмечаем категории, где траты скачут, бывают не каждый месяц или идут регулярными платежами.',
           'limits.suggestions.shortTitle' => 'Пока мало истории',
           'limits.suggestions.shortText' =>
             ({required Object day}) =>
@@ -7083,13 +7102,13 @@ extension on TranslationsRu {
           'notifications.months.3' => 'апрель',
           'notifications.months.4' => 'май',
           'notifications.months.5' => 'июнь',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.months.6' => 'июль',
           'notifications.months.7' => 'август',
           'notifications.months.8' => 'сентябрь',
           'notifications.months.9' => 'октябрь',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.months.10' => 'ноябрь',
           'notifications.months.11' => 'декабрь',
           'notifications.howTitle' => 'Что сюда приходит',
@@ -8105,14 +8124,14 @@ extension on TranslationsRu {
           'tags.picker.tripsNote' =>
             'Пока идёт поездка, её метка сама встаёт на расходы этих дней.',
           'tags.picker.now' => 'сейчас',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.picker.emptyTitle' => 'Меток пока нет',
           'tags.picker.emptyText' =>
             'Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.',
           'tags.row.add' => 'Добавить метку',
           'tags.row.addText' => 'Поездка, ремонт или праздник',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.row.trip' => ({required Object days}) => 'Поездка · ${days}',
           'tags.row.byDays' =>
             ({required Object days}) => 'Поездка · ${days} · по датам',

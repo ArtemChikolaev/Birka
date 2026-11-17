@@ -7,6 +7,7 @@ import 'package:birka_web/pages/help_island.dart';
 import 'package:birka_web/pages/home_route.dart';
 import 'package:birka_web/pages/import_island.dart';
 import 'package:birka_web/pages/inbox_island.dart';
+import 'package:birka_web/pages/limits_island.dart';
 import 'package:birka_web/pages/more_island.dart';
 import 'package:birka_web/pages/notifications_island.dart';
 import 'package:birka_web/pages/operations_island.dart';
@@ -95,6 +96,11 @@ class App extends StatelessComponent {
           path: '/debts',
           title: 'Debts · Birka',
           builder: (_, _) => const PageFrame(wide: true, child: DebtsIsland()),
+        ),
+        Route(
+          path: '/limits',
+          title: 'Limits · Birka',
+          builder: (_, _) => const PageFrame(wide: true, child: LimitsIsland()),
         ),
         Route(
           path: '/tags',

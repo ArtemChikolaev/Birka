@@ -28,6 +28,7 @@ export 'src/birka_head.dart';
 export 'src/birka_icon.dart';
 export 'src/birka_line_chart.dart';
 export 'src/birka_link_row.dart';
+export 'src/birka_meter.dart';
 export 'src/birka_placeholder.dart';
 export 'src/birka_ring.dart';
 export 'src/birka_rule.dart';

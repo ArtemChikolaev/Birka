@@ -322,6 +322,82 @@ void main() {
 
       expect(find.text('Could not save.'), findsOneComponent);
     });
+
+    testComponents('says what a save will do over its button, and a failure '
+        'takes that place', (tester) async {
+      BirkaForm form({String? failure}) => BirkaForm(
+        title: 'New',
+        closeLabel: 'Close',
+        onClose: () {},
+        submitLabel: 'Save',
+        onSubmit: () {},
+        failure: failure,
+        caution: const Component.text('Cafés: 600 left'),
+        secondary: const BirkaButton(label: 'Remove', quiet: true),
+        children: const [Component.text('Field')],
+      );
+      tester.pumpComponent(form());
+
+      expect(find.text('Cafés: 600 left'), findsOneComponent);
+      expect(find.text('Remove'), findsOneComponent);
+
+      tester.pumpComponent(form(failure: 'Could not save.'));
+      await tester.pump();
+      expect(find.text('Cafés: 600 left'), findsNothing);
+      expect(find.text('Could not save.'), findsOneComponent);
+    });
+
+    testComponents('without a label for its button has none', (tester) async {
+      tester.pumpComponent(
+        const BirkaForm(
+          title: 'Averages',
+          closeLabel: 'Close',
+          onClose: _nothing,
+          submitLabel: null,
+          onSubmit: null,
+          children: [Component.text('Too early')],
+        ),
+      );
+
+      expect(find.text('Too early'), findsOneComponent);
+      expect(find.byType(BirkaButton), findsNothing);
+    });
+  });
+
+  testComponents('BirkaMeter fills up to its end, in its color', (
+    tester,
+  ) async {
+    tester.pumpComponent(
+      const BirkaMeter(
+        value: 1.25,
+        label: 'Leisure: 125 % of the limit',
+        color: 'var(--color-negative)',
+        height: 6,
+      ),
+    );
+
+    final meter = find.byComponentPredicate(
+      (component) =>
+          component is DomComponent && component.classes == 'birka-meter',
+    );
+    expect(attributesOf(meter)['role'], 'meter');
+    expect(attributesOf(meter)['aria-valuenow'], '125');
+    final fill =
+        find
+                .byComponentPredicate(
+                  (component) =>
+                      component is DomComponent &&
+                      component.classes == 'birka-meter__fill',
+                )
+                .evaluate()
+                .single
+                .component
+            as DomComponent;
+    expect(fill.styles?.properties['width'], '100.0%');
+    expect(
+      fill.styles?.properties['--birka-meter-color'],
+      'var(--color-negative)',
+    );
   });
 
   testComponents('BirkaChoice puts a label over its options', (tester) async {
@@ -2278,3 +2354,5 @@ void main() {
     expect(find.text('Amount'), findsOneComponent);
   });
 }
+
+void _nothing() {}

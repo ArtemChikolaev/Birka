@@ -25,6 +25,7 @@ import 'package:birka_web/pages/help_island.dart' as _help_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
 import 'package:birka_web/pages/import_island.dart' as _import_island;
 import 'package:birka_web/pages/inbox_island.dart' as _inbox_island;
+import 'package:birka_web/pages/limits_island.dart' as _limits_island;
 import 'package:birka_web/pages/more_island.dart' as _more_island;
 import 'package:birka_web/pages/more_page.dart' as _more_page;
 import 'package:birka_web/pages/notifications_island.dart'
@@ -72,6 +73,7 @@ import 'package:design_jaspr/src/birka_head.dart' as _birka_head;
 import 'package:design_jaspr/src/birka_icon.dart' as _birka_icon;
 import 'package:design_jaspr/src/birka_line_chart.dart' as _birka_line_chart;
 import 'package:design_jaspr/src/birka_link_row.dart' as _birka_link_row;
+import 'package:design_jaspr/src/birka_meter.dart' as _birka_meter;
 import 'package:design_jaspr/src/birka_placeholder.dart' as _birka_placeholder;
 import 'package:design_jaspr/src/birka_ring.dart' as _birka_ring;
 import 'package:design_jaspr/src/birka_rule.dart' as _birka_rule;
@@ -133,6 +135,14 @@ import 'package:inbox_jaspr/src/presentation/components/pair_card.dart'
     as _pair_card;
 import 'package:inbox_jaspr/src/presentation/pages/inbox_page.dart'
     as _inbox_page;
+import 'package:limits_jaspr/src/presentation/components/limits_overview_part.dart'
+    as _limits_overview_part;
+import 'package:limits_jaspr/src/presentation/pages/limit_form_page.dart'
+    as _limit_form_page;
+import 'package:limits_jaspr/src/presentation/pages/limit_suggest_page.dart'
+    as _limit_suggest_page;
+import 'package:limits_jaspr/src/presentation/pages/limits_page.dart'
+    as _limits_page;
 import 'package:notifications_jaspr/src/presentation/pages/notifications_page.dart'
     as _notifications_page;
 import 'package:onboarding_jaspr/src/presentation/pages/onboarding_page.dart'
@@ -222,6 +232,9 @@ ServerOptions get defaultServerOptions => ServerOptions(
     _inbox_island.InboxIsland: ClientTarget<_inbox_island.InboxIsland>(
       'inbox_island',
     ),
+    _limits_island.LimitsIsland: ClientTarget<_limits_island.LimitsIsland>(
+      'limits_island',
+    ),
     _more_island.MoreIsland: ClientTarget<_more_island.MoreIsland>(
       'more_island',
     ),
@@ -284,6 +297,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._birka_icon.BirkaIcon.styles,
     ..._birka_line_chart.BirkaLineChart.styles,
     ..._birka_link_row.BirkaLinkRow.styles,
+    ..._birka_meter.BirkaMeter.styles,
     ..._birka_placeholder.BirkaPlaceholder.styles,
     ..._birka_ring.BirkaRing.styles,
     ..._birka_rule.BirkaRule.styles,
@@ -337,6 +351,10 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._inbox_row.InboxRow.styles,
     ..._pair_card.PairCard.styles,
     ..._inbox_page.InboxPage.styles,
+    ..._limits_overview_part.LimitsOverviewPart.styles,
+    ..._limit_form_page.LimitFormPage.styles,
+    ..._limit_suggest_page.LimitSuggestPage.styles,
+    ..._limits_page.LimitsPage.styles,
     ..._notifications_page.NotificationsPage.styles,
     ..._onboarding_page.OnboardingPage.styles,
     ..._overview_page.OverviewPage.styles,

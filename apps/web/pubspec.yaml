@@ -57,6 +57,10 @@ dependencies:
     path: ../../packages/core/l10n
   ledger:
     path: ../../packages/core/ledger
+  limits_common:
+    path: ../../packages/features/limits/common
+  limits_jaspr:
+    path: ../../packages/features/limits/jaspr
   notifications_common:
     path: ../../packages/features/notifications/common
   notifications_jaspr:

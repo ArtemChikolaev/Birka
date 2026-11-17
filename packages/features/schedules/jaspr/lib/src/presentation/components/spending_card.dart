@@ -52,7 +52,6 @@ class SpendingCard extends StatelessComponent {
     final share = perDay > 0
         ? (spent / perDay).clamp(0.0, 1.0)
         : (spent > 0 ? 1.0 : 0.0);
-    final percent = (share * 100).round();
     final line = switch (view.forecast) {
       final forecast? => switch (forecastLine(forecast)) {
         final text? => (short: forecast.runsDry, text: text),
@@ -78,25 +77,13 @@ class SpendingCard extends StatelessComponent {
             .text(mask(t.schedules.ofPerDay(amount: formatMoney(plan.perDay)))),
           ]),
         ]),
-        span(
-          classes: 'spending__bar',
-          attributes: {
-            'role': 'meter',
-            'aria-label': t.schedules.canSpend,
-            'aria-valuemin': '0',
-            'aria-valuemax': '100',
-            'aria-valuenow': '$percent',
-          },
-          [
-            span(
-              classes: plan.over
-                  ? 'spending__fill spending__fill--over'
-                  : 'spending__fill',
-              styles: Styles(raw: {'width': '$percent%'}),
-              const [],
-            ),
-          ],
-        ),
+        span(classes: 'spending__bar', [
+          BirkaMeter(
+            value: share,
+            label: t.schedules.canSpend,
+            color: plan.over ? 'var(--color-negative)' : 'var(--color-accent)',
+          ),
+        ]),
         span(classes: 'text-caption spending__spent', [
           .text(mask(spentLabel(plan))),
         ]),
@@ -202,28 +189,7 @@ class SpendingCard extends StatelessComponent {
     ),
     css('.spending__of').styles(raw: {'color': 'var(--color-text-muted)'}),
     css('.spending__bar').styles(
-      raw: {
-        'background': 'var(--color-surface-raised)',
-        'border-radius': '4px',
-        'display': 'block',
-        'height': '8px',
-        'margin': 'var(--space-xxs) 0',
-        'overflow': 'hidden',
-      },
-    ),
-    css('.spending__fill').styles(
-      raw: {
-        'background': 'var(--color-accent)',
-        'border-radius': '4px',
-        'display': 'block',
-        'height': '100%',
-        'transition':
-            'width var(--duration-roll) var(--easing-standard), '
-            'background var(--duration-slow) var(--easing-fade)',
-      },
-    ),
-    css('.spending__fill--over').styles(
-      raw: {'background': 'var(--color-negative)'},
+      raw: {'display': 'block', 'margin': 'var(--space-xxs) 0'},
     ),
     css('.spending__spent').styles(
       raw: {'color': 'var(--color-text-secondary)'},
