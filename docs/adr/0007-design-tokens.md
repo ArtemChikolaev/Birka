@@ -25,8 +25,9 @@
    uppercase and tabular figures, go into `$extensions` under
    `io.github.artemchikolaev.birka`.
 2. Our generator, `make tokens`, writes `lib/src/tokens.g.dart`, pure-Dart
-   constants for both kits, and `lib/css/tokens.css`, custom properties and
-   text classes for the web. It supports the subset of DTCG that Birka uses and
+   constants for both kits, `lib/css/tokens.css`, custom properties and
+   text classes for the web, and `docs/design/system/tokens.json`, the tokens
+   of the design system on claude.ai with a usage note each. It supports the subset of DTCG that Birka uses and
    rejects anything else with the name of the token. The generated files are
    committed, and `make check-tokens` fails in CI when they are out of date.
 3. `packages/design/flutter` turns the tokens into a `ThemeData` with two

@@ -1,0 +1,34 @@
+<!-- @dsCard height=288 -->
+<style>
+  .cover { position: relative; width: 960px; height: 288px; background: var(--color-background); overflow: hidden; }
+  .cover svg { position: absolute; left: 0; top: 0; }
+  .b-accent { fill: var(--color-accent); }
+  .b-deep { fill: var(--color-art-emerald); }
+  .b-raised { fill: var(--color-surface-selected); }
+  .b-amber { fill: var(--color-palette-amber); }
+  .b-sky { fill: var(--color-art-sapphire); }
+  .ring { fill: none; stroke: var(--color-glass-border); stroke-width: 1px; }
+  .cover__text { position: absolute; left: 48px; bottom: 40px; max-width: 440px; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .cover__name { font-family: var(--font-display); font-weight: 800; font-size: 120px; line-height: .92; letter-spacing: -4px; color: var(--color-text); margin: 0; }
+  .cover__tag { font-family: var(--font-text); font-size: 14px; color: var(--color-text-muted); margin: 0; }
+</style>
+<div class="cover">
+  <!-- blocks: color-accent 224×224 disc, color-art-emerald 160 slab (radius-xl), color-surface-selected 128 pill, color-palette-amber 64 disc, color-art-sapphire 96 disc.
+       arrangement: one big coin bleeding off the top right, a slab and a pill stacked beneath, two satellites.
+       pattern: "a literal motif" — coins: discs and concentric hairline rings (color-glass-border), since the brand mark is a glass coin.
+       steps and radii: space-xxl 32 gaps, space-md 16 ring pitch, radius-xl 28, radius-pill. -->
+  <svg width="960" height="288" viewBox="0 0 960 288" aria-hidden="true">
+    <rect class="b-deep" x="512" y="128" width="192" height="160" rx="28"/>
+    <rect class="b-raised" x="512" y="32" width="160" height="64" rx="32"/>
+    <circle class="b-accent" cx="832" cy="64" r="128"/>
+    <circle class="ring" cx="832" cy="64" r="144"/>
+    <circle class="ring" cx="832" cy="64" r="160"/>
+    <circle class="ring" cx="832" cy="64" r="176"/>
+    <circle class="b-sky" cx="784" cy="240" r="48"/>
+    <circle class="b-amber" cx="896" cy="232" r="32"/>
+  </svg>
+  <div class="cover__text">
+    <p class="cover__name">Birka</p>
+    <p class="cover__tag">Money across currencies, banks and countries, kept on your phone.</p>
+  </div>
+</div>
