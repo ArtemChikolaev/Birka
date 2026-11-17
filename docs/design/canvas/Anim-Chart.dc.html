@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>График при смене периода</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="При смене недели, месяца и года белая плашка переезжает к выбранному периоду, старая линия гаснет, новая прорисовывается слева направо, а точка в конце появляется последней" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(64% 20% at 0% 66%, rgba(36,138,86,0.24) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 20px; height: 44px; display: flex; align-items: center; justify-content: space-between">
+    <span style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.07); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: #F4F4F2; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></span>
+    <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.14em; color: #A3A3A3">СЧЁТ</span>
+    <span style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.07); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: #F4F4F2; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg></span>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 84px; height: 188px; box-sizing: border-box; padding: 20px; border-radius: 26px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); background: radial-gradient(120% 130% at 100% 100%, rgba(30,150,92,0.85) 0%, rgba(14,70,44,0.55) 38%, transparent 66%), radial-gradient(70% 80% at 0% 0%, rgba(120,214,166,0.20) 0%, transparent 60%), linear-gradient(135deg, #0A1A12 0%, #030504 100%); background-clip: padding-box; box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 18px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: space-between">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start">
+      <div>
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Карта</div>
+        <div style="margin-top: 2px; font-size: 13px; color: #D6D6D4">Рубли · Дебетовая карта</div>
+      </div>
+      <div style="width: 36px; height: 26px; border-radius: 6px; background: linear-gradient(135deg, rgba(255,255,255,0.55), rgba(255,255,255,0.18)); border: 1px solid rgba(255,255,255,0.35)"></div>
+    </div>
+    <div style="font-family: Manrope, Inter, sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; font-variant-numeric: tabular-nums">49 650 ₽</div>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 292px; height: 30px">
+    <div style="position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 10px; opacity: {{dw.o}}; transition: {{fade}}"><span style="height: 30px; padding: 0 12px; border-radius: 15px; background: rgba(255,107,107,0.16); color: #FF8A80; font-size: 14px; font-weight: 600; display: flex; align-items: center; font-variant-numeric: tabular-nums">↘ −350 ₽</span><span style="color: #A3A3A3">за неделю</span></div>
+    <div style="position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 10px; opacity: {{dm.o}}; transition: {{fade}}"><span style="height: 30px; padding: 0 12px; border-radius: 15px; background: rgba(255,107,107,0.16); color: #FF8A80; font-size: 14px; font-weight: 600; display: flex; align-items: center; font-variant-numeric: tabular-nums">↘ −350 ₽</span><span style="color: #A3A3A3">за ноябрь</span></div>
+    <div style="position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 10px; opacity: {{dy.o}}; transition: {{fade}}"><span style="height: 30px; padding: 0 12px; border-radius: 15px; background: rgba(61,220,151,0.16); color: #3DDC97; font-size: 14px; font-weight: 600; display: flex; align-items: center; font-variant-numeric: tabular-nums">↗ +12 400 ₽</span><span style="color: #A3A3A3">за год</span></div>
+  </div>
+
+  <svg aria-hidden="true" style="position: absolute; left: 20px; top: 336px" width="350" height="150" viewBox="0 0 350 150" fill="none">
+    <path d="M4 50 H346" stroke="rgba(255,255,255,0.06)" stroke-width="1"></path>
+    <path d="M4 100 H346" stroke="rgba(255,255,255,0.06)" stroke-width="1"></path>
+    <path d="M4 24 H168 C 206 26 248 54 286 86 C 308 104 326 118 338 124" stroke="#3DDC97" stroke-width="3" stroke-linecap="round" style="stroke-dasharray: 900; stroke-dashoffset: {{lm.d}}; opacity: {{lm.o}}; transition: {{lm.tr}}"></path>
+    <path d="M4 30 H250 C 280 30 300 60 338 124" stroke="#3DDC97" stroke-width="3" stroke-linecap="round" style="stroke-dasharray: 900; stroke-dashoffset: {{lw.d}}; opacity: {{lw.o}}; transition: {{lw.tr}}"></path>
+    <path d="M4 132 C 40 120 70 128 100 104 C 130 82 160 96 190 74 C 220 54 250 66 280 42 C 300 28 320 30 338 22" stroke="#3DDC97" stroke-width="3" stroke-linecap="round" style="stroke-dasharray: 900; stroke-dashoffset: {{ly.d}}; opacity: {{ly.o}}; transition: {{ly.tr}}"></path>
+    <circle cx="338" cy="124" r="6" fill="#3DDC97" style="opacity: {{em.o}}; transform: {{em.t}}; transform-box: fill-box; transform-origin: center; transition: {{em.tr}}"></circle>
+    <circle cx="338" cy="124" r="6" fill="#3DDC97" style="opacity: {{ew.o}}; transform: {{ew.t}}; transform-box: fill-box; transform-origin: center; transition: {{ew.tr}}"></circle>
+    <circle cx="338" cy="22" r="6" fill="#3DDC97" style="opacity: {{ey.o}}; transform: {{ey.t}}; transform-box: fill-box; transform-origin: center; transition: {{ey.tr}}"></circle>
+  </svg>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; top: 502px; width: 270px; height: 40px">
+    <span style="position: absolute; left: 0; top: 0; width: 96px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+    <span style="position: absolute; left: 106px; top: 0; width: 90px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+    <span style="position: absolute; left: 206px; top: 0; width: 64px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+    <span style="position: absolute; top: 0; height: 40px; border-radius: 20px; background: #F4F4F2; left: {{pill.l}}px; width: {{pill.w}}px; transition: {{pill.tr}}"></span>
+    <span style="position: absolute; left: 0; top: 0; width: 96px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: {{cw}}; transition: color 200ms ease">Неделя</span>
+    <span style="position: absolute; left: 106px; top: 0; width: 90px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: {{cm}}; transition: color 200ms ease">Месяц</span>
+    <span style="position: absolute; left: 206px; top: 0; width: 64px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: {{cy}}; transition: color 200ms ease">Год</span>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 566px; display: flex; flex-direction: column; gap: 16px">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em">ОПЕРАЦИИ</div>
+    <div style="display: flex; justify-content: space-between; padding: 0 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #A3A3A3"><span>СЕГОДНЯ</span><span style="font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums">−350 ₽</span></div>
+    <div style="height: 66px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 12px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+      <span style="width: 44px; height: 44px; border-radius: 12px; background: rgba(242,181,51,0.16); color: #F2B533; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"></path><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16"></path><path d="M8 3v3M12 3v3"></path></svg></span>
+      <span style="flex: 1 1 auto"><span style="display: block; font-weight: 600">Кафе</span><span style="display: block; font-size: 13px; color: #A3A3A3">Карта</span></span>
+      <span style="font-family: Manrope, Inter, sans-serif; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums">−350 ₽</span>
+    </div>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 46px; top: 500px; width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.32); box-shadow: 0 0 0 6px rgba(255,255,255,0.10); pointer-events: none; opacity: {{tapWeek.o}}; transform: {{tapWeek.t}}; transition: {{tapWeek.tr}}"></div>
+  <div aria-hidden="true" style="position: absolute; left: 149px; top: 500px; width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.32); box-shadow: 0 0 0 6px rgba(255,255,255,0.10); pointer-events: none; opacity: {{tapMonth.o}}; transform: {{tapMonth.t}}; transition: {{tapMonth.tr}}"></div>
+  <div aria-hidden="true" style="position: absolute; left: 236px; top: 500px; width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.32); box-shadow: 0 0 0 6px rgba(255,255,255,0.10); pointer-events: none; opacity: {{tapYear.o}}; transform: {{tapYear.t}}; transition: {{tapYear.tr}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"slow":{"editor":"boolean","default":false},"reducedMotion":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { phase: 'month' };
+    this.timer = null;
+    this.start = 0;
+    this.slowSeen = null;
+    this.stopped = false;
+  }
+
+  componentDidMount() {
+    this.stopped = false;
+    this.clock();
+  }
+
+  componentDidUpdate() {
+    this.clock();
+  }
+
+  componentWillUnmount() {
+    this.stopped = true;
+    clearTimeout(this.timer);
+    this.timer = null;
+  }
+
+  steps() {
+    return [['month', 1100, 860], ['tapWeek', 80, 140], ['week', 1100, 860], ['tapYear', 80, 140], ['year', 1300, 860], ['tapMonth', 80, 140]];
+  }
+
+  active() {
+    return !this.stopped && (!this.__host || this.__host.logic === this);
+  }
+
+  phaseAt(elapsed) {
+    const k = this.props.slow ? 3 : 1;
+    const steps = this.steps();
+    const total = steps.reduce((sum, s) => sum + s[1] + s[2] * k, 0);
+    let t = elapsed % total;
+    for (const s of steps) {
+      const d = s[1] + s[2] * k;
+      if (t < d) return s[0];
+      t -= d;
+    }
+    return steps[0][0];
+  }
+
+  clock() {
+    const slow = !!this.props.slow;
+    if (slow !== this.slowSeen) {
+      this.slowSeen = slow;
+      this.start = Date.now();
+    }
+    if (this.timer || !this.active()) return;
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      if (!this.active()) return;
+      const phase = this.phaseAt(Date.now() - this.start);
+      if (phase !== this.state.phase) this.setState({ phase });
+      this.clock();
+    }, 40);
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  renderVals() {
+    this.clock();
+    const k = this.props.slow ? 3 : 1;
+    const reduced = this.props.reducedMotion ?? this.prefersReduced();
+    const phase = this.state.phase;
+    let period = 'month';
+    if (phase === 'week' || phase === 'tapYear') period = 'week';
+    if (phase === 'year' || phase === 'tapMonth') period = 'year';
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const ms = (x) => Math.round(x * k) + 'ms';
+    const line = (p) => {
+      const on = period === p;
+      if (reduced) return { d: 0, o: on ? 1 : 0, tr: 'opacity ' + ms(220) + ' ease' };
+      if (on) return { d: 0, o: 1, tr: 'opacity 0ms, stroke-dashoffset ' + ms(600) + ' ' + ease + ' ' + ms(120) };
+      return { d: 900, o: 0, tr: 'opacity ' + ms(180) + ' ease, stroke-dashoffset 0ms linear ' + ms(220) };
+    };
+    const end = (p) => {
+      const on = period === p;
+      if (reduced) return { o: on ? 1 : 0, t: 'scale(1)', tr: 'opacity ' + ms(220) + ' ease' };
+      if (on) return { o: 1, t: 'scale(1)', tr: 'opacity ' + ms(160) + ' ease ' + ms(620) + ', transform ' + ms(260) + ' ' + spring + ' ' + ms(620) };
+      return { o: 0, t: 'scale(0.4)', tr: 'opacity ' + ms(120) + ' ease, transform ' + ms(120) + ' ease' };
+    };
+    const pos = { week: [0, 96], month: [106, 90], year: [206, 64] }[period];
+    const dot = (on) => ({ o: on ? 1 : 0, t: on ? 'scale(1)' : 'scale(0.6)', tr: 'opacity ' + ms(140) + ' ease-out, transform ' + ms(140) + ' ease-out' });
+    return {
+      lm: line('month'),
+      lw: line('week'),
+      ly: line('year'),
+      em: end('month'),
+      ew: end('week'),
+      ey: end('year'),
+      pill: { l: pos[0], w: pos[1], tr: reduced ? 'none' : 'left ' + ms(560) + ' ' + spring + ', width ' + ms(560) + ' ' + spring },
+      cw: period === 'week' ? '#0A0A0A' : '#D6D6D4',
+      cm: period === 'month' ? '#0A0A0A' : '#D6D6D4',
+      cy: period === 'year' ? '#0A0A0A' : '#D6D6D4',
+      dw: { o: period === 'week' ? 1 : 0 },
+      dm: { o: period === 'month' ? 1 : 0 },
+      dy: { o: period === 'year' ? 1 : 0 },
+      fade: 'opacity ' + ms(220) + ' ease',
+      tapWeek: dot(phase === 'tapWeek'),
+      tapMonth: dot(phase === 'tapMonth'),
+      tapYear: dot(phase === 'tapYear')
+    };
+  }
+}
+</script>
+</body>
+</html>

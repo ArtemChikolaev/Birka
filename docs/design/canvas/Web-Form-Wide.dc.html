@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Регулярный платёж на сайте · форма, широкий экран</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="min-height: 900px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(38% 40% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(42% 44% at 100% 100%, rgba(36,138,86,0.26) 0%, transparent 74%), radial-gradient(30% 26% at 72% 30%, rgba(36,138,86,0.10) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.4">
+  <form onsubmit="return false" style="max-width: 1160px; margin: 0 auto; box-sizing: border-box; padding: 32px 20px 64px; display: flex; flex-direction: column; gap: 24px">
+
+    <div style="display: flex; align-items: center; gap: 12px">
+      <h1 style="flex: 1 1 auto; display: grid; margin: 0; min-width: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.22px; line-height: 1.2"><span style="grid-area: 1 / 1; opacity: {{title.oa}}; transition: {{title.tr}}">{{title.a}}</span><span style="grid-area: 1 / 1; opacity: {{title.ob}}; transition: {{title.tr}}">{{title.b}}</span></h1>
+      <a href="Web-Planned-Wide.dc.html" aria-label="Закрыть" style="flex: 0 0 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start">
+    <div style="display: flex; flex-direction: column; gap: 20px; min-width: 0">
+    <div role="group" aria-label="Что за платёж" style="display: flex; height: 52px; box-sizing: border-box; padding: 4px; border-radius: 22px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09)">
+      <sc-for list="{{kinds}}" as="k" hint-placeholder-count="3">
+        <button type="button" aria-pressed="{{k.pressed}}" onClick="{{k.pick}}" style="flex: 1 1 0; min-width: 0; padding: 0; border: 0; border-radius: 16px; background: {{k.bg}}; color: {{k.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.96px; line-height: 1.2; text-transform: uppercase; cursor: pointer; transition: background 150ms, color 150ms">{{k.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start">
+    <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+      <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Название</span>
+      <span style="box-sizing: border-box; padding: 12px 16px; border-radius: 16px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); font-size: 16px; line-height: 1.4; color: {{name.ink}}">{{name.text}}</span>
+    </label>
+    <div style="display: flex; flex-direction: column; min-width: 0">
+    <label style="display: flex; flex-direction: column; gap: 8px">
+      <span style="display: grid; font-size: 13px; line-height: 1.35; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{amountLabel.oa}}; transition: {{amountLabel.tr}}">{{amountLabel.a}}</span><span style="grid-area: 1 / 1; opacity: {{amountLabel.ob}}; transition: {{amountLabel.tr}}">{{amountLabel.b}}</span></span>
+      <span style="box-sizing: border-box; padding: 12px 16px; border-radius: 16px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 1.4; font-variant-numeric: tabular-nums"><span style="flex: 1 1 auto; color: {{amount.ink}}">{{amount.text}}</span><span style="color: #8A8A8A">₽</span></span>
+    </label>
+    <div style="display: grid; grid-template-rows: {{halvesNote.rows}}; opacity: {{halvesNote.o}}; transition: {{halvesNote.tr}}">
+      <div style="overflow: hidden"><div style="padding-top: 8px; font-size: 13px; line-height: 1.35; color: #C9C9C7">по 60 000 ₽ авансом и зарплатой</div></div>
+    </div>
+    </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+        <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Категория</span>
+        <span style="min-height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 16px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09); display: flex; align-items: center; gap: 8px; cursor: pointer"><span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{category.dot}}"></span><span style="flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; color: {{category.ink}}">{{category.name}}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M6 9l6 6 6-6"></path></svg></span>
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+        <span style="display: grid; font-size: 13px; line-height: 1.35; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{accountLabel.oa}}; transition: {{accountLabel.tr}}">{{accountLabel.a}}</span><span style="grid-area: 1 / 1; opacity: {{accountLabel.ob}}; transition: {{accountLabel.tr}}">{{accountLabel.b}}</span></span>
+        <span style="min-height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 16px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09); display: flex; align-items: center; gap: 8px; cursor: pointer"><span style="flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600">Зарплатная карта</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M6 9l6 6 6-6"></path></svg></span>
+      </label>
+    </div>
+
+    <div style="display: grid; grid-template-rows: {{partsRow.rows}}; opacity: {{partsRow.o}}; margin-top: -20px; transition: {{partsRow.tr}}">
+      <div style="overflow: hidden">
+        <div role="group" aria-label="Как приходит" style="display: flex; flex-direction: column; gap: 8px; padding-top: 20px">
+          <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Как приходит</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{parts}}" as="o" hint-placeholder-count="2">
+              <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 150ms, color 150ms">{{o.label}}</button>
+            </sc-for>
+          </div>
+          <span style="display: grid; font-size: 13px; line-height: 1.35; color: #C9C9C7"><span style="grid-area: 1 / 1; opacity: {{partsNote.oa}}; transition: {{partsNote.tr}}">{{partsNote.a}}</span><span style="grid-area: 1 / 1; opacity: {{partsNote.ob}}; transition: {{partsNote.tr}}">{{partsNote.b}}</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-rows: {{everyRow.rows}}; opacity: {{everyRow.o}}; margin-top: -20px; transition: {{everyRow.tr}}">
+      <div style="overflow: hidden">
+        <div role="group" aria-label="Повторять каждый" style="display: flex; flex-direction: column; gap: 8px; padding-top: 20px">
+          <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Повторять каждый</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{every}}" as="o" hint-placeholder-count="3">
+              <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 150ms, color 150ms">{{o.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-rows: {{halvesDays.rows}}; opacity: {{halvesDays.o}}; margin-top: -20px; transition: {{halvesDays.tr}}">
+      <div style="overflow: hidden">
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 20px">
+          <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+            <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Аванс</span>
+            <span style="min-height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 16px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09); display: flex; align-items: center; gap: 8px; cursor: pointer"><span style="flex: 1 1 auto; font-weight: 600">20-го</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></span>
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+            <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Сумма аванса</span>
+            <span style="min-height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 16px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09); display: flex; align-items: center; gap: 8px; cursor: pointer"><span style="flex: 1 1 auto; font-weight: 600; color: #8A8A8A">половина</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+        <span style="display: grid; font-size: 13px; line-height: 1.35; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{dayLabel.oa}}; transition: {{dayLabel.tr}}">{{dayLabel.a}}</span><span style="grid-area: 1 / 1; opacity: {{dayLabel.ob}}; transition: {{dayLabel.tr}}">{{dayLabel.b}}</span></span>
+        <span style="min-height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 16px; background: #0E0E0F; border: 1px solid rgba(255,255,255,0.09); display: flex; align-items: center; gap: 8px; cursor: pointer"><span style="flex: 1 1 auto; display: grid; font-weight: 600"><span style="grid-area: 1 / 1; opacity: {{day.oa}}; transition: {{day.tr}}">{{day.a}}</span><span style="grid-area: 1 / 1; opacity: {{day.ob}}; transition: {{day.tr}}">{{day.b}}</span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></span>
+      </label>
+      <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+        <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Следующий раз</span>
+        <span style="align-self: flex-start; max-width: 100%; height: 44px; box-sizing: border-box; padding: 0 16px; border-radius: 999px; background: #161617; color: {{nextChip.fg}}; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; white-space: nowrap; cursor: {{nextChip.cursor}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 20px; opacity: {{nextChip.iconO}}"><rect x="3.5" y="5" width="17" height="15.5" rx="3"></rect><path d="M3.5 10h17"></path><path d="M8 3v4M16 3v4"></path></svg><span style="display: grid; min-width: 0"><span style="grid-area: 1 / 1; overflow: hidden; text-overflow: ellipsis; opacity: {{next.oa}}; transition: {{next.tr}}">{{next.a}}</span><span style="grid-area: 1 / 1; overflow: hidden; text-overflow: ellipsis; opacity: {{next.ob}}; transition: {{next.tr}}">{{next.b}}</span></span></span>
+      </div>
+    </div>
+
+    <div role="group" aria-label="В день платежа" style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">В день платежа</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{onDay}}" as="o" hint-placeholder-count="2">
+          <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 150ms, color 150ms">{{o.label}}</button>
+        </sc-for>
+      </div>
+      <span style="display: grid; font-size: 13px; line-height: 1.35; color: #C9C9C7"><span style="grid-area: 1 / 1; opacity: {{onDayNote.oa}}; transition: {{onDayNote.tr}}">{{onDayNote.a}}</span><span style="grid-area: 1 / 1; opacity: {{onDayNote.ob}}; transition: {{onDayNote.tr}}">{{onDayNote.b}}</span></span>
+    </div>
+
+    </div>
+    <aside style="position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px">
+      <sc-if value="{{found}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: rgba(61,220,151,0.16); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19l-3-3"></path><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5l3 3"></path></svg></span>
+          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-weight: 600">Нашли в операциях · 4 раза</span><span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">12 авг, 12 сен, 12 окт, 12 ноя · Подписки</span></span>
+        </div>
+      </sc-if>
+      <section aria-label="Как будет в списке" style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; color: #A3A3A3">В списке платежей</span>
+        <div style="display: flex; align-items: center; gap: 12px; min-height: 48px">
+          <span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{preview.dot}}; transition: background 150ms"></span>
+          <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; color: {{preview.nameInk}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{preview.name}}</span><span style="display: grid; font-size: 13px; line-height: 1.35; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{preview.meta.oa}}; transition: {{preview.meta.tr}}">{{preview.meta.a}}</span><span style="grid-area: 1 / 1; opacity: {{preview.meta.ob}}; transition: {{preview.meta.tr}}">{{preview.meta.b}}</span></span></span>
+          <span style="flex: 0 0 auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{preview.ink}}; transition: color 150ms"><span style="display: grid"><span style="grid-area: 1 / 1; opacity: {{preview.amount.oa}}; transition: {{preview.amount.tr}}">{{preview.amount.a}}</span><span style="grid-area: 1 / 1; opacity: {{preview.amount.ob}}; transition: {{preview.amount.tr}}">{{preview.amount.b}}</span></span></span>
+        </div>
+        <span aria-hidden="true" style="height: 1px; background: rgba(255,255,255,0.08)"></span>
+        <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Следующие разы</span>
+        <span style="display: grid; font-weight: 600"><span style="grid-area: 1 / 1; opacity: {{preview.dates.oa}}; transition: {{preview.dates.tr}}">{{preview.dates.a}}</span><span style="grid-area: 1 / 1; opacity: {{preview.dates.ob}}; transition: {{preview.dates.tr}}">{{preview.dates.b}}</span></span>
+      </section>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <button type="button" onClick="{{save}}" style="height: 56px; padding: 0 20px; border: 0; border-radius: 999px; background: #3DDC97; color: #02130B; font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.96px; text-transform: uppercase; cursor: pointer; opacity: {{saveBtn.o}}; transition: opacity 150ms">Сохранить</button>
+        <span style="font-size: 13px; line-height: 1.35; color: #A3A3A3; text-align: center">{{saveNote}}</span>
+      </div>
+      <sc-if value="{{editing}}" hint-placeholder-val="{{ false }}">
+        <div style="border-radius: 22px; overflow: hidden; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <button type="button" style="width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px 16px; border: 0; background: none; text-align: left; font-family: Inter, system-ui, sans-serif; cursor: pointer"><span style="font-size: 15px; font-weight: 600; line-height: 1.4; color: #FF8E7F">Удалить платёж</span><span style="font-size: 13px; line-height: 1.35; color: #A3A3A3">Прошлые операции останутся</span></button>
+        </div>
+      </sc-if>
+    </aside>
+    </div>
+  </form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["Новый","Из находки","Зарплата с авансом","Изменить"],"default":"Из находки"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+    this.lines = {};
+  }
+
+  fresh() {
+    return { kind: null, every: null, onDay: null, parts: null };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) this.setState(this.fresh());
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // A line that cross-fades into a new one over duration.base: the new text
+  // goes into the layer behind, which then comes forward.
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  // BirkaChip of the site: the picked one turns white over duration.fast.
+  chips(list, current, key) {
+    return list.map(([id, label]) => ({
+      label,
+      pressed: id === current ? 'true' : 'false',
+      bg: id === current ? '#F4F4F2' : '#161617',
+      fg: id === current ? '#000000' : '#C9C9C7',
+      pick: () => this.setState({ [key]: id })
+    }));
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'Из находки';
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    // The payments of the phone boards. On the site the form is a page, as
+    // the forms of an account and a category are there, with its fields in
+    // the open instead of sheets.
+    const forms = {
+      'Новый': { title: 'Новый платёж', kind: 'expense', name: '', amount: '', category: ['Без категории', 'rgba(255,255,255,0.24)', '#8A8A8A'], every: 'month', day: '18-го', next: '18 ноября, ср', onDay: 'ask' },
+      'Из находки': { title: 'Новый платёж', found: true, kind: 'expense', name: 'Яндекс Плюс', amount: '449', category: ['Подписки', '#A78BFA', '#F4F4F2'], every: 'month', day: '12-го', next: '12 декабря, сб', onDay: 'post' },
+      'Зарплата с авансом': { title: 'Новый платёж', kind: 'income', name: 'Зарплата', amount: '120 000', category: ['Зарплата', '#4ADE80', '#F4F4F2'], parts: 'two', every: 'month', day: '5-го', next: '5 декабря, сб', onDay: 'ask' },
+      'Изменить': { title: 'Аренда', editing: true, kind: 'expense', name: 'Аренда', amount: '45 000', category: ['Дом', '#22D3EE', '#F4F4F2'], every: 'month', day: '25-го', next: '25 ноября, ср', onDay: 'ask' }
+    };
+    const form = forms[mode] ?? forms['Из находки'];
+    const kind = st.kind ?? form.kind;
+    const income = kind === 'income';
+    const parts = st.parts ?? form.parts ?? 'one';
+    const halves = income && parts === 'two';
+    const every = st.every ?? form.every;
+    const onDay = st.onDay ?? form.onDay;
+    // A part that opens to its height over duration.base, as the answers of
+    // «Помощь» do on the site, and fades in after it starts.
+    const fold = (open) => ({
+      rows: open ? '1fr' : '0fr',
+      o: open ? '1' : '0',
+      tr: reduced
+        ? 'opacity 220ms ' + fade
+        : open
+          ? 'grid-template-rows 220ms ' + ease + ', opacity 220ms ' + fade + ' 60ms'
+          : 'grid-template-rows 220ms ' + ease + ' 60ms, opacity 150ms ' + ease
+    });
+    const dayLabels = { month: 'Какого числа', week: 'Какой день недели', year: 'Какого дня' };
+    const dayValues = { month: form.day, week: 'Среда', year: '12 декабря' };
+    const nextValues = { month: form.next, week: '25 ноября, ср', year: '12 декабря, сб' };
+    return {
+      title: this.fading('title', form.title, reduced),
+      found: !!form.found,
+      editing: !!form.editing,
+      kinds: [['expense', 'Расход'], ['income', 'Поступление'], ['transfer', 'Перевод']].map(([id, label]) => ({
+        label,
+        pressed: id === kind ? 'true' : 'false',
+        bg: id === kind ? '#1E1E1F' : 'transparent',
+        fg: id === kind ? '#F4F4F2' : '#8A8A8A',
+        pick: () => this.setState({ kind: id })
+      })),
+      name: { text: form.name || 'Например, Аренда', ink: form.name ? '#F4F4F2' : '#8A8A8A' },
+      amountLabel: this.fading('amountLabel', halves ? 'Сумма в месяц' : 'Сумма', reduced),
+      amount: { text: form.amount || '0', ink: form.amount ? '#F4F4F2' : '#8A8A8A' },
+      halvesNote: fold(halves && !!form.amount),
+      category: { name: form.category[0], dot: form.category[1], ink: form.category[2] },
+      accountLabel: this.fading('account', income ? 'На счёт' : 'Счёт', reduced),
+      partsRow: fold(income),
+      parts: this.chips([['one', 'Одной суммой'], ['two', 'С авансом']], parts, 'parts'),
+      partsNote: this.fading('parts', halves ? 'Пополам: аванс 20-го, зарплата 5-го.' : 'Вся сумма приходит в один день.', reduced),
+      everyRow: fold(!halves),
+      every: this.chips([['month', 'Месяц'], ['week', 'Неделю'], ['year', 'Год']], every, 'every'),
+      halvesDays: fold(halves),
+      dayLabel: this.fading('dayLabel', halves ? 'Зарплата' : dayLabels[every], reduced),
+      day: this.fading('day', halves ? '5-го' : dayValues[every], reduced),
+      // A salary in halves takes its next day from its two days, so the
+      // date is not picked by hand there.
+      next: this.fading('next', halves ? 'аванс, 20 ноября, пт' : nextValues[every], reduced),
+      nextChip: { fg: halves ? '#A3A3A3' : '#F4F4F2', iconO: halves ? '0.5' : '1', cursor: halves ? 'default' : 'pointer' },
+      onDay: this.chips([['ask', 'Спросить меня'], ['post', 'Провести само']], onDay, 'onDay'),
+      onDayNote: this.fading('onDay', onDay === 'post'
+        ? 'Для подписок с одной суммой. Придёт в выписке банка — копии не будет.'
+        : 'Подойдёт, если сумма меняется, как у ЖКХ: в этот день платёж подождёт вашего «Провести».', reduced),
+      saveNote: form.editing ? 'Изменится со следующего раза: 25 ноября' : 'Появится в «Ближайших платежах» и в «Можно тратить сегодня»',
+      saveBtn: { o: form.name ? '1' : '0.5' },
+      // How the payment will stand in «Все регулярные», and its next days.
+      preview: {
+        dot: form.category[1],
+        name: form.name || 'Название',
+        nameInk: form.name ? '#F4F4F2' : '#8A8A8A',
+        meta: this.fading('pMeta', (halves ? '20-го и 5-го' : { month: 'каждый месяц ' + form.day, week: 'каждую неделю, по средам', year: 'раз в год, 12 декабря' }[every]) + ' · ' + (onDay === 'post' ? 'проводится сам' : 'спросить'), reduced),
+        amount: this.fading('pAmount', (kind === 'income' ? '+' : kind === 'expense' ? '−' : '') + (form.amount || '0') + ' ₽', reduced),
+        ink: kind === 'income' ? '#3DDC97' : '#F4F4F2',
+        dates: this.fading('pDates', halves
+          ? '20 ноября · 5 декабря · 20 декабря'
+          : {
+            month: { 'Новый': '18 ноября · 18 декабря · 18 января', 'Из находки': '12 декабря · 12 января · 12 февраля', 'Зарплата с авансом': '5 декабря · 5 января · 5 февраля', 'Изменить': '25 ноября · 25 декабря · 25 января' }[mode],
+            week: '25 ноября · 2 декабря · 9 декабря',
+            year: '12 декабря · 12 декабря 2027 · 12 декабря 2028'
+          }[every], reduced)
+      },
+      // Saved, the site goes back to the list, where the payment opens and a
+      // toast says so (Web-Planned, «Добавили»).
+      save: () => { if (form.name) window.location.href = 'Web-Planned-Wide.dc.html'; }
+    };
+  }
+}
+</script>
+</body>
+</html>

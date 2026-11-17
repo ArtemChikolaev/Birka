@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Спросить · не по теме</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000">
+  <div ref="{{boxRef}}" onScroll="{{scrolled}}" style="position: absolute; left: 0; right: 0; top: 76px; bottom: 0; overflow-y: auto; scrollbar-width: none; -webkit-mask-image: {{edge}}; mask-image: {{edge}}">
+    <div style="display: flex; flex-direction: column; gap: 18px; padding: 12px 20px 48px">
+
+      <sc-if value="{{isStart}}" hint-placeholder-val="{{ true }}">
+        <section aria-label="Можно спросить" style="display: flex; flex-direction: column; gap: 8px; opacity: {{startO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Можно спросить</h2>
+          <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+            <sc-for list="{{examples}}" as="x" hint-placeholder-count="5">
+              <button type="button" onClick="{{x.go}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border: 0; border-bottom: {{x.divider}}; background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer">
+                <span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: {{x.tint}}; display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="flex: 0 0 18px; width: 18px; height: 18px; background: {{x.color}}; -webkit-mask: {{x.mask}} center / contain no-repeat; mask: {{x.mask}} center / contain no-repeat"></span></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{x.title}}</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{x.sub}}</span></span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+
+        <div style="display: grid; grid-template-rows: {{recent.rows}}; opacity: {{recent.o}}; transition: grid-template-rows 320ms cubic-bezier(0.2, 0, 0, 1), opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)">
+          <section aria-label="Недавние" style="min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-right: 4px">
+              <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Недавние</h2>
+              <button type="button" onClick="{{clearRecent}}" style="height: 32px; padding: 0 6px; border: 0; background: none; color: #3DDC97; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Очистить</button>
+            </div>
+            <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+              <sc-for list="{{recentRows}}" as="r" hint-placeholder-count="3">
+                <button type="button" onClick="{{r.go}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 52px; box-sizing: border-box; border: 0; border-bottom: {{r.divider}}; background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>
+                  <span style="flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.text}}</span>
+                </button>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+
+        <p style="margin: 0; padding: 0 12px; text-align: center; font-size: 12px; line-height: 1.6; color: #8A8A8A">Отвечает само приложение: вопросы и ответы остаются на этом устройстве.</p>
+      </sc-if>
+
+      <sc-if value="{{hasChips}}" hint-placeholder-val="{{ true }}">
+        <section aria-label="Понял так" style="display: flex; flex-direction: column; gap: 8px">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3; opacity: {{in0.o}}; transform: translateY({{in0.y}}); transition: {{in0.tr}}">Понял так</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{chips}}" as="c" hint-placeholder-count="3">
+              <button type="button" onClick="{{c.tap}}" aria-haspopup="{{c.popup}}" style="height: 40px; box-sizing: border-box; padding: 0 12px; border: 0; border-radius: 20px; display: inline-flex; align-items: center; gap: 7px; background: #F4F4F2; color: #000000; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; opacity: {{c.o}}; transform: translateY({{c.y}}) scale({{c.s}}); transition: {{c.tr}}">
+                <sc-if value="{{c.hasGlyph}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="flex: 0 0 18px; width: 18px; height: 18px; background: {{c.color}}; -webkit-mask: {{c.mask}} center / contain no-repeat; mask: {{c.mask}} center / contain no-repeat"></span></sc-if>
+                <span style="display: grid; grid-template-columns: minmax(0, 1fr); width: {{c.w}}; overflow: hidden; transition: {{c.wtr}}"><span style="grid-area: 1 / 1; justify-self: start; white-space: nowrap; opacity: {{c.oa}}; transition: {{c.ltr}}">{{c.a}}</span><span style="grid-area: 1 / 1; justify-self: start; white-space: nowrap; opacity: {{c.ob}}; transition: {{c.ltr}}">{{c.b}}</span></span>
+                <sc-if value="{{c.isPeriod}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px; margin-right: -4px"><path d="M7 10l5 5 5-5"></path></svg></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasCard}}" hint-placeholder-val="{{ true }}">
+        <section aria-label="Ответ" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 24px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); opacity: {{in1.o}}; transform: translateY({{in1.y}}); transition: {{in1.tr}}">
+          <span style="display: grid; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{label.oa}}; transition: {{label.tr}}">{{label.a}}</span><span style="grid-area: 1 / 1; opacity: {{label.ob}}; transition: {{label.tr}}">{{label.b}}</span></span>
+          <span style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap">
+            <span style="position: relative; display: flex; height: 40px; overflow: hidden; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 34px; font-weight: 800; line-height: 40px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: {{fig.ink}}; transition: {{fig.inkTr}}">
+                <span style="display: flex; transform: translateY({{fig.inY}}); opacity: {{fig.inO}}; transition: {{fig.layerTr}}">
+                  <sc-for list="{{fig.slots}}" as="c" hint-placeholder-count="7">
+                    <sc-if value="{{c.digit}}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 1ch; height: 40px; overflow: hidden"><span style="display: block; transform: translateY({{c.y}}); transition: {{c.tr}}"><sc-for list="{{digits}}" as="d" hint-placeholder-count="10"><span style="display: block; height: 40px">{{d}}</span></sc-for></span></span></sc-if>
+                    <sc-if value="{{c.still}}" hint-placeholder-val="{{ false }}"><span>{{c.ch}}</span></sc-if>
+                  </sc-for>
+                </span>
+                <span aria-hidden="true" style="position: absolute; left: 0; top: 0; transform: translateY({{fig.outY}}); opacity: {{fig.outO}}; transition: {{fig.layerTr}}">{{fig.old}}</span>
+              </span>
+            <sc-if value="{{hasSuffix}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: #A3A3A3; white-space: nowrap">{{suffix}}</span></sc-if>
+          </span>
+          <sc-if value="{{hasMeter}}" hint-placeholder-val="{{ false }}">
+            <span role="meter" aria-label="Потрачено сегодня от дневной суммы" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{meter.percent}}" style="height: 8px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden">
+              <span style="display: block; height: 100%; width: {{meter.width}}; border-radius: 4px; background: #3DDC97; transform-origin: 0 50%; transform: scaleX({{meter.grow}}); transition: {{meter.tr}}"></span>
+            </span>
+          </sc-if>
+          <span style="display: grid; font-size: 14px; line-height: 1.4; color: #C9C9C7"><span style="grid-area: 1 / 1; opacity: {{line.oa}}; transition: {{line.tr}}">{{line.a}}</span><span style="grid-area: 1 / 1; opacity: {{line.ob}}; transition: {{line.tr}}">{{line.b}}</span></span>
+          <sc-if value="{{hasPill}}" hint-placeholder-val="{{ false }}">
+            <span style="display: flex; align-items: center; gap: 8px">
+              <span style="display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 14px; background: {{pill.bg}}; color: {{pill.fg}}; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; transition: background-color 320ms cubic-bezier(0.42, 0, 0.58, 1), color 320ms cubic-bezier(0.42, 0, 0.58, 1)"><span aria-hidden="true" style="flex: 0 0 14px; width: 14px; height: 14px; background: {{pill.color}}; -webkit-mask: {{pill.mask}} center / contain no-repeat; mask: {{pill.mask}} center / contain no-repeat"></span><span style="display: grid"><span style="grid-area: 1 / 1; opacity: {{pillText.oa}}; transition: {{pillText.tr}}">{{pillText.a}}</span><span style="grid-area: 1 / 1; opacity: {{pillText.ob}}; transition: {{pillText.tr}}">{{pillText.b}}</span></span></span>
+              <span style="display: grid; font-size: 13px; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{pillCaption.oa}}; transition: {{pillCaption.tr}}">{{pillCaption.a}}</span><span style="grid-area: 1 / 1; opacity: {{pillCaption.ob}}; transition: {{pillCaption.tr}}">{{pillCaption.b}}</span></span>
+            </span>
+          </sc-if>
+          <sc-if value="{{hasBars}}" hint-placeholder-val="{{ false }}">
+            <div role="img" aria-label="{{barsLabel}}" style="display: flex; align-items: flex-end; gap: 6px; height: 104px; padding-top: 4px; opacity: {{barsIn.o}}; transition: {{barsIn.tr}}">
+              <sc-for list="{{bars}}" as="b" hint-placeholder-count="5">
+                <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 100%">
+                  <span style="font-size: 11px; font-weight: 600; color: {{b.valueInk}}; font-variant-numeric: tabular-nums; white-space: nowrap; opacity: {{b.valueO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1) 400ms">{{b.value}}</span>
+                  <span style="display: block; width: 100%; max-width: 40px; height: {{b.h}}; border-radius: 8px; background: {{b.bg}}; transform-origin: 50% 100%; transform: scaleY({{b.grow}}); transition: {{b.tr}}"></span>
+                  <span style="font-size: 11px; color: #A3A3A3; white-space: nowrap">{{b.label}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{hasItems}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column">
+              <sc-for list="{{items}}" as="it" hint-placeholder-count="3">
+                <div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid rgba(255,255,255,0.06)">
+                  <span aria-hidden="true" style="flex: 0 0 10px; width: 10px; height: 10px; border-radius: 5px; background: {{it.dot}}; box-shadow: 0 0 10px {{it.dot}}"></span>
+                  <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.title}}</span><sc-if value="{{it.hasSub}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; color: #A3A3A3">{{it.sub}}</span></sc-if></span>
+                  <span style="flex: 0 0 auto; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap">{{it.amount}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{hasCta}}" hint-placeholder-val="{{ true }}">
+            <a href="Ask-Operations.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin-top: 2px; border-radius: 24px; background: rgba(255,255,255,0.08); color: #F4F4F2; text-decoration: none; font-weight: 600">{{cta}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg></a>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasShares}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="{{sharesLabel}}" style="display: flex; flex-direction: column; gap: 8px; opacity: {{in2.o}}; transform: translateY({{in2.y}}); transition: {{in2.tr}}">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">{{sharesLabel}}</h2>
+          <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+            <sc-for list="{{shares}}" as="s" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-bottom: {{s.divider}}">
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: {{s.tint}}; display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="flex: 0 0 18px; width: 18px; height: 18px; background: {{s.color}}; -webkit-mask: {{s.mask}} center / contain no-repeat; mask: {{s.mask}} center / contain no-repeat"></span></span>
+                  <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{s.name}}</span><sc-if value="{{s.hasNote}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A3A3A3">{{s.note}}</span></sc-if></span>
+                  <span style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-variant-numeric: tabular-nums; white-space: nowrap"><span style="font-weight: 600">{{s.amount}}</span><span style="font-size: 13px; color: #A3A3A3">{{s.share}}</span></span>
+                </div>
+                <span aria-hidden="true" style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden"><span style="display: block; height: 4px; width: {{s.width}}; border-radius: 2px; background: {{s.bar}}; transform-origin: 0 50%; transform: scaleX({{s.grow}}); transition: {{s.tr}}"></span></span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasRows}}" hint-placeholder-val="{{ true }}">
+        <section aria-label="{{rowsLabel}}" style="display: flex; flex-direction: column; gap: 8px; opacity: {{in2.o}}; transform: translateY({{in2.y}}); transition: {{in2.tr}}">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">{{rowsLabel}}</h2>
+          <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+            <sc-for list="{{rows}}" as="o" hint-placeholder-count="3">
+              <a href="Transaction.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border-bottom: {{o.divider}}; color: #F4F4F2; text-decoration: none">
+                <span aria-hidden="true" style="flex: 0 0 40px; width: 40px; height: 40px; border-radius: 13px; background: {{o.tint}}; display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="flex: 0 0 18px; width: 18px; height: 18px; background: {{o.color}}; -webkit-mask: {{o.mask}} center / contain no-repeat; mask: {{o.mask}} center / contain no-repeat"></span></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.title}}</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.sub}}</span></span>
+                <span style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-variant-numeric: tabular-nums; white-space: nowrap"><span style="font-weight: 600">{{o.amount}}</span><sc-if value="{{o.hasMuted}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A3A3A3">{{o.muted}}</span></sc-if></span>
+              </a>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasHelp}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Из справки" style="display: flex; flex-direction: column; gap: 8px; opacity: {{in1.o}}; transform: translateY({{in1.y}}); transition: {{in1.tr}}">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Из справки</h2>
+          <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); padding: 14px 16px 4px">
+            <p style="margin: 0; font-weight: 600; line-height: 1.4">{{help.q}}</p>
+            <p style="margin: 8px 0 12px; font-size: 14px; line-height: 1.5; color: #C9C9C7">{{help.a}}</p>
+            <a href="Help.dc.html" style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; border-top: 1px solid rgba(255,255,255,0.06); color: #3DDC97; text-decoration: none; font-weight: 600">Вся справка<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg></a>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasScreens}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Экраны" style="display: flex; flex-direction: column; gap: 8px; opacity: {{in2.o}}; transform: translateY({{in2.y}}); transition: {{in2.tr}}">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Экраны</h2>
+          <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+            <sc-for list="{{screens}}" as="w" hint-placeholder-count="2">
+              <a href="{{w.href}}" style="display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; border-bottom: {{w.divider}}; color: #F4F4F2; text-decoration: none">
+                <span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: {{w.tint}}; display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="flex: 0 0 18px; width: 18px; height: 18px; background: {{w.color}}; -webkit-mask: {{w.mask}} center / contain no-repeat; mask: {{w.mask}} center / contain no-repeat"></span></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.title}}</span><span style="font-size: 13px; color: #A3A3A3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.sub}}</span></span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+              </a>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasRefuse}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Ответ" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 24px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); flex-direction: row; align-items: flex-start; gap: 14px; opacity: {{in1.o}}; transform: translateY({{in1.y}}); transition: {{in1.tr}}">
+          <span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: rgba(255,255,255,0.08); color: #C9C9C7; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 11v5.5"></path><path d="M12 7.6v.4"></path></svg></span>
+          <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 700; line-height: 1.35">{{refuse.title}}</span><span style="font-size: 14px; line-height: 1.5; color: #C9C9C7">{{refuse.text}}</span></span>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasSuggest}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Можно спросить так" style="display: flex; flex-direction: column; gap: 8px; opacity: {{in2.o}}; transform: translateY({{in2.y}}); transition: {{in2.tr}}">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Можно спросить так</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{suggest}}" as="g" hint-placeholder-count="3">
+              <button type="button" onClick="{{g.go}}" style="height: 40px; box-sizing: border-box; padding: 0 14px; border: 0; border-radius: 20px; background: #161617; color: #C9C9C7; font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer">{{g.label}}</button>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{hasLink}}" hint-placeholder-val="{{ false }}">
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); opacity: {{in3.o}}; transform: translateY({{in3.y}}); transition: {{in3.tr}}">
+          <a href="{{link.href}}" style="display: flex; align-items: center; gap: 12px; min-height: 64px; box-sizing: border-box; padding: 10px 0; color: #F4F4F2; text-decoration: none">
+            <span aria-hidden="true" style="flex: 0 0 36px; width: 36px; height: 36px; border-radius: 12px; background: {{link.tint}}; display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="flex: 0 0 18px; width: 18px; height: 18px; background: {{link.color}}; -webkit-mask: {{link.mask}} center / contain no-repeat; mask: {{link.mask}} center / contain no-repeat"></span></span>
+            <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{link.label}}</span><span style="font-size: 13px; color: #A3A3A3">{{link.sub}}</span></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+          </a>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{hasCaption}}" hint-placeholder-val="{{ true }}">
+        <p style="margin: 0; padding: 0 12px; text-align: center; font-size: 12px; line-height: 1.6; color: #8A8A8A; opacity: {{in3.o}}; transform: translateY({{in3.y}}); transition: {{in3.tr}}">{{caption}}</p>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="position: absolute; left: 20px; right: 20px; top: 20px; height: 48px; display: flex; align-items: center; gap: 10px">
+    <a href="Ask-Entry.dc.html" aria-label="Назад" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); flex: 0 0 44px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+    <label style="flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; height: 48px; box-sizing: border-box; padding: 0 4px 0 16px; border-radius: 24px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4.2-4.2"></path></svg>
+      <input type="text" enterkeyhint="search" aria-label="Спросить" placeholder="Спросите про деньги" value="{{text}}" onInput="{{typed}}" style="flex: 1 1 auto; min-width: 0; height: 100%; padding: 0; background: none; border: 0; outline: none; color: #F4F4F2; font: inherit; font-size: 15px; caret-color: #3DDC97">
+      <sc-if value="{{hasText}}" hint-placeholder-val="{{ false }}">
+        <button type="button" aria-label="Стереть вопрос" onClick="{{clear}}" style="flex: 0 0 40px; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 20px; background: none; color: #A3A3A3; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+      </sc-if>
+    </label>
+  </div>
+
+  <sc-if value="{{sheetOn}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0">
+      <button type="button" aria-label="Закрыть" onClick="{{closeSheet}}" style="position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: #000000; opacity: {{scrim.o}}; transition: {{scrim.tr}}; cursor: pointer"></button>
+      <div role="dialog" aria-modal="true" aria-label="Период" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 20px 20px 34px; border-radius: 22px 22px 0 0; border: 1px solid rgba(255,255,255,0.12); border-bottom: 0; background: #000000; box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transform: translateY({{sheetBox.y}}); transition: {{sheetBox.tr}}">
+        <h2 style="margin: 0 0 4px; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Период</h2>
+        <p style="margin: 0 0 16px; font-size: 13px; color: #A3A3A3">Ответ посчитается заново</p>
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{periods}}" as="p" hint-placeholder-count="5">
+            <button type="button" onClick="{{p.pick}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; box-sizing: border-box; padding: 8px 0; border: 0; border-bottom: {{p.divider}}; background: none; color: #F4F4F2; font: inherit; text-align: left; cursor: pointer">
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{p.label}}</span><sc-if value="{{p.hasSub}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A3A3A3">{{p.sub}}</span></sc-if></span>
+              <span aria-hidden="true" style="flex: 0 0 22px; display: flex; color: #3DDC97; opacity: {{p.checkO}}; transform: scale({{p.checkS}}); transition: opacity 150ms cubic-bezier(0.42, 0, 0.58, 1), transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"question": {"editor": "enum", "label": "Вопрос", "options": ["", "Кафе в октябре", "Траты в Тбилиси", "Больше 5000 в ноябре", "Доходы в октябре", "Сколько можно тратить сегодня", "Когда следующий платёж", "Сколько у меня денег", "Курс лари", "Как перенести данные на новый телефон", "Зарплата", "Стоит ли сейчас покупать доллары", "Какая погода в Тбилиси", "Сколько я съел пиццы"], "default": "Стоит ли сейчас покупать доллары"}, "sheet": {"editor": "enum", "label": "Период", "options": ["Закрыт", "Открыт"], "default": "Закрыт"}, "$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.data = {"cafe": {"nov": {"chip": "Этот месяц", "title": "Кафе · 1–12 ноября", "total": 23277, "count": 26, "avg": 895, "prev": 7240, "prevLabel": "к 1–12 октября", "bars": [["1–2", 980], ["3–9", 15840], ["10–12", 6457]], "top": [["Ужин в Barbarestan", "8 ноября · Карта в лари", "210 ₾", "6 311 ₽"], ["Ужин в Сололаки", "11 ноября · Карта в лари", "96 ₾", "2 885 ₽"], ["Хинкали на Руставели", "6 ноября · Карта в лари", "54 ₾", "1 623 ₽"]]}, "oct": {"chip": "Октябрь 2026", "title": "Кафе · октябрь", "total": 18640, "count": 29, "avg": 643, "prev": 16360, "prevLabel": "к сентябрю", "bars": [["1–4", 2980], ["5–11", 4410], ["12–18", 3260], ["19–25", 5120], ["26–31", 2870]], "top": [["Кофейня Surf", "14 октября · Зарплатная", "1 950 ₽", null], ["Хинкальная на Пятницкой", "21 октября · Зарплатная", "1 780 ₽", null], ["Пекарня у дома", "3 октября · Наличные", "1 240 ₽", null]]}, "sep": {"chip": "Сентябрь 2026", "title": "Кафе · сентябрь", "total": 16360, "count": 26, "avg": 629, "prev": 17120, "prevLabel": "к августу", "bars": [["1–6", 3140], ["7–13", 3980], ["14–20", 4220], ["21–27", 3410], ["28–30", 1610]], "top": [["Ресторан «Белуга»", "19 сентября · Зарплатная", "2 400 ₽", null], ["Кофейня Surf", "8 сентября · Зарплатная", "1 620 ₽", null], ["Хинкальная на Пятницкой", "26 сентября · Наличные", "1 380 ₽", null]]}, "3m": {"chip": "Авг – окт", "title": "Кафе · август – октябрь", "total": 52120, "count": 81, "avg": 643, "prev": 49870, "prevLabel": "к маю – июлю", "bars": [["Авг", 17120], ["Сен", 16360], ["Окт", 18640]], "top": [["Ресторан «Белуга»", "19 сентября · Зарплатная", "2 400 ₽", null], ["Кофейня Surf", "14 октября · Зарплатная", "1 950 ₽", null], ["Хинкальная на Пятницкой", "21 октября · Зарплатная", "1 780 ₽", null]]}, "year": {"chip": "2026", "title": "Кафе · 2026", "total": 183247, "count": 274, "avg": 669, "prev": 156300, "prevLabel": "к тем же дням 2025", "bars": [["Я", 14200], ["Ф", 13800], ["М", 15100], ["А", 14900], ["М", 15600], ["И", 16300], ["И", 17950], ["А", 17120], ["С", 16360], ["О", 18640], ["Н", 23277]], "top": [["Ужин в Barbarestan", "8 ноября · Карта в лари", "210 ₾", "6 311 ₽"], ["Ужин в Сололаки", "11 ноября · Карта в лари", "96 ₾", "2 885 ₽"], ["Ресторан «Белуга»", "19 сентября · Зарплатная", "2 400 ₽", null]]}}, "periods": [["nov", "Этот месяц", "1–12 ноября"], ["oct", "Октябрь 2026", null], ["sep", "Сентябрь 2026", null], ["3m", "Последние 3 месяца", "Август – октябрь"], ["year", "Этот год", "С 1 января"]], "big": {"nov": {"chip": "Ноябрь 2026", "month": "ноября", "spent": 76940, "ops": [["home", "Плитка и затирка", "2 ноября · Ремонт кухни", 18400, null], ["cafe", "Ужин в Barbarestan", "8 ноября · Карта в лари", 6311, "210 ₾"], ["groceries", "Продукты на неделю", "1 ноября · Зарплатная", 5380, null], ["gifts", "Сувениры на Сухом мосту", "12 ноября · Карта в лари", 3606, "120 ₾"], ["gifts", "Подарки родным", "10 ноября · Карта в лари", 3306, "110 ₾"], ["cafe", "Ужин в Сололаки", "11 ноября · Карта в лари", 2885, "96 ₾"], ["leisure", "Серные бани", "11 ноября · Карта в лари", 2404, "80 ₾"], ["transport", "Такси из аэропорта", "3 ноября · Карта в лари", 2104, "70 ₾"]]}, "oct": {"chip": "Октябрь 2026", "month": "октября", "spent": 86420, "ops": [["travel", "Квартира в Тбилиси", "20 октября · Тбилиси", 34188, "420 $"], ["travel", "Билеты в Тбилиси", "14 октября · Тбилиси", 23800, null], ["gifts", "Подарок маме", "17 октября · Зарплатная", 6980, null], ["groceries", "Продукты на неделю", "4 октября · Зарплатная", 5640, null], ["home", "Доставка плитки", "28 октября · Ремонт кухни", 2400, null]]}}, "trip": {"total": 105948, "count": 46, "shares": [["travel", 57988, 55, "Билеты и жильё"], ["cafe", 22297, 21, null], ["groceries", 8594, 8, null], ["gifts", 6912, 6, null], ["leisure", 5109, 5, null], ["transport", 5048, 5, null]]}, "income": {"total": 224400, "count": 3, "prev": 212400, "shares": [["salary", 210000, 94, null], ["sold", 12000, 5, null], ["cashback", 2400, 1, null]], "rows": [["salary", "Зарплата", "25 октября · Зарплатная", "+210 000 ₽"], ["sold", "Велосипед на Авито", "18 октября · Наличные", "+12 000 ₽"], ["cashback", "Кешбэк за сентябрь", "5 октября · Зарплатная", "+2 400 ₽"]]}, "payments": [["25 ноября", "Аренда", 45000, "#22D3EE"], ["28 ноября", "Интернет", 650, "#22D3EE"], ["1 декабря", "Netflix", 799, "#A78BFA"]], "accounts": [["Накопления", "283 273 ₽", null, "#A78BFA"], ["Зарплатная карта", "86 400 ₽", null, "#3DDC97"], ["Карта в лари", "2 140 ₾", "≈ 64 307 ₽", "#60A5FA"], ["Наличные", "3 200 ₽", null, "#C9C9C7"]], "rates": {"usd": ["81,40 ₽", "$", "доллара"], "gel": ["30,05 ₽", "₾", "лари"], "eur": ["94,12 ₽", "€", "евро"]}, "help": {"move": ["Как перенести учёт на другое устройство?", "Сохраните копию в «Ещё → Данные», перешлите файл себе и восстановите его на новом устройстве. Синхронизация появится позже."]}, "examples": [["Кафе в октябре", "Сумма, сравнение и самые крупные", "cup", "#FBBF24"], ["Траты в Тбилиси", "Итог поездки во всех валютах", "plane", "#60A5FA"], ["Сколько можно тратить", "Сегодня и до зарплаты", "wallet", "#3DDC97"], ["Когда следующий платёж", "Регулярные платежи по датам", "repeat", "#22D3EE"], ["Как перенести данные", "Ответ из справки", "book", "#C9C9C7"]], "recent": ["кафе за 3 месяца", "курс лари", "больше 3000 в ноябре"], "categories": {"groceries": {"name": "Продукты", "color": "#4ADE80", "glyph": "cart"}, "cafe": {"name": "Кафе", "color": "#FBBF24", "glyph": "cup"}, "transport": {"name": "Транспорт", "color": "#60A5FA", "glyph": "bus"}, "travel": {"name": "Поездки", "color": "#60A5FA", "glyph": "plane"}, "leisure": {"name": "Досуг", "color": "#FB923C", "glyph": "ticket"}, "gifts": {"name": "Подарки", "color": "#FB7185", "glyph": "gift"}, "home": {"name": "Дом", "color": "#A78BFA", "glyph": "home"}, "subs": {"name": "Подписки", "color": "#22D3EE", "glyph": "subs"}, "salary": {"name": "Зарплата", "color": "#3DDC97", "glyph": "wallet"}, "sold": {"name": "Продажа вещей", "color": "#FBBF24", "glyph": "tag"}, "cashback": {"name": "Кешбэк", "color": "#22D3EE", "glyph": "repeat"}}};
+    this.masks = {"back": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M15%206l-6%206%206%206%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "close": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%206l12%2012M18%206L6%2018%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "chevron": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "plus": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%205v14M5%2012h14%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "check": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012.5l4.5%204.5L19%207.5%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "tag": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3.5%205v6.1a1.6%201.6%200%200%200%20.47%201.13l8.3%208.3a1.6%201.6%200%200%200%202.26%200l6-6a1.6%201.6%200%200%200%200-2.26l-8.3-8.3A1.6%201.6%200%200%200%2011.1%203.5H5A1.5%201.5%200%200%200%203.5%205z%22%3E%3C%2Fpath%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%221.4%22%3E%3C%2Fcircle%3E%3C%2Fsvg%3E)", "plane": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M21%203%203%2010.5l7%203%203%207z%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M10%2013.5%2021%203%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "cup": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%209h12v6a4%204%200%200%201-4%204H9a4%204%200%200%201-4-4z%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M17%2011h1.5a2.5%202.5%200%200%201%200%205H17%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M9%203v2.5M13%203v2.5%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "cart": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%204h2.2l2.3%2011h10.2l2-8H6.2%22%3E%3C%2Fpath%3E%3Ccircle%20cx%3D%229.5%22%20cy%3D%2219%22%20r%3D%221.4%22%3E%3C%2Fcircle%3E%3Ccircle%20cx%3D%2216.5%22%20cy%3D%2219%22%20r%3D%221.4%22%3E%3C%2Fcircle%3E%3C%2Fsvg%3E)", "bus": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%225%22%20y%3D%224%22%20width%3D%2214%22%20height%3D%2213%22%20rx%3D%223%22%3E%3C%2Frect%3E%3Cpath%20d%3D%22M5%2011h14%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M8%2017v3M16%2017v3%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M8.5%2014h.01M15.5%2014h.01%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "ticket": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%226%22%20width%3D%2218%22%20height%3D%2212%22%20rx%3D%222.5%22%3E%3C%2Frect%3E%3Cpath%20d%3D%22M9%206v12M15%206v12%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "gift": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%229%22%20width%3D%2216%22%20height%3D%2211%22%20rx%3D%222%22%3E%3C%2Frect%3E%3Cpath%20d%3D%22M12%209v11M4%2013h16%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M12%209S10.5%204%208%204.5%207.5%209%2012%209zm0%200s1.5-5%204-4.5S16.5%209%2012%209z%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "home": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2011l8-7%208%207%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M6%209.5V20h12V9.5%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M10%2020v-5h4v5%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "repeat": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2011V9.5A2.5%202.5%200%200%201%207.5%207H19l-3-3%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M19%2013v1.5a2.5%202.5%200%200%201-2.5%202.5H5l3%203%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "wallet": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%226%22%20width%3D%2218%22%20height%3D%2213%22%20rx%3D%223%22%3E%3C%2Frect%3E%3Cpath%20d%3D%22M3%2010h18%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M16%2014.5h2%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "calendar": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223.5%22%20y%3D%225%22%20width%3D%2217%22%20height%3D%2215.5%22%20rx%3D%223%22%3E%3C%2Frect%3E%3Cpath%20d%3D%22M3.5%2010h17%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M8%203v4M16%203v4%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "search": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2211%22%20cy%3D%2211%22%20r%3D%226.5%22%3E%3C%2Fcircle%3E%3Cpath%20d%3D%22M20%2020l-4.2-4.2%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "dots": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2212%22%20r%3D%221.3%22%3E%3C%2Fcircle%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%221.3%22%3E%3C%2Fcircle%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2212%22%20r%3D%221.3%22%3E%3C%2Fcircle%3E%3C%2Fsvg%3E)", "subs": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%225%22%20width%3D%2218%22%20height%3D%2212.5%22%20rx%3D%222.5%22%3E%3C%2Frect%3E%3Cpath%20d%3D%22M10.2%208.9v5l4.2-2.5z%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M8%2020.5h8%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "book": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%204.5h9.5a3%203%200%200%201%203%203V20H8a3%203%200%200%201-3-3z%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M5%2017a3%203%200%200%201%203-3h9.5%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "doc": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%203.5h7l4%204V20a1%201%200%200%201-1%201H7a1%201%200%200%201-1-1V4.5a1%201%200%200%201%201-1z%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M14%203.5V8h4%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M9%2013h6M9%2016.5h4%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "mail": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223.5%22%20y%3D%225.5%22%20width%3D%2217%22%20height%3D%2213%22%20rx%3D%222.5%22%3E%3C%2Frect%3E%3Cpath%20d%3D%22M4.5%207l7.5%206%207.5-6%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "clock": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%228.5%22%3E%3C%2Fcircle%3E%3Cpath%20d%3D%22M12%207.5V12l3%202%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "info": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%228.5%22%3E%3C%2Fcircle%3E%3Cpath%20d%3D%22M12%2011v5.5%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M12%207.6v.4%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "chevdown": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%2010l5%205%205-5%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "rise": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%2017%2017%207%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M9%207h8v8%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)", "fall": "url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%207l10%2010%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M17%209v8H9%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E)"};
+    this.lines = {};
+    this.figs = {};
+    this.chipLines = {};
+    this.timers = [];
+    this.stopped = false;
+    this.box = null;
+    this.state = this.fresh(props);
+  }
+
+  fresh(props) {
+    const text = props.question ?? '';
+    const open = (props.sheet ?? 'Закрыт') === 'Открыт';
+    return { text, ans: this.parse(text), chosen: null, at: 0, typing: false, recent: true, edge: 0,
+      sheet: open ? 'period' : null, sheetAt: 0, closing: false, picking: null };
+  }
+
+  componentDidMount() {
+    this.stopped = false;
+    this.fadeEdge();
+    try {
+      document.fonts.ready.then(() => { if (!this.stopped) this.setState({}); });
+    } catch (error) {}
+  }
+
+  measure(text) {
+    try {
+      const ctx = this.ctx ?? (this.ctx = document.createElement('canvas').getContext('2d'));
+      ctx.font = '600 15px Inter, system-ui, sans-serif';
+      return Math.ceil(ctx.measureText(text).width) + 2 + 'px';
+    } catch (error) {
+      return 'auto';
+    }
+  }
+
+  componentWillUnmount() {
+    this.stopped = true;
+    this.stop();
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.question !== this.props.question || prev.sheet !== this.props.sheet) {
+      this.stop();
+      this.figs = {};
+      this.lines = {};
+      if (this.box) this.box.scrollTop = 0;
+      this.setState(this.fresh(this.props));
+    }
+  }
+
+  // The answers go softly under the field as they scroll, as ScrollEdgeFade.
+  fadeEdge() {
+    const edge = this.box ? Math.min(1, Math.max(0, this.box.scrollTop / 48)) : 0;
+    if (edge !== this.state.edge) this.setState({ edge });
+  }
+  // ---------------------------------------------------------------- the question
+  // A question in words becomes one of a few typed answers, as the parser of
+  // Birka will make them: data (a query the ledger counts), a fact, a screen
+  // or a help answer, and a fixed reply to advice or to something off topic.
+  // The board knows only the questions of its story.
+  parse(raw) {
+    const t = String(raw ?? '').toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim();
+    if (t.length < 2) return null;
+    const num = t.match(/\d[\d\s]*\d|\d/);
+    const amount = num ? Number(num[0].replace(/\s/g, '')) : null;
+    const period = /сентябр/.test(t) ? 'sep'
+      : /октябр/.test(t) ? 'oct'
+      : /(3|три|трех)\s*месяц|квартал|август/.test(t) ? '3m'
+      : /(год|2026)/.test(t) ? 'year'
+      : 'nov';
+    if (/(купить|покупать|продать|продавать|вложить|вкладывать|инвест|стоит ли|акци|крипт|биткоин)/.test(t)) return { key: 'advice' };
+    if (/курс/.test(t)) return { key: 'rate', cur: /(лари|gel|₾)/.test(t) ? 'gel' : /(евро|eur|€)/.test(t) ? 'eur' : 'usd' };
+    if (/(можно|осталось|остается)\s.*(трат|день|сегодня)|в день|на день/.test(t)) return { key: 'allowance' };
+    if (/(платеж|списан|подписк|аренд)/.test(t)) return { key: 'payments' };
+    if (/(сколько\s.*денег|сколько у меня|капитал|баланс|на счетах|всего денег)/.test(t)) return { key: 'capital' };
+    if (/(тбилис|поездк|грузи)/.test(t)) return { key: 'trip' };
+    if (/(больше|дороже|свыше|от)\s*\d/.test(t) && amount) return { key: 'big', amount, month: /октябр/.test(t) ? 'oct' : 'nov' };
+    if (/(доход|заработ|пришл|получил)/.test(t)) return { key: 'income' };
+    if (/(кафе|кофе|ресторан|еда вне)/.test(t)) return { key: 'cafe', period };
+    if (/(перенес|перенос|другое устройство|новый телефон|новом телефоне)/.test(t)) return { key: 'move' };
+    if (/(зарплат|аванс)/.test(t)) return { key: 'salary' };
+    if (/(погод|новост|анекдот|шутк|кто ты|привет)/.test(t)) return { key: 'offtopic' };
+    if (t.length < 4) return null;
+    return { key: 'unknown' };
+  }
+
+  // What an answer shows, as plain data for the page to draw.
+  model(ans, chosen) {
+    const D = this.data;
+    const rub = (n) => String(Math.abs(Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    const plural = (n, one, few, many) => (n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? few : many);
+    const ops = (n) => n + ' ' + plural(n, 'операция', 'операции', 'операций');
+    const cat = (id) => D.categories[id];
+    const counted = 'Посчитано на этом устройстве, в рублях по курсу ЦБ на день операции';
+    const shares = (items) => {
+      const top = Math.max(...items.map((it) => it[1]));
+      return items.map(([id, value, share, note], i) => ({
+        name: cat(id).name, glyph: cat(id).glyph, color: cat(id).color, note: note ?? '',
+        hasNote: Boolean(note), amount: rub(value), share: share + '%', width: (value / top * 100).toFixed(1) + '%', i
+      }));
+    };
+    const none = { chips: [], card: null, shares: null, rows: null, help: null, screens: null, refuse: null, suggest: null, link: null, caption: '' };
+    switch (ans.key) {
+      case 'cafe': {
+        const p = D.cafe[chosen ?? ans.period];
+        const diff = p.total - p.prev;
+        const top = Math.max(...p.bars.map((b) => b[1]));
+        return { ...none,
+          chips: [{ label: 'Траты' }, { label: 'Кафе', glyph: 'cup', color: '#FBBF24' }, { label: p.chip, glyph: 'calendar', period: true }],
+          card: { label: p.title, figure: rub(p.total), value: p.total, better: 'down',
+            line: ops(p.count) + ' · в среднем ' + rub(p.avg),
+            pill: { text: (diff >= 0 ? '+' : '−') + rub(diff), rise: diff >= 0, good: diff < 0, caption: p.prevLabel },
+            bars: p.bars.map(([label, value], i) => ({ label, value: rub(value).replace(' ₽', ''), h: Math.max(6, Math.round(value / top * 64)), hi: value === top, all: p.bars.length <= 6, i })),
+            cta: 'Показать ' + ops(p.count) },
+          rows: { label: 'Самые крупные', items: p.top.map(([title, sub, amount, muted]) => ({ title, sub, amount: '−' + amount, muted: muted ? '≈ ' + muted : '', glyph: 'cup', color: '#FBBF24' })) },
+          caption: counted };
+      }
+      case 'trip':
+        return { ...none,
+          chips: [{ label: 'Траты' }, { label: 'Тбилиси · 3–12 ноября', glyph: 'plane', color: '#60A5FA' }],
+          card: { label: 'Тбилиси · 3–12 ноября', figure: rub(D.trip.total), value: D.trip.total, better: 'down',
+            line: ops(D.trip.count) + ' · ≈ 160 ₾ в день на месте', cta: 'Показать ' + ops(D.trip.count) },
+          shares: { label: 'По категориям', items: shares(D.trip.shares) },
+          link: { label: 'Отчёт поездки', sub: 'Валюты, категории и дни', href: 'Tags-Trip.dc.html', glyph: 'plane', color: '#60A5FA' },
+          caption: counted };
+      case 'big': {
+        const month = D.big[ans.month];
+        const list = month.ops.filter((o) => o[3] > ans.amount).sort((a, b) => b[3] - a[3]);
+        const total = list.reduce((sum, o) => sum + o[3], 0);
+        const share = Math.round(total / month.spent * 100);
+        return { ...none,
+          chips: [{ label: 'Траты' }, { label: month.chip, glyph: 'calendar' }, { label: 'Больше ' + rub(ans.amount) }],
+          card: { label: 'Больше ' + rub(ans.amount) + ' · ' + month.chip.toLowerCase(), figure: rub(total), value: total, better: 'down',
+            line: list.length ? ops(list.length) + ' · ' + share + '% всех трат ' + month.month : 'Таких трат нет',
+            cta: list.length ? 'Показать ' + ops(list.length) : null },
+          rows: list.length ? { label: 'Операции', items: list.map(([id, title, sub, value, orig]) => ({
+            title, sub, amount: '−' + (orig ?? rub(value)), muted: orig ? '≈ ' + rub(value) : '', glyph: cat(id).glyph, color: cat(id).color })) } : null,
+          caption: counted };
+      }
+      case 'income': {
+        const diff = D.income.total - D.income.prev;
+        return { ...none,
+          chips: [{ label: 'Доходы' }, { label: 'Октябрь 2026', glyph: 'calendar' }],
+          card: { label: 'Доходы · октябрь', figure: '+' + rub(D.income.total), value: D.income.total, better: 'up', ink: '#3DDC97',
+            line: D.income.count + ' поступления · в сентябре ' + rub(D.income.prev),
+            pill: { text: '+' + rub(diff), rise: true, good: true, caption: 'к сентябрю' }, cta: 'Показать ' + ops(D.income.count) },
+          shares: { label: 'Откуда', items: shares(D.income.shares) },
+          caption: counted };
+      }
+      case 'allowance':
+        return { ...none,
+          card: { label: 'Можно тратить сегодня', figure: rub(2345), value: 2345, better: 'up', suffix: 'из 2 965 ₽ на день',
+            meter: { width: '21%', percent: '21' }, line: 'Потратили 620 ₽ · до зарплаты 10 дней' },
+          link: { label: 'Как это считается', sub: 'Деньги до зарплаты', href: 'Forecast-Payday.dc.html', glyph: 'wallet', color: '#3DDC97' },
+          caption: counted };
+      case 'payments': {
+        const total = D.payments.reduce((sum, p) => sum + p[2], 0);
+        return { ...none,
+          card: { label: 'Ближайшие платежи', figure: rub(total), value: total, better: 'down', line: '3 платежа до 1 декабря',
+            items: D.payments.map(([day, name, value, dot]) => ({ title: name, sub: day, amount: '−' + rub(value), dot })) },
+          link: { label: 'Все регулярные платежи', sub: '6 платежей, 2 ждут в ноябре', href: 'Future-Planned.dc.html', glyph: 'repeat', color: '#22D3EE' },
+          caption: counted };
+      }
+      case 'capital':
+        return { ...none,
+          card: { label: 'Капитал · 2 валюты', figure: rub(437180), value: 437180, better: 'up', line: '4 счёта · лари по курсу ЦБ на сегодня',
+            items: D.accounts.map(([name, amount, muted, dot]) => ({ title: name, sub: muted ?? '', amount, dot })) },
+          link: { label: 'Все счета', sub: 'Балансы и история', href: 'Accounts.dc.html', glyph: 'wallet', color: '#3DDC97' },
+          caption: counted };
+      case 'rate': {
+        const [figure, symbol, name] = D.rates[ans.cur];
+        return { ...none,
+          chips: [{ label: 'Курс ' + name }],
+          card: { label: 'Курс ЦБ на 12 ноября', figure, value: Number(figure.replace(/[^0-9]/g, '')), better: 'up', suffix: 'за 1 ' + symbol,
+            line: 'Обновлён сегодня в 09:12 · хранится на устройстве' },
+          link: { label: 'Откуда берётся курс', sub: 'Ответ из справки', href: 'Help.dc.html', glyph: 'book', color: '#C9C9C7' },
+          caption: '' };
+      }
+      case 'move':
+        return { ...none,
+          help: { q: D.help.move[0], a: D.help.move[1] },
+          screens: [{ title: 'Данные', sub: 'Копия, восстановление и экспорт', href: 'Data.dc.html', glyph: 'doc', color: '#A78BFA' }] };
+      case 'salary':
+        return { ...none,
+          screens: [
+            { title: 'Деньги до зарплаты', sub: 'Сколько можно тратить в день и прогноз', href: 'Forecast-Payday.dc.html', glyph: 'wallet', color: '#3DDC97' },
+            { title: 'Зарплата и аванс', sub: 'Ещё → Зарплата: дни и суммы', href: 'Salary-Form.dc.html', glyph: 'calendar', color: '#60A5FA' }],
+          suggest: ['Доходы в октябре', 'Сколько можно тратить сегодня'] };
+      case 'advice':
+        return { ...none,
+          refuse: { title: 'Советов о вложениях и курсах не даю', text: 'Birka считает ваши деньги, но не предсказывает курсы и не говорит, что покупать.' },
+          suggest: ['Курс доллара сегодня', 'Сколько у меня денег'] };
+      case 'offtopic':
+        return { ...none,
+          refuse: { title: 'Отвечаю только про ваши деньги', text: 'Спросите про траты, доходы, счета, платежи или настройки Birka.' },
+          suggest: ['Кафе в октябре', 'Траты в Тбилиси', 'Когда следующий платёж'] };
+      default:
+        return { ...none,
+          refuse: { title: 'Не понял вопрос', text: 'Попробуйте короче: что, когда и сколько. Например, «кафе в октябре».' },
+          suggest: ['Кафе в октябре', 'Больше 5000 в ноябре', 'Траты в Тбилиси'],
+          link: { label: 'Написать разработчику', sub: 'Расскажите, что хотели узнать', href: 'Help.dc.html', glyph: 'mail', color: '#3DDC97' } };
+    }
+  }
+
+  // ---------------------------------------------------------------- motion
+  stop() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, change) {
+    this.timers.push(setTimeout(() => {
+      if (this.stopped) return;
+      if (typeof change === 'function') change();
+      else this.setState(change ?? {});
+    }, ms));
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Renders again as a figure goes through its roll.
+  wake() {
+    for (const ms of [30, 540, 640]) this.later(ms, {});
+  }
+
+  // A figure as AmountText shows it: digits that differ roll over
+  // duration.roll; a figure of another shape rolls out and the new one in.
+  // While it rolls it takes the color of the news, green when things got
+  // better and red when worse. The first figure of an answer rolls up from
+  // zeros without a color.
+  figure(key, text, value, ink, h, reduced, better, quiet) {
+    const now = Date.now();
+    const seen = this.figs[key];
+    if (!seen) {
+      this.figs[key] = { text, value, from: '', swap: false, up: true, at: -100000, news: null };
+    } else if (seen.text !== text) {
+      const shape = (s) => s.replace(/[0-9]/g, '0');
+      const up = value > seen.value;
+      const good = better === 'up' ? up : !up;
+      this.figs[key] = { text, value, from: seen.text, swap: shape(seen.text) !== shape(text), up, at: now, news: quiet ? null : good ? '#3DDC97' : '#FF8E7F' };
+      this.wake();
+    }
+    const f = this.figs[key];
+    const age = now - f.at;
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const swapping = f.swap && !reduced && age < 620;
+    const entering = swapping && age < 30;
+    const news = f.news && age < 520;
+    return {
+      slots: Array.from(text).map((ch) => {
+        const digit = ch >= '0' && ch <= '9';
+        return { digit, still: !digit, ch, y: digit ? -Number(ch) * h + 'px' : '0px', tr: reduced || f.swap ? 'none' : 'transform 520ms ' + ease };
+      }),
+      old: swapping ? f.from : '',
+      inY: entering ? (f.up ? h : -h) + 'px' : '0px',
+      inO: entering ? '0' : '1',
+      outY: swapping && !entering ? (f.up ? -h : h) + 'px' : '0px',
+      outO: entering ? '1' : '0',
+      layerTr: entering ? 'none' : 'transform 520ms ' + ease + ', opacity 220ms ' + fade,
+      ink: news ? f.news : ink,
+      inkTr: news ? 'color 150ms ' + fade : 'color 320ms ' + fade
+    };
+  }
+
+  // A line that cross-fades into a new one over duration.base, as FadingText.
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return { a: s.a, b: s.b, oa: s.front === 'a' ? '1' : '0', ob: s.front === 'b' ? '1' : '0', tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)' };
+  }
+
+  // ---------------------------------------------------------------- what a tap does
+  // Shows the answer to text at once (a typed question, a tweak) and lets
+  // it come in.
+  answer(text) {
+    const ans = this.parse(text);
+    const same = ans && this.state.ans && ans.key === this.state.ans.key;
+    if (!same) {
+      this.figs = {};
+      this.lines = {};
+    }
+    this.setState({ ans, chosen: null, at: Date.now(), sheet: null });
+    this.later(30, {});
+    this.later(700, {});
+  }
+
+  // Types an example or a recent question into the field, as a finger
+  // would, and answers it.
+  ask(text) {
+    this.stop();
+    if (this.box) this.box.scrollTop = 0;
+    const reduced = this.prefersReduced();
+    if (reduced) {
+      this.setState({ text });
+      this.answer(text);
+      return;
+    }
+    this.setState({ text: '', typing: true });
+    Array.from(text).forEach((_, i) => this.later(18 * (i + 1), { text: text.slice(0, i + 1) }));
+    this.later(18 * text.length + 140, () => {
+      this.setState({ typing: false });
+      this.answer(text);
+    });
+  }
+
+  typed(event) {
+    const text = event.target.value;
+    this.stop();
+    this.setState({ text });
+    if (!text.trim()) {
+      this.setState({ ans: null, at: Date.now() });
+      return;
+    }
+    this.later(380, () => this.answer(text));
+  }
+
+  // The sheet of periods comes up over duration.sheet; a pick moves the
+  // check, the sheet goes down and the answer rolls to the new period.
+  openSheet() {
+    this.setState({ sheet: 'period', sheetAt: Date.now(), closing: false, picking: null });
+    this.later(30, {});
+  }
+
+  closeSheet() {
+    this.setState({ closing: true, closedAt: Date.now() });
+    this.later(340, { sheet: null, closing: false, picking: null });
+  }
+
+  pickPeriod(id) {
+    this.setState({ picking: id });
+    this.later(160, () => {
+      this.closeSheet();
+      this.setState({ chosen: id });
+    });
+  }
+
+  renderVals() {
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const sheetCurve = 'cubic-bezier(0.32, 0.72, 0, 1)';
+    const now = Date.now();
+    const age = now - st.at;
+    const pre = !reduced && age < 30;
+    const tint = (hex, a) => {
+      const h = hex.replace('#', '');
+      return 'rgba(' + parseInt(h.slice(0, 2), 16) + ',' + parseInt(h.slice(2, 4), 16) + ',' + parseInt(h.slice(4, 6), 16) + ',' + a + ')';
+    };
+    const look = (glyph, color) => ({ mask: this.masks[glyph] ?? this.masks.search, color, tint: tint(color, 0.14) });
+    const divider = (i, n) => (i < n - 1 ? '1px solid rgba(255,255,255,0.06)' : '0');
+    // Each part of an answer comes in a little after the one above it.
+    const enter = (i) => (pre
+      ? { o: '0', y: '10px', tr: 'none' }
+      : { o: '1', y: '0px', tr: reduced ? 'opacity 220ms ' + fade : 'opacity 220ms ' + fade + ' ' + i * 60 + 'ms, transform 320ms ' + ease + ' ' + i * 60 + 'ms' });
+
+    const m = st.ans ? this.model(st.ans, st.chosen) : null;
+    const card = m && m.card;
+    const zeros = (s) => s.replace(/[0-9]/g, '0');
+    const fresh = age < 700;
+    const fig = card ? this.figure('answer', pre ? zeros(card.figure) : card.figure, pre ? 0 : card.value, card.ink ?? '#F4F4F2', 40, reduced, card.better, fresh) : null;
+    const pill = card && card.pill;
+    const bars = card && card.bars;
+    const sheetIn = st.sheet && !st.closing && (reduced || now - st.sheetAt > 30);
+    const period = st.picking ?? st.chosen ?? (st.ans && st.ans.period) ?? 'oct';
+    const go = (text) => () => this.ask(text);
+
+    return {
+      text: st.text,
+      hasText: st.text.length > 0,
+      typed: (event) => this.typed(event),
+      clear: () => {
+        this.stop();
+        this.setState({ text: '', ans: null, at: Date.now(), sheet: null });
+      },
+      boxRef: (el) => { this.box = el; },
+      scrolled: () => this.fadeEdge(),
+      edge: 'linear-gradient(to bottom, rgba(0,0,0,' + (1 - st.edge).toFixed(2) + ') 0px, #000000 48px)',
+
+      isStart: !m,
+      startO: st.typing ? '0.4' : '1',
+      examples: this.data.examples.map(([title, sub, glyph, color], i, all) => ({ title, sub, ...look(glyph, color), divider: divider(i, all.length), go: go(title) })),
+      recent: st.recent ? { rows: '1fr', o: '1' } : { rows: '0fr', o: '0' },
+      recentRows: this.data.recent.map((text, i, all) => ({ text, divider: divider(i, all.length), go: go(text) })),
+      clearRecent: () => this.setState({ recent: false }),
+
+      in0: enter(0),
+      in1: enter(1),
+      in2: enter(2),
+      in3: enter(3),
+
+      hasChips: Boolean(m && m.chips.length),
+      chips: (m ? m.chips : []).map((chip, i) => {
+        const line = this.fading('chip' + i, chip.label, reduced);
+        return {
+          hasGlyph: Boolean(chip.glyph), ...look(chip.glyph ?? 'search', '#000000'),
+          a: line.a, b: line.b, oa: line.oa, ob: line.ob, ltr: line.tr,
+          // The chip eases to the width of its new label, as BirkaChip does.
+          w: this.measure(chip.label), wtr: reduced ? 'none' : 'width 320ms ' + ease,
+          isPeriod: Boolean(chip.period), popup: chip.period ? 'dialog' : 'false',
+          tap: chip.period ? () => this.openSheet() : () => {},
+          o: pre ? '0' : '1', y: pre ? '8px' : '0px', s: pre ? '0.92' : '1',
+          tr: reduced ? 'opacity 220ms ' + fade : 'opacity 220ms ' + fade + ' ' + i * 40 + 'ms, transform 320ms ' + spring + ' ' + i * 40 + 'ms'
+        };
+      }),
+
+      hasCard: Boolean(card),
+      label: this.fading('label', card ? card.label : '', reduced),
+      fig: fig ?? this.figure('none', '', 0, '#F4F4F2', 40, reduced, 'up', true),
+      digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      hasSuffix: Boolean(card && card.suffix),
+      suffix: card && card.suffix ? card.suffix : '',
+      hasMeter: Boolean(card && card.meter),
+      meter: card && card.meter ? { ...card.meter, grow: pre ? '0' : '1', tr: reduced ? 'none' : 'transform 520ms ' + ease + ' 120ms' } : { width: '0%', percent: '0', grow: '1', tr: 'none' },
+      line: this.fading('line', card ? card.line : '', reduced),
+      hasPill: Boolean(pill),
+      pillText: this.fading('pillText', pill ? pill.text : '', reduced),
+      pillCaption: this.fading('pillCaption', pill ? pill.caption : '', reduced),
+      pill: pill ? { bg: pill.good ? 'rgba(61,220,151,0.14)' : 'rgba(255,142,127,0.14)', fg: pill.good ? '#3DDC97' : '#FF8E7F', ...look(pill.rise ? 'rise' : 'fall', pill.good ? '#3DDC97' : '#FF8E7F') } : { bg: 'none', fg: '#A3A3A3', ...look('rise', '#A3A3A3') },
+      hasBars: Boolean(bars),
+      barsLabel: bars ? bars.map((b) => b.label + ': ' + b.value).join(', ') : '',
+      barsIn: { o: '1', tr: 'none' },
+      bars: (bars ?? []).map((b, i) => ({
+        label: b.label, value: b.value, valueO: (b.hi || b.all) && !pre ? '1' : '0', valueInk: b.hi ? '#F4F4F2' : '#A3A3A3', h: b.h + 'px',
+        bg: b.hi ? '#3DDC97' : 'rgba(255,255,255,0.14)', grow: pre ? '0' : '1',
+        tr: reduced ? 'none' : 'transform 520ms ' + ease + ' ' + (120 + i * 30) + 'ms, height 320ms ' + ease + ', background-color 220ms ' + fade
+      })),
+      hasItems: Boolean(card && card.items),
+      items: (card && card.items ? card.items : []).map((it) => ({ ...it, hasSub: Boolean(it.sub) })),
+      hasCta: Boolean(card && card.cta),
+      cta: card && card.cta ? card.cta : '',
+
+      hasShares: Boolean(m && m.shares),
+      sharesLabel: m && m.shares ? m.shares.label : '',
+      shares: (m && m.shares ? m.shares.items : []).map((s, i, all) => ({
+        ...s, ...look(s.glyph, s.color), bar: s.color, divider: divider(i, all.length), grow: pre ? '0' : '1',
+        tr: reduced ? 'none' : 'transform 520ms ' + ease + ' ' + (160 + i * 40) + 'ms'
+      })),
+      hasRows: Boolean(m && m.rows),
+      rowsLabel: m && m.rows ? m.rows.label : '',
+      rows: (m && m.rows ? m.rows.items : []).map((o, i, all) => ({ ...o, ...look(o.glyph, o.color), hasMuted: Boolean(o.muted), divider: divider(i, all.length) })),
+      hasHelp: Boolean(m && m.help),
+      help: m && m.help ? m.help : { q: '', a: '' },
+      hasScreens: Boolean(m && m.screens),
+      screens: (m && m.screens ? m.screens : []).map((w, i, all) => ({ ...w, ...look(w.glyph, w.color), divider: divider(i, all.length) })),
+      hasRefuse: Boolean(m && m.refuse),
+      refuse: m && m.refuse ? m.refuse : { title: '', text: '' },
+      hasSuggest: Boolean(m && m.suggest),
+      suggest: (m && m.suggest ? m.suggest : []).map((label) => ({ label, go: go(label) })),
+      hasLink: Boolean(m && m.link),
+      link: m && m.link ? { ...m.link, ...look(m.link.glyph, m.link.color) } : { label: '', sub: '', href: '#', ...look('search', '#A3A3A3') },
+      hasCaption: Boolean(m && m.caption),
+      caption: m && m.caption ? m.caption : '',
+
+      sheetOn: Boolean(st.sheet),
+      closeSheet: () => this.closeSheet(),
+      scrim: { o: sheetIn ? '0.5' : '0', tr: 'opacity ' + (st.closing ? 220 : 320) + 'ms ' + fade },
+      sheetBox: { y: sheetIn ? '0px' : '110%', tr: reduced ? 'none' : st.closing ? 'transform 320ms ' + ease : 'transform 520ms ' + sheetCurve },
+      periods: this.data.periods.map(([id, label, sub], i, all) => ({
+        label, sub: sub ?? '', hasSub: Boolean(sub), divider: divider(i, all.length),
+        checkO: period === id ? '1' : '0', checkS: period === id || reduced ? '1' : '0.6',
+        pick: () => this.pickPeriod(id)
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

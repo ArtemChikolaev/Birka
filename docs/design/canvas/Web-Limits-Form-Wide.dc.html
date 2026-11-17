@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Форма лимита на сайте · широкий экран</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+:root{--color-palette-black: #000000;
+  --color-palette-white: #ffffff;
+  --color-palette-ink: #f4f4f2;
+  --color-palette-gray900: #0e0e0f;
+  --color-palette-gray850: #161617;
+  --color-palette-gray800: #1e1e1f;
+  --color-palette-gray500: #8a8a8a;
+  --color-palette-gray400: #a3a3a3;
+  --color-palette-gray300: #c9c9c7;
+  --color-palette-emerald400: #3ddc97;
+  --color-palette-emerald700: #248a56;
+  --color-palette-emerald950: #02130b;
+  --color-palette-coral400: #ff8e7f;
+  --color-palette-green: #4ade80;
+  --color-palette-amber: #fbbf24;
+  --color-palette-sky: #60a5fa;
+  --color-palette-violet: #a78bfa;
+  --color-palette-rose: #fb7185;
+  --color-palette-orange: #fb923c;
+  --color-palette-cyan: #22d3ee;
+  --color-palette-slate: #3a3a3c;
+  --color-palette-steel: #6e6e73;
+  --color-palette-sapphire: #2368b3;
+  --color-palette-bronze: #a8650f;
+  --color-palette-iris: #6a4ec4;
+  --color-palette-ruby: #b83a58;
+  --color-background: #000000;
+  --color-surface: #0e0e0f;
+  --color-surface-raised: #161617;
+  --color-surface-selected: #1e1e1f;
+  --color-text: #f4f4f2;
+  --color-text-secondary: #c9c9c7;
+  --color-text-muted: #a3a3a3;
+  --color-text-subtle: #8a8a8a;
+  --color-accent: #3ddc97;
+  --color-on-accent: #02130b;
+  --color-accent-highlight: rgb(255 255 255 / 0.45);
+  --color-accent-soft: rgb(61 220 151 / 0.14);
+  /* The glow in the corners of every screen. */
+  --color-ambient: rgb(36 138 86 / 0.3);
+  --color-positive: #3ddc97;
+  --color-negative: #ff8e7f;
+  --color-hairline: rgb(255 255 255 / 0.09);
+  --color-art-emerald: #248a56;
+  --color-art-graphite: #6e6e73;
+  --color-art-sapphire: #2368b3;
+  --color-art-amber: #a8650f;
+  --color-art-violet: #6a4ec4;
+  --color-art-rose: #b83a58;
+  --color-glass-fill-top: rgb(255 255 255 / 0.1);
+  --color-glass-fill-bottom: rgb(255 255 255 / 0.03);
+  --color-glass-border: rgb(255 255 255 / 0.14);
+  --color-glass-highlight: rgb(255 255 255 / 0.18);
+  --color-nav-fill: rgb(32 32 34 / 0.52);
+  --color-nav-highlight: rgb(255 255 255 / 0.22);
+  --color-nav-lowlight: rgb(255 255 255 / 0.05);
+  --color-nav-bubble: rgb(255 255 255 / 0.13);
+  --color-nav-bubble-highlight: rgb(255 255 255 / 0.28);
+  --color-nav-label: #b4b4b2;
+  --blur-control: 14px;
+  --blur-glass: 18px;
+  --blur-nav: 22px;
+  --saturation-glass: 1.6;
+  --saturation-nav: 1.7;
+  --shadow-glass: 0px 10px 28px 0px rgb(0 0 0 / 0.4);
+  --shadow-nav: 0px 12px 32px 0px rgb(0 0 0 / 0.55);
+  --shadow-nav-bubble: 0px 4px 14px 0px rgb(0 0 0 / 0.35);
+  --shadow-accent-glow: 0px 6px 22px 0px rgb(36 138 86 / 0.55);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 320ms;
+  /* Digits that roll to a new figure, and the parts of a ring that move to their new shares. */
+  --duration-roll: 520ms;
+  /* A card that grows into its page, the longest way anything travels. */
+  --duration-zoom: 420ms;
+  /* The tab bar bubble and switches. */
+  --duration-spring: 560ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  /* Overshoots a little, like a spring. */
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* For opacity: starts and ends gently, so that a cross-fade does not snap. */
+  --easing-fade: cubic-bezier(0.42, 0, 0.58, 1);
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  /* The smallest tap area. */
+  --size-touch-target: 44px;
+  --size-nav-bar: 64px;
+  /* How deep a list fades where it goes under a header or a button that stays in place. */
+  --size-scroll-edge: 48px;
+  /* The height of the count on the corner of a button, such as the new notices on the bell. */
+  --size-badge: 20px;
+  /* Headlines and large amounts. */
+  --font-family-display: Manrope, Inter, system-ui, sans-serif;
+  --font-family-text: Inter, system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;}
+.text-heading{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.22px;
+  line-height: 1.2;}
+.text-body{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-body-strong{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-caption{font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.35;}
+/* Short section labels in capitals,such as ACCOUNTS. */
+.text-label{font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.96px;
+  line-height: 1.2;
+  text-transform: uppercase;}
+.page{box-sizing: border-box;
+        margin: 0 auto;
+        max-width: 520px;
+        padding: max(var(--space-md), env(safe-area-inset-top)) var(--space-lg) max(var(--space-xxl), env(safe-area-inset-bottom));}
+@media (min-width: 901px){.page--wide{max-width: 1160px;}
+}
+.ambient{isolation: isolate;
+        min-height: 100dvh;
+        position: relative;}
+.ambient::before{background: radial-gradient(62% 34% at 0% 0%, var(--color-ambient) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, var(--color-ambient) 0%, transparent 74%), radial-gradient(64% 20% at 0% 72%, var(--color-ambient) 0%, transparent 72%), var(--color-background);
+        content: "";
+        height: 100lvh;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: -1;}
+.amount{font-variant-numeric: tabular-nums;
+        white-space: nowrap;}
+.birka-button{align-items: center;
+        background: var(--color-accent);
+        border: 0;
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-on-accent);
+        cursor: pointer;
+        display: flex;
+        height: 56px;
+        justify-content: center;
+        padding: 0 var(--space-lg);
+        text-decoration: none;
+        transition: opacity var(--duration-fast);
+        width: 100%;}
+.birka-button:disabled{cursor: default;
+        opacity: 0.5;}
+.birka-button--quiet{background: var(--color-surface-raised);
+        color: var(--color-text);}
+.birka-button--danger{background: color-mix(in srgb, var(--color-negative) 16%, transparent);
+        color: var(--color-negative);}
+.birka-button--compact{display: inline-flex;
+        flex: none;
+        height: 40px;
+        padding: 0 var(--space-md);
+        width: auto;}
+.birka-chip{align-items: center;
+        background: var(--color-surface-raised);
+        border: 0;
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        display: inline-flex;
+        gap: var(--space-xs);
+        height: var(--size-touch-target);
+        max-width: 100%;
+        padding: 0 var(--space-md);
+        text-decoration: none;
+        transition: background var(--duration-fast), color var(--duration-fast);}
+.birka-chip:disabled{cursor: default;}
+.birka-chip--selected{background: var(--color-text);
+        color: var(--color-background);}
+.birka-chip__room{display: flex;
+        flex: none;
+        margin-left: calc(-1 * var(--space-xs));
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-width var(--duration-slow) var(--easing-standard), margin-left var(--duration-slow) var(--easing-standard), opacity var(--duration-base) var(--easing-fade);}
+@media (prefers-reduced-motion: reduce){.birka-chip__room{transition: none;}
+}
+.birka-chip .birka-icon{height: 20px;
+        width: 20px;}
+.birka-chip__label{min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.birka-choice{display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);}
+.birka-choice__label{color: var(--color-text-muted);}
+.birka-choice__options{display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs);}
+.birka-form{display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);}
+.birka-form__header{align-items: center;
+        display: flex;
+        gap: var(--space-sm);}
+.birka-form__title{flex: 1;
+        margin: 0;}
+.birka-form__actions{display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);}
+.birka-form__note{color: var(--color-text-muted);
+        margin: 0;
+        text-align: center;}
+html{color-scheme: dark;}
+body{margin: 0;
+        background: var(--color-background);
+        color: var(--color-text);
+        -webkit-font-smoothing: antialiased;}
+:focus-visible{outline: 2px solid var(--color-accent);
+        outline-offset: 2px;}
+.birka-icon{display: block;
+        flex: none;
+        height: 22px;
+        width: 22px;}
+.birka-icon svg{display: block;
+        height: 100%;
+        width: 100%;}
+.birka-select{align-items: center;
+        background: var(--color-surface);
+        border: 1px solid var(--color-hairline);
+        border-radius: var(--radius-md);
+        box-sizing: border-box;
+        display: flex;
+        gap: var(--space-xs);
+        min-height: var(--size-touch-target);
+        min-width: 0;
+        padding: 0 var(--space-sm);
+        position: relative;
+        transition: border-color var(--duration-fast);}
+.birka-select:hover{border-color: var(--color-glass-border);}
+.birka-select:has(select:focus-visible){outline: 2px solid var(--color-accent);
+        outline-offset: 2px;}
+.birka-select__value{color: var(--color-text);
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.birka-select__chevron{color: var(--color-text-muted);
+        display: flex;
+        flex: none;
+        transform: rotate(90deg);}
+.birka-select__chevron .birka-icon{height: 16px;
+        width: 16px;}
+.birka-select__field{appearance: none;
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+        height: 100%;
+        inset: 0;
+        margin: 0;
+        opacity: 0;
+        position: absolute;
+        width: 100%;}
+.birka-select__field option{background: var(--color-background);
+        color: var(--color-text);}
+.birka-split{align-items: start;
+        display: grid;
+        gap: var(--space-xl);
+        grid-template-columns: minmax(0, 1fr) var(--birka-split-aside, 300px);}
+.birka-split__main{display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+        min-width: 0;}
+.birka-split__aside{display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        min-width: 0;
+        position: sticky;
+        top: var(--space-lg);}
+@media (min-width: 901px){.birka-narrow-only{display: none;}
+}
+@media (max-width: 900px){.birka-wide-only{display: none;}
+.birka-split{grid-template-columns: minmax(0, 1fr);}
+.birka-split__aside{position: static;}
+}
+.birka-switch{background: var(--color-surface-selected);
+        border: 0;
+        border-radius: var(--radius-pill);
+        cursor: pointer;
+        display: block;
+        flex: none;
+        height: 32px;
+        padding: 4px;
+        transition: background var(--duration-fast);
+        width: 52px;}
+.birka-switch--on{background: var(--color-accent);}
+.birka-switch__thumb{background: var(--color-text);
+        border-radius: var(--radius-pill);
+        display: block;
+        height: 24px;
+        transition: transform var(--duration-fast);
+        width: 24px;}
+.birka-switch--on .birka-switch__thumb{transform: translateX(20px);}
+.birka-field{display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);}
+.birka-field__label{color: var(--color-text-muted);}
+.glass.birka-field__box{align-items: center;
+        border-radius: var(--radius-md);
+        display: flex;
+        gap: var(--space-xs);
+        padding: var(--space-sm) var(--space-md);
+        transition: border-color var(--duration-fast);}
+.glass.birka-field__box:focus-within{border-color: var(--color-accent);}
+.birka-field__input{background: none;
+        border: 0;
+        box-sizing: border-box;
+        caret-color: var(--color-accent);
+        color: var(--color-text);
+        flex: 1 1 0;
+        font-size: max(1em, 16px);
+        min-width: 0;
+        outline: none;
+        padding: 0;
+        width: 100%;}
+.birka-field__suffix{color: var(--color-text-subtle);
+        flex: none;
+        font-size: max(1em, 16px);}
+.birka-field__input::placeholder{color: var(--color-text-subtle);}
+.glass.glass-icon-button{align-items: center;
+        border-radius: var(--radius-pill);
+        color: var(--color-text);
+        cursor: pointer;
+        display: flex;
+        flex: none;
+        height: var(--size-touch-target);
+        justify-content: center;
+        padding: 0;
+        position: relative;
+        width: var(--size-touch-target);}
+.glass.glass-list{overflow: hidden;
+        padding: 0;}
+.glass-row{align-items: center;
+        background: none;
+        border: 0;
+        box-sizing: border-box;
+        color: var(--color-text);
+        display: flex;
+        font: inherit;
+        gap: var(--space-sm);
+        min-height: var(--size-touch-target);
+        padding: var(--space-md);
+        position: relative;
+        text-align: left;
+        text-decoration: none;
+        width: 100%;}
+.glass-row + .glass-row::before{background: var(--color-hairline);
+        content: "";
+        height: 1px;
+        left: var(--space-md);
+        position: absolute;
+        right: var(--space-md);
+        top: 0;}
+.glass-row__text{display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-width: 0;}
+.glass-row__line{overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.glass-row__subtitle{color: var(--color-text-muted);}
+.glass-row__lines{-webkit-box-orient: vertical;
+        display: -webkit-box;
+        overflow: hidden;}
+.glass{box-sizing: border-box;
+        padding: var(--space-md);
+        border: 1px solid var(--color-glass-border);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(160deg, var(--color-glass-fill-top) 0%, var(--color-glass-fill-bottom) 100%);
+        box-shadow: inset 0 1px 0 var(--color-glass-highlight), var(--shadow-glass);
+        -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));
+        backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));}
+.tinted-box{--tint: var(--color-accent);
+        background: color-mix(in srgb, var(--tint) 10%, transparent);
+        border: 1px solid color-mix(in srgb, var(--tint) 28%, transparent);
+        border-radius: var(--radius-md);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        padding: var(--space-md);}
+.birka-meter{background:var(--color-surface-raised);border-radius:var(--radius-pill);display:block;height:var(--birka-meter-height,8px);overflow:hidden}
+.birka-meter__fill{background:var(--birka-meter-color,var(--color-accent));border-radius:inherit;display:block;height:100%;transition:width var(--duration-roll) var(--easing-standard),background var(--duration-slow) var(--easing-fade)}
+@media (prefers-reduced-motion: reduce){.birka-meter__fill{transition:none}
+}
+.limit-form__average{align-items:center;flex-direction:row;gap:var(--space-sm);justify-content:space-between}
+.limit-form__average-text{display:flex;flex-direction:column}
+.limit-form__average-label,.limit-form__same{color:var(--color-text-muted)}
+.limit-form__side{display:flex;flex-direction:column;gap:var(--space-sm)}
+.limit-form__month{display:flex;flex-direction:column;gap:var(--space-xs)}
+.limit-form__month-label{color:var(--color-text-secondary)}
+
+</style>
+</helmet>
+<div style="min-height: 600px">
+<sc-if value="{{is0}}" hint-placeholder-val="{{ true }}">
+<div class="ambient text-body"><main class="page page--wide"><div><form class="birka-form" onsubmit="return false"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Новый лимит</h1><button class="glass glass-icon-button" type="button" aria-label="Закрыть"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></button></div><div class="birka-split" style="--birka-split-aside: 340px"><div class="birka-split__main"><div class="birka-field"><span class="text-caption birka-field__label">Категория</span><div class="birka-select"><span class="text-body-strong birka-select__value">Дом</span><span class="birka-select__chevron"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></span><select class="birka-select__field" aria-label="Категория"><option>Дом</option></select></div></div><label class="birka-field"><span class="text-caption birka-field__label">В месяц</span><div class="glass birka-field__box"><input class="text-body birka-field__input" type="text" inputmode="decimal" placeholder="0" value=""><span class="text-body birka-field__suffix">₽</span></div></label><div class="birka-choice"><span class="text-caption birka-choice__label">Валюта лимита</span><div class="birka-choice__options"><button class="text-body-strong birka-chip birka-chip--selected" type="button" aria-pressed="true"><span class="birka-chip__label">Рубли</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip" type="button" aria-pressed="false"><span class="birka-chip__label">Евро</span><span class="birka-chip__room"></span></button></div></div><div class="birka-narrow-only"><div class="limit-form__side"><div class="tinted-box limit-form__average"><span class="limit-form__average-text"><span class="text-caption limit-form__average-label">В среднем за 3 месяца</span><span class="text-heading amount amount--neutral">6 210 ₽</span></span><button class="text-label birka-button birka-button--compact" type="button">Взять 6 500 ₽</button></div></div></div><div class="glass glass-list"><div class="glass-row"><span class="glass-row__text"><span class="text-body-strong glass-row__line">Сказать заранее</span><span class="text-caption glass-row__lines glass-row__subtitle" style="-webkit-line-clamp: 2">Скажем, когда уйдёт 80 % лимита.</span></span><button class="birka-switch birka-switch--on" type="button" role="switch" aria-checked="true" aria-label="Сказать заранее"><span class="birka-switch__thumb"></span></button></div></div></div><aside class="birka-split__aside"><div class="birka-wide-only"><div class="limit-form__side"><div class="tinted-box limit-form__average"><span class="limit-form__average-text"><span class="text-caption limit-form__average-label">В среднем за 3 месяца</span><span class="text-heading amount amount--neutral">6 210 ₽</span></span><button class="text-label birka-button birka-button--compact" type="button">Взять 6 500 ₽</button></div></div></div><div class="birka-form__actions"><button class="text-label birka-button" type="button" disabled>Сохранить</button><p class="text-caption birka-form__note">Лимит считается с 1-го по последнее число месяца и начинается заново каждый месяц.</p></div></aside></div></form></div></main></div>
+</sc-if>
+<sc-if value="{{is1}}" hint-placeholder-val="{{ false }}">
+<div class="ambient text-body"><main class="page page--wide"><div><form class="birka-form" onsubmit="return false"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Лимит на «Кафе»</h1><button class="glass glass-icon-button" type="button" aria-label="Закрыть"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></button></div><div class="birka-split" style="--birka-split-aside: 340px"><div class="birka-split__main"><label class="birka-field"><span class="text-caption birka-field__label">В месяц</span><div class="glass birka-field__box"><input class="text-body birka-field__input" type="text" inputmode="decimal" placeholder="0" value="12 000"><span class="text-body birka-field__suffix">₽</span></div></label><div class="birka-choice"><span class="text-caption birka-choice__label">Валюта лимита</span><div class="birka-choice__options"><button class="text-body-strong birka-chip birka-chip--selected" type="button" aria-pressed="true"><span class="birka-chip__label">Рубли</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip" type="button" aria-pressed="false"><span class="birka-chip__label">Евро</span><span class="birka-chip__room"></span></button></div></div><div class="birka-narrow-only"><div class="limit-form__side"><div class="tinted-box limit-form__average"><span class="limit-form__average-text"><span class="text-caption limit-form__average-label">В среднем за 3 месяца</span><span class="text-heading amount amount--neutral">11 620 ₽</span></span><span class="text-caption limit-form__same">как сейчас</span></div><div class="glass limit-form__month"><span class="text-caption limit-form__month-label">В ноябре — 10 150 ₽ из 12 000 ₽</span><span class="birka-meter" role="meter" aria-label="Кафе: потрачено 85 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="85" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m0}}; --birka-meter-color: var(--color-palette-amber)"></span></span></div></div></div><div class="glass glass-list"><div class="glass-row"><span class="glass-row__text"><span class="text-body-strong glass-row__line">Сказать заранее</span><span class="text-caption glass-row__lines glass-row__subtitle" style="-webkit-line-clamp: 2">Скажем, когда уйдёт 80 % — 9 600 ₽.</span></span><button class="birka-switch birka-switch--on" type="button" role="switch" aria-checked="true" aria-label="Сказать заранее"><span class="birka-switch__thumb"></span></button></div></div></div><aside class="birka-split__aside"><div class="birka-wide-only"><div class="limit-form__side"><div class="tinted-box limit-form__average"><span class="limit-form__average-text"><span class="text-caption limit-form__average-label">В среднем за 3 месяца</span><span class="text-heading amount amount--neutral">11 620 ₽</span></span><span class="text-caption limit-form__same">как сейчас</span></div><div class="glass limit-form__month"><span class="text-caption limit-form__month-label">В ноябре — 10 150 ₽ из 12 000 ₽</span><span class="birka-meter" role="meter" aria-label="Кафе: потрачено 85 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="85" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m0}}; --birka-meter-color: var(--color-palette-amber)"></span></span></div></div></div><div class="birka-form__actions"><button class="text-label birka-button" type="button">Сохранить</button><button class="text-label birka-button birka-button--quiet birka-button--danger" type="button">Убрать лимит</button><p class="text-caption birka-form__note">Лимит считается с 1-го по последнее число месяца и начинается заново каждый месяц.</p></div></aside></div></form></div></main></div>
+</sc-if>
+<sc-if value="{{is2}}" hint-placeholder-val="{{ false }}">
+<div class="ambient text-body"><main class="page page--wide"><div><form class="birka-form" onsubmit="return false"><div class="birka-form__header"><h1 class="text-heading birka-form__title">Новый лимит</h1><button class="glass glass-icon-button" type="button" aria-label="Закрыть"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></button></div><div class="birka-split" style="--birka-split-aside: 340px"><div class="birka-split__main"><div class="birka-field"><span class="text-caption birka-field__label">Категория</span><div class="birka-select"><span class="text-body-strong birka-select__value">Дом</span><span class="birka-select__chevron"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></span><select class="birka-select__field" aria-label="Категория"><option>Дом</option></select></div></div><label class="birka-field"><span class="text-caption birka-field__label">В месяц</span><div class="glass birka-field__box"><input class="text-body birka-field__input" type="text" inputmode="decimal" placeholder="0" value="70"><span class="text-body birka-field__suffix">€</span></div></label><div class="birka-choice"><span class="text-caption birka-choice__label">Валюта лимита</span><div class="birka-choice__options"><button class="text-body-strong birka-chip" type="button" aria-pressed="false"><span class="birka-chip__label">Рубли</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--selected" type="button" aria-pressed="true"><span class="birka-chip__label">Евро</span><span class="birka-chip__room"></span></button></div></div><div class="birka-narrow-only"><div class="limit-form__side"><div class="tinted-box limit-form__average"><span class="limit-form__average-text"><span class="text-caption limit-form__average-label">В среднем за 3 месяца</span><span class="text-heading amount amount--neutral">≈ 68 €</span></span><button class="text-label birka-button birka-button--compact" type="button">Взять 70 €</button></div></div></div><div class="glass glass-list"><div class="glass-row"><span class="glass-row__text"><span class="text-body-strong glass-row__line">Сказать заранее</span><span class="text-caption glass-row__lines glass-row__subtitle" style="-webkit-line-clamp: 2">Скажем, когда уйдёт 80 % — 56 €.</span></span><button class="birka-switch birka-switch--on" type="button" role="switch" aria-checked="true" aria-label="Сказать заранее"><span class="birka-switch__thumb"></span></button></div></div></div><aside class="birka-split__aside"><div class="birka-wide-only"><div class="limit-form__side"><div class="tinted-box limit-form__average"><span class="limit-form__average-text"><span class="text-caption limit-form__average-label">В среднем за 3 месяца</span><span class="text-heading amount amount--neutral">≈ 68 €</span></span><button class="text-label birka-button birka-button--compact" type="button">Взять 70 €</button></div></div></div><div class="birka-form__actions"><button class="text-label birka-button" type="button">Сохранить</button><p class="text-caption birka-form__note">Траты в других валютах идут в этот лимит по курсу ЦБ на день операции. Лимит считается с 1-го по последнее число месяца и начинается заново каждый месяц.</p></div></aside></div></form></div></main></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["Новый", "Изменить", "В евро"], "default": "Новый"}, "$preview": {"width": 1440, "height": 600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { grown: false, picked: null };
+    this.timer = null;
+  }
+
+  componentDidMount() {
+    this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      clearTimeout(this.timer);
+      this.setState({ grown: false, picked: null });
+      this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  renderVals() {
+    const s = this.props.state ?? "Новый";
+    const widths = {"Новый": {}, "Изменить": {"m0": "84.6%"}, "В евро": {}}[s] ?? {};
+    const m = Object.fromEntries(Object.entries(widths).map(([k, v]) => [k, this.state.grown ? v : "0%"]));
+    return { m, is0: s === "Новый", is1: s === "Изменить", is2: s === "В евро" };
+  }
+}
+</script>
+</body>
+</html>

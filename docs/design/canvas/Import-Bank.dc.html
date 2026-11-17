@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Импорт выписки · банк и формат</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#3DDC97}a:hover{color:#7CEBBB}
+</style>
+</helmet>
+<div style="min-height: 1040px; box-sizing: border-box; background: radial-gradient(38% 46% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(42% 50% at 100% 100%, rgba(36,138,86,0.26) 0%, transparent 74%), radial-gradient(30% 30% at 72% 28%, rgba(36,138,86,0.10) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 24px">
+
+    <header style="display: flex; align-items: center; gap: 16px">
+      <a href="Import-File.dc.html" aria-label="Назад к файлу" style="flex: 0 0 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">Импорт выписки</h1>
+        <p style="margin: 0; font-size: 13px; color: #A3A3A3">Шаг 2 из 6 · чья это выписка</p>
+      </div>
+    </header>
+
+    <nav aria-label="Шаги импорта" style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="6">
+        <sc-if value="{{s.done}}" hint-placeholder-val="{{ false }}">
+          <a href="{{s.href}}" style="display: flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; padding: 0 16px 0 8px; border-radius: 20px; text-decoration: none; color: #C9C9C7; font-size: 14px; font-weight: 600; background: rgba(61,220,151,0.10); border: 1px solid rgba(61,220,151,0.24)">
+            <span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 12px; background: #3DDC97; color: #02130B; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+            {{s.label}}
+          </a>
+        </sc-if>
+        <sc-if value="{{s.now}}" hint-placeholder-val="{{ true }}">
+          <span aria-current="step" style="display: flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; padding: 0 16px 0 8px; border-radius: 20px; color: #02130B; font-size: 14px; font-weight: 700; background: #F4F4F2">
+            <span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 12px; background: #02130B; color: #F4F4F2; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{s.number}}</span>
+            {{s.label}}
+          </span>
+        </sc-if>
+        <sc-if value="{{s.later}}" hint-placeholder-val="{{ false }}">
+          <span style="display: flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; padding: 0 16px 0 8px; border-radius: 20px; color: #8A8A8A; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.09)">
+            <span aria-hidden="true" style="width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{s.number}}</span>
+            {{s.label}}
+          </span>
+        </sc-if>
+      </sc-for>
+    </nav>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+
+        <sc-if value="{{detected}}" hint-placeholder-val="{{ true }}">
+          <section aria-label="Что узнали в файле" style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: 22px; background: linear-gradient(160deg, rgba(61,220,151,0.14) 0%, rgba(61,220,151,0.03) 100%); border: 1px solid rgba(61,220,151,0.30); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+            <div style="display: flex; gap: 14px; align-items: flex-start">
+              <span aria-hidden="true" style="flex: 0 0 48px; height: 48px; border-radius: 16px; background: rgba(61,220,151,0.18); color: #3DDC97; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"></path><path d="M5 10v8"></path><path d="M9.5 10v8"></path><path d="M14.5 10v8"></path><path d="M19 10v8"></path><path d="M3 20h18"></path></svg></span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Похоже на выписку Альфа-Банка</h2>
+                <p style="margin: 0; color: #C9C9C7; line-height: 1.45">Совпали 7 колонок из 8. По ним Birka и разберёт файл, а вы проверите результат на следующем шаге.</p>
+              </div>
+            </div>
+            <ul aria-label="Совпавшие колонки" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{matched}}" as="m" hint-placeholder-count="7">
+                <li style="height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px 0 8px; border-radius: 16px; background: rgba(0,0,0,0.30); font-size: 13px; font-weight: 600; color: #F4F4F2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{m}}</li>
+              </sc-for>
+              <li style="height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px 0 8px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.20); font-size: 13px; font-weight: 600; color: #A3A3A3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>Код MCC — не берём</li>
+            </ul>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{unknown}}" hint-placeholder-val="{{ false }}">
+          <section aria-label="Что узнали в файле" style="display: flex; gap: 14px; align-items: flex-start; padding: 20px; border-radius: 22px; background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.28)">
+            <span aria-hidden="true" style="flex: 0 0 48px; height: 48px; border-radius: 16px; background: rgba(251,191,36,0.14); color: #FBBF24; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4"></path><path d="M12 17h.01"></path></svg></span>
+            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+              <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Этот формат нам ещё не встречался</h2>
+              <p style="margin: 0; color: #C9C9C7; line-height: 1.45">Колонки «Date», «Narrative», «Debit», «Credit» и «Balance» не похожи ни на один известный банк. Выберите его ниже, если он там есть, или назначьте колонки сами: Birka запомнит формат для следующих выписок.</p>
+            </div>
+          </section>
+        </sc-if>
+
+        <section aria-label="Формат выписки" style="display: flex; flex-direction: column; gap: 8px">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Формат выписки</h2>
+          <div role="radiogroup" aria-label="Формат выписки" style="display: flex; flex-wrap: wrap; gap: 12px">
+            <sc-for list="{{presets}}" as="p" hint-placeholder-count="6">
+              <button type="button" role="radio" aria-checked="{{p.checked}}" onClick="{{p.pick}}" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 14px 16px; border-radius: 22px; text-align: left; font-family: Inter, system-ui, sans-serif; font-size: 15px; color: #F4F4F2; cursor: pointer; background: {{p.fill}}; border: 1px solid {{p.line}}; box-shadow: inset 0 1px 0 rgba(255,255,255,0.12); transition: background 220ms ease, border-color 220ms ease">
+                <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: {{p.tint}}; color: {{p.ink}}; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-size: 15px; font-weight: 800">{{p.mark}}</span>
+                <span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+                  <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><span style="font-weight: 600">{{p.name}}</span><span style="font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: #A3A3A3">{{p.kind}}</span></span>
+                  <span style="font-size: 13px; color: #A3A3A3; line-height: 1.4">{{p.note}}</span>
+                </span>
+                <span aria-hidden="true" style="flex: 0 0 22px; height: 22px; box-sizing: border-box; border-radius: 11px; border: 2px solid {{p.ring}}; display: flex; align-items: center; justify-content: center"><span style="width: 10px; height: 10px; border-radius: 5px; background: #3DDC97; opacity: {{p.dot}}; transition: opacity 220ms ease"></span></span>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+      </main>
+
+      <aside aria-label="Что попадёт в учёт" style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+        <section style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+          <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Что попадёт в учёт</h2>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.05)">
+            <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: rgba(96,165,250,0.14); color: #60A5FA; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M9 4v16"></path></svg></span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-weight: 600; overflow-wrap: anywhere">{{file.name}}</span><span style="font-size: 13px; color: #A3A3A3">{{file.meta}}</span></span>
+          </div>
+          <dl style="margin: 0; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; justify-content: space-between; gap: 12px"><dt style="color: #A3A3A3">Формат</dt><dd style="margin: 0; font-weight: 600; text-align: right">{{pickedName}}</dd></div>
+            <div style="display: flex; justify-content: space-between; gap: 12px"><dt style="color: #A3A3A3">Строк в файле</dt><dd style="margin: 0; font-weight: 600; font-variant-numeric: tabular-nums">214</dd></div>
+            <div style="display: flex; justify-content: space-between; gap: 12px"><dt style="color: #A3A3A3">Период</dt><dd style="margin: 0; font-weight: 600; text-align: right">1–31 октября 2026</dd></div>
+            <div style="display: flex; justify-content: space-between; gap: 12px"><dt style="color: #A3A3A3">Счёт</dt><dd style="margin: 0; color: #8A8A8A; text-align: right">выберем на 4-м шаге</dd></div>
+          </dl>
+        </section>
+        <a href="Import-Columns.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 26px; background: #3DDC97; color: #02130B; font-weight: 700; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 8px 24px rgba(36,138,86,0.45)">Дальше: колонки<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></a>
+        <a href="Import-File.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 24px; color: #F4F4F2; font-weight: 600; text-decoration: none">Назад</a>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"detected":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { picked: null };
+  }
+
+  renderVals() {
+    const detected = this.props.detected ?? true;
+    const labels = ['Файл', 'Банк', 'Колонки', 'Счёт', 'Дубликаты', 'Итог'];
+    const boards = ['Import-File.dc.html', 'Import-Bank.dc.html', 'Import-Columns.dc.html', 'Import-Account.dc.html', 'Import-Duplicates.dc.html', 'Import-Done.dc.html'];
+    const current = 1;
+    const picked = this.state.picked ?? (detected ? 'alfa' : 'own');
+    const all = [
+      { id: 'alfa', name: 'Альфа-Банк', kind: 'EXCEL', note: detected ? 'Узнали по колонкам · операции одной карты' : 'Операции одной карты или счёта', mark: 'А', tint: 'rgba(255,142,127,0.14)', ink: '#FF8E7F' },
+      { id: 'tbank', name: 'Т-Банк', kind: 'CSV', note: 'Операции одной карты, с категориями банка', mark: 'Т', tint: 'rgba(251,191,36,0.14)', ink: '#FBBF24' },
+      { id: 'zen', name: 'Дзен-мани', kind: 'CSV', note: 'Все счета, категории и переводы разом', mark: 'Д', tint: 'rgba(61,220,151,0.14)', ink: '#3DDC97' },
+      { id: 'wise', name: 'Wise', kind: 'CSV', note: 'У каждой операции своя валюта и курс', mark: 'W', tint: 'rgba(96,165,250,0.14)', ink: '#60A5FA' },
+      { id: 'revolut', name: 'Revolut', kind: 'CSV', note: 'У каждой операции своя валюта и комиссия', mark: 'R', tint: 'rgba(167,139,250,0.14)', ink: '#A78BFA' },
+      { id: 'own', name: 'Свой формат', kind: 'ЛЮБОЙ', note: 'Колонки назначите сами, Birka запомнит их', mark: '+', tint: 'rgba(255,255,255,0.08)', ink: '#F4F4F2' }
+    ];
+    const presets = all.map((p) => {
+      const on = p.id === picked;
+      return {
+        ...p,
+        checked: on ? 'true' : 'false',
+        pick: () => this.setState({ picked: p.id }),
+        fill: on ? 'linear-gradient(160deg, rgba(61,220,151,0.14) 0%, rgba(61,220,151,0.04) 100%)' : 'linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+        line: on ? 'rgba(61,220,151,0.45)' : 'rgba(255,255,255,0.12)',
+        ring: on ? '#3DDC97' : 'rgba(255,255,255,0.28)',
+        dot: on ? 1 : 0
+      };
+    });
+    const chosen = all.find((p) => p.id === picked);
+    return {
+      steps: labels.map((label, i) => ({ label, number: String(i + 1), href: boards[i], done: i < current, now: i === current, later: i > current })),
+      detected,
+      unknown: !detected,
+      matched: ['Дата операции', 'Дата проводки', 'Описание', 'Сумма', 'Валюта', 'Категория', 'Номер карты'],
+      presets,
+      pickedName: chosen.name + ' · ' + (chosen.kind === 'ЛЮБОЙ' ? 'свои колонки' : chosen.kind),
+      file: detected
+        ? { name: 'alfa-2026-10.xlsx', meta: '48 КБ · лист «Выписка»' }
+        : { name: 'statement_oct_2026.csv', meta: '31 КБ · UTF-8 · разделитель «,»' }
+    };
+  }
+}
+</script>
+</body>
+</html>

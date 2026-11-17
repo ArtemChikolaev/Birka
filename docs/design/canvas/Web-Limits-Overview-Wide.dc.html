@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Лимиты в обзоре сайта · широкий экран</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+:root{--color-palette-black: #000000;
+  --color-palette-white: #ffffff;
+  --color-palette-ink: #f4f4f2;
+  --color-palette-gray900: #0e0e0f;
+  --color-palette-gray850: #161617;
+  --color-palette-gray800: #1e1e1f;
+  --color-palette-gray500: #8a8a8a;
+  --color-palette-gray400: #a3a3a3;
+  --color-palette-gray300: #c9c9c7;
+  --color-palette-emerald400: #3ddc97;
+  --color-palette-emerald700: #248a56;
+  --color-palette-emerald950: #02130b;
+  --color-palette-coral400: #ff8e7f;
+  --color-palette-green: #4ade80;
+  --color-palette-amber: #fbbf24;
+  --color-palette-sky: #60a5fa;
+  --color-palette-violet: #a78bfa;
+  --color-palette-rose: #fb7185;
+  --color-palette-orange: #fb923c;
+  --color-palette-cyan: #22d3ee;
+  --color-palette-slate: #3a3a3c;
+  --color-palette-steel: #6e6e73;
+  --color-palette-sapphire: #2368b3;
+  --color-palette-bronze: #a8650f;
+  --color-palette-iris: #6a4ec4;
+  --color-palette-ruby: #b83a58;
+  --color-background: #000000;
+  --color-surface: #0e0e0f;
+  --color-surface-raised: #161617;
+  --color-surface-selected: #1e1e1f;
+  --color-text: #f4f4f2;
+  --color-text-secondary: #c9c9c7;
+  --color-text-muted: #a3a3a3;
+  --color-text-subtle: #8a8a8a;
+  --color-accent: #3ddc97;
+  --color-on-accent: #02130b;
+  --color-accent-highlight: rgb(255 255 255 / 0.45);
+  --color-accent-soft: rgb(61 220 151 / 0.14);
+  /* The glow in the corners of every screen. */
+  --color-ambient: rgb(36 138 86 / 0.3);
+  --color-positive: #3ddc97;
+  --color-negative: #ff8e7f;
+  --color-hairline: rgb(255 255 255 / 0.09);
+  --color-art-emerald: #248a56;
+  --color-art-graphite: #6e6e73;
+  --color-art-sapphire: #2368b3;
+  --color-art-amber: #a8650f;
+  --color-art-violet: #6a4ec4;
+  --color-art-rose: #b83a58;
+  --color-glass-fill-top: rgb(255 255 255 / 0.1);
+  --color-glass-fill-bottom: rgb(255 255 255 / 0.03);
+  --color-glass-border: rgb(255 255 255 / 0.14);
+  --color-glass-highlight: rgb(255 255 255 / 0.18);
+  --color-nav-fill: rgb(32 32 34 / 0.52);
+  --color-nav-highlight: rgb(255 255 255 / 0.22);
+  --color-nav-lowlight: rgb(255 255 255 / 0.05);
+  --color-nav-bubble: rgb(255 255 255 / 0.13);
+  --color-nav-bubble-highlight: rgb(255 255 255 / 0.28);
+  --color-nav-label: #b4b4b2;
+  --blur-control: 14px;
+  --blur-glass: 18px;
+  --blur-nav: 22px;
+  --saturation-glass: 1.6;
+  --saturation-nav: 1.7;
+  --shadow-glass: 0px 10px 28px 0px rgb(0 0 0 / 0.4);
+  --shadow-nav: 0px 12px 32px 0px rgb(0 0 0 / 0.55);
+  --shadow-nav-bubble: 0px 4px 14px 0px rgb(0 0 0 / 0.35);
+  --shadow-accent-glow: 0px 6px 22px 0px rgb(36 138 86 / 0.55);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 320ms;
+  /* Digits that roll to a new figure, and the parts of a ring that move to their new shares. */
+  --duration-roll: 520ms;
+  /* A card that grows into its page, the longest way anything travels. */
+  --duration-zoom: 420ms;
+  /* The tab bar bubble and switches. */
+  --duration-spring: 560ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  /* Overshoots a little, like a spring. */
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* For opacity: starts and ends gently, so that a cross-fade does not snap. */
+  --easing-fade: cubic-bezier(0.42, 0, 0.58, 1);
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  /* The smallest tap area. */
+  --size-touch-target: 44px;
+  --size-nav-bar: 64px;
+  /* How deep a list fades where it goes under a header or a button that stays in place. */
+  --size-scroll-edge: 48px;
+  /* The height of the count on the corner of a button, such as the new notices on the bell. */
+  --size-badge: 20px;
+  /* Headlines and large amounts. */
+  --font-family-display: Manrope, Inter, system-ui, sans-serif;
+  --font-family-text: Inter, system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;}
+.text-display{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 46px;
+  font-weight: 800;
+  letter-spacing: -1.6px;
+  line-height: 1.02;
+  font-variant-numeric: tabular-nums;}
+.text-title{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.56px;
+  line-height: 1.1;}
+.text-heading{font-family: Manrope, Inter, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.22px;
+  line-height: 1.2;}
+.text-body{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-body-strong{font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0px;
+  line-height: 1.4;}
+.text-caption{font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  line-height: 1.35;}
+/* Short section labels in capitals,such as ACCOUNTS. */
+.text-label{font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.96px;
+  line-height: 1.2;
+  text-transform: uppercase;}
+.text-tab{font-family: Inter, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0px;
+  line-height: 1.2;}
+.page{box-sizing: border-box;
+        margin: 0 auto;
+        max-width: 520px;
+        padding: max(var(--space-md), env(safe-area-inset-top)) var(--space-lg) max(var(--space-xxl), env(safe-area-inset-bottom));}
+@media (min-width: 901px){.page--wide{max-width: 1160px;}
+}
+.account-card-link{border-radius: var(--radius-xl);
+        color: inherit;
+        display: block;
+        text-decoration: none;}
+.account-card{box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        height: 188px;
+        justify-content: space-between;
+        padding: var(--space-lg);}
+.account-card--compact{height: 146px;
+        padding: var(--space-md);}
+.account-card .amount{overflow: hidden;
+        text-overflow: ellipsis;}
+.account-card__top{align-items: flex-start;
+        display: flex;
+        gap: var(--space-sm);}
+.account-card__names{display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: var(--space-xxs);
+        min-width: 0;}
+.account-card__line{overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.account-card__subtitle{color: var(--color-text-secondary);}
+.account-card__chip{background: linear-gradient(135deg, var(--color-text-subtle), var(--color-surface-selected));
+        border: 1px solid var(--color-glass-border);
+        border-radius: var(--radius-xs);
+        box-sizing: border-box;
+        flex: none;
+        height: 28px;
+        width: 38px;}
+.ambient{isolation: isolate;
+        min-height: 100dvh;
+        position: relative;}
+.ambient::before{background: radial-gradient(62% 34% at 0% 0%, var(--color-ambient) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, var(--color-ambient) 0%, transparent 74%), radial-gradient(64% 20% at 0% 72%, var(--color-ambient) 0%, transparent 72%), var(--color-background);
+        content: "";
+        height: 100lvh;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: -1;}
+.amount{font-variant-numeric: tabular-nums;
+        white-space: nowrap;}
+.amount--positive{color: var(--color-positive);}
+.amount--muted{color: var(--color-text-muted);}
+.birka-button{align-items: center;
+        background: var(--color-accent);
+        border: 0;
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-on-accent);
+        cursor: pointer;
+        display: flex;
+        height: 56px;
+        justify-content: center;
+        padding: 0 var(--space-lg);
+        text-decoration: none;
+        transition: opacity var(--duration-fast);
+        width: 100%;}
+.birka-button:disabled{cursor: default;
+        opacity: 0.5;}
+.birka-change-pill{align-items: center;
+        border-radius: var(--radius-pill);
+        display: inline-flex;
+        gap: var(--space-xxs);
+        max-width: 100%;
+        padding: var(--space-xxs) var(--space-sm);}
+.birka-change-pill .birka-icon{height: 14px;
+        width: 14px;}
+.birka-change-pill--rise{background: color-mix(in srgb, var(--color-positive) 16%, transparent);
+        color: var(--color-positive);}
+.birka-chip{align-items: center;
+        background: var(--color-surface-raised);
+        border: 0;
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        display: inline-flex;
+        gap: var(--space-xs);
+        height: var(--size-touch-target);
+        max-width: 100%;
+        padding: 0 var(--space-md);
+        text-decoration: none;
+        transition: background var(--duration-fast), color var(--duration-fast);}
+.birka-chip:disabled{cursor: default;}
+.birka-chip--selected{background: var(--color-text);
+        color: var(--color-background);}
+.birka-chip--compact{padding: 0 var(--space-sm);}
+.birka-chip__room{display: flex;
+        flex: none;
+        margin-left: calc(-1 * var(--space-xs));
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-width var(--duration-slow) var(--easing-standard), margin-left var(--duration-slow) var(--easing-standard), opacity var(--duration-base) var(--easing-fade);}
+@media (prefers-reduced-motion: reduce){.birka-chip__room{transition: none;}
+}
+.birka-chip .birka-icon{height: 20px;
+        width: 20px;}
+.birka-chip__label{min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.birka-column{display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);}
+html{color-scheme: dark;}
+body{margin: 0;
+        background: var(--color-background);
+        color: var(--color-text);
+        -webkit-font-smoothing: antialiased;}
+:focus-visible{outline: 2px solid var(--color-accent);
+        outline-offset: 2px;}
+.birka-icon{display: block;
+        flex: none;
+        height: 22px;
+        width: 22px;}
+.birka-icon svg{display: block;
+        height: 100%;
+        width: 100%;}
+.birka-line-chart{display: block;
+        height: auto;
+        width: 100%;}
+.birka-line-chart__stop{stop-color: var(--color-accent);}
+.birka-line-chart__glow{fill: url(#birka-line-glow);}
+.birka-line-chart__line{fill: none;
+        stroke: var(--color-accent);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2.5;}
+.birka-line-chart__halo{fill: var(--color-accent);
+        fill-opacity: 0.2;}
+.birka-line-chart__dot{fill: var(--color-accent);}
+.birka-link-row{align-items: center;
+        color: var(--color-accent);
+        display: flex;
+        gap: var(--space-xs);
+        justify-content: space-between;
+        min-height: var(--size-touch-target);
+        text-decoration: none;}
+.birka-link-row .birka-icon{flex: none;
+        height: 16px;
+        width: 16px;}
+.birka-ring{flex: none;
+        position: relative;}
+.birka-ring__picture{display: block;
+        height: 100%;
+        width: 100%;}
+.birka-ring__track{stroke: var(--color-surface-raised);}
+.birka-rule{background: var(--color-hairline);
+        flex: none;
+        height: 1px;}
+.birka-split{align-items: start;
+        display: grid;
+        gap: var(--space-xl);
+        grid-template-columns: minmax(0, 1fr) var(--birka-split-aside, 300px);}
+.birka-split__main{display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+        min-width: 0;}
+.birka-split__aside{display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        min-width: 0;
+        position: sticky;
+        top: var(--space-lg);}
+@media (min-width: 901px){.birka-narrow-only{display: none;}
+}
+@media (max-width: 900px){.birka-wide-only{display: none;}
+.birka-split{grid-template-columns: minmax(0, 1fr);}
+.birka-split__aside{position: static;}
+.birka-split--wide-aside > .birka-split__aside{display: none;}
+}
+.card-art{--art-reach: 238px;
+        border: 1px solid var(--color-glass-border);
+        border-radius: var(--radius-xl);
+        box-sizing: border-box;
+        overflow: hidden;}
+.card-art--emerald{background: radial-gradient(circle var(--art-reach) at 100% 100%, color-mix(in srgb, var(--color-art-emerald) 95%, transparent), transparent), linear-gradient(135deg, color-mix(in srgb, var(--color-art-emerald) 28%, transparent), transparent 50%), var(--color-surface);}
+.card-art--graphite{background: linear-gradient(33deg, transparent 42%, color-mix(in srgb, var(--color-art-graphite) 55%, transparent) 50%, transparent 58%), radial-gradient(circle var(--art-reach) at 100% 100%, color-mix(in srgb, var(--color-art-graphite) 95%, transparent), transparent), linear-gradient(135deg, color-mix(in srgb, var(--color-art-graphite) 28%, transparent), transparent 50%), var(--color-surface);}
+.card-art--sapphire{background: radial-gradient(circle var(--art-reach) at 100% 100%, color-mix(in srgb, var(--color-art-sapphire) 95%, transparent), transparent), linear-gradient(135deg, color-mix(in srgb, var(--color-art-sapphire) 28%, transparent), transparent 50%), var(--color-surface);}
+.card-art--violet{background: radial-gradient(circle var(--art-reach) at 100% 100%, color-mix(in srgb, var(--color-art-violet) 95%, transparent), transparent), linear-gradient(135deg, color-mix(in srgb, var(--color-art-violet) 28%, transparent), transparent 50%), var(--color-surface);}
+.glass.glass-icon-button{align-items: center;
+        border-radius: var(--radius-pill);
+        color: var(--color-text);
+        cursor: pointer;
+        display: flex;
+        flex: none;
+        height: var(--size-touch-target);
+        justify-content: center;
+        padding: 0;
+        position: relative;
+        width: var(--size-touch-target);}
+.glass-icon-button__badge{align-items: center;
+        background: var(--color-accent);
+        border: 2px solid var(--color-background);
+        border-radius: var(--radius-pill);
+        box-sizing: border-box;
+        color: var(--color-on-accent);
+        display: flex;
+        font-variant-numeric: tabular-nums;
+        height: var(--size-badge);
+        justify-content: center;
+        letter-spacing: 0;
+        line-height: 1;
+        min-width: var(--size-badge);
+        padding: 0 var(--space-xxs);
+        pointer-events: none;
+        position: absolute;
+        right: calc(-1 * var(--space-xxs));
+        top: calc(-1 * var(--space-xxs));
+        transition: opacity var(--duration-base) var(--easing-fade), transform var(--duration-slow) var(--easing-spring);}
+.glass-icon-button__badge--off{opacity: 0;
+        transform: scale(0.4);}
+@media (prefers-reduced-motion: reduce){.glass-icon-button__badge,.glass-icon-button__badge--off{transform: none;}
+}
+.glass-nav-room{height: calc(var(--size-nav-bar) + var(--space-xl));}
+.glass-nav{-webkit-backdrop-filter: blur(var(--blur-nav)) saturate(var(--saturation-nav));
+        backdrop-filter: blur(var(--blur-nav)) saturate(var(--saturation-nav));
+        background: var(--color-nav-fill);
+        border: 1px solid var(--color-glass-border);
+        border-radius: calc(var(--size-nav-bar) / 2);
+        bottom: max(var(--space-xl), env(safe-area-inset-bottom));
+        box-shadow: inset 0 1px 0 var(--color-nav-highlight), inset 0 -1px 0 var(--color-nav-lowlight), var(--shadow-nav);
+        box-sizing: border-box;
+        display: grid;
+        grid-auto-columns: minmax(0, 1fr);
+        grid-auto-flow: column;
+        height: var(--size-nav-bar);
+        left: 50%;
+        max-width: 456px;
+        padding: 6px;
+        position: fixed;
+        transform: translateX(-50%);
+        width: calc(100% - 2 * var(--space-xxl));
+        z-index: 1;}
+@media (max-width: 360px){.glass-nav{width: calc(100% - 2 * var(--space-md));}
+}
+.glass-nav__tab{align-items: center;
+        border-radius: calc((var(--size-nav-bar) - 12px) / 2);
+        color: var(--color-nav-label);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        justify-content: center;
+        min-width: 0;
+        text-decoration: none;
+        transition: color var(--duration-fast);}
+.glass-nav__tab--selected{background: var(--color-nav-bubble);
+        box-shadow: inset 0 1px 0 var(--color-nav-bubble-highlight), var(--shadow-nav-bubble);
+        color: var(--color-accent);}
+.glass-nav__label{max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;}
+.glass-nav__action{align-items: center;
+        align-self: center;
+        background: var(--color-accent);
+        border-radius: 50%;
+        box-shadow: inset 0 1px 0 var(--color-accent-highlight), var(--shadow-accent-glow);
+        color: var(--color-on-accent);
+        display: flex;
+        height: 50px;
+        justify-content: center;
+        justify-self: center;
+        width: 50px;}
+.glass-nav__action .birka-icon{height: 24px;
+        width: 24px;}
+.glass-page-header{align-items: center;
+        display: flex;
+        gap: var(--space-xs);
+        justify-content: space-between;
+        min-height: var(--size-touch-target);}
+.glass-page-header__title{margin: 0;
+        min-width: 0;}
+.glass{box-sizing: border-box;
+        padding: var(--space-md);
+        border: 1px solid var(--color-glass-border);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(160deg, var(--color-glass-fill-top) 0%, var(--color-glass-fill-bottom) 100%);
+        box-shadow: inset 0 1px 0 var(--color-glass-highlight), var(--shadow-glass);
+        -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));
+        backdrop-filter: blur(var(--blur-glass)) saturate(var(--saturation-glass));}
+.section-label{margin: 0;}
+.overview__actions{display: flex;
+        flex: none;
+        gap: var(--space-xs);}
+.overview__capital{display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);}
+.overview__figures{display: flex;
+        flex-direction: column;
+        gap: var(--space-xxs);}
+.overview__figures .amount{overflow-wrap: anywhere;
+        white-space: normal;}
+.overview__label{color: var(--color-text-muted);}
+.overview__change{align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+        margin-top: var(--space-xxs);}
+.overview__caption{color: var(--color-text-muted);}
+.overview__periods{display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs);}
+.overview__accounts{display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);}
+.overview__accounts-heading{align-items: center;
+        display: flex;
+        justify-content: space-between;}
+.overview__all{color: var(--color-text-muted);
+        text-decoration: none;}
+.overview__cards{display: flex;
+        gap: var(--space-sm);
+        margin: 0 calc(-1 * var(--space-lg));
+        overflow-x: auto;
+        padding: 0 var(--space-lg);
+        scroll-padding: 0 var(--space-lg);
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;}
+.overview__cards::-webkit-scrollbar{display: none;}
+@media (min-width: 521px){.overview__cards{mask-image: linear-gradient(to right, transparent, black var(--space-lg), black calc(100% - var(--space-lg)), transparent);}
+}
+.overview__card{flex: 0 0 236px;
+        min-width: 0;
+        scroll-snap-align: start;}
+.overview__spending{align-items: center;
+        display: flex;
+        gap: var(--space-md);}
+.overview__month{display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: var(--space-xxs);
+        min-width: 0;}
+.overview__month .amount{overflow-wrap: anywhere;
+        white-space: normal;}
+.overview__category{align-items: center;
+        display: flex;
+        gap: var(--space-xs);}
+.overview__dot{border-radius: 50%;
+        flex: none;
+        height: 8px;
+        width: 8px;}
+.overview__category-name{color: var(--color-text-secondary);
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;}
+.overview__note{color: var(--color-text-subtle);
+        margin: 0;}
+.spending{display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);}
+.spending .section-label{color: var(--color-text-muted);}
+.spending .birka-rule{margin: var(--space-xs) 0;}
+.spending__title{color: var(--color-text);
+        margin: 0;}
+.spending__text{color: var(--color-text-secondary);
+        margin: 0 0 var(--space-xs);}
+.birka-meter{background:var(--color-surface-raised);border-radius:var(--radius-pill);display:block;height:var(--birka-meter-height,8px);overflow:hidden}
+.birka-meter__fill{background:var(--birka-meter-color,var(--color-accent));border-radius:inherit;display:block;height:100%;transition:width var(--duration-roll) var(--easing-standard),background var(--duration-slow) var(--easing-fade)}
+@media (prefers-reduced-motion: reduce){.birka-meter__fill{transition:none}
+}
+.limits-part{display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md)}
+.limits-part>.birka-rule{margin-bottom:var(--space-xxs)}
+.limits-part__head{align-items:baseline;display:flex;gap:var(--space-sm);justify-content:space-between}
+.limits-part__head .section-label{color:var(--color-text-muted)}
+.limits-part__summary{color:var(--color-text-muted)}
+.limits-part__summary--over{color:var(--color-negative)}
+.limits-part__text{color:var(--color-text-secondary);margin:0}
+.limit-line{display:flex;flex-direction:column;gap:var(--space-xxs)}
+.limit-line__top{align-items:baseline;display:flex;gap:var(--space-xs)}
+.limit-line__name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.limit-line__figures{color:var(--color-text-secondary);flex:none}
+.limit-line__note{color:var(--color-text-muted)}
+.limit-line__note--near{color:var(--color-palette-amber)}
+.limit-line__note--over{color:var(--color-negative)}
+
+</style>
+</helmet>
+<div style="min-height: 1300px">
+<sc-if value="{{is0}}" hint-placeholder-val="{{ true }}">
+<div class="ambient text-body">
+      <main class="page page--wide">
+        <!--@overview_island--><div><div class="birka-column"><div class="glass-page-header"><h1 class="text-title glass-page-header__title">Ноябрь</h1><div class="overview__actions"><a class="glass glass-icon-button" aria-label="Спросить" href="ask/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.8-3.8"></path></svg></span></a><a class="glass glass-icon-button" aria-label="Уведомления" href="notifications/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15.5 6 9.5z"></path><path d="M10 20.5a2.2 2.2 0 0 0 4 0"></path></svg></span><span class="text-label glass-icon-button__badge glass-icon-button__badge--off" aria-hidden="true">0</span></a><button class="glass glass-icon-button" aria-label="Скрыть суммы" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg></span></button></div></div><div class="birka-split birka-split--wide-aside" style="--birka-split-aside: 380px"><div class="birka-split__main"><div class="overview__capital"><div class="overview__figures"><div class="overview__label"><h2 class="text-label section-label">Капитал · 3 валюты</h2></div><span class="text-display amount amount--neutral">208 495,11 ₽</span><span class="text-body-strong amount amount--muted">2 937,85 $ · 195,62 €</span><div class="overview__change"><span class="birka-change-pill birka-change-pill--rise"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg></span><span class="text-body-strong amount amount--positive">+25 771,30 ₽</span></span><span class="text-body overview__caption">за ноябрь</span></div></div><svg class="birka-line-chart" aria-label="Капитал за период" role="img" viewBox="0 0 360 96"><defs><linearGradient id="birka-line-glow" x1="0" x2="0" y1="0" y2="1"><stop class="birka-line-chart__stop" offset="0" stop-opacity="0.28"></stop><stop class="birka-line-chart__stop" offset="1" stop-opacity="0"></stop></linearGradient><linearGradient id="birka-line-sides"><stop offset="0" stop-color="white" stop-opacity="0"></stop><stop offset="0.7" stop-color="white"></stop><stop offset="1" stop-color="white" stop-opacity="0"></stop></linearGradient><mask id="birka-line-fade"><rect fill="url(#birka-line-sides)" height="100%" width="100%"></rect></mask></defs><path class="birka-line-chart__glow" mask="url(#birka-line-fade)" d="M0.0 85.0 C3.6 82.5 14.5 72.2 21.8 69.9 C29.1 69.9 36.4 70.7 43.6 71.1 C50.9 71.5 58.2 71.6 65.4 72.3 C72.7 73.1 80.0 75.7 87.3 75.7 C94.5 65.5 101.8 21.0 109.1 11.0 C116.3 11.0 123.6 14.4 130.9 15.7 C138.1 17.1 145.4 17.9 152.7 18.9 C160.0 19.9 167.2 21.3 174.5 21.8 C181.8 21.8 189.0 21.8 196.3 21.8 C203.6 23.5 210.9 30.4 218.1 32.2 C225.4 32.3 232.7 32.3 239.9 32.3 C247.2 32.0 254.5 30.8 261.8 30.8 C269.0 32.1 276.3 38.5 283.6 40.1 C290.8 40.1 298.1 40.1 305.4 40.1 C312.6 40.6 319.9 41.9 327.2 42.9 C334.5 43.9 345.4 45.6 349.0 46.2 L349.0 96 L0.0 96 Z"></path><path class="birka-line-chart__line" d="M0.0 85.0 C3.6 82.5 14.5 72.2 21.8 69.9 C29.1 69.9 36.4 70.7 43.6 71.1 C50.9 71.5 58.2 71.6 65.4 72.3 C72.7 73.1 80.0 75.7 87.3 75.7 C94.5 65.5 101.8 21.0 109.1 11.0 C116.3 11.0 123.6 14.4 130.9 15.7 C138.1 17.1 145.4 17.9 152.7 18.9 C160.0 19.9 167.2 21.3 174.5 21.8 C181.8 21.8 189.0 21.8 196.3 21.8 C203.6 23.5 210.9 30.4 218.1 32.2 C225.4 32.3 232.7 32.3 239.9 32.3 C247.2 32.0 254.5 30.8 261.8 30.8 C269.0 32.1 276.3 38.5 283.6 40.1 C290.8 40.1 298.1 40.1 305.4 40.1 C312.6 40.6 319.9 41.9 327.2 42.9 C334.5 43.9 345.4 45.6 349.0 46.2"></path><circle class="birka-line-chart__halo" cx="349.0" cy="46.2" r="11"></circle><circle class="birka-line-chart__dot" cx="349.0" cy="46.2" r="5"></circle></svg><div class="overview__periods"><button class="text-body-strong birka-chip birka-chip--compact" aria-pressed="false" type="button"><span class="birka-chip__label">Неделя</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--selected birka-chip--compact" aria-pressed="true" type="button"><span class="birka-chip__label">Месяц</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--compact" aria-pressed="false" type="button"><span class="birka-chip__label">Год</span><span class="birka-chip__room"></span></button></div></div><div class="birka-narrow-only"><div class="glass"><div class="spending"><h2 class="text-label section-label">До зарплаты</h2><h2 class="text-heading spending__title">Сколько можно тратить в день?</h2><p class="text-body spending__text">Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.</p><a class="text-label birka-button" href="payday/">Указать день зарплаты</a></div></div></div><section class="overview__accounts"><div class="overview__accounts-heading"><h2 class="text-label section-label">Счета</h2><a class="text-label overview__all" href="accounts/">Все 4</a></div><div class="overview__cards"><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af97-70b3-97da-117392d5c59a"><div class="card-art card-art--emerald"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Зарплатная карта</span><span class="text-caption account-card__line account-card__subtitle">Рубли · •• 4821</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">206 246,62 ₽</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9a-722c-8a8b-07092f5a11b8"><div class="card-art card-art--graphite"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Наличные</span><span class="text-caption account-card__line account-card__subtitle">Рубли · Наличные</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">2 248,49 ₽</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9c-7737-aacb-9832c4889d9a"><div class="card-art card-art--sapphire"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Накопления</span><span class="text-caption account-card__line account-card__subtitle">Доллары · Накопительный</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">2 937,85 $</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9d-735a-9def-d3e88a92f8c6"><div class="card-art card-art--violet"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Карта в евро</span><span class="text-caption account-card__line account-card__subtitle">Евро · •• 0937</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">195,62 €</span></div></div></a></div></div></section><div class="glass"><div class="overview__spending"><div class="birka-ring" style="height: 96px; width: 96px"><svg class="birka-ring__picture" aria-label="Траты по категориям" role="img" viewBox="0 0 96 96"><circle class="birka-ring__track" fill="none" stroke-width="10" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#4ade80" stroke-dasharray="87.3123 270.1770" stroke-dashoffset="-1.5050" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fbbf24" stroke-dasharray="46.1730 270.1770" stroke-dashoffset="-91.8273" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fb923c" stroke-dasharray="42.0542 270.1770" stroke-dashoffset="-141.0103" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#a78bfa" stroke-dasharray="28.0019 270.1770" stroke-dashoffset="-186.0745" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#60a5fa" stroke-dasharray="17.8261 270.1770" stroke-dashoffset="-217.0864" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#60a5fa" stroke-dasharray="10.8969 270.1770" stroke-dashoffset="-237.9226" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fb7185" stroke-dasharray="7.1658 270.1770" stroke-dashoffset="-251.8295" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#22d3ee" stroke-dasharray="6.6667 270.1770" stroke-dashoffset="-262.0053" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle></svg></div><div class="overview__month"><div class="overview__label"><h2 class="text-label section-label">Траты в ноябре</h2></div><span class="text-heading amount amount--neutral">−55 757 ₽</span><div class="overview__category"><span class="overview__dot" style="background: #4ade80"></span><span class="text-caption overview__category-name">Продукты</span><span class="text-caption amount amount--neutral">18 640 ₽</span></div><div class="overview__category"><span class="overview__dot" style="background: #fbbf24"></span><span class="text-caption overview__category-name">Кафе</span><span class="text-caption amount amount--neutral">10 150 ₽</span></div><div class="overview__category"><span class="overview__dot" style="background: #fb923c"></span><span class="text-caption overview__category-name">Досуг</span><span class="text-caption amount amount--neutral">9 300 ₽</span></div><span class="text-caption amount amount--muted">214 €</span></div></div><div class="limits-part"><div class="birka-rule"></div><div class="limits-part__head"><h2 class="text-label section-label">Лимиты на ноябрь</h2><span class="text-caption limits-part__summary limits-part__summary--over">превышен 1 · 13 дней</span></div><div class="limit-line"><span class="limit-line__top"><span class="text-body-strong limit-line__name">Досуг</span><span class="text-caption amount limit-line__figures">9 300 ₽ из 8 000 ₽</span></span><span class="birka-meter" role="meter" aria-label="Досуг: потрачено 116 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="116" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m0}}; --birka-meter-color: var(--color-negative)"></span></span><span class="text-caption limit-line__note limit-line__note--over">больше лимита на 1 300 ₽</span></div><div class="limit-line"><span class="limit-line__top"><span class="text-body-strong limit-line__name">Кафе</span><span class="text-caption amount limit-line__figures">10 150 ₽ из 12 000 ₽</span></span><span class="birka-meter" role="meter" aria-label="Кафе: потрачено 85 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="85" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m1}}; --birka-meter-color: var(--color-palette-amber)"></span></span><span class="text-caption limit-line__note limit-line__note--near">осталось 1 850 ₽ · хватит примерно до 21 ноября</span></div><div class="limit-line"><span class="limit-line__top"><span class="text-body-strong limit-line__name">Поездки</span><span class="text-caption amount limit-line__figures">≈ 261 € из 400 €</span></span><span class="birka-meter" role="meter" aria-label="Поездки: потрачено 65 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m2}}; --birka-meter-color: var(--color-accent)"></span></span><span class="text-caption limit-line__note limit-line__note--ok">осталось ≈ 139 €</span></div><a class="text-body-strong birka-link-row" href="#"><span>Все лимиты · 5</span><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a></div></div><p class="text-caption overview__note">Данные хранятся только в этом браузере.</p></div><aside class="birka-split__aside"><div class="glass"><div class="spending"><h2 class="text-label section-label">До зарплаты</h2><h2 class="text-heading spending__title">Сколько можно тратить в день?</h2><p class="text-body spending__text">Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.</p><a class="text-label birka-button" href="payday/">Указать день зарплаты</a></div></div></aside></div></div><div class="glass-nav-room"><nav class="glass-nav"><a class="glass-nav__tab glass-nav__tab--selected" aria-current="page" href="overview/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg></span><span class="text-tab glass-nav__label">Обзор</span></a><a class="glass-nav__tab" href="operations/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"></path><circle cx="4.5" cy="6" r="1"></circle><circle cx="4.5" cy="12" r="1"></circle><circle cx="4.5" cy="18" r="1"></circle></svg></span><span class="text-tab glass-nav__label">Операции</span></a><a class="glass-nav__action" aria-label="Новая операция" href="operations/#new"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span></a><a class="glass-nav__tab" href="reports/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9h-9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg></span><span class="text-tab glass-nav__label">Отчёты</span></a><a class="glass-nav__tab" href="more/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"></rect></svg></span><span class="text-tab glass-nav__label">Ещё</span></a></nav></div></div><!--/@overview_island-->
+      </main>
+    </div>
+</sc-if>
+<sc-if value="{{is1}}" hint-placeholder-val="{{ false }}">
+<div class="ambient text-body">
+      <main class="page page--wide">
+        <!--@overview_island--><div><div class="birka-column"><div class="glass-page-header"><h1 class="text-title glass-page-header__title">Ноябрь</h1><div class="overview__actions"><a class="glass glass-icon-button" aria-label="Спросить" href="ask/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.8-3.8"></path></svg></span></a><a class="glass glass-icon-button" aria-label="Уведомления" href="notifications/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15.5 6 9.5z"></path><path d="M10 20.5a2.2 2.2 0 0 0 4 0"></path></svg></span><span class="text-label glass-icon-button__badge glass-icon-button__badge--off" aria-hidden="true">0</span></a><button class="glass glass-icon-button" aria-label="Скрыть суммы" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg></span></button></div></div><div class="birka-split birka-split--wide-aside" style="--birka-split-aside: 380px"><div class="birka-split__main"><div class="overview__capital"><div class="overview__figures"><div class="overview__label"><h2 class="text-label section-label">Капитал · 3 валюты</h2></div><span class="text-display amount amount--neutral">208 495,11 ₽</span><span class="text-body-strong amount amount--muted">2 937,85 $ · 195,62 €</span><div class="overview__change"><span class="birka-change-pill birka-change-pill--rise"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg></span><span class="text-body-strong amount amount--positive">+25 771,30 ₽</span></span><span class="text-body overview__caption">за ноябрь</span></div></div><svg class="birka-line-chart" aria-label="Капитал за период" role="img" viewBox="0 0 360 96"><defs><linearGradient id="birka-line-glow" x1="0" x2="0" y1="0" y2="1"><stop class="birka-line-chart__stop" offset="0" stop-opacity="0.28"></stop><stop class="birka-line-chart__stop" offset="1" stop-opacity="0"></stop></linearGradient><linearGradient id="birka-line-sides"><stop offset="0" stop-color="white" stop-opacity="0"></stop><stop offset="0.7" stop-color="white"></stop><stop offset="1" stop-color="white" stop-opacity="0"></stop></linearGradient><mask id="birka-line-fade"><rect fill="url(#birka-line-sides)" height="100%" width="100%"></rect></mask></defs><path class="birka-line-chart__glow" mask="url(#birka-line-fade)" d="M0.0 85.0 C3.6 82.5 14.5 72.2 21.8 69.9 C29.1 69.9 36.4 70.7 43.6 71.1 C50.9 71.5 58.2 71.6 65.4 72.3 C72.7 73.1 80.0 75.7 87.3 75.7 C94.5 65.5 101.8 21.0 109.1 11.0 C116.3 11.0 123.6 14.4 130.9 15.7 C138.1 17.1 145.4 17.9 152.7 18.9 C160.0 19.9 167.2 21.3 174.5 21.8 C181.8 21.8 189.0 21.8 196.3 21.8 C203.6 23.5 210.9 30.4 218.1 32.2 C225.4 32.3 232.7 32.3 239.9 32.3 C247.2 32.0 254.5 30.8 261.8 30.8 C269.0 32.1 276.3 38.5 283.6 40.1 C290.8 40.1 298.1 40.1 305.4 40.1 C312.6 40.6 319.9 41.9 327.2 42.9 C334.5 43.9 345.4 45.6 349.0 46.2 L349.0 96 L0.0 96 Z"></path><path class="birka-line-chart__line" d="M0.0 85.0 C3.6 82.5 14.5 72.2 21.8 69.9 C29.1 69.9 36.4 70.7 43.6 71.1 C50.9 71.5 58.2 71.6 65.4 72.3 C72.7 73.1 80.0 75.7 87.3 75.7 C94.5 65.5 101.8 21.0 109.1 11.0 C116.3 11.0 123.6 14.4 130.9 15.7 C138.1 17.1 145.4 17.9 152.7 18.9 C160.0 19.9 167.2 21.3 174.5 21.8 C181.8 21.8 189.0 21.8 196.3 21.8 C203.6 23.5 210.9 30.4 218.1 32.2 C225.4 32.3 232.7 32.3 239.9 32.3 C247.2 32.0 254.5 30.8 261.8 30.8 C269.0 32.1 276.3 38.5 283.6 40.1 C290.8 40.1 298.1 40.1 305.4 40.1 C312.6 40.6 319.9 41.9 327.2 42.9 C334.5 43.9 345.4 45.6 349.0 46.2"></path><circle class="birka-line-chart__halo" cx="349.0" cy="46.2" r="11"></circle><circle class="birka-line-chart__dot" cx="349.0" cy="46.2" r="5"></circle></svg><div class="overview__periods"><button class="text-body-strong birka-chip birka-chip--compact" aria-pressed="false" type="button"><span class="birka-chip__label">Неделя</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--selected birka-chip--compact" aria-pressed="true" type="button"><span class="birka-chip__label">Месяц</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--compact" aria-pressed="false" type="button"><span class="birka-chip__label">Год</span><span class="birka-chip__room"></span></button></div></div><div class="birka-narrow-only"><div class="glass"><div class="spending"><h2 class="text-label section-label">До зарплаты</h2><h2 class="text-heading spending__title">Сколько можно тратить в день?</h2><p class="text-body spending__text">Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.</p><a class="text-label birka-button" href="payday/">Указать день зарплаты</a></div></div></div><section class="overview__accounts"><div class="overview__accounts-heading"><h2 class="text-label section-label">Счета</h2><a class="text-label overview__all" href="accounts/">Все 4</a></div><div class="overview__cards"><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af97-70b3-97da-117392d5c59a"><div class="card-art card-art--emerald"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Зарплатная карта</span><span class="text-caption account-card__line account-card__subtitle">Рубли · •• 4821</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">206 246,62 ₽</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9a-722c-8a8b-07092f5a11b8"><div class="card-art card-art--graphite"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Наличные</span><span class="text-caption account-card__line account-card__subtitle">Рубли · Наличные</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">2 248,49 ₽</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9c-7737-aacb-9832c4889d9a"><div class="card-art card-art--sapphire"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Накопления</span><span class="text-caption account-card__line account-card__subtitle">Доллары · Накопительный</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">2 937,85 $</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9d-735a-9def-d3e88a92f8c6"><div class="card-art card-art--violet"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Карта в евро</span><span class="text-caption account-card__line account-card__subtitle">Евро · •• 0937</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">195,62 €</span></div></div></a></div></div></section><div class="glass"><div class="overview__spending"><div class="birka-ring" style="height: 96px; width: 96px"><svg class="birka-ring__picture" aria-label="Траты по категориям" role="img" viewBox="0 0 96 96"><circle class="birka-ring__track" fill="none" stroke-width="10" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#4ade80" stroke-dasharray="87.3123 270.1770" stroke-dashoffset="-1.5050" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fbbf24" stroke-dasharray="46.1730 270.1770" stroke-dashoffset="-91.8273" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fb923c" stroke-dasharray="42.0542 270.1770" stroke-dashoffset="-141.0103" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#a78bfa" stroke-dasharray="28.0019 270.1770" stroke-dashoffset="-186.0745" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#60a5fa" stroke-dasharray="17.8261 270.1770" stroke-dashoffset="-217.0864" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#60a5fa" stroke-dasharray="10.8969 270.1770" stroke-dashoffset="-237.9226" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fb7185" stroke-dasharray="7.1658 270.1770" stroke-dashoffset="-251.8295" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#22d3ee" stroke-dasharray="6.6667 270.1770" stroke-dashoffset="-262.0053" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle></svg></div><div class="overview__month"><div class="overview__label"><h2 class="text-label section-label">Траты в ноябре</h2></div><span class="text-heading amount amount--neutral">−55 757 ₽</span><div class="overview__category"><span class="overview__dot" style="background: #4ade80"></span><span class="text-caption overview__category-name">Продукты</span><span class="text-caption amount amount--neutral">18 640 ₽</span></div><div class="overview__category"><span class="overview__dot" style="background: #fbbf24"></span><span class="text-caption overview__category-name">Кафе</span><span class="text-caption amount amount--neutral">10 150 ₽</span></div><div class="overview__category"><span class="overview__dot" style="background: #fb923c"></span><span class="text-caption overview__category-name">Досуг</span><span class="text-caption amount amount--neutral">9 300 ₽</span></div><span class="text-caption amount amount--muted">214 €</span></div></div><div class="limits-part"><div class="birka-rule"></div><div class="limits-part__head"><h2 class="text-label section-label">Лимиты на ноябрь</h2><span class="text-caption limits-part__summary">всё в лимите · 13 дней</span></div><div class="limit-line"><span class="limit-line__top"><span class="text-body-strong limit-line__name">Кафе</span><span class="text-caption amount limit-line__figures">10 150 ₽ из 12 000 ₽</span></span><span class="birka-meter" role="meter" aria-label="Кафе: потрачено 85 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="85" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m0}}; --birka-meter-color: var(--color-palette-amber)"></span></span><span class="text-caption limit-line__note limit-line__note--near">осталось 1 850 ₽ · хватит примерно до 21 ноября</span></div><div class="limit-line"><span class="limit-line__top"><span class="text-body-strong limit-line__name">Поездки</span><span class="text-caption amount limit-line__figures">≈ 261 € из 400 €</span></span><span class="birka-meter" role="meter" aria-label="Поездки: потрачено 65 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m1}}; --birka-meter-color: var(--color-accent)"></span></span><span class="text-caption limit-line__note limit-line__note--ok">осталось ≈ 139 €</span></div><div class="limit-line"><span class="limit-line__top"><span class="text-body-strong limit-line__name">Продукты</span><span class="text-caption amount limit-line__figures">18 640 ₽ из 30 000 ₽</span></span><span class="birka-meter" role="meter" aria-label="Продукты: потрачено 62 % лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="62" style="--birka-meter-height: 6px"><span class="birka-meter__fill" style="width: {{m.m2}}; --birka-meter-color: var(--color-accent)"></span></span><span class="text-caption limit-line__note limit-line__note--ok">осталось 11 360 ₽</span></div><a class="text-body-strong birka-link-row" href="#"><span>Все лимиты · 4</span><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a></div></div><p class="text-caption overview__note">Данные хранятся только в этом браузере.</p></div><aside class="birka-split__aside"><div class="glass"><div class="spending"><h2 class="text-label section-label">До зарплаты</h2><h2 class="text-heading spending__title">Сколько можно тратить в день?</h2><p class="text-body spending__text">Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.</p><a class="text-label birka-button" href="payday/">Указать день зарплаты</a></div></div></aside></div></div><div class="glass-nav-room"><nav class="glass-nav"><a class="glass-nav__tab glass-nav__tab--selected" aria-current="page" href="overview/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg></span><span class="text-tab glass-nav__label">Обзор</span></a><a class="glass-nav__tab" href="operations/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"></path><circle cx="4.5" cy="6" r="1"></circle><circle cx="4.5" cy="12" r="1"></circle><circle cx="4.5" cy="18" r="1"></circle></svg></span><span class="text-tab glass-nav__label">Операции</span></a><a class="glass-nav__action" aria-label="Новая операция" href="operations/#new"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span></a><a class="glass-nav__tab" href="reports/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9h-9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg></span><span class="text-tab glass-nav__label">Отчёты</span></a><a class="glass-nav__tab" href="more/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"></rect></svg></span><span class="text-tab glass-nav__label">Ещё</span></a></nav></div></div><!--/@overview_island-->
+      </main>
+    </div>
+</sc-if>
+<sc-if value="{{is2}}" hint-placeholder-val="{{ false }}">
+<div class="ambient text-body">
+      <main class="page page--wide">
+        <!--@overview_island--><div><div class="birka-column"><div class="glass-page-header"><h1 class="text-title glass-page-header__title">Ноябрь</h1><div class="overview__actions"><a class="glass glass-icon-button" aria-label="Спросить" href="ask/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.8-3.8"></path></svg></span></a><a class="glass glass-icon-button" aria-label="Уведомления" href="notifications/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15.5 6 9.5z"></path><path d="M10 20.5a2.2 2.2 0 0 0 4 0"></path></svg></span><span class="text-label glass-icon-button__badge glass-icon-button__badge--off" aria-hidden="true">0</span></a><button class="glass glass-icon-button" aria-label="Скрыть суммы" type="button"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg></span></button></div></div><div class="birka-split birka-split--wide-aside" style="--birka-split-aside: 380px"><div class="birka-split__main"><div class="overview__capital"><div class="overview__figures"><div class="overview__label"><h2 class="text-label section-label">Капитал · 3 валюты</h2></div><span class="text-display amount amount--neutral">208 495,11 ₽</span><span class="text-body-strong amount amount--muted">2 937,85 $ · 195,62 €</span><div class="overview__change"><span class="birka-change-pill birka-change-pill--rise"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg></span><span class="text-body-strong amount amount--positive">+25 771,30 ₽</span></span><span class="text-body overview__caption">за ноябрь</span></div></div><svg class="birka-line-chart" aria-label="Капитал за период" role="img" viewBox="0 0 360 96"><defs><linearGradient id="birka-line-glow" x1="0" x2="0" y1="0" y2="1"><stop class="birka-line-chart__stop" offset="0" stop-opacity="0.28"></stop><stop class="birka-line-chart__stop" offset="1" stop-opacity="0"></stop></linearGradient><linearGradient id="birka-line-sides"><stop offset="0" stop-color="white" stop-opacity="0"></stop><stop offset="0.7" stop-color="white"></stop><stop offset="1" stop-color="white" stop-opacity="0"></stop></linearGradient><mask id="birka-line-fade"><rect fill="url(#birka-line-sides)" height="100%" width="100%"></rect></mask></defs><path class="birka-line-chart__glow" mask="url(#birka-line-fade)" d="M0.0 85.0 C3.6 82.5 14.5 72.2 21.8 69.9 C29.1 69.9 36.4 70.7 43.6 71.1 C50.9 71.5 58.2 71.6 65.4 72.3 C72.7 73.1 80.0 75.7 87.3 75.7 C94.5 65.5 101.8 21.0 109.1 11.0 C116.3 11.0 123.6 14.4 130.9 15.7 C138.1 17.1 145.4 17.9 152.7 18.9 C160.0 19.9 167.2 21.3 174.5 21.8 C181.8 21.8 189.0 21.8 196.3 21.8 C203.6 23.5 210.9 30.4 218.1 32.2 C225.4 32.3 232.7 32.3 239.9 32.3 C247.2 32.0 254.5 30.8 261.8 30.8 C269.0 32.1 276.3 38.5 283.6 40.1 C290.8 40.1 298.1 40.1 305.4 40.1 C312.6 40.6 319.9 41.9 327.2 42.9 C334.5 43.9 345.4 45.6 349.0 46.2 L349.0 96 L0.0 96 Z"></path><path class="birka-line-chart__line" d="M0.0 85.0 C3.6 82.5 14.5 72.2 21.8 69.9 C29.1 69.9 36.4 70.7 43.6 71.1 C50.9 71.5 58.2 71.6 65.4 72.3 C72.7 73.1 80.0 75.7 87.3 75.7 C94.5 65.5 101.8 21.0 109.1 11.0 C116.3 11.0 123.6 14.4 130.9 15.7 C138.1 17.1 145.4 17.9 152.7 18.9 C160.0 19.9 167.2 21.3 174.5 21.8 C181.8 21.8 189.0 21.8 196.3 21.8 C203.6 23.5 210.9 30.4 218.1 32.2 C225.4 32.3 232.7 32.3 239.9 32.3 C247.2 32.0 254.5 30.8 261.8 30.8 C269.0 32.1 276.3 38.5 283.6 40.1 C290.8 40.1 298.1 40.1 305.4 40.1 C312.6 40.6 319.9 41.9 327.2 42.9 C334.5 43.9 345.4 45.6 349.0 46.2"></path><circle class="birka-line-chart__halo" cx="349.0" cy="46.2" r="11"></circle><circle class="birka-line-chart__dot" cx="349.0" cy="46.2" r="5"></circle></svg><div class="overview__periods"><button class="text-body-strong birka-chip birka-chip--compact" aria-pressed="false" type="button"><span class="birka-chip__label">Неделя</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--selected birka-chip--compact" aria-pressed="true" type="button"><span class="birka-chip__label">Месяц</span><span class="birka-chip__room"></span></button><button class="text-body-strong birka-chip birka-chip--compact" aria-pressed="false" type="button"><span class="birka-chip__label">Год</span><span class="birka-chip__room"></span></button></div></div><div class="birka-narrow-only"><div class="glass"><div class="spending"><h2 class="text-label section-label">До зарплаты</h2><h2 class="text-heading spending__title">Сколько можно тратить в день?</h2><p class="text-body spending__text">Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.</p><a class="text-label birka-button" href="payday/">Указать день зарплаты</a></div></div></div><section class="overview__accounts"><div class="overview__accounts-heading"><h2 class="text-label section-label">Счета</h2><a class="text-label overview__all" href="accounts/">Все 4</a></div><div class="overview__cards"><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af97-70b3-97da-117392d5c59a"><div class="card-art card-art--emerald"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Зарплатная карта</span><span class="text-caption account-card__line account-card__subtitle">Рубли · •• 4821</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">206 246,62 ₽</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9a-722c-8a8b-07092f5a11b8"><div class="card-art card-art--graphite"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Наличные</span><span class="text-caption account-card__line account-card__subtitle">Рубли · Наличные</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">2 248,49 ₽</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9c-7737-aacb-9832c4889d9a"><div class="card-art card-art--sapphire"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Накопления</span><span class="text-caption account-card__line account-card__subtitle">Доллары · Накопительный</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">2 937,85 $</span></div></div></a></div><div class="overview__card"><a class="account-card-link" href="accounts/#01a1e50f-af9d-735a-9def-d3e88a92f8c6"><div class="card-art card-art--violet"><div class="account-card account-card--compact"><div class="account-card__top"><div class="account-card__names"><span class="text-label account-card__line">Карта в евро</span><span class="text-caption account-card__line account-card__subtitle">Евро · •• 0937</span></div><div class="account-card__chip"></div></div><span class="text-title amount amount--neutral">195,62 €</span></div></div></a></div></div></section><div class="glass"><div class="overview__spending"><div class="birka-ring" style="height: 96px; width: 96px"><svg class="birka-ring__picture" aria-label="Траты по категориям" role="img" viewBox="0 0 96 96"><circle class="birka-ring__track" fill="none" stroke-width="10" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#4ade80" stroke-dasharray="87.3123 270.1770" stroke-dashoffset="-1.5050" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fbbf24" stroke-dasharray="46.1730 270.1770" stroke-dashoffset="-91.8273" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fb923c" stroke-dasharray="42.0542 270.1770" stroke-dashoffset="-141.0103" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#a78bfa" stroke-dasharray="28.0019 270.1770" stroke-dashoffset="-186.0745" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#60a5fa" stroke-dasharray="17.8261 270.1770" stroke-dashoffset="-217.0864" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#60a5fa" stroke-dasharray="10.8969 270.1770" stroke-dashoffset="-237.9226" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#fb7185" stroke-dasharray="7.1658 270.1770" stroke-dashoffset="-251.8295" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle><circle fill="none" stroke-width="10" stroke="#22d3ee" stroke-dasharray="6.6667 270.1770" stroke-dashoffset="-262.0053" transform="rotate(-90 48 48)" cx="48" cy="48" r="43"></circle></svg></div><div class="overview__month"><div class="overview__label"><h2 class="text-label section-label">Траты в ноябре</h2></div><span class="text-heading amount amount--neutral">−55 757 ₽</span><div class="overview__category"><span class="overview__dot" style="background: #4ade80"></span><span class="text-caption overview__category-name">Продукты</span><span class="text-caption amount amount--neutral">18 640 ₽</span></div><div class="overview__category"><span class="overview__dot" style="background: #fbbf24"></span><span class="text-caption overview__category-name">Кафе</span><span class="text-caption amount amount--neutral">10 150 ₽</span></div><div class="overview__category"><span class="overview__dot" style="background: #fb923c"></span><span class="text-caption overview__category-name">Досуг</span><span class="text-caption amount amount--neutral">9 300 ₽</span></div><span class="text-caption amount amount--muted">214 €</span></div></div><div class="limits-part"><div class="birka-rule"></div><h2 class="text-label section-label">Лимиты</h2><p class="text-body limits-part__text">Поставьте месячный лимит на категорию — Birka покажет, сколько осталось, и скажет заранее, если он кончается.</p><a class="text-body-strong birka-link-row" href="#"><span>Предложить по средним тратам</span><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a></div></div><p class="text-caption overview__note">Данные хранятся только в этом браузере.</p></div><aside class="birka-split__aside"><div class="glass"><div class="spending"><h2 class="text-label section-label">До зарплаты</h2><h2 class="text-heading spending__title">Сколько можно тратить в день?</h2><p class="text-body spending__text">Укажите день зарплаты. Birka вычтет регулярные платежи до него и разделит остаток на дни.</p><a class="text-label birka-button" href="payday/">Указать день зарплаты</a></div></div></aside></div></div><div class="glass-nav-room"><nav class="glass-nav"><a class="glass-nav__tab glass-nav__tab--selected" aria-current="page" href="overview/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg></span><span class="text-tab glass-nav__label">Обзор</span></a><a class="glass-nav__tab" href="operations/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"></path><circle cx="4.5" cy="6" r="1"></circle><circle cx="4.5" cy="12" r="1"></circle><circle cx="4.5" cy="18" r="1"></circle></svg></span><span class="text-tab glass-nav__label">Операции</span></a><a class="glass-nav__action" aria-label="Новая операция" href="operations/#new"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span></a><a class="glass-nav__tab" href="reports/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9h-9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg></span><span class="text-tab glass-nav__label">Отчёты</span></a><a class="glass-nav__tab" href="more/"><span class="birka-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"></rect></svg></span><span class="text-tab glass-nav__label">Ещё</span></a></nav></div></div><!--/@overview_island-->
+      </main>
+    </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["Как обычно", "Всё в лимите", "Нет лимитов"], "default": "Как обычно"}, "$preview": {"width": 1440, "height": 1300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { grown: false, picked: null };
+    this.timer = null;
+  }
+
+  componentDidMount() {
+    this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) {
+      clearTimeout(this.timer);
+      this.setState({ grown: false, picked: null });
+      this.timer = setTimeout(() => this.setState({ grown: true }), 150);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  renderVals() {
+    const s = this.props.state ?? "Как обычно";
+    const widths = {"Как обычно": {"m0": "100.0%", "m1": "84.6%", "m2": "65.2%"}, "Всё в лимите": {"m0": "84.6%", "m1": "65.2%", "m2": "62.1%"}, "Нет лимитов": {}}[s] ?? {};
+    const m = Object.fromEntries(Object.entries(widths).map(([k, v]) => [k, this.state.grown ? v : "0%"]));
+    return { m, is0: s === "Как обычно", is1: s === "Всё в лимите", is2: s === "Нет лимитов" };
+  }
+}
+</script>
+</body>
+</html>

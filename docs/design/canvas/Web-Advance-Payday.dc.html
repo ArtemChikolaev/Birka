@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Деньги до зарплаты на сайте · прогноз с авансом, узкий экран</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#3DDC97}a:hover{color:#7CEBBB}
+</style>
+</helmet>
+<div style="min-height: 1360px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(38% 40% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(42% 44% at 100% 100%, rgba(36,138,86,0.26) 0%, transparent 74%), radial-gradient(30% 26% at 72% 30%, rgba(36,138,86,0.10) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div>
+    <div style="max-width: 520px; margin: 0 auto; box-sizing: border-box; padding: 32px 20px 64px; display: flex; flex-direction: column; gap: 20px">
+
+      <header style="display: flex; align-items: center; gap: 16px">
+        <a href="Web-Overview.dc.html" aria-label="Назад" style="flex: 0 0 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">Деньги до зарплаты</h1>
+      </header>
+
+      <section aria-label="Как считаем" aria-live="polite" style="display: flex; flex-direction: column; gap: 14px; padding: 18px 16px 16px; border-radius: 24px; background: linear-gradient(160deg, rgba(61,220,151,0.14) 0%, rgba(61,220,151,0.03) 100%); border: 1px solid rgba(61,220,151,0.24)">
+        <span style="display: flex; flex-direction: column; gap: 2px">
+          <span style="position: relative; display: flex; height: 38px; overflow: hidden; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 32px; font-weight: 800; line-height: 38px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: {{big.ink}}; transition: {{big.inkTr}}">
+            <span style="display: flex; transform: translateY({{big.inY}}); opacity: {{big.inO}}; transition: {{big.layerTr}}">
+              <sc-for list="{{big.slots}}" as="c" hint-placeholder-count="12">
+                <sc-if value="{{c.digit}}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 1ch; height: 38px; overflow: hidden"><span style="display: block; transform: translateY({{c.y}}); transition: {{c.tr}}"><sc-for list="{{digits}}" as="d" hint-placeholder-count="10"><span style="display: block; height: 38px">{{d}}</span></sc-for></span></span></sc-if>
+                <sc-if value="{{c.still}}" hint-placeholder-val="{{ false }}"><span>{{c.ch}}</span></sc-if>
+              </sc-for>
+            </span>
+            <span aria-hidden="true" style="position: absolute; left: 0; top: 0; transform: translateY({{big.outY}}); opacity: {{big.outO}}; transition: {{big.layerTr}}">{{big.old}}</span>
+          </span>
+          <span style="display: grid; font-size: 13px; color: #A3A3A3"><span style="grid-area: 1 / 1; opacity: {{sub.oa}}; transition: {{sub.tr}}">{{sub.a}}</span><span style="grid-area: 1 / 1; opacity: {{sub.ob}}; transition: {{sub.tr}}">{{sub.b}}</span></span>
+        </span>
+        <dl style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{lines}}" as="l" hint-placeholder-count="4">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: {{l.top}}; border-top: {{l.rule}}">
+              <dt style="display: grid; color: {{l.labelInk}}"><span style="grid-area: 1 / 1; opacity: {{l.label.oa}}; transition: {{l.label.tr}}">{{l.label.a}}</span><span style="grid-area: 1 / 1; opacity: {{l.label.ob}}; transition: {{l.label.tr}}">{{l.label.b}}</span></dt>
+              <dd style="position: relative; margin: 0; display: flex; height: 20px; overflow: hidden; white-space: pre; font-weight: {{l.weight}}; line-height: 20px; font-variant-numeric: tabular-nums; color: {{l.value.ink}}; transition: {{l.value.inkTr}}">
+                <span style="display: flex; transform: translateY({{l.value.inY}}); opacity: {{l.value.inO}}; transition: {{l.value.layerTr}}">
+                  <sc-for list="{{l.value.slots}}" as="c" hint-placeholder-count="8">
+                    <sc-if value="{{c.digit}}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 1ch; height: 20px; overflow: hidden"><span style="display: block; transform: translateY({{c.y}}); transition: {{c.tr}}"><sc-for list="{{digits}}" as="d" hint-placeholder-count="10"><span style="display: block; height: 20px">{{d}}</span></sc-for></span></span></sc-if>
+                    <sc-if value="{{c.still}}" hint-placeholder-val="{{ false }}"><span>{{c.ch}}</span></sc-if>
+                  </sc-for>
+                </span>
+                <span aria-hidden="true" style="position: absolute; right: 0; top: 0; transform: translateY({{l.value.outY}}); opacity: {{l.value.outO}}; transition: {{l.value.layerTr}}">{{l.value.old}}</span>
+              </dd>
+            </div>
+          </sc-for>
+        </dl>
+        <span style="display: grid; font-size: 13px; line-height: 1.4"><span style="grid-area: 1 / 1; color: {{near.inkA}}; opacity: {{near.oa}}; transition: {{near.tr}}">{{near.a}}</span><span style="grid-area: 1 / 1; color: {{near.inkB}}; opacity: {{near.ob}}; transition: {{near.tr}}">{{near.b}}</span></span>
+      </section>
+
+      <section aria-label="Если тратить как обычно" aria-live="polite" style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Если тратить как обычно</span>
+        <span style="display: grid; font-family: Manrope, Inter, sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.01em"><span style="grid-area: 1 / 1; color: {{fc.title.inkA}}; opacity: {{fc.title.oa}}; transition: {{fc.title.tr}}">{{fc.title.a}}</span><span style="grid-area: 1 / 1; color: {{fc.title.inkB}}; opacity: {{fc.title.ob}}; transition: {{fc.title.tr}}">{{fc.title.b}}</span></span>
+        <span style="display: grid; font-size: 13px; line-height: 1.45; color: #C9C9C7"><span style="grid-area: 1 / 1; opacity: {{fc.text.oa}}; transition: {{fc.text.tr}}">{{fc.text.a}}</span><span style="grid-area: 1 / 1; opacity: {{fc.text.ob}}; transition: {{fc.text.tr}}">{{fc.text.b}}</span></span>
+        <svg width="448" height="112" viewBox="0 0 448 112" role="img" aria-label="{{fc.aria}}" style="display: block; max-width: 100%; margin-top: 4px; overflow: visible"><defs><clipPath id="advwn-above"><rect x="-10" y="-20" width="468" height="{{fc.aboveH}}" style="height: {{fc.aboveH}}px; transition: {{fc.clipTr}}"></rect></clipPath><clipPath id="advwn-below"><rect x="-10" y="{{fc.zeroY}}" width="468" height="{{fc.belowH}}" style="y: {{fc.zeroY}}px; height: {{fc.belowH}}px; transition: {{fc.clipTr}}"></rect></clipPath></defs><path d="{{fc.adv}}" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1" stroke-dasharray="2 4" style="d: path('{{fc.adv}}'); transition: {{fc.tr}}"></path><path d="{{fc.zero}}" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1" stroke-dasharray="2 4" style="d: path('{{fc.zero}}'); transition: {{fc.tr}}"></path><path d="{{fc.plan}}" fill="none" stroke="#3DDC97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 6" opacity="0.7" style="d: path('{{fc.plan}}'); transition: {{fc.tr}}"></path><path d="{{fc.usual}}" clip-path="url(#advwn-above)" fill="none" stroke="#F4F4F2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="d: path('{{fc.usual}}'); transition: {{fc.tr}}"></path><path d="{{fc.usual}}" clip-path="url(#advwn-below)" fill="none" stroke="#FF8E7F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="d: path('{{fc.usual}}'); transition: {{fc.tr}}"></path><circle r="5" fill="#000000" stroke="#FF8E7F" stroke-width="2.5" cx="{{fc.dot1X}}" cy="{{fc.dot1Y}}" style="cx: {{fc.dot1X}}px; cy: {{fc.dot1Y}}px; opacity: {{fc.dot1O}}; transition: {{fc.dotTr}}"></circle><circle r="5" fill="#000000" stroke="#FF8E7F" stroke-width="2.5" cx="{{fc.dot2X}}" cy="{{fc.dot2Y}}" style="cx: {{fc.dot2X}}px; cy: {{fc.dot2Y}}px; opacity: {{fc.dot2O}}; transition: {{fc.dotTr}}"></circle></svg>
+        <div style="position: relative; height: 16px; font-size: 12px; color: #8A8A8A"><span style="position: absolute; left: 0; top: 0">сегодня</span><span style="position: absolute; top: 0; left: {{fc.advX}}px; transform: translateX(-50%); white-space: nowrap; color: #A3A3A3; transition: {{fc.advTr}}">20 ноя · аванс</span><span style="position: absolute; right: 0; top: 0; display: grid; justify-items: end"><span style="grid-area: 1 / 1; opacity: {{fc.end.oa}}; transition: {{fc.end.tr}}">{{fc.end.a}}</span><span style="grid-area: 1 / 1; opacity: {{fc.end.ob}}; transition: {{fc.end.tr}}">{{fc.end.b}}</span></span></div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: #A3A3A3">
+          <span style="display: flex; align-items: center; gap: 6px"><svg width="18" height="4" viewBox="0 0 18 4" aria-hidden="true"><path d="M1 2h16" stroke="#F4F4F2" stroke-width="2.5" stroke-linecap="round"></path></svg>как обычно</span>
+          <span style="display: flex; align-items: center; gap: 6px"><svg width="18" height="4" viewBox="0 0 18 4" aria-hidden="true"><path d="M1 2h16" stroke="#3DDC97" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 6"></path></svg><span style="display: grid"><span style="grid-area: 1 / 1; opacity: {{fc.plan2.oa}}; transition: {{fc.plan2.tr}}">{{fc.plan2.a}}</span><span style="grid-area: 1 / 1; opacity: {{fc.plan2.ob}}; transition: {{fc.plan2.tr}}">{{fc.plan2.b}}</span></span></span>
+        </div>
+        <span style="font-size: 12px; line-height: 1.4; color: #8A8A8A">Обычные траты — среднее за 3 месяца по этим счетам, без регулярных платежей и переводов.</span>
+      </section>
+
+      <section aria-label="Считать до" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+        <span style="font-size: 13px; color: #A3A3A3">Считать до</span>
+        <div role="group" aria-label="Считать до" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{until}}" as="o" hint-placeholder-count="2">
+            <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 150ms, color 150ms">{{o.label}}</button>
+          </sc-for>
+        </div>
+        <div style="height: {{payday.h}}; opacity: {{payday.o}}; overflow: hidden; transition: {{payday.tr}}">
+          <button type="button" style="width: 100%; height: 52px; margin-top: 6px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; border-top: 1px solid rgba(255,255,255,0.06); color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; text-align: left; cursor: pointer">
+            <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span>День зарплаты</span><span style="font-size: 12px; color: #8A8A8A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">из платежа «Зарплата»</span></span>
+            <span style="font-weight: 600; white-space: nowrap">5-е число</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+      </section>
+
+      <section aria-label="Какие счета считать" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Какие счета считать</h2>
+        <div style="border-radius: 22px; padding: 2px 18px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{accounts}}" as="a" hint-placeholder-count="4">
+            <div style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-bottom: {{a.divider}}">
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; color: {{a.nameInk}}">{{a.name}}</span><span style="font-size: 12px; color: #8A8A8A">{{a.meta}}</span></span>
+              <button type="button" role="switch" aria-checked="{{a.checked}}" aria-label="Считать «{{a.name}}»" onClick="{{a.toggle}}" disabled="{{a.locked}}" style="flex: 0 0 52px; width: 52px; height: 32px; box-sizing: border-box; padding: 4px; border: 0; border-radius: 999px; background: {{a.track}}; opacity: {{a.dim}}; cursor: pointer; transition: background 150ms"><span aria-hidden="true" style="display: block; width: 24px; height: 24px; border-radius: 999px; background: #F4F4F2; transform: translateX({{a.knob}}); transition: {{a.knobTr}}"></span></button>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="border-radius: 22px; padding: 2px 18px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <button type="button" style="width: 100%; min-height: 60px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; text-align: left; cursor: pointer">
+            <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span>Отложить до зарплаты</span><span style="font-size: 12px; color: #8A8A8A">не тратим, даже если «можно»</span></span>
+            <span style="font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap">10 000 ₽</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["До зарплаты", "До конца месяца"], "default": "До зарплаты"}, "pace": {"editor": "enum", "options": ["Хватит", "Не хватит до аванса", "Не хватит и после"], "default": "Не хватит до аванса"}, "$preview": {"width": 520, "height": 1360}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+    this.lines = {};
+    this.figs = {};
+    this.timers = [];
+    this.stopped = false;
+  }
+
+  fresh() {
+    return { until: null, on: { card: true, cash: true, savings: false } };
+  }
+
+  componentDidMount() {
+    this.stopped = false;
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) this.setState(this.fresh());
+  }
+
+  componentWillUnmount() {
+    this.stopped = true;
+    for (const timer of this.timers) clearTimeout(timer);
+    this.timers = [];
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Renders again as a figure goes through its roll.
+  wake() {
+    for (const ms of [30, 540, 640]) {
+      this.timers.push(setTimeout(() => {
+        if (!this.stopped) this.forceUpdate();
+      }, ms));
+    }
+  }
+
+  // A figure as AmountText shows it. When the new text has the same shape,
+  // only the digits that differ roll over duration.roll; otherwise the old
+  // figure rolls out and the new one rolls in, up as it grows and down as it
+  // shrinks. While it rolls it takes the color of the news, green when things
+  // got better and red when worse, and turns back once it settles. With less
+  // motion it changes at once and only its color comes and goes.
+  figure(key, text, value, ink, h, reduced) {
+    const now = Date.now();
+    const seen = this.figs[key];
+    if (!seen) {
+      this.figs[key] = { text, value, from: '', swap: false, up: true, at: -100000, news: null };
+    } else if (seen.text !== text) {
+      const shape = (s) => s.replace(/[0-9]/g, '0');
+      const up = value > seen.value;
+      this.figs[key] = { text, value, from: seen.text, swap: shape(seen.text) !== shape(text), up, at: now, news: up ? '#3DDC97' : '#FF8E7F' };
+      this.wake();
+    }
+    const f = this.figs[key];
+    const age = now - f.at;
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const swapping = f.swap && !reduced && age < 620;
+    const entering = swapping && age < 30;
+    const news = f.news && age < 520;
+    return {
+      slots: Array.from(text).map((ch) => {
+        const digit = ch >= '0' && ch <= '9';
+        return { digit, still: !digit, ch, y: digit ? -Number(ch) * h + 'px' : '0px', tr: reduced || f.swap ? 'none' : 'transform 520ms ' + ease };
+      }),
+      old: swapping ? f.from : '',
+      inY: entering ? (f.up ? h : -h) + 'px' : '0px',
+      inO: entering ? '0' : '1',
+      outY: swapping && !entering ? (f.up ? -h : h) + 'px' : '0px',
+      outO: entering ? '1' : '0',
+      layerTr: entering ? 'none' : 'transform 520ms ' + ease + ', opacity 220ms ' + fade,
+      ink: news ? f.news : ink,
+      inkTr: news ? 'color 150ms ' + fade : 'color 320ms ' + fade
+    };
+  }
+
+  // A line that cross-fades into a new one over duration.base, as FadingText
+  // does: the new text goes into the layer behind, which then comes forward.
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  // A line that cross-fades into a new one, as FadingText does, keeping the
+  // color of each of its two layers, so that a warning turns into good news.
+  inked(key, text, ink, reduced) {
+    const line = this.fading(key, text, reduced);
+    const inks = this.inks ?? (this.inks = {});
+    const seen = inks[key] ?? (inks[key] = { a: ink, b: ink });
+    if (line.oa === '1') seen.a = ink; else seen.b = ink;
+    return { ...line, inkA: seen.a, inkB: seen.b };
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'До зарплаты';
+    const st = this.state;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const until = st.until ?? (mode === 'До конца месяца' ? 'month' : 'payday');
+    const payday = until === 'payday';
+    const rub = (n) => String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    const list = [
+      { id: 'card', name: 'Зарплатная карта', meta: '••4821 · 18 400 ₽', value: 18400 },
+      { id: 'cash', name: 'Наличные', meta: '3 200 ₽', value: 3200 },
+      { id: 'savings', name: 'Накопительный', meta: '250 000 ₽ · копим на отпуск', value: 250000 },
+      { id: 'wise', name: 'Wise', meta: '$1 200 · другая валюта, пока не считаем', value: 0, locked: true }
+    ];
+    const sum = list.reduce((all, a) => all + (st.on[a.id] ? a.value : 0), 0);
+    // Today is Friday, 13 November. The salary of 120 000 ₽ comes as the
+    // advance of 60 000 ₽ on the 20th and the rest on 5 December; the rent
+    // went on the 10th. Until the 5th: the internet on 28 November, Netflix
+    // on the 1st and the gym on the 3rd; until the 30th: the internet.
+    const days = payday ? 22 : 18;
+    const payments = payday ? 4949 : 650;
+    const count = payday ? 3 : 1;
+    const aside = 10000;
+    const advance = 60000;
+    const free = sum + advance - payments - aside;
+    // The days before the advance, the 13th to the 19th, live on what the
+    // accounts hold: no payment falls on them, and a day may not take more
+    // than they allow.
+    const nearDays = 7;
+    const near = sum - aside;
+    const lack = free <= 0 ? free : near <= 0 ? near : 0;
+    const perDay = lack === 0 ? Math.min(Math.floor(free / days), Math.floor(near / nearDays)) : 0;
+    const white = '#F4F4F2';
+    const red = '#FF8E7F';
+    const line = (key, label, text, value, last, ink) => ({
+      label: this.fading('label-' + key, label, reduced),
+      value: this.figure('line-' + key, text, value, ink ?? (last && free < 0 ? red : white), 20, reduced),
+      top: last ? '10px' : '0px',
+      rule: last ? '1px solid rgba(255,255,255,0.12)' : '0',
+      weight: last ? '700' : '600',
+      labelInk: last ? white : '#A3A3A3'
+    });
+    // As usual: what the counted accounts spent a day over the last three
+    // months, without regular payments and transfers. Until the advance the
+    // days live on what the accounts hold; on its day the advance brings
+    // what the payments after it leave. At the usual pace the money of the
+    // days can run out before the advance, come back with it and run out
+    // again before the end: the forecast names the first day it runs out.
+    const pace = this.props.pace ?? 'Не хватит до аванса';
+    const usual = pace === 'Хватит' ? 1500 : pace === 'Не хватит до аванса' ? 2100 : 3200;
+    const advanceAt = 7;
+    const before = Math.min(near, free);
+    const step = free - before;
+    const end = free - usual * days;
+    const dip = before - usual * advanceAt;
+    const back = dip + step;
+    const months = ['ноября', 'декабря'];
+    const dayOf = (offset) => {
+      const n = 13 + offset;
+      return n <= 30 ? n + '\u00a0' + months[0] : (n - 30) + '\u00a0' + months[1];
+    };
+    // Figures in a sentence keep together, as formatMoney does.
+    const tight = (s) => s.replace(/ /g, '\u00a0');
+    const round = (n) => tight(rub(Math.round(Math.abs(n) / 100) * 100));
+    const endDay = payday ? '5\u00a0декабря' : '30\u00a0ноября';
+    const green = '#3DDC97';
+    const none = free <= 0 || before <= 0;
+    const runsOut = none ? 0 : dip < 0 ? Math.floor(before / usual) : end < 0 ? Math.floor(free / usual) : null;
+    const again = !none && dip < 0 && back > 0 && end < 0 ? Math.floor(free / usual) : null;
+    const title = none
+      ? 'Денег не хватает уже сейчас'
+      : runsOut !== null
+        ? 'Деньги кончатся ' + dayOf(runsOut)
+        : payday ? 'Хватит до зарплаты' : 'Хватит до конца месяца';
+    const usualText = 'Обычно вы тратите ≈\u00a0' + tight(rub(usual)) + ' в день';
+    const text = free <= 0
+      ? 'Платежи до ' + (payday ? 'зарплаты' : 'конца месяца') + ' больше, чем на счетах.'
+      : before <= 0
+        ? 'До аванса 20\u00a0ноября на счетах меньше, чем вы откладываете.'
+        : dip < 0
+          ? usualText + ', а до аванса можно ' + tight(rub(perDay)) + '. ' + (end >= 0
+            ? 'После аванса 20\u00a0ноября хватит: к ' + endDay + ' останется ≈\u00a0' + round(end) + '.'
+            : back > 0
+              ? 'С авансом 20\u00a0ноября деньги кончатся снова ' + dayOf(again) + ', к ' + endDay + ' не хватит ≈\u00a0' + round(end) + '.'
+              : 'Аванса 20\u00a0ноября не хватит на эти дни: к ' + endDay + ' не хватит ≈\u00a0' + round(end) + '.')
+          : end < 0
+            ? usualText + ', а можно ' + tight(rub(perDay)) + '. К ' + endDay + ' не хватит ≈\u00a0' + round(end) + '.'
+            : usualText + ': к ' + endDay + ' останется ≈\u00a0' + round(end) + '.';
+    // The chart: today on the left, the last day on the right, the money of
+    // the days from top to the line of zero and below it. On the day of the
+    // advance both lines rise by what it brings, as a step.
+    const planDip = before - perDay * advanceAt;
+    const top = Math.max(before, back, planDip + step, 0);
+    const bottom = Math.min(0, dip, end);
+    const span = Math.max(top - bottom, 1);
+    const x = (d) => (8 + 432 * d / days).toFixed(1);
+    const y = (v) => (10 + 86 * (top - v) / span).toFixed(1);
+    const path = (points) => 'M ' + points.map(([d, v]) => x(d) + ' ' + y(v)).join(' L ');
+    const zeroY = Number(y(0));
+    const cross1 = none ? 0 : dip < 0 ? before / usual : null;
+    const cross2 = !none && back > 0 && end < 0 ? free / usual : null;
+    const fc = {
+      title: this.inked('fc-title', title, none || runsOut !== null ? '#FF8E7F' : green, reduced),
+      text: this.fading('fc-text', text, reduced),
+      end: this.fading('fc-end', payday ? '5 дек · зарплата' : '30 ноя', reduced),
+      plan2: this.fading('fc-plan', none ? 'по плану' : 'по плану: ' + tight(rub(perDay)) + ' в день до аванса', reduced),
+      aria: title + '. ' + text,
+      zero: 'M 8 ' + y(0) + ' L ' + (8 + 432) + ' ' + y(0),
+      adv: 'M ' + x(advanceAt) + ' 4 L ' + x(advanceAt) + ' ' + (16 + 86),
+      advX: x(advanceAt),
+      plan: none
+        ? path([[0, before], [advanceAt, before], [advanceAt, free], [days, free]])
+        : path([[0, before], [advanceAt, planDip], [advanceAt, planDip + step], [days, 0]]),
+      usual: path([[0, before], [advanceAt, dip], [advanceAt, back], [days, end]]),
+      aboveH: (zeroY + 20).toFixed(1),
+      zeroY: zeroY.toFixed(1),
+      belowH: (200 - zeroY).toFixed(1),
+      dot1X: x(cross1 ?? 0),
+      dot1Y: y(0),
+      dot1O: cross1 === null ? '0' : '1',
+      dot2X: x(cross2 ?? days),
+      dot2Y: y(0),
+      dot2O: cross2 === null ? '0' : '1',
+      tr: reduced ? 'none' : 'd 520ms ' + ease,
+      clipTr: reduced ? 'none' : 'y 520ms ' + ease + ', height 520ms ' + ease,
+      advTr: reduced ? 'none' : 'left 520ms ' + ease,
+      dotTr: reduced ? 'opacity 220ms ' + fade : 'cx 520ms ' + ease + ', cy 520ms ' + ease + ', opacity 220ms ' + fade
+    };
+    return {
+      digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      fc,
+      near: lack === 0 && near > 0
+        ? this.inked('near', 'До аванса 20\u00a0ноября хватает: ' + rub(near) + ' на ' + nearDays + ' дней', '#A3A3A3', reduced)
+        : this.inked('near', 'До аванса 20\u00a0ноября не хватает ' + rub(near), red, reduced),
+      big: this.figure('big', lack === 0 ? rub(perDay) + ' в день' : 'Не хватает ' + rub(lack), lack === 0 ? perDay : lack, lack === 0 ? white : red, 38, reduced),
+      sub: this.fading('sub', payday ? 'до зарплаты 5 декабря · 22 дня' : 'до 30 ноября · 18 дней', reduced),
+      lines: [
+        line('sum', 'Утром на счетах', rub(sum), sum, false),
+        line('advance', 'Аванс 20 ноября', '+' + rub(advance), advance, false, '#3DDC97'),
+        line('payments', count + (count === 1 ? ' платёж' : count < 5 ? ' платежа' : ' платежей') + (payday ? ' до зарплаты' : ' до конца месяца'), '−' + rub(payments), -payments, false),
+        line('aside', 'Отложить', '−' + rub(aside), -aside, false),
+        line('free', 'Остаётся на ' + days + (days === 22 ? ' дня' : ' дней'), (free < 0 ? '−' : '') + rub(free), free, true)
+      ],
+      // BirkaChip of the site: the picked one turns white over duration.fast.
+      until: [['payday', 'Дня зарплаты'], ['month', 'Конца месяца']].map(([id, label]) => ({
+        label,
+        pressed: until === id ? 'true' : 'false',
+        bg: until === id ? '#F4F4F2' : '#161617',
+        fg: until === id ? '#000000' : '#C9C9C7',
+        pick: () => this.setState({ until: id })
+      })),
+      // The row of the payday opens and closes as rows of AnimatedColumn do.
+      payday: {
+        h: payday ? '58px' : '0px',
+        o: payday ? '1' : '0',
+        tr: reduced
+          ? (payday ? 'opacity 220ms ' + ease : 'none')
+          : payday
+            ? 'height 220ms ' + ease + ', opacity 220ms ' + fade + ' 60ms'
+            : 'height 220ms ' + ease + ' 60ms, opacity 150ms ' + ease
+      },
+      accounts: list.map((a, i) => {
+        const on = !!st.on[a.id];
+        return {
+          name: a.name,
+          meta: a.meta,
+          checked: on ? 'true' : 'false',
+          locked: !!a.locked,
+          dim: a.locked ? '0.4' : '1',
+          nameInk: a.locked ? '#8A8A8A' : '#F4F4F2',
+          track: on ? '#3DDC97' : '#1E1E1F',
+          knob: on ? '20px' : '0px',
+          knobTr: reduced ? 'none' : 'transform 150ms',
+          divider: i < list.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0',
+          toggle: () => {
+            if (!a.locked) this.setState({ on: { ...st.on, [a.id]: !on } });
+          }
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

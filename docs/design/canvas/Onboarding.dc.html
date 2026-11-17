@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Онбординг</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+@media (prefers-reduced-motion: reduce){.coin{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(70% 34% at 50% 26%, rgba(36,138,86,0.34) 0%, transparent 74%), radial-gradient(62% 30% at 0% 0%, rgba(36,138,86,0.22) 0%, transparent 74%), radial-gradient(66% 34% at 100% 100%, rgba(36,138,86,0.28) 0%, transparent 74%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; padding: 20px 24px 32px; gap: 20px">
+
+  <div style="display: flex; align-items: center; gap: 12px; height: 44px">
+    <sc-if value="{{canGoBack}}" hint-placeholder-val="{{ false }}">
+      <button type="button" onClick="{{back}}" aria-label="Назад" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.07); color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+      </button>
+    </sc-if>
+    <div role="img" aria-label="{{progressLabel}}" style="flex: 1 1 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+        <span style="height: 4px; border-radius: 2px; background: {{s.color}}"></span>
+      </sc-for>
+    </div>
+    <a href="Main.dc.html" style="font-size: 13px; font-weight: 700; color: #A3A3A3; text-decoration: none; padding: 12px 0 12px 8px">Пропустить</a>
+  </div>
+
+  <sc-if value="{{isWelcome}}" hint-placeholder-val="{{ true }}">
+    <div style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 20px">
+      <div role="img" aria-label="Стеклянные монеты: рубль, евро и доллар" style="position: relative; align-self: center; width: 342px; height: 290px">
+        <div aria-hidden="true" style="position: absolute; left: 40px; top: 40px; width: 262px; height: 220px; border-radius: 50%; background: radial-gradient(closest-side, rgba(36,138,86,0.55), transparent)"></div>
+        <svg width="342" height="290" viewBox="0 0 342 290" aria-hidden="true" style="position: absolute; inset: 0">
+          <ellipse cx="171" cy="160" rx="164" ry="44" fill="none" stroke="rgba(61,220,151,0.30)" stroke-width="1.2" transform="rotate(-14 171 160)"></ellipse>
+          <ellipse cx="171" cy="160" rx="132" ry="30" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1" transform="rotate(-14 171 160)"></ellipse>
+          <circle cx="22" cy="196" r="3" fill="#3DDC97"></circle>
+          <circle cx="318" cy="118" r="2.5" fill="#8CF5C6"></circle>
+          <circle cx="250" cy="226" r="2" fill="rgba(255,255,255,0.7)"></circle>
+        </svg>
+
+        <div class="coin" style="position: absolute; left: 12px; top: 28px; width: 118px; height: 118px; opacity: 0.72; filter: blur(2.5px); animation: floatB 7s ease-in-out infinite">
+          <div style="position: relative; width: 100%; height: 100%; transform: perspective(700px) rotateY(24deg) rotateX(12deg) rotate(-12deg)">
+            <div style="position: absolute; inset: 0; border-radius: 50%; transform: translate(-7px, 3px); background: linear-gradient(135deg, #0F5A3B, #041A10)"></div>
+            <div style="position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.08) 32%, rgba(61,220,151,0.12) 60%, rgba(61,220,151,0.30) 100%), #0A261A; border: 1.5px solid rgba(255,255,255,0.32)"></div>
+            <div style="position: absolute; inset: 5px; border-radius: 50%; background: repeating-conic-gradient(rgba(255,255,255,0.38) 0deg 1.6deg, transparent 1.6deg 8deg); -webkit-mask-image: radial-gradient(closest-side, transparent 82%, #000 83%); mask-image: radial-gradient(closest-side, transparent 82%, #000 83%)"></div>
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-size: 52px; font-weight: 800; color: #EFFFF7">€</div>
+          </div>
+        </div>
+
+        <div class="coin" style="position: absolute; left: 236px; top: 150px; width: 96px; height: 96px; opacity: 0.6; filter: blur(3px); animation: floatA 8s ease-in-out infinite">
+          <div style="position: relative; width: 100%; height: 100%; transform: perspective(700px) rotateY(-28deg) rotateX(14deg) rotate(10deg)">
+            <div style="position: absolute; inset: 0; border-radius: 50%; transform: translate(7px, 3px); background: linear-gradient(135deg, #0F5A3B, #041A10)"></div>
+            <div style="position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.08) 32%, rgba(61,220,151,0.12) 60%, rgba(61,220,151,0.30) 100%), #0A261A; border: 1.5px solid rgba(255,255,255,0.32)"></div>
+            <div style="position: absolute; inset: 4px; border-radius: 50%; background: repeating-conic-gradient(rgba(255,255,255,0.38) 0deg 1.6deg, transparent 1.6deg 8deg); -webkit-mask-image: radial-gradient(closest-side, transparent 82%, #000 83%); mask-image: radial-gradient(closest-side, transparent 82%, #000 83%)"></div>
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-size: 42px; font-weight: 800; color: #EFFFF7">$</div>
+          </div>
+        </div>
+
+        <div class="coin" style="position: absolute; left: 82px; top: 54px; width: 188px; height: 188px; animation: floatA 6s ease-in-out infinite">
+          <div style="position: relative; width: 100%; height: 100%; transform: perspective(900px) rotateY(-18deg) rotateX(10deg)">
+            <div style="position: absolute; inset: 0; border-radius: 50%; transform: translate(11px, 5px); background: linear-gradient(135deg, #13704A 0%, #062E1D 60%, #031109 100%); box-shadow: 0 34px 60px rgba(0,0,0,0.65)"></div>
+            <div style="position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 30% 24%, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.12) 30%, rgba(61,220,151,0.14) 58%, rgba(61,220,151,0.38) 100%), #0B2C1E; border: 1.5px solid rgba(255,255,255,0.40); box-shadow: inset 0 2px 0 rgba(255,255,255,0.55), inset 0 -12px 30px rgba(61,220,151,0.40), 0 0 90px rgba(61,220,151,0.40)"></div>
+            <div style="position: absolute; inset: 7px; border-radius: 50%; background: repeating-conic-gradient(rgba(255,255,255,0.42) 0deg 1.3deg, transparent 1.3deg 6deg); -webkit-mask-image: radial-gradient(closest-side, transparent 84%, #000 85%); mask-image: radial-gradient(closest-side, transparent 84%, #000 85%)"></div>
+            <div style="position: absolute; inset: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.24)"></div>
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-size: 86px; font-weight: 800; color: #F4FFF9; text-shadow: 0 0 26px rgba(61,220,151,0.75)">₽</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 36px; line-height: 1.08; font-weight: 800; letter-spacing: -0.03em">Все деньги —<br>в одном месте</h1>
+        <p style="margin: 12px 0 0; font-size: 16px; line-height: 1.45; color: #C9C9C7">Счета в любой валюте и без паролей от банков. Данные остаются на телефоне.</p>
+      </div>
+      <div role="group" aria-label="Язык" style="display: flex; gap: 8px">
+        <sc-for list="{{langs}}" as="l" hint-placeholder-count="2">
+          <button type="button" onClick="{{l.pick}}" aria-pressed="{{l.pressed}}" style="height: 38px; padding: 0 16px; border-radius: 19px; border: 0; background: {{l.bg}}; color: {{l.fg}}; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{l.label}}</button>
+        </sc-for>
+      </div>
+      <button type="button" onClick="{{next}}" style="margin-top: auto; height: 60px; border-radius: 30px; border: 0; background: #F4F4F2; color: #000000; font: inherit; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; padding: 0 10px 0 26px; cursor: pointer">
+        Начать
+        <span aria-hidden="true" style="width: 42px; height: 42px; border-radius: 21px; background: #000000; color: #F4F4F2; display: flex; align-items: center; justify-content: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+        </span>
+      </button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isAccount}}" hint-placeholder-val="{{ false }}">
+    <div style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 18px">
+      <div>
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Первый счёт</h1>
+        <p style="margin: 8px 0 0; color: #C9C9C7">Остаток можно поправить потом.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px; padding: 18px; border-radius: 24px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Название</span>
+          <input type="text" value="Зарплатная карта" style="height: 46px; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.14); background: rgba(0,0,0,0.35); color: #F4F4F2; font: inherit; font-size: 16px">
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Валюта</span>
+          <div role="group" aria-label="Валюта" style="display: flex; gap: 8px">
+            <sc-for list="{{currencies}}" as="c" hint-placeholder-count="3">
+              <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="width: 64px; height: 44px; border-radius: 14px; border: 1px solid {{c.ring}}; background: {{c.bg}}; color: #F4F4F2; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer">{{c.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Остаток сейчас</span>
+          <div style="font-family: Manrope, Inter, sans-serif; font-size: 38px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">412 300 {{currencySign}}</div>
+        </div>
+      </div>
+      <a href="Main.dc.html" style="align-self: center; font-size: 14px; font-weight: 600; color: #3DDC97; text-decoration: none">Посмотреть на демо-данных</a>
+      <button type="button" onClick="{{next}}" style="margin-top: auto; height: 58px; border-radius: 29px; border: 0; background: #3DDC97; color: #02130B; font: inherit; font-size: 16px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 10px 30px rgba(36,138,86,0.45); cursor: pointer">Дальше</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isCategories}}" hint-placeholder-val="{{ false }}">
+    <div style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 16px">
+      <div>
+        <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -0.03em">Категории</h1>
+        <p style="margin: 8px 0 0; color: #C9C9C7">Набор можно поменять в настройках.</p>
+      </div>
+      <sc-for list="{{sets}}" as="set" hint-placeholder-count="2">
+        <button type="button" onClick="{{set.pick}}" aria-pressed="{{set.pressed}}" style="text-align: left; padding: 18px; border-radius: 24px; border: 1.5px solid {{set.ring}}; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); color: #F4F4F2; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 12px">
+          <span style="display: flex; justify-content: space-between; align-items: baseline">
+            <span style="font-size: 17px; font-weight: 700">{{set.title}}</span>
+            <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">{{set.count}}</span>
+          </span>
+          <span style="font-size: 14px; color: #C9C9C7; line-height: 1.4">{{set.text}}</span>
+          <span aria-hidden="true" style="display: flex; gap: 6px">
+            <sc-for list="{{set.dots}}" as="d" hint-placeholder-count="6">
+              <span style="width: 26px; height: 26px; border-radius: 9px; background: {{d.tint}}; display: flex; align-items: center; justify-content: center"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{d.ink}}"></span></span>
+            </sc-for>
+          </span>
+        </button>
+      </sc-for>
+      <a href="Main.dc.html" style="margin-top: auto; height: 58px; border-radius: 29px; background: #3DDC97; color: #02130B; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 10px 30px rgba(36,138,86,0.45)">Готово</a>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { step: 1, lang: 'ru', currency: 'RUB', set: 'short' };
+  }
+
+  renderVals() {
+    const { step, lang, currency, set } = this.state;
+    const palette = [
+      ['rgba(74,222,128,0.16)', '#4ADE80'], ['rgba(251,191,36,0.16)', '#FBBF24'], ['rgba(96,165,250,0.16)', '#60A5FA'],
+      ['rgba(167,139,250,0.16)', '#A78BFA'], ['rgba(251,113,133,0.16)', '#FB7185'], ['rgba(251,146,60,0.16)', '#FB923C'],
+      ['rgba(34,211,238,0.16)', '#22D3EE'], ['rgba(61,220,151,0.16)', '#3DDC97'], ['rgba(255,255,255,0.10)', '#D6D6D4']
+    ];
+    const dots = (n) => palette.slice(0, n).map(([tint, ink]) => ({ tint, ink }));
+    const signs = { RUB: '₽', USD: '$', EUR: '€' };
+    return {
+      isWelcome: step === 1,
+      isAccount: step === 2,
+      isCategories: step === 3,
+      canGoBack: step > 1,
+      back: () => this.setState({ step: Math.max(1, step - 1) }),
+      next: () => this.setState({ step: Math.min(3, step + 1) }),
+      progressLabel: 'Шаг ' + step + ' из 3',
+      steps: [1, 2, 3].map((n) => ({ color: n <= step ? '#3DDC97' : 'rgba(255,255,255,0.14)' })),
+      langs: [['ru', 'Русский'], ['en', 'English']].map(([id, label]) => ({
+        label,
+        pick: () => this.setState({ lang: id }),
+        pressed: lang === id ? 'true' : 'false',
+        bg: lang === id ? '#F4F4F2' : 'rgba(255,255,255,0.08)',
+        fg: lang === id ? '#000000' : '#F4F4F2'
+      })),
+      currencies: ['RUB', 'USD', 'EUR'].map((id) => ({
+        label: signs[id],
+        pick: () => this.setState({ currency: id }),
+        pressed: currency === id ? 'true' : 'false',
+        ring: currency === id ? '#3DDC97' : 'rgba(255,255,255,0.14)',
+        bg: currency === id ? 'rgba(61,220,151,0.14)' : 'rgba(0,0,0,0.35)'
+      })),
+      currencySign: signs[currency],
+      sets: [
+        { id: 'short', title: 'Короткий', count: '12 категорий', text: 'Продукты, кафе, транспорт, дом, здоровье и ещё семь — чтобы начать за минуту.', dots: dots(6) },
+        { id: 'full', title: 'Подробный', count: '32 категории', text: 'С подкатегориями: аренда и коммуналка, такси и метро, подписки по сервисам.', dots: dots(9) }
+      ].map((s) => ({
+        ...s,
+        pick: () => this.setState({ set: s.id }),
+        pressed: set === s.id ? 'true' : 'false',
+        ring: set === s.id ? '#3DDC97' : 'rgba(255,255,255,0.14)'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Платёж · когда напомнить</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+
+  <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; overflow: hidden; transform-origin: 50% 0%; transform: translateY(10px) scale(0.92); border-radius: 24px; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000">
+    <div style="display: flex; flex-direction: column; gap: 18px; padding: 20px 20px 48px">
+      <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px">
+        <span aria-hidden="true" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></span>
+        <span style="text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Регулярные платежи</span>
+        <span aria-hidden="true" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #3DDC97; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>
+      </div>
+      <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14)">
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+          <div style="display: flex; align-items: center; gap: 12px; height: 60px; box-sizing: border-box; border-top: {{r.divider}}">
+            <span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{r.dot}}"></span>
+            <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{r.name}}</span><span style="font-size: 12px; color: #8A8A8A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.meta}}</span></span>
+            <span style="font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.ink}}">{{r.amount}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: #000000; opacity: 0.45"></div>
+  </div>
+
+  <div role="dialog" aria-modal="true" aria-label="Аренда" style="position: absolute; left: 0; right: 0; top: 52px; bottom: 0; box-sizing: border-box; border-radius: 22px 22px 0 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); border-bottom: 0; background: radial-gradient(70% 30% at 100% 0%, rgba(36,138,86,0.26) 0%, transparent 72%), radial-gradient(60% 26% at 0% 100%, rgba(36,138,86,0.22) 0%, transparent 72%), #050706; box-shadow: 0 -12px 40px rgba(0,0,0,0.6)">
+    <div style="position: absolute; left: 20px; right: 12px; top: 20px; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <h1 style="margin: 0; min-width: 0; font-family: Manrope, Inter, sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -0.02em">Аренда</h1>
+      <button type="button" aria-label="Закрыть" style="flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 0; background: none; color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </div>
+
+    <div ref="{{boxRef}}" style="position: absolute; left: 0; right: 0; top: 76px; bottom: 0; overflow-y: auto; scrollbar-width: none">
+      <div style="display: flex; flex-direction: column; gap: 18px; padding: 4px 20px 170px">
+        <div role="group" aria-label="Что за платёж" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 4px; border-radius: 22px; background: rgba(255,255,255,0.06)">
+          <button type="button" aria-pressed="true" style="height: 38px; border-radius: 19px; border: 0; background: #F4F4F2; color: #000000; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700">Расход</button>
+          <button type="button" aria-pressed="false" style="height: 38px; border-radius: 19px; border: 0; background: rgba(255,255,255,0.07); color: #C9C9C7; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700">Поступление</button>
+          <button type="button" aria-pressed="false" style="height: 38px; border-radius: 19px; border: 0; background: rgba(255,255,255,0.07); color: #C9C9C7; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700">Перевод</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0 2px">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Сумма</span>
+          <span style="font-family: Manrope, Inter, sans-serif; font-size: 44px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">45 000 ₽</span>
+        </div>
+
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <sc-for list="{{fields}}" as="f" hint-placeholder-count="3">
+            <button type="button" style="width: 100%; min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; border-top: {{f.divider}}; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; text-align: left; cursor: pointer">
+              <span style="flex: 1 1 auto; color: #C9C9C7">{{f.label}}</span>
+              <span aria-hidden="true" style="flex: 0 0 8px; height: 8px; border-radius: 4px; background: {{f.dot}}"></span>
+              <span style="font-weight: 600; white-space: nowrap">{{f.value}}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px"><path d="M9 6l6 6-6 6"></path></svg>
+            </button>
+          </sc-for>
+        </div>
+
+        <section ref="{{targetRef}}" aria-label="Когда" style="display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: #A3A3A3">Повторять каждый</span>
+            <div role="group" aria-label="Повторять каждый" style="position: relative; height: 40px">
+              <sc-for list="{{every.items}}" as="o" hint-placeholder-count="3">
+                <span aria-hidden="true" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+              </sc-for>
+              <span aria-hidden="true" style="position: absolute; top: 0; left: {{every.pill.left}}; width: {{every.pill.width}}; height: 40px; border-radius: 20px; background: #F4F4F2"></span>
+              <sc-for list="{{every.items}}" as="o" hint-placeholder-count="3">
+                <button type="button" aria-pressed="{{o.pressed}}" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; padding: 0; border: 0; border-radius: 20px; background: transparent; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600">{{o.label}}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px"><span style="font-size: 13px; color: #A3A3A3">Какого числа</span><span style="font-weight: 600">25-го</span></div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px"><span style="font-size: 13px; color: #A3A3A3">Следующий раз</span><span style="font-weight: 600">25 ноября, ср</span></div>
+        </section>
+
+        <section aria-label="В день платежа" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+          <span style="font-size: 13px; color: #A3A3A3">В день платежа</span>
+          <div role="group" aria-label="В день платежа" style="position: relative; height: 40px">
+            <sc-for list="{{onDay.items}}" as="o" hint-placeholder-count="2">
+              <span aria-hidden="true" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+            </sc-for>
+            <span aria-hidden="true" style="position: absolute; top: 0; left: {{onDay.pill.left}}; width: {{onDay.pill.width}}; height: 40px; border-radius: 20px; background: #F4F4F2"></span>
+            <sc-for list="{{onDay.items}}" as="o" hint-placeholder-count="2">
+              <button type="button" aria-pressed="{{o.pressed}}" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; padding: 0; border: 0; border-radius: 20px; background: transparent; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600">{{o.label}}</button>
+            </sc-for>
+          </div>
+          <span style="font-size: 13px; line-height: 1.4; color: #C9C9C7">Подойдёт, если сумма меняется, как у ЖКХ: в этот день платёж подождёт вашего «Провести».</span>
+        </section>
+
+        <section aria-label="Напомнить" style="display: flex; flex-direction: column; gap: 8px">
+          <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Напомнить</h2>
+          <div role="group" aria-label="Напомнить" style="position: relative; height: 40px">
+            <sc-for list="{{remind.items}}" as="o" hint-placeholder-count="3">
+              <span aria-hidden="true" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.08)"></span>
+            </sc-for>
+            <span aria-hidden="true" style="position: absolute; top: 0; left: {{remind.pill.left}}; width: {{remind.pill.width}}; height: 40px; border-radius: 20px; background: #F4F4F2; transition: {{remind.pill.tr}}"></span>
+            <sc-for list="{{remind.items}}" as="o" hint-placeholder-count="3">
+              <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="position: absolute; top: 0; left: {{o.left}}; width: {{o.width}}; height: 40px; padding: 0; border: 0; border-radius: 20px; background: transparent; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: color 200ms ease">{{o.label}}</button>
+            </sc-for>
+          </div>
+          <span style="display: grid; padding: 0 4px; font-size: 13px; line-height: 1.4; color: #C9C9C7"><span style="grid-area: 1 / 1; opacity: {{line.oa}}; transition: {{line.tr}}">{{line.a}}</span><span style="grid-area: 1 / 1; opacity: {{line.ob}}; transition: {{line.tr}}">{{line.b}}</span></span>
+          <div style="height: {{enable.h}}; opacity: {{enable.o}}; overflow: hidden; transition: {{enable.tr}}">
+            <a href="Remind-Settings.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 4px; color: #3DDC97; font-weight: 600; text-decoration: none">Включить напоминания<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+          </div>
+        </section>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 4px">
+          <button type="button" style="height: 44px; padding: 0 18px; border-radius: 22px; border: 0; background: none; color: #FF8E7F; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">Удалить платёж</button>
+          <span style="font-size: 12px; color: #8A8A8A">Прошлые операции останутся</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 150px; background: linear-gradient(180deg, rgba(5,7,6,0) 0%, rgba(5,7,6,0.88) 38%, #050706 100%); pointer-events: none"></div>
+    <button type="button" aria-label="Сохранить изменения" style="position: absolute; left: 20px; right: 20px; bottom: 52px; height: 56px; padding: 0; border: 0; border-radius: 28px; background: #3DDC97; color: #04130B; box-shadow: 0 10px 30px rgba(61,220,151,0.28); font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; cursor: pointer">СОХРАНИТЬ</button>
+    <span style="position: absolute; left: 20px; right: 20px; bottom: 22px; text-align: center; font-size: 12px; color: #8A8A8A">Изменится со следующего раза: 25 ноября, ср</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ways":{"editor":"enum","options":["Birka и календарь","Только Birka","Только календарь","Выключены"],"default":"Birka и календарь"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { remind: 'day' };
+    this.lines = {};
+    this.box = null;
+    this.target = null;
+  }
+
+  componentDidMount() {
+    // The sheet opens scrolled down to «Когда», so that «Напомнить» is in sight.
+    if (this.box && this.target) this.box.scrollTop = Math.max(0, this.target.offsetTop - 8);
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.ways !== this.props.ways) this.setState({ remind: 'day' });
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // A line that cross-fades into a new one over duration.base, as FadingText.
+  fading(key, text, reduced) {
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a' };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+    }
+    const s = this.lines[key];
+    return {
+      a: s.a,
+      b: s.b,
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  // A ChipSwitch: chips as wide as their labels and a white pill that slides
+  // to the picked one over duration.spring.
+  chips(list, current, key, reduced) {
+    let left = 0;
+    const items = list.map(([id, label, width]) => {
+      const on = id === current;
+      const item = { id, label, left: left + 'px', width: width + 'px', fg: on ? '#0A0A0A' : '#D6D6D4', pressed: on ? 'true' : 'false', pick: key ? () => this.setState({ [key]: id }) : null };
+      left += width + 8;
+      return item;
+    });
+    const picked = items.find((item) => item.id === current) ?? items[0];
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    return { items, pill: { left: picked.left, width: picked.width, tr: reduced ? 'none' : 'left 560ms ' + spring + ', width 560ms ' + spring } };
+  }
+
+  renderVals() {
+    const ways = this.props.ways ?? 'Birka и календарь';
+    const remind = this.state.remind;
+    const reduced = this.prefersReduced();
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const off = ways === 'Выключены';
+    const who = {
+      'Birka и календарь': 'напомнят Birka и календарь',
+      'Только Birka': 'напомнит Birka',
+      'Только календарь': 'напомнит календарь «Birka»'
+    }[ways];
+    const when = remind === 'before' ? '24 ноября в 9:00' : '25 ноября в 9:00';
+    const line = remind === 'none'
+      ? 'Без напоминания'
+      : off
+        ? 'Напоминания выключены в «Ещё»'
+        : when + ' · ' + who;
+    const enable = off && remind !== 'none';
+    return {
+      boxRef: (el) => { this.box = el; },
+      targetRef: (el) => { this.target = el; },
+      rows: [
+        { name: 'Зарплата', meta: 'каждый месяц 5-го · спросить', amount: '+120 000 ₽', ink: '#3DDC97', dot: '#4ADE80', divider: '0' },
+        { name: 'Аренда', meta: 'каждый месяц 25-го · спросить', amount: '−45 000 ₽', ink: '#F4F4F2', dot: '#22D3EE', divider: '1px solid rgba(255,255,255,0.06)' },
+        { name: 'Интернет', meta: 'каждый месяц 28-го · спросить', amount: '−650 ₽', ink: '#F4F4F2', dot: '#22D3EE', divider: '1px solid rgba(255,255,255,0.06)' },
+        { name: 'Netflix', meta: 'каждый месяц 1-го · проводится сам', amount: '−799 ₽', ink: '#F4F4F2', dot: '#A78BFA', divider: '1px solid rgba(255,255,255,0.06)' },
+        { name: 'Спортзал', meta: 'каждый месяц 3-го · спросить', amount: '−3 500 ₽', ink: '#F4F4F2', dot: '#F87171', divider: '1px solid rgba(255,255,255,0.06)' }
+      ],
+      fields: [
+        { label: 'Название', value: 'Аренда', dot: 'transparent', divider: '0' },
+        { label: 'Категория', value: 'Дом', dot: '#22D3EE', divider: '1px solid rgba(255,255,255,0.06)' },
+        { label: 'Счёт', value: 'Зарплатная карта', dot: 'transparent', divider: '1px solid rgba(255,255,255,0.06)' }
+      ],
+      every: this.chips([['month', 'Месяц', 76], ['week', 'Неделю', 84], ['year', 'Год', 56]], 'month', null, reduced),
+      onDay: this.chips([['ask', 'Спросить меня', 134], ['post', 'Провести само', 132]], 'ask', null, reduced),
+      remind: this.chips([['day', 'В день', 76], ['before', 'За день', 83], ['none', 'Не напоминать', 135]], remind, 'remind', reduced),
+      line: this.fading('line', line, reduced),
+      enable: {
+        h: enable ? '44px' : '0px',
+        o: enable ? '1' : '0',
+        tr: reduced ? 'opacity 220ms ' + ease : 'height 320ms ' + ease + ', opacity 220ms ' + ease
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

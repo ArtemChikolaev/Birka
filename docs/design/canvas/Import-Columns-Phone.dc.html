@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Колонки выписки на телефоне</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(60% 20% at 0% 55%, rgba(36,138,86,0.18) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+  <div style="position: absolute; inset: 0; overflow-y: auto">
+    <div style="display: flex; flex-direction: column; gap: 18px; padding: 20px 20px 170px">
+
+      <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px">
+        <a href="Import-Phone.dc.html" aria-label="Назад" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #F4F4F2; text-decoration: none; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Колонки выписки</h1>
+        <span aria-hidden="true"></span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.06)">
+        <span aria-hidden="true" style="flex: 0 0 36px; height: 36px; border-radius: 12px; background: rgba(251,191,36,0.14); color: #FBBF24; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M9 4v16"></path></svg></span>
+        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-weight: 600">statement_oct_2026.csv</span><span style="font-size: 13px; color: #A3A3A3">5 колонок · 186 строк</span></span>
+      </div>
+
+      <p style="margin: 0; color: #C9C9C7; line-height: 1.45">Отметьте один раз, где дата и где сумма. Дальше Birka узнает выписки этого банка сама.</p>
+
+      <section aria-label="Колонки файла" style="display: flex; flex-direction: column; gap: 8px">
+        <h2 style="margin: 0; padding: 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Колонки файла</h2>
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+          <sc-for list="{{columns}}" as="c" hint-placeholder-count="5">
+            <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: {{c.divider}}">
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; color: {{c.ink}}; transition: color 200ms ease">{{c.header}}</span><span style="font-size: 13px; color: #8A8A8A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.sample}}</span></span>
+              <button type="button" aria-haspopup="dialog" aria-label="Что в колонке «{{c.header}}»: {{c.role}}" onClick="{{c.open}}" style="flex: 0 0 auto; height: 36px; box-sizing: border-box; padding: 0 10px 0 12px; border-radius: 18px; border: 1px solid {{c.line}}; background: {{c.fill}}; color: {{c.roleInk}}; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: background 200ms ease, color 200ms ease, border-color 200ms ease">{{c.role}}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section aria-label="Как записаны числа и даты" style="display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+        <div role="group" aria-label="Расход в файле записан" style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 13px; color: #A3A3A3">Расход в файле записан</span>
+          <span style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{signs}}" as="o" hint-placeholder-count="2">
+              <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="height: 40px; border-radius: 20px; border: 0; background: {{o.bg}}; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 200ms ease, color 200ms ease">{{o.label}}</button>
+            </sc-for>
+          </span>
+        </div>
+        <div role="group" aria-label="Копейки отделены" style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 13px; color: #A3A3A3">Копейки отделены</span>
+          <span style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{decimals}}" as="o" hint-placeholder-count="2">
+              <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="height: 40px; border-radius: 20px; border: 0; background: {{o.bg}}; color: {{o.fg}}; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 200ms ease, color 200ms ease">{{o.label}}</button>
+            </sc-for>
+          </span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+          <span style="font-size: 13px; color: #A3A3A3">Даты</span>
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 600">ДД.ММ.ГГГГ<span style="padding: 2px 8px; border-radius: 10px; background: rgba(61,220,151,0.14); color: #3DDC97; font-size: 12px; font-weight: 700">узнали сами</span></span>
+        </div>
+      </section>
+
+      <div role="alert" style="display: flex; align-items: flex-start; gap: 10px; padding: {{missing.pad}}; border-radius: 16px; background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.28); max-height: {{missing.height}}; opacity: {{missing.fade}}; overflow: hidden; box-sizing: border-box; transition: max-height 280ms ease, opacity 200ms ease, padding 280ms ease">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5"></path><path d="M12 16.2v.3"></path></svg>
+        <span style="font-size: 14px; line-height: 1.4; color: #F4F4F2">{{missing.text}}</span>
+      </div>
+
+      <section aria-label="Так строки попадут в учёт" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 4px">
+          <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A3A3">Так строки попадут в учёт</h2>
+          <span style="font-size: 12px; color: #8A8A8A; white-space: nowrap">первые 4 из 186</span>
+        </div>
+        <div style="border-radius: 22px; padding: 2px 14px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%)">
+          <sc-for list="{{preview}}" as="r" hint-placeholder-count="4">
+            <div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-bottom: {{r.divider}}">
+              <span style="flex: 0 0 48px; font-size: 13px; color: #A3A3A3; font-variant-numeric: tabular-nums">{{r.date}}</span>
+              <span style="flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600">{{r.title}}</span>
+              <span style="flex: 0 0 auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{r.amountInk}}; transition: color 200ms ease">{{r.amount}}</span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{unreadable}}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0; padding: 0 4px; font-size: 13px; line-height: 1.45; color: #FF8E7F">Ни одна сумма не прочиталась: в файле копейки отделены запятой, как в «-420,00».</p>
+        </sc-if>
+      </section>
+    </div>
+  </div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 10px; padding: 40px 20px 22px; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.86) 34%, #000000 100%); pointer-events: none">
+    <sc-if value="{{ready}}" hint-placeholder-val="{{ false }}">
+      <a href="Import-Phone.dc.html" style="pointer-events: auto; height: 52px; box-sizing: border-box; border-radius: 26px; background: #3DDC97; color: #02130B; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 8px 24px rgba(36,138,86,0.45)">Готово · 186 операций</a>
+    </sc-if>
+    <sc-if value="{{blocked}}" hint-placeholder-val="{{ true }}">
+      <button type="button" disabled style="pointer-events: auto; height: 52px; border-radius: 26px; border: 0; background: rgba(255,255,255,0.08); color: #8A8A8A; font-family: Inter, system-ui, sans-serif; font-size: 15px; font-weight: 700">Готово</button>
+    </sc-if>
+    <span style="text-align: center; font-size: 12px; color: #8A8A8A">Birka запомнит эти колонки для выписок этого банка</span>
+  </div>
+
+  <div style="position: absolute; inset: 0; pointer-events: {{sheet.events}}">
+    <button type="button" aria-label="Закрыть" onClick="{{closeSheet}}" style="position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(0,0,0,0.62); opacity: {{sheet.shade}}; transition: opacity 260ms ease; cursor: pointer"></button>
+    <div role="dialog" aria-modal="true" aria-label="Что в колонке «{{sheet.header}}»" style="position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 16px; border-radius: 30px; background: rgba(26,26,28,0.96); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 -10px 40px rgba(0,0,0,0.6); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); transform: translateY({{sheet.y}}); transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1)">
+      <span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.24)"></span>
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
+        <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Что в колонке «{{sheet.header}}»</h2>
+        <p style="margin: 0; font-size: 13px; color: #A3A3A3">Например: {{sheet.sample}}</p>
+      </div>
+      <div style="max-height: 500px; overflow-y: auto; border-radius: 22px; padding: 2px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08)">
+        <sc-for list="{{roles}}" as="r" hint-placeholder-count="9">
+          <button type="button" onClick="{{r.pick}}" style="width: 100%; min-height: 50px; display: flex; align-items: center; gap: 12px; padding: 0; background: none; border: 0; border-bottom: {{r.divider}}; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; text-align: left; cursor: pointer"><span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 1px"><span>{{r.name}}</span><span style="font-size: 12px; color: #8A8A8A">{{r.note}}</span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 18px; opacity: {{r.mark}}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["Назначаем","Роль колонки","Всё назначено"],"default":"Назначаем"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+  }
+
+  fresh() {
+    return { map: null, sign: 'minus', decimal: 'comma', sheet: undefined };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state) this.setState(this.fresh());
+  }
+
+  renderVals() {
+    const mode = this.props.state ?? 'Назначаем';
+    const st = this.state;
+    const roles = [
+      ['Дата', 'день операции'],
+      ['Сумма', 'расход и поступление в одной колонке'],
+      ['Расход', 'только списания'],
+      ['Поступление', 'только зачисления'],
+      ['Валюта', 'RUB, USD, EUR…'],
+      ['Описание', 'магазин, получатель или назначение'],
+      ['Категория банка', 'разберём во «Входящих»'],
+      ['Остаток', 'сверим с банком'],
+      ['Не брать', 'колонку пропустим']
+    ];
+    const source = [
+      { id: 'date', header: 'Дата', sample: '03.10.2026', guess: 'Дата' },
+      { id: 'text', header: 'Назначение платежа', sample: 'Оплата: Кофейня Зерно, Москва', guess: 'Описание' },
+      { id: 'amount', header: 'Сумма в валюте счёта', sample: '-420,00', guess: 'Не брать', set: 'Сумма' },
+      { id: 'currency', header: 'Валюта', sample: 'RUB', guess: 'Валюта' },
+      { id: 'balance', header: 'Остаток', sample: '142 259,81', guess: 'Остаток' }
+    ];
+    const base = Object.fromEntries(source.map((c) => [c.id, mode === 'Всё назначено' ? c.set ?? c.guess : c.guess]));
+    const map = st.map ?? base;
+    const sheetFor = st.sheet !== undefined ? st.sheet : mode === 'Роль колонки' ? 'amount' : null;
+    const has = (role) => Object.values(map).includes(role);
+    const amounts = has('Сумма') || (has('Расход') && has('Поступление'));
+    const lacking = [has('Дата') ? null : 'даты', amounts ? null : 'суммы'].filter(Boolean);
+    const readable = st.decimal === 'comma';
+    const ready = lacking.length === 0 && readable;
+    const columns = source.map((c, i) => {
+      const role = map[c.id];
+      const off = role === 'Не брать';
+      return {
+        header: c.header,
+        sample: c.sample,
+        role,
+        ink: off ? '#8A8A8A' : '#F4F4F2',
+        roleInk: off ? '#A3A3A3' : '#F4F4F2',
+        fill: off ? 'transparent' : 'rgba(255,255,255,0.08)',
+        line: off ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.18)',
+        divider: i < source.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0',
+        open: () => this.setState({ sheet: c.id })
+      };
+    });
+    const pill = (on) => ({ bg: on ? '#F4F4F2' : 'rgba(255,255,255,0.07)', fg: on ? '#000000' : '#C9C9C7', pressed: on ? 'true' : 'false' });
+    const signs = [['minus', 'с минусом'], ['plus', 'с плюсом']].map(([id, label]) => ({ label, ...pill(st.sign === id), pick: () => this.setState({ sign: id }) }));
+    const decimals = [['comma', 'запятой'], ['dot', 'точкой']].map(([id, label]) => ({ label, ...pill(st.decimal === id), pick: () => this.setState({ decimal: id }) }));
+    const flip = st.sign === 'plus' ? -1 : 1;
+    const money = (v) => {
+      const [whole, cents] = Math.abs(v).toFixed(2).split('.');
+      return (v < 0 ? '−' : '+') + whole.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ',' + cents + ' ₽';
+    };
+    const shown = amounts && readable;
+    const rows = [
+      ['1 окт', 'Зарплата · ООО «Северный ветер»', 96500],
+      ['2 окт', 'Продукты «Берёзка»', -2340.5],
+      ['3 окт', 'Кофейня «Зерно»', -420],
+      ['5 окт', 'Аптека №12', -1180]
+    ];
+    const preview = rows.map(([date, title, value], i) => {
+      const v = value * flip;
+      return {
+        date,
+        title: has('Описание') ? title : '—',
+        amount: shown ? money(v) : '—',
+        amountInk: !shown ? '#8A8A8A' : v < 0 ? '#F4F4F2' : '#3DDC97',
+        divider: i < rows.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0'
+      };
+    });
+    const col = source.find((c) => c.id === sheetFor) ?? null;
+    return {
+      columns,
+      signs,
+      decimals,
+      missing: {
+        text: lacking.length ? 'Отметьте колонку ' + lacking.join(' и ') + (lacking.length > 1 ? ': без них' : ': без неё') + ' строку не записать.' : '',
+        height: lacking.length ? '120px' : '0px',
+        fade: lacking.length ? '1' : '0',
+        pad: lacking.length ? '12px 14px' : '0 14px'
+      },
+      preview,
+      unreadable: !readable,
+      ready,
+      blocked: !ready,
+      sheet: {
+        events: col ? 'auto' : 'none',
+        shade: col ? '1' : '0',
+        y: col ? '0' : '112%',
+        header: col ? col.header : '',
+        sample: col ? col.sample : ''
+      },
+      closeSheet: () => this.setState({ sheet: null }),
+      roles: roles.map(([name, note], i) => ({
+        name,
+        note,
+        mark: col && map[col.id] === name ? '1' : '0',
+        divider: i < roles.length - 1 ? '1px solid rgba(255,255,255,0.06)' : '0',
+        pick: () => {
+          if (col) this.setState({ map: { ...map, [col.id]: name }, sheet: null });
+        }
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Появление и удаление операций</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="Новая трата раскрывается в списке, итоги докручиваются вверх и вспыхивают красным; после свайпа строка схлопывается, соседние подтягиваются, а итоги докручиваются обратно и вспыхивают зелёным" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: radial-gradient(62% 34% at 0% 0%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(66% 38% at 100% 100%, rgba(36,138,86,0.30) 0%, transparent 74%), radial-gradient(64% 20% at 0% 66%, rgba(36,138,86,0.24) 0%, transparent 72%), #000000; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px">
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 20px; height: 44px; display: flex; align-items: center; justify-content: space-between">
+    <span style="font-family: Manrope, Inter, sans-serif; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Операции</span>
+    <span style="height: 44px; box-sizing: border-box; padding: 0 16px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.07); display: flex; align-items: center; gap: 8px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="3"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg>Ноябрь</span>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 84px; height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 26px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; color: #8A8A87"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>Кафе, 250 или заметка</div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; top: 152px; display: flex; gap: 6px">
+    <span style="height: 40px; box-sizing: border-box; padding: 0 13px; border-radius: 20px; display: flex; align-items: center; font-size: 14px; font-weight: 600; background: #F4F4F2; color: #0A0A0A">Все</span>
+    <span style="height: 40px; box-sizing: border-box; padding: 0 13px; border-radius: 20px; display: flex; align-items: center; font-size: 14px; font-weight: 600; background: rgba(255,255,255,0.08); color: #D6D6D4">Расходы</span>
+    <span style="height: 40px; box-sizing: border-box; padding: 0 13px; border-radius: 20px; display: flex; align-items: center; font-size: 14px; font-weight: 600; background: rgba(255,255,255,0.08); color: #D6D6D4">Доходы</span>
+    <span style="height: 40px; box-sizing: border-box; padding: 0 13px; border-radius: 20px; display: flex; align-items: center; font-size: 14px; font-weight: 600; background: rgba(255,255,255,0.08); color: #D6D6D4">Переводы</span>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; top: 210px; height: 22px; display: flex; align-items: center; white-space: pre; font-size: 15px; line-height: 22px; color: #A3A3A3">Расходы <span style="display: flex; color: {{sum.c}}; transition: {{sum.tr}}; font-weight: 700; font-variant-numeric: tabular-nums"><span>−</span><span style="display: block; height: 22px; overflow: hidden"><span style="display: block; transform: translateY({{sumH.y}}px); transition: {{roll}}"><span style="display: block; height: 22px">0</span><span style="display: block; height: 22px">1</span><span style="display: block; height: 22px">2</span><span style="display: block; height: 22px">3</span><span style="display: block; height: 22px">4</span><span style="display: block; height: 22px">5</span><span style="display: block; height: 22px">6</span><span style="display: block; height: 22px">7</span><span style="display: block; height: 22px">8</span><span style="display: block; height: 22px">9</span></span></span><span style="display: block; height: 22px; overflow: hidden"><span style="display: block; transform: translateY({{sumT.y}}px); transition: {{roll}}"><span style="display: block; height: 22px">0</span><span style="display: block; height: 22px">1</span><span style="display: block; height: 22px">2</span><span style="display: block; height: 22px">3</span><span style="display: block; height: 22px">4</span><span style="display: block; height: 22px">5</span><span style="display: block; height: 22px">6</span><span style="display: block; height: 22px">7</span><span style="display: block; height: 22px">8</span><span style="display: block; height: 22px">9</span></span></span><span>0 ₽</span></span></div>
+
+  <div aria-hidden="true" style="position: absolute; left: 36px; right: 36px; top: 250px; height: 16px; display: flex; justify-content: space-between; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #A3A3A3"><span>СЕГОДНЯ</span><span style="display: flex; white-space: pre; font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums; color: {{day.c}}; transition: {{day.tr}}"><span>−</span><span style="display: block; height: 16px; overflow: hidden"><span style="display: block; transform: translateY({{dayH.y}}px); transition: {{roll}}"><span style="display: block; height: 16px">0</span><span style="display: block; height: 16px">1</span><span style="display: block; height: 16px">2</span><span style="display: block; height: 16px">3</span><span style="display: block; height: 16px">4</span><span style="display: block; height: 16px">5</span><span style="display: block; height: 16px">6</span><span style="display: block; height: 16px">7</span><span style="display: block; height: 16px">8</span><span style="display: block; height: 16px">9</span></span></span><span style="display: block; height: 16px; overflow: hidden"><span style="display: block; transform: translateY({{dayT.y}}px); transition: {{roll}}"><span style="display: block; height: 16px">0</span><span style="display: block; height: 16px">1</span><span style="display: block; height: 16px">2</span><span style="display: block; height: 16px">3</span><span style="display: block; height: 16px">4</span><span style="display: block; height: 16px">5</span><span style="display: block; height: 16px">6</span><span style="display: block; height: 16px">7</span><span style="display: block; height: 16px">8</span><span style="display: block; height: 16px">9</span></span></span><span>0 ₽</span></span></div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 278px">
+    <div style="height: {{taxi.h}}px; margin-bottom: {{taxi.mb}}px; opacity: {{taxi.o}}; overflow: hidden; transition: {{taxi.tr}}">
+      <div style="position: relative; height: 66px">
+        <div style="position: absolute; right: 0; top: 0; width: 88px; height: 66px; box-sizing: border-box; border-radius: 22px; background: rgba(255,107,107,0.20); color: #FF8A80; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path></svg>Удалить</div>
+        <div style="position: absolute; left: 0; top: 0; width: 350px; height: 66px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 12px; border-radius: 22px; background: linear-gradient(160deg, #181A19 0%, #0B0C0B 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); transform: translateX({{row.x}}px); transition: {{row.tr}}">
+          <span style="width: 44px; height: 44px; border-radius: 12px; background: rgba(110,168,254,0.16); color: #6EA8FE; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15v-4l2-5h10l2 5v4"></path><path d="M3 15h18v3H3z"></path><circle cx="7.5" cy="18" r="1.5"></circle><circle cx="16.5" cy="18" r="1.5"></circle></svg></span>
+          <span style="flex: 1 1 auto"><span style="display: block; font-weight: 600">Такси</span><span style="display: block; font-size: 13px; color: #A3A3A3">Карта</span></span>
+          <span style="font-family: Manrope, Inter, sans-serif; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums">−420 ₽</span>
+        </div>
+      </div>
+    </div>
+    <div style="height: 66px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 12px; border-radius: 22px; background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 28px rgba(0,0,0,0.40)">
+      <span style="width: 44px; height: 44px; border-radius: 12px; background: rgba(242,181,51,0.16); color: #F2B533; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"></path><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16"></path><path d="M8 3v3M12 3v3"></path></svg></span>
+      <span style="flex: 1 1 auto"><span style="display: block; font-weight: 600">Кафе</span><span style="display: block; font-size: 13px; color: #A3A3A3">Карта</span></span>
+      <span style="font-family: Manrope, Inter, sans-serif; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums">−350 ₽</span>
+    </div>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; bottom: 20px; height: 66px; box-sizing: border-box; padding: 0 8px; border-radius: 33px; border: 1px solid rgba(255,255,255,0.12); background: rgba(22,22,22,0.72); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); display: flex; align-items: center; justify-content: space-around">
+    <span style="display: flex; flex-direction: column; align-items: center; gap: 3px; width: 58px; color: #C9C9C7; font-size: 10px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"></path></svg><span>Обзор</span></span>
+    <span style="display: flex; flex-direction: column; align-items: center; gap: 3px; width: 58px; color: #3DDC97; font-size: 10px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"></path><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg><span>Операции</span></span>
+    <span style="width: 52px; height: 52px; border-radius: 26px; background: #3DDC97; color: #04130B; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(61,220,151,0.35)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>
+    <span style="display: flex; flex-direction: column; align-items: center; gap: 3px; width: 58px; color: #C9C9C7; font-size: 10px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M11 3.5a8.5 8.5 0 1 0 9.5 9.5H11z"></path><path d="M14.5 2.5a7 7 0 0 1 7 7h-7z"></path></svg><span>Отчёты</span></span>
+    <span style="display: flex; flex-direction: column; align-items: center; gap: 3px; width: 58px; color: #C9C9C7; font-size: 10px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6.5" height="6.5" rx="2"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"></rect></svg><span>Ещё</span></span>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 173px; top: 769px; width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.32); box-shadow: 0 0 0 6px rgba(255,255,255,0.10); pointer-events: none; opacity: {{tapPlus.o}}; transform: {{tapPlus.t}}; transition: {{tapPlus.tr}}"></div>
+  <div aria-hidden="true" style="position: absolute; left: {{finger.x}}px; top: 291px; width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.32); box-shadow: 0 0 0 6px rgba(255,255,255,0.10); pointer-events: none; opacity: {{finger.o}}; transition: {{finger.tr}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"slow":{"editor":"boolean","default":false},"reducedMotion":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { phase: 'rest' };
+    this.timer = null;
+    this.start = 0;
+    this.slowSeen = null;
+    this.stopped = false;
+  }
+
+  componentDidMount() {
+    this.stopped = false;
+    this.clock();
+  }
+
+  componentDidUpdate() {
+    this.clock();
+  }
+
+  componentWillUnmount() {
+    this.stopped = true;
+    clearTimeout(this.timer);
+    this.timer = null;
+  }
+
+  steps() {
+    return [['rest', 1300, 0], ['tapPlus', 80, 140], ['added', 0, 560], ['addedCalm', 1260, 0], ['grab', 100, 140], ['swipe', 540, 360], ['deleted', 0, 560], ['deletedCalm', 960, 0]];
+  }
+
+  active() {
+    return !this.stopped && (!this.__host || this.__host.logic === this);
+  }
+
+  phaseAt(elapsed) {
+    const k = this.props.slow ? 3 : 1;
+    const steps = this.steps();
+    const total = steps.reduce((sum, s) => sum + s[1] + s[2] * k, 0);
+    let t = elapsed % total;
+    for (const s of steps) {
+      const d = s[1] + s[2] * k;
+      if (t < d) return s[0];
+      t -= d;
+    }
+    return steps[0][0];
+  }
+
+  clock() {
+    const slow = !!this.props.slow;
+    if (slow !== this.slowSeen) {
+      this.slowSeen = slow;
+      this.start = Date.now();
+    }
+    if (this.timer || !this.active()) return;
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      if (!this.active()) return;
+      const phase = this.phaseAt(Date.now() - this.start);
+      if (phase !== this.state.phase) this.setState({ phase });
+      this.clock();
+    }, 40);
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  renderVals() {
+    this.clock();
+    const k = this.props.slow ? 3 : 1;
+    const reduced = this.props.reducedMotion ?? this.prefersReduced();
+    const phase = this.state.phase;
+    const shown = ['added', 'addedCalm', 'grab', 'swipe'].indexOf(phase) !== -1;
+    const swiped = ['swipe', 'deleted', 'deletedCalm'].indexOf(phase) !== -1;
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const ms = (x) => Math.round(x * k) + 'ms';
+    // A total takes the color of what its change means while it rolls, and
+    // turns back once it settles: more spent is red, less spent is green.
+    const news = phase === 'added' ? '#FF8E7F' : phase === 'deleted' ? '#3DDC97' : null;
+    const colorTr = phase === 'rest' ? 'none' : 'color ' + ms(news ? 150 : 320) + ' ' + fade;
+    const digits = shown ? [7, 7] : [3, 5];
+    let taxiTr = 'height ' + ms(320) + ' ' + ease + ', margin-bottom ' + ms(320) + ' ' + ease + ', opacity ' + ms(240) + ' ' + ease + ' ' + ms(80);
+    if (phase === 'deleted' || phase === 'deletedCalm') taxiTr = 'height ' + ms(260) + ' ' + ease + ' ' + ms(80) + ', margin-bottom ' + ms(260) + ' ' + ease + ' ' + ms(80) + ', opacity ' + ms(180) + ' ' + ease;
+    if (reduced) taxiTr = 'opacity ' + ms(220) + ' ' + ease;
+    const fingerOn = phase === 'grab' || phase === 'swipe';
+    return {
+      roll: reduced ? 'none' : 'transform ' + ms(520) + ' ' + ease,
+      sum: { c: news || '#F4F4F2', tr: colorTr },
+      day: { c: news || '#A3A3A3', tr: colorTr },
+      sumH: { y: -22 * digits[0] },
+      sumT: { y: -22 * digits[1] },
+      dayH: { y: -16 * digits[0] },
+      dayT: { y: -16 * digits[1] },
+      taxi: { h: shown ? 66 : 0, mb: shown ? 10 : 0, o: shown ? 1 : 0, tr: taxiTr },
+      row: { x: swiped ? -96 : 0, tr: phase === 'rest' || reduced ? 'none' : 'transform ' + ms(360) + ' ' + ease },
+      finger: { x: swiped ? 184 : 280, o: fingerOn ? 1 : 0, tr: 'left ' + (phase === 'swipe' ? ms(360) : '0ms') + ' ' + ease + ', opacity ' + ms(140) + ' ease-out' },
+      tapPlus: { o: phase === 'tapPlus' ? 1 : 0, t: phase === 'tapPlus' ? 'scale(1)' : 'scale(0.6)', tr: 'opacity ' + ms(140) + ' ease-out, transform ' + ms(140) + ' ease-out' }
+    };
+  }
+}
+</script>
+</body>
+</html>

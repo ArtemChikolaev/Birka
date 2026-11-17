@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Экран «Домой» · виджеты Birka</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; color: #F4F4F2; font-family: Inter, system-ui, sans-serif; font-size: 15px; background: radial-gradient(70% 45% at 12% 8%, rgba(88,110,255,0.34) 0%, transparent 70%), radial-gradient(70% 50% at 92% 88%, rgba(170,80,200,0.30) 0%, transparent 70%), linear-gradient(170deg, #121A33 0%, #0D1222 55%, #1C1029 100%)">
+  <div style="position: absolute; inset: 0; "><div style="position: absolute; left: 26px; top: 74px; width: 338px; height: 158px; border-radius: 22px; box-sizing: border-box; overflow: hidden; background: {{k.bg}}; box-shadow: {{k.shadow}}; -webkit-backdrop-filter: {{k.blur}}; backdrop-filter: {{k.blur}}"><a href="{{bodyHref}}" aria-label="{{aria}}" style="position: absolute; inset: 0"></a><div style="position: absolute; left: 16px; top: 15px; bottom: 15px; width: 188px; display: flex; flex-direction: column; gap: 3px; pointer-events: none"><span style="display: grid; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.label}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{label.oa}}; transition: {{label.tr}}">{{label.a}}</span><span style="grid-area: 1 / 1; opacity: {{label.ob}}; transition: {{label.tr}}">{{label.b}}</span></span><span style="position: relative; flex: 0 0 auto; display: grid; height: 38px; overflow: hidden">
+<span style="grid-area: 1 / 1; position: relative; display: flex; height: 38px; overflow: hidden; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 32px; font-weight: 800; line-height: 38px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: {{figM.ink}}; filter: {{figM.veilF}}; opacity: {{figM.veilO}}; transition: {{figM.tr}}">
+<span style="display: flex; transform: translateY({{figM.inY}}); opacity: {{figM.inO}}; transition: {{figM.layerTr}}">
+<sc-for list="{{figM.slots}}" as="c" hint-placeholder-count="7">
+<sc-if value="{{c.digit}}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 1ch; height: 38px; overflow: hidden"><span style="display: block; transform: translateY({{c.y}}); transition: {{c.tr}}"><sc-for list="{{digits}}" as="d" hint-placeholder-count="10"><span style="display: block; height: 38px">{{d}}</span></sc-for></span></span></sc-if>
+<sc-if value="{{c.still}}" hint-placeholder-val="{{ false }}"><span>{{c.ch}}</span></sc-if>
+</sc-for>
+</span>
+<span aria-hidden="true" style="position: absolute; left: 0; top: 0; transform: translateY({{figM.outY}}); opacity: {{figM.outO}}; transition: {{figM.layerTr}}">{{figM.old}}</span>
+</span>
+<span aria-hidden="true" style="grid-area: 1 / 1; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 32px; font-weight: 800; line-height: 38px; letter-spacing: -0.02em; color: {{figM.dotsInk}}; opacity: {{figM.dotsO}}; transition: {{figM.dotsTr}}">{{figM.dots}}</span>
+</span><span style="display: grid; font-size: 13px; line-height: 17px; color: {{k.sub}}"><span style="grid-area: 1 / 1; opacity: {{of.oa}}; transition: {{of.tr}}">{{of.a}}</span><span style="grid-area: 1 / 1; opacity: {{of.ob}}; transition: {{of.tr}}">{{of.b}}</span></span><span style="flex: 1 1 auto"></span><span aria-hidden="true" style="display: block; height: 6px; border-radius: 3.0px; background: {{k.track}}; overflow: hidden; opacity: {{barO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"><span style="display: block; height: 100%; width: {{bar}}; border-radius: 3.0px; background: {{barFill}}; transition: width 520ms cubic-bezier(0.2, 0, 0, 1), background 320ms cubic-bezier(0.42, 0, 0.58, 1)"></span></span><span style="display: grid; margin-top: 5px; font-size: 13px; line-height: 17px; color: {{k.sub}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{spent.oa}}; transition: {{spent.tr}}">{{spent.a}}</span><span style="grid-area: 1 / 1; opacity: {{spent.ob}}; transition: {{spent.tr}}">{{spent.b}}</span></span></div><div style="position: absolute; right: 14px; top: 14px; bottom: 14px; width: 104px; display: flex; flex-direction: column; justify-content: center; gap: 10px"><a href="QuickAdd.dc.html" style="height: 52px; border-radius: 26px; background: {{k.btn}}; color: {{k.btnInk}}; box-shadow: {{k.glow}}; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg>Расход</a><a href="QuickAdd.dc.html" style="height: 52px; border-radius: 26px; background: {{k.btn2}}; color: {{k.btn2Ink}}; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Доход</a></div></div><div style="position: absolute; left: 26px; top: 258px; width: 158px; height: 158px; border-radius: 22px; box-sizing: border-box; overflow: hidden; background: {{k.bg}}; box-shadow: {{k.shadow}}; -webkit-backdrop-filter: {{k.blur}}; backdrop-filter: {{k.blur}}"><a href="{{bodyHref}}" aria-label="{{aria}}" style="position: absolute; inset: 0"></a><div style="position: absolute; left: 14px; right: 12px; top: 14px; display: flex; flex-direction: column; gap: 2px; pointer-events: none"><span style="display: grid; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: {{k.label}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{small.oa}}; transition: {{small.tr}}">{{small.a}}</span><span style="grid-area: 1 / 1; opacity: {{small.ob}}; transition: {{small.tr}}">{{small.b}}</span></span><span style="position: relative; flex: 0 0 auto; display: grid; height: 34px; overflow: hidden">
+<span style="grid-area: 1 / 1; position: relative; display: flex; height: 34px; overflow: hidden; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; line-height: 34px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: {{figS.ink}}; filter: {{figS.veilF}}; opacity: {{figS.veilO}}; transition: {{figS.tr}}">
+<span style="display: flex; transform: translateY({{figS.inY}}); opacity: {{figS.inO}}; transition: {{figS.layerTr}}">
+<sc-for list="{{figS.slots}}" as="c" hint-placeholder-count="7">
+<sc-if value="{{c.digit}}" hint-placeholder-val="{{ true }}"><span style="display: block; width: 1ch; height: 34px; overflow: hidden"><span style="display: block; transform: translateY({{c.y}}); transition: {{c.tr}}"><sc-for list="{{digits}}" as="d" hint-placeholder-count="10"><span style="display: block; height: 34px">{{d}}</span></sc-for></span></span></sc-if>
+<sc-if value="{{c.still}}" hint-placeholder-val="{{ false }}"><span>{{c.ch}}</span></sc-if>
+</sc-for>
+</span>
+<span aria-hidden="true" style="position: absolute; left: 0; top: 0; transform: translateY({{figS.outY}}); opacity: {{figS.outO}}; transition: {{figS.layerTr}}">{{figS.old}}</span>
+</span>
+<span aria-hidden="true" style="grid-area: 1 / 1; white-space: pre; font-family: Manrope, Inter, sans-serif; font-size: 28px; font-weight: 800; line-height: 34px; letter-spacing: -0.02em; color: {{figS.dotsInk}}; opacity: {{figS.dotsO}}; transition: {{figS.dotsTr}}">{{figS.dots}}</span>
+</span><span style="display: grid; font-size: 12px; line-height: 16px; color: {{k.sub}}"><span style="grid-area: 1 / 1; opacity: {{ofSmall.oa}}; transition: {{ofSmall.tr}}">{{ofSmall.a}}</span><span style="grid-area: 1 / 1; opacity: {{ofSmall.ob}}; transition: {{ofSmall.tr}}">{{ofSmall.b}}</span></span><span style="display: grid; font-size: 12px; line-height: 16px; color: {{k.sub}}; white-space: nowrap"><span style="grid-area: 1 / 1; opacity: {{spentSmall.oa}}; transition: {{spentSmall.tr}}">{{spentSmall.a}}</span><span style="grid-area: 1 / 1; opacity: {{spentSmall.ob}}; transition: {{spentSmall.tr}}">{{spentSmall.b}}</span></span></div><div style="position: absolute; left: 14px; right: 66px; bottom: 30px; pointer-events: none"><span aria-hidden="true" style="display: block; height: 5px; border-radius: 2.5px; background: {{k.track}}; overflow: hidden; opacity: {{barO}}; transition: opacity 220ms cubic-bezier(0.42, 0, 0.58, 1)"><span style="display: block; height: 100%; width: {{bar}}; border-radius: 2.5px; background: {{barFill}}; transition: width 520ms cubic-bezier(0.2, 0, 0, 1), background 320ms cubic-bezier(0.42, 0, 0.58, 1)"></span></span></div><a href="QuickAdd.dc.html" aria-label="Новая операция" style="position: absolute; right: 12px; bottom: 12px; width: 42px; height: 42px; border-radius: 21px; background: {{k.btn}}; color: {{k.btnInk}}; box-shadow: {{k.glow}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a></div><a href="QuickAdd.dc.html" aria-label="Новая операция" style="position: absolute; left: 206px; top: 258px; width: 158px; height: 158px; border-radius: 22px; box-sizing: border-box; overflow: hidden; background: {{k.bg}}; box-shadow: {{k.shadow}}; -webkit-backdrop-filter: {{k.blur}}; backdrop-filter: {{k.blur}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-decoration: none; color: {{k.ink}}"><span style="width: 64px; height: 64px; border-radius: 32px; background: {{k.btn}}; color: {{k.btnInk}}; box-shadow: {{k.glow}}; display: flex; align-items: center; justify-content: center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span><span style="font-size: 14px; font-weight: 600">Новая операция</span></a><span aria-hidden="true" style="position: absolute; left: 27px; top: 446px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(59,74,107,0.95) 0%, rgba(59,74,107,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><span aria-hidden="true" style="position: absolute; left: 119px; top: 446px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(90,62,100,0.95) 0%, rgba(90,62,100,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><span aria-hidden="true" style="position: absolute; left: 211px; top: 446px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(47,93,88,0.95) 0%, rgba(47,93,88,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><span aria-hidden="true" style="position: absolute; left: 303px; top: 446px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(107,78,46,0.95) 0%, rgba(107,78,46,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><span aria-hidden="true" style="position: absolute; left: 27px; top: 542px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(68,80,106,0.95) 0%, rgba(68,80,106,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><span aria-hidden="true" style="position: absolute; left: 119px; top: 542px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(92,47,58,0.95) 0%, rgba(92,47,58,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><span aria-hidden="true" style="position: absolute; left: 211px; top: 542px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(46,76,110,0.95) 0%, rgba(46,76,110,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><span aria-hidden="true" style="position: absolute; left: 303px; top: 542px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 7px"><span style="width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(79,91,58,0.95) 0%, rgba(79,91,58,0.6) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></span><span style="width: 38px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.30)"></span></span><div aria-hidden="true" style="position: absolute; left: 12px; top: 742px; width: 366px; height: 90px; border-radius: 34px; background: rgba(255,255,255,0.14); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.20)"></div><span aria-hidden="true" style="position: absolute; left: 122px; top: 757px; width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(62,62,70,0.95) 0%, rgba(62,62,70,0.6) 100%)"></span><span aria-hidden="true" style="position: absolute; left: 208px; top: 757px; width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(106,63,94,0.95) 0%, rgba(106,63,94,0.6) 100%)"></span><span aria-hidden="true" style="position: absolute; left: 293px; top: 757px; width: 60px; height: 60px; border-radius: 14px; background: linear-gradient(160deg, rgba(44,95,122,0.95) 0%, rgba(44,95,122,0.6) 100%)"></span><a href="Widgets-Actions.dc.html" aria-label="Birka" style="position: absolute; left: 37px; top: 757px; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none"><span aria-hidden="true" style="position: relative; display: block; width: 60px; height: 60px; border-radius: 14.2px; overflow: hidden"><span style="position: absolute; left: 0; top: 0; width: 220px; height: 220px; transform: scale(0.2727); transform-origin: 0 0; border-radius: 52px; overflow: hidden; background: radial-gradient(80% 70% at 28% 18%, rgba(36,138,86,0.55) 0%, transparent 70%), radial-gradient(70% 60% at 92% 100%, rgba(36,138,86,0.42) 0%, transparent 70%), #020604; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18)">
+<span style="position: absolute; left: 36px; top: 34px; width: 150px; height: 150px; transform: perspective(700px) rotateY(-14deg) rotateX(8deg)">
+<span style="position: absolute; inset: 0; border-radius: 50%; transform: translate(9px, 4px); background: linear-gradient(135deg, #13704A 0%, #062E1D 60%, #031109 100%)"></span>
+<span style="position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 30% 24%, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.12) 30%, rgba(61,220,151,0.14) 58%, rgba(61,220,151,0.40) 100%), #0B2C1E; border: 1.5px solid rgba(255,255,255,0.42); box-shadow: inset 0 2px 0 rgba(255,255,255,0.55), inset 0 -10px 26px rgba(61,220,151,0.42), 0 0 60px rgba(61,220,151,0.45)"></span>
+<span style="position: absolute; inset: 6px; border-radius: 50%; background: repeating-conic-gradient(rgba(255,255,255,0.45) 0deg 1.4deg, transparent 1.4deg 6.5deg); -webkit-mask-image: radial-gradient(closest-side, transparent 84%, #000 85%); mask-image: radial-gradient(closest-side, transparent 84%, #000 85%)"></span>
+<span style="position: absolute; inset: 24px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.26)"></span>
+<span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: Manrope, Inter, sans-serif; font-size: 72px; font-weight: 800; letter-spacing: -0.04em; color: #F4FFF9; text-shadow: 0 0 22px rgba(61,220,151,0.8)">B</span>
+</span>
+</span></span></a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state": {"editor": "enum", "options": ["Обычный день", "После записи", "Потратили больше", "Нет дня зарплаты", "Суммы скрыты"], "default": "Обычный день"}, "look": {"editor": "enum", "options": ["Тёмный", "Прозрачный · iOS 26"], "default": "Тёмный"}, "$preview": {"width": 390, "height": 844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.timers = [];
+    this.lines = {};
+    this.figs = {};
+    this.stopped = false;
+
+  }
+
+  stop() {
+    this.timers.forEach((timer) => clearTimeout(timer));
+    this.timers = [];
+  }
+
+  later(ms, change) {
+    this.timers.push(setTimeout(() => {
+      if (!this.stopped) this.setState(change);
+    }, ms));
+  }
+
+  componentWillUnmount() {
+    this.stopped = true;
+    this.stop();
+  }
+
+  prefersReduced() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Renders again as a figure goes through its roll.
+  wake() {
+    for (const ms of [30, 540, 640]) {
+      this.timers.push(setTimeout(() => {
+        if (!this.stopped) this.forceUpdate();
+      }, ms));
+    }
+  }
+
+  rub(n) {
+    return String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+  }
+
+  // The digits go and the sign and the currency stay, as HiddenAmounts.masked.
+  mask(text) {
+    return text.replace(/\d[\d ]*\d|\d/g, '•••');
+  }
+
+  // A figure as AmountText shows it: the digits that differ roll, or the old
+  // figure rolls out when the shape changes. It takes the color of the news
+  // (goodUp says whether growing is good) and turns back once it settles.
+  // Hidden, it blurs out under the dots, as on the «Суммы» board.
+  figure(key, text, value, ink, h, reduced, goodUp, hidden) {
+    const now = Date.now();
+    const seen = this.figs[key];
+    if (!seen) {
+      this.figs[key] = { text, value, from: '', swap: false, up: true, at: -100000, news: null };
+    } else if (seen.text !== text) {
+      const shape = (s) => s.replace(/[0-9]/g, '0');
+      const up = value > seen.value;
+      this.figs[key] = { text, value, from: seen.text, swap: shape(seen.text) !== shape(text), up, at: now, news: up === goodUp ? '#3DDC97' : '#FF8E7F' };
+      this.wake();
+    }
+    const f = this.figs[key];
+    const age = now - f.at;
+    const ease = 'cubic-bezier(0.2, 0, 0, 1)';
+    const fade = 'cubic-bezier(0.42, 0, 0.58, 1)';
+    const swapping = f.swap && !reduced && age < 620;
+    const entering = swapping && age < 30;
+    const news = f.news && age < 520;
+    const veilTr = reduced ? 'opacity 220ms ' + fade : 'filter 260ms ' + ease + ', opacity 260ms ' + ease;
+    return {
+      slots: Array.from(text).map((ch) => {
+        const digit = ch >= '0' && ch <= '9';
+        return { digit, still: !digit, ch, y: digit ? -Number(ch) * h + 'px' : '0px', tr: reduced || f.swap ? 'none' : 'transform 520ms ' + ease };
+      }),
+      old: swapping ? f.from : '',
+      inY: entering ? (f.up ? h : -h) + 'px' : '0px',
+      inO: entering ? '0' : '1',
+      outY: swapping && !entering ? (f.up ? -h : h) + 'px' : '0px',
+      outO: entering ? '1' : '0',
+      layerTr: entering ? 'none' : 'transform 520ms ' + ease + ', opacity 220ms ' + fade,
+      ink: news ? f.news : ink,
+      tr: (news ? 'color 150ms ' : 'color 320ms ') + fade + ', ' + veilTr,
+      veilF: hidden && !reduced ? 'blur(8px)' : 'blur(0px)',
+      veilO: hidden ? '0' : '1',
+      dots: this.mask(text),
+      dotsInk: ink,
+      dotsO: hidden ? '1' : '0',
+      dotsTr: veilTr
+    };
+  }
+
+  // A line that cross-fades into a new one over duration.base, as FadingText
+  // does; once the fade is over the old line goes, so its height goes too.
+  fading(key, text, reduced) {
+    const now = Date.now();
+    const seen = this.lines[key];
+    if (!seen) {
+      this.lines[key] = { a: text, b: '', front: 'a', at: -100000 };
+    } else if ((seen.front === 'a' ? seen.a : seen.b) !== text) {
+      if (seen.front === 'a') {
+        seen.b = text;
+        seen.front = 'b';
+      } else {
+        seen.a = text;
+        seen.front = 'a';
+      }
+      seen.at = now;
+      this.timers.push(setTimeout(() => {
+        if (!this.stopped) this.forceUpdate();
+      }, 260));
+    }
+    const s = this.lines[key];
+    const settled = now - s.at > 240;
+    return {
+      a: s.front === 'a' || !settled ? s.a : '',
+      b: s.front === 'b' || !settled ? s.b : '',
+      oa: s.front === 'a' ? '1' : '0',
+      ob: s.front === 'b' ? '1' : '0',
+      tr: reduced ? 'none' : 'opacity 220ms cubic-bezier(0.2, 0, 0, 1)'
+    };
+  }
+
+  // The day of the story: 1 744 ₽ a day, 17 days to the salary.
+  story(mode) {
+    const perDay = 1744;
+    const spentBy = { 'Обычный день': 620, 'После записи': 990, 'Потратили больше': 2100, 'Нет дня зарплаты': 620, 'Суммы скрыты': 620 };
+    const spent = spentBy[mode] ?? 620;
+    const left = perDay - spent;
+    return { perDay, spent, left, over: left < 0, payday: mode !== 'Нет дня зарплаты', hidden: mode === 'Суммы скрыты' };
+  }
+
+  // The widget follows the look of Birka; in the clear look of iOS 26 the
+  // system takes the color away and the glass shows the wallpaper.
+  skin(look) {
+    if (look === 'Прозрачный · iOS 26') {
+      return {
+        bg: 'rgba(255,255,255,0.10)', shadow: 'inset 0 1px 0 rgba(255,255,255,0.34), inset 0 0 0 1px rgba(255,255,255,0.14)',
+        blur: 'blur(24px) saturate(170%)', label: 'rgba(255,255,255,0.74)', ink: '#FFFFFF', sub: 'rgba(255,255,255,0.74)',
+        track: 'rgba(255,255,255,0.24)', fill: '#FFFFFF', over: '#FFFFFF', btn: 'rgba(255,255,255,0.26)', btnInk: '#FFFFFF',
+        btn2: 'rgba(255,255,255,0.14)', btn2Ink: '#FFFFFF', glow: 'none'
+      };
+    }
+    return {
+      bg: 'radial-gradient(90% 70% at 0% 0%, rgba(36,138,86,0.34) 0%, transparent 72%), radial-gradient(80% 60% at 100% 100%, rgba(36,138,86,0.20) 0%, transparent 72%), #050706',
+      shadow: 'inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 30px rgba(0,0,0,0.45)', blur: 'none',
+      label: '#A3A3A3', ink: '#F4F4F2', sub: '#A3A3A3', track: 'rgba(255,255,255,0.10)', fill: '#3DDC97', over: '#FF8E7F',
+      btn: '#3DDC97', btnInk: '#02130B', btn2: 'rgba(255,255,255,0.10)', btn2Ink: '#F4F4F2', glow: '0 8px 24px rgba(61,220,151,0.30)'
+    };
+  }
+
+  // What the «Сегодня» widgets show in a state of the day.
+  today(mode, look, reduced, hiddenNow) {
+    const s = this.story(mode);
+    const k = this.skin(look);
+    const hidden = hiddenNow ?? s.hidden;
+    const rub = (n) => this.rub(n);
+    const shown = (text) => (hidden ? this.mask(text) : text);
+    const text = s.payday ? (s.over ? '−' : '') + rub(s.left) : rub(s.spent);
+    const value = s.payday ? s.left : s.spent;
+    const ink = s.payday && s.over ? k.over : k.ink;
+    const share = s.payday ? Math.min(100, Math.round((s.spent / s.perDay) * 100)) : 0;
+    return {
+      k,
+      digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      bodyHref: s.payday ? 'Future-Overview.dc.html' : 'Future-Payday.dc.html',
+      aria: s.payday ? 'Можно тратить сегодня: ' + shown(text) + '. Открыть обзор' : 'Потратили сегодня: ' + shown(text) + '. Указать день зарплаты',
+      label: this.fading('label', s.payday ? (s.over ? 'Сегодня больше дневного' : 'Можно тратить сегодня') : 'Потратили сегодня', reduced),
+      small: this.fading('small', s.payday ? (s.over ? 'Больше дневного' : 'Можно сегодня') : 'Потратили', reduced),
+      figM: this.figure('figM', text, value, ink, 38, reduced, s.payday, hidden),
+      figS: this.figure('figS', text, value, ink, 34, reduced, s.payday, hidden),
+      figA: this.figure('figA', text, value, ink, 40, reduced, s.payday, hidden),
+      of: this.fading('of', s.payday ? shown('из ' + rub(s.perDay) + ' на день') : 'Укажите день зарплаты — покажем, сколько можно', reduced),
+      ofSmall: this.fading('ofSmall', s.payday ? shown('из ' + rub(s.perDay)) : 'сегодня', reduced),
+      spent: this.fading('spent', s.payday ? shown(s.over ? 'Завтра можно ' + rub(1721) + ' в день' : 'Потратили ' + rub(s.spent)) : '', reduced),
+      spentSmall: this.fading('spentSmall', s.payday ? shown(s.over ? 'завтра ' + rub(1721) : 'потратили ' + rub(s.spent)) : '', reduced),
+      bar: share + '%',
+      barFill: s.over ? k.over : k.fill,
+      barO: s.payday ? '1' : '0'
+    };
+  }
+
+  renderVals() {
+    const reduced = this.prefersReduced();
+    return this.today(this.props.state ?? 'Обычный день', this.props.look ?? 'Тёмный', reduced);
+  }
+}
+</script>
+</body>
+</html>
