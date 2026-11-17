@@ -41,7 +41,7 @@ void main() {
 
   Future<void> save(ComponentTester tester) async {
     (find.byType(BirkaForm).evaluate().single.component as BirkaForm)
-        .onSubmit();
+        .onSubmit!();
     await tester.pump();
   }
 

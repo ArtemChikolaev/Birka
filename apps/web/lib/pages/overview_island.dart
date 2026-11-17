@@ -12,6 +12,8 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
+import 'package:limits_common/limits_common.dart' show LimitsCubit;
+import 'package:limits_jaspr/limits_jaspr.dart';
 import 'package:notifications_common/notifications_common.dart'
     show NotificationsSummaryCubit;
 import 'package:notifications_jaspr/notifications_jaspr.dart';
@@ -37,6 +39,7 @@ class OverviewIsland extends StatefulComponent {
 class _OverviewIslandState extends DataIslandState<OverviewIsland> {
   OverviewCubit? _overview;
   SchedulesCubit? _schedules;
+  LimitsCubit? _limits;
 
   /// Whether the steps of a new browser stand in place of the overview. A
   /// browser with no mark starts here, so that it never sees the overview
@@ -96,6 +99,7 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
   void onTabShown() {
     unawaited(_overview?.calendarChecked());
     unawaited(_schedules?.calendarChecked());
+    _limits?.refresh();
   }
 
   @override
@@ -119,6 +123,7 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         BlocProvider<InboxSummaryCubit>(create: (_) => getIt()),
         BlocProvider<NotificationsSummaryCubit>(create: (_) => getIt()),
         BlocProvider<SchedulesCubit>(create: (_) => _schedules = getIt()),
+        BlocProvider<LimitsCubit>(create: (_) => _limits = getIt()),
       ],
       child: OverviewPage(
         addAccountHref: 'accounts/#new',
@@ -131,6 +136,10 @@ class _OverviewIslandState extends DataIslandState<OverviewIsland> {
         side: const SpendingCard(
           paydayHref: 'payday/',
           listHref: 'schedules/',
+        ),
+        limits: const LimitsOverviewPart(
+          href: 'limits/',
+          suggestHref: 'limits/#suggest',
         ),
       ),
     );

@@ -5524,6 +5524,21 @@ class Translations$limits$suggestions$en {
   /// en: 'Every category that spends already has a limit.'
   String get nothing => 'Every category that spends already has a limit.';
 
+  /// en: 'How we count'
+  String get howTitle => 'How we count';
+
+  /// en: 'We take three full months: $first and $last.'
+  String howMonths({required Object first, required Object last}) =>
+      'We take three full months: ${first} and ${last}.';
+
+  /// en: 'The average is rounded up to $step.'
+  String howStep({required Object step}) =>
+      'The average is rounded up to ${step}.';
+
+  /// en: 'We leave unchecked the categories whose spending jumps, comes in some months only or goes to regular payments.'
+  String get howUnchecked =>
+      'We leave unchecked the categories whose spending jumps, comes in some months only or goes to regular payments.';
+
   /// en: 'Not much history yet'
   String get shortTitle => 'Not much history yet';
 
@@ -7774,6 +7789,14 @@ extension on Translations {
                 ),
           'limits.suggestions.nothing' =>
             'Every category that spends already has a limit.',
+          'limits.suggestions.howTitle' => 'How we count',
+          'limits.suggestions.howMonths' =>
+            ({required Object first, required Object last}) =>
+                'We take three full months: ${first} and ${last}.',
+          'limits.suggestions.howStep' =>
+            ({required Object step}) => 'The average is rounded up to ${step}.',
+          'limits.suggestions.howUnchecked' =>
+            'We leave unchecked the categories whose spending jumps, comes in some months only or goes to regular payments.',
           'limits.suggestions.shortTitle' => 'Not much history yet',
           'limits.suggestions.shortText' =>
             ({required Object day}) =>
@@ -7901,13 +7924,13 @@ extension on Translations {
           'notifications.months.3' => 'April',
           'notifications.months.4' => 'May',
           'notifications.months.5' => 'June',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.months.6' => 'July',
           'notifications.months.7' => 'August',
           'notifications.months.8' => 'September',
           'notifications.months.9' => 'October',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.months.10' => 'November',
           'notifications.months.11' => 'December',
           'notifications.howTitle' => 'What comes here',
@@ -8849,14 +8872,14 @@ extension on Translations {
           'tags.picker.tripsNote' =>
             'While a trip goes on, its tag goes onto the expenses of its days by itself.',
           'tags.picker.now' => 'now',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.picker.emptyTitle' => 'No tags yet',
           'tags.picker.emptyText' =>
             'Type a name: a trip, a renovation or a holiday. A tag gathers what they took in every currency.',
           'tags.row.add' => 'Add a tag',
           'tags.row.addText' => 'A trip, a renovation or a holiday',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.row.trip' => ({required Object days}) => 'Trip · ${days}',
           'tags.row.byDays' =>
             ({required Object days}) => 'Trip · ${days} · by its dates',

@@ -41,6 +41,7 @@ workspace:
   - packages/features/inbox/jaspr
   - packages/features/limits/common
   - packages/features/limits/flutter
+  - packages/features/limits/jaspr
   - packages/features/notifications/common
   - packages/features/notifications/flutter
   - packages/features/notifications/jaspr

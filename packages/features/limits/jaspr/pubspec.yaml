@@ -1,0 +1,29 @@
+name: limits_jaspr
+description: >-
+  The monthly limits of categories in Jaspr: the page of the limits, the form
+  of a limit, the limits from averages and the part of the overview, on the
+  site.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  design_jaspr:
+    path: ../../../design/jaspr
+  jaspr: ^0.22.3
+  jaspr_bloc: ^1.0.1
+  l10n:
+    path: ../../../core/l10n
+  ledger:
+    path: ../../../core/ledger
+  limits_common:
+    path: ../common
+  money:
+    path: ../../../core/money
+  rates:
+    path: ../../../core/rates
+
+dev_dependencies:
+  jaspr_test: ^0.22.3

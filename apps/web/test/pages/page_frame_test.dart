@@ -3,6 +3,7 @@ import 'package:birka_web/pages/ask_island.dart';
 import 'package:birka_web/pages/categories_island.dart';
 import 'package:birka_web/pages/import_island.dart';
 import 'package:birka_web/pages/inbox_island.dart';
+import 'package:birka_web/pages/limits_island.dart';
 import 'package:birka_web/pages/more_island.dart';
 import 'package:birka_web/pages/notifications_island.dart';
 import 'package:birka_web/pages/operations_island.dart';
@@ -28,6 +29,7 @@ void main() {
     ('notifications', NotificationsIsland()),
     ('tags', TagsIsland()),
     ('ask', AskIsland()),
+    ('limits', LimitsIsland()),
   ]) {
     testComponents('the build leaves a frame without words for $name', (
       tester,

@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:import_common/import_common.dart';
 import 'package:inbox_common/inbox_common.dart';
 import 'package:ledger/ledger.dart';
+import 'package:limits_common/limits_common.dart' show registerLimits;
 import 'package:notifications_common/notifications_common.dart'
     show registerNotifications;
 import 'package:onboarding_common/onboarding_common.dart'
@@ -72,6 +73,7 @@ void registerDependencies(GetIt getIt, QueryExecutor executor) {
   registerReports(getIt);
   // The site has no reminders: what needs them is never asked for here.
   registerSchedules(getIt, const BrowserSettingsStore());
+  registerLimits(getIt);
   registerTags(getIt);
   registerTransactions(getIt);
 }

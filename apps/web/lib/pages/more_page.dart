@@ -69,6 +69,17 @@ class MorePage extends StatelessComponent {
             ),
             GlassListRow(
               leading: const GlyphBadge(
+                glyph: BirkaGlyph.gauge,
+                color: 'var(--color-accent)',
+              ),
+              title: t.limits.title,
+              href: 'limits/',
+              trailing: const span(classes: 'more__end', [
+                BirkaIcon(BirkaGlyph.chevron),
+              ]),
+            ),
+            GlassListRow(
+              leading: const GlyphBadge(
                 glyph: BirkaGlyph.people,
                 color: 'var(--color-accent)',
               ),

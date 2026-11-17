@@ -54,8 +54,7 @@ class _NotificationsIslandState extends DataIslandState<NotificationsIsland> {
           NoticePlace.schedules || NoticePlace.schedule => 'schedules/',
           NoticePlace.debt when id != null => 'debts/#$id',
           NoticePlace.debt => 'debts/',
-          // The site has no page of the limits yet.
-          NoticePlace.limits => null,
+          NoticePlace.limits => 'limits/',
         },
         onOpen: openSitePage,
       ),

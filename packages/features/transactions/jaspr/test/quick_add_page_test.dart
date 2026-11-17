@@ -5,7 +5,8 @@ import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:jaspr_bloc/testing.dart';
 import 'package:jaspr_test/jaspr_test.dart';
 import 'package:l10n/l10n.dart';
-import 'package:ledger/ledger.dart' show Tag;
+import 'package:ledger/ledger.dart' show CategoryDayTotal, CategoryLimit, Tag;
+import 'package:ledger/ledger.dart' as ledger show Category;
 import 'package:money/money.dart';
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_jaspr/transactions_jaspr.dart';
@@ -87,7 +88,7 @@ void main() {
     await tap(tester, 'Кафе');
     expect(find.text('Сохранить · Кафе'), findsOneComponent);
     // Where a click on the button of a real form ends.
-    form().onSubmit();
+    form().onSubmit!();
     await tester.pump();
 
     final draft = repository.recorded.single;
@@ -480,5 +481,53 @@ void main() {
 
     expect(repository.recorded, isEmpty);
     expect(closed, 1);
+  });
+
+  testComponents('says over the button what an expense leaves of its limit', (
+    tester,
+  ) async {
+    final limited = ledger.Category(
+      id: 'Кафе',
+      kind: CategoryKind.expense,
+      name: 'Кафе',
+      archived: false,
+      sortOrder: 0,
+      limit: CategoryLimit(Money(1200000, Currency.rub)),
+    );
+    repository
+      ..expenses = [limited, testCategory('Продукты')]
+      ..spending = MonthSpending(
+        month: CivilDate(2026, 10, 1),
+        rows: [
+          CategoryDayTotal(
+            limited,
+            CivilDate(2026, 10, 3),
+            Money(1015000, Currency.rub),
+          ),
+        ],
+      );
+    await pump(tester);
+    await tap(tester, 'Кафе');
+    await press(tester, '1250');
+
+    expect(
+      find.text('Кафе: останется 600$space₽ из 12${space}000$space₽'),
+      findsOneComponent,
+    );
+    expect(
+      find.byComponentPredicate(
+        (component) =>
+            component is DomComponent &&
+            component.classes ==
+                'text-caption quick-add__limit quick-add__limit--near',
+      ),
+      findsOneComponent,
+    );
+
+    await press(tester, '0');
+    expect(
+      find.text('Кафе: больше лимита на 10${space}650$space₽'),
+      findsOneComponent,
+    );
   });
 }

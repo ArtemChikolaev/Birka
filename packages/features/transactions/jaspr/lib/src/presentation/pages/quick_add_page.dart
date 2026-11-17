@@ -5,6 +5,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
+import 'package:rates/rates.dart' show LimitState;
 import 'package:transactions_common/transactions_common.dart';
 import 'package:transactions_jaspr/src/presentation/components/big_amount.dart';
 import 'package:transactions_jaspr/src/presentation/components/quick_add_tile.dart';
@@ -103,6 +104,29 @@ class QuickAddPage extends StatelessComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
+    // What an expense leaves of its limit fades in over the button
+    // (ADR 0033), in the color of where the limit stands.
+    css('.quick-add__limit').styles(
+      raw: {
+        'animation': 'quick-add-limit var(--duration-base) var(--easing-fade)',
+        'color': 'var(--color-text-muted)',
+        'margin': '0',
+        'text-align': 'center',
+        'transition': 'color var(--duration-fast)',
+      },
+    ),
+    css('.quick-add__limit--near').styles(
+      raw: {'color': 'var(--color-palette-amber)'},
+    ),
+    css('.quick-add__limit--over').styles(
+      raw: {'color': 'var(--color-negative)'},
+    ),
+    css.keyframes('quick-add-limit', {
+      'from': const Styles(raw: {'opacity': '0'}),
+    }),
+    css.media(const MediaQuery.raw('(prefers-reduced-motion: reduce)'), [
+      css('.quick-add__limit').styles(raw: {'animation': 'none'}),
+    ]),
     css('.quick-add__header').styles(
       raw: {
         'align-items': 'center',
@@ -243,6 +267,7 @@ class _SheetState extends State<_Sheet> {
           QuickAddStatus.failedToRead => t.transactions.failedToRead,
           _ => null,
         },
+        caution: _limit(context),
         children: [
           GlassSegmented<TransactionKind>(
             segments: {
@@ -324,6 +349,23 @@ class _SheetState extends State<_Sheet> {
         alwaysShown: true,
       ),
     ]);
+  }
+
+  /// What the expense leaves of the monthly limit of its category, over the
+  /// button (ADR 0033), or `null` when it has none to tell.
+  Component? _limit(BuildContext context) {
+    final line = _state.limitLine;
+    if (line == null) return null;
+    return p(
+      classes: switch (line.state) {
+        LimitState.ok => 'text-caption quick-add__limit',
+        LimitState.near =>
+          'text-caption quick-add__limit quick-add__limit--near',
+        LimitState.over =>
+          'text-caption quick-add__limit quick-add__limit--over',
+      },
+      [.text(HiddenAmounts.mask(context, limitLineLabel(line)))],
+    );
   }
 
   /// One of the two amounts of a transfer between currencies.

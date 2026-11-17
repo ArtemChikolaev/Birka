@@ -85,7 +85,12 @@
 - The rates come for the days of operations in a currency other than the
   base one. A limit in euros counts an expense in rubles at the latest rate
   before its day when that day has none.
-- The site gets its boards and screens after the phone.
+- The site has the same screens after the phone, as the boards «Лимиты на
+  сайте» draw them: the page at `limits/` with the form at `#new` and
+  `#<category>` and the averages at `#suggest`, the part of the overview,
+  the line of quick add, and the notices of the bell, which open the page.
+  A wide page keeps how many limits are within and the days left at the
+  side. The page is also in «Ещё».
 
 ## Options considered
 
