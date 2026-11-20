@@ -166,7 +166,7 @@ build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 check-site: ## Every page of the built site opens in Chrome without errors; BASE as in build-web
 	dart run birka_tools:check_site apps/web/build/jaspr $(BASE)
 
-verify-web: ## Exercise category-limit or backup-roundtrip on the built site (FLOW, BASE as in build-web)
+verify-web: ## Exercise category-limit, backup-roundtrip or statement-reimport (FLOW, BASE as in build-web)
 	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)"
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk

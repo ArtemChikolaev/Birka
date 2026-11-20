@@ -9,6 +9,7 @@ Future<void> main(List<String> args) async {
   const flows = {
     'category-limit': _categoryLimit,
     'backup-roundtrip': _backupRoundtrip,
+    'statement-reimport': _statementReimport,
   };
   if (args.length != 3 || !flows.containsKey(args.last)) {
     stderr.writeln('Usage: make verify-web FLOW=<${flows.keys.join('|')}>');
@@ -75,6 +76,25 @@ Future<void> _backupRoundtrip(Uri origin) async {
     await downloads.delete(recursive: true);
   }
 }
+
+Future<void> _statementReimport(Uri origin) =>
+    _visit(origin, 'statement-reimport', (browser) async {
+      await browser.restore(_fixture);
+      final csv = File('tools/fixtures/statement-reimport.csv');
+      const amounts = ['−₽10,150', '−₽250', '+₽1,000'];
+      await browser.planImport(csv);
+      await browser.click('button', 'Import 2 operations');
+      await browser.expect('.import-done__title', 'Added 2 operations');
+      await browser.open('accounts/#card');
+      await browser.checkAccount('₽10,600', amounts);
+
+      await browser.planImport(csv);
+      await browser.expect('h2', '2 operations are already in the ledger');
+      await browser.expect('button:disabled', 'Nothing to add');
+      await browser.open('accounts/#card');
+      await browser.reload();
+      await browser.checkAccount('₽10,600', amounts);
+    });
 
 Future<T> _visit<T>(
   Uri origin,
@@ -163,6 +183,15 @@ final class _Browser {
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     throw StateError('$flow: no .birka download after saving the copy');
+  }
+
+  Future<void> planImport(File csv) async {
+    await open('import/');
+    await chooseFile('Choose a file', csv);
+    await click('button', 'Next: the columns');
+    await click('button', 'Next: the account');
+    await click('.import-accounts .glass-option__name', 'Test card');
+    await click('button', 'Next: duplicates');
   }
 
   Future<void> checkAccount(String balance, List<String> amounts) async {

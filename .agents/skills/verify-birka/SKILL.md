@@ -1,6 +1,6 @@
 ---
 name: verify-birka
-description: Verify category limits, quick-add spending, and backup downloads and restores in the built Birka web app. Use when a change affects one of these journeys.
+description: Verify category limits, quick-add spending, backup transfers and duplicate CSV imports in the built Birka web app. Use when a change affects one of these journeys.
 ---
 
 Choose a journey in the [feature map](references/feature-map.md). Build the
