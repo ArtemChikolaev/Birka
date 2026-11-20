@@ -6,7 +6,7 @@
 | [0002](0002-toolchain.md) | Flutter 3.38.10 and the package versions it allows | accepted 2026-10-29 |
 | [0003](0003-money-representation.md) | Money as integer minor units | accepted 2026-10-29 |
 | [0004](0004-branches-and-releases.md) | GitHub flow with a protected main | accepted 2026-10-29 |
-| [0005](0005-claude-review.md) | An advisory Claude review of pull requests | accepted 2026-10-30 |
+| [0005](0005-claude-review.md) | An advisory Claude review of pull requests | superseded by 0034 |
 | [0006](0006-feature-first-packages.md) | Feature-first packages with Clean layers inside | accepted 2026-10-30 |
 | [0007](0007-design-tokens.md) | Design tokens in DTCG with our own generator | accepted 2026-10-30 |
 | [0008](0008-web-host.md) | The web host: a static Jaspr site on GitHub Pages | accepted 2026-10-30 |
@@ -35,3 +35,4 @@
 | [0031](0031-widgets.md) | Widgets and quick actions | accepted 2026-11-15 |
 | [0032](0032-receipts.md) | Receipts by their QR code | accepted 2026-11-15 |
 | [0033](0033-limits.md) | Monthly limits of categories | accepted 2026-11-16 |
+| [0034](0034-codex-review.md) | GitHub code review with the ChatGPT subscription | accepted 2026-11-20 |

@@ -1,0 +1,78 @@
+name: Codex review
+
+# Hosted Codex runs the review. Its summary is created and then edited on the
+# PR. issue_comment uses this workflow from the default branch (ADR 0034).
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions: {}
+
+jobs:
+  publish:
+    name: Publish Codex review status
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.comment.user.login == 'chatgpt-codex-connector[bot]' &&
+      github.event.sender.login == 'chatgpt-codex-connector[bot]' &&
+      startsWith(github.event.comment.body, '<!-- codex-pull-request-review-summary -->')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    concurrency:
+      group: codex-review-summary-${{ github.event.comment.id }}
+      cancel-in-progress: false
+    permissions:
+      pull-requests: read
+      statuses: write
+    steps:
+      - name: Mirror the current summary on the reviewed commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENT_ID: ${{ github.event.comment.node_id }}
+        shell: python
+        run: |
+          import json
+          import os
+          import re
+          import subprocess
+
+          # Read the latest edit even when multiple webhook deliveries queue up.
+          query = """query($id: ID!) {
+            node(id: $id) {
+              ... on IssueComment { author { login } editor { login } body url }
+            }
+          }"""
+          response = subprocess.check_output([
+              "gh", "api", "graphql", "-f", f"query={query}",
+              "-f", f"id={os.environ['COMMENT_ID']}",
+          ])
+          comment = json.loads(response)["data"]["node"]
+          bot = "chatgpt-codex-connector"
+          if comment["author"]["login"] != bot or (comment["editor"] or {}).get("login", bot) != bot:
+              raise SystemExit("Unexpected author or editor of the Codex review summary")
+
+          marker = re.search(r"^<!-- codex-review-state:v1 (.+) -->$", comment["body"], re.MULTILINE)
+          if not marker:
+              raise SystemExit("Unrecognized Codex review summary format")
+          review = json.loads(marker[1])["code_review"]
+          sha = review["commit_sha"]
+          if sha is None and review["status"] is None:
+              raise SystemExit(0)  # A security-only review has no code review to publish.
+          if not re.fullmatch(r"[0-9a-f]{40}", sha or ""):
+              raise SystemExit("Missing or invalid reviewed commit")
+
+          if review["status"] in ("queued", "running"):
+              state, description = "pending", "Codex is reviewing this commit"
+          elif review["status"] == "completed" and review["has_unresolved_findings"] is False:
+              state, description = "success", "Codex review completed with no open findings"
+          elif review["status"] == "completed" and review["has_unresolved_findings"] is True:
+              state, description = "failure", "Codex reported findings. See the review on the PR"
+          else:
+              state, description = "error", "Codex did not report a completed result. See the PR"
+
+          subprocess.run([
+              "gh", "api", "--silent", "--method", "POST",
+              f"repos/{os.environ['GITHUB_REPOSITORY']}/statuses/{sha}",
+              "-f", "context=Codex review", "-f", f"state={state}",
+              "-f", f"description={description}", "-f", f"target_url={comment['url']}",
+          ], check=True)
