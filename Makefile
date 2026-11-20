@@ -40,7 +40,7 @@ BASE ?= /
 # The build number of the APK: CI passes the number of its run.
 BUILD_NUMBER ?= 1
 
-.PHONY: help bootstrap format analyze check-deps check-tokens check-site verify-web tokens \
+.PHONY: help bootstrap format analyze check-deps check-tokens check-site verify-web verify-flutter tokens \
 	gen icons icon-masters web-fonts test test-core test-database test-tools \
 	test-design test-features test-web test-mobile run-mobile run-web build-web \
 	build-apk check
@@ -168,6 +168,10 @@ check-site: ## Every page of the built site opens in Chrome without errors; BASE
 
 verify-web: ## Exercise category-limit, backup-roundtrip or statement-reimport (FLOW, BASE as in build-web)
 	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)"
+
+verify-flutter: ## Exercise category-limit in the native Flutter app (DEVICE defaults to macos)
+	@test "$(FLOW)" = category-limit || { echo 'Usage: make verify-flutter FLOW=category-limit'; exit 64; }
+	cd apps/mobile && flutter test -d "$(DEVICE)" integration_test/category_limit_test.dart
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \

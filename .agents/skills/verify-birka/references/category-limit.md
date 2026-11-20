@@ -1,4 +1,4 @@
-# Monthly category limits on the site
+# Monthly category limits
 
 ## Starting state
 
@@ -22,5 +22,12 @@ has a monthly limit of ₽12,000 and one expense of ₽10,150.
 The amounts before saving come from quick add. The later amounts come from the
 limits page reading the browser ledger. The check waits for the new document
 after reload. Run it against a fresh build of the change under review.
-The threshold and accounting rules are in ADR 0033. This journey covers the
-Jaspr host, one currency and manually entered spending.
+The threshold and accounting rules are in ADR 0033.
+
+## Flutter
+
+Run `make verify-flutter FLOW=category-limit` on macOS, or select a device with
+`DEVICE`. The test seeds the same amounts in a temporary SQLite database for
+the device's current month, taps through Overview, Limits and quick add, then
+unmounts Birka, closes the database and reopens it. The Flutter Limits row
+shortens the final label to **₽1 over**. The test deletes its temporary ledger.

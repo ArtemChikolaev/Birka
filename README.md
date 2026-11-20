@@ -103,6 +103,7 @@ make build-web check-site           # every page of the built site in Chrome
 make verify-web FLOW=category-limit # record two expenses on the built site and reload
 make verify-web FLOW=backup-roundtrip # save a ledger and restore the download in a fresh browser
 make verify-web FLOW=statement-reimport # import the same CSV twice and check the account
+make verify-flutter FLOW=category-limit # run the same limit journey in the native macOS app
 make build-apk                      # a release APK for Android
 make tokens                         # regenerate the design tokens
 ```

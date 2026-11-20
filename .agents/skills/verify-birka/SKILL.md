@@ -1,10 +1,12 @@
 ---
 name: verify-birka
-description: Verify category limits, quick-add spending, backup transfers and duplicate CSV imports in the built Birka web app. Use when a change affects one of these journeys.
+description: Verify category limits and quick-add spending in Flutter or the built website, and backup transfers and duplicate CSV imports on the web. Use when a change affects one of these journeys.
 ---
 
-Choose a journey in the [feature map](references/feature-map.md). Build the
-current checkout once, then run its command with the same base path.
+Choose the affected host and journey in the [feature map](references/feature-map.md).
+For Flutter, run the mapped command on macOS or pass a device ID. For the
+website, build the current checkout once, then run the mapped command with
+the same base path.
 
 ```sh
 make build-web BASE=/Birka/
