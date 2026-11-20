@@ -35,14 +35,16 @@ final class LocalReminderChannel implements ReminderChannel {
     } on Exception {
       // An unknown zone keeps UTC: reminders come hours off rather than not.
     }
+    const darwin = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     await _plugin.initialize(
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('ic_notification'),
-        iOS: DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-        ),
+        iOS: darwin,
+        macOS: darwin,
       ),
       onDidReceiveNotificationResponse: (response) {
         final payload = response.payload;
