@@ -41,6 +41,43 @@ void main() {
   setUp(() => site = Directory.systemTemp.createTempSync('birka-site'));
   tearDown(() => site.deleteSync(recursive: true));
 
+  group('webBuildProblem', () {
+    test('explains an invalid base before suggesting a rebuild', () {
+      for (final base in ['', 'Birka/', '/Birka', '//another-host/']) {
+        expect(
+          webBuildProblem(site, base: base),
+          contains('such as BASE=/Birka/'),
+        );
+      }
+    });
+
+    test('explains how to build a missing site for the requested base', () {
+      final problem = webBuildProblem(site, base: '/Birka/');
+      expect(problem, contains('index.html'));
+      expect(problem, contains('make build-web BASE=/Birka/'));
+    });
+
+    test('ignores a commented base tag', () {
+      write('index.html', '<!-- <base href="/"> --><title>Home</title>');
+      expect(webBuildProblem(site, base: '/'), contains('Missing <base href>'));
+    });
+
+    test('checks each runtime file and accepts a complete root build', () {
+      write('index.html', "<base href='/'>");
+      for (final file in [
+        'main.client.dart.js',
+        'drift_worker.dart.js',
+        'sqlite3.wasm',
+      ]) {
+        expect(webBuildProblem(site, base: '/'), contains(file));
+        write(file, '');
+        expect(webBuildProblem(site, base: '/'), contains(file));
+        write(file, 'synthetic asset');
+      }
+      expect(webBuildProblem(site, base: '/'), isNull);
+    });
+  });
+
   group('pagesOf', () {
     test('finds every page, the first one first', () {
       page('');
@@ -77,6 +114,17 @@ void main() {
     test('answers under the base', () async {
       expect((await get('/Birka/')).statusCode, 200);
       expect((await get('/Birka/reports/')).statusCode, 200);
+    });
+
+    test('also serves a site mounted under multiple directories', () async {
+      final nested = await serveSite(site, base: '/preview/Birka/');
+      addTearDown(() => nested.close(force: true));
+      final request = await client.get(
+        'localhost',
+        nested.port,
+        '/preview/Birka/reports/',
+      );
+      expect((await request.close()).statusCode, 200);
     });
 
     test('answers nothing outside it', () async {

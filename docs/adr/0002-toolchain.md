@@ -41,7 +41,7 @@
 | Testing and lints | test, mocktail, very_good_analysis, stream_channel, fake_async | 1.26.3, 1.0.5, 10.1.0, 2.1.4, 1.3.3 |
 | Monitoring | sentry_flutter | 9.30.1 |
 | App icons | flutter_launcher_icons | 0.14.4 |
-| Check of the built site | browser_launcher, shelf, shelf_static, webkit_inspection_protocol | 1.1.3, 1.4.3, 1.2.0, 1.2.1 |
+| Check of the built site | browser_launcher, html, shelf, shelf_static, webkit_inspection_protocol | 1.1.3, 0.15.7, 1.4.3, 1.2.0, 1.2.1 |
 | Sync client (later) | connectrpc, protobuf | 2.0.1, 6.1.0 |
 
 3. Every dependency gets an explicit caret constraint taken from this table.

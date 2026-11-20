@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:browser_launcher/browser_launcher.dart';
+import 'package:html/parser.dart' as html;
 import 'package:path/path.dart' as p;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -29,6 +30,44 @@ final class SiteProblem {
   String toString() => '/$page: $message';
 }
 
+/// The first build problem that would prevent the web journeys from starting.
+/// The caller can run this before opening a port or starting Chrome.
+String? webBuildProblem(Directory site, {required String base}) {
+  final uri = Uri.tryParse(base);
+  if (uri?.path != base ||
+      !base.startsWith('/') ||
+      !base.endsWith('/') ||
+      base.startsWith('//')) {
+    return 'Use a base path with a leading and trailing slash, such as BASE=/Birka/';
+  }
+  final rebuild = 'Run make build-web BASE=$base';
+  final index = File(p.join(site.path, 'index.html'));
+  if (!index.existsSync()) return 'Missing ${index.path}. $rebuild';
+  final document = html.parse(index.readAsStringSync());
+  final builtBase = document.head
+      ?.querySelector('base[href]')
+      ?.attributes['href'];
+  if (builtBase == null) {
+    return 'Missing <base href> in ${index.path}. $rebuild';
+  }
+  if (base != builtBase) {
+    return 'Site built for "$builtBase" but verification uses "$base". '
+        '$rebuild or repeat verification with BASE=$builtBase';
+  }
+  const runtimeFiles = [
+    'main.client.dart.js',
+    'drift_worker.dart.js',
+    'sqlite3.wasm',
+  ];
+  for (final name in runtimeFiles) {
+    final file = File(p.join(site.path, name));
+    if (!file.existsSync() || file.lengthSync() == 0) {
+      return 'Missing or empty ${file.path}. $rebuild';
+    }
+  }
+  return null;
+}
+
 /// The pages of the site in [site]: every `index.html`, the first page first.
 List<String> pagesOf(Directory site) {
   final folders = [
@@ -47,7 +86,8 @@ Future<HttpServer> serveSite(Directory site, {required String base}) {
   return shelf_io.serve(
     (request) {
       if (prefix.isEmpty) return files(request);
-      return request.url.pathSegments.firstOrNull == prefix
+      final path = request.url.path;
+      return path == prefix || path.startsWith('$prefix/')
           ? files(request.change(path: prefix))
           : Response.notFound('');
     },
