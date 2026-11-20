@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
   push:
     branches: [main]
   workflow_dispatch:
@@ -121,13 +122,19 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  native-limits:
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'verify-flutter')
+    uses: ./.github/workflows/verify-flutter.yml
+    with:
+      commit: ${{ github.event.pull_request.head.sha }}
+
   all-checks:
     name: All checks
     # The only check the ruleset for main requires (ADR 0004). GitHub counts a
     # skipped job as passed, so this job runs even when a job it needs fails.
     # Every new job goes into needs.
     if: always()
-    needs: [analyze, test, web, android]
+    needs: [analyze, test, web, android, native-limits]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -174,7 +174,7 @@ verify-web: ## Exercise category-limit, currency-transfer, backup-roundtrip or s
 
 verify-flutter: ## Exercise category-limit in the native Flutter app (DEVICE defaults to macos)
 	@test "$(FLOW)" = category-limit || { echo 'Usage: make verify-flutter FLOW=category-limit'; exit 64; }
-	cd apps/mobile && flutter test -d "$(DEVICE)" integration_test/category_limit_test.dart
+	cd apps/mobile && flutter test --reporter expanded -d "$(DEVICE)" integration_test/category_limit_test.dart
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \
