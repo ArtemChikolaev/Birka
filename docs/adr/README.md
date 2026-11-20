@@ -35,4 +35,4 @@
 | [0031](0031-widgets.md) | Widgets and quick actions | accepted 2026-11-15 |
 | [0032](0032-receipts.md) | Receipts by their QR code | accepted 2026-11-15 |
 | [0033](0033-limits.md) | Monthly limits of categories | accepted 2026-11-16 |
-| [0034](0034-codex-review.md) | An advisory Codex review of pull requests | accepted 2026-11-20 |
+| [0034](0034-codex-review.md) | GitHub code review with the ChatGPT subscription | accepted 2026-11-20 |

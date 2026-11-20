@@ -157,15 +157,24 @@ Extend what exists instead of duplicating it.
   path filters on a workflow with required checks.
 - Actions in workflows are pinned by SHA with the version in a comment;
   Dependabot updates them.
-- Codex reviews pull requests that change code
-  ([ADR 0034](docs/adr/0034-codex-review.md)). Fix Important findings,
-  answer the rest and resolve every thread. The `codex-review` label asks
-  for a review of any pull request. The `codex-strong` label requests the
-  stronger reviewer. A Dart change selects it automatically.
+- Codex reviews pull requests using the maintainer's ChatGPT subscription
+  ([ADR 0034](docs/adr/0034-codex-review.md)). Address actionable findings
+  and resolve review threads before merge.
 - PR titles follow Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`);
   the description says what, why and how it was verified.
 - Code, docs, commits and comments are in English.
 - Push is not deploy: after a merge, wait for CI and check the result.
+
+## Code Review Rules
+
+- Follow changes to money from input through storage to both hosts. Check
+  integer minor units, explicit exchange-rate rounding, and civil dates at
+  month boundaries across the VM, JavaScript and WebAssembly.
+- Check that ledger writes and their outbox entries share a transaction,
+  tombstones survive, and migrations and backup restores read older data.
+- Verify that Flutter and Jaspr expose the same shared rules. Inspect the
+  actual host wiring, browser persistence and routes under the Pages base path.
+  Keep fixtures synthetic and personal records out of logs and screenshots.
 
 ## Before "done"
 
