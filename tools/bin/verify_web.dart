@@ -17,31 +17,34 @@ Future<void> main(List<String> args) async {
     return;
   }
   final [path, base, flow] = args;
-  if (!File('$path/index.html').existsSync()) {
-    stderr.writeln('Build the site first with make build-web BASE=$base');
+  final site = Directory(path);
+  final root = await Directory('build/verify-web').create(recursive: true);
+  final run = _Run(flow, base, await root.createTemp('$flow-'));
+  stdout.writeln('Verification evidence: ${run.directory.path}');
+  final buildProblem = webBuildProblem(site, base: base);
+  if (buildProblem != null) {
+    run.writeReport(error: buildProblem);
+    stderr.writeln(buildProblem);
     exitCode = 1;
     return;
   }
-  final server = await serveSite(Directory(path), base: base);
   try {
-    final origin = Uri.parse('http://localhost:${server.port}$base');
-    final root = await Directory('build/verify-web').create(recursive: true);
-    final run = _Run(flow, origin, await root.createTemp('$flow-'));
-    stdout.writeln('Verification evidence: ${run.directory.path}');
+    final server = await serveSite(site, base: base);
     try {
+      run.origin = Uri.parse('http://localhost:${server.port}$base');
       await flows[flow]!(run);
-    } on Object catch (error) {
-      try {
-        run.writeReport(error: error);
-      } on FileSystemException catch (writeError) {
-        stderr.writeln('Could not write the failure report: $writeError');
-      }
-      rethrow;
+    } finally {
+      await server.close(force: true);
     }
-    run.writeReport();
-  } finally {
-    await server.close(force: true);
+  } on Object catch (error) {
+    try {
+      run.writeReport(error: error);
+    } on FileSystemException catch (writeError) {
+      stderr.writeln('Could not write the failure report: $writeError');
+    }
+    rethrow;
   }
+  run.writeReport();
 }
 
 const _limitNote = 'a[href="limits/#cafe"] .limit-note';
@@ -107,17 +110,18 @@ Future<void> _statementReimport(_Run run) => run.visit((browser) async {
 
 /// One report covers a whole journey, including both profiles of a restore.
 final class _Run {
-  _Run(this.flow, this.origin, this.directory);
+  _Run(this.flow, this.base, this.directory);
 
   final String flow;
-  final Uri origin;
+  final String base;
   final Directory directory;
+  late final Uri origin;
   final observations = <Map<String, String>>[];
 
   void writeReport({Object? error}) {
     final report = {
       'flow': flow,
-      'base': origin.path,
+      'base': base,
       'status': error == null ? 'passed' : 'failed',
       'observations': observations,
       if (error != null) 'error': error.toString(),

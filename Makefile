@@ -40,7 +40,7 @@ BASE ?= /
 # The build number of the APK: CI passes the number of its run.
 BUILD_NUMBER ?= 1
 
-.PHONY: help bootstrap format analyze check-deps check-tokens check-site verify-web verify-flutter tokens \
+.PHONY: help bootstrap format analyze check-deps check-tokens doctor-web check-site verify-web verify-flutter tokens \
 	gen icons icon-masters web-fonts test test-core test-database test-tools \
 	test-design test-features test-web test-mobile run-mobile run-web build-web \
 	build-apk check
@@ -162,6 +162,9 @@ build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 		! -name 'design_*' -exec rm -rf {} +
 	find apps/web/build/jaspr/packages -name '*.json' -delete
 	rm -rf apps/web/build/jaspr/.dart_tool apps/web/build/jaspr/.build.manifest
+
+doctor-web: ## Check the built site's base and required browser files before opening Chrome
+	dart run birka_tools:check_site --build-only apps/web/build/jaspr "$(BASE)"
 
 check-site: ## Every page of the built site opens in Chrome without errors; BASE as in build-web
 	dart run birka_tools:check_site apps/web/build/jaspr $(BASE)

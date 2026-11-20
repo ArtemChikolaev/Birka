@@ -100,6 +100,7 @@ make test-core COMPILER=dart2wasm   # core tests in Chrome via WebAssembly
 make run-mobile                     # the Flutter app on macOS
 make run-web                        # the site on localhost:8080
 make build-web check-site           # every page of the built site in Chrome
+make doctor-web                     # inspect the current build; use BASE=/Birka/ for a Pages build
 make verify-web FLOW=category-limit # record two expenses on the built site and reload
 make verify-web FLOW=backup-roundtrip # save a ledger and restore the download in a fresh browser
 make verify-web FLOW=statement-reimport # import the same CSV twice and check the account
@@ -109,6 +110,9 @@ make tokens                         # regenerate the design tokens
 ```
 
 Each `verify-web` run prints its own directory under `build/verify-web/`.
+It checks the generated HTML base path, JavaScript client, database worker
+and SQLite WebAssembly file before opening Chrome. `check-site` runs the
+same check. Use `doctor-web` to run just that part with the build's `BASE`.
 Open `report.json` for the outcome and the text Chrome read on each page.
 If a journey fails while its tab is open, look next to the report for
 `failure.png`. The Web CI job publishes these files in the

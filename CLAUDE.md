@@ -178,6 +178,10 @@ Extend what exists instead of duplicating it.
 
 ## Before "done"
 
+For a change to a mapped user journey, follow the
+[verification guide](.agents/skills/verify-birka/SKILL.md). It links each
+journey to its command and explains how to investigate a failed run.
+
 Run `make check`. After changes in core packages also run
 `make test-core COMPILER=dart2js` and `make test-core COMPILER=dart2wasm`.
 After changes on the site also run `make build-web` and `make check-site`.
