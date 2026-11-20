@@ -40,7 +40,7 @@ BASE ?= /
 # The build number of the APK: CI passes the number of its run.
 BUILD_NUMBER ?= 1
 
-.PHONY: help bootstrap format analyze check-deps check-tokens check-site tokens \
+.PHONY: help bootstrap format analyze check-deps check-tokens check-site verify-web tokens \
 	gen icons icon-masters web-fonts test test-core test-database test-tools \
 	test-design test-features test-web test-mobile run-mobile run-web build-web \
 	build-apk check
@@ -165,6 +165,9 @@ build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 
 check-site: ## Every page of the built site opens in Chrome without errors; BASE as in build-web
 	dart run birka_tools:check_site apps/web/build/jaspr $(BASE)
+
+verify-web: ## Exercise a user flow on the built site (FLOW=category-limit, BASE as in build-web)
+	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)"
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \

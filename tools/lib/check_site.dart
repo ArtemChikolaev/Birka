@@ -65,15 +65,7 @@ Future<List<SiteProblem>> checkPages(
   Duration patience = const Duration(seconds: 30),
   String? beforePage,
 }) async {
-  final chrome = await Chrome.startWithDebugPort(const [
-    'about:blank',
-  ], headless: true);
-  try {
-    final tab = await chrome.chromeConnection.getTab(
-      (tab) => tab.type == 'page',
-      retryFor: const Duration(seconds: 5),
-    );
-    final connection = await tab!.connect();
+  return withSiteTab((connection) async {
     final reports = <String>[];
     final listening = [
       connection.runtime.onConsoleAPICalled
@@ -108,8 +100,26 @@ Future<List<SiteProblem>> checkPages(
       ]);
     }
     await Future.wait(listening.map((listener) => listener.cancel()));
-    await connection.close();
     return problems;
+  });
+}
+
+/// Runs [visit] in a fresh headless browser with its own profile.
+Future<T> withSiteTab<T>(Future<T> Function(WipConnection) visit) async {
+  final chrome = await Chrome.startWithDebugPort(const [
+    'about:blank',
+  ], headless: true);
+  try {
+    final tab = await chrome.chromeConnection.getTab(
+      (tab) => tab.type == 'page',
+      retryFor: const Duration(seconds: 5),
+    );
+    final connection = await tab!.connect();
+    try {
+      return await visit(connection);
+    } finally {
+      await connection.close();
+    }
   } finally {
     await chrome.close();
   }
