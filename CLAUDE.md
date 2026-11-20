@@ -153,18 +153,28 @@ Extend what exists instead of duplicating it.
   and pull requests from anyone else also need the owner's approval
   ([ADR 0004](docs/adr/0004-branches-and-releases.md)).
 - The only required check is `All checks` in `ci.yml`. Add every new CI job
-  to its `needs`, keep the advisory Claude review out of it, and never put
+  to its `needs`, keep the advisory Codex review out of it, and never put
   path filters on a workflow with required checks.
 - Actions in workflows are pinned by SHA with the version in a comment;
   Dependabot updates them.
-- Claude reviews pull requests that change code
-  ([ADR 0005](docs/adr/0005-claude-review.md)). Fix Important findings,
-  answer the rest and resolve every thread. The `claude-review` label asks
-  for a review of any pull request, `claude-opus` for a stronger model.
+- Codex reviews pull requests using the maintainer's ChatGPT subscription
+  ([ADR 0034](docs/adr/0034-codex-review.md)). Address actionable findings
+  and resolve review threads before merge.
 - PR titles follow Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`);
   the description says what, why and how it was verified.
 - Code, docs, commits and comments are in English.
 - Push is not deploy: after a merge, wait for CI and check the result.
+
+## Code Review Rules
+
+- Follow changes to money from input through storage to both hosts. Check
+  integer minor units, explicit exchange-rate rounding, and civil dates at
+  month boundaries across the VM, JavaScript and WebAssembly.
+- Check that ledger writes and their outbox entries share a transaction,
+  tombstones survive, and migrations and backup restores read older data.
+- Verify that Flutter and Jaspr expose the same shared rules. Inspect the
+  actual host wiring, browser persistence and routes under the Pages base path.
+  Keep fixtures synthetic and personal records out of logs and screenshots.
 
 ## Before "done"
 
