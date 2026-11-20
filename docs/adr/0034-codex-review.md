@@ -12,14 +12,27 @@ repository requires no OpenAI API key, copied CLI login or self-hosted runner.
    GitHub to Codex. Grant the GitHub integration access to
    `ArtemChikolaev/Birka`.
 2. Open [Code review settings](https://chatgpt.com/settings/code-review),
-   select Birka, and enable **Automatic review** under **Review code**. For
-   a personal repository, choose whose PRs should be reviewed and the
-   opening/ready trigger if available. When the repository follows personal
-   preferences, enable **Automatic review** in personal preferences too.
+   select Birka, and set **Automatic code review** to **All PRs**. Choose
+   **On PR open** as the trigger. Keep **Use credits for reviews** off to
+   stay within the plan's allowance.
 3. On an existing PR, post `@codex review` from the connected GitHub
    account. An eyes reaction acknowledges the request. Verify that Codex
    subsequently posts its result. Repeat the command to request another pass
    after a fix.
+
+## Review status in CI
+
+The `Codex review` commit status links to the hosted review summary. A
+GitHub Actions workflow on the default branch mirrors the connector bot's
+summary when it is created or edited. A running review shows as pending.
+A completed review with open findings shows as a failure, and a completed
+review with no open findings shows as a success. The status belongs to the
+commit Codex reviewed. After pushing a fix, request another review to get
+a status on the new commit.
+
+The workflow reads the connector's versioned summary comment. If the format
+changes, inspect the workflow run and the original summary. The status is
+advisory and stays outside the required `All checks` job.
 
 ## Project rules and routing
 
