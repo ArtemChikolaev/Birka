@@ -1,0 +1,37 @@
+{
+  "format": "birka-copy",
+  "version": 12,
+  "madeAt": "2026-11-18T09:00:00Z",
+  "accounts": [
+    {
+      "id": "rub",
+      "createdAt": "2026-11-18T09:00:00Z",
+      "updatedAt": "2026-11-18T09:00:00Z",
+      "name": "Ruble card",
+      "type": "debit",
+      "currency": "RUB",
+      "decimalDigits": 2,
+      "openingBalanceMinor": 1000000,
+      "art": "emerald",
+      "includeInTotals": true,
+      "archived": false,
+      "sortOrder": 0
+    },
+    {
+      "id": "usd",
+      "createdAt": "2026-11-18T09:00:00Z",
+      "updatedAt": "2026-11-18T09:00:00Z",
+      "name": "Dollar card",
+      "type": "debit",
+      "currency": "USD",
+      "decimalDigits": 2,
+      "openingBalanceMinor": 2000,
+      "art": "emerald",
+      "includeInTotals": true,
+      "archived": false,
+      "sortOrder": 1
+    }
+  ],
+  "categories": [],
+  "transactions": []
+}

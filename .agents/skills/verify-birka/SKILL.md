@@ -1,6 +1,6 @@
 ---
 name: verify-birka
-description: Verify category limits and quick-add spending in Flutter or the built website, and backup transfers and duplicate CSV imports on the web. Use when a change affects one of these journeys.
+description: Verify category limits and quick-add spending in Flutter or the built website, and cross-currency transfers, backup restores and duplicate CSV imports on the web. Use when a change affects one of these journeys.
 ---
 
 Choose the affected host and journey in the [feature map](references/feature-map.md).

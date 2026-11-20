@@ -77,6 +77,9 @@ jobs:
       - name: Verify duplicate detection on a repeated CSV import
         if: ${{ !cancelled() && steps.smoke.outcome == 'success' }}
         run: make verify-web FLOW=statement-reimport BASE=/${{ github.event.repository.name }}/
+      - name: Verify both balances after a cross-currency transfer
+        if: ${{ !cancelled() && steps.smoke.outcome == 'success' }}
+        run: make verify-web FLOW=currency-transfer BASE=/${{ github.event.repository.name }}/
       - name: Upload web verification reports and failure screenshots
         if: ${{ !cancelled() && steps.smoke.outcome == 'success' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
