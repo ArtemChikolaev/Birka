@@ -31,3 +31,8 @@ Run `make verify-flutter FLOW=category-limit` on macOS, or select a device with
 the device's current month, taps through Overview, Limits and quick add, then
 unmounts Birka, closes the database and reopens it. The Flutter Limits row
 shortens the final label to **₽1 over**. The test deletes its temporary ledger.
+
+To run on a GitHub-hosted Mac, use **Actions → Verify Flutter → Run workflow**
+and select a revision, or add the `verify-flutter` label to a PR. Download
+`flutter-category-limit` from the run. Its report identifies the tested
+commit and records the preview, saved values and the value after reopening.
