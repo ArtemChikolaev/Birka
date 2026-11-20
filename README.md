@@ -124,8 +124,9 @@ and Android ones start the device if none is running.
 
 For a hosted macOS run, open **Actions → Verify Flutter → Run workflow**.
 Select the branch or enter a commit SHA. On a pull request, adding the
-`verify-flutter` label tests its current head. Remove and reapply the label
-to request another run. Download `flutter-category-limit` from that run for
+`verify-flutter` label includes the native journey in the required CI checks
+for the current head and subsequent pushes while the label is present.
+Download `flutter-category-limit` from that run for
 the tested commit, the displayed amounts and the result after reopening SQLite.
 
 ## Contributing

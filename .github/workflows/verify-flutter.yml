@@ -7,21 +7,24 @@ on:
         description: Optional commit SHA (defaults to the selected branch or tag)
         type: string
         required: false
-  pull_request:
-    types: [labeled]
+  workflow_call:
+    inputs:
+      commit:
+        description: PR head to verify
+        type: string
+        required: true
 
 permissions:
   contents: read
 
 jobs:
   category-limit:
-    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'verify-flutter'
     runs-on: macos-15
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.commit || github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.commit || github.sha }}
           persist-credentials: false
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
