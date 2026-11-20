@@ -12,7 +12,9 @@ the same base path.
 make build-web BASE=/Birka/
 ```
 
-Report the first failed step or the values read back from the app. For
-loading or routing changes also run `make check-site BASE=/Birka/`. When a
+Report the first failed step or the values read back from the app. For web
+runs, read `report.json` in the printed directory or the CI `web-verification`
+artifact. Inspect `failure.png` when Chrome captured the failing page.
+For loading or routing changes also run `make check-site BASE=/Birka/`. When a
 change affects a mapped entry point, file format or expected result, drive
 the affected journey and update its card in the same PR.

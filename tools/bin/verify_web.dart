@@ -25,7 +25,20 @@ Future<void> main(List<String> args) async {
   final server = await serveSite(Directory(path), base: base);
   try {
     final origin = Uri.parse('http://localhost:${server.port}$base');
-    await flows[flow]!(origin);
+    final root = await Directory('build/verify-web').create(recursive: true);
+    final run = _Run(flow, origin, await root.createTemp('$flow-'));
+    stdout.writeln('Verification evidence: ${run.directory.path}');
+    try {
+      await flows[flow]!(run);
+    } on Object catch (error) {
+      try {
+        run.writeReport(error: error);
+      } on FileSystemException catch (writeError) {
+        stderr.writeln('Could not write the failure report: $writeError');
+      }
+      rethrow;
+    }
+    run.writeReport();
   } finally {
     await server.close(force: true);
   }
@@ -34,9 +47,7 @@ Future<void> main(List<String> args) async {
 const _limitNote = 'a[href="limits/#cafe"] .limit-note';
 final _fixture = File('tools/fixtures/category-limit.json');
 
-Future<void> _categoryLimit(Uri origin) => _visit(origin, 'category-limit', (
-  browser,
-) async {
+Future<void> _categoryLimit(_Run run) => run.visit((browser) async {
   await browser.restore(_fixture);
   await browser.open('overview/');
   await browser.click('a[href="limits/"]', 'All limits · 1');
@@ -54,17 +65,16 @@ Future<void> _categoryLimit(Uri origin) => _visit(origin, 'category-limit', (
   stdout.writeln('category-limit: persisted ₽1 over the limit after reload');
 });
 
-Future<void> _backupRoundtrip(Uri origin) async {
-  const flow = 'backup-roundtrip';
+Future<void> _backupRoundtrip(_Run run) async {
   final downloads = await Directory.systemTemp.createTemp('birka-backup-');
   try {
-    final copy = await _visit(origin, flow, (browser) async {
+    final copy = await run.visit((browser) async {
       await browser.restore(_fixture);
       await browser.spend('150', 'Cafe: ₽1,700 of ₽12,000 left');
       return browser.saveCopy(downloads);
     });
     // Start another Chrome only after the source browser and its profile close.
-    await _visit(origin, flow, (browser) async {
+    await run.visit((browser) async {
       await browser.restore(copy);
       await browser.reload();
       await browser.open('accounts/#card');
@@ -77,41 +87,77 @@ Future<void> _backupRoundtrip(Uri origin) async {
   }
 }
 
-Future<void> _statementReimport(Uri origin) =>
-    _visit(origin, 'statement-reimport', (browser) async {
-      await browser.restore(_fixture);
-      final csv = File('tools/fixtures/statement-reimport.csv');
-      const amounts = ['−₽10,150', '−₽250', '+₽1,000'];
-      await browser.planImport(csv);
-      await browser.click('button', 'Import 2 operations');
-      await browser.expect('.import-done__title', 'Added 2 operations');
-      await browser.open('accounts/#card');
-      await browser.checkAccount('₽10,600', amounts);
+Future<void> _statementReimport(_Run run) => run.visit((browser) async {
+  await browser.restore(_fixture);
+  final csv = File('tools/fixtures/statement-reimport.csv');
+  const amounts = ['−₽10,150', '−₽250', '+₽1,000'];
+  await browser.planImport(csv);
+  await browser.click('button', 'Import 2 operations');
+  await browser.expect('.import-done__title', 'Added 2 operations');
+  await browser.open('accounts/#card');
+  await browser.checkAccount('₽10,600', amounts);
 
-      await browser.planImport(csv);
-      await browser.expect('h2', '2 operations are already in the ledger');
-      await browser.expect('button:disabled', 'Nothing to add');
-      await browser.open('accounts/#card');
-      await browser.reload();
-      await browser.checkAccount('₽10,600', amounts);
-    });
-
-Future<T> _visit<T>(
-  Uri origin,
-  String flow,
-  Future<T> Function(_Browser) visit,
-) => withSiteTab((tab) async {
-  final browser = _Browser(tab, origin, flow);
-  await browser.prepare();
-  return visit(browser);
+  await browser.planImport(csv);
+  await browser.expect('h2', '2 operations are already in the ledger');
+  await browser.expect('button:disabled', 'Nothing to add');
+  await browser.open('accounts/#card');
+  await browser.reload();
+  await browser.checkAccount('₽10,600', amounts);
 });
 
+/// One report covers a whole journey, including both profiles of a restore.
+final class _Run {
+  _Run(this.flow, this.origin, this.directory);
+
+  final String flow;
+  final Uri origin;
+  final Directory directory;
+  final observations = <Map<String, String>>[];
+
+  void writeReport({Object? error}) {
+    final report = {
+      'flow': flow,
+      'base': origin.path,
+      'status': error == null ? 'passed' : 'failed',
+      'observations': observations,
+      if (error != null) 'error': error.toString(),
+    };
+    File('${directory.path}/report.json').writeAsStringSync(
+      '${const JsonEncoder.withIndent('  ').convert(report)}\n',
+    );
+  }
+
+  Future<T> visit<T>(Future<T> Function(_Browser) journey) =>
+      withSiteTab((tab) async {
+        try {
+          final browser = _Browser(tab, this);
+          await browser.prepare();
+          return await journey(browser);
+        } on Object {
+          await captureFailure(tab);
+          rethrow;
+        }
+      });
+
+  // The failing tab is available only until withSiteTab closes its profile.
+  Future<void> captureFailure(WipConnection tab) async {
+    try {
+      final image = await tab.page
+          .sendCommand('Page.captureScreenshot')
+          .timeout(const Duration(seconds: 5));
+      final png = base64Decode(image.result!['data'] as String);
+      await File('${directory.path}/failure.png').writeAsBytes(png);
+    } on Object catch (error) {
+      stderr.writeln('Could not capture the failing page: $error');
+    }
+  }
+}
+
 final class _Browser {
-  _Browser(this.tab, this.origin, this.flow);
+  _Browser(this.tab, this.run);
 
   final WipConnection tab;
-  final Uri origin;
-  final String flow;
+  final _Run run;
 
   Future<void> prepare() async {
     await tab.page.enable();
@@ -182,7 +228,7 @@ final class _Browser {
       if (files.isNotEmpty) return File(files.single.path);
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
-    throw StateError('$flow: no .birka download after saving the copy');
+    throw StateError('${run.flow}: no .birka download after saving the copy');
   }
 
   Future<void> planImport(File csv) async {
@@ -218,7 +264,7 @@ final class _Browser {
   }
 
   Future<void> open(String page) async {
-    await tab.page.navigate(origin.resolve(page).toString());
+    await tab.page.navigate(run.origin.resolve(page).toString());
   }
 
   Future<void> spend(String amount, String preview) async {
@@ -236,10 +282,8 @@ final class _Browser {
     );
   }
 
-  Future<void> expect(String selector, String text) async {
-    await _wait(text, _element(selector, text, click: false));
-    stdout.writeln('Observed $text');
-  }
+  Future<void> expect(String selector, String text) =>
+      _wait(text, _element(selector, text, click: false));
 
   Future<void> click(String selector, [String? text]) =>
       _wait('click ${text ?? selector}', _element(selector, text, click: true));
@@ -251,8 +295,11 @@ final class _Browser {
         .find(e => e.checkVisibility() && (${!click} || !e.disabled) &&
           (${text == null} || e.innerText.trim().toLowerCase() === ${jsonEncode(text?.toLowerCase())}));
       if (!element) return false;
-      ${click ? 'element.click();' : ''}
-      return true;
+      if ($click) {
+        element.click();
+        return true;
+      }
+      return {page: location.pathname + location.hash, text: element.innerText.trim()};
     })()
   ''';
 
@@ -264,12 +311,20 @@ final class _Browser {
         returnByValue: true,
       );
       if (result.value == true) return;
+      if (result.value case {
+        'page': final String page,
+        'text': final String text,
+      }) {
+        run.observations.add({'page': page, 'text': text});
+        stdout.writeln('Observed $text');
+        return;
+      }
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     final state = await tab.runtime.evaluate(
       r"location.href + '\n' + document.body.innerText.slice(-1600)",
       returnByValue: true,
     );
-    throw StateError('$flow failed at "$step"\n${state.value}');
+    throw StateError('${run.flow} failed at "$step"\n${state.value}');
   }
 }

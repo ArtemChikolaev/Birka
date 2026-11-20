@@ -108,6 +108,12 @@ make build-apk                      # a release APK for Android
 make tokens                         # regenerate the design tokens
 ```
 
+Each `verify-web` run prints its own directory under `build/verify-web/`.
+Open `report.json` for the outcome and the text Chrome read on each page.
+If a journey fails while its tab is open, look next to the report for
+`failure.png`. The Web CI job publishes these files in the
+`web-verification` artifact for seven days.
+
 In VS Code, Run and Debug has a configuration for the site, for macOS, the iOS
 simulator and the Android emulator, and one that starts all three apps. The iOS
 and Android ones start the device if none is running.
