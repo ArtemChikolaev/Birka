@@ -6,12 +6,16 @@ import 'package:webkit_inspection_protocol/webkit_inspection_protocol.dart';
 
 /// Exercises a named flow on a static build served under its real base path.
 Future<void> main(List<String> args) async {
-  if (args.length != 3 || args.last != 'category-limit') {
-    stderr.writeln('Usage: make verify-web FLOW=category-limit');
+  const flows = {
+    'category-limit': _categoryLimit,
+    'backup-roundtrip': _backupRoundtrip,
+  };
+  if (args.length != 3 || !flows.containsKey(args.last)) {
+    stderr.writeln('Usage: make verify-web FLOW=<${flows.keys.join('|')}>');
     exitCode = 64;
     return;
   }
-  final [path, base, _] = args;
+  final [path, base, flow] = args;
   if (!File('$path/index.html').existsSync()) {
     stderr.writeln('Build the site first with make build-web BASE=$base');
     exitCode = 1;
@@ -20,20 +24,76 @@ Future<void> main(List<String> args) async {
   final server = await serveSite(Directory(path), base: base);
   try {
     final origin = Uri.parse('http://localhost:${server.port}$base');
-    await withSiteTab((tab) => _CategoryLimit(tab, origin).run());
+    await flows[flow]!(origin);
   } finally {
     await server.close(force: true);
   }
 }
 
-final class _CategoryLimit {
-  _CategoryLimit(this.tab, this.origin);
+const _limitNote = 'a[href="limits/#cafe"] .limit-note';
+final _fixture = File('tools/fixtures/category-limit.json');
+
+Future<void> _categoryLimit(Uri origin) => _visit(origin, 'category-limit', (
+  browser,
+) async {
+  await browser.restore(_fixture);
+  await browser.open('overview/');
+  await browser.click('a[href="limits/"]', 'All limits · 1');
+  await browser.expect(_limitNote, '₽1,850 left');
+
+  await browser.spend('1850', 'Cafe: ₽0 of ₽12,000 left');
+  await browser.open('limits/');
+  await browser.expect(_limitNote, '₽0 left');
+
+  await browser.spend('1', 'Cafe: ₽1 over the limit');
+  await browser.open('limits/');
+  await browser.expect(_limitNote, '₽1 over the limit');
+  await browser.reload();
+  await browser.expect(_limitNote, '₽1 over the limit');
+  stdout.writeln('category-limit: persisted ₽1 over the limit after reload');
+});
+
+Future<void> _backupRoundtrip(Uri origin) async {
+  const flow = 'backup-roundtrip';
+  final downloads = await Directory.systemTemp.createTemp('birka-backup-');
+  try {
+    final copy = await _visit(origin, flow, (browser) async {
+      await browser.restore(_fixture);
+      await browser.spend('150', 'Cafe: ₽1,700 of ₽12,000 left');
+      return browser.saveCopy(downloads);
+    });
+    // Start another Chrome only after the source browser and its profile close.
+    await _visit(origin, flow, (browser) async {
+      await browser.restore(copy);
+      await browser.reload();
+      await browser.open('accounts/#card');
+      await browser.checkAccount('₽9,700', ['−₽10,150', '−₽150']);
+      await browser.open('limits/');
+      await browser.expect(_limitNote, '₽1,700 left');
+    });
+  } finally {
+    await downloads.delete(recursive: true);
+  }
+}
+
+Future<T> _visit<T>(
+  Uri origin,
+  String flow,
+  Future<T> Function(_Browser) visit,
+) => withSiteTab((tab) async {
+  final browser = _Browser(tab, origin, flow);
+  await browser.prepare();
+  return visit(browser);
+});
+
+final class _Browser {
+  _Browser(this.tab, this.origin, this.flow);
 
   final WipConnection tab;
   final Uri origin;
-  static const note = 'a[href="limits/#cafe"] .limit-note';
+  final String flow;
 
-  Future<void> run() async {
+  Future<void> prepare() async {
     await tab.page.enable();
     // Keep the civil day in the fixture's month while timers and animations
     // still advance normally. This is confined to the temporary tab.
@@ -51,14 +111,26 @@ final class _CategoryLimit {
       ''',
       },
     );
-    await _open('data/');
+  }
+
+  Future<void> restore(File file) async {
+    await open('data/');
+    await chooseFile('Restore from a copy', file);
+    await click('button', 'Replace the records');
+    await _wait(
+      'restored synthetic ledger',
+      "document.body.innerText.includes('Records restored from the copy')",
+    );
+  }
+
+  Future<void> chooseFile(String label, File file) async {
     await tab.page.sendCommand(
       'Page.setInterceptFileChooserDialog',
       params: {'enabled': true},
     );
-    await _click('button', 'Restore from a copy');
+    await click('button', label);
     await _wait(
-      'restore file chooser',
+      'file chooser for $label',
       "!!document.querySelector('input[type=file]')",
     );
     final input = await tab.runtime.evaluate(
@@ -68,68 +140,86 @@ final class _CategoryLimit {
       'DOM.setFileInputFiles',
       params: {
         'objectId': input.objectId,
-        'files': [File('tools/fixtures/category-limit.json').absolute.path],
+        'files': [file.absolute.path],
       },
     );
-    await _click('button', 'Replace the records');
+  }
+
+  Future<File> saveCopy(Directory downloads) async {
+    await open('data/');
+    await tab.sendCommand('Browser.setDownloadBehavior', {
+      'behavior': 'allow',
+      'downloadPath': downloads.path,
+    });
+    await click('button', 'Save a copy');
+    // Chrome drops the .crdownload suffix when the write is complete.
+    final watch = Stopwatch()..start();
+    while (watch.elapsed < const Duration(seconds: 15)) {
+      final files = await downloads
+          .list()
+          .where((entry) => entry.path.endsWith('.birka'))
+          .toList();
+      if (files.isNotEmpty) return File(files.single.path);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    throw StateError('$flow: no .birka download after saving the copy');
+  }
+
+  Future<void> checkAccount(String balance, List<String> amounts) async {
+    await expect('.account-card .amount', balance);
+    const rows = '.account__operations a .amount';
+    for (final amount in amounts) {
+      await expect(rows, amount);
+    }
     await _wait(
-      'restored synthetic ledger',
-      "document.body.innerText.includes('Records restored from the copy')",
+      '${amounts.length} operation rows',
+      'document.querySelectorAll(${jsonEncode(rows)}).length'
+          ' === ${amounts.length}',
     );
-    await _open('overview/');
-    await _click('a[href="limits/"]', 'All limits · 1');
-    await _expect(note, '₽1,850 left');
+  }
 
-    await _spend('1850', 'Cafe: ₽0 of ₽12,000 left');
-    await _open('limits/');
-    await _expect(note, '₽0 left');
-
-    await _spend('1', 'Cafe: ₽1 over the limit');
-    await _open('limits/');
-    await _expect(note, '₽1 over the limit');
+  Future<void> reload() async {
     // Wait for a new document so the existing row cannot satisfy the reload.
-    await tab.runtime.evaluate('window.beforeLimitReload = true');
+    await tab.runtime.evaluate('window.beforeJourneyReload = true');
     await tab.page.reload(ignoreCache: true);
     await _wait(
       'new document after reload',
-      'window.beforeLimitReload !== true',
+      'window.beforeJourneyReload !== true',
     );
-    await _expect(note, '₽1 over the limit');
-    stdout.writeln('category-limit: persisted ₽1 over the limit after reload');
   }
 
-  Future<void> _open(String page) async {
+  Future<void> open(String page) async {
     await tab.page.navigate(origin.resolve(page).toString());
   }
 
-  Future<void> _spend(String amount, String preview) async {
-    await _open('operations/');
-    await _click('a[href="operations/#new"]');
-    await _click('.quick-add button', 'Cafe');
+  Future<void> spend(String amount, String preview) async {
+    await open('operations/');
+    await click('a[href="operations/#new"]');
+    await click('.quick-add button', 'Cafe');
     for (final digit in amount.split('')) {
-      await _click('.quick-add button', digit);
+      await click('.quick-add button', digit);
     }
-    await _expect('.quick-add__limit', preview);
-    await _click('.quick-add button', 'Save · Cafe');
+    await expect('.quick-add__limit', preview);
+    await click('.quick-add button', 'Save · Cafe');
     await _wait(
       'saved expense of ₽$amount',
       "location.hash === '' && !document.querySelector('.quick-add')",
     );
   }
 
-  Future<void> _expect(String selector, String text) async {
+  Future<void> expect(String selector, String text) async {
     await _wait(text, _element(selector, text, click: false));
     stdout.writeln('Observed $text');
   }
 
-  Future<void> _click(String selector, [String? text]) =>
+  Future<void> click(String selector, [String? text]) =>
       _wait('click ${text ?? selector}', _element(selector, text, click: true));
 
   String _element(String selector, String? text, {required bool click}) =>
       '''
     (() => {
       const element = Array.from(document.querySelectorAll(${jsonEncode(selector)}))
-        .find(e => e.checkVisibility() && !e.disabled &&
+        .find(e => e.checkVisibility() && (${!click} || !e.disabled) &&
           (${text == null} || e.innerText.trim().toLowerCase() === ${jsonEncode(text?.toLowerCase())}));
       if (!element) return false;
       ${click ? 'element.click();' : ''}
@@ -151,6 +241,6 @@ final class _CategoryLimit {
       r"location.href + '\n' + document.body.innerText.slice(-1600)",
       returnByValue: true,
     );
-    throw StateError('category-limit failed at "$step"\n${state.value}');
+    throw StateError('$flow failed at "$step"\n${state.value}');
   }
 }
