@@ -66,13 +66,26 @@ jobs:
       - name: Fail if the generated Jaspr options are stale
         run: git diff --exit-code -- apps/web/lib
       - name: Fail if a page of the site reports an error
+        id: smoke
         run: make check-site BASE=/${{ github.event.repository.name }}/
       - name: Verify that category limits survive a reload
         run: make verify-web FLOW=category-limit BASE=/${{ github.event.repository.name }}/
       - name: Restore a downloaded backup in a fresh browser
+        if: ${{ !cancelled() && steps.smoke.outcome == 'success' }}
         run: make verify-web FLOW=backup-roundtrip BASE=/${{ github.event.repository.name }}/
       - name: Verify duplicate detection on a repeated CSV import
+        if: ${{ !cancelled() && steps.smoke.outcome == 'success' }}
         run: make verify-web FLOW=statement-reimport BASE=/${{ github.event.repository.name }}/
+      - name: Upload web verification reports and failure screenshots
+        if: ${{ !cancelled() && steps.smoke.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: web-verification
+          path: |
+            build/verify-web/*/report.json
+            build/verify-web/*/failure.png
+          if-no-files-found: error
+          retention-days: 7
       - if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
