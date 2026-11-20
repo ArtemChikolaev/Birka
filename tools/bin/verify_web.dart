@@ -8,6 +8,7 @@ import 'package:webkit_inspection_protocol/webkit_inspection_protocol.dart';
 Future<void> main(List<String> args) async {
   const flows = {
     'category-limit': _categoryLimit,
+    'currency-transfer': _currencyTransfer,
     'backup-roundtrip': _backupRoundtrip,
     'statement-reimport': _statementReimport,
   };
@@ -66,6 +67,35 @@ Future<void> _categoryLimit(_Run run) => run.visit((browser) async {
   await browser.reload();
   await browser.expect(_limitNote, '₽1 over the limit');
   stdout.writeln('category-limit: persisted ₽1 over the limit after reload');
+});
+
+Future<void> _currencyTransfer(_Run run) => run.visit((browser) async {
+  await browser.restore(File('tools/fixtures/currency-transfer.json'));
+  await browser.open('accounts/#rub');
+  await browser.checkAccount('₽10,000', []);
+  await browser.open('accounts/#usd');
+  await browser.checkAccount(r'$20', []);
+
+  await browser.newOperation();
+  await browser.click('.glass-segmented button', 'Transfer');
+  await browser.click('.quick-add__targets button', 'Dollar card');
+  await browser.click('.quick-add__line span', 'Leaves');
+  await browser.typeAmount('1234.56');
+  await browser.expect('.quick-add__line--active .amount', '₽1,234.56');
+  await browser.click('.quick-add__line span', 'Arrives');
+  await browser.typeAmount('12.34');
+  await browser.expect('.quick-add__line--active .amount', r'$12.34');
+  await browser.saveOperation('Dollar card');
+
+  await browser.open('accounts/#rub');
+  await browser.reload();
+  await browser.checkAccount('₽8,765.44', ['−₽1,234.56']);
+  await browser.open('accounts/#usd');
+  await browser.reload();
+  await browser.checkAccount(r'$32.34', [r'+$12.34']);
+  await browser.click('.account__operations a');
+  await browser.expect('.operation__title', 'Transfer');
+  await browser.expect('.operation__summary .amount', r'₽1,234.56 → $12.34');
 });
 
 Future<void> _backupRoundtrip(_Run run) async {
@@ -272,16 +302,28 @@ final class _Browser {
   }
 
   Future<void> spend(String amount, String preview) async {
+    await newOperation();
+    await click('.quick-add button', 'Cafe');
+    await typeAmount(amount);
+    await expect('.quick-add__limit', preview);
+    await saveOperation('Cafe');
+  }
+
+  Future<void> newOperation() async {
     await open('operations/');
     await click('a[href="operations/#new"]');
-    await click('.quick-add button', 'Cafe');
-    for (final digit in amount.split('')) {
-      await click('.quick-add button', digit);
+  }
+
+  Future<void> typeAmount(String amount) async {
+    for (final key in amount.split('')) {
+      await click('.glass-keypad button', key);
     }
-    await expect('.quick-add__limit', preview);
-    await click('.quick-add button', 'Save · Cafe');
+  }
+
+  Future<void> saveOperation(String target) async {
+    await click('.quick-add button', 'Save · $target');
     await _wait(
-      'saved expense of ₽$amount',
+      'saved operation for $target',
       "location.hash === '' && !document.querySelector('.quick-add')",
     );
   }

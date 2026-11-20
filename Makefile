@@ -169,7 +169,7 @@ doctor-web: ## Check the built site's base and required browser files before ope
 check-site: ## Every page of the built site opens in Chrome without errors; BASE as in build-web
 	dart run birka_tools:check_site apps/web/build/jaspr $(BASE)
 
-verify-web: ## Exercise category-limit, backup-roundtrip or statement-reimport (FLOW, BASE as in build-web)
+verify-web: ## Exercise category-limit, currency-transfer, backup-roundtrip or statement-reimport (FLOW, BASE as in build-web)
 	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)"
 
 verify-flutter: ## Exercise category-limit in the native Flutter app (DEVICE defaults to macos)
