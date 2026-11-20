@@ -54,7 +54,11 @@ String deviceLanguage() => PlatformDispatcher.instance.locale.languageCode;
 Future<bool> openLedger(GetIt getIt, SettingsStore settings) async {
   await getIt.reset();
   final name = databaseNameIn(settings);
-  registerDependencies(getIt, settings, databaseName: name);
+  registerDependencies(
+    getIt,
+    settings,
+    BirkaDatabase(driftDatabase(name: name)),
+  );
   await settleDemo(
     settings,
     getIt<LedgerRepository>(),
@@ -65,14 +69,13 @@ Future<bool> openLedger(GetIt getIt, SettingsStore settings) async {
 }
 
 /// Puts the objects of the app into [getIt]: the one place that knows every
-/// implementation (ADR 0006). The database [databaseName] opens on its first
+/// implementation (ADR 0006). The [database] opens on its first
 /// query, and [settings] are already open, because the language comes first.
 void registerDependencies(
   GetIt getIt,
-  SettingsStore settings, {
-  required String databaseName,
-}) {
-  final database = BirkaDatabase(driftDatabase(name: databaseName));
+  SettingsStore settings,
+  BirkaDatabase database,
+) {
   final ledger = LedgerRepository(database);
   final rates = RatesRepository(database);
   final kept = Settings.readFrom(settings);

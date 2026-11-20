@@ -109,6 +109,8 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
   money:
     path: ../../packages/core/money
 
