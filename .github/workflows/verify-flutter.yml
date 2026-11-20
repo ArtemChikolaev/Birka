@@ -1,0 +1,55 @@
+name: Verify Flutter
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: Optional commit SHA (defaults to the selected branch or tag)
+        type: string
+        required: false
+  workflow_call:
+    inputs:
+      commit:
+        description: PR head to verify
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  category-limit:
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.commit || github.sha }}
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version-file: .fvmrc
+          cache: true
+      - run: flutter pub get
+      - name: Check the limit in the macOS app and reopen its ledger
+        id: verify
+        shell: bash
+        run: |
+          mkdir -p build/verify-flutter
+          {
+            echo "Commit $(git rev-parse HEAD)"
+            if make verify-flutter FLOW=category-limit DEVICE=macos; then
+              echo "Result: passed"
+            else
+              echo "Result: failed"
+              exit 1
+            fi
+          } 2>&1 | tee build/verify-flutter/report.txt
+      - name: Save the native verification report
+        if: ${{ !cancelled() && (steps.verify.outcome == 'success' || steps.verify.outcome == 'failure') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: flutter-category-limit
+          path: build/verify-flutter/report.txt
+          if-no-files-found: error
+          retention-days: 7

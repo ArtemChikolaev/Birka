@@ -71,7 +71,13 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    Future<void> openLimits(String expected) async {
+    Future<void> observe(Finder label, String step) async {
+      await waitFor(label);
+      final text = tester.widget<Text>(label);
+      debugPrint('$step: ${text.data ?? text.textSpan!.toPlainText()}');
+    }
+
+    Future<void> openLimits(String expected, String step) async {
       final link = find.text('All limits · 1');
       await tester.scrollUntilVisible(
         link.hitTestable(),
@@ -80,11 +86,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tapVisible(link);
-      await waitFor(
+      await observe(
         find.descendant(
           of: find.byType(LimitsPage),
           matching: find.text(expected),
         ),
+        step,
       );
     }
 
@@ -104,7 +111,7 @@ void main() {
         );
         await tester.pump();
       }
-      await waitFor(find.text(preview));
+      await observe(find.text(preview), 'Quick-add preview');
       await tapVisible(find.text('SAVE · CAFE'));
       await waitFor(find.bySemanticsLabel('New operation').hitTestable());
     }
@@ -139,17 +146,17 @@ void main() {
       );
       await tester.pumpWidget(BirkaApp(getIt: getIt));
       await tester.pumpAndSettle();
-      await openLimits('₽1,850 left');
+      await openLimits('₽1,850 left', 'Starting limit');
       await spend('1850', 'Cafe: ₽0 of ₽12,000 left');
-      await openLimits('₽0 left');
+      await openLimits('₽0 left', 'After saving ₽1,850');
       await spend('1', 'Cafe: ₽1 over the limit');
-      await openLimits('₽1 over');
+      await openLimits('₽1 over', 'After saving ₽1');
       await closeApp();
 
       openDatabase();
       await tester.pumpWidget(BirkaApp(getIt: getIt));
       await tester.pumpAndSettle();
-      await openLimits('₽1 over');
+      await openLimits('₽1 over', 'After reopening SQLite');
     } finally {
       try {
         await closeApp();
