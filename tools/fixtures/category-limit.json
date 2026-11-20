@@ -1,0 +1,69 @@
+{
+  "format": "birka-copy",
+  "version": 12,
+  "madeAt": "2026-11-18T09:00:00Z",
+  "accounts": [
+    {
+      "id": "card",
+      "createdAt": "2026-11-18T09:00:00Z",
+      "updatedAt": "2026-11-18T09:00:00Z",
+      "name": "Test card",
+      "type": "debit",
+      "currency": "RUB",
+      "decimalDigits": 2,
+      "openingBalanceMinor": 2000000,
+      "art": "emerald",
+      "includeInTotals": true,
+      "archived": false,
+      "sortOrder": 0
+    }
+  ],
+  "categories": [
+    {
+      "id": "cafe",
+      "createdAt": "2026-11-18T09:00:00Z",
+      "updatedAt": "2026-11-18T09:00:00Z",
+      "name": "Cafe",
+      "kind": "expense",
+      "icon": "cup",
+      "archived": false,
+      "sortOrder": 0,
+      "limit": {
+        "minor": 1200000,
+        "currency": "RUB",
+        "decimalDigits": 2,
+        "warn": true
+      }
+    }
+  ],
+  "transactions": [
+    {
+      "id": "lunch",
+      "createdAt": "2026-11-18T09:00:00Z",
+      "updatedAt": "2026-11-18T09:00:00Z",
+      "kind": "expense",
+      "occurredOn": "2026-11-18",
+      "note": "",
+      "status": "cleared",
+      "source": "manual",
+      "entries": [
+        {
+          "id": "e1",
+          "createdAt": "2026-11-18T09:00:00Z",
+          "updatedAt": "2026-11-18T09:00:00Z",
+          "accountId": "card",
+          "amountMinor": -1015000
+        }
+      ],
+      "allocations": [
+        {
+          "id": "a1",
+          "createdAt": "2026-11-18T09:00:00Z",
+          "updatedAt": "2026-11-18T09:00:00Z",
+          "categoryId": "cafe",
+          "amountMinor": 1015000
+        }
+      ]
+    }
+  ]
+}

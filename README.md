@@ -100,6 +100,7 @@ make test-core COMPILER=dart2wasm   # core tests in Chrome via WebAssembly
 make run-mobile                     # the Flutter app on macOS
 make run-web                        # the site on localhost:8080
 make build-web check-site           # every page of the built site in Chrome
+make verify-web FLOW=category-limit # record two expenses on the built site and reload
 make build-apk                      # a release APK for Android
 make tokens                         # regenerate the design tokens
 ```
