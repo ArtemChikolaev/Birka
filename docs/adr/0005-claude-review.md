@@ -1,6 +1,6 @@
 # ADR 0005 — An advisory Claude review of pull requests
 
-**Status:** accepted 2026-10-30.
+**Status:** superseded by [ADR 0034](0034-codex-review.md).
 
 ## Context
 

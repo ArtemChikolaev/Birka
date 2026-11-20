@@ -153,14 +153,15 @@ Extend what exists instead of duplicating it.
   and pull requests from anyone else also need the owner's approval
   ([ADR 0004](docs/adr/0004-branches-and-releases.md)).
 - The only required check is `All checks` in `ci.yml`. Add every new CI job
-  to its `needs`, keep the advisory Claude review out of it, and never put
+  to its `needs`, keep the advisory Codex review out of it, and never put
   path filters on a workflow with required checks.
 - Actions in workflows are pinned by SHA with the version in a comment;
   Dependabot updates them.
-- Claude reviews pull requests that change code
-  ([ADR 0005](docs/adr/0005-claude-review.md)). Fix Important findings,
-  answer the rest and resolve every thread. The `claude-review` label asks
-  for a review of any pull request, `claude-opus` for a stronger model.
+- Codex reviews pull requests that change code
+  ([ADR 0034](docs/adr/0034-codex-review.md)). Fix Important findings,
+  answer the rest and resolve every thread. The `codex-review` label asks
+  for a review of any pull request. The `codex-strong` label requests the
+  stronger reviewer. A Dart change selects it automatically.
 - PR titles follow Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`);
   the description says what, why and how it was verified.
 - Code, docs, commits and comments are in English.
