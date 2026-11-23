@@ -146,7 +146,9 @@ jobs:
     name: Deploy to GitHub Pages
     # Publishes the site that the web job built, once every check of main has
     # passed (ADR 0008).
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    # The optional native job is skipped on main. Use the aggregate result
+    # explicitly so that the skipped ancestor does not suppress publication.
+    if: ${{ !cancelled() && needs.all-checks.result == 'success' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
     needs: all-checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
