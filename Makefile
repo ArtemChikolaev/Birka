@@ -156,7 +156,11 @@ run-web: ## Serve the site on localhost:8080, rebuilt on every change
 	cd apps/web && dart run jaspr_cli:jaspr serve --release
 
 build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
-	cd apps/web && dart run jaspr_cli:jaspr build --dart-define=BASE_PATH=$(BASE)
+	@set -e; revision=$$(git rev-parse --verify HEAD 2>/dev/null) || revision=unknown; \
+		changes=$$(git status --porcelain 2>/dev/null) || revision=unknown; \
+		if [ -n "$$changes" ]; then revision="$$revision-dirty"; fi; \
+		cd apps/web && dart run jaspr_cli:jaspr build --dart-define=BASE_PATH=$(BASE) \
+			--dart-define="BIRKA_BUILD=$$revision@$$(date -u +%Y%m%dT%H%M%SZ)"
 	# The build copies the assets of every package; the site needs only these.
 	find apps/web/build/jaspr/packages -mindepth 1 -maxdepth 1 \
 		! -name 'design_*' -exec rm -rf {} +
@@ -169,8 +173,8 @@ doctor-web: ## Check the built site's base and required browser files before ope
 check-site: ## Every page of the built site opens in Chrome without errors; BASE as in build-web
 	dart run birka_tools:check_site apps/web/build/jaspr $(BASE)
 
-verify-web: ## Exercise category-limit, currency-transfer, backup-roundtrip or statement-reimport (FLOW, BASE as in build-web)
-	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)"
+verify-web: ## Exercise a built web journey (FLOW, matching BASE, optional WIDTH in CSS pixels)
+	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)" $(if $(WIDTH),"$(WIDTH)")
 
 verify-flutter: ## Exercise category-limit in the native Flutter app (DEVICE defaults to macos)
 	@test "$(FLOW)" = category-limit || { echo 'Usage: make verify-flutter FLOW=category-limit'; exit 64; }

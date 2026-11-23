@@ -36,3 +36,12 @@ To run on a GitHub-hosted Mac, use **Actions → Verify Flutter → Run workflow
 and select a revision, or add the `verify-flutter` label to a PR. Download
 `flutter-category-limit` from the run. Its report identifies the tested
 commit and records the preview, saved values and the value after reopening.
+
+## Sources and callers
+
+[ADR 0033](../../../../docs/adr/0033-limits.md) sets the thresholds.
+[LimitProgress, limitShare and limitStateOf](../../../../packages/core/rates/lib/src/limits.dart)
+compute the share and state. Follow the progress into the
+[Flutter overview](../../../../packages/features/limits/flutter/lib/src/presentation/widgets/limits_overview_part.dart)
+and the shared calculation into the
+[Jaspr limit form](../../../../packages/features/limits/jaspr/lib/src/presentation/pages/limit_form_page.dart).

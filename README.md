@@ -104,7 +104,7 @@ make doctor-web                     # inspect the current build; use BASE=/Birka
 make verify-web FLOW=category-limit # record two expenses on the built site and reload
 make verify-web FLOW=backup-roundtrip # save a ledger and restore the download in a fresh browser
 make verify-web FLOW=statement-reimport # import the same CSV twice and check the account
-make verify-web FLOW=currency-transfer # transfer between RUB and USD and reopen both accounts
+make verify-web FLOW=currency-transfer # verify the transfer at 390 and 1440 CSS pixels
 make verify-flutter FLOW=category-limit # run the same limit journey in the native macOS app
 make build-apk                      # a release APK for Android
 make tokens                         # regenerate the design tokens
@@ -114,7 +114,16 @@ Each `verify-web` run prints its own directory under `build/verify-web/`.
 It checks the generated HTML base path, JavaScript client, database worker
 and SQLite WebAssembly file before opening Chrome. `check-site` runs the
 same check. Use `doctor-web` to run just that part with the build's `BASE`.
-Open `report.json` for the outcome and the text Chrome read on each page.
+The transfer runs in fresh profiles at 390 × 844 and 1440 × 844. It checks
+where the form opened, then reads both balances after reloading. Other journeys
+default to 390 × 844. Use `WIDTH=1440` on a verification command to run one
+width. Clicks scroll the control into view and use a point it can receive.
+
+Open each `report.json` for the requested width, measured viewport, outcome
+and text Chrome read on each page. Its `buildId` comes from the site's HTML.
+`make build-web` embeds the source commit and UTC build time, with `-dirty`
+when the checkout has local changes. An older or unstamped build reports
+`null`; a failure before Chrome opens has a null viewport.
 If a journey fails while its tab is open, look next to the report for
 `failure.png`. The Web CI job publishes these files in the
 `web-verification` artifact for seven days.
