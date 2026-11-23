@@ -410,6 +410,7 @@ final class _Browser {
           (${text == null} || e.innerText.trim().toLowerCase() === ${jsonEncode(text?.toLowerCase())}));
       if (!element) return false;
       if ($click) {
+        if (document.fonts.status === 'loading') return false;
         element.scrollIntoView({block: 'center', inline: 'center', behavior: 'instant'});
         const box = element.getBoundingClientRect();
         // A sticky bar can cover the center but leave an edge reachable.
@@ -425,12 +426,22 @@ final class _Browser {
 
   Future<void> _wait(String step, String expression) async {
     final watch = Stopwatch()..start();
+    ({num x, num y})? previousPoint;
     while (watch.elapsed < const Duration(seconds: 15)) {
       final result = await tab.runtime.evaluate(
         expression,
         returnByValue: true,
       );
       if (result.value case {'x': final num x, 'y': final num y}) {
+        // A scroll or an island finishing its layout can move a visible link
+        // between the hit test and the mouse press. Sample its position again
+        // before the one click, including for actions that save money.
+        final point = (x: x, y: y);
+        if (previousPoint != point) {
+          previousPoint = point;
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+          continue;
+        }
         for (final type in ['mousePressed', 'mouseReleased']) {
           await tab.sendCommand('Input.dispatchMouseEvent', {
             'type': type,
@@ -443,6 +454,7 @@ final class _Browser {
         }
         return;
       }
+      previousPoint = null;
       if (result.value == true) return;
       if (result.value case {
         'page': final String page,
