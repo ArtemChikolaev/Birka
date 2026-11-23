@@ -176,11 +176,15 @@ check-site: ## Every page of the built site opens in Chrome without errors; BASE
 verify-web: ## Exercise a built web journey (FLOW, matching BASE, optional WIDTH in CSS pixels)
 	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)" $(if $(WIDTH),"$(WIDTH)")
 
-verify-flutter: ## Exercise a native journey (DEVICE defaults to macos; backup-roundtrip requires macos)
+ifeq ($(FLOW),statement-reimport)
+# Include the shared synthetic file only in this integration build.
+verify-flutter: STATEMENT_ARG = --dart-define="BIRKA_TEST_STATEMENT_BASE64=$$(base64 < ../../tools/fixtures/statement-reimport.csv | tr -d '\n')"
+endif
+verify-flutter: ## Exercise a native journey (DEVICE defaults to macos; file journeys require macos)
 	@case "$(FLOW)" in category-limit|currency-transfer) ;; \
-		backup-roundtrip) test "$(DEVICE)" = macos || { echo 'backup-roundtrip requires DEVICE=macos'; exit 64; } ;; \
-		*) echo 'Usage: make verify-flutter FLOW=category-limit|currency-transfer|backup-roundtrip'; exit 64 ;; esac
-	cd apps/mobile && flutter test --reporter expanded -d "$(DEVICE)" "integration_test/$(subst -,_,$(FLOW))_test.dart"
+		backup-roundtrip|statement-reimport) test "$(DEVICE)" = macos || { echo '$(FLOW) requires DEVICE=macos'; exit 64; } ;; \
+		*) echo 'Usage: make verify-flutter FLOW=category-limit|currency-transfer|backup-roundtrip|statement-reimport'; exit 64 ;; esac
+	cd apps/mobile && flutter test --reporter expanded $(STATEMENT_ARG) -d "$(DEVICE)" "integration_test/$(subst -,_,$(FLOW))_test.dart"
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \

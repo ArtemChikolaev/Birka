@@ -1,16 +1,15 @@
 import 'dart:io';
 
 import 'package:backup_flutter/backup_flutter.dart';
-import 'package:design_flutter/design_flutter.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
-import 'package:transactions_flutter/transactions_flutter.dart';
 
+import 'account_journey.dart';
 import 'cafe_journey.dart';
+import 'mac_file_panels.dart';
 import 'native_journey.dart';
 
 void main() {
@@ -19,33 +18,17 @@ void main() {
   testWidgets('a saved file replaces another ledger and survives reopening', (
     tester,
   ) async {
-    // macOS panels return paths. The registered file picker still writes and
-    // reads the bytes on disk, and Birka opens its real confirmation sheet.
-    expect(Platform.isMacOS, isTrue, reason: 'This journey uses macOS panels');
     final folder = await Directory.systemTemp.createTemp('birka-backup-file-');
     addTearDown(() => folder.delete(recursive: true));
-    const panel = MethodChannel('miguelruivo.flutter.plugins.filepicker');
-    final messenger = tester.binding.defaultBinaryMessenger;
     late File copy;
-    messenger.setMockMethodCallHandler(panel, (call) async {
-      switch (call.method) {
-        case 'save':
-          final arguments = call.arguments as Map<Object?, Object?>;
-          final name = arguments['fileName']! as String;
-          expect(name, matches(RegExp(r'^birka-\d{4}-\d{2}-\d{2}\.birka$')));
-          copy = File.fromUri(folder.uri.resolve(name));
-          return copy.path;
-        case 'any':
-          return [
-            {'path': copy.path, 'size': await copy.length()},
-          ];
-        default:
-          throw UnsupportedError(
-            'Unexpected file picker method ${call.method}',
-          );
-      }
-    });
-    addTearDown(() => messenger.setMockMethodCallHandler(panel, null));
+    useMacFilePanels(
+      tester,
+      open: () => copy,
+      save: (name) {
+        expect(name, matches(RegExp(r'^birka-\d{4}-\d{2}-\d{2}\.birka$')));
+        return copy = File.fromUri(folder.uri.resolve(name));
+      },
+    );
 
     await withNativeLedger(
       tester,
@@ -122,31 +105,11 @@ void main() {
         await tester.waitForOne(find.text('Test card'));
         expect(find.text(marker), findsNothing);
         await tester.tapVisible(find.text('Test card'));
-        final page = find.byType(AccountPage);
-        final card = find.descendant(
-          of: page,
-          matching: find.byType(AccountCard),
+        await checkAccountHistory(
+          tester,
+          balance: '₽9,700',
+          amounts: ['−₽10,150', '−₽150'],
         );
-        await tester.observeText(
-          find.descendant(of: card, matching: find.text('₽9,700')),
-          'Reopened balance',
-        );
-        final rows = find.descendant(
-          of: page,
-          matching: find.byType(OperationRow),
-        );
-        for (final amount in ['−₽10,150', '−₽150']) {
-          final label = find.descendant(of: rows, matching: find.text(amount));
-          await tester.scrollUntilVisible(
-            label.hitTestable(),
-            160,
-            scrollable: find
-                .descendant(of: page, matching: find.byType(Scrollable))
-                .first,
-          );
-          await tester.observeText(label, 'Restored expense');
-        }
-        expect(rows, findsNWidgets(2));
       },
     );
   });
