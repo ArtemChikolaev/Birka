@@ -1,4 +1,6 @@
-# Move a ledger to another browser
+# Move a ledger using a saved copy
+
+## Web
 
 Start with the category-limit fixture in a fresh Chrome profile. Test card
 opens with ₽20,000, Cafe has a ₽12,000 limit and one expense of ₽10,150.
@@ -14,6 +16,23 @@ The harness keeps both profiles in November 2026 so they show that month.
 
 The new expense distinguishes the downloaded copy from the starting fixture.
 The verifier removes its temporary downloads when it finishes.
+
+## Flutter on macOS
+
+Run `make verify-flutter FLOW=backup-roundtrip`. The source ledger starts
+with the same synthetic amounts in the current month. Enter ₽150 through
+quick add, open More → Data and save a copy. The test supplies the paths
+normally returned by the macOS panels. The registered file picker writes
+and reads the actual `.birka` file.
+
+The source database closes before a separate destination opens. Its only
+account is **Destination only**. In Data, choose the saved file and cancel
+the replacement. Check that the original account is still there. Choose
+the same file again and confirm **Replace the records**. After reopening
+the destination database, Test card must show ₽9,700 and both expenses.
+On Limits, Cafe must show ₽1,700 remaining.
+The destination-only account must be gone. The CI report is
+`flutter-backup-roundtrip`.
 
 ## Sources and callers
 

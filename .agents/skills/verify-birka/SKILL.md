@@ -1,12 +1,13 @@
 ---
 name: verify-birka
-description: Verify category limits, quick-add spending and cross-currency transfers in Flutter or the built website, and backup restores and duplicate CSV imports on the web. Use when a change affects one of these journeys.
+description: Verify category limits, quick-add spending, cross-currency transfers and backup restores in Flutter or the built website, and repeated CSV imports on the web. Use when a change affects one of these journeys.
 ---
 
 Choose the affected host and journey in the [feature map](references/feature-map.md).
 Before changing the behavior, follow the card to the decision, shared rule
 and its callers in both hosts. Reuse the rule at that boundary.
-For Flutter, run the mapped command on macOS or pass a device ID. For the
+For Flutter, run the mapped command on macOS. Limits and transfers also
+accept a native device ID. The backup journey uses the macOS file picker. For the
 website, build the current checkout once, then run the mapped command with
 the same base path.
 
