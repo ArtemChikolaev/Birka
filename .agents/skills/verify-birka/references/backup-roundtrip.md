@@ -14,3 +14,13 @@ The harness keeps both profiles in November 2026 so they show that month.
 
 The new expense distinguishes the downloaded copy from the starting fixture.
 The verifier removes its temporary downloads when it finishes.
+
+## Sources and callers
+
+[ADR 0016](../../../../docs/adr/0016-ledger-copy.md) defines replacement and compatibility.
+[LedgerCopy](../../../../packages/core/ledger/lib/src/ledger_copy.dart) handles the copy format.
+[BackupCubit](../../../../packages/features/backup/common/lib/src/presentation/backup_cubit.dart)
+drives the save and restore actions on the
+[Flutter Data page](../../../../packages/features/backup/flutter/lib/src/presentation/pages/backup_page.dart)
+and the
+[Jaspr Data page](../../../../packages/features/backup/jaspr/lib/src/presentation/pages/backup_page.dart).

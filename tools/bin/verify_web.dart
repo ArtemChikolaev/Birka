@@ -2,50 +2,74 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:birka_tools/check_site.dart';
+import 'package:html/parser.dart' as html;
 import 'package:webkit_inspection_protocol/webkit_inspection_protocol.dart';
+
+const _flows = <String, Future<void> Function(_Run)>{
+  'category-limit': _categoryLimit,
+  'currency-transfer': _currencyTransfer,
+  'backup-roundtrip': _backupRoundtrip,
+  'statement-reimport': _statementReimport,
+};
+
+/// Names accepted by the web verification command.
+Iterable<String> get webFlowNames => _flows.keys;
 
 /// Exercises a named flow on a static build served under its real base path.
 Future<void> main(List<String> args) async {
-  const flows = {
-    'category-limit': _categoryLimit,
-    'currency-transfer': _currencyTransfer,
-    'backup-roundtrip': _backupRoundtrip,
-    'statement-reimport': _statementReimport,
-  };
-  if (args.length != 3 || !flows.containsKey(args.last)) {
-    stderr.writeln('Usage: make verify-web FLOW=<${flows.keys.join('|')}>');
+  final width = args.length == 4 ? int.tryParse(args.last) : null;
+  if (args.length < 3 ||
+      args.length > 4 ||
+      !_flows.containsKey(args[2]) ||
+      (args.length == 4 && (width == null || width < 1 || width > 10000000))) {
+    stderr.writeln(
+      'Usage: make verify-web FLOW=<${webFlowNames.join('|')}> '
+      '[WIDTH=<pixels>]',
+    );
     exitCode = 64;
     return;
   }
-  final [path, base, flow] = args;
-  final site = Directory(path);
+  final site = Directory(args[0]);
+  final base = args[1];
+  final flow = args[2];
+  final widths = width != null
+      ? [width]
+      : [390, if (flow == 'currency-transfer') 1440];
   final root = await Directory('build/verify-web').create(recursive: true);
-  final run = _Run(flow, base, await root.createTemp('$flow-'));
-  stdout.writeln('Verification evidence: ${run.directory.path}');
-  final buildProblem = webBuildProblem(site, base: base);
-  if (buildProblem != null) {
-    run.writeReport(error: buildProblem);
-    stderr.writeln(buildProblem);
-    exitCode = 1;
-    return;
-  }
-  try {
-    final server = await serveSite(site, base: base);
+  for (final width in widths) {
+    final run = _Run(
+      flow,
+      base,
+      width,
+      await root.createTemp('$flow-${width}px-'),
+    );
+    stdout.writeln('Verification evidence: ${run.directory.path}');
     try {
-      run.origin = Uri.parse('http://localhost:${server.port}$base');
-      await flows[flow]!(run);
-    } finally {
-      await server.close(force: true);
-    }
-  } on Object catch (error) {
-    try {
+      final index = File('${site.path}/index.html');
+      if (index.existsSync()) {
+        run.buildId = html
+            .parse(await index.readAsString())
+            .head
+            ?.querySelector('meta[name="birka-build"]')
+            ?.attributes['content'];
+      }
+      final problem = webBuildProblem(site, base: base);
+      if (problem != null) throw StateError(problem);
+      final server = await serveSite(site, base: base);
+      try {
+        run.origin = Uri.parse('http://localhost:${server.port}$base');
+        await _flows[flow]!(run);
+      } finally {
+        await server.close(force: true);
+      }
+    } on Object catch (error) {
       run.writeReport(error: error);
-    } on FileSystemException catch (writeError) {
-      stderr.writeln('Could not write the failure report: $writeError');
+      stderr.writeln(error);
+      exitCode = 1;
+      continue;
     }
-    rethrow;
+    run.writeReport();
   }
-  run.writeReport();
 }
 
 const _limitNote = 'a[href="limits/#cafe"] .limit-note';
@@ -77,6 +101,7 @@ Future<void> _currencyTransfer(_Run run) => run.visit((browser) async {
   await browser.checkAccount(r'$20', []);
 
   await browser.newOperation();
+  await browser.checkTransferLayout();
   await browser.click('.glass-segmented button', 'Transfer');
   await browser.click('.quick-add__targets button', 'Dollar card');
   await browser.click('.quick-add__line span', 'Leaves');
@@ -140,11 +165,14 @@ Future<void> _statementReimport(_Run run) => run.visit((browser) async {
 
 /// One report covers a whole journey, including both profiles of a restore.
 final class _Run {
-  _Run(this.flow, this.base, this.directory);
+  _Run(this.flow, this.base, this.width, this.directory);
 
   final String flow;
   final String base;
+  final int width;
   final Directory directory;
+  String? buildId;
+  Map<String, int>? viewport;
   late final Uri origin;
   final observations = <Map<String, String>>[];
 
@@ -152,6 +180,9 @@ final class _Run {
     final report = {
       'flow': flow,
       'base': base,
+      'buildId': buildId,
+      'requestedWidth': width,
+      'viewport': viewport,
       'status': error == null ? 'passed' : 'failed',
       'observations': observations,
       if (error != null) 'error': error.toString(),
@@ -195,6 +226,26 @@ final class _Browser {
 
   Future<void> prepare() async {
     await tab.page.enable();
+    const height = 844;
+    await tab.sendCommand('Emulation.setDeviceMetricsOverride', {
+      'width': run.width,
+      'height': height,
+      'deviceScaleFactor': 1,
+      'mobile': false,
+    });
+    final size = await tab.runtime.evaluate(
+      '[innerWidth, innerHeight]',
+      returnByValue: true,
+    );
+    if (size.value case [final int width, final int actualHeight]) {
+      run.viewport = {'width': width, 'height': actualHeight};
+    }
+    if (run.viewport?['width'] != run.width ||
+        run.viewport?['height'] != height) {
+      throw StateError(
+        'Requested ${run.width} × $height, Chrome reported ${size.value}',
+      );
+    }
     // Keep the civil day in the fixture's month while timers and animations
     // still advance normally. This is confined to the temporary tab.
     await tab.page.sendCommand(
@@ -314,6 +365,23 @@ final class _Browser {
     await click('a[href="operations/#new"]');
   }
 
+  Future<void> checkTransferLayout() async {
+    // ADR 0008 puts the form beside the list from 901 CSS pixels.
+    final wide = run.width >= 901;
+    final layout = wide ? 'form beside the list' : 'form in place of the list';
+    await _wait(layout, '''
+      (() => {
+        const form = document.querySelector('.quick-add');
+        const list = document.querySelector('.operations__tools');
+        if (!form?.checkVisibility()) return false;
+        const beside = list?.checkVisibility() &&
+          list.getBoundingClientRect().right <= form.getBoundingClientRect().left;
+        if (${wide ? '!beside' : 'list?.checkVisibility()'}) return false;
+        return {page: location.pathname + location.hash, text: '$layout'};
+      })()
+    ''');
+  }
+
   Future<void> typeAmount(String amount) async {
     for (final key in amount.split('')) {
       await click('.glass-keypad button', key);
@@ -342,8 +410,14 @@ final class _Browser {
           (${text == null} || e.innerText.trim().toLowerCase() === ${jsonEncode(text?.toLowerCase())}));
       if (!element) return false;
       if ($click) {
-        element.click();
-        return true;
+        element.scrollIntoView({block: 'center', inline: 'center', behavior: 'instant'});
+        const box = element.getBoundingClientRect();
+        // A sticky bar can cover the center but leave an edge reachable.
+        for (const [fx, fy] of [[.5,.5], [.25,.5], [.75,.5], [.5,.25], [.5,.75]]) {
+          const x = box.left + box.width * fx, y = box.top + box.height * fy;
+          if (element.contains(document.elementFromPoint(x, y))) return {x, y};
+        }
+        return false;
       }
       return {page: location.pathname + location.hash, text: element.innerText.trim()};
     })()
@@ -356,6 +430,19 @@ final class _Browser {
         expression,
         returnByValue: true,
       );
+      if (result.value case {'x': final num x, 'y': final num y}) {
+        for (final type in ['mousePressed', 'mouseReleased']) {
+          await tab.sendCommand('Input.dispatchMouseEvent', {
+            'type': type,
+            'x': x,
+            'y': y,
+            'button': 'left',
+            'buttons': type == 'mousePressed' ? 1 : 0,
+            'clickCount': 1,
+          });
+        }
+        return;
+      }
       if (result.value == true) return;
       if (result.value case {
         'page': final String page,

@@ -20,7 +20,11 @@ void main() {
       base: _basePath,
       // The glow of the backdrop goes under the bars of a phone.
       viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
-      meta: {'description': HomeRoute.tagline},
+      meta: {
+        'description': HomeRoute.tagline,
+        if (bool.hasEnvironment('BIRKA_BUILD'))
+          'birka-build': String.fromEnvironment('BIRKA_BUILD'),
+      },
       head: [
         ...birkaHead,
         link(rel: 'icon', type: 'image/png', href: 'favicon.png'),

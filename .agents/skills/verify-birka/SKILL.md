@@ -4,6 +4,8 @@ description: Verify category limits and quick-add spending in Flutter or the bui
 ---
 
 Choose the affected host and journey in the [feature map](references/feature-map.md).
+Before changing the behavior, follow the card to the decision, shared rule
+and its callers in both hosts. Reuse the rule at that boundary.
 For Flutter, run the mapped command on macOS or pass a device ID. For the
 website, build the current checkout once, then run the mapped command with
 the same base path.
@@ -12,7 +14,9 @@ the same base path.
 make build-web BASE=/Birka/
 ```
 
-Report the first failed step or the values read back from the app. For web
+For a transfer, the default command covers both supported test layouts.
+To repeat either one, pass its width with `WIDTH=390` or `WIDTH=1440`.
+Report the build ID, actual viewport and first failed step or observed values. For web
 runs, read `report.json` in the printed directory or the CI `web-verification`
 artifact. Inspect `failure.png` when Chrome captured the failing page.
 For loading or routing changes also run `make check-site BASE=/Birka/`. When a
@@ -28,6 +32,10 @@ the affected journey and update its card in the same PR.
    the screenshot to reproduce the symptom with the same fixture. Follow
    the value from the screen to the host or shared ledger until you find
    the first point where it differs from the scenario card.
-3. For a regression, capture that difference in a focused failing test.
-   After the fix, repeat the test and the original journey with a fresh
-   build. Cite the two outcomes and the new report in the PR.
+3. For a regression, run a focused test through the public action on the
+   old behavior. Record which assertion failed and the observed value.
+   A setup or compilation failure calls for correcting the test setup first.
+   Run the same test with the same expectations and fixtures on the fix.
+   If an expectation changes, explain its source and repeat the baseline.
+   Rebuild, repeat the original journey and link the report for that build
+   alongside the two test outcomes in the PR.
