@@ -106,6 +106,7 @@ make verify-web FLOW=backup-roundtrip # save a ledger and restore the download i
 make verify-web FLOW=statement-reimport # import the same CSV twice and check the account
 make verify-web FLOW=currency-transfer # verify the transfer at 390 and 1440 CSS pixels
 make verify-flutter FLOW=category-limit # run the same limit journey in the native macOS app
+make verify-flutter FLOW=currency-transfer # reopen SQLite and read both transfer entries in Flutter
 make build-apk                      # a release APK for Android
 make tokens                         # regenerate the design tokens
 ```
@@ -134,10 +135,10 @@ and Android ones start the device if none is running.
 
 For a hosted macOS run, open **Actions → Verify Flutter → Run workflow**.
 Select the branch or enter a commit SHA. On a pull request, adding the
-`verify-flutter` label includes the native journey in the required CI checks
+`verify-flutter` label includes both native journeys in the required CI checks
 for the current head and subsequent pushes while the label is present.
-Download `flutter-category-limit` from that run for
-the tested commit, the displayed amounts and the result after reopening SQLite.
+Download `flutter-category-limit` or `flutter-currency-transfer` from that run
+for the tested commit, the displayed amounts and the result after reopening SQLite.
 
 ## Contributing
 

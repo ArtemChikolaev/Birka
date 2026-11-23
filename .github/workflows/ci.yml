@@ -122,7 +122,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  native-limits:
+  native-journeys:
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'verify-flutter')
     uses: ./.github/workflows/verify-flutter.yml
     with:
@@ -134,7 +134,7 @@ jobs:
     # skipped job as passed, so this job runs even when a job it needs fails.
     # Every new job goes into needs.
     if: always()
-    needs: [analyze, test, web, android, native-limits]
+    needs: [analyze, test, web, android, native-journeys]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

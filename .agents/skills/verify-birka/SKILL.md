@@ -1,6 +1,6 @@
 ---
 name: verify-birka
-description: Verify category limits and quick-add spending in Flutter or the built website, and cross-currency transfers, backup restores and duplicate CSV imports on the web. Use when a change affects one of these journeys.
+description: Verify category limits, quick-add spending and cross-currency transfers in Flutter or the built website, and backup restores and duplicate CSV imports on the web. Use when a change affects one of these journeys.
 ---
 
 Choose the affected host and journey in the [feature map](references/feature-map.md).
@@ -14,10 +14,9 @@ the same base path.
 make build-web BASE=/Birka/
 ```
 
-For a transfer, the default command covers both supported test layouts.
+For a web transfer, the default command covers both supported test layouts.
 To repeat either one, pass its width with `WIDTH=390` or `WIDTH=1440`.
-Report the build ID, actual viewport and first failed step or observed values. For web
-runs, read `report.json` in the printed directory or the CI `web-verification`
+For web runs, report the build ID, actual viewport and first failed step or observed values. Read `report.json` in the printed directory or the CI `web-verification`
 artifact. Inspect `failure.png` when Chrome captured the failing page.
 For loading or routing changes also run `make check-site BASE=/Birka/`. When a
 change affects a mapped entry point, file format or expected result, drive

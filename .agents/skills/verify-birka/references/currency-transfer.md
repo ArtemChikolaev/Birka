@@ -16,6 +16,16 @@ site with that base. The narrow form replaces the list at 390 × 844. At
 same fixture and produces its own report. Pass `WIDTH=390` or `WIDTH=1440`
 to reproduce a single layout.
 
+## Flutter
+
+Run `make verify-flutter FLOW=currency-transfer` on macOS or pass a native
+device ID as `DEVICE`. The test seeds the same two opening balances in a
+temporary SQLite ledger, checks both accounts, then enters both amounts with
+the quick-add keypad. It unmounts Birka, closes the ledger and reopens it.
+It reads the balances and signed rows on both account pages, then opens the
+credit to check the operation type and the amounts. The GitHub workflow
+saves these observations and the tested commit in `flutter-currency-transfer`.
+
 ## Sources and callers
 
 [ADR 0009](../../../../docs/adr/0009-data-model.md) defines both transfer entries.
