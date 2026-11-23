@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flow: [category-limit, currency-transfer, backup-roundtrip]
+        flow: [category-limit, currency-transfer, backup-roundtrip, statement-reimport]
     runs-on: macos-15
     timeout-minutes: 35
     steps:

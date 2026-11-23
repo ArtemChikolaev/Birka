@@ -108,6 +108,7 @@ make verify-web FLOW=currency-transfer # verify the transfer at 390 and 1440 CSS
 make verify-flutter FLOW=category-limit # run the same limit journey in the native macOS app
 make verify-flutter FLOW=currency-transfer # reopen SQLite and read both transfer entries in Flutter
 make verify-flutter FLOW=backup-roundtrip # restore a saved file into a separate ledger on macOS
+make verify-flutter FLOW=statement-reimport # reopen SQLite and import the same CSV again on macOS
 make build-apk                      # a release APK for Android
 make tokens                         # regenerate the design tokens
 ```
@@ -139,8 +140,9 @@ Select the branch or enter a commit SHA. On a pull request, adding the
 `verify-flutter` label includes the native journeys in the required CI checks
 for the current head and subsequent pushes while the label is present.
 Each `flutter-<flow>` artifact records the tested commit, displayed amounts
-and result after reopening SQLite. The backup journey runs on macOS. It
-supplies paths to the file picker and lets the plugin write and read the copy.
+and result after reopening SQLite. The backup and CSV journeys supply the
+paths returned by the macOS file panels. The plugin handles file I/O, and
+both hosts use the same synthetic CSV from `tools/fixtures/`.
 
 ## Contributing
 
