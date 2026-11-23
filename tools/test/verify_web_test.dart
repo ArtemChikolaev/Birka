@@ -69,22 +69,7 @@ void main() {
     () async {
       final work = await Directory.systemTemp.createTemp('birka-evidence-');
       addTearDown(() => work.delete(recursive: true));
-      final site = Directory(p.join(work.path, 'site'));
-      await site.create();
-      await File(
-        p.join(site.path, 'index.html'),
-      ).writeAsString('<base href="/Birka/">');
-      for (final name in [
-        'main.client.dart.js',
-        'drift_worker.dart.js',
-        'sqlite3.wasm',
-      ]) {
-        await File(p.join(site.path, name)).writeAsBytes([0]);
-      }
-      final data = await File(
-        p.join(site.path, 'data', 'index.html'),
-      ).create(recursive: true);
-      await data.writeAsString('''
+      final site = await restorePage(work, '''
         <button onclick="this.textContent = 'Restore clicked'">Restore from a copy</button>
         <div style="position:fixed;inset:0;background:white">Covering panel</div>
       ''');
@@ -109,6 +94,60 @@ void main() {
     },
     timeout: const Timeout(Duration(minutes: 2)),
   );
+  test(
+    'a restore control moving after scroll receives one trusted click',
+    () async {
+      final work = await Directory.systemTemp.createTemp(
+        'birka-moving-control-',
+      );
+      addTearDown(() => work.delete(recursive: true));
+      final site = await restorePage(work, '''
+      <button id="restore" style="position:absolute;left:0;top:40px"
+        >Restore from a copy</button>
+      <p id="observed">Waiting for the restore click</p>
+      <script>
+        const button = document.querySelector('#restore');
+        const originalScroll = button.scrollIntoView.bind(button);
+        button.scrollIntoView = options => {
+          originalScroll(options);
+          delete button.scrollIntoView;
+          queueMicrotask(() => button.style.left = '200px');
+        };
+        let clicks = 0;
+        button.addEventListener('click', event => {
+          if (event.isTrusted) document.querySelector('#observed').textContent =
+            'Trusted restore clicks: ' + ++clicks;
+        });
+      </script>
+    ''');
+      // Waiting for the missing file chooser records the final page text.
+      final result = await verify(site, work, '/Birka/');
+      expect(result.exitCode, isNot(0));
+      expect(result.stderr, contains('file chooser for Restore from a copy'));
+      expect(result.stderr, contains('Trusted restore clicks: 1'));
+    },
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
+}
+
+Future<Directory> restorePage(Directory work, String body) async {
+  final site = Directory(p.join(work.path, 'site'));
+  await site.create();
+  await File(
+    p.join(site.path, 'index.html'),
+  ).writeAsString('<base href="/Birka/">');
+  for (final name in [
+    'main.client.dart.js',
+    'drift_worker.dart.js',
+    'sqlite3.wasm',
+  ]) {
+    await File(p.join(site.path, name)).writeAsBytes([0]);
+  }
+  final data = await File(
+    p.join(site.path, 'data', 'index.html'),
+  ).create(recursive: true);
+  await data.writeAsString(body);
+  return site;
 }
 
 Future<ProcessResult> verify(

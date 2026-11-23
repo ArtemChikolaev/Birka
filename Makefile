@@ -176,9 +176,10 @@ check-site: ## Every page of the built site opens in Chrome without errors; BASE
 verify-web: ## Exercise a built web journey (FLOW, matching BASE, optional WIDTH in CSS pixels)
 	dart run birka_tools:verify_web apps/web/build/jaspr "$(BASE)" "$(FLOW)" $(if $(WIDTH),"$(WIDTH)")
 
-verify-flutter: ## Exercise category-limit in the native Flutter app (DEVICE defaults to macos)
-	@test "$(FLOW)" = category-limit || { echo 'Usage: make verify-flutter FLOW=category-limit'; exit 64; }
-	cd apps/mobile && flutter test --reporter expanded -d "$(DEVICE)" integration_test/category_limit_test.dart
+verify-flutter: ## Exercise category-limit or currency-transfer in Flutter (DEVICE defaults to macos)
+	@case "$(FLOW)" in category-limit|currency-transfer) ;; \
+		*) echo 'Usage: make verify-flutter FLOW=category-limit|currency-transfer'; exit 64 ;; esac
+	cd apps/mobile && flutter test --reporter expanded -d "$(DEVICE)" "integration_test/$(subst -,_,$(FLOW))_test.dart"
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \

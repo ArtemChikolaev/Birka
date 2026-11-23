@@ -21,10 +21,14 @@ Future<void> main() async {
     'make verify-$host FLOW=([a-z0-9-]+)',
   ).allMatches(text).map((match) => match[1]!).toSet();
 
-  String commands(String workflow, String job) {
+  YamlMap jobOf(String workflow, String job) {
     final config = loadYaml(read('.github/workflows/$workflow')) as YamlMap;
     final jobs = config['jobs'] as YamlMap;
-    final steps = (jobs[job] as YamlMap)['steps'] as YamlList;
+    return jobs[job] as YamlMap;
+  }
+
+  String commands(String workflow, String job) {
+    final steps = jobOf(workflow, job)['steps'] as YamlList;
     return steps.whereType<YamlMap>().map((step) => step['run']).join('\n');
   }
 
@@ -43,13 +47,22 @@ Future<void> main() async {
   });
 
   test('the native journeys in CI match the map and the README', () {
-    final native = flows(
-      commands('verify-flutter.yml', 'category-limit'),
-      'flutter',
-    );
+    final job = jobOf('verify-flutter.yml', 'journey');
+    final matrix = (job['strategy'] as YamlMap)['matrix'] as YamlMap;
+    final native = (matrix['flow'] as YamlList).cast<String>().toSet();
     expect(native, isNotEmpty);
     expect(flows(map, 'flutter'), native);
     expect(flows(readme, 'flutter'), native);
+    for (final flow in native) {
+      final file = '${flow.replaceAll('-', '_')}_test.dart';
+      expect(
+        File(
+          p.join(root.path, 'apps/mobile/integration_test', file),
+        ).existsSync(),
+        isTrue,
+        reason: 'No device journey for $flow',
+      );
+    }
   });
 
   test(
