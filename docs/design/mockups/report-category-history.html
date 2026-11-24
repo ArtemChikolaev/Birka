@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бирка · По месяцам</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing: border-box }
+  html { color-scheme: dark }
+  body { font-family: var(--font-family-text); min-height: 100vh; background: radial-gradient(ellipse at top left, var(--color-ambient), transparent 55%), var(--color-background); }
+  main { max-width: 940px; margin: auto; padding: 24px 20px; display: grid; gap: 18px; grid-template-areas: "header" "total" "lines" "history" }
+  header, .heading, .category { display: flex; align-items: center; justify-content: space-between; gap: 12px }
+  header { grid-area: header }
+  h1 { margin: 0; font: 800 30px Manrope, sans-serif }
+  h2 { margin: 0; font-size: 13px; letter-spacing: .05em; text-transform: uppercase }
+  .muted, small { color: var(--color-text-muted) }
+  .total { grid-area: total; justify-self: center; width: 176px; height: 176px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--color-palette-green) 0 60%, var(--color-palette-amber) 60% 85%, var(--color-palette-sky) 85% 100%) }
+  .center { background: var(--color-background); border-radius: 50%; width: 144px; height: 144px; display: grid; align-content: center; justify-items: center; gap: 6px }
+  .center b { font: 800 24px Manrope, sans-serif }
+  .categories { grid-area: lines; align-self: start }
+  .category { padding: 14px 0; border-bottom: 1px solid var(--color-hairline) }
+  .category:last-child { border: 0 }
+  .category i { width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; display: inline-block }
+  .glass { padding: 16px; border-radius: 22px }
+  .history { grid-area: history; display: grid; gap: 14px }
+  select { justify-self: start; max-width: 100%; font: 600 14px Inter, sans-serif; color: var(--color-text); background: var(--color-surface-raised); border: 1px solid var(--color-glass-border); border-radius: 24px; padding: 8px 12px }
+  .bars { display: flex; gap: 8px; align-items: end }
+  .bar { flex: 1; min-width: 0; text-align: center; font-size: 12px; font-variant-numeric: tabular-nums }
+  .bar i { display: block; margin: 5px auto; width: 70%; max-width: 40px; border-radius: 6px; background: var(--color-accent-soft); border: 1px solid var(--color-accent-soft) }
+  .bar:last-child i { background: var(--color-accent) }
+  @media (min-width: 760px) {
+    main { padding-top: 48px; grid-template-columns: 1fr 1fr; grid-template-areas: "header header" "total lines" "history lines" }
+  }
+</style>
+<main>
+  <header><h1>Отчёты</h1><span class="muted">Ноябрь 2026</span></header>
+  <section class="total" aria-label="Расходы за ноябрь"><div class="center"><small>Расходы</small><b>30 000 ₽</b></div></section>
+  <section class="categories glass" aria-label="Категории за ноябрь">
+    <div class="category"><span><i style="background:var(--color-palette-green)"></i>Продукты</span><b>18 000 ₽</b></div>
+    <div class="category"><span><i style="background:var(--color-palette-amber)"></i>Кафе</span><b>7 500 ₽</b></div>
+    <div class="category"><span><i style="background:var(--color-palette-sky)"></i>Транспорт</span><b>4 500 ₽</b></div>
+  </section>
+  <section class="history glass">
+    <div class="heading"><h2>По месяцам</h2><small id="average"></small></div>
+    <select id="category" aria-label="Категория"><option>Все категории</option><option>Продукты</option><option>Кафе</option><option>Транспорт</option></select>
+    <div class="bars" id="bars" aria-live="polite"></div>
+  </section>
+</main>
+<script>
+  const series = [[10000, 14000, 12500, 17000, 15500, 18000],
+    [6000, 0, 4500, 7800, 8000, 7500], [3500, 3000, 3200, 4000, 4000, 4500]];
+  const months = ['Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя'];
+  const amount = new Intl.NumberFormat('ru');
+  function draw() {
+    const values = series[category.selectedIndex - 1] ??
+      months.map((_, i) => series.reduce((sum, row) => sum + row[i], 0));
+    const active = values.filter(value => value > 0);
+    average.textContent = 'в среднем ' + amount.format(Math.round(active.reduce((a, b) => a + b, 0) / active.length)) + ' ₽';
+    bars.replaceChildren(...values.map((value, i) => {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      const fill = document.createElement('i');
+      fill.style.height = Math.max(2, value / Math.max(...values) * 84) + 'px';
+      const label = document.createElement('small');
+      label.textContent = months[i];
+      bar.append(amount.format(value), fill, label);
+      return bar;
+    }));
+  }
+  const category = document.querySelector('select');
+  const bars = document.querySelector('#bars');
+  const average = document.querySelector('#average');
+  if (location.hash === '#cafe') category.selectedIndex = 2;
+  category.addEventListener('change', draw);
+  draw();
+</script>
+</html>

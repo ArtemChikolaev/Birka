@@ -104,6 +104,9 @@ void main() {
   final october = CivilDate(2026, 10, 1);
   final september = CivilDate(2026, 9, 1);
 
+  Finder categoryRow(String name) =>
+      find.descendant(of: find.byType(ShareLine), matching: find.text(name));
+
   late _FakeRepository repository;
   late DateTime now;
 
@@ -221,7 +224,7 @@ void main() {
     );
     await pump(tester);
 
-    expect(find.text('Без категории'), findsOneComponent);
+    expect(categoryRow('Без категории'), findsOneComponent);
     final ring =
         find.byType(BirkaRing).evaluate().single.component as BirkaRing;
     expect(ring.slices.last.color, 'var(--color-text-subtle)');
@@ -232,10 +235,10 @@ void main() {
   ) async {
     await pump(tester);
 
-    expect(find.text('Продукты'), findsOneComponent);
+    expect(categoryRow('Продукты'), findsOneComponent);
     expect(find.text('24${space}300$space₽'), findsOneComponent);
     expect(find.text('−4%'), findsOneComponent);
-    expect(find.text('Кафе'), findsOneComponent);
+    expect(categoryRow('Кафе'), findsOneComponent);
     expect(find.text('+35%'), findsOneComponent);
     final widths = stylesOf(
       'share-line__fill',
@@ -262,8 +265,8 @@ void main() {
       matching: finder,
     );
     expect(inHalf(0, find.byType(BirkaRing)), findsOneComponent);
-    expect(inHalf(0, find.text('Продукты')), findsNothing);
-    expect(inHalf(1, find.text('Продукты')), findsOneComponent);
+    expect(inHalf(0, categoryRow('Продукты')), findsNothing);
+    expect(inHalf(1, categoryRow('Продукты')), findsOneComponent);
     expect(inHalf(1, find.text('Только в этом браузере')), findsOneComponent);
   });
 
@@ -280,7 +283,7 @@ void main() {
 
     await tap(tester, 'Доходы');
 
-    expect(find.text('Зарплата'), findsOneComponent);
+    expect(categoryRow('Зарплата'), findsOneComponent);
     expect(classesOf('+5%'), contains('amount--positive'));
   });
 
@@ -307,6 +310,25 @@ void main() {
     expect(bars, hasLength(6));
     expect(bars.last.highlighted, isTrue);
     expect(bars.first.highlighted, isFalse);
+  });
+
+  testComponents('the category picker scopes the chart in the wide report', (
+    tester,
+  ) async {
+    await pump(tester, wide: true);
+    BirkaSelect<String?> picker() =>
+        find.byType(BirkaSelect<String?>).evaluate().single.component
+            as BirkaSelect<String?>;
+    picker().onChanged('Кафе');
+    await tester.pump();
+    expect(picker().selected, 'Кафе');
+    final bars =
+        (find.byType(BirkaBars).evaluate().single.component as BirkaBars).bars;
+    expect(bars.last.value, 1285000);
+    expect(find.text('в среднем 11$spaceтыс.$space₽'), findsOneComponent);
+    picker().onChanged(null);
+    await tester.pump();
+    expect(find.text('в среднем 36$spaceтыс.$space₽'), findsOneComponent);
   });
 
   testComponents('another month can be picked', (tester) async {

@@ -212,6 +212,31 @@ void main() {
     expect(bars.first.highlighted, isFalse);
   });
 
+  testWidgets('picking a category changes the bars and can be cleared', (
+    tester,
+  ) async {
+    await pump(tester);
+    await tapText(tester, 'Все категории');
+    await tester.tap(
+      find.descendant(
+        of: find.byType(ChoiceSheet),
+        matching: find.text('Кафе'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final bars = tester.widget<BirkaBars>(find.byType(BirkaBars)).bars;
+    expect(bars.last.value, 1285000);
+    expect(bars[4].value, 951900);
+    expect(find.text('в среднем 11$spaceтыс.$space₽'), findsOneWidget);
+    await tester.tap(find.widgetWithText(BirkaChip, 'Кафе'));
+    await tester.pumpAndSettle();
+    await tapText(tester, 'Все категории');
+    expect(
+      tester.widget<BirkaBars>(find.byType(BirkaBars)).bars.last.value,
+      3715000,
+    );
+  });
+
   testWidgets('another month can be picked', (tester) async {
     await pump(tester);
 

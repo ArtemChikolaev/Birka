@@ -184,7 +184,7 @@ class _ReportsPageState extends State<ReportsPage> {
             p(classes: 'text-caption reports__rate', [
               .text(t.reports.dayRates),
             ]),
-          if (ready && report.average != null) _byMonth(context, report),
+          if (ready && report.average != null) _byMonth(context, state),
         ];
         final quiet = note != null && ready
             ? p(classes: 'text-caption reports__note', [.text(note)])
@@ -276,31 +276,44 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   /// The last months as bars.
-  Component _byMonth(BuildContext context, Report report) {
-    final average = report.average!;
+  Component _byMonth(BuildContext context, ReportsState state) {
+    final history = state.history;
+    final average = history.average;
+    final selected = state.selectedHistoryCategory;
     return GlassSurface(
       child: div(classes: 'reports__months', [
         div(classes: 'reports__months-heading', [
           SectionLabel(t.reports.byMonth),
-          span(classes: 'text-caption reports__average', [
-            // A compact amount would tell its size by its word.
-            .text(
-              averageLabel(
-                HiddenAmounts.of(context)
-                    ? HiddenAmounts.mask(context, formatMoney(average))
-                    : formatCompactMoney(average),
+          if (average != null)
+            span(classes: 'text-caption reports__average', [
+              // A compact amount would tell its size by its word.
+              .text(
+                averageLabel(
+                  HiddenAmounts.of(context)
+                      ? HiddenAmounts.mask(context, formatMoney(average))
+                      : formatCompactMoney(average),
+                ),
               ),
-            ),
-          ]),
+            ]),
+        ]),
+        div([
+          BirkaSelect<String?>(
+            label: t.transactions.category,
+            options: historyCategoryLabels(state.historyCategories),
+            selected: selected,
+            pill: true,
+            onChanged: context.read<ReportsCubit>().historyCategoryChanged,
+          ),
         ]),
         BirkaBars(
+          key: ValueKey(selected),
           bars: [
-            for (final (index, month) in report.months.indexed)
+            for (final (index, month) in history.months.indexed)
               BirkaBar(
                 value: month.total.minorUnits.toDouble(),
                 amount: formatCompactFigure(month.total),
                 label: shortMonthLabel(month.month),
-                highlighted: index == report.months.length - 1,
+                highlighted: index == history.months.length - 1,
               ),
           ],
         ),

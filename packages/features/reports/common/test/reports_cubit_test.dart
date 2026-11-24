@@ -45,6 +45,52 @@ void main() {
     expect(reports.state.report.average, rub(1080));
   });
 
+  test(
+    'category history filters six budget months independently of the ring',
+    () async {
+      repository
+        ..start = 5
+        ..days[CategoryKind.expense] = [
+          testDay('Food', CivilDate(2026, 10, 4), rub(1000)),
+          testDay('Food', CivilDate(2026, 10, 5), rub(200)),
+          CategoryDayTotal(null, CivilDate(2026, 10, 6), rub(300)),
+          testDay('Travel', september, rub(700)),
+          testDay('Foreign', october, usd(500)),
+        ];
+      final cubit = await open();
+      final reads = repository.asked.length;
+      expect(
+        cubit.state.historyCategories.keys,
+        unorderedEquals(['Food', 'Travel', '']),
+      );
+      cubit.historyCategoryChanged('Food');
+      expect(cubit.state.history.months.map((bar) => bar.total.minorUnits), [
+        0,
+        0,
+        0,
+        0,
+        1000,
+        200,
+      ]);
+      expect(cubit.state.history.average, rub(600));
+      expect(cubit.state.report.total, rub(500));
+      cubit.historyCategoryChanged('Travel');
+      expect(cubit.state.history.months.last.total, rub(0));
+      expect(cubit.state.history.average, rub(700));
+      cubit.historyCategoryChanged('');
+      expect(cubit.state.history.months.last.total, rub(300));
+      cubit.historyCategoryChanged(null);
+      expect(cubit.state.history.months, cubit.state.report.months);
+      expect(repository.asked, hasLength(reads));
+
+      cubit.historyCategoryChanged('Food');
+      await cubit.kindChanged(CategoryKind.income);
+      await settle();
+      expect(cubit.state.selectedHistoryCategory, isNull);
+      expect(cubit.state.historyCategories.keys, ['Salary']);
+    },
+  );
+
   test('reads the months of the report', () async {
     await open();
 
@@ -153,6 +199,29 @@ void main() {
       expect(report.others, isEmpty);
       expect(reports.state.converted, isTrue);
     });
+
+    test(
+      'the category bars use each day’s rate and update with the ledger',
+      () async {
+        final cubit = await open();
+        cubit.historyCategoryChanged('Food');
+        expect(cubit.state.history.months.last.total, rub(16000));
+        repository.days[CategoryKind.expense]!.removeWhere(
+          (row) => row.day == monday,
+        );
+        repository.changedRows();
+        await settle();
+        expect(cubit.state.history.average, rub(9000));
+        expect(cubit.state.report.total, rub(9055));
+        repository.days[CategoryKind.expense]!.removeWhere(
+          (row) => row.category?.id == 'Food',
+        );
+        repository.changedRows();
+        await settle();
+        expect(cubit.state.selectedHistoryCategory, isNull);
+        expect(cubit.state.history.average, rub(55));
+      },
+    );
 
     test('the month bar and the month agree', () async {
       final reports = await open();

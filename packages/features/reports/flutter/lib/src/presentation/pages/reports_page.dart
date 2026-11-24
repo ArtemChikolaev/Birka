@@ -116,7 +116,7 @@ class _ReportsPageState extends State<ReportsPage> {
                             ],
                             if (report.average != null) ...[
                               gap,
-                              _Months(report: report),
+                              _Months(state: state),
                             ],
                           ],
                         },
@@ -351,15 +351,18 @@ class _RateNote extends StatelessWidget {
 
 /// The last months as bars.
 class _Months extends StatelessWidget {
-  const _Months({required this.report});
+  const _Months({required this.state});
 
-  final Report report;
+  final ReportsState state;
 
   @override
   Widget build(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
-    final average = report.average!;
+    final history = state.history;
+    final average = history.average;
+    final choices = historyCategoryLabels(state.historyCategories);
+    final selected = state.selectedHistoryCategory;
     return GlassSurface(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -368,30 +371,56 @@ class _Months extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SectionLabel(t.reports.byMonth, color: colors.text),
-              Flexible(
-                child: Text(
-                  // A compact amount would tell its size by its word.
-                  averageLabel(
-                    HiddenAmounts.of(context)
-                        ? HiddenAmounts.mask(context, formatMoney(average))
-                        : formatCompactMoney(average),
+              if (average != null)
+                Flexible(
+                  child: Text(
+                    // A compact amount would tell its size by its word.
+                    averageLabel(
+                      HiddenAmounts.of(context)
+                          ? HiddenAmounts.mask(context, formatMoney(average))
+                          : formatCompactMoney(average),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: styles.caption.copyWith(color: colors.textMuted),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: styles.caption.copyWith(color: colors.textMuted),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: BirkaTokens.spaceMd),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: BirkaChip(
+              label: choices[selected]!,
+              selected: false,
+              trailingGlyph: BirkaGlyph.chevron,
+              trailingTurns: 1,
+              onTap: () async {
+                final picked = await showChoiceSheet<String?>(
+                  context,
+                  title: t.transactions.category,
+                  choices: choices.keys.toList(),
+                  selected: selected,
+                  labelOf: (id) => choices[id]!,
+                );
+                if (context.mounted && picked != null) {
+                  context.read<ReportsCubit>().historyCategoryChanged(
+                    picked.$1,
+                  );
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: BirkaTokens.spaceMd),
           BirkaBars(
+            key: ValueKey(selected),
             bars: [
-              for (final (index, month) in report.months.indexed)
+              for (final (index, month) in history.months.indexed)
                 BirkaBar(
                   value: month.total.minorUnits.toDouble(),
                   amount: formatCompactFigure(month.total),
                   label: shortMonthLabel(month.month),
-                  highlighted: index == report.months.length - 1,
+                  highlighted: index == history.months.length - 1,
                 ),
             ],
           ),

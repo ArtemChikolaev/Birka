@@ -88,4 +88,7 @@
   moves a little as the rates of its days come in. A report in one currency
   needs no rate and never moves.
 - The bar of a month is the sum of its categories, each rounded on its own, so
-  that the two can never disagree on the same page.
+  that the two can never disagree on the same page. The six-month chart can
+  show one category, including uncategorized amounts. Each bar then uses that
+  category's total in the report currency for the budget month. The average
+  includes only months with a positive bar.

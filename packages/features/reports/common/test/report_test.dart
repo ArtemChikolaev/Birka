@@ -156,6 +156,18 @@ void main() {
       expect(it.months.first.month, CivilDate(2025, 9, 1));
     });
 
+    test('average stays exact near the largest amount on every compiler', () {
+      const limit = Money.maxMinorUnits;
+      final it = report(
+        const [],
+        months: [
+          MonthTotal(CivilDate(2026, 9, 1), rub(limit - 3)),
+          MonthTotal(october, rub(limit)),
+        ],
+      );
+      expect(it.average, rub(limit - 2));
+    });
+
     test('average those with anything in them', () {
       final it = report(
         [testTotal('Food', rub(300))],
