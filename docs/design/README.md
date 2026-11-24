@@ -101,3 +101,14 @@ and includes categories used earlier in the six-month period.
 
 [Phone preview](mockups/19-category-history-phone.png) ·
 [Desktop preview](mockups/20-category-history-web.png)
+
+### Biggest category changes
+
+Below the category list, the monthly report shows up to three increases or
+decreases, ranked by the magnitude of the change in the report currency.
+The date caption identifies both budget periods. In the current month both
+periods end at the same number of elapsed days, capped at the previous
+period's end. The amount carries its sign in both expense and income views.
+
+[Phone preview](mockups/21-category-changes-phone.png) ·
+[Desktop preview](mockups/22-category-changes-web.png)
