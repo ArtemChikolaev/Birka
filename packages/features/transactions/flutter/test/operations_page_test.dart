@@ -67,6 +67,7 @@ void main() {
           account: card,
           category: cafe,
           note: 'Кофейня у дома',
+          tagNames: ['Тбилиси'],
         ),
         testOperation(
           'bread',
@@ -260,12 +261,12 @@ void main() {
     expect(find.text('Продукты'), findsNothing);
   });
 
-  testWidgets('the search narrows it, and the cross brings it back', (
+  testWidgets('search combines a trip and a note, and clears with the cross', (
     tester,
   ) async {
     await pump(tester);
 
-    await tester.enterText(find.byType(TextField), 'кофей');
+    await tester.enterText(find.byType(TextField), 'тбилиси кофей');
     await tester.pumpAndSettle();
     expect(find.text('Кофейня у дома'), findsOneWidget);
     expect(find.text('Продукты'), findsNothing);

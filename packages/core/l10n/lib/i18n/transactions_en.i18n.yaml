@@ -25,7 +25,7 @@ oneAccountHint: A transfer needs a second account.
 noCategoriesHint: Add categories to sort your money.
 addCategories: Add categories
 search: Search
-searchHint: Cafe, 250 or a note
+searchHint: Amount, category, note or tag
 clearSearch: Clear the search
 fromQuestion: From the question
 toAnswer: Back to the answer

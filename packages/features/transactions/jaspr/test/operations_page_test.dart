@@ -78,6 +78,7 @@ void main() {
           account: card,
           category: cafe,
           note: 'Кофейня у дома',
+          tagNames: ['Тбилиси'],
         ),
         testOperation(
           'bread',
@@ -255,12 +256,12 @@ void main() {
     expect(find.text('Кофейня у дома'), findsNothing);
   });
 
-  testComponents('the search narrows it, and an empty one brings it back', (
+  testComponents('search combines a trip and a note, and clears', (
     tester,
   ) async {
     await pump(tester);
 
-    await search(tester, 'кофей');
+    await search(tester, 'тбилиси кофей');
     expect(find.text('Кофейня у дома'), findsOneComponent);
     expect(find.text('Продукты'), findsNothing);
 

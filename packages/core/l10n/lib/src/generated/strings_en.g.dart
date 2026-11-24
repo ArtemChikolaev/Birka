@@ -3979,8 +3979,8 @@ class Translations$transactions$en {
   /// en: 'Search'
   String get search => 'Search';
 
-  /// en: 'Cafe, 250 or a note'
-  String get searchHint => 'Cafe, 250 or a note';
+  /// en: 'Amount, category, note or tag'
+  String get searchHint => 'Amount, category, note or tag';
 
   /// en: 'Clear the search'
   String get clearSearch => 'Clear the search';
@@ -8915,7 +8915,7 @@ extension on Translations {
             'Add categories to sort your money.',
           'transactions.addCategories' => 'Add categories',
           'transactions.search' => 'Search',
-          'transactions.searchHint' => 'Cafe, 250 or a note',
+          'transactions.searchHint' => 'Amount, category, note or tag',
           'transactions.clearSearch' => 'Clear the search',
           'transactions.fromQuestion' => 'From the question',
           'transactions.toAnswer' => 'Back to the answer',

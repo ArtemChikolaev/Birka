@@ -3,7 +3,7 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 
-/// A transaction with the accounts and the category it names.
+/// A transaction with the names of its accounts, category and tags.
 @immutable
 final class Operation {
   /// Creates an operation.
@@ -12,14 +12,16 @@ final class Operation {
     this.account,
     this.toAccount,
     this.category,
+    this.tagNames = const [],
   });
 
-  /// Looks up what [transaction] names. Archived accounts and categories have
-  /// to be among [accounts] and [categories], since old operations keep them.
+  /// Looks up what [transaction] names, including archived accounts,
+  /// categories and tags that old operations still refer to.
   factory Operation.of(
     Transaction transaction, {
     required Map<String, Account> accounts,
     required Map<String, Category> categories,
+    Map<String, String> tagNamesById = const {},
   }) {
     final entries = transaction.entries;
     return Operation(
@@ -29,6 +31,7 @@ final class Operation {
           ? accounts[entries.last.accountId]
           : null,
       category: categories[transaction.allocations.firstOrNull?.categoryId],
+      tagNames: [for (final id in transaction.tagIds) ?tagNamesById[id]],
     );
   }
 
@@ -43,6 +46,9 @@ final class Operation {
 
   /// The category.
   final Category? category;
+
+  /// The names of the tags and trips this operation wears.
+  final List<String> tagNames;
 
   /// The debt that a transfer moves, the account named after the other
   /// person, or `null` for any other operation (ADR 0029).
@@ -115,11 +121,13 @@ final class Operation {
   /// `250` finds 250 and 250,50, and `250,5` only the second one. Case and the
   /// letter ё do not matter.
   bool matches(String query) {
+    if (query.isEmpty) return true;
     final words = searchKey(query).split(RegExp(r'\s+'));
     final texts = [
       searchKey(note),
       for (final name in [category?.name, account?.name, toAccount?.name])
         if (name != null) searchKey(name),
+      ...tagNames.map(searchKey),
     ];
     return words.every(
       (word) => texts.any((text) => text.contains(word)) || _hasAmount(word),

@@ -10,7 +10,9 @@ countries. A pure-Dart core is shared by a Flutter app (Android and iOS; it
 also runs on macOS during development) and a Jaspr web app; a small Go server
 for end-to-end encrypted sync comes later.
 Decisions live in [docs/adr](docs/adr/), the mockups and the design system in
-[docs/design](docs/design/). Design made on claude.ai (Claude Design, a design
+[docs/design](docs/design/). Before implementing a user-facing feature, check
+the mockups for each affected host. If the flow is missing or changes, draw
+or update its mockups first. Design made on claude.ai (Claude Design, a design
 system or a mockup in an artifact) is always copied into `docs/design` in the
 same pull request: nothing of the design lives only in an account.
 

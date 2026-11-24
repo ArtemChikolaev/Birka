@@ -228,6 +228,7 @@ Operation testOperation(
   String note = '',
   TransactionSource source = TransactionSource.manual,
   Map<String, TagMark> tags = const {},
+  List<String> tagNames = const [],
   Receipt? receipt,
 }) => Operation(
   transaction: Transaction(
@@ -255,4 +256,5 @@ Operation testOperation(
   account: account,
   toAccount: toAccount,
   category: category,
+  tagNames: tagNames,
 );
