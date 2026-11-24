@@ -81,8 +81,7 @@ final class Report {
           categoryKey(row.category): row.total.minorUnits,
     };
     final biggest = kept.firstOrNull?.total.minorUnits ?? 0;
-    final months = _monthsUpTo(month, monthTotals, currency);
-    final filled = months.where((it) => it.total.isPositive).toList();
+    final history = ReportHistory.of(month, monthTotals, currency);
 
     return Report(
       total: kept.isEmpty
@@ -105,13 +104,8 @@ final class Report {
           ),
       ],
       others: _others(rows, currency),
-      months: months,
-      average: filled.isEmpty
-          ? null
-          : _money(
-              _sum(filled.map((it) => it.total.minorUnits)) ~/ filled.length,
-              currency,
-            ),
+      months: history.months,
+      average: history.average,
     );
   }
 
@@ -141,24 +135,6 @@ final class Report {
   /// Whether nothing went through the month in the currency of the report.
   bool get isEmpty => lines.isEmpty;
 
-  static List<ReportMonth> _monthsUpTo(
-    CivilDate month,
-    List<MonthTotal> totals,
-    Currency currency,
-  ) {
-    final byMonth = {
-      for (final total in totals)
-        if (total.total.currency == currency) total.month: total.total,
-    };
-    return [
-      for (var back = monthCount - 1; back >= 0; back--)
-        ReportMonth(
-          monthsBefore(month, back),
-          byMonth[monthsBefore(month, back)] ?? Money.zero(currency),
-        ),
-    ];
-  }
-
   static List<Money> _others(List<CategoryTotal> rows, Currency currency) {
     final sums = <Currency, int>{};
     for (final CategoryTotal(:total) in rows) {
@@ -181,6 +157,51 @@ final class Report {
     minorUnits.clamp(0, Money.maxMinorUnits),
     currency,
   );
+}
+
+/// The six bars and the average over months with activity in one currency.
+@immutable
+final class ReportHistory {
+  /// Creates a series with its average.
+  const ReportHistory(this.months, this.average);
+
+  /// Pads missing months with zero and averages the months with activity.
+  factory ReportHistory.of(
+    CivilDate month,
+    List<MonthTotal> totals,
+    Currency currency,
+  ) {
+    final byMonth = {
+      for (final row in totals)
+        if (row.total.currency == currency) row.month: row.total,
+    };
+    final months = [
+      for (var back = Report.monthCount - 1; back >= 0; back--)
+        monthsBefore(month, back),
+    ];
+    final bars = [
+      for (final date in months)
+        ReportMonth(date, byMonth[date] ?? Money.zero(currency)),
+    ];
+    final filled = bars.where((bar) => bar.total.isPositive);
+    // Six valid amounts can sum beyond the exact integer range in JavaScript.
+    final sum = filled.fold(
+      BigInt.zero,
+      (n, bar) => n + BigInt.from(bar.total.minorUnits),
+    );
+    return ReportHistory(
+      bars,
+      filled.isEmpty
+          ? null
+          : Money((sum ~/ BigInt.from(filled.length)).toInt(), currency),
+    );
+  }
+
+  /// One bar per month, the earliest first.
+  final List<ReportMonth> months;
+
+  /// Average over months with activity, or null for six empty months.
+  final Money? average;
 }
 
 /// The first day of the month [count] months before the one of [month].

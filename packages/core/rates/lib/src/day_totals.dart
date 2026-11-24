@@ -36,15 +36,35 @@ List<MonthTotal> monthTotalsIn(
   RateBook rates, {
   int monthStart = 1,
 }) {
+  return sumMonthlyCategories(
+    monthlyCategoriesIn(target, rows, rates, monthStart: monthStart),
+  );
+}
+
+/// Category totals rounded separately for each budget month and currency.
+Map<CivilDate, List<CategoryTotal>> monthlyCategoriesIn(
+  Currency? target,
+  List<CategoryDayTotal> rows,
+  RateBook rates, {
+  int monthStart = 1,
+}) {
   final months = <CivilDate, List<CategoryDayTotal>>{};
   for (final row in rows) {
     (months[row.day.monthStart(monthStart)] ??= []).add(row);
   }
-  return [
+  return {
     for (final MapEntry(key: month, value: days) in months.entries)
-      ..._totalsOf(month, totalsIn(target, days, rates)),
-  ]..sort((a, b) => a.month.compareTo(b.month));
+      month: totalsIn(target, days, rates),
+  };
 }
+
+/// Adds up the rounded categories for each month, earliest month first.
+List<MonthTotal> sumMonthlyCategories(
+  Map<CivilDate, List<CategoryTotal>> months,
+) => [
+  for (final MapEntry(key: month, value: categories) in months.entries)
+    ..._totalsOf(month, categories),
+]..sort((a, b) => a.month.compareTo(b.month));
 
 Iterable<MonthTotal> _totalsOf(CivilDate month, List<CategoryTotal> totals) {
   final sums = <Currency, int>{};

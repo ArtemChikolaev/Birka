@@ -50,3 +50,11 @@ String emptyLabel(CategoryKind kind) => switch (kind) {
   CategoryKind.expense => t.reports.noExpenses,
   CategoryKind.income => t.reports.noIncome,
 };
+
+/// Choices of the six-month chart, including the uncategorized group.
+Map<String?, String> historyCategoryLabels(Map<String, Category?> categories) =>
+    {
+      null: t.transactions.allCategories,
+      for (final entry in categories.entries)
+        entry.key: entry.value?.name ?? t.app.noCategory,
+    };

@@ -34,6 +34,7 @@ final class ReportsState {
     this.rates = const RateBook.empty(),
     this.days = const [],
     this.monthStart = 1,
+    this.historyCategoryId,
   });
 
   /// Where the reports stand.
@@ -69,19 +70,63 @@ final class ReportsState {
   /// The currency that the report follows.
   Currency? get _target => base ?? preferred;
 
+  // Both the ring and the chart use the same rounded category totals.
+  late final Map<CivilDate, List<CategoryTotal>> _monthly = monthlyCategoriesIn(
+    _target,
+    days,
+    rates,
+    monthStart: monthStart,
+  );
+
   /// The report of [month], with each amount at the rate of its own day
   /// (ADR 0009).
   late final Report report = Report.of(
     month: month,
-    rows: totalsIn(_target, _daysFrom(month, lastDayOf(month)), rates),
+    rows: _monthly[month] ?? const [],
     previousRows: totalsIn(
       _target,
       _daysFrom(monthsBefore(month, 1), _endOfComparison),
       rates,
     ),
-    monthTotals: monthTotalsIn(_target, days, rates, monthStart: monthStart),
+    monthTotals: sumMonthlyCategories(_monthly),
     preferred: _target,
   );
+
+  /// The category requested for the chart. Null means all categories and the
+  /// empty key represents uncategorized operations.
+  final String? historyCategoryId;
+
+  /// Categories in the chart currency, starting with the latest month's rows.
+  late final Map<String, Category?> historyCategories = {
+    for (final bar in report.months.reversed)
+      for (final row in _monthly[bar.month] ?? const <CategoryTotal>[])
+        if (row.total.currency == bar.total.currency)
+          categoryKey(row.category): row.category,
+  };
+
+  /// Falls back to the whole report if the category leaves the period.
+  String? get selectedHistoryCategory =>
+      historyCategories.containsKey(historyCategoryId)
+      ? historyCategoryId
+      : null;
+
+  /// The series selected in the chart. The ring and list always use [report].
+  late final ReportHistory history = _history();
+
+  ReportHistory _history() {
+    final key = selectedHistoryCategory;
+    final currency = report.average?.currency;
+    if (key == null || currency == null) {
+      return ReportHistory(report.months, report.average);
+    }
+    return ReportHistory.of(month, [
+      for (final entry in _monthly.entries)
+        for (final row in entry.value)
+          if (categoryKey(row.category) == key &&
+              row.total.currency == currency)
+            MonthTotal(entry.key, row.total),
+    ], currency);
+  }
 
   /// Whether a rate stands behind any amount of [month].
   bool get converted {
@@ -122,6 +167,7 @@ final class ReportsState {
     RateBook? rates,
     List<CategoryDayTotal>? days,
     int? monthStart,
+    String? Function()? historyCategoryId,
   }) {
     return ReportsState(
       status: status ?? this.status,
@@ -133,6 +179,9 @@ final class ReportsState {
       rates: rates ?? this.rates,
       days: days ?? this.days,
       monthStart: monthStart ?? this.monthStart,
+      historyCategoryId: historyCategoryId == null
+          ? this.historyCategoryId
+          : historyCategoryId(),
     );
   }
 }
@@ -191,6 +240,12 @@ class ReportsCubit extends Cubit<ReportsState> {
     if (kind != state.kind) await _restart(kind: kind);
   }
 
+  /// Changes only the six-month chart without rereading the ledger.
+  void historyCategoryChanged(String? id) {
+    if (id != null && !state.historyCategories.containsKey(id)) return;
+    emit(state.copyWith(historyCategoryId: () => id));
+  }
+
   /// The months to choose from: the current one, even with nothing in it, and
   /// the ones with operations, the latest first. When those cannot be read, the
   /// current one and the one on the screen still can be chosen.
@@ -231,6 +286,7 @@ class ReportsCubit extends Cubit<ReportsState> {
         today: today,
         month: month,
         kind: kind,
+        historyCategoryId: kind != null ? () => null : null,
         days: const [],
       ),
     );
