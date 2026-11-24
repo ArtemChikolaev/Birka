@@ -25,7 +25,7 @@ oneAccountHint: Для перевода нужен второй счёт.
 noCategoriesHint: Добавьте категории, чтобы разбирать траты.
 addCategories: Добавить категории
 search: Поиск
-searchHint: Кафе, 250 или заметка
+searchHint: Сумма, категория, заметка или метка
 clearSearch: Очистить поиск
 fromQuestion: Из вопроса
 toAnswer: К ответу

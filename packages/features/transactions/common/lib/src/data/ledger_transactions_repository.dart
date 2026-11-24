@@ -53,13 +53,7 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   @override
   Stream<List<Operation>> watchOperations(CivilDate month) {
     final last = CivilDate.of(DateTime.utc(month.year, month.month + 1, 0));
-    return combineLatest(
-      _ledger.watchTransactions(from: month, to: last, limit: null),
-      _watchNames(),
-      (transactions, names) => [
-        for (final transaction in transactions) names.operationOf(transaction),
-      ],
-    );
+    return watchOperationsBetween(month, last);
   }
 
   @override
@@ -135,17 +129,20 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   @override
   Future<void> delete(String id) => _ledger.delete(id);
 
-  /// Every account and category, archived ones and debts too, since old
-  /// operations keep them and a transfer of a debt names its person.
-  /// Following them keeps a list right after a change of a name.
+  /// Old operations keep archived accounts, categories and tags. Following
+  /// the catalogs also updates an open search when a name changes.
   Stream<_Names> _watchNames() => combineLatest(
-    _ledger.watchAccounts(includeArchived: true, includeDebts: true),
+    combineLatest(
+      _ledger.watchAccounts(includeArchived: true, includeDebts: true),
+      _ledger.watchTags(includeArchived: true),
+      (accounts, tags) => (accounts: accounts, tags: tags),
+    ),
     combineLatest(
       _ledger.watchCategories(CategoryKind.expense, includeArchived: true),
       _ledger.watchCategories(CategoryKind.income, includeArchived: true),
       (expenses, income) => [...expenses, ...income],
     ),
-    _Names.new,
+    (catalog, categories) => _Names(catalog.accounts, categories, catalog.tags),
   );
 
   @override
@@ -169,16 +166,19 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
 
 /// What operations name.
 final class _Names {
-  _Names(List<Account> accounts, List<Category> categories)
+  _Names(List<Account> accounts, List<Category> categories, List<Tag> tags)
     : _accounts = {for (final account in accounts) account.id: account},
-      _categories = {for (final category in categories) category.id: category};
+      _categories = {for (final category in categories) category.id: category},
+      _tagNames = {for (final tag in tags) tag.id: tag.name};
 
   final Map<String, Account> _accounts;
   final Map<String, Category> _categories;
+  final Map<String, String> _tagNames;
 
   Operation operationOf(Transaction transaction) => Operation.of(
     transaction,
     accounts: _accounts,
     categories: _categories,
+    tagNamesById: _tagNames,
   );
 }

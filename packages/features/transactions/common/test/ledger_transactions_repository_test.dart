@@ -284,6 +284,44 @@ void main() {
       expect(february.single.day, CivilDate(2028, 2, 29));
     });
 
+    test('search finds only the operations wearing a tag or trip', () async {
+      final trip = (await ledger.addTag(
+        name: 'Перелёт',
+        days: TagDays(today, today),
+        marksDays: true,
+      )).tag;
+      final work = (await ledger.addTag(name: 'Work')).tag;
+      final flight = await ledger.record(on(today));
+      final paid = await ledger.record(on(today).withTags({work.id, trip.id}));
+      await ledger.record(on(today).withTags({work.id}));
+      await ledger.record(on(CivilDate(2026, 9, 30)).withTags({trip.id}));
+      await ledger.updateTag(trip.copyWith(archived: true));
+
+      final cubit = OperationsCubit(
+        repository,
+        now: () => DateTime(2026, 10, 31),
+      );
+      addTearDown(cubit.close);
+      await cubit.stream.firstWhere(
+        (state) => state.status == OperationsStatus.ready,
+      );
+
+      cubit.queryChanged('ПЕРЕЛЕТ food');
+      expect(
+        cubit.state.shown.map((operation) => operation.id),
+        unorderedEquals([flight, paid]),
+      );
+      expect(cubit.state.expenses, [rub(-200)]);
+      cubit.queryChanged('work перелет 1');
+      expect(cubit.state.shown.single.id, paid);
+
+      final renamed = cubit.stream.firstWhere((state) => state.shown.isEmpty);
+      await ledger.updateTag(work.copyWith(name: 'Client'));
+      await renamed;
+      cubit.queryChanged('client перелет');
+      expect(cubit.state.shown.single.id, paid);
+    });
+
     test('are not cut off by the limit of a list', () async {
       for (var i = 0; i < 201; i++) {
         await repository.record(on(today));

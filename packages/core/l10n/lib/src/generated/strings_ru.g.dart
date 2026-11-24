@@ -3399,7 +3399,7 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get search => 'Поиск';
   @override
-  String get searchHint => 'Кафе, 250 или заметка';
+  String get searchHint => 'Сумма, категория, заметка или метка';
   @override
   String get clearSearch => 'Очистить поиск';
   @override
@@ -8167,7 +8167,7 @@ extension on TranslationsRu {
             'Добавьте категории, чтобы разбирать траты.',
           'transactions.addCategories' => 'Добавить категории',
           'transactions.search' => 'Поиск',
-          'transactions.searchHint' => 'Кафе, 250 или заметка',
+          'transactions.searchHint' => 'Сумма, категория, заметка или метка',
           'transactions.clearSearch' => 'Очистить поиск',
           'transactions.fromQuestion' => 'Из вопроса',
           'transactions.toAnswer' => 'К ответу',
