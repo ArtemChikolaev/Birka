@@ -90,3 +90,14 @@ up and add up across the pages.
 | <img src="mockups/16-import-done.png" width="300" alt="Import: the result"> | The result | what was added and skipped, the balance as in the bank, what waits in the inbox; the undo of the whole import |
 | <img src="mockups/17-inbox.png" width="300" alt="Inbox"> | Inbox | a transfer between one's own accounts to link; operations without a category with hints from past choices; several picked at once |
 | <img src="mockups/18-import-phone.png" width="200" alt="Import on the phone"> | Import on the phone | a sheet over the overview: the bank and the card told, the counts, the balance after, one button |
+
+### Category history in reports
+
+The [interactive mockup](mockups/report-category-history.html) shows the
+category picker inside the six-month chart on phone and desktop. Pick a
+category to update the bars and their average. The ring and the category
+list still describe the selected month. The chart starts with all categories
+and includes categories used earlier in the six-month period.
+
+[Phone preview](mockups/19-category-history-phone.png) ·
+[Desktop preview](mockups/20-category-history-web.png)
