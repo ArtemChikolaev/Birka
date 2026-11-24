@@ -92,3 +92,9 @@
   show one category, including uncategorized amounts. Each bar then uses that
   category's total in the report currency for the budget month. The average
   includes only months with a positive bar.
+- The report ranks up to three category changes by absolute amount in its
+  currency. Closed budget months compare in full. For a month in progress,
+  both periods stop at the same elapsed day or the previous month's end.
+  A category with unconverted amounts in either period stays outside this
+  comparison. The card appears when a comparable previous period exists
+  and at least one category changed.

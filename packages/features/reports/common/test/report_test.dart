@@ -131,6 +131,57 @@ void main() {
     expect(it.others, [eur(3)]);
   });
 
+  group('biggest changes', () {
+    test('ranks new, disappearing and uncategorized amounts by magnitude', () {
+      final changes = biggestCategoryChanges(
+        currency: Currency.rub,
+        previous: [
+          testTotal('Gone', rub(700)),
+          testTotal('Same', rub(90)),
+          testTotal('Food', rub(499)),
+          CategoryTotal(null, rub(20)),
+        ],
+        current: [
+          testTotal('New', rub(600)),
+          testTotal('Food', rub(500)),
+          testTotal('Same', rub(90)),
+          CategoryTotal(null, rub(400)),
+        ],
+      );
+      expect(changes.map((row) => (row.category?.name, row.delta)), [
+        ('Gone', rub(-700)),
+        ('New', rub(600)),
+        (null, rub(380)),
+      ]);
+    });
+
+    test('omits categories with unconverted money on either side', () {
+      final changes = biggestCategoryChanges(
+        currency: Currency.rub,
+        previous: [
+          testTotal('Food', rub(1)),
+          testTotal('Mixed', rub(200)),
+          testTotal('Foreign', eur(300)),
+        ],
+        current: [
+          testTotal('Food', rub(12)),
+          testTotal('Mixed', rub(100)),
+          testTotal('Mixed', eur(20)),
+          testTotal('Foreign', rub(250)),
+        ],
+      );
+      expect(changes.map((row) => row.delta), [rub(11)]);
+      expect(
+        biggestCategoryChanges(
+          currency: Currency.rub,
+          previous: const [],
+          current: [testTotal('First', rub(100))],
+        ),
+        isEmpty,
+      );
+    });
+  });
+
   group('the months', () {
     test('are six, up to the month of the report', () {
       final it = report(

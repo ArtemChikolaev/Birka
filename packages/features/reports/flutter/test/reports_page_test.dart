@@ -106,6 +106,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Finder categoryRow(String name) =>
+      find.descendant(of: find.byType(ShareLine), matching: find.text(name));
+
   Future<void> tapText(WidgetTester tester, String text) async {
     await tester.tap(find.text(text));
     await tester.pumpAndSettle();
@@ -157,10 +160,10 @@ void main() {
   ) async {
     await pump(tester);
 
-    expect(find.text('Продукты'), findsOneWidget);
+    expect(categoryRow('Продукты'), findsOneWidget);
     expect(find.text('24${space}300$space₽'), findsOneWidget);
     expect(find.text('−4%'), findsOneWidget);
-    expect(find.text('Кафе'), findsOneWidget);
+    expect(categoryRow('Кафе'), findsOneWidget);
     expect(find.text('+35%'), findsOneWidget);
     final bars = tester
         .widgetList<FractionallySizedBox>(find.byType(FractionallySizedBox))
@@ -178,7 +181,7 @@ void main() {
     );
     await pump(tester);
 
-    expect(find.text('Без категории'), findsOneWidget);
+    expect(categoryRow('Без категории'), findsOneWidget);
     expect(find.text('5${space}000$space₽'), findsOneWidget);
   });
 
@@ -194,8 +197,27 @@ void main() {
 
     await tapText(tester, 'ДОХОДЫ');
 
-    expect(find.text('Зарплата'), findsOneWidget);
+    expect(categoryRow('Зарплата'), findsOneWidget);
     expect(colorOf(tester, '+5%'), BirkaColors.dark.positive);
+  });
+
+  testWidgets('shows signed category changes and respects hidden amounts', (
+    tester,
+  ) async {
+    await pump(tester);
+    expect(find.text('ГЛАВНЫЕ ИЗМЕНЕНИЯ'), findsOneWidget);
+    expect(
+      find.text('1–31 октября по сравнению с 1–30 сентября'),
+      findsOneWidget,
+    );
+    expect(colorOf(tester, '+3${space}331$space₽'), BirkaColors.dark.negative);
+    expect(
+      colorOf(tester, '−1${space}012,50$space₽'),
+      BirkaColors.dark.positive,
+    );
+    hidden.value = true;
+    await tester.pumpAndSettle();
+    expect(find.text('+3${space}331$space₽'), findsNothing);
   });
 
   testWidgets('shows the last months with their average', (tester) async {

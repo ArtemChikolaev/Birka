@@ -1,5 +1,7 @@
 expenses: Расходы
 income: Доходы
+biggestChanges: Главные изменения
+comparison: "$current по сравнению с $previous"
 byMonth: По месяцам
 average: в среднем $amount
 noExpenses: В этом месяце расходов нет.

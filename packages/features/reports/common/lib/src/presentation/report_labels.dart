@@ -1,6 +1,7 @@
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:reports_common/src/domain/report.dart';
+import 'package:reports_common/src/presentation/reports_cubit.dart';
 
 /// The name of [kind] on the switch of the reports.
 String kindLabel(CategoryKind kind) => switch (kind) {
@@ -58,3 +59,27 @@ Map<String?, String> historyCategoryLabels(Map<String, Category?> categories) =>
       for (final entry in categories.entries)
         entry.key: entry.value?.name ?? t.app.noCategory,
     };
+
+/// The date ranges behind the category changes.
+String changesPeriodLabel(ReportsState state) => t.reports.comparison(
+  current: _period(state.month, state.comparisonEnd, today: state.today),
+  previous: _period(state.previousStart, state.previousEnd, today: state.today),
+);
+
+String _period(CivilDate first, CivilDate last, {required CivilDate today}) {
+  String day(CivilDate date) => dateLabel(
+    year: date.year,
+    month: date.month,
+    day: date.day,
+    thisYear: today.year,
+  );
+  if (first == last) return day(first);
+  if (first.month != last.month || first.year != last.year) {
+    return '${day(first)} – ${day(last)}';
+  }
+  final range = t.transactions.dayOfMonth(
+    day: '${first.day}–${last.day}',
+    month: t.transactions.months[first.month - 1],
+  );
+  return first.year == today.year ? range : '$range ${first.year}';
+}

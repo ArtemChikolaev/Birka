@@ -2584,6 +2584,13 @@ class Translations$reports$en {
   /// en: 'Income'
   String get income => 'Income';
 
+  /// en: 'Biggest changes'
+  String get biggestChanges => 'Biggest changes';
+
+  /// en: '$current compared with $previous'
+  String comparison({required Object current, required Object previous}) =>
+      '${current} compared with ${previous}';
+
   /// en: 'By month'
   String get byMonth => 'By month';
 
@@ -8020,6 +8027,10 @@ extension on Translations {
           'overview.changeIn.11' => 'in December',
           'reports.expenses' => 'Expenses',
           'reports.income' => 'Income',
+          'reports.biggestChanges' => 'Biggest changes',
+          'reports.comparison' =>
+            ({required Object current, required Object previous}) =>
+                '${current} compared with ${previous}',
           'reports.byMonth' => 'By month',
           'reports.average' =>
             ({required Object amount}) => 'average ${amount}',
@@ -8869,12 +8880,12 @@ extension on Translations {
           'tags.picker.create' =>
             ({required Object name}) => 'New tag «${name}»',
           'tags.picker.createText' => 'A trip with dates or just a tag',
-          'tags.picker.tripsNote' =>
-            'While a trip goes on, its tag goes onto the expenses of its days by itself.',
-          'tags.picker.now' => 'now',
           _ => null,
         } ??
         switch (path) {
+          'tags.picker.tripsNote' =>
+            'While a trip goes on, its tag goes onto the expenses of its days by itself.',
+          'tags.picker.now' => 'now',
           'tags.picker.emptyTitle' => 'No tags yet',
           'tags.picker.emptyText' =>
             'Type a name: a trip, a renovation or a holiday. A tag gathers what they took in every currency.',

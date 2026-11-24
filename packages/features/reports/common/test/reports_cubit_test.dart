@@ -129,6 +129,28 @@ void main() {
     );
   });
 
+  test('changes compare elapsed budget days and follow a new write', () async {
+    now = DateTime(2026, 11, 2);
+    repository
+      ..start = 5
+      ..days[CategoryKind.expense] = [
+        testDay('Food', CivilDate(2026, 9, 5), rub(100)),
+        testDay('Food', CivilDate(2026, 10, 3), rub(30)),
+        testDay('Food', CivilDate(2026, 10, 4), rub(9000)),
+        testDay('Food', CivilDate(2026, 11, 2), rub(230)),
+        testDay('Food', CivilDate(2026, 11, 3), rub(8000)),
+      ];
+    final cubit = await open();
+    expect(cubit.state.previousEnd, CivilDate(2026, 10, 3));
+    expect(cubit.state.categoryChanges.single.delta, rub(100));
+    repository.days[CategoryKind.expense]!.add(
+      testDay('Food', CivilDate(2026, 10, 5), rub(15)),
+    );
+    repository.changedRows();
+    await settle();
+    expect(cubit.state.categoryChanges.single.delta, rub(115));
+  });
+
   group('a month under way', () {
     test('compares with the same days of the month before', () async {
       now = DateTime(2026, 10, 10);

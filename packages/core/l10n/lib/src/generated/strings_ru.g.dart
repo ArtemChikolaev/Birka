@@ -2254,6 +2254,11 @@ class _Translations$reports$ru extends Translations$reports$en {
   @override
   String get income => 'Доходы';
   @override
+  String get biggestChanges => 'Главные изменения';
+  @override
+  String comparison({required Object current, required Object previous}) =>
+      '${current} по сравнению с ${previous}';
+  @override
   String get byMonth => 'По месяцам';
   @override
   String average({required Object amount}) => 'в среднем ${amount}';
@@ -7204,6 +7209,10 @@ extension on TranslationsRu {
           'overview.changeIn.11' => 'за декабрь',
           'reports.expenses' => 'Расходы',
           'reports.income' => 'Доходы',
+          'reports.biggestChanges' => 'Главные изменения',
+          'reports.comparison' =>
+            ({required Object current, required Object previous}) =>
+                '${current} по сравнению с ${previous}',
           'reports.byMonth' => 'По месяцам',
           'reports.average' =>
             ({required Object amount}) => 'в среднем ${amount}',
@@ -8121,12 +8130,12 @@ extension on TranslationsRu {
           'tags.picker.create' =>
             ({required Object name}) => 'Новая метка «${name}»',
           'tags.picker.createText' => 'Поездка с датами или просто метка',
-          'tags.picker.tripsNote' =>
-            'Пока идёт поездка, её метка сама встаёт на расходы этих дней.',
-          'tags.picker.now' => 'сейчас',
           _ => null,
         } ??
         switch (path) {
+          'tags.picker.tripsNote' =>
+            'Пока идёт поездка, её метка сама встаёт на расходы этих дней.',
+          'tags.picker.now' => 'сейчас',
           'tags.picker.emptyTitle' => 'Меток пока нет',
           'tags.picker.emptyText' =>
             'Наберите название: поездку, ремонт или праздник. Метка соберёт их траты во всех валютах.',
