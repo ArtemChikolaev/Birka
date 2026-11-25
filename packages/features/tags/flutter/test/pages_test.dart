@@ -94,6 +94,12 @@ void main() {
     expect(find.text('На месте в день'), findsOneWidget);
     expect(find.text('≈ ${nb('13 GEL')}'), findsOneWidget);
     expect(find.text('2 там, 2 заранее'), findsOneWidget);
+    expect(find.text('До поездки'), findsOneWidget);
+    expect(find.text('≈ ${nb('57 988 ₽')}'), findsOneWidget);
+    expect(find.text('В поездке'), findsOneWidget);
+    expect(find.text('≈ ${nb('4 027 ₽')}'), findsOneWidget);
+    expect(find.text('После поездки'), findsOneWidget);
+    expect(find.text(nb('0 ₽')), findsOneWidget);
     expect(find.text('Доллары'), findsOneWidget);
     expect(find.text('2 операции на месте'), findsOneWidget);
     expect(find.text('Квартира в Сололаки, 20 октября'), findsOneWidget);

@@ -98,6 +98,28 @@ class TagReportPage extends StatelessWidget {
       _Summary(report: report, today: today),
       gap,
       _Stats(report: report, today: today),
+      if (report.periods.isNotEmpty) ...[
+        gap,
+        SectionLabel(t.tags.report.periods),
+        small,
+        GlassListGroup(
+          children: [
+            for (final part in report.periods)
+              GlassListRow(
+                key: ValueKey(part.period),
+                title: tripPeriodLabel(part.period),
+                subtitle: t.tags.report.expenses(n: part.count),
+                trailing: AmountText(
+                  tripSpendingLabel(part),
+                  value: part.total?.minorUnits,
+                  rise: AmountRise.bad,
+                  alwaysShown: part.total == null,
+                  style: styles.bodyStrong.copyWith(color: colors.text),
+                ),
+              ),
+          ],
+        ),
+      ],
       if (report.currencies.length > 1) ...[
         gap,
         SectionLabel(t.tags.report.currencies),

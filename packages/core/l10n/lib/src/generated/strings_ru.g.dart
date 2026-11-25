@@ -4884,6 +4884,26 @@ class _Translations$tags$report$ru extends Translations$tags$report$en {
 
   // Translations
   @override
+  String get periods => 'Расходы по этапам';
+  @override
+  String get beforeTrip => 'До поездки';
+  @override
+  String get duringTrip => 'В поездке';
+  @override
+  String get afterTrip => 'После поездки';
+  @override
+  String get rateMissing => 'Нет курса';
+  @override
+  String expenses({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(
+        n,
+        zero: '${n} расходов',
+        one: '${n} расход',
+        few: '${n} расхода',
+        many: '${n} расходов',
+        other: '${n} расхода',
+      );
+  @override
   String get todayLast => 'сегодня последний день';
   @override
   String get perDay => 'На месте в день';
@@ -8069,6 +8089,22 @@ extension on TranslationsRu {
             'У поездки есть даты: расходы этих дней получают её метку сами, кроме регулярных платежей.',
           'tags.steps.third' =>
             'Билеты и жильё, купленные заранее, отметьте в карточке операции.',
+          'tags.report.periods' => 'Расходы по этапам',
+          'tags.report.beforeTrip' => 'До поездки',
+          'tags.report.duringTrip' => 'В поездке',
+          'tags.report.afterTrip' => 'После поездки',
+          'tags.report.rateMissing' => 'Нет курса',
+          'tags.report.expenses' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('ru'))(
+                  n,
+                  zero: '${n} расходов',
+                  one: '${n} расход',
+                  few: '${n} расхода',
+                  many: '${n} расходов',
+                  other: '${n} расхода',
+                ),
           'tags.report.todayLast' => 'сегодня последний день',
           'tags.report.perDay' => 'На месте в день',
           'tags.report.perMonth' => 'В месяц',
@@ -8143,6 +8179,9 @@ extension on TranslationsRu {
           'tags.form.footTrip' =>
             'Метку можно поставить и на билеты, купленные заранее',
           'tags.form.footPlain' => 'Метки живут в «Ещё» → «Метки»',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.form.save' => 'Сохранить',
           'tags.form.done' => 'Готово',
           'tags.form.nameMissing' => 'Дайте метке название.',
@@ -8151,9 +8190,6 @@ extension on TranslationsRu {
             ({required Object name}) => 'Добавили поездку «${name}»',
           'tags.addedTag' =>
             ({required Object name}) => 'Добавили метку «${name}»',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.saved' => ({required Object name}) => 'Сохранили «${name}»',
           'tags.marked' =>
             ({required num n, required Object name}) =>

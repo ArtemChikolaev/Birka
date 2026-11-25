@@ -29,6 +29,14 @@ steps:
   second: "A trip has days: its expenses on those days get its tag by themselves, except regular payments."
   third: Tag the tickets and the stay that you bought in advance on the card of the operation.
 report:
+  periods: Spending by period
+  beforeTrip: Before the trip
+  duringTrip: During the trip
+  afterTrip: After the trip
+  rateMissing: No rate
+  expenses(n):
+    one: $n expense
+    other: $n expenses
   todayLast: today is the last day
   perDay: A day on the spot
   perMonth: A month

@@ -76,6 +76,25 @@ class TagReportPage extends StatelessComponent {
     return [
       _summary(report, today),
       _stats(context, report, today),
+      if (report.periods.isNotEmpty)
+        section(classes: 'tag-report__group', [
+          SectionLabel(t.tags.report.periods),
+          GlassListGroup(
+            children: [
+              for (final part in report.periods)
+                GlassListRow(
+                  key: ValueKey(part.period),
+                  title: tripPeriodLabel(part.period),
+                  subtitle: t.tags.report.expenses(n: part.count),
+                  trailing: AmountText(
+                    tripSpendingLabel(part),
+                    alwaysShown: part.total == null,
+                    textClass: 'text-body-strong',
+                  ),
+                ),
+            ],
+          ),
+        ]),
       if (report.currencies.length > 1)
         section(classes: 'tag-report__group', [
           SectionLabel(t.tags.report.currencies),

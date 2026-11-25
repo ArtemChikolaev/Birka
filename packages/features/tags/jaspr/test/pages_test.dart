@@ -138,6 +138,12 @@ void main() {
     expect(find.text('На месте в день'), findsOneComponent);
     expect(find.text('≈ ${nb('13 GEL')}'), findsOneComponent);
     expect(find.text('2 там, 2 заранее'), findsOneComponent);
+    expect(find.text('До поездки'), findsOneComponent);
+    expect(find.text('≈ ${nb('57 988 ₽')}'), findsOneComponent);
+    expect(find.text('В поездке'), findsOneComponent);
+    expect(find.text('≈ ${nb('4 027 ₽')}'), findsOneComponent);
+    expect(find.text('После поездки'), findsOneComponent);
+    expect(find.text(nb('0 ₽')), findsOneComponent);
     expect(find.text('Доллары'), findsOneComponent);
     expect(find.text('2 операции на месте'), findsOneComponent);
     expect(find.text('Квартира в Сололаки, 20 октября'), findsOneComponent);
