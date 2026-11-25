@@ -130,7 +130,10 @@ Start typing in Operations, then enable All months to include older matches.
 The selected transaction type still applies. The totals describe the matches,
 and dates from earlier years include the year. Clearing the query or turning
 off All months returns to the month being viewed. Search opened from an Ask
-answer stays within the answer's operations.
+answer stays within the answer's operations. Long results open 30 matching
+days at a time, keeping every operation of the last visible day together.
+The count and amounts cover all matches. In the mockup, search for `обед`
+across months to try the longer list.
 
 [Interactive mockup](mockups/operations-history-search.html) ·
 [Phone preview](mockups/25-history-search-phone.png) ·

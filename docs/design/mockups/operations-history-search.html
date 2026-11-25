@@ -50,7 +50,7 @@
     <button class="chip" id="scope" aria-pressed="false">Все месяцы</button>
     <div class="bar filters" aria-label="Тип операции"><button class="chip" aria-pressed="true">Все</button><button class="chip">Расходы</button><button class="chip">Доходы</button><button class="chip">Переводы</button></div>
     <p class="summary inline" id="inline"></p>
-    <div id="results" aria-live="polite"></div>
+    <div id="results" aria-live="polite"></div><button class="chip" id="more" hidden>Показать ещё</button>
   </div><aside class="glass"><h2 id="heading">Ноябрь</h2><p class="summary" id="summary"></p></aside></div>
 </main>
 <script>
@@ -58,10 +58,13 @@
     {day: '19 ноября', current: true, note: 'Кофе перед работой', rub: 280},
     {day: '7 октября', current: false, note: 'Кофе в дороге', rub: 310},
     {day: '14 декабря 2025', current: false, note: 'Кофе на вокзале', rub: 190},
+    ...Array.from({length: 31}, (_, i) => ({
+      day: (31 - i) + ' октября 2025', current: false, note: 'Обед в кафе', rub: 400,
+    })),
   ];
   const query = document.querySelector('#query'), scope = document.querySelector('#scope');
   const filters = [...document.querySelectorAll('.filters button')];
-  let all = false, kind = 0;
+  let all = false, kind = 0, limit = 30;
   function render() {
     const text = query.value.trim().toLowerCase();
     if (!text) all = false;
@@ -73,12 +76,14 @@
     const summary = [all ? 'Найдено: ' + hits.length : '', hits.length ? 'Расходы  −' + total + ' ₽' : ''].filter(Boolean).join(' · ');
     document.querySelector('#heading').textContent = all ? 'Результаты поиска' : 'Ноябрь';
     document.querySelector('#summary').textContent = document.querySelector('#inline').textContent = summary;
-    document.querySelector('#results').innerHTML = hits.map(r => '<section><div class="day"><span>' + r.day + '</span><span>−' + r.rub + ' ₽</span></div><div class="glass row"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z M17 9h1a3 3 0 0 1 0 6h-1 M3 21h16"/></svg></span><div class="name"><b>' + r.note + '</b><small>Кафе · Карта</small></div><b class="amount">−' + r.rub + ' ₽</b></div></section>').join('') || '<p class="empty">Ничего не найдено</p>';
+    document.querySelector('#more').hidden = !all || hits.length <= limit;
+    document.querySelector('#results').innerHTML = hits.slice(0, all ? limit : hits.length).map(r => '<section><div class="day"><span>' + r.day + '</span><span>−' + r.rub + ' ₽</span></div><div class="glass row"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z M17 9h1a3 3 0 0 1 0 6h-1 M3 21h16"/></svg></span><div class="name"><b>' + r.note + '</b><small>Кафе · Карта</small></div><b class="amount">−' + r.rub + ' ₽</b></div></section>').join('') || '<p class="empty">Ничего не найдено</p>';
   }
-  query.oninput = render;
+  document.querySelector('#more').onclick = () => { limit += 30; render(); };
+  query.oninput = () => { limit = 30; render(); };
   document.querySelector('#clear').onclick = () => { query.value = ''; query.focus(); render(); };
-  scope.onclick = () => { all = !all; render(); };
-  filters.forEach((button, index) => button.onclick = () => { kind = index; filters.forEach((b, i) => b.setAttribute('aria-pressed', i === kind)); render(); });
+  scope.onclick = () => { all = !all; limit = 30; render(); };
+  filters.forEach((button, index) => button.onclick = () => { kind = index; limit = 30; filters.forEach((b, i) => b.setAttribute('aria-pressed', i === kind)); render(); });
   render();
 </script>
 </html>
