@@ -34,6 +34,21 @@ class DebtsPage extends StatefulWidget {
 
 class _DebtsPageState extends State<DebtsPage> {
   var _closedOpen = false;
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onResume: context.read<DebtsCubit>().calendarChecked,
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +98,20 @@ class _DebtsPageState extends State<DebtsPage> {
     final styles = BirkaTextStyles.of(context);
     const gap = SizedBox(height: BirkaTokens.spaceLg);
     const small = SizedBox(height: BirkaTokens.spaceXs);
-    final closed = state.closed;
+    final owed = state.visibleOwed;
+    final mine = state.visibleMine;
+    final closed = state.filter == DebtDueFilter.all
+        ? state.closed
+        : const <Debt>[];
     return [
+      ChipSwitch(
+        options: debtDueLabels,
+        selected: state.filter,
+        compact: true,
+        wrap: true,
+        onChanged: context.read<DebtsCubit>().selectFilter,
+      ),
+      const SizedBox(height: BirkaTokens.spaceSm),
       IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,8 +119,8 @@ class _DebtsPageState extends State<DebtsPage> {
             Expanded(
               child: _Total(
                 label: t.debts.owedToMe,
-                amount: state.owedTotal,
-                people: state.owed.length,
+                amount: state.totalOf(owed),
+                people: peopleInDebts(owed),
                 tone: AmountTone.positive,
                 base: state.base,
               ),
@@ -102,8 +129,8 @@ class _DebtsPageState extends State<DebtsPage> {
             Expanded(
               child: _Total(
                 label: t.debts.myDebts,
-                amount: state.mineTotal,
-                people: state.mine.length,
+                amount: state.totalOf(mine),
+                people: peopleInDebts(mine),
                 tone: AmountTone.neutral,
                 base: state.base,
               ),
@@ -111,27 +138,37 @@ class _DebtsPageState extends State<DebtsPage> {
           ],
         ),
       ),
-      for (final (title, debts, owed) in [
-        (t.debts.owedToMe, state.owed, true),
-        (t.debts.myDebts, state.mine, false),
+      for (final (title, debts, isOwed) in [
+        (t.debts.owedToMe, owed, true),
+        (t.debts.myDebts, mine, false),
       ])
         if (debts.isNotEmpty) ...[
           gap,
           SectionLabel(title),
           small,
           GlassListGroup(
+            key: ValueKey((title, state.filter)),
             children: [
               for (final debt in debts)
                 _DebtRow(
                   key: ValueKey(debt.id),
                   debt: debt,
                   state: state,
-                  tone: owed ? AmountTone.positive : AmountTone.neutral,
+                  tone: isOwed ? AmountTone.positive : AmountTone.neutral,
                   onTap: () => widget.onOpen(debt.id),
                 ),
             ],
           ),
         ],
+      if (state.filter != DebtDueFilter.all &&
+          owed.isEmpty &&
+          mine.isEmpty) ...[
+        gap,
+        Text(
+          t.debts.dueFilter.empty,
+          style: styles.body.copyWith(color: colors.textSecondary),
+        ),
+      ],
       if (closed.isNotEmpty) ...[
         gap,
         Semantics(

@@ -543,6 +543,9 @@ class _Translations$debts$ru extends Translations$debts$en {
   @override
   String get done => 'Готово';
   @override
+  late final _Translations$debts$dueFilter$ru dueFilter =
+      _Translations$debts$dueFilter$ru._(_root);
+  @override
   String get foldClosed => 'Показать закрытые';
   @override
   String get moreHint => 'Кто кому должен и до какого дня';
@@ -4147,6 +4150,25 @@ class _Translations$categories$form$ru extends Translations$categories$form$en {
   String get failed => 'Не удалось сохранить. Попробуйте ещё раз.';
 }
 
+// Path: debts.dueFilter
+class _Translations$debts$dueFilter$ru extends Translations$debts$dueFilter$en {
+  _Translations$debts$dueFilter$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get all => 'Все';
+  @override
+  String get due => 'Срок наступил';
+  @override
+  String get week => 'Через 1–7 дней';
+  @override
+  String get empty => 'Нет открытых долгов с таким сроком.';
+}
+
 // Path: debts.line
 class _Translations$debts$line$ru extends Translations$debts$line$en {
   _Translations$debts$line$ru._(TranslationsRu root)
@@ -5682,6 +5704,10 @@ extension on TranslationsRu {
           'debts.toMore' => 'Ещё',
           'debts.close' => 'Закрыть',
           'debts.done' => 'Готово',
+          'debts.dueFilter.all' => 'Все',
+          'debts.dueFilter.due' => 'Срок наступил',
+          'debts.dueFilter.week' => 'Через 1–7 дней',
+          'debts.dueFilter.empty' => 'Нет открытых долгов с таким сроком.',
           'debts.foldClosed' => 'Показать закрытые',
           'debts.moreHint' => 'Кто кому должен и до какого дня',
           'debts.moreBoth' =>
@@ -5986,14 +6012,14 @@ extension on TranslationsRu {
           'help.letterPrivacy' =>
             'Операции, суммы и названия счетов в письмо не попадают.',
           'help.openMail' => 'Открыть почту',
+          _ => null,
+        } ??
+        switch (path) {
           'help.cancel' => 'Отмена',
           'help.questionSubject' => 'Birka · вопрос',
           'help.bugSubject' =>
             ({required Object version}) => 'Birka ${version} · ошибка',
           'help.ideaSubject' => 'Birka · идея',
-          _ => null,
-        } ??
-        switch (path) {
           'help.questionBody' => 'Здравствуйте!\n',
           'help.bugBody' => 'Что случилось:\n\nЧто ожидали:',
           'help.ideaBody' => 'Чего не хватает:\n\nКак это помогло бы:',
@@ -7122,14 +7148,14 @@ extension on TranslationsRu {
             ({required Object left}) => 'Отдали часть · осталось ${left}',
           'notifications.debtWaits' =>
             ({required Object left}) => 'Ещё не вернули · осталось ${left}',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.debtWaitsRepaid' =>
             ({required Object left}) => 'Ещё не отдали · осталось ${left}',
           'notifications.debtGone' => 'Этого долга больше нет',
           'notifications.today' => 'сегодня',
           'notifications.months.0' => 'январь',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.months.1' => 'февраль',
           'notifications.months.2' => 'март',
           'notifications.months.3' => 'апрель',
@@ -8125,6 +8151,9 @@ extension on TranslationsRu {
             ({required Object name}) => 'Добавили поездку «${name}»',
           'tags.addedTag' =>
             ({required Object name}) => 'Добавили метку «${name}»',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.saved' => ({required Object name}) => 'Сохранили «${name}»',
           'tags.marked' =>
             ({required num n, required Object name}) =>
@@ -8149,9 +8178,6 @@ extension on TranslationsRu {
                   other: 'Сняли метку с ${n} расхода',
                 ),
           'tags.undo' => 'Вернуть',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.picker.title' => 'Метки',
           'tags.picker.search' => 'Найти или создать',
           'tags.picker.clear' => 'Очистить поиск',

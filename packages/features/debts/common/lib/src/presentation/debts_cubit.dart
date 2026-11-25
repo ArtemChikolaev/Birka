@@ -20,6 +20,33 @@ enum DebtsStatus {
   failed,
 }
 
+/// The due dates included in the debt list.
+enum DebtDueFilter {
+  /// Every date, including debts without a deadline.
+  all,
+
+  /// Today or earlier.
+  due,
+
+  /// Tomorrow through the seventh day from today.
+  week
+  ;
+
+  bool _includes(Debt debt, CivilDate today) {
+    switch (this) {
+      case all:
+        return true;
+      case due:
+        return debt.isDue(today);
+      case week:
+        final date = debt.dueOn;
+        if (date == null) return false;
+        final days = today.daysUntil(date);
+        return days >= 1 && days <= 7;
+    }
+  }
+}
+
 /// What the list of debts shows (ADR 0029): who owes the person, whom the
 /// person owes, and the debts that are settled.
 @immutable
@@ -28,6 +55,7 @@ final class DebtsState {
   const DebtsState({
     required this.status,
     required this.today,
+    this.filter = DebtDueFilter.all,
     this.debts = const [],
     this.people = const [],
     this.base = Currency.rub,
@@ -39,6 +67,9 @@ final class DebtsState {
 
   /// Today on this device.
   final CivilDate today;
+
+  /// The selected scope of the list. A debt card can open any debt by ID.
+  final DebtDueFilter filter;
 
   /// Every debt that has anything to show.
   final List<Debt> debts;
@@ -62,6 +93,12 @@ final class DebtsState {
   /// The open debts that the person owes: the nearest day first.
   List<Debt> get mine => _open(DebtSide.borrowed);
 
+  /// The open debts on each side matching the selected due dates.
+  List<Debt> get visibleOwed => _open(DebtSide.lent, filter: filter);
+
+  /// The open debts the person owes within the selected dates.
+  List<Debt> get visibleMine => _open(DebtSide.borrowed, filter: filter);
+
   /// The settled debts, the latest first.
   List<Debt> get closed => debts.where((debt) => debt.closed).toList()
     ..sort(
@@ -70,18 +107,20 @@ final class DebtsState {
 
   /// What others owe the person in [base], or `null` while a rate is
   /// missing.
-  Money? get owedTotal => _sum(owed);
+  Money? get owedTotal => totalOf(owed);
 
   /// What the person owes in [base], or `null` while a rate is missing.
-  Money? get mineTotal => _sum(mine);
+  Money? get mineTotal => totalOf(mine);
 
   /// What [debt] has left in [base], when it is in another currency.
   Money? inBase(Debt debt) =>
       debt.currency == base ? null : rates.convert(debt.left, base);
 
-  /// Whether an open debt is in a currency other than [base].
-  bool get hasOtherCurrencies =>
-      [...owed, ...mine].any((debt) => debt.currency != base);
+  /// Whether any visible open balance needs conversion to the base currency.
+  bool get hasOtherCurrencies => debts.any(
+    (debt) =>
+        !debt.closed && debt.currency != base && filter._includes(debt, today),
+  );
 
   /// Whether there is no debt to show.
   bool get isEmpty => debts.isEmpty;
@@ -89,14 +128,22 @@ final class DebtsState {
   /// The debt [id], when it is among [debts].
   Debt? debt(String id) => debts.where((debt) => debt.id == id).firstOrNull;
 
-  List<Debt> _open(DebtSide side) =>
-      debts.where((debt) => !debt.closed && debt.side == side).toList()
+  List<Debt> _open(DebtSide side, {DebtDueFilter filter = DebtDueFilter.all}) =>
+      debts
+          .where(
+            (debt) =>
+                !debt.closed &&
+                debt.side == side &&
+                filter._includes(debt, today),
+          )
+          .toList()
         ..sort((a, b) {
           final byDay = _soonerFirst(a.dueOn, b.dueOn);
           return byDay != 0 ? byDay : _laterFirst(a.since, b.since);
         });
 
-  Money? _sum(List<Debt> debts) =>
+  /// The outstanding amount of [debts] in the base currency.
+  Money? totalOf(List<Debt> debts) =>
       rates.sum(debts.map((debt) => debt.left), base);
 
   static int _soonerFirst(CivilDate? a, CivilDate? b) {
@@ -114,6 +161,7 @@ final class DebtsState {
       other is DebtsState &&
       other.status == status &&
       other.today == today &&
+      other.filter == filter &&
       other.base == base &&
       identical(other.rates, rates) &&
       _same(other.debts, debts) &&
@@ -123,12 +171,19 @@ final class DebtsState {
   int get hashCode => Object.hash(
     status,
     today,
+    filter,
     base,
     rates,
     Object.hashAll(debts),
     Object.hashAll(people),
   );
 }
+
+/// Counts a person once across currencies. A legacy debt without a person
+/// counts separately, even when its account ID matches another person's ID.
+int peopleInDebts(List<Debt> debts) => {
+  for (final debt in debts) (debt.personId != null, debt.personId ?? debt.id),
+}.length;
 
 bool _same<T>(List<T> a, List<T> b) {
   if (a.length != b.length) return false;
@@ -171,6 +226,7 @@ final class DebtsCubit extends Cubit<DebtsState> {
   }
 
   final DebtsRepository _repository;
+  Timer? _midnight;
   final _subscriptions = <StreamSubscription<Object?>>[];
   List<Debt>? _debts;
   List<Person> _people = const [];
@@ -179,18 +235,49 @@ final class DebtsCubit extends Cubit<DebtsState> {
   var _baseRead = false;
   Currency? _main;
 
-  void _failed(Object _) {
+  /// Changes the date scope without changing the ledger.
+  void selectFilter(DebtDueFilter filter) {
     if (isClosed) return;
-    emit(DebtsState(status: DebtsStatus.failed, today: state.today));
+    _update(filter: filter);
+    _scheduleMidnight();
   }
 
-  void _update() {
+  /// Refreshes the civil day when the app or browser tab is shown again.
+  void calendarChecked() {
+    if (isClosed) return;
+    if (state.today != _repository.today()) _update();
+    _scheduleMidnight();
+  }
+
+  // Keep an open filtered list current overnight. On resume, recompute the
+  // next local midnight in case the clock or the time zone changed.
+  void _scheduleMidnight() {
+    _midnight?.cancel();
+    if (state.filter == DebtDueFilter.all) return;
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    _midnight = Timer(tomorrow.difference(now), calendarChecked);
+  }
+
+  void _failed(Object _) {
+    if (isClosed) return;
+    emit(
+      DebtsState(
+        status: DebtsStatus.failed,
+        today: state.today,
+        filter: state.filter,
+      ),
+    );
+  }
+
+  void _update({DebtDueFilter? filter}) {
     final debts = _debts;
     if (debts == null || !_baseRead || isClosed) return;
     emit(
       DebtsState(
         status: DebtsStatus.ready,
         today: _repository.today(),
+        filter: filter ?? state.filter,
         debts: debts,
         people: _people,
         base: _base ?? _main ?? Currency.rub,
@@ -201,6 +288,7 @@ final class DebtsCubit extends Cubit<DebtsState> {
 
   @override
   Future<void> close() async {
+    _midnight?.cancel();
     for (final subscription in _subscriptions) {
       await subscription.cancel();
     }

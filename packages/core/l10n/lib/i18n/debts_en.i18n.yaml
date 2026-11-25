@@ -2,6 +2,11 @@ title: Debts
 toMore: More
 close: Close
 done: Done
+dueFilter:
+  all: All
+  due: Due now
+  week: In 1–7 days
+  empty: No open debts are due in this period.
 foldClosed: Show the settled ones
 moreHint: Who owes whom, and by what day
 moreBoth: Owed to me $owed · mine $mine

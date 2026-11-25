@@ -41,6 +41,9 @@ class DebtsPage extends StatefulComponent {
   /// The styles of the page.
   @css
   static List<StyleRule> get styles => [
+    css('.debts__filters').styles(
+      raw: {'display': 'flex', 'flex-wrap': 'wrap', 'gap': 'var(--space-xs)'},
+    ),
     css('.debts__totals').styles(
       raw: {
         'display': 'grid',
@@ -168,37 +171,53 @@ class _DebtsPageState extends State<DebtsPage> {
   }
 
   List<Component> _sections(DebtsState state) {
-    final closed = state.closed;
+    final owed = state.visibleOwed;
+    final mine = state.visibleMine;
+    final closed = state.filter == DebtDueFilter.all
+        ? state.closed
+        : const <Debt>[];
     return [
+      div(classes: 'debts__filters', [
+        for (final entry in debtDueLabels.entries)
+          BirkaChip(
+            label: entry.value,
+            compact: true,
+            selected: entry.key == state.filter,
+            onTap: () => context.read<DebtsCubit>().selectFilter(entry.key),
+          ),
+      ]),
       div(classes: 'debts__totals', [
         _total(
           t.debts.owedToMe,
-          state.owedTotal,
-          state.owed.length,
+          state.totalOf(owed),
+          peopleInDebts(owed),
           AmountTone.positive,
           state.base,
         ),
         _total(
           t.debts.myDebts,
-          state.mineTotal,
-          state.mine.length,
+          state.totalOf(mine),
+          peopleInDebts(mine),
           AmountTone.neutral,
           state.base,
         ),
       ]),
       for (final (title, debts, tone) in [
-        (t.debts.owedToMe, state.owed, AmountTone.positive),
-        (t.debts.myDebts, state.mine, AmountTone.neutral),
+        (t.debts.owedToMe, owed, AmountTone.positive),
+        (t.debts.myDebts, mine, AmountTone.neutral),
       ])
         if (debts.isNotEmpty)
           section(classes: 'debts__group', [
             SectionLabel(title),
             GlassListGroup(
+              key: ValueKey((title, state.filter)),
               children: [
                 for (final debt in debts) _row(debt, state, tone),
               ],
             ),
           ]),
+      if (state.filter != DebtDueFilter.all && owed.isEmpty && mine.isEmpty)
+        GlassNotice(text: t.debts.dueFilter.empty),
       if (closed.isNotEmpty)
         section(classes: 'debts__group', [
           button(

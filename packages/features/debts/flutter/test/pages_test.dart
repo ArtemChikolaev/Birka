@@ -54,6 +54,36 @@ void main() {
       expect(opened, ['masha']);
     });
 
+    testWidgets('filters both sides and their totals by due date', (
+      tester,
+    ) async {
+      final repository = FakeDebtsRepository();
+      final cubit = DebtsCubit(repository);
+      addTearDown(cubit.close);
+      await tester.pumpWidget(
+        phone(cubit, DebtsPage(onBack: () {}, onAdd: () {}, onOpen: (_) {})),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Срок наступил'));
+      await tester.pumpAndSettle();
+      expect(find.text('Дима'), findsOneWidget);
+      expect(find.text('Маша'), findsNothing);
+      expect(find.text('Саша'), findsNothing);
+      expect(find.text(nb('9 768 ₽')), findsOneWidget);
+      expect(find.text('ЗАКРЫТЫЕ · 2'), findsNothing);
+      await tester.tap(find.text('Через 1–7 дней'));
+      await tester.pumpAndSettle();
+      expect(find.text('Саша'), findsOneWidget);
+      expect(find.text('Дима'), findsNothing);
+      expect(find.text(nb('4 000 ₽')), findsNWidgets(2));
+      repository.currentDay = boardToday.addDays(6);
+      await tester.pump(const Duration(days: 1));
+      await tester.pumpAndSettle();
+      expect(find.text(t.debts.dueFilter.empty), findsOneWidget);
+      await tester.tap(find.text('Все'));
+      await tester.pumpAndSettle();
+    });
+
     testWidgets('offers the first debt when there is none', (tester) async {
       var added = 0;
       final cubit = DebtsCubit(FakeDebtsRepository(debts: [], transfers: []));

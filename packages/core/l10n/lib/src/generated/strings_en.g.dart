@@ -590,6 +590,9 @@ class Translations$debts$en {
   /// en: 'Done'
   String get done => 'Done';
 
+  late final Translations$debts$dueFilter$en dueFilter =
+      Translations$debts$dueFilter$en.internal(_root);
+
   /// en: 'Show the settled ones'
   String get foldClosed => 'Show the settled ones';
 
@@ -4894,6 +4897,27 @@ class Translations$categories$form$en {
   String get failed => 'Could not save. Try again.';
 }
 
+// Path: debts.dueFilter
+class Translations$debts$dueFilter$en {
+  Translations$debts$dueFilter$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'All'
+  String get all => 'All';
+
+  /// en: 'Due now'
+  String get due => 'Due now';
+
+  /// en: 'In 1–7 days'
+  String get week => 'In 1–7 days';
+
+  /// en: 'No open debts are due in this period.'
+  String get empty => 'No open debts are due in this period.';
+}
+
 // Path: debts.line
 class Translations$debts$line$en {
   Translations$debts$line$en.internal(this._root);
@@ -6631,6 +6655,10 @@ extension on Translations {
           'debts.toMore' => 'More',
           'debts.close' => 'Close',
           'debts.done' => 'Done',
+          'debts.dueFilter.all' => 'All',
+          'debts.dueFilter.due' => 'Due now',
+          'debts.dueFilter.week' => 'In 1–7 days',
+          'debts.dueFilter.empty' => 'No open debts are due in this period.',
           'debts.foldClosed' => 'Show the settled ones',
           'debts.moreHint' => 'Who owes whom, and by what day',
           'debts.moreBoth' =>
@@ -6930,14 +6958,14 @@ extension on Translations {
           'help.letterPrivacy' =>
             'Operations, amounts and account names stay out of the letter.',
           'help.openMail' => 'Open mail',
+          _ => null,
+        } ??
+        switch (path) {
           'help.cancel' => 'Cancel',
           'help.questionSubject' => 'Birka · question',
           'help.bugSubject' =>
             ({required Object version}) => 'Birka ${version} · bug',
           'help.ideaSubject' => 'Birka · idea',
-          _ => null,
-        } ??
-        switch (path) {
           'help.questionBody' => 'Hello!\n',
           'help.bugBody' => 'What happened:\n\nWhat you expected:',
           'help.ideaBody' => 'What is missing:\n\nHow it would help:',
@@ -7955,14 +7983,14 @@ extension on Translations {
             ({required Object left}) => 'You paid back a part · ${left} left',
           'notifications.debtWaits' =>
             ({required Object left}) => 'Not paid back yet · ${left} left',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.debtWaitsRepaid' =>
             ({required Object left}) => 'Not paid back yet · ${left} left',
           'notifications.debtGone' => 'This debt is no longer here',
           'notifications.today' => 'today',
           'notifications.months.0' => 'January',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.months.1' => 'February',
           'notifications.months.2' => 'March',
           'notifications.months.3' => 'April',
@@ -8890,6 +8918,9 @@ extension on Translations {
             ({required Object name}) => 'Added the trip «${name}»',
           'tags.addedTag' =>
             ({required Object name}) => 'Added the tag «${name}»',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.saved' => ({required Object name}) => 'Saved «${name}»',
           'tags.marked' =>
             ({required num n, required Object name}) =>
@@ -8908,9 +8939,6 @@ extension on Translations {
                   other: 'Took the tag off ${n} expenses',
                 ),
           'tags.undo' => 'Undo',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.picker.title' => 'Tags',
           'tags.picker.search' => 'Find or create',
           'tags.picker.clear' => 'Clear the search',

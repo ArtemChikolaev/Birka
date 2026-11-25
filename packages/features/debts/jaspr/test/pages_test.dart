@@ -96,6 +96,33 @@ void main() {
       expect(find.text('вернули 2 ноября'), findsOneComponent);
     });
 
+    testComponents('filters due dates and restores the full list', (
+      tester,
+    ) async {
+      final cubit = DebtsCubit(FakeDebtsRepository());
+      addTearDown(cubit.close);
+      tester.pumpComponent(
+        BlocProvider<DebtsCubit>.value(
+          value: cubit,
+          child: DebtsPage(addHref: 'new', hrefOf: (id) => id),
+        ),
+      );
+      await tester.pump();
+      await tester.click(buttonOf('Срок наступил'));
+      await tester.pump();
+      expect(hrefOf('Дима'), 'dima');
+      expect(find.text('Саша'), findsNothing);
+      expect(find.text('Закрытые · 2'), findsNothing);
+      await tester.click(buttonOf('Через 1–7 дней'));
+      await tester.pump();
+      expect(hrefOf('Саша'), 'sasha');
+      expect(find.text('Дима'), findsNothing);
+      await tester.click(buttonOf('Все'));
+      await tester.pump();
+      expect(hrefOf('Маша'), 'masha');
+      expect(find.text('Закрытые · 2'), findsOneComponent);
+    });
+
     testComponents('offers the first debt when there is none', (tester) async {
       final cubit = DebtsCubit(FakeDebtsRepository(debts: [], transfers: []));
       addTearDown(cubit.close);

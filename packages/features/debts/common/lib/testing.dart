@@ -185,14 +185,16 @@ final class FakeDebtsRepository implements DebtsRepository {
        _people = people ?? peopleOf(debts ?? boardDebts()),
        _transfers = transfers ?? boardTransfers(),
        _rates = rates ?? boardRates(),
-       _today = today ?? boardToday;
+       currentDay = today ?? boardToday;
 
   final List<Account> _accounts;
   final List<Account> _debts;
   final List<Person> _people;
   final List<Transaction> _transfers;
   final RateBook _rates;
-  final CivilDate _today;
+
+  /// The civil day, which a test can advance before resuming the list.
+  CivilDate currentDay;
 
   /// The currency of the totals, or `null` to follow the first account.
   final Currency? base;
@@ -213,7 +215,7 @@ final class FakeDebtsRepository implements DebtsRepository {
   List<Transaction> get transfers => List.unmodifiable(_transfers);
 
   @override
-  CivilDate today() => _today;
+  CivilDate today() => currentDay;
 
   /// What [read] gives now, and again after every change. A cancel gives
   /// back no future: one of a broadcast stream completes in the root zone,

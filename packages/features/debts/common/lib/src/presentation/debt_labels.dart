@@ -7,6 +7,13 @@ import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
 
+/// Labels for the due-date options on both hosts.
+Map<DebtDueFilter, String> get debtDueLabels => {
+  DebtDueFilter.all: t.debts.dueFilter.all,
+  DebtDueFilter.due: t.debts.dueFilter.due,
+  DebtDueFilter.week: t.debts.dueFilter.week,
+};
+
 /// How loudly a line of a debt speaks.
 enum DebtTone {
   /// As the text around it.
