@@ -5779,6 +5779,29 @@ class Translations$tags$report$en {
 
   // Translations
 
+  /// en: 'Spending by period'
+  String get periods => 'Spending by period';
+
+  /// en: 'Before the trip'
+  String get beforeTrip => 'Before the trip';
+
+  /// en: 'During the trip'
+  String get duringTrip => 'During the trip';
+
+  /// en: 'After the trip'
+  String get afterTrip => 'After the trip';
+
+  /// en: 'No rate'
+  String get rateMissing => 'No rate';
+
+  /// en: '(one) {$n expense} (other) {$n expenses}'
+  String expenses({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
+        n,
+        one: '${n} expense',
+        other: '${n} expenses',
+      );
+
   /// en: 'today is the last day'
   String get todayLast => 'today is the last day';
 
@@ -8846,6 +8869,19 @@ extension on Translations {
             'A trip has days: its expenses on those days get its tag by themselves, except regular payments.',
           'tags.steps.third' =>
             'Tag the tickets and the stay that you bought in advance on the card of the operation.',
+          'tags.report.periods' => 'Spending by period',
+          'tags.report.beforeTrip' => 'Before the trip',
+          'tags.report.duringTrip' => 'During the trip',
+          'tags.report.afterTrip' => 'After the trip',
+          'tags.report.rateMissing' => 'No rate',
+          'tags.report.expenses' =>
+            ({required num n}) =>
+                (_root.$meta.cardinalResolver ??
+                PluralResolvers.cardinal('en'))(
+                  n,
+                  one: '${n} expense',
+                  other: '${n} expenses',
+                ),
           'tags.report.todayLast' => 'today is the last day',
           'tags.report.perDay' => 'A day on the spot',
           'tags.report.perMonth' => 'A month',
@@ -8910,6 +8946,9 @@ extension on Translations {
           'tags.form.footTrip' =>
             'The tickets bought in advance can wear the tag too',
           'tags.form.footPlain' => 'Tags live in More → Tags',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.form.save' => 'Save',
           'tags.form.done' => 'Done',
           'tags.form.nameMissing' => 'Give the tag a name.',
@@ -8918,9 +8957,6 @@ extension on Translations {
             ({required Object name}) => 'Added the trip «${name}»',
           'tags.addedTag' =>
             ({required Object name}) => 'Added the tag «${name}»',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.saved' => ({required Object name}) => 'Saved «${name}»',
           'tags.marked' =>
             ({required num n, required Object name}) =>

@@ -135,6 +135,42 @@ final class TagCategoryPart {
   final double fraction;
 }
 
+/// The three civil-date ranges of a trip.
+enum TripPeriod {
+  /// Dates before departure.
+  before,
+
+  /// Departure through the last day, inclusive.
+  during,
+
+  /// Dates following the last day.
+  after
+  ;
+
+  static TripPeriod _of(CivilDate day, TagDays days) {
+    if (days.contains(day)) return during;
+    return day.compareTo(days.first) < 0 ? before : after;
+  }
+}
+
+/// Tagged expenses in one period, valued at the rates of their own days.
+@immutable
+final class TripSpending {
+  const TripSpending._(this.period, this.count, this.total, this.converted);
+
+  /// The period relative to the trip dates.
+  final TripPeriod period;
+
+  /// Number of expense transactions, including any without a rate.
+  final int count;
+
+  /// The full amount, or null if any expense lacks a historical rate.
+  final Money? total;
+
+  /// Whether at least one expense was in a different currency.
+  final bool converted;
+}
+
 /// What a метка took, in every currency and by category (ADR 0027).
 @immutable
 final class TagReport {
@@ -151,6 +187,7 @@ final class TagReport {
     required this.before,
     required this.after,
     required this.elapsed,
+    this.periods = const [],
     this.perDay,
     this.perDayLocal,
     this.perMonth,
@@ -176,6 +213,9 @@ final class TagReport {
 
   /// The expenses by category, the biggest first.
   final List<TagCategoryPart> categories;
+
+  /// Before, during and after a trip with at least one expense.
+  final List<TripSpending> periods;
 
   /// The operations that wear it, the latest first.
   final List<Transaction> operations;
@@ -233,17 +273,11 @@ TagReport reportOf({
   final (total, missing) = _total(parts, rates, base);
   final days = tag.days;
 
-  var there = 0;
-  var before = 0;
-  var after = 0;
-  for (final operation in operations) {
-    final day = operation.occurredOn;
-    if (days == null || days.contains(day)) {
-      there++;
-    } else if (day.compareTo(days.first) < 0) {
-      before++;
-    } else {
-      after++;
+  final byPeriod = <TripPeriod, List<Transaction>>{};
+  if (days != null) {
+    for (final operation in operations) {
+      final period = TripPeriod._of(operation.occurredOn, days);
+      (byPeriod[period] ??= []).add(operation);
     }
   }
 
@@ -284,9 +318,16 @@ TagReport reportOf({
     currencies: currencies,
     categories: categoryParts,
     operations: operations,
-    there: there,
-    before: before,
-    after: after,
+    there: days == null
+        ? operations.length
+        : byPeriod[TripPeriod.during]?.length ?? 0,
+    before: byPeriod[TripPeriod.before]?.length ?? 0,
+    after: byPeriod[TripPeriod.after]?.length ?? 0,
+    periods: [
+      if (days != null && currencies.isNotEmpty)
+        for (final period in TripPeriod.values)
+          _spending(period, byPeriod[period] ?? const [], rates, base),
+    ],
     elapsed: elapsed,
     perDay: perDay,
     perDayLocal: perDayLocal,
@@ -335,6 +376,27 @@ Category? _topOf(String? id, Map<String, Category> categories) {
   return (rates.sumOfDays(known, base) ?? Money.zero(base), true);
 }
 
+CategoryDayTotal _expenseOnDay(Transaction expense) =>
+    CategoryDayTotal(null, expense.occurredOn, -expense.entries.first.amount);
+
+TripSpending _spending(
+  TripPeriod period,
+  List<Transaction> operations,
+  RateBook rates,
+  Currency base,
+) {
+  final expenses = [
+    for (final operation in operations)
+      if (operation.kind == TransactionKind.expense) _expenseOnDay(operation),
+  ];
+  return TripSpending._(
+    period,
+    expenses.length,
+    rates.sumOfDays(expenses, base),
+    expenses.any((expense) => expense.total.currency != base),
+  );
+}
+
 List<TagCurrencyPart> _currencies(
   List<Transaction> operations,
   RateBook rates,
@@ -371,9 +433,9 @@ TagCurrencyPart _currencyPart(
   final rows = <CategoryDayTotal>[];
   var there = 0;
   for (final expense in expenses) {
-    final spent = -expense.entries.first.amount;
-    amount += spent;
-    rows.add(CategoryDayTotal(null, expense.occurredOn, spent));
+    final row = _expenseOnDay(expense);
+    amount += row.total;
+    rows.add(row);
     if (days == null || days.contains(expense.occurredOn)) there++;
   }
   return TagCurrencyPart(

@@ -93,3 +93,18 @@ String _date(CivilDate day, int thisYear) => dateLabel(
   day: day.day,
   thisYear: thisYear,
 );
+
+/// The heading for one stage of a trip.
+String tripPeriodLabel(TripPeriod period) => switch (period) {
+  TripPeriod.before => t.tags.report.beforeTrip,
+  TripPeriod.during => t.tags.report.duringTrip,
+  TripPeriod.after => t.tags.report.afterTrip,
+};
+
+/// The period amount, with converted totals marked as estimates.
+String tripSpendingLabel(TripSpending spending) {
+  final total = spending.total;
+  if (total == null) return t.tags.report.rateMissing;
+  final amount = formatMoney(total);
+  return spending.converted ? '≈ $amount' : amount;
+}

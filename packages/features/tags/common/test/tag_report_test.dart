@@ -1,6 +1,8 @@
+import 'package:decimal/decimal.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 import 'package:tags_common/tags_common.dart';
 import 'package:tags_common/testing.dart';
 import 'package:test/test.dart';
@@ -75,6 +77,99 @@ void main() {
       );
     });
 
+    test('values expenses by period at their historical rates', () {
+      final periods = reportOfTrip().periods;
+      expect(
+        [
+          for (final part in periods)
+            (part.period, part.count, part.total, part.converted),
+        ],
+        [
+          (TripPeriod.before, 2, units(57988, Currency.rub), true),
+          (TripPeriod.during, 2, units(4027, Currency.rub), true),
+          (TripPeriod.after, 0, units(0, Currency.rub), false),
+        ],
+      );
+    });
+
+    test('uses each expense date when rates change within a period', () {
+      final first = tbilisi.days!.first;
+      final last = tbilisi.days!.last;
+      final report = reportOf(
+        tag: tbilisi,
+        operations: [
+          expense('last', units(1, Currency.usd), last),
+          expense('first', units(1, Currency.usd), first),
+        ],
+        categories: const [],
+        rates: RateBook([
+          DayRates(first, {'USD': Decimal.fromInt(80)}),
+          DayRates(last, {'USD': Decimal.fromInt(90)}),
+        ]),
+        base: Currency.rub,
+        today: last,
+      );
+      expect(report.periods[1].total, units(170, Currency.rub));
+    });
+
+    test('includes both trip dates and counts a split expense once', () {
+      final first = CivilDate(2026, 12, 31);
+      final last = CivilDate(2027, 1, 1);
+      final trip = Tag(
+        id: 'new-year',
+        name: 'New Year',
+        days: TagDays(first, last),
+      );
+      Money rub(int amount) => Money(amount, Currency.rub);
+      final transfer = Transaction(
+        id: 'transfer',
+        kind: TransactionKind.transfer,
+        occurredOn: last,
+        note: '',
+        status: TransactionStatus.cleared,
+        source: TransactionSource.manual,
+        entries: [
+          Entry(accountId: 'a', amount: rub(-100)),
+          Entry(accountId: 'b', amount: rub(100)),
+        ],
+        allocations: const [],
+      );
+      TagReport report(List<Transaction> operations) => reportOf(
+        tag: trip,
+        operations: operations,
+        categories: boardCategories(),
+        rates: boardRates(),
+        base: Currency.rub,
+        today: last,
+      );
+      final result = report([
+        expense('after', rub(202), CivilDate(2027, 1, 2)),
+        transfer,
+        expense('last', rub(303), last),
+        Transaction(
+          id: 'split',
+          kind: TransactionKind.expense,
+          occurredOn: first,
+          note: '',
+          status: TransactionStatus.cleared,
+          source: TransactionSource.manual,
+          entries: [Entry(accountId: 'a', amount: rub(-599))],
+          allocations: [
+            Allocation(categoryId: 'cafe', amount: rub(399)),
+            Allocation(categoryId: 'travel', amount: rub(200)),
+          ],
+        ),
+        expense('before', rub(101), CivilDate(2026, 12, 30)),
+      ]);
+      expect(
+        [for (final part in result.periods) (part.count, part.total)],
+        [(1, rub(101)), (2, rub(902)), (1, rub(202))],
+      );
+      expect(result.there, 3);
+      expect(report([transfer]).periods, isEmpty);
+      expect(report([]).periods, isEmpty);
+    });
+
     test('has no day on the spot before the trip starts', () {
       final report = reportOfTrip(today: CivilDate(2026, 11, 1));
 
@@ -105,6 +200,12 @@ void main() {
       );
 
       expect(report.missingRates, isTrue);
+      final periods = report.periods;
+      expect(periods.first.total, units(57988, Currency.rub));
+      expect(periods[1].count, 3);
+      expect(periods[1].total, isNull);
+      expect(tripSpendingLabel(periods[1]), 'Нет курса');
+      expect(periods.last.total, units(0, Currency.rub));
       expect(report.total, units(62015, Currency.rub));
     });
   });
@@ -135,6 +236,7 @@ void main() {
     );
 
     expect(report.total, units(20800, Currency.rub));
+    expect(report.periods, isEmpty);
     expect(report.span, 81);
     // 30 days of the 81.
     expect(report.perMonth, Money(770370, Currency.rub));
