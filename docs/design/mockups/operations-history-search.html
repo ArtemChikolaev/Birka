@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бирка · Поиск операций</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing: border-box }
+  html { color-scheme: dark }
+  body { margin: 0; min-height: 100vh; font-family: var(--font-family-text); color: var(--color-text); background: radial-gradient(ellipse at top left,var(--color-ambient),transparent 60%),var(--color-background) }
+  main { max-width: 1080px; padding: 28px 20px; margin: auto }
+  header, .bar, .row, .search { display: flex; align-items: center; gap: 10px }
+  header, .row { justify-content: space-between }
+  h1 { margin: 0; font: 800 30px Manrope,sans-serif }
+  h2, .day { margin: 0; color: var(--color-text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em }
+  section, aside, .filters { margin-top: 12px }
+  .glass { border-radius: var(--radius-lg); padding: 16px }
+  input, button { color: inherit; font: inherit }
+  input { min-width: 0; width: 100%; background: transparent; border: none; outline: none }
+  .search { margin: 18px 0 8px; padding: 12px 16px }
+  .search:focus-within { outline: 1px solid var(--color-accent) }
+  .search button { border: none; background: transparent; color: var(--color-text-muted); cursor: pointer }
+  .bar { flex-wrap: wrap; gap: 5px }
+  .chip { border: 1px solid var(--color-hairline); border-radius: var(--radius-pill); padding: 8px 12px; background: var(--color-surface-raised); color: var(--color-text-secondary); font-size: 13px; font-weight: 600; cursor: pointer }
+  [aria-pressed=true] { background: var(--color-text); color: var(--color-background) }
+  .date { font-size: 14px; color: var(--color-text-secondary) }
+  .day { display: flex; justify-content: space-between; margin: 20px 2px 6px }
+  .amount { font-variant-numeric: tabular-nums; white-space: nowrap }
+  .row { gap: 12px }
+  .name { display: flex; flex-direction: column; gap: 3px; flex: 1 }
+  small, .empty { color: var(--color-text-muted) }
+  .mark { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: var(--color-palette-amber); background: color-mix(in srgb,var(--color-palette-amber) 16%,transparent) }
+  .mark svg { width: 20px; height: 20px }
+  .summary { color: var(--color-text-secondary); margin: 12px 0; font-size: 14px }
+  aside { display: none }
+  [hidden] { display: none !important }
+  @media(min-width: 760px) {
+    main { padding-top: 48px }
+    .layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 24px }
+    aside { display: block; align-self: start; margin-top: 18px }
+    .inline { display: none }
+  }
+</style>
+<main>
+  <header><h1>Операции</h1><span class="date" id="month">Ноябрь</span></header>
+  <div class="layout"><div>
+    <label class="glass search"><span aria-hidden="true">⌕</span><input id="query" aria-label="Поиск" placeholder="Сумма, категория, заметка или метка" value="кофе"><button id="clear" aria-label="Очистить поиск">✕</button></label>
+    <button class="chip" id="scope" aria-pressed="false">Все месяцы</button>
+    <div class="bar filters" aria-label="Тип операции"><button class="chip" aria-pressed="true">Все</button><button class="chip">Расходы</button><button class="chip">Доходы</button><button class="chip">Переводы</button></div>
+    <p class="summary inline" id="inline"></p>
+    <div id="results" aria-live="polite"></div><button class="chip" id="more" hidden>Показать ещё</button>
+  </div><aside class="glass"><h2 id="heading">Ноябрь</h2><p class="summary" id="summary"></p></aside></div>
+</main>
+<script>
+  const rows = [
+    {day: '19 ноября', current: true, note: 'Кофе перед работой', rub: 280},
+    {day: '7 октября', current: false, note: 'Кофе в дороге', rub: 310},
+    {day: '14 декабря 2025', current: false, note: 'Кофе на вокзале', rub: 190},
+    ...Array.from({length: 31}, (_, i) => ({
+      day: (31 - i) + ' октября 2025', current: false, note: 'Обед в кафе', rub: 400,
+    })),
+  ];
+  const query = document.querySelector('#query'), scope = document.querySelector('#scope');
+  const filters = [...document.querySelectorAll('.filters button')];
+  let all = false, kind = 0, limit = 30;
+  function render() {
+    const text = query.value.trim().toLowerCase();
+    if (!text) all = false;
+    scope.hidden = !text; scope.setAttribute('aria-pressed', all);
+    document.querySelector('#clear').hidden = !query.value;
+    document.querySelector('#month').hidden = all;
+    const hits = rows.filter(r => (all || r.current) && kind <= 1 && text.split(/\s+/).every(w => (r.note.toLowerCase() + ' кафе карта ' + r.rub).includes(w)));
+    const total = hits.reduce((sum, r) => sum + r.rub, 0);
+    const summary = [all ? 'Найдено: ' + hits.length : '', hits.length ? 'Расходы  −' + total + ' ₽' : ''].filter(Boolean).join(' · ');
+    document.querySelector('#heading').textContent = all ? 'Результаты поиска' : 'Ноябрь';
+    document.querySelector('#summary').textContent = document.querySelector('#inline').textContent = summary;
+    document.querySelector('#more').hidden = !all || hits.length <= limit;
+    document.querySelector('#results').innerHTML = hits.slice(0, all ? limit : hits.length).map(r => '<section><div class="day"><span>' + r.day + '</span><span>−' + r.rub + ' ₽</span></div><div class="glass row"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z M17 9h1a3 3 0 0 1 0 6h-1 M3 21h16"/></svg></span><div class="name"><b>' + r.note + '</b><small>Кафе · Карта</small></div><b class="amount">−' + r.rub + ' ₽</b></div></section>').join('') || '<p class="empty">Ничего не найдено</p>';
+  }
+  document.querySelector('#more').onclick = () => { limit += 30; render(); };
+  query.oninput = () => { limit = 30; render(); };
+  document.querySelector('#clear').onclick = () => { query.value = ''; query.focus(); render(); };
+  scope.onclick = () => { all = !all; limit = 30; render(); };
+  filters.forEach((button, index) => button.onclick = () => { kind = index; limit = 30; filters.forEach((b, i) => b.setAttribute('aria-pressed', i === kind)); render(); });
+  render();
+</script>
+</html>

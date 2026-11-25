@@ -26,6 +26,10 @@ noCategoriesHint: Добавьте категории, чтобы разбира
 addCategories: Добавить категории
 search: Поиск
 searchHint: Сумма, категория, заметка или метка
+allMonths: Все месяцы
+searchResults: Результаты поиска
+matchCount: "Найдено: $count"
+moreSearchDays: Показать ещё
 clearSearch: Очистить поиск
 fromQuestion: Из вопроса
 toAnswer: К ответу

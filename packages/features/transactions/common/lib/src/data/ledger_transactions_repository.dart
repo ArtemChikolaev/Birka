@@ -51,7 +51,10 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   Future<void> record(TransactionDraft draft) => _ledger.record(draft);
 
   @override
-  Stream<List<Operation>> watchOperations(CivilDate month) {
+  Stream<List<Operation>> watchOperations(CivilDate? month) {
+    if (month == null) {
+      return _operationsFor(_ledger.watchTransactions(limit: null));
+    }
     final last = CivilDate.of(DateTime.utc(month.year, month.month + 1, 0));
     return watchOperationsBetween(month, last);
   }
@@ -60,13 +63,19 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   Stream<List<Operation>> watchOperationsBetween(
     CivilDate first,
     CivilDate last,
-  ) => combineLatest(
+  ) => _operationsFor(
     _ledger.watchTransactions(from: first, to: last, limit: null),
-    _watchNames(),
-    (transactions, names) => [
-      for (final transaction in transactions) names.operationOf(transaction),
-    ],
   );
+
+  Stream<List<Operation>> _operationsFor(Stream<List<Transaction>> rows) =>
+      combineLatest(
+        rows,
+        _watchNames(),
+        (transactions, names) => [
+          for (final transaction in transactions)
+            names.operationOf(transaction),
+        ],
+      );
 
   @override
   Stream<Operation?> watchOperation(String id) => combineLatest(
@@ -99,22 +108,12 @@ final class LedgerTransactionsRepository implements TransactionsRepository {
   }) => _ledger.watchDayChanges(from: from, accountId: id);
 
   @override
-  Stream<List<Operation>> watchAccountOperations(String id) => combineLatest(
-    _ledger.watchTransactions(accountId: id),
-    _watchNames(),
-    (transactions, names) => [
-      for (final transaction in transactions) names.operationOf(transaction),
-    ],
-  );
+  Stream<List<Operation>> watchAccountOperations(String id) =>
+      _operationsFor(_ledger.watchTransactions(accountId: id));
 
   @override
-  Stream<List<Operation>> watchTagOperations(String id) => combineLatest(
-    _ledger.watchTransactions(tagId: id, limit: null),
-    _watchNames(),
-    (transactions, names) => [
-      for (final transaction in transactions) names.operationOf(transaction),
-    ],
-  );
+  Stream<List<Operation>> watchTagOperations(String id) =>
+      _operationsFor(_ledger.watchTransactions(tagId: id, limit: null));
 
   @override
   Future<List<Tag>> tags() => _ledger.watchTags().first;

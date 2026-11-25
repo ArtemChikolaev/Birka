@@ -75,11 +75,12 @@ final class FakeRepository implements TransactionsRepository {
   }
 
   @override
-  Stream<List<Operation>> watchOperations(CivilDate month) => _follow(
+  Stream<List<Operation>> watchOperations(CivilDate? month) => _follow(
     () => [
       for (final operation in operations)
-        if (operation.day.year == month.year &&
-            operation.day.month == month.month)
+        if (month == null ||
+            operation.day.year == month.year &&
+                operation.day.month == month.month)
           operation,
     ],
   );

@@ -4005,6 +4005,18 @@ class Translations$transactions$en {
   /// en: 'Amount, category, note or tag'
   String get searchHint => 'Amount, category, note or tag';
 
+  /// en: 'All months'
+  String get allMonths => 'All months';
+
+  /// en: 'Search results'
+  String get searchResults => 'Search results';
+
+  /// en: 'Matches: $count'
+  String matchCount({required Object count}) => 'Matches: ${count}';
+
+  /// en: 'Show more'
+  String get moreSearchDays => 'Show more';
+
   /// en: 'Clear the search'
   String get clearSearch => 'Clear the search';
 
@@ -8949,6 +8961,11 @@ extension on Translations {
           'transactions.addCategories' => 'Add categories',
           'transactions.search' => 'Search',
           'transactions.searchHint' => 'Amount, category, note or tag',
+          'transactions.allMonths' => 'All months',
+          'transactions.searchResults' => 'Search results',
+          'transactions.matchCount' =>
+            ({required Object count}) => 'Matches: ${count}',
+          'transactions.moreSearchDays' => 'Show more',
           'transactions.clearSearch' => 'Clear the search',
           'transactions.fromQuestion' => 'From the question',
           'transactions.toAnswer' => 'Back to the answer',

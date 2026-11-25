@@ -36,6 +36,39 @@ void main() {
         occurredOn: today,
       );
 
+  test(
+    'history includes older rows beyond one batch in civil date order',
+    () async {
+      final card = await account('Card');
+      final cafe = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Cafe',
+      );
+      final draft = expense(card, cafe);
+      await database.transaction(() async {
+        for (var i = 0; i < 1000; i++) {
+          await ledger.record(draft);
+        }
+        await ledger.record(
+          TransactionDraft.expense(
+            accountId: card.id,
+            allocations: draft.allocations,
+            occurredOn: CivilDate(2025, 12, 31),
+            note: 'Old coffee',
+          ),
+        );
+      });
+
+      final rows = await repository.watchOperations(null).first;
+      expect(rows, hasLength(1001));
+      expect(rows.map((it) => it.id).toSet(), hasLength(1001));
+      final oldest = rows.last;
+      expect(oldest.note, 'Old coffee');
+      expect(oldest.category?.id, cafe.id);
+      expect(oldest.amountOn(card.id), rub(-100));
+    },
+  );
+
   group('an account', () {
     test('comes with what it holds', () async {
       final card = await account('Card');

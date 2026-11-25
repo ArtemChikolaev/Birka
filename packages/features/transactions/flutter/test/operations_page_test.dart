@@ -249,6 +249,33 @@ void main() {
     expect(find.text('Кофейня у дома'), findsNothing);
   });
 
+  testWidgets(
+    'all months finds an older operation and clears back to the month',
+    (tester) async {
+      await pump(tester);
+      expect(find.text('Все месяцы'), findsNothing);
+      await tester.enterText(find.byType(TextField), 'Сентябрь');
+      await tester.pumpAndSettle();
+      await tapText(tester, 'Все месяцы');
+      expect(find.text('Найдено: 1'), findsOneWidget);
+      await tester.tap(
+        find
+            .descendant(
+              of: find.byType(GlassListRow),
+              matching: find.text('Сентябрь'),
+            )
+            .first,
+      );
+      expect(opened, ['old']);
+      expect(find.text('Октябрь'), findsNothing);
+      await tester.enterText(find.byType(TextField), '');
+      await tester.pumpAndSettle();
+      expect(find.text('Октябрь'), findsOneWidget);
+      expect(find.text('Все месяцы'), findsNothing);
+      expect(find.text('Кофейня у дома'), findsOneWidget);
+    },
+  );
+
   testWidgets('a search changes the list at once instead of closing rows', (
     tester,
   ) async {

@@ -230,6 +230,22 @@ void main() {
     );
   });
 
+  testComponents(
+    'all months finds the older row and retains the query when turned off',
+    (tester) async {
+      await pump(tester);
+      await search(tester, 'Прошлый');
+      expect(links(), isEmpty);
+      await tap(tester, 'Все месяцы');
+      expect(links(), ['open/old']);
+      expect(find.text('Найдено: 1'), findsOneComponent);
+      expect(find.text('Октябрь'), findsNothing);
+      await tap(tester, 'Все месяцы');
+      expect(links(), isEmpty);
+      expect(find.text('Октябрь'), findsOneComponent);
+    },
+  );
+
   testComponents('leads to every row', (tester) async {
     await pump(tester);
 

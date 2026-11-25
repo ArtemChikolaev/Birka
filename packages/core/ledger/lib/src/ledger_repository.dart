@@ -3018,6 +3018,17 @@ final class LedgerRepository {
   }
 
   Future<List<Transaction>> _withLegs(List<TransactionRow> rows) async {
+    // Each leg query binds one ID per transaction. Read long histories in
+    // batches below SQLite's legacy 999-variable limit, in the original order.
+    const batchSize = 900;
+    if (rows.length > batchSize) {
+      final result = <Transaction>[];
+      for (var i = 0; i < rows.length; i += batchSize) {
+        final end = (i + batchSize).clamp(0, rows.length);
+        result.addAll(await _withLegs(rows.sublist(i, end)));
+      }
+      return result;
+    }
     final ids = rows.map((row) => row.id).toList();
     final entryRows =
         await (_db.select(_db.entries).join([

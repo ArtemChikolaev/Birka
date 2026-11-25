@@ -17,8 +17,8 @@ abstract interface class TransactionsRepository {
   /// Puts [draft] into the ledger.
   Future<void> record(TransactionDraft draft);
 
-  /// Every operation of the month that starts on [month], the latest first.
-  Stream<List<Operation>> watchOperations(CivilDate month);
+  /// Operations of [month], or the whole ledger when null, the latest first.
+  Stream<List<Operation>> watchOperations(CivilDate? month);
 
   /// The operations from [first] to [last], with both ends included, the
   /// latest first.

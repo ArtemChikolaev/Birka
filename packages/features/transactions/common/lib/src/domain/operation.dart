@@ -120,9 +120,17 @@ final class Operation {
   ///
   /// `250` finds 250 and 250,50, and `250,5` only the second one. Case and the
   /// letter ё do not matter.
-  bool matches(String query) {
-    if (query.isEmpty) return true;
-    final words = searchKey(query).split(RegExp(r'\s+'));
+  bool matches(String query) => matching(query)(this);
+
+  /// Builds the predicate once for all operations in a search.
+  static bool Function(Operation) matching(String query) {
+    final key = searchKey(query);
+    if (key.isEmpty) return (_) => true;
+    final words = key.split(RegExp(r'\s+'));
+    return (operation) => operation._matchesWords(words);
+  }
+
+  bool _matchesWords(List<String> words) {
     final texts = [
       searchKey(note),
       for (final name in [category?.name, account?.name, toAccount?.name])
