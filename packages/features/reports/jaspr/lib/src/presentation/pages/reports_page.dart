@@ -63,6 +63,15 @@ class ReportsPage extends StatefulComponent {
         'text-align': 'center',
       },
     ),
+    css(
+      '.reports__changes-heading',
+    ).styles(raw: {'padding': 'var(--space-md)'}),
+    css('.reports__changes-heading p').styles(
+      raw: {
+        'margin': 'var(--space-xxs) 0 0',
+        'color': 'var(--color-text-muted)',
+      },
+    ),
     css('.reports__months').styles(
       raw: {
         'display': 'flex',
@@ -171,6 +180,9 @@ class _ReportsPageState extends State<ReportsPage> {
                 ],
               )
             : null;
+        final changes = ready && state.categoryChanges.isNotEmpty
+            ? _changes(state)
+            : null;
         final after = [
           if (ready && report.others.isNotEmpty)
             div(classes: 'reports__others', [
@@ -199,6 +211,7 @@ class _ReportsPageState extends State<ReportsPage> {
               ?empty,
               ?ring,
               ?lines,
+              ?changes,
               ...after,
               ?quiet,
             ],
@@ -211,7 +224,7 @@ class _ReportsPageState extends State<ReportsPage> {
             BirkaSplit(
               halves: true,
               main: [kinds, ?failure, ?empty, ?ring, ...after],
-              aside: [?lines, ?quiet],
+              aside: [?lines, ?changes, ?quiet],
             ),
           ],
         );
@@ -276,6 +289,25 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   /// The last months as bars.
+  Component _changes(ReportsState state) => GlassListGroup(
+    children: [
+      div(classes: 'reports__changes-heading', [
+        SectionLabel(t.reports.biggestChanges),
+        p(classes: 'text-caption', [.text(changesPeriodLabel(state))]),
+      ]),
+      for (final (:category, :delta) in state.categoryChanges)
+        GlassListRow(
+          key: ValueKey(categoryKey(category)),
+          title: category?.name ?? t.app.noCategory,
+          trailing: AmountText(
+            signedMoney(delta),
+            tone: changeTone(delta.minorUnits.sign, state.kind),
+            textClass: 'text-body-strong',
+          ),
+        ),
+    ],
+  );
+
   Component _byMonth(BuildContext context, ReportsState state) {
     final history = state.history;
     final average = history.average;

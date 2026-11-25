@@ -27,6 +27,47 @@ final class ReportLine {
   final int? change;
 }
 
+/// A category's signed change in the currency of the report.
+typedef CategoryChange = ({Category? category, Money delta});
+
+/// The three largest changes by magnitude. A category with money that could
+/// not be converted in either period cannot be compared as a whole.
+List<CategoryChange> biggestCategoryChanges({
+  required List<CategoryTotal> current,
+  required List<CategoryTotal> previous,
+  required Currency currency,
+}) {
+  final incomplete = {
+    for (final row in [...current, ...previous])
+      if (row.total.currency != currency) categoryKey(row.category),
+  };
+  Map<String, CategoryTotal> comparable(List<CategoryTotal> rows) => {
+    for (final row in rows)
+      if (!incomplete.contains(categoryKey(row.category)))
+        categoryKey(row.category): row,
+  };
+  final before = comparable(previous);
+  if (before.isEmpty) return const [];
+  final after = comparable(current);
+  final zero = Money.zero(currency);
+  final changes = <CategoryChange>[];
+  for (final id in {...after.keys, ...before.keys}) {
+    final now = after[id];
+    final then = before[id];
+    final delta = (now?.total ?? zero) - (then?.total ?? zero);
+    if (!delta.isZero) {
+      changes.add((category: (now ?? then!).category, delta: delta));
+    }
+  }
+  changes.sort((a, b) {
+    final size = b.delta.minorUnits.abs().compareTo(a.delta.minorUnits.abs());
+    return size != 0
+        ? size
+        : categoryKey(a.category).compareTo(categoryKey(b.category));
+  });
+  return changes.take(3).toList();
+}
+
 /// A month in the row of bars of a report.
 @immutable
 final class ReportMonth {

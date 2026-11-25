@@ -297,6 +297,21 @@ void main() {
     expect(classesOf('0% к сентябрю'), contains('amount--muted'));
   });
 
+  testComponents('shows the biggest changes on the wide report', (
+    tester,
+  ) async {
+    await pump(tester, wide: true);
+    expect(find.text('Главные изменения'), findsOneComponent);
+    expect(
+      find.text('1–31 октября по сравнению с 1–30 сентября'),
+      findsOneComponent,
+    );
+    expect(classesOf('+3${space}331$space₽'), contains('amount--negative'));
+    expect(classesOf('−1${space}012,50$space₽'), contains('amount--positive'));
+    await tap(tester, 'Доходы');
+    expect(classesOf('+10${space}000$space₽'), contains('amount--positive'));
+  });
+
   testComponents('shows the last months with their average', (tester) async {
     await pump(tester);
 

@@ -106,6 +106,13 @@ class _ReportsPageState extends State<ReportsPage> {
                                 kind: state.kind,
                               ),
                             ],
+                            if (state.categoryChanges.isNotEmpty) ...[
+                              gap,
+                              _Changes(
+                                key: ValueKey((state.month, state.kind)),
+                                state: state,
+                              ),
+                            ],
                             if (report.others.isNotEmpty) ...[
                               const SizedBox(height: BirkaTokens.spaceSm),
                               _Others(amounts: report.others),
@@ -345,6 +352,60 @@ class _RateNote extends StatelessWidget {
       style: BirkaTextStyles.of(
         context,
       ).caption.copyWith(color: BirkaColors.of(context).textSubtle),
+    );
+  }
+}
+
+/// The categories that moved most between the two periods.
+class _Changes extends StatelessWidget {
+  const _Changes({required this.state, super.key});
+
+  final ReportsState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) => GlassListGroup(
+        children: [
+          Padding(
+            key: const ValueKey(0),
+            padding: const EdgeInsets.all(BirkaTokens.spaceMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionLabel(t.reports.biggestChanges),
+                const SizedBox(height: BirkaTokens.spaceXxs),
+                Text(
+                  changesPeriodLabel(state),
+                  style: styles.caption.copyWith(color: colors.textMuted),
+                ),
+              ],
+            ),
+          ),
+          for (final (:category, :delta) in state.categoryChanges)
+            GlassListRow(
+              key: ValueKey(categoryKey(category)),
+              title: category?.name ?? t.app.noCategory,
+              trailing: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth * .55,
+                ),
+                child: AmountText(
+                  signedMoney(delta),
+                  value: delta.minorUnits,
+                  rise: _riseOf(state.kind),
+                  style: styles.bodyStrong,
+                  tone:
+                      (delta.isPositive == (state.kind == CategoryKind.income))
+                      ? AmountTone.positive
+                      : AmountTone.negative,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

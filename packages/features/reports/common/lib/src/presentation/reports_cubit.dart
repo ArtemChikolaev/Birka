@@ -83,14 +83,38 @@ final class ReportsState {
   late final Report report = Report.of(
     month: month,
     rows: _monthly[month] ?? const [],
-    previousRows: totalsIn(
-      _target,
-      _daysFrom(monthsBefore(month, 1), _endOfComparison),
-      rates,
-    ),
+    previousRows: _previousRows,
     monthTotals: sumMonthlyCategories(_monthly),
     preferred: _target,
   );
+
+  /// Inclusive first day of the previous budget month.
+  CivilDate get previousStart => monthsBefore(month, 1);
+
+  /// The latest day included in this month's comparison.
+  CivilDate get comparisonEnd => month == current ? today : lastDayOf(month);
+
+  late final List<CategoryTotal> _previousRows = totalsIn(
+    _target,
+    _daysFrom(previousStart, previousEnd),
+    rates,
+  );
+
+  /// The main changes between the two budget periods, across all categories.
+  late final List<CategoryChange> categoryChanges = _categoryChanges();
+
+  List<CategoryChange> _categoryChanges() {
+    final currency = report.months.lastOrNull?.total.currency;
+    if (currency == null || month.compareTo(current) > 0) return const [];
+    final rows = comparisonEnd == lastDayOf(month)
+        ? _monthly[month] ?? const <CategoryTotal>[]
+        : totalsIn(_target, _daysFrom(month, comparisonEnd), rates);
+    return biggestCategoryChanges(
+      current: rows,
+      previous: _previousRows,
+      currency: currency,
+    );
+  }
 
   /// The category requested for the chart. Null means all categories and the
   /// empty key represents uncategorized operations.
@@ -147,8 +171,8 @@ final class ReportsState {
   /// The last day of the month before [month] to compare with. A month still
   /// under way takes as many days as it has had, or else it would always start
   /// far below the whole month before it.
-  CivilDate get _endOfComparison {
-    final before = monthsBefore(month, 1);
+  CivilDate get previousEnd {
+    final before = previousStart;
     final last = lastDayOf(before);
     if (month != current) return last;
     final same = before.addDays(month.daysUntil(today));

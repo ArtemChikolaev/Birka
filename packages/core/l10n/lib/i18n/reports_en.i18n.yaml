@@ -1,5 +1,7 @@
 expenses: Expenses
 income: Income
+biggestChanges: Biggest changes
+comparison: "$current compared with $previous"
 byMonth: By month
 average: average $amount
 noExpenses: Nothing spent this month.

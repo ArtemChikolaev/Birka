@@ -2,7 +2,7 @@
 <html lang="ru">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Бирка · По месяцам</title>
+<title>Бирка · Отчёты по категориям</title>
 <link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
 <link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
 <link rel="stylesheet" href="../system/components/bundle.css">
@@ -10,7 +10,7 @@
   * { box-sizing: border-box }
   html { color-scheme: dark }
   body { font-family: var(--font-family-text); min-height: 100vh; background: radial-gradient(ellipse at top left, var(--color-ambient), transparent 55%), var(--color-background); }
-  main { max-width: 940px; margin: auto; padding: 24px 20px; display: grid; gap: 18px; grid-template-areas: "header" "total" "lines" "history" }
+  main { max-width: 940px; margin: auto; padding: 24px 20px; display: grid; gap: 18px; grid-template-areas: "header" "total" "lines" "changes" "history" }
   header, .heading, .category { display: flex; align-items: center; justify-content: space-between; gap: 12px }
   header { grid-area: header }
   h1 { margin: 0; font: 800 30px Manrope, sans-serif }
@@ -24,6 +24,10 @@
   .category:last-child { border: 0 }
   .category i { width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; display: inline-block }
   .glass { padding: 16px; border-radius: 22px }
+  .changes { grid-area: changes; align-self: start }
+  .changes small { display: block; margin-top: 6px }
+  .changes .up { color: var(--color-negative) }
+  .changes .down { color: var(--color-positive) }
   .history { grid-area: history; display: grid; gap: 14px }
   select { justify-self: start; max-width: 100%; font: 600 14px Inter, sans-serif; color: var(--color-text); background: var(--color-surface-raised); border: 1px solid var(--color-glass-border); border-radius: 24px; padding: 8px 12px }
   .bars { display: flex; gap: 8px; align-items: end }
@@ -31,7 +35,7 @@
   .bar i { display: block; margin: 5px auto; width: 70%; max-width: 40px; border-radius: 6px; background: var(--color-accent-soft); border: 1px solid var(--color-accent-soft) }
   .bar:last-child i { background: var(--color-accent) }
   @media (min-width: 760px) {
-    main { padding-top: 48px; grid-template-columns: 1fr 1fr; grid-template-areas: "header header" "total lines" "history lines" }
+    main { padding-top: 48px; grid-template-columns: 1fr 1fr; grid-template-areas: "header header" "total lines" "history changes" }
   }
 </style>
 <main>
@@ -41,6 +45,13 @@
     <div class="category"><span><i style="background:var(--color-palette-green)"></i>Продукты</span><b>18 000 ₽</b></div>
     <div class="category"><span><i style="background:var(--color-palette-amber)"></i>Кафе</span><b>7 500 ₽</b></div>
     <div class="category"><span><i style="background:var(--color-palette-sky)"></i>Транспорт</span><b>4 500 ₽</b></div>
+  </section>
+  <section class="changes glass" aria-labelledby="changes-title">
+    <h2 id="changes-title">Главные изменения</h2>
+    <small>1–24 ноября по сравнению с 1–24 октября</small>
+    <div class="category"><span>Продукты</span><b class="up">+2 500 ₽</b></div>
+    <div class="category"><span>Транспорт</span><b class="up">+1 000 ₽</b></div>
+    <div class="category"><span>Кафе</span><b class="down">−500 ₽</b></div>
   </section>
   <section class="history glass">
     <div class="heading"><h2>По месяцам</h2><small id="average"></small></div>
