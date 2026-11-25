@@ -15,6 +15,6 @@ abstract interface class BackupRepository {
   /// Removes everything the ledger holds.
   Future<void> wipe();
 
-  /// Every operation, with the accounts and the categories that it names.
-  Future<OperationsExport> operations();
+  /// Operations within the inclusive dates, with their accounts and categories.
+  Future<OperationsExport> operations({CivilDate? from, CivilDate? to});
 }

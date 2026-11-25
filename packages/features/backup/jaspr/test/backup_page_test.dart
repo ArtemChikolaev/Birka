@@ -194,6 +194,28 @@ void main() {
     expect(toast().text, 'Файл готов: birka-operations-2026-11-02.csv');
   });
 
+  testComponents('fixes an invalid period before exporting it', (tester) async {
+    await pump(tester);
+    await clickText(tester, 'За период');
+    BirkaDateField from() =>
+        find.byType(BirkaDateField).evaluate().first.component
+            as BirkaDateField;
+    from().onChanged('');
+    await tester.pump();
+    expect(find.text(t.backup.invalidRange), findsOneComponent);
+    final export = find.byComponentPredicate(
+      (item) => item is GlassListRow && item.title == t.backup.exportTitle,
+    );
+    expect((export.evaluate().single.component as GlassListRow).onTap, isNull);
+    from().onChanged('2026-11-02');
+    await tester.pump();
+    await clickText(tester, 'Операции в CSV');
+    expect(
+      files.saved.single.name,
+      'birka-operations-2026-11-02_2026-11-02.csv',
+    );
+  });
+
   testComponents('offers the demo, which the host turns on', (tester) async {
     final turns = <bool>[];
     await pump(tester, onDemoChanged: turns.add);

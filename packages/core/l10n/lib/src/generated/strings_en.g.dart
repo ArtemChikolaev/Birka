@@ -377,6 +377,22 @@ class Translations$backup$en {
   /// en: 'Export'
   String get export => 'Export';
 
+  /// en: 'All time'
+  String get allTime => 'All time';
+
+  /// en: 'Date range'
+  String get dateRange => 'Date range';
+
+  /// en: 'From'
+  String get rangeFrom => 'From';
+
+  /// en: 'Through'
+  String get rangeThrough => 'Through';
+
+  /// en: 'Choose both dates. The end must be on or after the start.'
+  String get invalidRange =>
+      'Choose both dates. The end must be on or after the start.';
+
   /// en: 'Operations as CSV'
   String get exportTitle => 'Operations as CSV';
 
@@ -6477,6 +6493,12 @@ extension on Translations {
           'backup.save' => 'Save a copy',
           'backup.restore' => 'Restore from a copy',
           'backup.export' => 'Export',
+          'backup.allTime' => 'All time',
+          'backup.dateRange' => 'Date range',
+          'backup.rangeFrom' => 'From',
+          'backup.rangeThrough' => 'Through',
+          'backup.invalidRange' =>
+            'Choose both dates. The end must be on or after the start.',
           'backup.exportTitle' => 'Operations as CSV',
           'backup.exportText' =>
             'For Excel and Google Sheets: date, amount, currency, account, category',
@@ -6901,6 +6923,9 @@ extension on Translations {
           'help.bugSubject' =>
             ({required Object version}) => 'Birka ${version} · bug',
           'help.ideaSubject' => 'Birka · idea',
+          _ => null,
+        } ??
+        switch (path) {
           'help.questionBody' => 'Hello!\n',
           'help.bugBody' => 'What happened:\n\nWhat you expected:',
           'help.ideaBody' => 'What is missing:\n\nHow it would help:',
@@ -6911,9 +6936,6 @@ extension on Translations {
               required Object system,
               required Object language,
             }) => 'Birka ${version} · ${system} · ${language}',
-          _ => null,
-        } ??
-        switch (path) {
           'help.noMail' =>
             ({required Object address}) =>
                 'Mail did not open. The address is copied: ${address}',
@@ -7926,14 +7948,14 @@ extension on Translations {
           'notifications.debtGone' => 'This debt is no longer here',
           'notifications.today' => 'today',
           'notifications.months.0' => 'January',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.months.1' => 'February',
           'notifications.months.2' => 'March',
           'notifications.months.3' => 'April',
           'notifications.months.4' => 'May',
           'notifications.months.5' => 'June',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.months.6' => 'July',
           'notifications.months.7' => 'August',
           'notifications.months.8' => 'September',
@@ -8874,15 +8896,15 @@ extension on Translations {
                   other: 'Took the tag off ${n} expenses',
                 ),
           'tags.undo' => 'Undo',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.picker.title' => 'Tags',
           'tags.picker.search' => 'Find or create',
           'tags.picker.clear' => 'Clear the search',
           'tags.picker.create' =>
             ({required Object name}) => 'New tag «${name}»',
           'tags.picker.createText' => 'A trip with dates or just a tag',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.picker.tripsNote' =>
             'While a trip goes on, its tag goes onto the expenses of its days by itself.',
           'tags.picker.now' => 'now',

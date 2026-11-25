@@ -498,7 +498,8 @@ final class _EmptyLedger implements BackupRepository {
   Future<void> wipe() async {}
 
   @override
-  Future<OperationsExport> operations() => throw UnimplementedError();
+  Future<OperationsExport> operations({CivilDate? from, CivilDate? to}) =>
+      throw UnimplementedError();
 }
 
 final class _NoFiles implements BackupFiles {

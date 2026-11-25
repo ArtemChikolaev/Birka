@@ -23,15 +23,18 @@ final class LedgerBackupRepository implements BackupRepository {
   Future<void> wipe() => _ledger.wipe();
 
   @override
-  Future<OperationsExport> operations() async => OperationsExport(
-    transactions: await _ledger.watchTransactions(limit: null).first,
-    // A transfer of a debt names the person, whose debt is an account too.
-    accounts: await _ledger
-        .watchAccounts(includeArchived: true, includeDebts: true)
-        .first,
-    categories: [
-      for (final kind in CategoryKind.values)
-        ...await _ledger.watchCategories(kind, includeArchived: true).first,
-    ],
-  );
+  Future<OperationsExport> operations({CivilDate? from, CivilDate? to}) async =>
+      OperationsExport(
+        transactions: await _ledger
+            .watchTransactions(from: from, to: to, limit: null)
+            .first,
+        // A transfer of a debt names the person, whose debt is an account too.
+        accounts: await _ledger
+            .watchAccounts(includeArchived: true, includeDebts: true)
+            .first,
+        categories: [
+          for (final kind in CategoryKind.values)
+            ...await _ledger.watchCategories(kind, includeArchived: true).first,
+        ],
+      );
 }

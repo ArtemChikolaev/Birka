@@ -57,7 +57,9 @@
    of the app picks the marks: `;` between cells and `,` in amounts in
    Russian, as a Russian Excel expects, and `,` and `.` in English. Text that
    starts with `=`, `+`, `-` or `@` gets an apostrophe, so that a spreadsheet
-   does not run it as a formula.
+   does not run it as a formula. The default export includes all operations.
+   A selected range uses transaction civil dates and includes both endpoints.
+   Its filename contains both dates. An empty range exports the header alone.
 7. The moment of the last saved copy lives in the store of the settings under
    `last-copy-at`. It is when the person confirmed the save window, since the
    app cannot know where the file went, and a wipe keeps it: the copy is still

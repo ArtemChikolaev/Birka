@@ -140,6 +140,22 @@ class BackupPage extends StatefulComponent {
     css('.backup__group .section-label').styles(
       raw: {'color': 'var(--color-text-muted)'},
     ),
+    css('.backup__scopes').styles(
+      raw: {
+        'display': 'flex',
+        'flex-wrap': 'wrap',
+        'gap': 'var(--space-xs)',
+      },
+    ),
+    css('.backup__dates').styles(
+      raw: {'border': '0', 'padding': '0', 'margin': '0', 'min-width': '0'},
+    ),
+    css('.backup__range-error').styles(
+      raw: {
+        'color': 'var(--color-negative)',
+        'margin': '0',
+      },
+    ),
     css('.backup__row-icon').styles(
       raw: {
         'color': 'var(--color-text-muted)',
@@ -224,6 +240,44 @@ class _BackupPageState extends State<BackupPage> {
             ]),
           section(classes: 'backup__group', [
             SectionLabel(t.backup.export),
+            div(classes: 'backup__scopes', [
+              for (final entry in exportScopeLabels.entries)
+                BirkaChip(
+                  label: entry.value,
+                  selected: entry.key == state.exportScope,
+                  onTap: idle ? () => cubit.selectExportScope(entry.key) : null,
+                  compact: true,
+                ),
+            ]),
+            if ((state.exportScope, state.exportDates) case (
+              ExportScope.period,
+              final dates?,
+            )) ...[
+              fieldset(classes: 'backup__dates', disabled: !idle, [
+                BirkaFieldPair(
+                  children: [
+                    _dateField(
+                      t.backup.rangeFrom,
+                      dates.from,
+                      (day) =>
+                          cubit.changeExportDates((from: day, to: dates.to)),
+                    ),
+                    _dateField(
+                      t.backup.rangeThrough,
+                      dates.to,
+                      (day) =>
+                          cubit.changeExportDates((from: dates.from, to: day)),
+                    ),
+                  ],
+                ),
+              ]),
+              if (!state.canExport)
+                p(
+                  classes: 'text-caption backup__range-error',
+                  attributes: const {'role': 'alert'},
+                  [.text(t.backup.invalidRange)],
+                ),
+            ],
             GlassListGroup(
               children: [
                 GlassListRow(
@@ -237,7 +291,9 @@ class _BackupPageState extends State<BackupPage> {
                   trailing: const span(classes: 'backup__row-icon', [
                     BirkaIcon(BirkaGlyph.download),
                   ]),
-                  onTap: idle ? () => unawaited(cubit.export()) : null,
+                  onTap: idle && state.canExport
+                      ? () => unawaited(cubit.export())
+                      : null,
                 ),
               ],
             ),
@@ -294,6 +350,25 @@ class _BackupPageState extends State<BackupPage> {
               ),
           ],
         );
+      },
+    );
+  }
+
+  Component _dateField(
+    String label,
+    CivilDate? day,
+    ValueChanged<CivilDate?> onChanged,
+  ) {
+    return BirkaDateField(
+      label: label,
+      text: exportDateLabel(day),
+      value: day?.toString() ?? '',
+      first: '0001-01-01',
+      last: '9999-12-31',
+      onChanged: (value) {
+        final parsed = DateTime.tryParse(value);
+        final valid = parsed != null && parsed.year >= 1 && parsed.year <= 9999;
+        onChanged(valid ? CivilDate.of(parsed) : null);
       },
     );
   }

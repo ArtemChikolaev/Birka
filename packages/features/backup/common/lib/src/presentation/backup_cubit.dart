@@ -106,6 +106,18 @@ final class BackupFailed extends BackupNotice {
   bool get isTrouble => true;
 }
 
+/// Which transactions the CSV should contain.
+enum ExportScope {
+  /// The whole ledger.
+  all,
+
+  /// The inclusive range selected on the data screen.
+  period,
+}
+
+/// The two date fields. A field can be cleared while editing.
+typedef ExportDates = ({CivilDate? from, CivilDate? to});
+
 /// What the data screen shows.
 @immutable
 final class BackupState {
@@ -116,7 +128,24 @@ final class BackupState {
     this.task,
     this.offer,
     this.notice,
+    this.exportScope = ExportScope.all,
+    this.exportDates,
   });
+
+  /// The scope of the next CSV export.
+  final ExportScope exportScope;
+
+  /// The last edited range, initialized when the date fields first open.
+  final ExportDates? exportDates;
+
+  /// Whether the chosen scope is ready to export.
+  bool get canExport {
+    if (exportScope == ExportScope.all) return true;
+    return switch (exportDates) {
+      (from: final from?, to: final to?) => from.compareTo(to) <= 0,
+      _ => false,
+    };
+  }
 
   /// How much the ledger holds, or `null` until it is read.
   final LedgerCounts? counts;
@@ -142,8 +171,12 @@ final class BackupState {
     (BackupTask?,)? task,
     (CopyOffer?,)? offer,
     (BackupNotice?,)? notice,
+    ExportScope? exportScope,
+    ExportDates? exportDates,
   }) {
     return BackupState(
+      exportScope: exportScope ?? this.exportScope,
+      exportDates: exportDates ?? this.exportDates,
       counts: counts ?? this.counts,
       lastCopyAt: lastCopyAt ?? this.lastCopyAt,
       task: task == null ? this.task : task.$1,
@@ -233,17 +266,48 @@ class BackupCubit extends Cubit<BackupState> {
   /// Lets the copy on offer go.
   void dismiss() => emit(state.copyWith(offer: (null,)));
 
-  /// Makes a table of the operations and lets the person save it.
-  Future<void> export() => _run(BackupTask.exporting, () async {
-    final operations = await _repository.operations();
-    final name = operationsFileName(_now());
-    final saved = await _files.save(
-      name: name,
-      type: operationsFileType,
-      bytes: utf8.encode(operationsCsv(operations, csvLanguage())),
-    );
-    return saved ? state.copyWith(notice: (OperationsExported(name),)) : state;
-  });
+  /// Opens the date fields on the current budget month the first time.
+  void selectExportScope(ExportScope scope) {
+    if (state.task != null || state.exportScope == scope) return;
+    var dates = state.exportDates;
+    if (scope == ExportScope.period && dates == null) {
+      final today = CivilDate.of(_now().toLocal());
+      dates = (
+        from: today.monthStart(Settings.readFrom(_store).monthStart),
+        to: today,
+      );
+    }
+    emit(state.copyWith(exportScope: scope, exportDates: dates));
+  }
+
+  /// Keeps both fields editable even when the range is incomplete or reversed.
+  void changeExportDates(ExportDates dates) {
+    if (state.task != null || state.exportScope != ExportScope.period) return;
+    emit(state.copyWith(exportDates: dates));
+  }
+
+  /// Saves all operations or those between the two chosen dates.
+  Future<void> export() async {
+    if (!state.canExport) return;
+    final dates = state.exportScope == ExportScope.period
+        ? state.exportDates
+        : null;
+    await _run(BackupTask.exporting, () async {
+      final operations = await _repository.operations(
+        from: dates?.from,
+        to: dates?.to,
+      );
+      final name = operationsFileName(_now(), from: dates?.from, to: dates?.to);
+      final saved = await _files.save(
+        name: name,
+        type: operationsFileType,
+        bytes: utf8.encode(operationsCsv(operations, csvLanguage())),
+      );
+      return saved
+          ? state.copyWith(notice: (OperationsExported(name),))
+          : state;
+    });
+  }
 
   /// Removes everything the ledger holds.
   Future<void> wipe() => _run(BackupTask.wiping, () async {

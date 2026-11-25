@@ -240,6 +240,53 @@ void main() {
     expect(cubit.state.notice, isA<OperationsExported>());
   });
 
+  test(
+    'exports inclusive civil dates and remembers edits when switching scope',
+    () async {
+      store.values['month-start'] = '5';
+      cubit.selectExportScope(ExportScope.period);
+      expect(cubit.state.exportDates, (
+        from: CivilDate(2026, 10, 5),
+        to: CivilDate(2026, 11, 2),
+      ));
+
+      final day = CivilDate(2024, 2, 29);
+      final dates = (from: day, to: day);
+      cubit
+        ..changeExportDates(dates)
+        ..selectExportScope(ExportScope.all);
+      await cubit.export();
+      cubit.selectExportScope(ExportScope.period);
+      await cubit.export();
+
+      expect(repository.exportRequests, [(from: null, to: null), dates]);
+      expect(
+        files.saved.last.name,
+        'birka-operations-2024-02-29_2024-02-29.csv',
+      );
+      expect(
+        const LineSplitter().convert(utf8.decode(files.saved.last.bytes)),
+        hasLength(1),
+      );
+    },
+  );
+
+  test('incomplete and reversed dates never write a file', () async {
+    cubit.selectExportScope(ExportScope.period);
+    final day = CivilDate(2026, 11, 2);
+    for (final dates in [
+      (from: day, to: null),
+      (from: null, to: day),
+      (from: day, to: day.addDays(-1)),
+    ]) {
+      cubit.changeExportDates(dates);
+      expect(cubit.state.canExport, isFalse);
+      await cubit.export();
+    }
+    expect(repository.exportRequests, isEmpty);
+    expect(files.saved, isEmpty);
+  });
+
   test('wipes the ledger', () async {
     await cubit.wipe();
 

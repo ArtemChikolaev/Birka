@@ -13,6 +13,11 @@ categories: Categories
 save: Save a copy
 restore: Restore from a copy
 export: Export
+allTime: All time
+dateRange: Date range
+rangeFrom: From
+rangeThrough: Through
+invalidRange: Choose both dates. The end must be on or after the start.
 exportTitle: Operations as CSV
 exportText: "For Excel and Google Sheets: date, amount, currency, account, category"
 records: Records
