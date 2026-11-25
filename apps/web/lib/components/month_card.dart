@@ -5,6 +5,7 @@ import 'package:design_jaspr/design_jaspr.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
+import 'package:l10n/l10n.dart';
 import 'package:reports_common/reports_common.dart';
 import 'package:reports_jaspr/reports_jaspr.dart';
 import 'package:transactions_common/transactions_common.dart';
@@ -79,6 +80,24 @@ class _MonthCardState extends State<MonthCard> {
   }
 
   Component _card(OperationsState operations, ReportsState reports) {
+    if (operations.allMonths) {
+      return GlassSurface(
+        child: div(classes: 'month-card', [
+          SectionLabel(t.transactions.searchResults),
+          if (operations.status == OperationsStatus.ready) ...[
+            span(classes: 'text-caption', [
+              .text(
+                t.transactions.matchCount(
+                  count: formatCount(operations.shown.length),
+                ),
+              ),
+            ]),
+            if (operations.expenses.isNotEmpty || operations.income.isNotEmpty)
+              OperationsTotals(operations, stacked: true),
+          ],
+        ]),
+      );
+    }
     final lines = reports.status == ReportsStatus.ready
         ? reports.report.lines.take(MonthCard._categories).toList()
         : const <ReportLine>[];

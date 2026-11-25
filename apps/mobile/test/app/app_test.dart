@@ -394,7 +394,7 @@ final class _Transactions implements TransactionsRepository {
   Future<void> record(TransactionDraft draft) async {}
 
   @override
-  Stream<List<Operation>> watchOperations(CivilDate month) =>
+  Stream<List<Operation>> watchOperations(CivilDate? month) =>
       Stream.value(operations);
 
   @override

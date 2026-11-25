@@ -26,6 +26,10 @@ noCategoriesHint: Add categories to sort your money.
 addCategories: Add categories
 search: Search
 searchHint: Amount, category, note or tag
+allMonths: All months
+searchResults: Search results
+matchCount: "Matches: $count"
+moreSearchDays: Show more
 clearSearch: Clear the search
 fromQuestion: From the question
 toAnswer: Back to the answer

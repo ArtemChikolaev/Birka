@@ -108,7 +108,9 @@ class _OperationsPageState extends State<OperationsPage> {
       return;
     }
     final months = await context.read<OperationsCubit>().months();
-    if (mounted) setState(() => _months = months);
+    if (mounted && !context.read<OperationsCubit>().state.allMonths) {
+      setState(() => _months = months);
+    }
   }
 
   Future<void> _pickMonth(CivilDate month) async {
@@ -124,17 +126,25 @@ class _OperationsPageState extends State<OperationsPage> {
         final side = component.side;
         final header = GlassPageHeader(
           title: t.app.operations,
-          trailing: BirkaChip(
-            glyph: BirkaGlyph.calendar,
-            label: monthLabel(state.month, today: state.today),
-            selected: _months != null,
-            onTap: () => unawaited(_toggleMonths()),
-          ),
+          trailing: state.allMonths || state.focus != null
+              ? null
+              : BirkaChip(
+                  glyph: BirkaGlyph.calendar,
+                  label: monthLabel(state.month, today: state.today),
+                  selected: _months != null,
+                  onTap: () => unawaited(_toggleMonths()),
+                ),
         );
         final list = [
-          ?_monthChoice(state),
+          if (!state.allMonths && state.focus == null) ?_monthChoice(state),
           _tools(context, state, totals: side == null || state.focus != null),
           ...switch (state.status) {
+            OperationsStatus.loading when state.allMonths => [
+              progress(
+                attributes: {'aria-label': t.transactions.search},
+                const [],
+              ),
+            ],
             OperationsStatus.loading => const <Component>[],
             OperationsStatus.failed => [
               GlassNotice(
@@ -174,6 +184,12 @@ class _OperationsPageState extends State<OperationsPage> {
               ),
             ],
           },
+          if (state.hasMoreDays)
+            BirkaButton(
+              label: t.transactions.moreSearchDays,
+              quiet: true,
+              onPressed: context.read<OperationsCubit>().showMoreDays,
+            ),
           if (note != null && state.status == OperationsStatus.ready)
             p(classes: 'text-caption operations__note', [.text(note)]),
         ];
@@ -255,6 +271,18 @@ class _OperationsPageState extends State<OperationsPage> {
         value: state.query,
         onChanged: cubit.queryChanged,
       ),
+      if (state.canSearchAllMonths)
+        div(classes: 'operations__filters', [
+          BirkaChip(
+            label: t.transactions.allMonths,
+            selected: state.allMonths,
+            compact: true,
+            onTap: () {
+              if (_months != null) setState(() => _months = null);
+              unawaited(cubit.toggleAllMonths());
+            },
+          ),
+        ]),
       div(classes: 'operations__filters', [
         for (final filter in OperationsFilter.values)
           BirkaChip(
@@ -265,6 +293,12 @@ class _OperationsPageState extends State<OperationsPage> {
           ),
       ]),
       ?_plaque(cubit, state.focus),
+      if (totals && state.allMonths && state.status == OperationsStatus.ready)
+        p(classes: 'text-caption operations__note', [
+          .text(
+            t.transactions.matchCount(count: formatCount(state.shown.length)),
+          ),
+        ]),
       if (totals && (state.expenses.isNotEmpty || state.income.isNotEmpty))
         OperationsTotals(state),
     ]);

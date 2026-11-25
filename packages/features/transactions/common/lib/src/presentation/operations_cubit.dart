@@ -54,10 +54,24 @@ final class OperationsState {
     required this.month,
     this.filter = OperationsFilter.all,
     this.query = '',
+    this.allMonths = false,
+    this.visibleDayLimit = daysPerPage,
     this.operations = const [],
     this.deleteFailed = false,
     this.focus,
   });
+
+  /// The number of complete matching days to reveal at a time.
+  static const daysPerPage = 30;
+
+  /// Whether the search includes operations outside the selected month.
+  final bool allMonths;
+
+  /// How many matching days are visible in an all-month search.
+  final int visibleDayLimit;
+
+  /// Whether a typed search can change its month scope.
+  bool get canSearchAllMonths => focus == null && query.trim().isNotEmpty;
 
   /// Where the list stands.
   final OperationsStatus status;
@@ -71,10 +85,10 @@ final class OperationsState {
   /// Which operations the list shows.
   final OperationsFilter filter;
 
-  /// What was typed into the search, which looks through [month].
+  /// What was typed into the search, within the selected scope.
   final String query;
 
-  /// Every operation of [month], the latest first.
+  /// Every operation in the scope, the latest first.
   final List<Operation> operations;
 
   /// Whether the last delete failed.
@@ -85,16 +99,27 @@ final class OperationsState {
   final OperationsFocus? focus;
 
   /// The operations that the filter and the search let through.
-  late final List<Operation> shown = [
-    for (final operation in operations)
-      if ((focus?.ids.contains(operation.id) ?? true) &&
-          filter.allows(operation.kind) &&
-          operation.matches(query))
-        operation,
-  ];
+  late final List<Operation> shown = operations
+      .where(
+        (operation) =>
+            (focus?.ids.contains(operation.id) ?? true) &&
+            filter.allows(operation.kind),
+      )
+      .where(Operation.matching(query))
+      .toList();
 
   /// What the list shows, day by day.
-  late final List<OperationDay> days = groupByDay(shown);
+  late final List<OperationDay> days = hasMoreDays
+      ? _matchingDays.take(visibleDayLimit).toList()
+      : _matchingDays;
+
+  late final List<OperationDay> _matchingDays = groupByDay(shown);
+
+  /// Whether the search has further matching days to reveal.
+  bool get hasMoreDays =>
+      status == OperationsStatus.ready &&
+      allMonths &&
+      _matchingDays.length > visibleDayLimit;
 
   /// The money spent in [shown], one amount for each currency.
   late final List<Money> expenses = _sumOf(TransactionKind.expense);
@@ -120,6 +145,8 @@ final class OperationsState {
     CivilDate? month,
     OperationsFilter? filter,
     String? query,
+    bool? allMonths,
+    int? visibleDayLimit,
     List<Operation>? operations,
     bool deleteFailed = false,
     OperationsFocus? Function()? focus,
@@ -130,6 +157,8 @@ final class OperationsState {
       month: month ?? this.month,
       filter: filter ?? this.filter,
       query: query ?? this.query,
+      allMonths: allMonths ?? this.allMonths,
+      visibleDayLimit: visibleDayLimit ?? this.visibleDayLimit,
       operations: operations ?? this.operations,
       deleteFailed: deleteFailed,
       focus: focus == null ? this.focus : focus(),
@@ -167,12 +196,16 @@ class OperationsCubit extends Cubit<OperationsState> {
 
   /// Shows the month that starts on [month].
   Future<void> monthChanged(CivilDate month) async {
-    if (month == state.month) return;
+    if (month == state.month || state.allMonths || state.focus != null) return;
+    await _restart(state.copyWith(month: month));
+  }
+
+  Future<void> _restart(OperationsState next) async {
     final cancelled = _subscription?.cancel();
     emit(
-      state.copyWith(
+      next.copyWith(
         status: OperationsStatus.loading,
-        month: month,
+        visibleDayLimit: OperationsState.daysPerPage,
         operations: const [],
       ),
     );
@@ -190,21 +223,59 @@ class OperationsCubit extends Cubit<OperationsState> {
 
   Future<void> _monthMoved({required bool earlier}) async {
     // The operations of an answer stay until the plaque is taken off.
-    if (state.focus != null) return;
+    if (state.focus != null || state.allMonths) return;
+    final startingMonth = state.month;
+    final choices = await months();
+    if (isClosed || state.month != startingMonth) return;
     final month = neighbourMonth(
-      await months(),
-      state.month,
+      choices,
+      startingMonth,
       earlier: earlier,
     );
     if (month != null) await monthChanged(month);
   }
 
   /// Sets which operations the list shows.
-  void filterChanged(OperationsFilter value) =>
-      emit(state.copyWith(filter: value));
+  void filterChanged(OperationsFilter value) {
+    if (state.filter == value) return;
+    emit(
+      state.copyWith(
+        filter: value,
+        visibleDayLimit: OperationsState.daysPerPage,
+      ),
+    );
+  }
 
   /// Sets what the search looks for.
-  void queryChanged(String value) => emit(state.copyWith(query: value));
+  void queryChanged(String value) {
+    if (state.query == value) return;
+    final next = state.copyWith(
+      query: value,
+      visibleDayLimit: OperationsState.daysPerPage,
+    );
+    if (state.allMonths && value.trim().isEmpty) {
+      unawaited(_restart(next.copyWith(allMonths: false)));
+    } else {
+      emit(next);
+    }
+  }
+
+  /// Switches a nonempty search between the chosen month and the whole ledger.
+  Future<void> toggleAllMonths() async {
+    if (!state.canSearchAllMonths) return;
+    await _restart(state.copyWith(allMonths: !state.allMonths));
+  }
+
+  /// Reveals another page of complete days without changing the totals.
+  void showMoreDays() {
+    if (state.hasMoreDays) {
+      emit(
+        state.copyWith(
+          visibleDayLimit: state.visibleDayLimit + OperationsState.daysPerPage,
+        ),
+      );
+    }
+  }
 
   /// The months to choose from: the current one, even with nothing in it, and
   /// the ones with operations, the latest first. When those cannot be read, the
@@ -223,25 +294,11 @@ class OperationsCubit extends Cubit<OperationsState> {
   /// last operation again.
   Future<void> dropFocus() async {
     if (state.focus == null) return;
-    final cancelled = _subscription?.cancel();
-    emit(
-      state.copyWith(
-        status: OperationsStatus.loading,
-        focus: () => null,
-        operations: const [],
-      ),
-    );
-    _follow();
-    await cancelled;
+    await _restart(state.copyWith(focus: () => null));
   }
 
   /// Reads the operations again after a failure.
-  Future<void> retry() async {
-    final cancelled = _subscription?.cancel();
-    emit(state.copyWith(status: OperationsStatus.loading));
-    _follow();
-    await cancelled;
-  }
+  Future<void> retry() => _restart(state);
 
   /// Deletes operation [id].
   Future<void> delete(String id) async {
@@ -259,14 +316,16 @@ class OperationsCubit extends Cubit<OperationsState> {
     if (today == state.today) return;
     final onCurrent = state.month == _monthOf(state.today);
     emit(state.copyWith(today: today));
-    if (onCurrent) await monthChanged(_monthOf(today));
+    if (onCurrent && !state.allMonths) await monthChanged(_monthOf(today));
   }
 
   void _follow() {
     final focus = state.focus;
     _subscription =
         (focus == null
-                ? _repository.watchOperations(state.month)
+                ? _repository.watchOperations(
+                    state.allMonths ? null : state.month,
+                  )
                 : _repository.watchOperationsBetween(focus.first, focus.last))
             .listen(
               (operations) => emit(

@@ -96,6 +96,10 @@ void main() {
           'old',
         ],
       );
+      list.queryChanged('Coffee');
+      await list.toggleAllMonths();
+      expect(list.state.allMonths, isFalse);
+      list.queryChanged('');
       // A swipe does not leave the operations of the answer.
       await list.previousMonth();
       expect(list.state.month, october);
@@ -153,6 +157,73 @@ void main() {
     expect(list.state.shown, hasLength(3));
     expect(list.state.isNarrowed, isFalse);
   });
+
+  test(
+    'all months is opt-in and clearing restores the chosen month',
+    () async {
+      final list = await open();
+      await list.monthChanged(september);
+      await settle();
+      await list.toggleAllMonths();
+      expect(repository.followed, [october, september]);
+      list.queryChanged('Coffee');
+      expect(list.state.shown, isEmpty);
+
+      await list.toggleAllMonths();
+      await settle();
+      expect(list.state.shown.single.id, 'coffee');
+      list
+        ..queryChanged('card')
+        ..filterChanged(OperationsFilter.income);
+      expect(list.state.shown.single.id, 'pay');
+      await list.previousMonth();
+      await list.monthChanged(october);
+      expect(list.state.month, september);
+      expect(repository.followed, [october, september, null]);
+
+      list.queryChanged('  ');
+      await settle();
+      expect(list.state.allMonths, isFalse);
+      expect(list.state.month, september);
+      expect(list.state.operations.single.id, 'old');
+      expect(list.state.filter, OperationsFilter.income);
+    },
+  );
+
+  test(
+    'pages complete matching days and counts every result in the totals',
+    () async {
+      final last = CivilDate(2026, 10, 31);
+      repository.operations = [
+        for (var index = 0; index < 32; index++)
+          for (var n = 0; n < 2; n++)
+            testOperation(
+              '$index-$n',
+              amount: rub(-100),
+              account: card,
+              note: 'Lunch',
+              day: last.addDays(-index),
+            ),
+      ];
+      final list = await open();
+      list.queryChanged('lunch');
+      await list.toggleAllMonths();
+      await settle();
+      expect(list.state.shown, hasLength(64));
+      expect(list.state.expenses, [rub(-6400)]);
+      expect(list.state.days, hasLength(30));
+      expect(list.state.days.last.operations, hasLength(2));
+      list.showMoreDays();
+      expect(list.state.days, hasLength(32));
+      expect(list.state.hasMoreDays, isFalse);
+      list.queryChanged('lun');
+      expect(list.state.days, hasLength(30));
+      repository.operations = [];
+      await settle();
+      expect(list.state.shown, isEmpty);
+      expect(list.state.hasMoreDays, isFalse);
+    },
+  );
 
   test('another month follows that month', () async {
     final list = await open();

@@ -3417,6 +3417,14 @@ class _Translations$transactions$ru extends Translations$transactions$en {
   @override
   String get searchHint => 'Сумма, категория, заметка или метка';
   @override
+  String get allMonths => 'Все месяцы';
+  @override
+  String get searchResults => 'Результаты поиска';
+  @override
+  String matchCount({required Object count}) => 'Найдено: ${count}';
+  @override
+  String get moreSearchDays => 'Показать ещё';
+  @override
   String get clearSearch => 'Очистить поиск';
   @override
   String get fromQuestion => 'Из вопроса';
@@ -8194,6 +8202,11 @@ extension on TranslationsRu {
           'transactions.addCategories' => 'Добавить категории',
           'transactions.search' => 'Поиск',
           'transactions.searchHint' => 'Сумма, категория, заметка или метка',
+          'transactions.allMonths' => 'Все месяцы',
+          'transactions.searchResults' => 'Результаты поиска',
+          'transactions.matchCount' =>
+            ({required Object count}) => 'Найдено: ${count}',
+          'transactions.moreSearchDays' => 'Показать ещё',
           'transactions.clearSearch' => 'Очистить поиск',
           'transactions.fromQuestion' => 'Из вопроса',
           'transactions.toAnswer' => 'К ответу',

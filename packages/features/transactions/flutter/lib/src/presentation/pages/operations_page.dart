@@ -104,6 +104,20 @@ class _OperationsPageState extends State<OperationsPage> {
                         onChanged: context.read<OperationsCubit>().queryChanged,
                       ),
                       const SizedBox(height: BirkaTokens.spaceSm),
+                      if (state.canSearchAllMonths) ...[
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: BirkaChip(
+                            label: t.transactions.allMonths,
+                            selected: state.allMonths,
+                            compact: true,
+                            onTap: context
+                                .read<OperationsCubit>()
+                                .toggleAllMonths,
+                          ),
+                        ),
+                        const SizedBox(height: BirkaTokens.spaceSm),
+                      ],
                       _Filters(state: state),
                       // The plaque of an answer closes as it is taken off.
                       AnimatedSize(
@@ -131,10 +145,23 @@ class _OperationsPageState extends State<OperationsPage> {
                       ],
                       SlideSwitcher(
                         value: state.month,
-                        follow: true,
+                        follow: !state.allMonths,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            if (state.allMonths &&
+                                state.status == OperationsStatus.ready) ...[
+                              const SizedBox(height: BirkaTokens.spaceSm),
+                              Text(
+                                t.transactions.matchCount(
+                                  count: formatCount(state.shown.length),
+                                ),
+                                style: BirkaTextStyles.of(context).caption
+                                    .copyWith(
+                                      color: BirkaColors.of(context).textMuted,
+                                    ),
+                              ),
+                            ],
                             if (state.expenses.isNotEmpty ||
                                 state.income.isNotEmpty) ...[
                               const SizedBox(height: BirkaTokens.spaceSm),
@@ -146,6 +173,7 @@ class _OperationsPageState extends State<OperationsPage> {
                                   state.month,
                                   state.filter,
                                   state.query,
+                                  state.allMonths,
                                   state.focus,
                                 )),
                                 state: state,
@@ -153,6 +181,11 @@ class _OperationsPageState extends State<OperationsPage> {
                             ],
                             const SizedBox(height: BirkaTokens.spaceMd),
                             ...switch (state.status) {
+                              OperationsStatus.loading when state.allMonths => [
+                                const Center(
+                                  child: CircularProgressIndicator.adaptive(),
+                                ),
+                              ],
                               OperationsStatus.loading => const <Widget>[],
                               OperationsStatus.failed => [const _Failure()],
                               OperationsStatus.ready when state.shown.isEmpty =>
@@ -166,19 +199,12 @@ class _OperationsPageState extends State<OperationsPage> {
                   ),
                 ),
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(
-                    BirkaTokens.spaceLg,
-                    0,
-                    BirkaTokens.spaceLg,
-                    // Each day keeps its room under it.
-                    GlassNavBar.clearance -
-                        BirkaTokens.spaceLg +
-                        MediaQuery.viewPaddingOf(context).bottom +
-                        MediaQuery.viewInsetsOf(context).bottom,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BirkaTokens.spaceLg,
                   ),
                   sliver: SlideSwitcher.sliver(
                     value: state.month,
-                    follow: true,
+                    follow: !state.allMonths,
                     sliver: state.status == OperationsStatus.ready
                         ? SliverOperationDays(
                             // A new month, filter or search starts the days
@@ -188,6 +214,7 @@ class _OperationsPageState extends State<OperationsPage> {
                               state.month,
                               state.filter,
                               state.query,
+                              state.allMonths,
                               state.focus,
                             )),
                             days: state.days,
@@ -198,6 +225,28 @@ class _OperationsPageState extends State<OperationsPage> {
                             onDelete: _delete,
                           )
                         : const SliverToBoxAdapter(),
+                  ),
+                ),
+                if (state.hasMoreDays)
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BirkaTokens.spaceLg,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: BirkaButton(
+                        label: t.transactions.moreSearchDays,
+                        quiet: true,
+                        onPressed: context.read<OperationsCubit>().showMoreDays,
+                      ),
+                    ),
+                  ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height:
+                        GlassNavBar.clearance -
+                        (state.hasMoreDays ? 0 : BirkaTokens.spaceLg) +
+                        MediaQuery.viewPaddingOf(context).bottom +
+                        MediaQuery.viewInsetsOf(context).bottom,
                   ),
                 ),
               ],
@@ -268,7 +317,7 @@ class _Header extends StatelessWidget {
           ),
         ),
         // Under the plaque of an answer the plaque tells the days.
-        if (state.focus == null) ...[
+        if (state.focus == null && !state.allMonths) ...[
           const SizedBox(width: BirkaTokens.spaceXs),
           BirkaChip(
             glyph: BirkaGlyph.calendar,

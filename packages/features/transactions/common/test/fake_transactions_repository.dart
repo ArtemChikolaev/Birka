@@ -43,7 +43,7 @@ final class FakeTransactionsRepository implements TransactionsRepository {
   final amended = <String, TransactionDraft>{};
 
   /// The months that were asked for.
-  final followed = <CivilDate>[];
+  final followed = <CivilDate?>[];
 
   /// The months with operations.
   List<CivilDate> monthList = const [];
@@ -98,13 +98,14 @@ final class FakeTransactionsRepository implements TransactionsRepository {
   }
 
   @override
-  Stream<List<Operation>> watchOperations(CivilDate month) {
+  Stream<List<Operation>> watchOperations(CivilDate? month) {
     followed.add(month);
     return _follow(
       () => [
         for (final operation in operations)
-          if (operation.day.year == month.year &&
-              operation.day.month == month.month)
+          if (month == null ||
+              operation.day.year == month.year &&
+                  operation.day.month == month.month)
             operation,
       ],
     );
