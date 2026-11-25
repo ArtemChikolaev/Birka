@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бирка · Расходы поездки</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing:border-box }
+  body { margin:0; min-height:100vh; font-family:Inter,sans-serif; background:radial-gradient(ellipse at top left,var(--color-ambient),transparent 65%),var(--color-background); color:var(--color-text) }
+  main { margin:auto; max-width:1020px; padding:24px 18px }
+  aside { display:none }
+  header,.row { display:flex; justify-content:space-between; align-items:center; gap:12px }
+  .control { border:1px solid var(--color-hairline); padding:6px 13px; border-radius:var(--radius-pill); font-size:13px }
+  .summary { text-align:center; padding:20px 0 18px }
+  .glyph { display:grid; place-items:center; width:58px; height:58px; border-radius:50%; margin:auto; background:var(--color-accent-soft) }
+  .plane { display:block; width:30px; height:30px; color:var(--color-accent) }
+  h1,h2,strong,.amount { font-family:Manrope,sans-serif }
+  h1 { font-size:23px; margin:10px 0 0 }
+  strong { display:block; font-size:35px }
+  small, .muted { color:var(--color-text-muted); font-size:13px }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:8px }
+  .glass { padding:14px; border-radius:var(--radius-lg) }
+  .stats b { display:block; font:750 22px Manrope,sans-serif; margin:3px 0 }
+  h2 { color:var(--color-text-muted); font-size:12px; letter-spacing:.06em; text-transform:uppercase; margin:20px 4px 8px }
+  .group { padding:0 15px }
+  .row { min-height:52px; padding:10px 0 }
+  .row + .row { border-top:1px solid var(--color-hairline) }
+  .row small { display:block; margin-top:3px }
+  .amount { white-space:nowrap; font-weight:750; font-variant-numeric:tabular-nums }
+  .selected { color:var(--color-accent) }
+  @media (min-width:800px) {
+    main { padding-top:44px; display:grid; grid-template-columns:minmax(0,1fr) 420px; gap:28px }
+    aside { display:block }
+    article { padding:16px; border:1px solid var(--color-hairline); border-radius:var(--radius-lg) }
+    .summary { padding-top:14px }
+  }
+</style>
+<main>
+  <aside><header><h1>Метки</h1><span class="control">＋</span></header>
+    <h2>Поездки</h2><div class="glass group"><div class="row"><div class="selected">Тбилиси<small>3–12 ноября · 5 операций</small></div><b>63 815 ₽</b></div>
+    <div class="row"><div>Стамбул<small>2–9 мая · 8 операций</small></div><b>49 200 ₽</b></div></div>
+  </aside>
+  <article><header><span class="control" aria-label="Назад">‹</span><b>Поездка</b><span class="control">Изменить</span></header>
+    <div class="summary"><div class="glyph"><svg class="plane" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="M10 13.5 21 3"/></svg></div><h1>Тбилиси</h1><strong>63 815 ₽</strong><small>3–12 ноября</small></div>
+    <div class="stats"><div class="glass"><small>На месте в день</small><b>≈ 13 GEL</b><small>403 ₽</small></div><div class="glass"><small>Операций</small><b>5</b><small>2 там, 2 заранее, 1 после</small></div></div>
+    <h2>Расходы по этапам</h2>
+    <div class="glass group" id="periods">
+      <div class="row"><div>До поездки<small>2 расхода</small></div><span class="amount">≈ 57 988 ₽</span></div>
+      <div class="row"><div>В поездке<small>2 расхода</small></div><span class="amount">≈ 4 027 ₽</span></div>
+      <div class="row"><div>После поездки<small>1 расход</small></div><span class="amount">1 800 ₽</span></div>
+    </div>
+    <h2>Валюты</h2><div class="glass group"><div class="row"><div>Доллар США<small>Квартира в Сололаки</small></div><b>34 188 ₽</b></div>
+    <div class="row"><div>Российский рубль</div><b>25 600 ₽</b></div>
+    <div class="row"><div>Грузинский лари</div><b>4 027 ₽</b></div></div>
+  </article>
+</main>
+</html>

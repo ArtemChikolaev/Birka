@@ -151,3 +151,16 @@ the list explains that the selected period is clear.
 [Interactive mockup](mockups/debt-due-filters.html) ·
 [Phone preview](mockups/27-debt-due-phone.png) ·
 [Desktop preview](mockups/28-debt-due-web.png)
+
+### Trip spending by period
+
+A trip report groups its tagged expenses into Before the trip, During the trip
+and After the trip. Both trip dates belong to the middle row. Each row shows
+the number of expenses and their amount in the report currency. Converted
+amounts carry an approximation sign. A period with expenses missing a rate
+shows “No rate” in place of its amount. An empty period shows zero. The
+section appears for dated trips with at least one expense.
+
+[Responsive mockup](mockups/trip-spending-periods.html) ·
+[Phone preview](mockups/29-trip-spending-phone.png) ·
+[Desktop preview](mockups/30-trip-spending-web.png)
