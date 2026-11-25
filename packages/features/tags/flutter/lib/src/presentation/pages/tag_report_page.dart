@@ -112,6 +112,7 @@ class TagReportPage extends StatelessWidget {
                 trailing: AmountText(
                   tripSpendingLabel(part),
                   value: part.total?.minorUnits,
+                  rise: AmountRise.bad,
                   alwaysShown: part.total == null,
                   style: styles.bodyStrong.copyWith(color: colors.text),
                 ),
