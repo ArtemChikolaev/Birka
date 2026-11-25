@@ -164,3 +164,14 @@ section appears for dated trips with at least one expense.
 [Responsive mockup](mockups/trip-spending-periods.html) ·
 [Phone preview](mockups/29-trip-spending-phone.png) ·
 [Desktop preview](mockups/30-trip-spending-web.png)
+
+### Finding a tag or trip
+
+Search the Tags list by any part of a name. Matching rows keep their original
+shelves, order and expense totals. Clearing the field restores the list.
+A report opens from its row, and returning keeps the query. The empty-ledger
+welcome and a search with no matches have distinct messages.
+
+[Interactive mockup](mockups/tag-list-search.html) ·
+[Phone preview](mockups/31-tag-search-phone.png) ·
+[Desktop preview](mockups/32-tag-search-web.png)
