@@ -112,3 +112,14 @@ period's end. The amount carries its sign in both expense and income views.
 
 [Phone preview](mockups/21-category-changes-phone.png) ·
 [Desktop preview](mockups/22-category-changes-web.png)
+
+### CSV export by date
+
+On Data, export all operations in one tap or select two dates. Both endpoints
+are included. The initial range runs from the start of the current budget
+month through today. A missing date or reversed range disables the download
+and shows how to correct it.
+
+[Interactive mockup](mockups/csv-export-period.html) ·
+[Phone preview](mockups/23-csv-period-phone.png) ·
+[Desktop preview](mockups/24-csv-period-web.png)

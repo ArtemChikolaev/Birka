@@ -17,7 +17,9 @@ String copyFileName(DateTime moment) => 'birka-${_day(moment)}.birka';
 
 /// The name of a table of operations made at [moment]:
 /// `birka-operations-2026-11-02.csv`.
-String operationsFileName(DateTime moment) =>
-    'birka-operations-${_day(moment)}.csv';
+String operationsFileName(DateTime moment, {CivilDate? from, CivilDate? to}) {
+  final period = from != null && to != null ? '${from}_$to' : _day(moment);
+  return 'birka-operations-$period.csv';
+}
 
 String _day(DateTime moment) => CivilDate.of(moment.toLocal()).toString();

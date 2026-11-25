@@ -3,6 +3,22 @@ import 'package:backup_common/src/presentation/backup_cubit.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 
+/// Labels for the CSV scope selector on both hosts.
+Map<ExportScope, String> get exportScopeLabels => {
+  ExportScope.all: t.backup.allTime,
+  ExportScope.period: t.backup.dateRange,
+};
+
+/// The civil date in an export field, including the year.
+String exportDateLabel(CivilDate? date) => date == null
+    ? '—'
+    : dateLabel(
+        year: date.year,
+        month: date.month,
+        day: date.day,
+        thisYear: -1,
+      );
+
 /// When a copy was made, for people: `сегодня, 21:40`, `вчера, 21:40` or
 /// `28 октября, 21:40`, on the clock of this device.
 String copyMomentLabel(DateTime moment, {required DateTime now}) {

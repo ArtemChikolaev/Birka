@@ -93,6 +93,58 @@ class BackupPage extends StatelessWidget {
                     const SizedBox(height: BirkaTokens.spaceXl),
                     SectionLabel(t.backup.export, color: colors.textMuted),
                     const SizedBox(height: BirkaTokens.spaceSm),
+                    ChipSwitch(
+                      options: exportScopeLabels,
+                      selected: state.exportScope,
+                      compact: true,
+                      onChanged: idle ? cubit.selectExportScope : null,
+                    ),
+                    if ((state.exportScope, state.exportDates) case (
+                      ExportScope.period,
+                      final dates?,
+                    )) ...[
+                      const SizedBox(height: BirkaTokens.spaceSm),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: _ExportDate(
+                              label: t.backup.rangeFrom,
+                              date: dates.from,
+                              onChanged: idle
+                                  ? (day) => cubit.changeExportDates((
+                                      from: day,
+                                      to: dates.to,
+                                    ))
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: BirkaTokens.spaceSm),
+                          Expanded(
+                            child: _ExportDate(
+                              label: t.backup.rangeThrough,
+                              date: dates.to,
+                              onChanged: idle
+                                  ? (day) => cubit.changeExportDates((
+                                      from: dates.from,
+                                      to: day,
+                                    ))
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (!state.canExport) ...[
+                        const SizedBox(height: BirkaTokens.spaceXs),
+                        Text(
+                          t.backup.invalidRange,
+                          style: styles.caption.copyWith(
+                            color: colors.negative,
+                          ),
+                        ),
+                      ],
+                    ],
+                    const SizedBox(height: BirkaTokens.spaceSm),
                     GlassListGroup(
                       children: [
                         GlassListRow(
@@ -108,7 +160,7 @@ class BackupPage extends StatelessWidget {
                             size: 18,
                             color: colors.textMuted,
                           ),
-                          onTap: idle ? cubit.export : null,
+                          onTap: idle && state.canExport ? cubit.export : null,
                         ),
                       ],
                     ),
@@ -246,6 +298,57 @@ class BackupPage extends StatelessWidget {
 }
 
 enum _WipeAnswer { saveFirst, wipe }
+
+class _ExportDate extends StatelessWidget {
+  const _ExportDate({
+    required this.label,
+    required this.date,
+    required this.onChanged,
+  });
+
+  final String label;
+  final CivilDate? date;
+  final ValueChanged<CivilDate>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = date;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          label,
+          style: BirkaTextStyles.of(
+            context,
+          ).caption.copyWith(color: BirkaColors.of(context).textMuted),
+        ),
+        const SizedBox(height: BirkaTokens.spaceXxs),
+        Semantics(
+          label: label,
+          child: OutlinedButton(
+            onPressed: onChanged == null
+                ? null
+                : () async {
+                    final picked = await showDatePicker(
+                      context: context,
+                      helpText: label,
+                      initialDate: current == null
+                          ? null
+                          : DateTime(current.year, current.month, current.day),
+                      firstDate: DateTime(1),
+                      lastDate: DateTime(9999, 12, 31),
+                    );
+                    if (context.mounted && picked != null) {
+                      onChanged?.call(CivilDate.of(picked));
+                    }
+                  },
+            child: Text(exportDateLabel(current)),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 /// Where the ledger lives, when it was last copied and how much it holds.
 class _Stored extends StatelessWidget {

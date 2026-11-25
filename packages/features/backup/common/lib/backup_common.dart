@@ -5,7 +5,7 @@ library;
 
 export 'package:device_settings/device_settings.dart' show SettingsStore;
 export 'package:ledger/ledger.dart'
-    show LedgerCopy, LedgerCopyProblem, LedgerCounts;
+    show CivilDate, LedgerCopy, LedgerCopyProblem, LedgerCounts;
 
 export 'src/di/register_backup.dart';
 export 'src/domain/backup_files.dart';

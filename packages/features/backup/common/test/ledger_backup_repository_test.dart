@@ -21,6 +21,39 @@ void main() {
 
   tearDown(() => database.close());
 
+  test(
+    'filters by transaction day across years before making the table',
+    () async {
+      final card = await ledger.addAccount(
+        name: 'Card',
+        type: AccountType.debit,
+        openingBalance: Money(0, Currency.rub),
+      );
+      final cafe = await ledger.addCategory(
+        kind: CategoryKind.expense,
+        name: 'Cafe',
+      );
+      final start = CivilDate(2025, 12, 31);
+      final end = CivilDate(2026, 1, 1);
+      for (final date in [start.addDays(-1), start, end, end.addDays(1)]) {
+        await ledger.record(
+          TransactionDraft.expense(
+            accountId: card.id,
+            allocations: [
+              Allocation(categoryId: cafe.id, amount: Money(100, Currency.rub)),
+            ],
+            occurredOn: date,
+          ),
+        );
+      }
+      final export = await repository.operations(from: start, to: end);
+      expect(
+        export.transactions.map((it) => it.occurredOn),
+        unorderedEquals([start, end]),
+      );
+    },
+  );
+
   test('a table names every operation, archived names included', () async {
     final card = await ledger.addAccount(
       name: 'Card',

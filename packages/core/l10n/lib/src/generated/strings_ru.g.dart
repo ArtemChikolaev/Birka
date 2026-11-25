@@ -362,6 +362,17 @@ class _Translations$backup$ru extends Translations$backup$en {
   @override
   String get export => 'Экспорт';
   @override
+  String get allTime => 'За всё время';
+  @override
+  String get dateRange => 'За период';
+  @override
+  String get rangeFrom => 'С';
+  @override
+  String get rangeThrough => 'По включительно';
+  @override
+  String get invalidRange =>
+      'Укажите обе даты. Конец периода должен быть в день начала или позже.';
+  @override
   String get exportTitle => 'Операции в CSV';
   @override
   String get exportText =>
@@ -5527,6 +5538,12 @@ extension on TranslationsRu {
           'backup.save' => 'Сохранить копию',
           'backup.restore' => 'Восстановить из копии',
           'backup.export' => 'Экспорт',
+          'backup.allTime' => 'За всё время',
+          'backup.dateRange' => 'За период',
+          'backup.rangeFrom' => 'С',
+          'backup.rangeThrough' => 'По включительно',
+          'backup.invalidRange' =>
+            'Укажите обе даты. Конец периода должен быть в день начала или позже.',
           'backup.exportTitle' => 'Операции в CSV',
           'backup.exportText' =>
             'Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория',
@@ -5966,6 +5983,9 @@ extension on TranslationsRu {
           'help.bugSubject' =>
             ({required Object version}) => 'Birka ${version} · ошибка',
           'help.ideaSubject' => 'Birka · идея',
+          _ => null,
+        } ??
+        switch (path) {
           'help.questionBody' => 'Здравствуйте!\n',
           'help.bugBody' => 'Что случилось:\n\nЧто ожидали:',
           'help.ideaBody' => 'Чего не хватает:\n\nКак это помогло бы:',
@@ -5976,9 +5996,6 @@ extension on TranslationsRu {
               required Object system,
               required Object language,
             }) => 'Birka ${version} · ${system} · ${language}',
-          _ => null,
-        } ??
-        switch (path) {
           'help.noMail' =>
             ({required Object address}) =>
                 'Почта не открылась. Адрес скопирован: ${address}',
@@ -7102,14 +7119,14 @@ extension on TranslationsRu {
           'notifications.debtGone' => 'Этого долга больше нет',
           'notifications.today' => 'сегодня',
           'notifications.months.0' => 'январь',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.months.1' => 'февраль',
           'notifications.months.2' => 'март',
           'notifications.months.3' => 'апрель',
           'notifications.months.4' => 'май',
           'notifications.months.5' => 'июнь',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.months.6' => 'июль',
           'notifications.months.7' => 'август',
           'notifications.months.8' => 'сентябрь',
@@ -8124,15 +8141,15 @@ extension on TranslationsRu {
                   other: 'Сняли метку с ${n} расхода',
                 ),
           'tags.undo' => 'Вернуть',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.picker.title' => 'Метки',
           'tags.picker.search' => 'Найти или создать',
           'tags.picker.clear' => 'Очистить поиск',
           'tags.picker.create' =>
             ({required Object name}) => 'Новая метка «${name}»',
           'tags.picker.createText' => 'Поездка с датами или просто метка',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.picker.tripsNote' =>
             'Пока идёт поездка, её метка сама встаёт на расходы этих дней.',
           'tags.picker.now' => 'сейчас',

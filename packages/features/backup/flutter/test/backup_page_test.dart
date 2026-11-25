@@ -165,6 +165,20 @@ void main() {
     );
   });
 
+  testWidgets('chooses the same day twice and exports it', (tester) async {
+    await pump(tester);
+    await tapText(tester, 'За период');
+    await tapText(tester, '1 ноября 2026');
+    await tester.tap(find.text('2').last);
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    await tapText(tester, 'Операции в CSV');
+    expect(
+      files.saved.single.name,
+      'birka-operations-2026-11-02_2026-11-02.csv',
+    );
+  });
+
   testWidgets('everything goes only after a yes', (tester) async {
     await pump(tester);
 

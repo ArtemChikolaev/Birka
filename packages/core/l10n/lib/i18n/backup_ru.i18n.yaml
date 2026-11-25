@@ -13,6 +13,11 @@ categories: Категории
 save: Сохранить копию
 restore: Восстановить из копии
 export: Экспорт
+allTime: За всё время
+dateRange: За период
+rangeFrom: С
+rangeThrough: По включительно
+invalidRange: Укажите обе даты. Конец периода должен быть в день начала или позже.
 exportTitle: Операции в CSV
 exportText: "Для Excel и Google Таблиц: дата, сумма, валюта, счёт, категория"
 records: Учёт

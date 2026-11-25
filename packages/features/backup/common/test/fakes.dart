@@ -96,6 +96,9 @@ final class FakeBackupRepository implements BackupRepository {
     categories: [],
   );
 
+  /// The bounds passed to each export.
+  final exportRequests = <ExportDates>[];
+
   /// What the next write fails with.
   Exception? failure;
 
@@ -127,8 +130,9 @@ final class FakeBackupRepository implements BackupRepository {
   }
 
   @override
-  Future<OperationsExport> operations() async {
+  Future<OperationsExport> operations({CivilDate? from, CivilDate? to}) async {
     if (failure case final failure?) throw failure;
+    exportRequests.add((from: from, to: to));
     return export;
   }
 }
