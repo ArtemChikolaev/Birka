@@ -2,6 +2,11 @@ title: Долги
 toMore: Ещё
 close: Закрыть
 done: Готово
+dueFilter:
+  all: Все
+  due: Срок наступил
+  week: Через 1–7 дней
+  empty: Нет открытых долгов с таким сроком.
 foldClosed: Показать закрытые
 moreHint: Кто кому должен и до какого дня
 moreBoth: Мне должны $owed · мои $mine

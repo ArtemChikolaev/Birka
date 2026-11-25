@@ -33,6 +33,11 @@ class _DebtsIslandState extends DataIslandState<DebtsIsland> {
   /// What the last save said.
   String? _toast;
 
+  DebtsCubit? _debts;
+
+  @override
+  void onTabShown() => _debts?.calendarChecked();
+
   @override
   SitePage get page => SitePage.more;
 
@@ -54,7 +59,7 @@ class _DebtsIslandState extends DataIslandState<DebtsIsland> {
   Component buildPage(BuildContext context) {
     final toast = _toast;
     return BlocProvider<DebtsCubit>(
-      create: (_) => getIt(),
+      create: (_) => _debts = getIt<DebtsCubit>(),
       child: div([
         if (wide) _besideList() else _inTurn(),
         if (toast != null)

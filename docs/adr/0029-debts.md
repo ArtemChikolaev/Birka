@@ -67,7 +67,11 @@
    the person owes:
    - the list adds both up in the currency of the totals, puts the debts
      with the nearest day first, shows a day that has come in amber, and
-     keeps the settled ones in a fold;
+     keeps the settled ones in a fold. On both hosts the list can show only
+     open debts due today or earlier, or those due in 1–7 civil days. Its
+     two summary cards use the visible remaining balances and count distinct
+     people on each side. All also includes undated debts and the settled
+     fold. The More summary continues to cover all outstanding debts;
    - the card says what is left of what, grows the bar of what came back,
      says the day and whether the phone reminds of it, and lists the steps;
      a tap on a step opens its operation;

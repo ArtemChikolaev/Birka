@@ -3,6 +3,7 @@ import 'package:debts_common/testing.dart';
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:money/money.dart';
+import 'package:rates/rates.dart';
 import 'package:test/test.dart';
 
 /// Lets the streams of the fake come in.
@@ -59,6 +60,104 @@ void main() {
       ));
       expect(debtLine(dad, today: boardToday).text, 'вернули 30 октября');
     });
+
+    test(
+      'filters dates and remaining balances independently of the More summary',
+      () async {
+        final today = CivilDate(2026, 12, 31);
+        final accounts = [
+          for (final offset in [-1, 0, 1, 7, 8])
+            debtAccount(
+              'd$offset',
+              'Alex',
+              DebtSide.lent,
+              dueOn: today.addDays(offset),
+              personId: 'alex',
+            ),
+          debtAccount('undated', 'Jo', DebtSide.lent),
+          debtAccount('closed', 'Pat', DebtSide.lent, dueOn: today),
+        ];
+        final repository = FakeDebtsRepository(
+          today: today,
+          debts: accounts,
+          transfers: [
+            for (final a in accounts)
+              transfer(
+                'lend-${a.id}',
+                'card',
+                a.id,
+                rub(1000),
+                today.addDays(-14),
+              ),
+            transfer('partial', 'd0', 'card', rub(250), today),
+            transfer('settled', 'closed', 'card', rub(1000), today),
+          ],
+        );
+        final cubit = DebtsCubit(repository);
+        addTearDown(cubit.close);
+        await settle();
+        final summary = debtsMoreLine(cubit.state);
+
+        cubit.selectFilter(DebtDueFilter.due);
+        var state = cubit.state;
+        expect(state.visibleOwed.map((debt) => debt.id), ['d-1', 'd0']);
+        expect(state.totalOf(state.visibleOwed), rub(1750));
+        expect(peopleInDebts(state.visibleOwed), 1);
+        expect(debtsMoreLine(state), summary);
+        expect(state.debt('closed')?.closed, isTrue);
+
+        cubit.selectFilter(DebtDueFilter.week);
+        expect(cubit.state.visibleOwed.map((d) => d.id), ['d1', 'd7']);
+        repository.currentDay = today.addDays(1);
+        cubit.calendarChecked();
+        expect(cubit.state.visibleOwed.map((d) => d.id), ['d7', 'd8']);
+
+        cubit.selectFilter(DebtDueFilter.all);
+        state = cubit.state;
+        expect(state.visibleOwed, hasLength(6));
+        expect(peopleInDebts(state.visibleOwed), 2);
+      },
+    );
+
+    test(
+      'removes a newly settled debt from the active due-date filter',
+      () async {
+        final repository = FakeDebtsRepository();
+        final cubit = DebtsCubit(repository);
+        addTearDown(cubit.close);
+        await settle();
+        cubit.selectFilter(DebtDueFilter.week);
+        final debt = cubit.state.visibleMine.single;
+        await repository.settle(
+          debt.id,
+          accountId: 'card',
+          amount: debt.left,
+          day: boardToday,
+        );
+        await settle();
+        expect(cubit.state.filter, DebtDueFilter.week);
+        expect(cubit.state.visibleMine, isEmpty);
+        expect(cubit.state.debt(debt.id)?.closed, isTrue);
+      },
+    );
+
+    test(
+      'only a matching foreign debt requires a rate for its total',
+      () async {
+        final cubit = DebtsCubit(
+          FakeDebtsRepository(rates: const RateBook.empty()),
+        );
+        addTearDown(cubit.close);
+        await settle();
+        cubit.selectFilter(DebtDueFilter.due);
+        expect(cubit.state.totalOf(cubit.state.visibleOwed), isNull);
+        expect(cubit.state.hasOtherCurrencies, isTrue);
+        cubit.selectFilter(DebtDueFilter.week);
+        expect(cubit.state.totalOf(cubit.state.visibleOwed), rub(0));
+        expect(cubit.state.totalOf(cubit.state.visibleMine), rub(4000));
+        expect(cubit.state.hasOtherCurrencies, isFalse);
+      },
+    );
 
     test('says what the page is for without debts', () async {
       final cubit = DebtsCubit(
