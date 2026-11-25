@@ -48,7 +48,7 @@ class TagsPage extends StatelessComponent {
           TagsStatus.loading => const <Component>[],
           TagsStatus.failed => [GlassNotice(text: t.tags.failed)],
           TagsStatus.ready when state.isEmpty => [_empty()],
-          TagsStatus.ready => _shelves(state),
+          TagsStatus.ready => _shelves(context, state),
         };
         final side = this.side;
         if (side == null) return BirkaColumn(children: [header, ...body]);
@@ -62,40 +62,52 @@ class TagsPage extends StatelessComponent {
     );
   }
 
-  List<Component> _shelves(TagsState state) => [
-    for (final (shelf, title) in [
-      (TagShelf.now, t.tags.now),
-      (TagShelf.trips, t.tags.trips),
-      (TagShelf.plain, t.tags.plain),
-    ])
-      if (state.on(shelf) case final summaries when summaries.isNotEmpty)
-        section(classes: 'tags__shelf', [
-          SectionLabel(title),
-          GlassListGroup(
-            children: [
-              for (final summary in summaries)
-                GlassListRow(
-                  key: ValueKey(summary.tag.id),
-                  leading: GlyphBadge(
-                    glyph: summary.tag.isTrip
-                        ? BirkaGlyph.plane
-                        : BirkaGlyph.tag,
-                    color: 'var(--color-accent)',
+  List<Component> _shelves(BuildContext context, TagsState state) {
+    final shelves = state.visibleShelves;
+    return [
+      GlassSearchField(
+        label: t.tags.search,
+        hint: t.tags.search,
+        clearLabel: t.tags.picker.clear,
+        value: state.query,
+        onChanged: context.read<TagsCubit>().queryChanged,
+      ),
+      for (final (shelf, title) in [
+        (TagShelf.now, t.tags.now),
+        (TagShelf.trips, t.tags.trips),
+        (TagShelf.plain, t.tags.plain),
+      ])
+        if (shelves[shelf] case final summaries?)
+          section(key: ValueKey((shelf, state.query)), classes: 'tags__shelf', [
+            SectionLabel(title),
+            GlassListGroup(
+              children: [
+                for (final summary in summaries)
+                  GlassListRow(
+                    key: ValueKey(summary.tag.id),
+                    leading: GlyphBadge(
+                      glyph: summary.tag.isTrip
+                          ? BirkaGlyph.plane
+                          : BirkaGlyph.tag,
+                      color: 'var(--color-accent)',
+                    ),
+                    title: summary.tag.name,
+                    subtitle: wideShelfLine(summary, today: state.today),
+                    trailing: AmountText(
+                      formatMoney(summary.total),
+                      textClass: 'text-body-strong',
+                    ),
+                    href: hrefOf(summary.tag.id),
+                    picked: summary.tag.id == picked,
                   ),
-                  title: summary.tag.name,
-                  subtitle: wideShelfLine(summary, today: state.today),
-                  trailing: AmountText(
-                    formatMoney(summary.total),
-                    textClass: 'text-body-strong',
-                  ),
-                  href: hrefOf(summary.tag.id),
-                  picked: summary.tag.id == picked,
-                ),
-            ],
-          ),
-        ]),
-    p(classes: 'text-caption tags__note', [.text(t.tags.note)]),
-  ];
+              ],
+            ),
+          ]),
+      p(classes: 'text-caption tags__note', [
+        .text(shelves.isEmpty ? t.tags.noMatches : t.tags.note),
+      ]),
+    ];
+  }
 
   Component _empty() {
     return div(classes: 'tags__empty', [

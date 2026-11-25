@@ -32,6 +32,47 @@ void main() {
     expect(state.on(TagShelf.now).single.total.minorUnits, 6201500);
   });
 
+  test('name search keeps shelves, amounts and live ledger updates', () async {
+    final repository = FakeTagsRepository(
+      tags: [
+        tbilisi.copyWith(name: 'Озёра'),
+        istanbul.copyWith(name: 'Зимние озёра'),
+        renovation.copyWith(name: 'Дом у озера'),
+        const Tag(id: 'other', name: 'Книги'),
+      ],
+    );
+    final cubit = TagsCubit(repository);
+    addTearDown(cubit.close);
+    await cubit.stream.firstWhere((state) => state.status == TagsStatus.ready);
+
+    final summaries = cubit.state.summaries;
+    cubit.queryChanged('  ОЗЕР  ');
+    expect(cubit.state.query, '  ОЗЕР  ');
+    expect(cubit.state.summaries, same(summaries));
+    expect(cubit.state.on(TagShelf.now).single.total.minorUnits, 6201500);
+    expect(cubit.state.on(TagShelf.trips).single.tag.id, 'istanbul');
+    expect(cubit.state.on(TagShelf.plain).single.tag.id, 'renovation');
+
+    final renamed = cubit.stream.firstWhere(
+      (state) => state.on(TagShelf.plain).length == 2,
+    );
+    await repository.update(const Tag(id: 'other', name: 'У озёр'));
+    expect((await renamed).on(TagShelf.plain).map((row) => row.tag.id), [
+      'renovation',
+      'other',
+    ]);
+    expect(cubit.state.query, '  ОЗЕР  ');
+
+    cubit.queryChanged('nothing matches');
+    expect(cubit.state.visibleShelves, isEmpty);
+    expect(cubit.state.isEmpty, isFalse);
+    cubit.queryChanged('  ');
+    expect(
+      cubit.state.visibleShelves.values.expand((shelf) => shelf),
+      hasLength(4),
+    );
+  });
+
   test('the report of a метка that goes is gone', () async {
     final cubit = TagReportCubit(FakeTagsRepository(), 'nope');
     addTearDown(cubit.close);

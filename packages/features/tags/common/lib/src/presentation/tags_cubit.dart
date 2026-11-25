@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
@@ -28,6 +29,7 @@ final class TagsState {
     required this.status,
     required this.today,
     this.summaries = const [],
+    this.query = '',
   });
 
   /// Where the list stands.
@@ -39,11 +41,25 @@ final class TagsState {
   /// What each метка took, in the order of the ledger.
   final List<TagSummary> summaries;
 
-  /// The метки of [shelf], in their order.
-  List<TagSummary> on(TagShelf shelf) => [
-    for (final summary in summaries)
-      if (shelfOf(summary.tag, today) == shelf) summary,
-  ];
+  /// The text in the search field, as entered.
+  final String query;
+
+  /// Matching rows in ledger order, grouped by their original shelf.
+  Map<TagShelf, List<TagSummary>> get visibleShelves {
+    final key = searchKey(query);
+    final shelves = <TagShelf, List<TagSummary>>{};
+    for (final summary in summaries) {
+      if (key.isNotEmpty && !searchKey(summary.tag.name).contains(key)) {
+        continue;
+      }
+      final shelf = shelfOf(summary.tag, today);
+      (shelves[shelf] ??= []).add(summary);
+    }
+    return shelves;
+  }
+
+  /// The visible метки of [shelf], in their order.
+  List<TagSummary> on(TagShelf shelf) => visibleShelves[shelf] ?? const [];
 
   /// Whether there is no метка yet.
   bool get isEmpty => summaries.isEmpty;
@@ -53,10 +69,12 @@ final class TagsState {
       other is TagsState &&
       other.status == status &&
       other.today == today &&
+      other.query == query &&
       _same(other.summaries, summaries);
 
   @override
-  int get hashCode => Object.hash(status, today, Object.hashAll(summaries));
+  int get hashCode =>
+      Object.hash(status, today, query, Object.hashAll(summaries));
 }
 
 bool _same<T>(List<T> a, List<T> b) {
@@ -74,7 +92,13 @@ final class TagsCubit extends Cubit<TagsState> {
     : super(TagsState(status: TagsStatus.loading, today: _repository.today())) {
     void failed(Object _) {
       if (isClosed) return;
-      emit(TagsState(status: TagsStatus.failed, today: state.today));
+      emit(
+        TagsState(
+          status: TagsStatus.failed,
+          today: state.today,
+          query: state.query,
+        ),
+      );
     }
 
     _subscriptions.addAll([
@@ -120,7 +144,21 @@ final class TagsCubit extends Cubit<TagsState> {
       TagsState(
         status: TagsStatus.ready,
         today: _repository.today(),
+        query: state.query,
         summaries: summarize(tags, tagged, rates: _rates, base: base),
+      ),
+    );
+  }
+
+  /// Narrows the existing summaries without reading or revaluing the ledger.
+  void queryChanged(String query) {
+    if (query == state.query) return;
+    emit(
+      TagsState(
+        status: state.status,
+        today: state.today,
+        summaries: state.summaries,
+        query: query,
       ),
     );
   }

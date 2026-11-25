@@ -90,6 +90,36 @@ void main() {
       );
     });
 
+    testComponents('search filters report links and explains an empty result', (
+      tester,
+    ) async {
+      final cubit = TagsCubit(FakeTagsRepository());
+      addTearDown(cubit.close);
+      tester.pumpComponent(
+        BlocProvider<TagsCubit>.value(
+          value: cubit,
+          child: TagsPage(addHref: 'tags/#new', hrefOf: (id) => 'tags/#$id'),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      GlassSearchField search() =>
+          find.byType(GlassSearchField).evaluate().single.component
+              as GlassSearchField;
+      search().onChanged('  КУХ ');
+      await tester.pump();
+      expect(hrefOf('Ремонт кухни'), 'tags/#renovation');
+      expect(find.text('Тбилиси'), findsNothing);
+      search().onChanged('Книги');
+      await tester.pump();
+      expect(find.text(t.tags.noMatches), findsOneComponent);
+      expect(find.text(t.tags.emptyTitle), findsNothing);
+      search().onChanged('');
+      await tester.pump();
+      expect(hrefOf('Тбилиси'), 'tags/#tbilisi');
+    });
+
     testComponents('offers the first метка when there is none', (
       tester,
     ) async {
@@ -105,6 +135,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('Меток пока нет'), findsOneComponent);
+      expect(find.byType(GlassSearchField), findsNothing);
       expect(hrefOf('Новая метка'), 'tags/#new');
     });
   });

@@ -48,6 +48,32 @@ void main() {
       expect(opened, ['tbilisi']);
     });
 
+    testWidgets('search narrows the list and the clear button restores it', (
+      tester,
+    ) async {
+      final cubit = TagsCubit(FakeTagsRepository());
+      addTearDown(cubit.close);
+      await tester.pumpWidget(
+        phone(cubit, TagsPage(onBack: () {}, onAdd: () {}, onOpen: (_) {})),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'КУХ');
+      await tester.pumpAndSettle();
+      expect(find.text('Ремонт кухни'), findsOneWidget);
+      expect(find.text('Тбилиси'), findsNothing);
+
+      await tester.enterText(find.byType(TextField), 'Книги');
+      await tester.pumpAndSettle();
+      expect(find.text(t.tags.noMatches), findsOneWidget);
+      expect(find.text(t.tags.emptyTitle), findsNothing);
+
+      await tester.tap(find.bySemanticsLabel(t.tags.picker.clear));
+      await tester.pumpAndSettle();
+      expect(find.text('Тбилиси'), findsOneWidget);
+      expect(cubit.state.query, isEmpty);
+    });
+
     testWidgets('offers the first метка when there is none', (tester) async {
       var added = 0;
       final cubit = TagsCubit(FakeTagsRepository(tags: [], operations: []));
@@ -61,6 +87,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Меток пока нет'), findsOneWidget);
+      expect(find.byType(GlassSearchField), findsNothing);
 
       await tester.tap(find.widgetWithText(BirkaButton, 'НОВАЯ МЕТКА'));
 
