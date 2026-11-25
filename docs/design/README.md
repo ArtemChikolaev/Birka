@@ -123,3 +123,15 @@ and shows how to correct it.
 [Interactive mockup](mockups/csv-export-period.html) ·
 [Phone preview](mockups/23-csv-period-phone.png) ·
 [Desktop preview](mockups/24-csv-period-web.png)
+
+### Operations search across months
+
+Start typing in Operations, then enable All months to include older matches.
+The selected transaction type still applies. The totals describe the matches,
+and dates from earlier years include the year. Clearing the query or turning
+off All months returns to the month being viewed. Search opened from an Ask
+answer stays within the answer's operations.
+
+[Interactive mockup](mockups/operations-history-search.html) ·
+[Phone preview](mockups/25-history-search-phone.png) ·
+[Desktop preview](mockups/26-history-search-web.png)
