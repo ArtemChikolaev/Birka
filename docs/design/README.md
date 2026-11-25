@@ -138,3 +138,16 @@ across months to try the longer list.
 [Interactive mockup](mockups/operations-history-search.html) ·
 [Phone preview](mockups/25-history-search-phone.png) ·
 [Desktop preview](mockups/26-history-search-web.png)
+
+### Debts by due date
+
+On the Debts screen, **Due now** includes today and earlier dates.
+**In 1–7 days** includes tomorrow through the seventh day. Both show open
+balances, grouped by who owes whom. The summary cards show the remaining
+amount and number of people on each side for the selected filter. Undated
+debts and the settled-debt fold are available under All. If no debt matches,
+the list explains that the selected period is clear.
+
+[Interactive mockup](mockups/debt-due-filters.html) ·
+[Phone preview](mockups/27-debt-due-phone.png) ·
+[Desktop preview](mockups/28-debt-due-web.png)

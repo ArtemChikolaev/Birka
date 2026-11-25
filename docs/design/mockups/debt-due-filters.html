@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бирка · Долги по сроку возврата</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing: border-box }
+  html { color-scheme: dark }
+  body { margin: 0; min-height: 100vh; font-family: var(--font-family-text); color: var(--color-text); background: radial-gradient(ellipse at top left,var(--color-ambient),transparent 60%),var(--color-background) }
+  main { max-width: 1030px; padding: 24px 18px; margin: auto }
+  header,.row,.filters { display: flex; align-items: center; gap: 8px }
+  header { justify-content: space-between; margin-bottom: 18px }
+  h1 { margin: 0; font: 800 30px Manrope,sans-serif }
+  h2 { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--color-text-muted); margin: 18px 4px 6px }
+  .filters { flex-wrap: wrap; gap: 5px }
+  button { font: inherit; color: inherit; cursor: pointer }
+  .filters button,.plus { background: var(--color-surface-raised); border: 1px solid var(--color-hairline); border-radius: var(--radius-pill); padding: 9px 12px; font-size: 13px; font-weight: 650 }
+  .plus { font-size: 22px; line-height: 1 }
+  .filters [aria-pressed=true] { background: var(--color-text); color: var(--color-background) }
+  .totals { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px }
+  .glass { border-radius: var(--radius-lg); padding: 14px }
+  .total { display: grid; gap: 3px }
+  small, .note, li { color: var(--color-text-muted) }
+  strong { font: 750 22px Manrope,sans-serif }
+  .owed { color: var(--color-positive) }
+  .due { color: var(--color-palette-amber) }
+  .row { gap: 12px; padding: 8px 0 }
+  .row + .row { border-top: 1px solid var(--color-hairline) }
+  .name { flex: 1; display: grid; gap: 3px }
+  .mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--color-accent-soft); color: var(--color-accent) }
+  .amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums }
+  .amount small { display: block; margin-top: 3px }
+  .note { font-size: 13px; line-height: 1.5 }
+  aside { display: none }
+  aside h2 { margin-top: 0 }
+  li { padding: 4px 0 }
+  .muted { color: var(--color-text-muted) }
+  @media (min-width: 760px) { main { padding-top: 48px }.layout { display: grid; grid-template-columns: minmax(0,3fr) minmax(0,2fr); gap: 24px } aside { display: block; align-self: start } }
+</style>
+<main>
+<header><h1>Долги</h1><span class="plus" aria-label="Новый долг">+</span></header>
+<div class="layout"><div>
+  <div class="filters" role="group" aria-label="Срок возврата">
+    <button data-filter="all" aria-pressed="true">Все</button><button data-filter="due" aria-pressed="false">Срок наступил</button><button data-filter="week" aria-pressed="false">Через 1–7 дней</button>
+  </div>
+  <div class="totals" id="totals"></div><div id="rows" aria-live="polite"></div>
+  <p class="note">Долги не входят в капитал: этих денег сейчас нет на ваших счетах.</p>
+</div><aside class="glass"><h2>Как это устроено</h2><ol>
+<li>Запишите, кому одолжили или у кого заняли: деньги уйдут со счёта или придут на него.</li>
+<li>Долг — не трата и не доход: в отчёты месяца он не попадёт.</li>
+<li>Возвраты закрывают долг частями, и список покажет, сколько осталось и до какого дня.</li>
+</ol></aside></div>
+</main>
+<script>
+  // A synthetic ledger on November 25, 2026. Offsets are civil days from today.
+  const debts = [
+    {side:0, who:'Лена', offset:-2, label:'срок был 23 ноября', left:3200, original:5000},
+    {side:0, who:'Саша', offset:0, label:'срок сегодня', left:1500},
+    {side:1, who:'Илья', offset:0, label:'срок сегодня', left:900},
+    {side:1, who:'Вера', offset:7, label:'до 2 декабря', left:2400},
+    {side:0, who:'Дима', offset:null, label:'с 10 ноября', left:1800},
+    {side:1, who:'Лиза', closed:true, offset:-4, label:'отдали 21 ноября', left:0, original:1000},
+  ];
+  const titles = ['Мне должны','Мои долги'];
+  const money = x => x.toLocaleString('ru-RU') + ' ₽';
+  function row(d) {
+    const due = !d.closed && d.offset !== null && d.offset <= 0;
+    return '<div class="row"><span class="mark">' + d.who[0] + '</span><div class="name"><b>' + d.who + '</b><small class="' + (due?'due':'') + '">' + d.label + '</small></div><div class="amount"><b class="' + (d.side === 0?'owed':'') + '">' + money(d.closed ? d.original : d.left) + '</b>' + (d.original && !d.closed?'<small>из ' + money(d.original) + '</small>':'') + '</div><span class="muted">›</span></div>';
+  }
+  function show(filter) {
+    document.querySelectorAll('[data-filter]').forEach(b => b.setAttribute('aria-pressed',b.dataset.filter === filter));
+    const open = debts.filter(d => !d.closed && (filter === 'all' || (d.offset !== null && (filter === 'due' ? d.offset <= 0 : d.offset > 0 && d.offset <= 7))));
+    const sides = titles.map((_,side) => open.filter(d => d.side === side));
+    document.querySelector('#totals').innerHTML = sides.map((ds,i) => '<div class="glass total"><small>' + titles[i] + '</small><strong class="' + (i===0 && ds.length?'owed':'') + '">' + money(ds.reduce((a,d) => a+d.left,0)) + '</strong><small>' + ds.length + (ds.length===2||ds.length===3?' человека':' человек') + '</small></div>').join('');
+    document.querySelector('#rows').innerHTML = sides.map((ds,i) => ds.length ? '<section><h2>' + titles[i] + '</h2><div class="glass">' + ds.map(row).join('') + '</div></section>' : '').join('') + (filter === 'all' ? '<details><summary>Закрытые · 1</summary>' + row(debts.at(-1)) + '</details>' : '');
+  }
+  document.querySelectorAll('[data-filter]').forEach(b => b.onclick = () => show(b.dataset.filter));
+  show('all');
+</script>
+</html>
