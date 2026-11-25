@@ -1249,6 +1249,9 @@ void main() {
     expect(find.byType(TagsPage), findsOneWidget);
     expect(find.byType(GlassNavBar), findsNothing);
 
+    await tester.enterText(find.byType(TextField), 'били');
+    await tester.pumpAndSettle();
+    expect(find.text('Стамбул'), findsNothing);
     await tester.tap(find.text('Тбилиси'));
     await tester.pumpAndSettle();
 
@@ -1260,6 +1263,15 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.byType(TagOperations), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      'били',
+    );
+    expect(find.text('Тбилиси'), findsOneWidget);
+    expect(find.text('Стамбул'), findsNothing);
   });
 
   testWidgets('quick add makes a метка over the picker and wears it', (

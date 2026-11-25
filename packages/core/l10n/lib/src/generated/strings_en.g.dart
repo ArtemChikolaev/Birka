@@ -3809,6 +3809,12 @@ class Translations$tags$en {
   /// en: 'Edit'
   String get edit => 'Edit';
 
+  /// en: 'Find a tag or trip'
+  String get search => 'Find a tag or trip';
+
+  /// en: 'No tags or trips match this name.'
+  String get noMatches => 'No tags or trips match this name.';
+
   /// en: 'Now'
   String get now => 'Now';
 
@@ -8826,6 +8832,8 @@ extension on Translations {
           'tags.add' => 'New tag',
           'tags.close' => 'Close',
           'tags.edit' => 'Edit',
+          'tags.search' => 'Find a tag or trip',
+          'tags.noMatches' => 'No tags or trips match this name.',
           'tags.now' => 'Now',
           'tags.trips' => 'Trips',
           'tags.plain' => 'Tags',
@@ -8943,12 +8951,12 @@ extension on Translations {
             'You put the tag on yourself, when you add an operation or on its card.',
           'tags.form.plainNote' =>
             'You put the tag on yourself, when you add an operation or on its card. Its report gathers what it took in every currency.',
-          'tags.form.footTrip' =>
-            'The tickets bought in advance can wear the tag too',
-          'tags.form.footPlain' => 'Tags live in More → Tags',
           _ => null,
         } ??
         switch (path) {
+          'tags.form.footTrip' =>
+            'The tickets bought in advance can wear the tag too',
+          'tags.form.footPlain' => 'Tags live in More → Tags',
           'tags.form.save' => 'Save',
           'tags.form.done' => 'Done',
           'tags.form.nameMissing' => 'Give the tag a name.',

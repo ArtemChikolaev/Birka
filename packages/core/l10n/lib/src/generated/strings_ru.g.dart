@@ -3255,6 +3255,10 @@ class _Translations$tags$ru extends Translations$tags$en {
   @override
   String get edit => 'Изменить';
   @override
+  String get search => 'Найти метку или поездку';
+  @override
+  String get noMatches => 'Меток и поездок с таким названием не найдено.';
+  @override
   String get now => 'Сейчас';
   @override
   String get trips => 'Поездки';
@@ -8041,6 +8045,8 @@ extension on TranslationsRu {
           'tags.add' => 'Новая метка',
           'tags.close' => 'Закрыть',
           'tags.edit' => 'Изменить',
+          'tags.search' => 'Найти метку или поездку',
+          'tags.noMatches' => 'Меток и поездок с таким названием не найдено.',
           'tags.now' => 'Сейчас',
           'tags.trips' => 'Поездки',
           'tags.plain' => 'Метки',
@@ -8176,12 +8182,12 @@ extension on TranslationsRu {
             'Метку ставите сами — при вводе операции или в её карточке.',
           'tags.form.plainNote' =>
             'Метку ставите сами — при вводе операции или в её карточке. Отчёт соберёт траты во всех валютах.',
-          'tags.form.footTrip' =>
-            'Метку можно поставить и на билеты, купленные заранее',
-          'tags.form.footPlain' => 'Метки живут в «Ещё» → «Метки»',
           _ => null,
         } ??
         switch (path) {
+          'tags.form.footTrip' =>
+            'Метку можно поставить и на билеты, купленные заранее',
+          'tags.form.footPlain' => 'Метки живут в «Ещё» → «Метки»',
           'tags.form.save' => 'Сохранить',
           'tags.form.done' => 'Готово',
           'tags.form.nameMissing' => 'Дайте метке название.',

@@ -3,6 +3,8 @@ back: Back
 add: New tag
 close: Close
 edit: Edit
+search: Find a tag or trip
+noMatches: No tags or trips match this name.
 now: Now
 trips: Trips
 plain: Tags

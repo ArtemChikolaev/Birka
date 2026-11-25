@@ -8,7 +8,7 @@ import 'package:tags_common/tags_common.dart';
 /// the метки without days, each with what it took.
 ///
 /// It needs a [TagsCubit] above it.
-class TagsPage extends StatelessWidget {
+class TagsPage extends StatefulWidget {
   /// Creates the page.
   const TagsPage({
     required this.onBack,
@@ -25,6 +25,27 @@ class TagsPage extends StatelessWidget {
 
   /// Opens the report of a метка, by its id.
   final ValueChanged<String> onOpen;
+
+  @override
+  State<TagsPage> createState() => _TagsPageState();
+}
+
+class _TagsPageState extends State<TagsPage> {
+  late final TextEditingController _search;
+
+  @override
+  void initState() {
+    super.initState();
+    _search = TextEditingController(
+      text: context.read<TagsCubit>().state.query,
+    );
+  }
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +66,11 @@ class TagsPage extends StatelessWidget {
                 BackHeader(
                   label: t.tags.title,
                   backLabel: t.tags.back,
-                  onBack: onBack,
+                  onBack: widget.onBack,
                   trailing: GlassIconButton(
                     glyph: BirkaGlyph.plus,
                     label: t.tags.add,
-                    onPressed: onAdd,
+                    onPressed: widget.onAdd,
                   ),
                 ),
                 const SizedBox(height: BirkaTokens.spaceLg),
@@ -57,7 +78,7 @@ class TagsPage extends StatelessWidget {
                   TagsStatus.loading => const <Widget>[],
                   TagsStatus.failed => [_Failure()],
                   TagsStatus.ready when state.isEmpty => [
-                    _Empty(onAdd: onAdd),
+                    _Empty(onAdd: widget.onAdd),
                   ],
                   TagsStatus.ready => _shelves(context, state),
                 },
@@ -72,16 +93,26 @@ class TagsPage extends StatelessWidget {
   List<Widget> _shelves(BuildContext context, TagsState state) {
     final colors = BirkaColors.of(context);
     final styles = BirkaTextStyles.of(context);
+    final shelves = state.visibleShelves;
     return [
+      GlassSearchField(
+        label: t.tags.search,
+        hint: t.tags.search,
+        clearLabel: t.tags.picker.clear,
+        controller: _search,
+        onChanged: context.read<TagsCubit>().queryChanged,
+      ),
+      const SizedBox(height: BirkaTokens.spaceLg),
       for (final (shelf, title) in [
         (TagShelf.now, t.tags.now),
         (TagShelf.trips, t.tags.trips),
         (TagShelf.plain, t.tags.plain),
       ])
-        if (state.on(shelf) case final summaries when summaries.isNotEmpty) ...[
+        if (shelves[shelf] case final summaries?) ...[
           SectionLabel(title),
           const SizedBox(height: BirkaTokens.spaceXs),
           GlassListGroup(
+            key: ValueKey((shelf, state.query)),
             children: [
               for (final summary in summaries)
                 GlassListRow(
@@ -111,14 +142,14 @@ class TagsPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  onTap: () => onOpen(summary.tag.id),
+                  onTap: () => widget.onOpen(summary.tag.id),
                 ),
             ],
           ),
           const SizedBox(height: BirkaTokens.spaceLg),
         ],
       Text(
-        t.tags.note,
+        shelves.isEmpty ? t.tags.noMatches : t.tags.note,
         style: styles.caption.copyWith(color: colors.textMuted),
       ),
     ];
