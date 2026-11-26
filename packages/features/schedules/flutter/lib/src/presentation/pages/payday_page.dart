@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:design_flutter/design_flutter.dart';
 import 'package:device_settings/device_settings.dart';
@@ -96,7 +97,17 @@ class PaydayPage extends StatelessWidget {
     );
     return [
       switch (view.plan) {
-        final plan? => _Sum(plan: plan),
+        final plan? => _Sum(
+          plan: plan,
+          paymentListKey: ValueKey((
+            plan.until,
+            plan.today,
+            plan.end,
+            jsonEncode(
+              view.counted.map((row) => row.account.id).toList()..sort(),
+            ),
+          )),
+        ),
         null => TintedNotice(
           color: colors.accent,
           title: t.schedules.noPaydayTitle,
@@ -333,9 +344,10 @@ class _Forecast extends StatelessWidget {
 
 /// How much each day may take, and the sum that gives it.
 class _Sum extends StatelessWidget {
-  const _Sum({required this.plan});
+  const _Sum({required this.plan, required this.paymentListKey});
 
   final SpendingPlan plan;
+  final Key paymentListKey;
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +389,7 @@ class _Sum extends StatelessWidget {
           if (plan.payments.isEmpty)
             _Line(label: planPaymentsLabel(plan), amount: -plan.paid)
           else
-            _PaymentBreakdown(plan: plan),
+            _PaymentBreakdown(plan: plan, listKey: paymentListKey),
           _Line(label: t.schedules.aside, amount: -plan.aside),
           const SizedBox(height: BirkaTokens.spaceXs),
           SizedBox(height: 1, child: ColoredBox(color: colors.hairline)),
@@ -417,9 +429,10 @@ class _Sum extends StatelessWidget {
 }
 
 class _PaymentBreakdown extends StatefulWidget {
-  const _PaymentBreakdown({required this.plan});
+  const _PaymentBreakdown({required this.plan, required this.listKey});
 
   final SpendingPlan plan;
+  final Key listKey;
 
   @override
   State<_PaymentBreakdown> createState() => _PaymentBreakdownState();
@@ -479,6 +492,7 @@ class _PaymentBreakdownState extends State<_PaymentBreakdown> {
           curve: BirkaMotion.standardCurve,
           child: _open
               ? GlassListGroup(
+                  key: widget.listKey,
                   children: [
                     for (final (:schedule, :on) in plan.payments.take(_visible))
                       GlassListRow(
