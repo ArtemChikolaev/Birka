@@ -3,6 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'; object-src 'none'">
 <title>Бирка · Аккаунт</title>
 <link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
 <link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
@@ -48,7 +49,23 @@
   .row b { flex: 1 }
   .row .arrow { color: var(--color-text-muted) }
   #menu h2 { margin: 0 0 16px }
-  #who, #recipient { overflow-wrap: anywhere }
+  #code-note { overflow-wrap: anywhere }
+  .glass-segmented__option { font-weight: 650; font-size: 14px }
+  .glass-segmented__option[aria-pressed=true] { color: var(--color-text); background: var(--color-surface-selected) }
+  .consent { display: flex; align-items: flex-start; gap: var(--space-sm); color: var(--color-text-secondary); font-weight: 450; cursor: pointer }
+  .consent input { flex: none; width: 18px; height: 18px; min-height: 0; margin: 2px 0; accent-color: var(--color-accent) }
+  .methods { display: grid; margin: 0; border-block: 1px solid var(--color-hairline) }
+  .methods > div { display: flex; justify-content: space-between; gap: var(--space-md); padding: var(--space-sm) 0 }
+  .methods > div + div { border-top: 1px solid var(--color-hairline) }
+  .methods dd { margin: 0; overflow-wrap: anywhere; text-align: end; font-weight: 600 }
+  .methods dt { color: var(--color-text-muted) }
+  .demo { flex-wrap: wrap; padding-block: var(--space-xs) }
+  .demo > details { width: 100%; padding-bottom: var(--space-xxs) }
+  .demo summary { cursor: pointer; width: fit-content }
+  .demo details label { display: flex; align-items: center; gap: var(--space-xs); padding-top: var(--space-xs); font-weight: 450 }
+  .demo details input { width: 16px; min-height: 16px; accent-color: var(--color-accent) }
+  .action:disabled,.quiet:disabled { opacity: .58; cursor: default }
+  .field .hint { font-size: 13px }
   .steps { margin: 0; padding-left: 22px; color: var(--color-text-secondary) }
   .steps li + li { margin-top: 8px }
   body[data-page=menu] article, body:not([data-page=menu]) #menu { display: none }
@@ -60,12 +77,15 @@
     #menu .row[aria-current=page] { border-color: var(--color-accent) }
   }
 </style>
-<body data-page="email">
+<body data-page="entry">
 <div class="demo-wrap"><div class="demo"><b>Макет Birka</b>
   <div class="switch" role="group" aria-label="Тестовое устройство">
     <button id="current" type="button" aria-pressed="true">С записями</button>
     <button id="fresh" type="button" aria-pressed="false">Новое устройство</button>
   </div>
+  <details><summary>Параметры макета</summary>
+    <label><input type="checkbox" id="delivery-fails">Telegram временно недоступен</label>
+  </details>
 </div></div>
 <main>
   <nav id="menu" aria-label="Ещё"><h2>Ещё</h2>
@@ -74,32 +94,67 @@
   <article>
     <button class="back" id="back"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg><span>Ещё</span></button>
     <h1 tabindex="-1">Аккаунт Birka</h1>
-    <section class="glass panel stack" id="email-view">
-      <div class="section-head"><span class="badge"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.6 18.3c1.2-2 3.1-3.1 5.4-3.1s4.2 1.1 5.4 3.1"/></svg></span><h2>Вход по почте</h2></div>
-      <p>При первом входе создадим аккаунт Birka для вашего адреса.</p>
-      <form class="stack" id="email-form" novalidate>
-        <div class="field"><label for="email">Электронная почта</label>
-          <input id="email" type="email" maxlength="254" required autocomplete="off" value="demo@example.com" aria-describedby="email-error">
-          <p class="error" id="email-error" role="alert" hidden>Введите адрес электронной почты.</p></div>
-        <button class="action">Получить код</button>
+    <section class="glass panel stack" id="entry-view">
+      <h2 id="entry-heading">Способ входа</h2>
+      <div class="glass-segmented" id="channels" role="group" aria-label="Способ входа">
+        <button class="glass-segmented__option" type="button" id="choose-email" aria-pressed="true">Почта</button>
+        <button class="glass-segmented__option" type="button" id="choose-telegram" aria-pressed="false">Telegram</button>
+      </div>
+      <p id="entry-intro"></p>
+      <form class="stack" id="entry-form" novalidate>
+        <div class="field" id="email-field">
+          <label for="email">Электронная почта</label>
+          <input id="email" type="email" maxlength="254" autocomplete="off" aria-describedby="email-error" value="demo@example.com">
+          <p class="error" id="email-error" role="alert" hidden>Введите адрес электронной почты.</p>
+        </div>
+        <div class="field" id="phone-field" hidden>
+          <label for="phone">Номер телефона в Telegram</label>
+          <input id="phone" type="tel" maxlength="32" autocomplete="off" aria-describedby="phone-error" value="+1 202 555 0148">
+          <p class="error" id="phone-error" role="alert" hidden>Введите номер с кодом страны, начиная с +.</p>
+        </div>
+        <div class="field" id="permission" hidden>
+          <label class="consent"><input type="checkbox" id="consent" aria-describedby="consent-error">Разрешаю Birka передать этот номер в Telegram для доставки кода.</label>
+          <p class="error" id="consent-error" role="alert" hidden>Для отправки кода нужно ваше разрешение.</p>
+        </div>
+        <button class="action" id="send">Получить код</button>
       </form>
-      <button class="quiet" id="skip">Продолжить без аккаунта</button>
+      <button class="quiet" id="exit-entry">Продолжить без аккаунта</button>
     </section>
+
     <section class="glass panel stack" id="code-view" hidden>
-      <h2>Введите код из письма</h2>
-      <p>Для входа с адресом <b id="recipient"></b> нужен шестизначный код.</p>
+      <h2 id="code-heading"></h2><p id="code-note"></p>
       <form id="code-form" class="stack" novalidate>
-        <div class="field"><label for="code">Код из письма</label>
-          <input id="code" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="000000" aria-describedby="code-error">
-          <p class="error" id="code-error" role="alert" hidden>Код не подошёл. Проверьте цифры или запросите новый.</p></div>
+        <div class="field"><label for="code">Шестизначный код Birka</label>
+          <input id="code" inputmode="numeric" autocomplete="off" maxlength="6" aria-describedby="code-error">
+          <p class="error" id="code-error" role="alert" hidden></p>
+        </div>
         <button class="action">Подтвердить</button>
       </form>
       <button class="quiet" id="resend">Получить новый код</button>
+      <button class="quiet" id="other-method"></button>
     </section>
+
+    <section class="glass panel stack" id="new-view" hidden>
+      <h2>Номер подтверждён</h2>
+      <p>Можно создать аккаунт Birka с этим номером. Если вы уже входили по почте, откройте свой профиль и привяжите Telegram там.</p>
+      <button class="action" id="create">Создать аккаунт Birka</button>
+      <button class="quiet" id="existing-email">У меня есть аккаунт с почтой</button>
+    </section>
+
+    <section class="glass panel stack" id="problem-view" hidden>
+      <h2 id="problem-heading"></h2><p id="problem-info" role="status"></p>
+      <button class="action" id="problem-primary"></button>
+      <button class="quiet" id="problem-back"></button>
+    </section>
+
     <section class="glass panel stack" id="profile-view" hidden>
       <div class="section-head"><span class="badge"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>Вы вошли в аккаунт</h2></div>
-      <b id="who"></b>
       <p class="description" id="account-info"></p>
+      <dl class="methods" aria-label="Способы входа">
+        <div id="profile-email"><dt>Почта</dt><dd></dd></div>
+        <div id="profile-telegram"><dt>Telegram</dt><dd></dd></div>
+      </dl>
+      <button class="action" id="link-method"></button>
       <button class="row" id="copy-info"><b>Как перенести записи</b><span class="arrow">›</span></button>
       <button class="quiet" id="signout">Выйти из аккаунта</button>
     </section>
@@ -113,80 +168,223 @@
   </article>
 </main>
 <script>
+  // This offline prototype keeps identities and both device sessions in memory.
   const el = id => document.getElementById(id);
-  const pages = ['email','code','profile','copy'];
-  let signedIn = false;
-  let fresh = false;
-  let address = '';
+  const profiles = [{email: 'demo@example.com'}];
+  const sessions = {current: null, fresh: null};
+  let device = 'current';
+  let channel = location.hash === '#telegram' ? 'telegram' : 'email';
+  let linking = false;
+  let challenge = null;
   let issued = 0;
-  // Deterministic examples for the offline design preview.
-  const demoCode = () => String((246810 + issued) % 1000000).padStart(6,'0');
+  const profile = () => sessions[device];
+  const isTelegram = () => channel === 'telegram';
+  const phoneLabel = phone => '+' + phone.slice(1, -4).replace(/./g, '•') + ' ' + phone.slice(-4);
 
-  function show(page, moveFocus = true) {
+  function show(page, focus = true) {
     document.body.dataset.page = page;
-    for (const name of pages) el(name+'-view').hidden = name !== page;
+    for (const view of document.querySelectorAll('article section')) {
+      view.hidden = view.id !== page + '-view';
+    }
     el('open-account').setAttribute('aria-current', page === 'menu' ? 'false' : 'page');
-    el('back').querySelector('span').textContent = page === 'code' ? 'Изменить адрес' : page === 'copy' ? 'Аккаунт' : 'Ещё';
-    el('device-summary').textContent = fresh ? 'На устройстве пока нет записей' : 'На устройстве · 3 счёта и 12 операций';
-    el('account-info').textContent = fresh ? 'Чтобы вернуть свои записи, перенесите файл копии с прежнего устройства.' : 'Ваши счета и операции по-прежнему хранятся на этом устройстве.';
-    el('demo-hint').textContent = page === 'code' ? 'Код для макета: '+demoCode()+'. Письма не отправляются.' : 'В макете используются тестовые данные.';
-    el('recipient').textContent = address;
-    el('who').textContent = address;
-    if (moveFocus) {
-      const target = page === 'menu' ? el('open-account') : page === 'code' ? el('code') : document.querySelector('article h1');
+    const back = {
+      code: isTelegram() ? 'Изменить номер' : 'Изменить адрес',
+      new: 'Способ входа', problem: linking ? 'К аккаунту' : 'Способ входа',
+      copy: 'К аккаунту', entry: linking ? 'К аккаунту' : 'Ещё',
+    };
+    el('back').querySelector('span').textContent = back[page] || 'Ещё';
+    el('device-summary').textContent = device === 'fresh'
+      ? 'На устройстве пока нет записей' : 'На устройстве · 3 счёта и 12 операций';
+    el('demo-hint').textContent = page === 'code'
+      ? 'Код для макета: ' + challenge.code + '.'
+      : 'Макет работает на тестовых данных. Сообщения не отправляются.';
+    if (focus) {
+      const target = page === 'menu' ? el('open-account') : page === 'code' ? el('code') : document.querySelector('h1');
       target.focus();
     }
   }
-  function clearError(name) {
-    el(name+'-error').hidden = true;
-    el(name).removeAttribute('aria-invalid');
+
+  function error(id, visible) {
+    el(id + '-error').hidden = !visible;
+    if (visible) {
+      el(id).setAttribute('aria-invalid', 'true');
+      el(id).focus();
+    } else {
+      el(id).removeAttribute('aria-invalid');
+    }
   }
-  function invalid(name) {
-    el(name+'-error').hidden = false;
-    el(name).setAttribute('aria-invalid','true');
-    el(name).focus();
+
+  function entry(method, link = false, focus = true) {
+    channel = method;
+    linking = link;
+    challenge = null;
+    el('consent').checked = false;
+    for (const id of ['email', 'phone', 'consent', 'code']) error(id, false);
+    const telegram = isTelegram();
+    el('channels').hidden = link;
+    el('entry-heading').textContent = link ? (telegram ? 'Привязать Telegram' : 'Добавить почту') : 'Способ входа';
+    el('choose-email').setAttribute('aria-pressed', String(!telegram));
+    el('choose-telegram').setAttribute('aria-pressed', String(telegram));
+    el('email-field').hidden = telegram;
+    el('phone-field').hidden = el('permission').hidden = !telegram;
+    el('entry-intro').textContent = link
+      ? 'Подтвердите ' + (telegram ? 'номер' : 'адрес') + ', чтобы входить в этот же аккаунт ещё одним способом.'
+      : telegram ? 'Код для входа в Birka придёт сообщением в Telegram.'
+      : 'При первом подтверждении адреса создадим аккаунт Birka.';
+    el('send').textContent = telegram ? 'Получить код в Telegram' : 'Получить код по почте';
+    el('exit-entry').textContent = link ? 'Отменить привязку' : 'Продолжить без аккаунта';
+    show('entry', focus);
   }
-  function selectDevice(isNew) {
-    if (fresh === isNew) return;
-    fresh = isNew;
-    signedIn = false;
-    address = '';
-    issued = 0;
-    el('email').value = 'demo@example.com';
+
+  function showProfile() {
+    linking = false;
+    challenge = null;
+    const account = profile();
+    el('profile-email').hidden = !account.email;
+    el('profile-email').querySelector('dd').textContent = account.email || '';
+    el('profile-telegram').hidden = !account.telegram;
+    el('profile-telegram').querySelector('dd').textContent = account.telegram ? phoneLabel(account.telegram) : '';
+    el('link-method').hidden = Boolean(account.email && account.telegram);
+    el('link-method').textContent = account.telegram ? 'Добавить почту' : 'Привязать Telegram';
+    el('account-info').textContent = device === 'fresh'
+      ? 'Чтобы вернуть записи, перенесите файл копии с прежнего устройства.'
+      : 'Ваши счета и операции хранятся на этом устройстве.';
+    show('profile');
+  }
+
+  function problem(occupied) {
+    challenge = null;
+    el('problem-heading').textContent = occupied ? 'Способ входа уже привязан' : 'Не удалось доставить код';
+    el('problem-info').textContent = occupied
+      ? 'Этот способ входа связан с другим аккаунтом Birka. Попробуйте другой ' + (isTelegram() ? 'номер.' : 'адрес.')
+      : linking ? 'Проверьте номер, указанный в Telegram, или попробуйте позже.'
+      : 'Проверьте номер в Telegram. Если у аккаунта Birka есть почта, можно войти по ней.';
+    el('problem-primary').textContent = linking ? 'К аккаунту' : 'Войти по почте';
+    el('problem-back').textContent = isTelegram() ? 'Изменить номер' : 'Изменить адрес';
+    show('problem');
+  }
+
+  function sendCode(value) {
+    if (isTelegram() && el('delivery-fails').checked) { problem(false); return; }
+    // Predictable fixture codes belong only to this local design board.
+    const now = Date.now();
+    challenge = {value, code: String(246810 + issued++).slice(-6), expires: now + 600000, resend: now + 60000};
     el('code').value = '';
-    for (const name of ['email','code']) clearError(name);
-    el('current').setAttribute('aria-pressed',String(!fresh));
-    el('fresh').setAttribute('aria-pressed',String(fresh));
-    show('email');
-  }
-  el('email-form').onsubmit = event => {
-    event.preventDefault();
-    if (!el('email').validity.valid) { invalid('email'); return; }
-    address = el('email').value;
-    issued = 0;
-    clearError('code');
-    el('code').value = '';
+    error('code', false);
+    el('code-heading').textContent = isTelegram() ? 'Код из Telegram' : 'Код из письма';
+    const destination = isTelegram() ? phoneLabel(value) : value;
+    el('code-note').textContent = 'Введите код Birka для ' + destination + '. Код действует 10 минут.';
+    el('other-method').textContent = linking ? 'Отменить привязку' : isTelegram() ? 'Войти по почте' : 'Войти через Telegram';
+    updateResend();
     show('code');
+  }
+
+  function updateResend() {
+    if (!challenge) return;
+    const remaining = Math.max(0, Math.ceil((challenge.resend - Date.now()) / 1000));
+    el('resend').disabled = remaining > 0;
+    el('resend').textContent = remaining ? 'Новый код через ' + remaining + ' с' : 'Получить новый код';
+  }
+
+  function leaveEntry() {
+    if (linking) { showProfile(); return; }
+    challenge = null;
+    show('menu');
+  }
+
+  el('entry-form').onsubmit = event => {
+    event.preventDefault();
+    let value;
+    if (isTelegram()) {
+      value = el('phone').value.trim().replace(/[\s()-]/g, '');
+      if (!/^\+[1-9]\d{6,14}$/.test(value)) { error('phone', true); return; }
+      if (!el('consent').checked) { error('consent', true); return; }
+    } else {
+      value = el('email').value.trim().toLowerCase();
+      if (!value || !el('email').validity.valid) { error('email', true); return; }
+    }
+    sendCode(value);
   };
+
   el('code-form').onsubmit = event => {
     event.preventDefault();
-    if (el('code').value !== demoCode()) { invalid('code'); return; }
-    signedIn = true;
+    if (!challenge || Date.now() >= challenge.expires || el('code').value !== challenge.code) {
+      el('code-error').textContent = 'Код не подошёл или истёк. Проверьте цифры или запросите новый.';
+      error('code', true);
+      return;
+    }
+    const value = challenge.value;
+    const owner = profiles.find(account => account[channel] === value);
     el('code').value = '';
-    show('profile');
+    if (linking) {
+      if (owner && owner !== profile()) { problem(true); return; }
+      profile()[channel] = value;
+    } else if (owner) {
+      sessions[device] = owner;
+    } else if (isTelegram()) {
+      show('new');
+      return;
+    } else {
+      const account = {email: value};
+      profiles.push(account);
+      sessions[device] = account;
+    }
+    showProfile();
   };
-  el('email').oninput = () => clearError('email');
-  el('code').oninput = () => clearError('code');
-  el('resend').onclick = () => { issued++; clearError('code'); el('code').value = ''; show('code'); };
-  el('skip').onclick = () => show('menu');
-  el('open-account').onclick = () => show(signedIn ? 'profile' : 'email');
-  el('back').onclick = () => show(({code:'email',copy:'profile'})[document.body.dataset.page] || 'menu');
+
+  el('create').onclick = () => {
+    if (!challenge || Date.now() >= challenge.expires) { entry('telegram'); return; }
+    const account = {telegram: challenge.value};
+    profiles.push(account);
+    sessions[device] = account;
+    showProfile();
+  };
+  el('existing-email').onclick = () => entry('email');
+  el('choose-email').onclick = () => entry('email', false, false);
+  el('choose-telegram').onclick = () => entry('telegram', false, false);
+  el('email').oninput = () => error('email', false);
+  el('phone').oninput = () => { error('phone', false); el('consent').checked = false; };
+  el('consent').onchange = () => error('consent', false);
+  el('code').oninput = () => error('code', false);
+  el('exit-entry').onclick = leaveEntry;
+  el('resend').onclick = () => {
+    if (challenge && Date.now() >= challenge.resend) sendCode(challenge.value);
+  };
+  el('other-method').onclick = () => linking ? showProfile() : entry(isTelegram() ? 'email' : 'telegram');
+  el('problem-primary').onclick = () => linking ? showProfile() : entry('email');
+  el('problem-back').onclick = () => entry(channel, linking);
+  el('link-method').onclick = () => entry(profile().telegram ? 'email' : 'telegram', true);
   el('copy-info').onclick = () => show('copy');
-  el('return-profile').onclick = () => show('profile');
-  el('signout').onclick = () => { signedIn = false; address = ''; el('email').value = ''; show('email'); };
-  el('current').onclick = () => selectDevice(false);
-  el('fresh').onclick = () => selectDevice(true);
-  show('email', false);
+  el('return-profile').onclick = showProfile;
+  el('open-account').onclick = () => profile() ? showProfile() : entry('email');
+  el('back').onclick = () => {
+    switch (document.body.dataset.page) {
+      case 'code': case 'new': entry(channel, linking); break;
+      case 'problem': if (linking) showProfile(); else entry(channel); break;
+      case 'copy': showProfile(); break;
+      default: leaveEntry();
+    }
+  };
+  el('signout').onclick = () => {
+    sessions[device] = null;
+    el('email').value = '';
+    el('phone').value = '';
+    entry('email');
+  };
+  for (const button of ['current', 'fresh']) {
+    el(button).onclick = () => {
+      if (device === button) return;
+      device = button;
+      el('current').setAttribute('aria-pressed', String(device === 'current'));
+      el('fresh').setAttribute('aria-pressed', String(device === 'fresh'));
+      el('email').value = 'demo@example.com';
+      el('phone').value = '+1 202 555 0148';
+      if (profile()) showProfile();
+      else entry(channel);
+    };
+  }
+  setInterval(updateResend, 1000);
+  entry(channel, false, false);
 </script>
 </body>
 </html>

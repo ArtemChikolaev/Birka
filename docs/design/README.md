@@ -178,19 +178,41 @@ welcome and a search with no matches have distinct messages.
 
 ### Optional Birka account
 
-The first-run setup stays focused on the local ledger. This prototype puts
-**Birka account** in More and explores a single email-code flow for a first
-registration and a returning user. A person can leave the flow at any time.
-The prototype runs locally with example codes and keeps state only until
-the page is reloaded. The device switch above the preview resets the flow
-with either an existing ledger or a fresh device.
+**More → Birka account** opens the optional sign-in flow. The email service
+creates an identity on first verification. Sessions belong to a device and
+the ledger stays local. A fresh device can import records from a backup.
+The shipped email flow is described in [ADR 0035](../adr/0035-optional-account.md).
 
-Signing in establishes an identity. An existing device keeps its records.
-A fresh device can recover records through the existing backup-file flow.
-Signing out leaves the local ledger in place. Encrypted device linking and
-recovery of encryption keys need a separate design before enabling sync.
-Both hosts use the Birka email-code service described in [ADR 0035](../adr/0035-optional-account.md).
+[Email flow on a phone](mockups/33-account-phone.png) ·
+[Email flow on desktop](mockups/34-account-web.png)
 
-[Interactive account prototype](mockups/optional-account.html) ·
-[Phone preview](mockups/33-account-phone.png) ·
-[Desktop preview](mockups/34-account-web.png)
+### Telegram codes for the Birka account (proposal)
+
+In the [interactive prototype](mockups/optional-account.html#telegram), choose
+Telegram, enter a phone number with its country code, and allow Birka to share
+that number with Telegram for code delivery. The proposed provider delivers a
+Birka verification code to the Telegram account registered to that number.
+[Telegram Gateway](https://core.telegram.org/gateway)
+
+- **First sign-in.** After a new number is verified, choose to create an
+  account or sign in to an existing email account. A known number opens the
+  linked profile directly.
+- **One account, two methods.** Sign in with the existing method, add the
+  second from the profile, and verify its code. A method already in use
+  stays with its owner. The profile lists the email and masked number.
+- **Delivery and recovery.** A code expires in ten minutes. Resend becomes
+  available after one minute and replaces the previous code. The user can edit
+  the number, switch to email or cancel linking. Email can recover an existing
+  identity when the email belongs to that identity.
+- **Local ledger.** Selecting a different device switches its local counts
+  and session. Signing in from a fresh device opens the same profile with
+  an empty local ledger. Guest access and the existing backup path remain available.
+
+To try linking, select **Почта** and use the prefilled synthetic address.
+The example code appears beneath the form. In the profile, choose
+**Привязать Telegram** and verify the second code. Switch to **Новое устройство**
+to try the linked number. **Параметры макета** can simulate a delivery failure.
+Reloading the HTML resets both devices and all sample identities.
+
+[Phone preview](mockups/35-telegram-sign-in-phone.png) ·
+[Desktop profile with both sign-in methods](mockups/36-telegram-profile-web.png)
