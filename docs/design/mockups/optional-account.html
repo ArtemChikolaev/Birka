@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Бирка · Аккаунт</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing: border-box }
+  [hidden] { display: none !important }
+  body { min-height: 100vh; margin: 0; background: radial-gradient(ellipse at 12% 0,var(--color-ambient),transparent 56%),var(--color-background); color: var(--color-text); font: 16px/1.45 var(--font-family-text) }
+  button,input { font: inherit; color: inherit }
+  button { cursor: pointer }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px }
+  main,.demo { margin: auto; width: min(100%,996px); padding: 0 20px }
+  .demo-wrap { border-bottom: 1px solid var(--color-hairline); background: var(--color-background) }
+  .demo { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--color-text-muted); font-size: 13px }
+  .switch { display: flex; gap: 2px; background: var(--color-surface-raised); border-radius: var(--radius-pill); padding: 3px }
+  .switch button { background: transparent; border: 0; border-radius: inherit; padding: 5px 10px; font-size: 12px }
+  .switch [aria-pressed=true] { background: var(--color-text); color: var(--color-background) }
+  main { padding-top: 18px; padding-bottom: 32px }
+  .back,.quiet { border: 0; background: none; padding: 8px 0; color: var(--color-text-secondary) }
+  .back { display: inline-flex; align-items: center; gap: 5px; font-size: 14px }
+  h1,h2 { margin: 0; font-family: var(--font-family-display); line-height: 1.18 }
+  h1 { font-size: 30px; letter-spacing: -.035em }
+  h2 { font-size: 21px; letter-spacing: -.015em }
+  p { margin: 0; color: var(--color-text-secondary) }
+  .panel { padding: 22px; margin-top: 16px; border-radius: var(--radius-lg) }
+  .stack { display: grid; gap: 16px }
+  .section-head { display: flex; align-items: center; gap: 10px }
+  .badge { display: grid; width: 36px; height: 36px; flex: none; place-items: center; color: var(--color-accent); background: var(--color-accent-soft); border-radius: var(--radius-sm) }
+  .badge svg, .back svg { width: 20px; height: 20px }
+  label, .description { font-size: 14px }
+  label { font-weight: 650 }
+  .field { display: grid; gap: 6px }
+  input { width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid var(--color-hairline); border-radius: var(--radius-sm); background: var(--color-surface-raised) }
+  input:focus { border-color: var(--color-accent); outline-offset: 2px }
+  #code { font-variant-numeric: tabular-nums; letter-spacing: .22em }
+  .action { width: 100%; min-height: 46px; background: var(--color-accent); color: var(--color-background); border: 0; border-radius: var(--radius-pill); font-weight: 750 }
+  .quiet { justify-self: center; color: var(--color-accent); font-size: 14px; font-weight: 650 }
+  .error { color: var(--color-negative); font-size: 14px }
+  .test-hint { font-size: 13px; color: var(--color-text-muted); margin-top: 12px }
+  .local { margin: 20px 4px 0; display: grid; gap: 3px; font-size: 14px }
+  .local small { color: var(--color-text-muted); font-size: 13px }
+  .row { width: 100%; display: flex; align-items: center; text-align: left; gap: 12px; padding: 14px; border: 1px solid var(--color-hairline); border-radius: var(--radius-md); background: var(--color-surface-raised) }
+  .row b { flex: 1 }
+  .row .arrow { color: var(--color-text-muted) }
+  #menu h2 { margin: 0 0 16px }
+  #who, #recipient { overflow-wrap: anywhere }
+  .steps { margin: 0; padding-left: 22px; color: var(--color-text-secondary) }
+  .steps li + li { margin-top: 8px }
+  body[data-page=menu] article, body:not([data-page=menu]) #menu { display: none }
+  @media (min-width: 800px) {
+    main { display: grid; grid-template-columns: 260px minmax(0,560px); gap: 48px; padding-top: 48px; justify-content: center }
+    body:not([data-page=menu]) #menu { display: block }
+    .panel { padding: 28px }
+    .back { margin-bottom: 6px }
+    #menu .row[aria-current=page] { border-color: var(--color-accent) }
+  }
+</style>
+<body data-page="email">
+<div class="demo-wrap"><div class="demo"><b>Макет Birka</b>
+  <div class="switch" role="group" aria-label="Тестовое устройство">
+    <button id="current" type="button" aria-pressed="true">С записями</button>
+    <button id="fresh" type="button" aria-pressed="false">Новое устройство</button>
+  </div>
+</div></div>
+<main>
+  <nav id="menu" aria-label="Ещё"><h2>Ещё</h2>
+    <button class="row" id="open-account"><span class="badge"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.6 18.3c1.2-2 3.1-3.1 5.4-3.1s4.2 1.1 5.4 3.1"/></svg></span><b>Аккаунт Birka</b><span class="arrow">›</span></button>
+  </nav>
+  <article>
+    <button class="back" id="back"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg><span>Ещё</span></button>
+    <h1 tabindex="-1">Аккаунт Birka</h1>
+    <section class="glass panel stack" id="email-view">
+      <div class="section-head"><span class="badge"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.6 18.3c1.2-2 3.1-3.1 5.4-3.1s4.2 1.1 5.4 3.1"/></svg></span><h2>Вход по почте</h2></div>
+      <p>При первом входе создадим аккаунт Birka для вашего адреса.</p>
+      <form class="stack" id="email-form" novalidate>
+        <div class="field"><label for="email">Электронная почта</label>
+          <input id="email" type="email" maxlength="254" required autocomplete="off" value="demo@example.com" aria-describedby="email-error">
+          <p class="error" id="email-error" role="alert" hidden>Введите адрес электронной почты.</p></div>
+        <button class="action">Получить код</button>
+      </form>
+      <button class="quiet" id="skip">Продолжить без аккаунта</button>
+    </section>
+    <section class="glass panel stack" id="code-view" hidden>
+      <h2>Введите код из письма</h2>
+      <p>Для входа с адресом <b id="recipient"></b> нужен шестизначный код.</p>
+      <form id="code-form" class="stack" novalidate>
+        <div class="field"><label for="code">Код из письма</label>
+          <input id="code" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="000000" aria-describedby="code-error">
+          <p class="error" id="code-error" role="alert" hidden>Код не подошёл. Проверьте цифры или запросите новый.</p></div>
+        <button class="action">Подтвердить</button>
+      </form>
+      <button class="quiet" id="resend">Получить новый код</button>
+    </section>
+    <section class="glass panel stack" id="profile-view" hidden>
+      <div class="section-head"><span class="badge"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>Вы вошли в аккаунт</h2></div>
+      <b id="who"></b>
+      <p class="description" id="account-info"></p>
+      <button class="row" id="copy-info"><b>Как перенести записи</b><span class="arrow">›</span></button>
+      <button class="quiet" id="signout">Выйти из аккаунта</button>
+    </section>
+    <section class="glass panel stack" id="copy-view" hidden>
+      <h2>Перенос через файл</h2>
+      <ol class="steps"><li>На устройстве с записями откройте «Ещё» → «Данные» и сохраните копию.</li><li>Передайте файл на новое устройство.</li><li>Откройте там «Данные» → «Восстановить из копии». Проверьте сводку и подтвердите замену записей.</li></ol>
+      <button class="quiet" id="return-profile">К аккаунту</button>
+    </section>
+    <div class="local"><b id="device-summary"></b><small>Учёт доступен на этом устройстве и без входа.</small></div>
+    <p class="test-hint" aria-live="polite" id="demo-hint"></p>
+  </article>
+</main>
+<script>
+  const el = id => document.getElementById(id);
+  const pages = ['email','code','profile','copy'];
+  let signedIn = false;
+  let fresh = false;
+  let address = '';
+  let issued = 0;
+  // Deterministic examples for the offline design preview.
+  const demoCode = () => String((246810 + issued) % 1000000).padStart(6,'0');
+
+  function show(page, moveFocus = true) {
+    document.body.dataset.page = page;
+    for (const name of pages) el(name+'-view').hidden = name !== page;
+    el('open-account').setAttribute('aria-current', page === 'menu' ? 'false' : 'page');
+    el('back').querySelector('span').textContent = page === 'code' ? 'Изменить адрес' : page === 'copy' ? 'Аккаунт' : 'Ещё';
+    el('device-summary').textContent = fresh ? 'На устройстве пока нет записей' : 'На устройстве · 3 счёта и 12 операций';
+    el('account-info').textContent = fresh ? 'Чтобы вернуть свои записи, перенесите файл копии с прежнего устройства.' : 'Ваши счета и операции по-прежнему хранятся на этом устройстве.';
+    el('demo-hint').textContent = page === 'code' ? 'Код для макета: '+demoCode()+'. Письма не отправляются.' : 'В макете используются тестовые данные.';
+    el('recipient').textContent = address;
+    el('who').textContent = address;
+    if (moveFocus) {
+      const target = page === 'menu' ? el('open-account') : page === 'code' ? el('code') : document.querySelector('article h1');
+      target.focus();
+    }
+  }
+  function clearError(name) {
+    el(name+'-error').hidden = true;
+    el(name).removeAttribute('aria-invalid');
+  }
+  function invalid(name) {
+    el(name+'-error').hidden = false;
+    el(name).setAttribute('aria-invalid','true');
+    el(name).focus();
+  }
+  function selectDevice(isNew) {
+    if (fresh === isNew) return;
+    fresh = isNew;
+    signedIn = false;
+    address = '';
+    issued = 0;
+    el('email').value = 'demo@example.com';
+    el('code').value = '';
+    for (const name of ['email','code']) clearError(name);
+    el('current').setAttribute('aria-pressed',String(!fresh));
+    el('fresh').setAttribute('aria-pressed',String(fresh));
+    show('email');
+  }
+  el('email-form').onsubmit = event => {
+    event.preventDefault();
+    if (!el('email').validity.valid) { invalid('email'); return; }
+    address = el('email').value;
+    issued = 0;
+    clearError('code');
+    el('code').value = '';
+    show('code');
+  };
+  el('code-form').onsubmit = event => {
+    event.preventDefault();
+    if (el('code').value !== demoCode()) { invalid('code'); return; }
+    signedIn = true;
+    el('code').value = '';
+    show('profile');
+  };
+  el('email').oninput = () => clearError('email');
+  el('code').oninput = () => clearError('code');
+  el('resend').onclick = () => { issued++; clearError('code'); el('code').value = ''; show('code'); };
+  el('skip').onclick = () => show('menu');
+  el('open-account').onclick = () => show(signedIn ? 'profile' : 'email');
+  el('back').onclick = () => show(({code:'email',copy:'profile'})[document.body.dataset.page] || 'menu');
+  el('copy-info').onclick = () => show('copy');
+  el('return-profile').onclick = () => show('profile');
+  el('signout').onclick = () => { signedIn = false; address = ''; el('email').value = ''; show('email'); };
+  el('current').onclick = () => selectDevice(false);
+  el('fresh').onclick = () => selectDevice(true);
+  show('email', false);
+</script>
+</body>
+</html>
