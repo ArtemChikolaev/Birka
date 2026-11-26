@@ -14,6 +14,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  BIRKA_AUTH_URL: ${{ vars.BIRKA_AUTH_URL }}
+
 jobs:
   analyze:
     name: Analyze
@@ -50,7 +53,7 @@ jobs:
       - run: flutter pub get
       - run: make test-core COMPILER=${{ matrix.compiler }}
       - if: matrix.compiler == 'vm'
-        run: make test-database test-tools test-design test-features test-web test-mobile
+        run: make test-auth test-database test-tools test-design test-features test-web test-mobile
 
   web:
     name: Web

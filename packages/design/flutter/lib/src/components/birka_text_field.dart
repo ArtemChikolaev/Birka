@@ -18,6 +18,7 @@ class BirkaTextField extends StatelessWidget {
     this.onSubmitted,
     this.autofocus = false,
     this.keyboardType,
+    this.autofillHints,
     this.textInputAction,
     this.textCapitalization = TextCapitalization.none,
     this.inputFormatters,
@@ -53,6 +54,9 @@ class BirkaTextField extends StatelessWidget {
 
   /// The keyboard of the field.
   final TextInputType? keyboardType;
+
+  /// Hints for the platform autofill service.
+  final Iterable<String>? autofillHints;
 
   /// The action key of the keyboard.
   final TextInputAction? textInputAction;
@@ -121,6 +125,7 @@ class BirkaTextField extends StatelessWidget {
                       onSubmitted: onSubmitted,
                       autofocus: autofocus,
                       keyboardType: keyboardType,
+                      autofillHints: autofillHints,
                       textInputAction: textInputAction,
                       textCapitalization: textCapitalization,
                       inputFormatters: inputFormatters,

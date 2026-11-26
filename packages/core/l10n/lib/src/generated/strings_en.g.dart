@@ -61,6 +61,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   );
   late final Translations$demo$en demo = Translations$demo$en.internal(_root);
   late final Translations$help$en help = Translations$help$en.internal(_root);
+  late final Translations$identity$en identity =
+      Translations$identity$en.internal(_root);
   late final Translations$imports$en imports = Translations$imports$en.internal(
     _root,
   );
@@ -932,6 +934,128 @@ class Translations$help$en {
 
   /// en: 'The page did not open. Try again.'
   String get noPage => 'The page did not open. Try again.';
+}
+
+// Path: identity
+class Translations$identity$en {
+  Translations$identity$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Birka account'
+  String get title => 'Birka account';
+
+  /// en: 'Sign in by email'
+  String get entry => 'Sign in by email';
+
+  /// en: 'Confirm your address for the first time to create a Birka account.'
+  String get intro =>
+      'Confirm your address for the first time to create a Birka account.';
+
+  /// en: 'Email address'
+  String get email => 'Email address';
+
+  /// en: 'Send code'
+  String get send => 'Send code';
+
+  /// en: 'Continue without an account'
+  String get guest => 'Continue without an account';
+
+  /// en: 'Enter the code from your email'
+  String get codeTitle => 'Enter the code from your email';
+
+  /// en: 'A six-digit code was sent to $email. It is valid for 10 minutes.'
+  String sent({required Object email}) =>
+      'A six-digit code was sent to ${email}. It is valid for 10 minutes.';
+
+  /// en: 'Email code'
+  String get code => 'Email code';
+
+  /// en: 'Confirm'
+  String get verify => 'Confirm';
+
+  /// en: 'Send a new code'
+  String get resend => 'Send a new code';
+
+  /// en: 'Change email address'
+  String get change => 'Change email address';
+
+  /// en: 'You are signed in'
+  String get profile => 'You are signed in';
+
+  /// en: 'Your accounts and operations stay on this device. Use a backup file to transfer your records.'
+  String get local =>
+      'Your accounts and operations stay on this device. Use a backup file to transfer your records.';
+
+  /// en: 'How to transfer records'
+  String get copy => 'How to transfer records';
+
+  /// en: 'Sign out'
+  String get logout => 'Sign out';
+
+  /// en: 'More'
+  String get back => 'More';
+
+  /// en: 'Try again'
+  String get retry => 'Try again';
+
+  /// en: 'Sign-in is not configured yet. You can track your money without an account.'
+  String get offline =>
+      'Sign-in is not configured yet. You can track your money without an account.';
+
+  /// en: 'Could not reach the sign-in service. Please try again.'
+  String get unavailable =>
+      'Could not reach the sign-in service. Please try again.';
+
+  /// en: 'Enter an email address.'
+  String get badEmail => 'Enter an email address.';
+
+  /// en: 'The code is incorrect or has expired. Check it or request a new one.'
+  String get badCode =>
+      'The code is incorrect or has expired. Check it or request a new one.';
+
+  /// en: 'Too many requests. Please wait before trying again.'
+  String get limited => 'Too many requests. Please wait before trying again.';
+
+  /// en: 'Allow the browser to keep cookies for sign-in.'
+  String get cookies => 'Allow the browser to keep cookies for sign-in.';
+
+  /// en: 'Please wait…'
+  String get working => 'Please wait…';
+
+  /// en: 'Transfer using a file'
+  String get copyTitle => 'Transfer using a file';
+
+  /// en: 'On the device with your records, open Data and save a backup.'
+  String get copySave =>
+      'On the device with your records, open Data and save a backup.';
+
+  /// en: 'Transfer the file to your new device.'
+  String get copyMove => 'Transfer the file to your new device.';
+
+  /// en: 'Open Data on that device and choose Restore from backup. Review the summary and confirm the replacement.'
+  String get copyRestore =>
+      'Open Data on that device and choose Restore from backup. Review the summary and confirm the replacement.';
+
+  /// en: 'Back to account'
+  String get copyBack => 'Back to account';
+
+  /// en: 'To bring back your records, transfer a backup file from your previous device.'
+  String get fresh =>
+      'To bring back your records, transfer a backup file from your previous device.';
+
+  /// en: 'No records on this device yet'
+  String get empty => 'No records on this device yet';
+
+  /// en: 'On this device · $accounts · $operations'
+  String device({required Object accounts, required Object operations}) =>
+      'On this device · ${accounts} · ${operations}';
+
+  /// en: 'You can keep using Birka on this device without signing in.'
+  String get available =>
+      'You can keep using Birka on this device without signing in.';
 }
 
 // Path: imports
@@ -7009,6 +7133,55 @@ extension on Translations {
             ({required Object address}) =>
                 'Mail did not open. The address is copied: ${address}',
           'help.noPage' => 'The page did not open. Try again.',
+          'identity.title' => 'Birka account',
+          'identity.entry' => 'Sign in by email',
+          'identity.intro' =>
+            'Confirm your address for the first time to create a Birka account.',
+          'identity.email' => 'Email address',
+          'identity.send' => 'Send code',
+          'identity.guest' => 'Continue without an account',
+          'identity.codeTitle' => 'Enter the code from your email',
+          'identity.sent' =>
+            ({required Object email}) =>
+                'A six-digit code was sent to ${email}. It is valid for 10 minutes.',
+          'identity.code' => 'Email code',
+          'identity.verify' => 'Confirm',
+          'identity.resend' => 'Send a new code',
+          'identity.change' => 'Change email address',
+          'identity.profile' => 'You are signed in',
+          'identity.local' =>
+            'Your accounts and operations stay on this device. Use a backup file to transfer your records.',
+          'identity.copy' => 'How to transfer records',
+          'identity.logout' => 'Sign out',
+          'identity.back' => 'More',
+          'identity.retry' => 'Try again',
+          'identity.offline' =>
+            'Sign-in is not configured yet. You can track your money without an account.',
+          'identity.unavailable' =>
+            'Could not reach the sign-in service. Please try again.',
+          'identity.badEmail' => 'Enter an email address.',
+          'identity.badCode' =>
+            'The code is incorrect or has expired. Check it or request a new one.',
+          'identity.limited' =>
+            'Too many requests. Please wait before trying again.',
+          'identity.cookies' =>
+            'Allow the browser to keep cookies for sign-in.',
+          'identity.working' => 'Please wait…',
+          'identity.copyTitle' => 'Transfer using a file',
+          'identity.copySave' =>
+            'On the device with your records, open Data and save a backup.',
+          'identity.copyMove' => 'Transfer the file to your new device.',
+          'identity.copyRestore' =>
+            'Open Data on that device and choose Restore from backup. Review the summary and confirm the replacement.',
+          'identity.copyBack' => 'Back to account',
+          'identity.fresh' =>
+            'To bring back your records, transfer a backup file from your previous device.',
+          'identity.empty' => 'No records on this device yet',
+          'identity.device' =>
+            ({required Object accounts, required Object operations}) =>
+                'On this device · ${accounts} · ${operations}',
+          'identity.available' =>
+            'You can keep using Birka on this device without signing in.',
           'imports.account' => 'Statement account',
           'imports.formats.alfa' => 'Alfa-Bank',
           'imports.formats.tbank' => 'T-Bank',
@@ -7938,6 +8111,9 @@ extension on Translations {
           'notifications.filters.import' => 'Imports',
           'notifications.filtersLabel' => 'Whose notifications',
           'notifications.emptyTitle' => 'All quiet',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.emptyText' =>
             'Reminders of your payments and of the days of your debts, warnings about your limits and the results of imports come here.',
           'notifications.emptyImports' =>
@@ -8012,9 +8188,6 @@ extension on Translations {
             ({required Object left}) => 'You paid back a part · ${left} left',
           'notifications.debtWaits' =>
             ({required Object left}) => 'Not paid back yet · ${left} left',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.debtWaitsRepaid' =>
             ({required Object left}) => 'Not paid back yet · ${left} left',
           'notifications.debtGone' => 'This debt is no longer here',
@@ -8881,6 +9054,9 @@ extension on Translations {
           'tags.report.beforeTrip' => 'Before the trip',
           'tags.report.duringTrip' => 'During the trip',
           'tags.report.afterTrip' => 'After the trip',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.report.rateMissing' => 'No rate',
           'tags.report.expenses' =>
             ({required num n}) =>
@@ -8951,9 +9127,6 @@ extension on Translations {
             'You put the tag on yourself, when you add an operation or on its card.',
           'tags.form.plainNote' =>
             'You put the tag on yourself, when you add an operation or on its card. Its report gathers what it took in every currency.',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.form.footTrip' =>
             'The tickets bought in advance can wear the tag too',
           'tags.form.footPlain' => 'Tags live in More → Tags',

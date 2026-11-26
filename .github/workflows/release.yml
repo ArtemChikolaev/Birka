@@ -14,6 +14,9 @@ permissions:
 concurrency:
   group: release-${{ github.ref }}
 
+env:
+  BIRKA_AUTH_URL: ${{ vars.BIRKA_AUTH_URL }}
+
 jobs:
   android:
     name: Android release

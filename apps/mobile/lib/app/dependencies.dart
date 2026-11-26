@@ -4,6 +4,7 @@ import 'package:accounts_common/accounts_common.dart';
 import 'package:ask_common/ask_common.dart';
 import 'package:backup_common/backup_common.dart';
 import 'package:backup_flutter/backup_flutter.dart';
+import 'package:birka_mobile/app/account_access.dart';
 import 'package:birka_mobile/app/channel_home_screen.dart';
 import 'package:categories_common/categories_common.dart';
 import 'package:database/database.dart';
@@ -83,6 +84,7 @@ void registerDependencies(
   final monthStart = MonthStart(kept.monthStart);
   final widgetSums = WidgetSums(shown: kept.widgetSums);
   getIt
+    ..registerFactory(createNativeAccount)
     ..registerSingleton(database, dispose: (database) => database.close())
     ..registerSingleton(ledger)
     ..registerSingleton(rates)

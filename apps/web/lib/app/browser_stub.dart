@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:backup_common/backup_common.dart';
 import 'package:birka_web/app/opened_database.dart';
 import 'package:help_common/help_common.dart';
+import 'package:http/http.dart' as http;
 import 'package:import_common/import_common.dart';
 
 /// The islands stop at `kIsWeb` on the VM, so nothing here ever runs.
@@ -135,3 +136,6 @@ Future<bool> copyText(String text) => _unavailable();
 
 /// See `browser_web.dart`.
 AppAbout get browserAbout => _unavailable();
+
+/// See `browser_web.dart`.
+http.Client accountClient() => _unavailable();

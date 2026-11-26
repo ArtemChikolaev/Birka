@@ -7,7 +7,7 @@ CORE_PACKAGES := packages/core/money packages/core/l10n packages/core/ledger \
 	packages/features/accounts/common packages/features/ask/common \
 	packages/features/backup/common \
 	packages/features/categories/common packages/features/debts/common \
-	packages/features/help/common packages/features/import/common \
+	packages/features/help/common packages/features/identity/common packages/features/import/common \
 	packages/features/inbox/common \
 	packages/features/limits/common \
 	packages/features/notifications/common \
@@ -42,7 +42,7 @@ BUILD_NUMBER ?= 1
 
 .PHONY: help bootstrap format analyze check-deps check-tokens doctor-web check-site verify-web verify-flutter tokens \
 	gen icons icon-masters web-fonts test test-core test-database test-tools \
-	test-design test-features test-web test-mobile run-mobile run-web build-web \
+	test-auth test-design test-features test-web test-mobile run-mobile run-web build-web \
 	build-apk check
 
 help: ## Show the targets
@@ -115,6 +115,8 @@ test-features: ## Tests of the screens of the features
 	cd packages/features/categories/jaspr && dart test
 	cd packages/features/debts/flutter && flutter test
 	cd packages/features/debts/jaspr && dart test
+	cd packages/features/identity/flutter && flutter test
+	cd packages/features/identity/jaspr && dart test
 	cd packages/features/help/flutter && flutter test
 	cd packages/features/help/jaspr && dart test
 	cd packages/features/import/flutter && flutter test
@@ -149,17 +151,17 @@ test-mobile: ## Widget tests of the Flutter host
 	cd apps/mobile && flutter test
 
 run-mobile: ## Run the Flutter host; DEVICE=macos|iPhone|emulator
-	cd apps/mobile && flutter run -d $(DEVICE)
+	cd apps/mobile && flutter run -d $(DEVICE) --dart-define="BIRKA_AUTH_URL=$(BIRKA_AUTH_URL)"
 
 run-web: ## Serve the site on localhost:8080, rebuilt on every change
 	# In release mode, because the worker of Drift cannot run as DDC modules.
-	cd apps/web && dart run jaspr_cli:jaspr serve --release
+	cd apps/web && dart run jaspr_cli:jaspr serve --release --dart-define="BIRKA_AUTH_URL=$(BIRKA_AUTH_URL)"
 
 build-web: ## The static site in apps/web/build/jaspr; BASE=/Birka/ as on Pages
 	@set -e; revision=$$(git rev-parse --verify HEAD 2>/dev/null) || revision=unknown; \
 		changes=$$(git status --porcelain 2>/dev/null) || revision=unknown; \
 		if [ -n "$$changes" ]; then revision="$$revision-dirty"; fi; \
-		cd apps/web && dart run jaspr_cli:jaspr build --dart-define=BASE_PATH=$(BASE) \
+		cd apps/web && dart run jaspr_cli:jaspr build --dart-define=BASE_PATH=$(BASE) --dart-define="BIRKA_AUTH_URL=$(BIRKA_AUTH_URL)" \
 			--dart-define="BIRKA_BUILD=$$revision@$$(date -u +%Y%m%dT%H%M%SZ)"
 	# The build copies the assets of every package; the site needs only these.
 	find apps/web/build/jaspr/packages -mindepth 1 -maxdepth 1 \
@@ -188,11 +190,14 @@ verify-flutter: ## Exercise a native journey (DEVICE defaults to macos; file jou
 
 build-apk: ## A release APK for arm64 in apps/mobile/build/app/outputs/flutter-apk
 	cd apps/mobile && flutter build apk --release \
-		--target-platform android-arm64 --build-number=$(BUILD_NUMBER)
+		--dart-define="BIRKA_AUTH_URL=$(BIRKA_AUTH_URL)" --target-platform android-arm64 --build-number=$(BUILD_NUMBER)
 	# Libraries of another ABI would let a phone without arm64 install an app
 	# that cannot start (ADR 0020).
 	abis="$$(unzip -Z1 apps/mobile/build/app/outputs/flutter-apk/app-release.apk \
 		'lib/*' | cut -d/ -f2 | sort -u | xargs)"; \
 		echo "ABIs of the APK: $$abis"; test "$$abis" = arm64-v8a
 
-check: analyze test ## What CI checks on every pull request (VM only)
+test-auth: ## Test account registration, code delivery and sessions
+	cd server && go test ./...
+
+check: analyze test test-auth ## What CI checks on every pull request (VM only)

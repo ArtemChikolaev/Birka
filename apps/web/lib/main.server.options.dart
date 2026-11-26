@@ -23,6 +23,7 @@ import 'package:birka_web/pages/categories_island.dart' as _categories_island;
 import 'package:birka_web/pages/debts_island.dart' as _debts_island;
 import 'package:birka_web/pages/help_island.dart' as _help_island;
 import 'package:birka_web/pages/home_route.dart' as _home_route;
+import 'package:birka_web/pages/identity_island.dart' as _identity_island;
 import 'package:birka_web/pages/import_island.dart' as _import_island;
 import 'package:birka_web/pages/inbox_island.dart' as _inbox_island;
 import 'package:birka_web/pages/limits_island.dart' as _limits_island;
@@ -109,6 +110,7 @@ import 'package:design_jaspr/src/share_line.dart' as _share_line;
 import 'package:design_jaspr/src/tinted_box.dart' as _tinted_box;
 import 'package:design_jaspr/src/welcome_art.dart' as _welcome_art;
 import 'package:help_jaspr/src/presentation/pages/help_page.dart' as _help_page;
+import 'package:identity_jaspr/identity_jaspr.dart' as _identity_jaspr;
 import 'package:import_jaspr/src/presentation/components/account_step.dart'
     as _account_step;
 import 'package:import_jaspr/src/presentation/components/columns_step.dart'
@@ -226,6 +228,8 @@ ServerOptions get defaultServerOptions => ServerOptions(
     _help_island.HelpIsland: ClientTarget<_help_island.HelpIsland>(
       'help_island',
     ),
+    _identity_island.IdentityIsland:
+        ClientTarget<_identity_island.IdentityIsland>('identity_island'),
     _import_island.ImportIsland: ClientTarget<_import_island.ImportIsland>(
       'import_island',
     ),
@@ -335,6 +339,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._tinted_box.TintedNotice.styles,
     ..._welcome_art.WelcomeArt.styles,
     ..._help_page.HelpPage.styles,
+    ..._identity_jaspr.IdentityPage.styles,
     ..._account_step.AccountStep.styles,
     ..._columns_step.ColumnsStep.styles,
     ..._copies_step.CopiesStep.styles,
