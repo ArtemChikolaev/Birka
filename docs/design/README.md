@@ -175,3 +175,22 @@ welcome and a search with no matches have distinct messages.
 [Interactive mockup](mockups/tag-list-search.html) ·
 [Phone preview](mockups/31-tag-search-phone.png) ·
 [Desktop preview](mockups/32-tag-search-web.png)
+
+### Optional Birka account (proposal)
+
+The first-run setup stays focused on the local ledger. This prototype puts
+**Birka account** in More and explores a single email-code flow for a first
+registration and a returning user. A person can leave the flow at any time.
+The prototype runs locally with example codes and keeps state only until
+the page is reloaded. The device switch above the preview resets the flow
+with either an existing ledger or a fresh device.
+
+Signing in establishes an identity. An existing device keeps its records.
+A fresh device can recover records through the existing backup-file flow.
+Signing out leaves the local ledger in place. Encrypted device linking and
+recovery of encryption keys need a separate design before enabling sync.
+The delivery method and identity provider are open product decisions.
+
+[Interactive account prototype](mockups/optional-account.html) ·
+[Phone preview](mockups/33-account-phone.png) ·
+[Desktop preview](mockups/34-account-web.png)
