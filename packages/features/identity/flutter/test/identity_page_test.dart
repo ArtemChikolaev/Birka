@@ -53,7 +53,7 @@ class _Access implements AccountAccess {
 
 void main() {
   testWidgets(
-    'guest access, email verification, transfer and explicit phone registration',
+    'a guest can sign in by email or register a verified phone',
     (tester) async {
       tester.view.physicalSize = const Size(780, 2000);
       tester.view.devicePixelRatio = 2;
