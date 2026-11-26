@@ -6,6 +6,21 @@ enum AccountIssue implements Exception {
   /// The address is malformed.
   email,
 
+  /// The phone number is malformed.
+  phone,
+
+  /// The user must agree to phone-number delivery.
+  consent,
+
+  /// The delivery provider could not accept the request.
+  delivery,
+
+  /// The method already belongs to an account.
+  occupied,
+
+  /// The session used to link a method has expired.
+  expiredSession,
+
   /// The code is invalid or expired.
   code,
 
@@ -16,16 +31,67 @@ enum AccountIssue implements Exception {
   cookies,
 }
 
+/// A verified sign-in identifier.
+enum SignInMethod {
+  /// Mailbox verification.
+  email,
+
+  /// Phone verification through Telegram Gateway.
+  telegram,
+}
+
+/// The outcome of verifying one challenge.
+sealed class AccountVerification {
+  const AccountVerification();
+}
+
+/// Verified methods for one identity. The service masks the stored number.
+final class AccountProfile extends AccountVerification {
+  /// Creates a profile with its verified identifiers.
+  const AccountProfile({this.email, this.telegram});
+
+  /// Verified mailbox.
+  final String? email;
+
+  /// Masked Telegram number.
+  final String? telegram;
+}
+
+/// A verified, unclaimed phone number, pending explicit account creation.
+final class RegistrationProof extends AccountVerification {
+  /// Creates a one-time proof.
+  const RegistrationProof(this.value);
+
+  /// Opaque short-lived proof, held only in memory.
+  final String value;
+}
+
 /// Access to an identity, independent of the local ledger.
 abstract interface class AccountAccess {
+  /// Methods available on this server.
+  Future<Set<SignInMethod>> methods();
+
   /// Reads the active session, or null for a guest.
-  Future<String?> session();
+  Future<AccountProfile?> session();
 
-  /// Sends a new code and returns its challenge handle.
-  Future<String> request(String email, String language);
+  /// Sends a sign-in or linking code to an explicitly selected destination.
+  Future<String> request(
+    SignInMethod method,
+    String destination,
+    String language, {
+    required bool link,
+    required bool consent,
+  });
 
-  /// Consumes a code and returns the verified address.
-  Future<String> verify(String challenge, String code);
+  /// Consumes a code, preserving the current session when linking.
+  Future<AccountVerification> verify(
+    String challenge,
+    String code, {
+    required bool link,
+  });
+
+  /// Creates an account for a verified phone number.
+  Future<AccountProfile> register(String proof);
 
   /// Revokes this device's session.
   Future<void> logout();

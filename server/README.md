@@ -1,9 +1,9 @@
 # Birka account service
 
-The Go service handles optional email-code registration and sign-in for the
+The Go service handles optional registration and sign-in by email or Telegram code for the
 Flutter app and static site. It needs Go 1.25 or later, a writable private
-directory, and an SMTP relay. `make test-auth` runs the service tests and
-delivers a real MIME message to a temporary loopback SMTP receiver.
+directory, and at least one configured delivery provider. `make test-auth` runs the service tests and
+checks SMTP delivery and the Telegram Gateway request locally with synthetic data.
 
 ## Local mail
 
@@ -44,25 +44,33 @@ make run-mobile DEVICE=macos BIRKA_AUTH_URL=http://localhost:8787
 Open the site at `http://localhost:8080`. In **More → Birka account**, enter a
 synthetic address such as `reader@example.test`. Read its six digits in the
 local inbox at `http://127.0.0.1:8025`, verify, reload the page and sign out.
-A fresh browser profile can sign into the same account with a new email. Its
+A fresh browser profile can sign into the same account with a fresh code sent to the same address. Its
 financial records come from that profile's ledger. Local mode restricts both
 the SMTP receiver and the HTTP listener to loopback.
+
+## Telegram Gateway
+
+Set `BIRKA_TELEGRAM_GATEWAY_TOKEN` in the **server's** secret configuration and restart the service. Both clients discover the enabled methods when the account page opens. SMTP and Gateway can be enabled independently. A guest can continue using the local ledger in every configuration.
+
+The service sends a six-digit code with a ten-minute lifetime to the number the user entered and consented to share. Telegram may charge for delivery. The default service-wide cap is 60 attempts per hour. Set `BIRKA_TELEGRAM_HOURLY_LIMIT` to a positive integer to change it. Per-number and per-IP limits apply in addition. A timeout can mean Telegram already accepted the request. Birka charges the attempt against its quota and waits for a new user request before sending again.
+
+Run `make test-auth` to exercise the Gateway integration without a token, an external connection to Telegram or a billable message. The tests inspect the outgoing request, simulate provider errors, and use the delivered code for registration, sign-in and account linking. A live delivery requires an active Gateway account, its token and a consenting recipient with Telegram on that number. [Telegram Gateway API](https://core.telegram.org/gateway/api)
 
 ## Published builds
 
 Set the public `BIRKA_AUTH_URL` repository variable for the web and Android
-workflows once a service and sender are available. Leave it unset for a
+workflows once a service and delivery provider are available. Leave it unset for a
 guest-only build. iOS accepts the same Flutter `--dart-define`.
 Serve the API and site under the same HTTPS site, for example
 `app.example.com` and `auth.example.com`. A Pages site needs a compatible
 custom domain or a same-origin reverse proxy for browser cookies.
 
 Run the service with `BIRKA_AUTH_LOCAL` unset, a private database directory,
-a stable secret `BIRKA_AUTH_KEY`, the exact `BIRKA_WEB_ORIGIN` (origin only),
-and a verified `BIRKA_MAIL_FROM`. Configure `BIRKA_SMTP_ADDR` for STARTTLS
+a stable secret `BIRKA_AUTH_KEY`, and the exact `BIRKA_WEB_ORIGIN` (origin only).
+For email, set a verified `BIRKA_MAIL_FROM`. Configure `BIRKA_SMTP_ADDR` for STARTTLS
 and `BIRKA_SMTP_USER` and `BIRKA_SMTP_PASSWORD` when the relay authenticates.
 Back up the database and secret separately. Losing the secret makes stored
 addresses unreadable. Terminate HTTPS at a reverse proxy on the service host.
 Configure the proxy to overwrite `X-Real-IP` with the client address and set
 `BIRKA_TRUST_LOCAL_PROXY=1` to apply the IP quota per client. Keep request
-bodies, credentials, cookies and email codes out of proxy and relay logs.
+bodies, credentials, cookies, phone numbers and verification codes out of proxy and relay logs.

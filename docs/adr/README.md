@@ -37,3 +37,4 @@
 | [0033](0033-limits.md) | Monthly limits of categories | accepted 2026-11-16 |
 | [0034](0034-codex-review.md) | GitHub code review with the ChatGPT subscription | accepted 2026-11-20 |
 | [0035](0035-optional-account.md) | Optional account access by email code | accepted 2026-11-26 |
+| [0036](0036-telegram-gateway.md) | Optional sign-in through Telegram Gateway | accepted 2026-11-26 |

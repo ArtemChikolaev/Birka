@@ -909,6 +909,68 @@ class _Translations$identity$ru extends Translations$identity$en {
       'На устройстве · ${accounts} · ${operations}';
   @override
   String get available => 'Учёт доступен на этом устройстве и без входа.';
+  @override
+  String get method => 'Способ входа';
+  @override
+  String get mailMethod => 'Почта';
+  @override
+  String get telegram => 'Telegram';
+  @override
+  String get phone => 'Номер телефона в Telegram';
+  @override
+  String get telegramIntro =>
+      'Код для входа в Birka придёт сообщением в Telegram.';
+  @override
+  String get consent =>
+      'Разрешаю Birka передать этот номер в Telegram для доставки кода.';
+  @override
+  String get needConsent => 'Для отправки кода нужно ваше разрешение.';
+  @override
+  String get badPhone => 'Введите номер с кодом страны, начиная с +.';
+  @override
+  String get sendTelegram => 'Получить код в Telegram';
+  @override
+  String get telegramCode => 'Код из Telegram';
+  @override
+  String telegramSent({required Object phone}) =>
+      'Введите код Birka для ${phone}. Код действует 10 минут.';
+  @override
+  String get changePhone => 'Изменить номер';
+  @override
+  String resendAfter({required Object seconds}) =>
+      'Новый код через ${seconds} с';
+  @override
+  String get useEmail => 'Войти по почте';
+  @override
+  String get useTelegram => 'Войти через Telegram';
+  @override
+  String get confirmed => 'Номер подтверждён';
+  @override
+  String get newPhone => 'Можно создать аккаунт Birka с этим номером.';
+  @override
+  String get existingEmailHint =>
+      'Если вы уже входили по почте, откройте свой профиль и привяжите Telegram там.';
+  @override
+  String get create => 'Создать аккаунт Birka';
+  @override
+  String get linkTelegram => 'Привязать Telegram';
+  @override
+  String get linkEmail => 'Добавить почту';
+  @override
+  String get linkIntro =>
+      'Подтвердите этот способ входа, чтобы пользоваться им в том же аккаунте.';
+  @override
+  String get cancelLink => 'Отменить привязку';
+  @override
+  String get delivery =>
+      'Не удалось доставить код. Проверьте адрес или номер и попробуйте ещё раз.';
+  @override
+  String get occupied =>
+      'Этот способ входа уже привязан. Попробуйте другой номер или адрес.';
+  @override
+  String get expiredSession => 'Сеанс истёк. Войдите снова.';
+  @override
+  String get birkaCode => 'Шестизначный код Birka';
 }
 
 // Path: imports
@@ -6200,6 +6262,42 @@ extension on TranslationsRu {
                 'На устройстве · ${accounts} · ${operations}',
           'identity.available' =>
             'Учёт доступен на этом устройстве и без входа.',
+          'identity.method' => 'Способ входа',
+          'identity.mailMethod' => 'Почта',
+          'identity.telegram' => 'Telegram',
+          'identity.phone' => 'Номер телефона в Telegram',
+          'identity.telegramIntro' =>
+            'Код для входа в Birka придёт сообщением в Telegram.',
+          'identity.consent' =>
+            'Разрешаю Birka передать этот номер в Telegram для доставки кода.',
+          'identity.needConsent' => 'Для отправки кода нужно ваше разрешение.',
+          'identity.badPhone' => 'Введите номер с кодом страны, начиная с +.',
+          'identity.sendTelegram' => 'Получить код в Telegram',
+          'identity.telegramCode' => 'Код из Telegram',
+          'identity.telegramSent' =>
+            ({required Object phone}) =>
+                'Введите код Birka для ${phone}. Код действует 10 минут.',
+          'identity.changePhone' => 'Изменить номер',
+          'identity.resendAfter' =>
+            ({required Object seconds}) => 'Новый код через ${seconds} с',
+          'identity.useEmail' => 'Войти по почте',
+          'identity.useTelegram' => 'Войти через Telegram',
+          'identity.confirmed' => 'Номер подтверждён',
+          'identity.newPhone' => 'Можно создать аккаунт Birka с этим номером.',
+          'identity.existingEmailHint' =>
+            'Если вы уже входили по почте, откройте свой профиль и привяжите Telegram там.',
+          'identity.create' => 'Создать аккаунт Birka',
+          'identity.linkTelegram' => 'Привязать Telegram',
+          'identity.linkEmail' => 'Добавить почту',
+          'identity.linkIntro' =>
+            'Подтвердите этот способ входа, чтобы пользоваться им в том же аккаунте.',
+          'identity.cancelLink' => 'Отменить привязку',
+          'identity.delivery' =>
+            'Не удалось доставить код. Проверьте адрес или номер и попробуйте ещё раз.',
+          'identity.occupied' =>
+            'Этот способ входа уже привязан. Попробуйте другой номер или адрес.',
+          'identity.expiredSession' => 'Сеанс истёк. Войдите снова.',
+          'identity.birkaCode' => 'Шестизначный код Birka',
           'imports.account' => 'Счёт из выписки',
           'imports.formats.alfa' => 'Альфа-Банк',
           'imports.formats.tbank' => 'Т-Банк',
@@ -7153,6 +7251,9 @@ extension on TranslationsRu {
           'limits.suggestions.regular' => 'это регулярные платежи',
           'limits.suggestions.later' =>
             'Сумму любого лимита можно поменять потом, на странице «Лимиты».',
+          _ => null,
+        } ??
+        switch (path) {
           'limits.suggestions.put' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -7235,9 +7336,6 @@ extension on TranslationsRu {
           'notifications.filters.import' => 'Импорт',
           'notifications.filtersLabel' => 'Чьи уведомления',
           'notifications.emptyTitle' => 'Пока тихо',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.emptyText' =>
             'Здесь появятся напоминания о платежах и сроках долгов, предупреждения о лимитах и итоги импорта.',
           'notifications.emptyImports' =>
@@ -8186,6 +8284,9 @@ extension on TranslationsRu {
           'tags.back' => 'Назад',
           'tags.add' => 'Новая метка',
           'tags.close' => 'Закрыть',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.edit' => 'Изменить',
           'tags.search' => 'Найти метку или поездку',
           'tags.noMatches' => 'Меток и поездок с таким названием не найдено.',
@@ -8241,9 +8342,6 @@ extension on TranslationsRu {
           'tags.report.beforeTrip' => 'До поездки',
           'tags.report.duringTrip' => 'В поездке',
           'tags.report.afterTrip' => 'После поездки',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.report.rateMissing' => 'Нет курса',
           'tags.report.expenses' =>
             ({required num n}) =>

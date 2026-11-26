@@ -40,7 +40,7 @@ final class AccountApi implements AccountAccess {
   Future<http.Response> _call(
     String method,
     String path, {
-    Map<String, String>? data,
+    Map<String, Object>? data,
     String? token,
   }) async {
     final req = http.Request(method, endpoint.resolve('v1/$path'))
@@ -63,8 +63,26 @@ final class AccountApi implements AccountAccess {
     return jsonDecode(utf8.decode(r.bodyBytes)) as Map<String, dynamic>;
   }
 
+  AccountProfile _profile(Map<String, dynamic> data) {
+    final email = data['email'] as String?;
+    final telegram = data['telegram'] as String?;
+    if (email == null && telegram == null) throw AccountIssue.unavailable;
+    return AccountProfile(email: email, telegram: telegram);
+  }
+
   @override
-  Future<String?> session() async {
+  Future<Set<SignInMethod>> methods() async {
+    final r = await _call('GET', 'methods');
+    if (r.statusCode == 404) return {SignInMethod.email};
+    final data = _data(r);
+    return {
+      for (final method in SignInMethod.values)
+        if (data[method.name] == true) method,
+    };
+  }
+
+  @override
+  Future<AccountProfile?> session() async {
     final token = await vault?.read();
     if (vault != null && token == null) return null;
     final r = await _call('GET', 'session', token: token);
@@ -72,29 +90,75 @@ final class AccountApi implements AccountAccess {
       await vault?.write(null);
       return null;
     }
-    return _data(r)['email'] as String;
+    return _profile(_data(r));
   }
 
   @override
-  Future<String> request(String email, String language) async {
+  Future<String> request(
+    SignInMethod method,
+    String destination,
+    String language, {
+    required bool link,
+    required bool consent,
+  }) async {
+    final telegram = method == SignInMethod.telegram;
     final r = await _call(
       'POST',
       'code',
-      data: {'email': email, 'language': language},
+      data: {
+        if (telegram) 'phone': destination else 'email': destination,
+        'language': language,
+        if (telegram) 'consent': consent,
+        if (link) 'link': true,
+      },
+      token: link ? await vault?.read() : null,
     );
-    if (r.statusCode == 400) throw AccountIssue.email;
+    if (r.statusCode == 400) {
+      throw telegram ? AccountIssue.phone : AccountIssue.email;
+    }
+    if (r.statusCode == 401) throw AccountIssue.expiredSession;
+    if (r.statusCode == 409) throw AccountIssue.occupied;
+    if (r.statusCode == 502) throw AccountIssue.delivery;
     return _data(r)['challenge'] as String;
   }
 
   @override
-  Future<String> verify(String challenge, String code) async {
+  Future<AccountVerification> verify(
+    String challenge,
+    String code, {
+    required bool link,
+  }) async {
     final r = await _call(
       'POST',
       'verify',
       data: {'challenge': challenge, 'code': code},
+      token: link ? await vault?.read() : null,
     );
-    if (r.statusCode == 401) throw AccountIssue.code;
+    if (r.statusCode == 401) {
+      if (link &&
+          r.body.isNotEmpty &&
+          (jsonDecode(r.body) as Map)['error'] == 'session') {
+        throw AccountIssue.expiredSession;
+      }
+      throw AccountIssue.code;
+    }
+    if (r.statusCode == 409) throw AccountIssue.occupied;
     final data = _data(r);
+    if (data['registration'] case final String proof) {
+      return RegistrationProof(proof);
+    }
+    return link ? _profile(data) : await _saveSession(data);
+  }
+
+  @override
+  Future<AccountProfile> register(String proof) async {
+    final r = await _call('POST', 'register', data: {'registration': proof});
+    if (r.statusCode == 401) throw AccountIssue.code;
+    return _saveSession(_data(r));
+  }
+
+  Future<AccountProfile> _saveSession(Map<String, dynamic> data) async {
+    final profile = _profile(data);
     final store = vault;
     if (store == null) return await session() ?? (throw AccountIssue.cookies);
     final token = data['token'] as String;
@@ -105,7 +169,7 @@ final class AccountApi implements AccountAccess {
       await _call('POST', 'logout', token: token);
       rethrow;
     }
-    return data['email'] as String;
+    return profile;
   }
 
   @override

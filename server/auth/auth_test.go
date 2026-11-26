@@ -180,7 +180,7 @@ func TestCodeLifetimeAttemptsAndConcurrentUse(t *testing.T) {
 	ctx := context.Background()
 	issue := func() (string, string) {
 		t.Helper()
-		id, code, err := a.issue(ctx, "a@example.test", "localhost")
+		id, code, err := a.issue(ctx, emailChannel, "a@example.test", "localhost", nil, 60)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -188,13 +188,13 @@ func TestCodeLifetimeAttemptsAndConcurrentUse(t *testing.T) {
 	}
 	reject := func(id, code string) {
 		t.Helper()
-		_, _, err := a.verify(ctx, id, code)
+		_, err := a.verify(ctx, id, code, "")
 		if !errors.Is(err, errCode) {
 			t.Fatalf("expected rejected code, got %v", err)
 		}
 	}
 	id, code := issue()
-	if _, _, err := a.issue(ctx, "a@example.test", "localhost"); !errors.Is(err, errLimit) {
+	if _, _, err := a.issue(ctx, emailChannel, "a@example.test", "localhost", nil, 60); !errors.Is(err, errLimit) {
 		t.Fatal("missing cooldown")
 	}
 	now = now.Add(time.Minute)
@@ -215,7 +215,7 @@ func TestCodeLifetimeAttemptsAndConcurrentUse(t *testing.T) {
 	id, code = issue()
 	done := make(chan error, 2)
 	for range 2 {
-		go func() { _, _, err := a.verify(ctx, id, code); done <- err }()
+		go func() { _, err := a.verify(ctx, id, code, ""); done <- err }()
 	}
 	first, second := <-done, <-done
 	if !(first == nil && errors.Is(second, errCode) || second == nil && errors.Is(first, errCode)) {
@@ -229,30 +229,30 @@ func TestQuotasAndCleanup(t *testing.T) {
 	a.now = func() time.Time { return now }
 	ctx := context.Background()
 	for i := range 30 {
-		_, _, err := a.issue(ctx, fmt.Sprintf("e%d@example.test", i), "ip")
+		_, _, err := a.issue(ctx, emailChannel, fmt.Sprintf("e%d@example.test", i), "ip", nil, 60)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	if _, _, err := a.issue(ctx, "another@example.test", "ip"); !errors.Is(err, errLimit) {
+	if _, _, err := a.issue(ctx, emailChannel, "another@example.test", "ip", nil, 60); !errors.Is(err, errLimit) {
 		t.Fatal("IP quota")
 	}
 	for i := range 5 {
 		now = now.Add(time.Minute)
-		_, _, err := a.issue(ctx, "same@example.test", fmt.Sprint(i))
+		_, _, err := a.issue(ctx, emailChannel, "same@example.test", fmt.Sprint(i), nil, 60)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 	now = now.Add(time.Minute)
-	if _, _, err := a.issue(ctx, "same@example.test", "else"); !errors.Is(err, errLimit) {
+	if _, _, err := a.issue(ctx, emailChannel, "same@example.test", "else", nil, 60); !errors.Is(err, errLimit) {
 		t.Fatal("address quota")
 	}
 	now = now.Add(time.Hour)
 	if err := a.cleanup(); err != nil {
 		t.Fatal(err)
 	}
-	if _, _, err := a.issue(ctx, "same@example.test", "ip"); err != nil {
+	if _, _, err := a.issue(ctx, emailChannel, "same@example.test", "ip", nil, 60); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -268,7 +268,7 @@ func TestRequestBoundaries(t *testing.T) {
 		{"", "", "{}", 403},
 		{app.origin, "web", `{"email":"invalid"}`, 400},
 		{app.origin, "web", strings.Repeat(" ", 4096) + "{}", 400},
-		{app.origin, "web", `{"email":"a@example.test"}`, 503},
+		{app.origin, "web", `{"email":"a@example.test"}`, 502},
 	} {
 		r := httptest.NewRequest("POST", "/v1/code", strings.NewReader(test.body))
 		r.Header.Set("Origin", test.origin)
@@ -291,13 +291,13 @@ func TestStoreProtectsAccountMaterial(t *testing.T) {
 	ctx := context.Background()
 	const email = "fixture@example.test"
 	const ip = "192.0.2.14"
-	id, code, err := a.issue(ctx, email, ip)
+	id, code, err := a.issue(ctx, emailChannel, email, ip, nil, 60)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var lookup string
 	var address, proof []byte
-	if err = a.db.QueryRow("SELECT email,address,digest FROM challenges").Scan(&lookup, &address, &proof); err != nil {
+	if err = a.db.QueryRow("SELECT lookup,address,digest FROM challenges").Scan(&lookup, &address, &proof); err != nil {
 		t.Fatal(err)
 	}
 	if lookup == email || bytes.Contains(address, []byte(email)) || string(proof) == code {
@@ -307,11 +307,11 @@ func TestStoreProtectsAccountMaterial(t *testing.T) {
 	if err = a.db.QueryRow("SELECT count(*) FROM quotas WHERE source IN (?,?)", email, ip).Scan(&n); err != nil || n != 0 {
 		t.Fatal("plaintext quota identifier")
 	}
-	_, token, err := a.verify(ctx, id, code)
+	result, err := a.verify(ctx, id, code, "")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = a.db.QueryRow("SELECT digest FROM sessions").Scan(&proof); err != nil || len(proof) != 32 || string(proof) == token {
+	if err = a.db.QueryRow("SELECT digest FROM sessions").Scan(&proof); err != nil || len(proof) != 32 || string(proof) == result.token {
 		t.Fatal("unprotected session")
 	}
 }

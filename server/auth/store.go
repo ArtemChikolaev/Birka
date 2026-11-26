@@ -50,15 +50,7 @@ func openAccounts(path string, key []byte) (*accounts, error) {
 		return nil, err
 	}
 	db.SetMaxOpenConns(1)
-	_, err = db.Exec(`
-PRAGMA foreign_keys=ON;
-PRAGMA busy_timeout=5000;
-CREATE TABLE IF NOT EXISTS accounts (email TEXT PRIMARY KEY, address BLOB NOT NULL);
-CREATE TABLE IF NOT EXISTS challenges (email TEXT PRIMARY KEY, address BLOB NOT NULL, id TEXT UNIQUE NOT NULL, digest BLOB NOT NULL, issued INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0);
-CREATE TABLE IF NOT EXISTS sessions (digest BLOB PRIMARY KEY, email TEXT NOT NULL REFERENCES accounts(email), expires INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS quotas (kind TEXT NOT NULL, source TEXT NOT NULL, started INTEGER NOT NULL, used INTEGER NOT NULL, PRIMARY KEY(kind,source));
-CREATE INDEX IF NOT EXISTS session_expiry ON sessions(expires);
-`)
+	err = initSchema(db)
 	if err != nil {
 		db.Close()
 		return nil, err
@@ -85,13 +77,14 @@ func (a *accounts) lookup(kind, value string) string {
 	return base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
 }
 
-func quota(tx *sql.Tx, kind, source string, now int64, max int) error {
-	// One anchored hour. A rejected request never extends the window.
+func quota(tx *sql.Tx, kind, source string, now int64, window time.Duration, max int) error {
+	// A rejected request never extends the window.
+	cutoff := now - int64(window.Seconds())
 	r, err := tx.Exec(`INSERT INTO quotas VALUES(?,?,?,1)
        ON CONFLICT(kind,source) DO UPDATE SET
        used=CASE WHEN started<=? THEN 1 ELSE used+1 END,
        started=CASE WHEN started<=? THEN excluded.started ELSE started END
-       WHERE started<=? OR used<?`, kind, source, now, now-3600, now-3600, now-3600, max)
+       WHERE started<=? OR used<?`, kind, source, now, cutoff, cutoff, cutoff, max)
 	if err != nil {
 		return err
 	}
@@ -100,83 +93,6 @@ func quota(tx *sql.Tx, kind, source string, now int64, max int) error {
 		return errLimit
 	}
 	return err
-}
-
-func (a *accounts) issue(ctx context.Context, email, ip string) (id, code string, err error) {
-	tx, err := a.db.BeginTx(ctx, nil)
-	if err != nil {
-		return "", "", err
-	}
-	defer tx.Rollback()
-	now := a.now().Unix()
-	mailbox := a.lookup("email", email)
-	if err = quota(tx, "ip", a.lookup("ip", ip), now, 30); err != nil {
-		return "", "", err
-	}
-	if err = quota(tx, "email", mailbox, now, 5); err != nil {
-		return "", "", err
-	}
-	id = randomToken()
-	number, err := rand.Int(rand.Reader, big.NewInt(1000000))
-	if err != nil {
-		return "", "", err
-	}
-	code = fmt.Sprintf("%06d", number.Int64())
-	address := a.addresses.Seal(nil, nil, []byte(email), []byte(mailbox))
-	r, err := tx.Exec(`INSERT INTO challenges(email,address,id,digest,issued) VALUES(?,?,?,?,?)
-      ON CONFLICT(email) DO UPDATE SET id=excluded.id,digest=excluded.digest,issued=excluded.issued,attempts=0
-      WHERE issued<=?`, mailbox, address, id, a.digestCode(id, code), now, now-60)
-	if err != nil {
-		return "", "", err
-	}
-	n, err := r.RowsAffected()
-	if err != nil {
-		return "", "", err
-	}
-	if n == 0 {
-		return "", "", errLimit
-	}
-	return id, code, tx.Commit()
-}
-
-func (a *accounts) verify(ctx context.Context, id, code string) (email, token string, err error) {
-	tx, err := a.db.BeginTx(ctx, nil)
-	if err != nil {
-		return "", "", err
-	}
-	defer tx.Rollback()
-	var digest, address []byte
-	var mailbox string
-	err = tx.QueryRow(`UPDATE challenges SET attempts=attempts+1 WHERE id=? AND issued>? AND attempts<5 RETURNING email,address,digest`, id, a.now().Add(-codeAge).Unix()).Scan(&mailbox, &address, &digest)
-	if errors.Is(err, sql.ErrNoRows) {
-		return "", "", errCode
-	}
-	if err != nil {
-		return "", "", err
-	}
-	if !hmac.Equal(digest, a.digestCode(id, code)) {
-		if err := tx.Commit(); err != nil {
-			return "", "", err
-		}
-		return "", "", errCode
-	}
-	plain, err := a.addresses.Open(nil, nil, address, []byte(mailbox))
-	if err != nil {
-		return "", "", err
-	}
-	email = string(plain)
-	if _, err = tx.Exec("DELETE FROM challenges WHERE id=?", id); err != nil {
-		return "", "", err
-	}
-	if _, err = tx.Exec("INSERT INTO accounts(email,address) VALUES(?,?) ON CONFLICT DO NOTHING", mailbox, address); err != nil {
-		return "", "", err
-	}
-	token = randomToken()
-	hash := sha256.Sum256([]byte(token))
-	if _, err = tx.Exec("INSERT INTO sessions VALUES(?,?,?)", hash[:], mailbox, a.now().Add(sessionAge).Unix()); err != nil {
-		return "", "", err
-	}
-	return email, token, tx.Commit()
 }
 
 func (a *accounts) cleanup() error {
@@ -189,6 +105,9 @@ func (a *accounts) cleanup() error {
 	if _, err = tx.Exec("DELETE FROM challenges WHERE issued<=?", now.Add(-codeAge).Unix()); err != nil {
 		return err
 	}
+	if _, err = tx.Exec("DELETE FROM registrations WHERE expires<=?", now.Unix()); err != nil {
+		return err
+	}
 	if _, err = tx.Exec("DELETE FROM sessions WHERE expires<=?", now.Unix()); err != nil {
 		return err
 	}
@@ -196,4 +115,235 @@ func (a *accounts) cleanup() error {
 		return err
 	}
 	return tx.Commit()
+}
+
+const (
+	emailChannel    = "email"
+	telegramChannel = "telegram"
+)
+
+var errSession = errors.New("session expired")
+var errOccupied = errors.New("method already linked")
+
+func tokenDigest(token string) []byte {
+	sum := sha256.Sum256([]byte(token))
+	return sum[:]
+}
+
+func sessionOwner(tx *sql.Tx, digest []byte, now int64) (string, error) {
+	var owner string
+	err := tx.QueryRow("SELECT account FROM sessions WHERE digest=? AND expires>?", digest, now).Scan(&owner)
+	if errors.Is(err, sql.ErrNoRows) {
+		err = errSession
+	}
+	return owner, err
+}
+
+func (a *accounts) issue(ctx context.Context, channel, value, ip string, linkSession []byte, telegramLimit int) (id, code string, err error) {
+	tx, err := a.db.BeginTx(ctx, nil)
+	if err != nil {
+		return "", "", err
+	}
+	defer tx.Rollback()
+	now := a.now().Unix()
+	lookup := a.lookup(channel, value)
+	if linkSession != nil {
+		owner, err := sessionOwner(tx, linkSession, now)
+		if err != nil {
+			return "", "", err
+		}
+		var hasMethod bool
+		if err = tx.QueryRow("SELECT EXISTS(SELECT 1 FROM methods WHERE account=? AND channel=?)", owner, channel).Scan(&hasMethod); err != nil {
+			return "", "", err
+		}
+		if hasMethod {
+			return "", "", errOccupied
+		}
+	}
+	if err = quota(tx, "ip", a.lookup("ip", ip), now, time.Hour, 30); err != nil {
+		return "", "", err
+	}
+	if err = quota(tx, channel, lookup, now, time.Hour, 5); err != nil {
+		return "", "", err
+	}
+	if channel == telegramChannel {
+		if err = quota(tx, "telegram-resend", lookup, now, time.Minute, 1); err != nil {
+			return "", "", err
+		}
+		if err = quota(tx, "telegram-service", "all", now, time.Hour, telegramLimit); err != nil {
+			return "", "", err
+		}
+	}
+	id = randomToken()
+	number, err := rand.Int(rand.Reader, big.NewInt(1000000))
+	if err != nil {
+		return "", "", err
+	}
+	code = fmt.Sprintf("%06d", number.Int64())
+	address := a.addresses.Seal(nil, nil, []byte(value), []byte(lookup))
+	r, err := tx.Exec(`INSERT INTO challenges(lookup,channel,address,id,digest,issued,link_session) VALUES(?,?,?,?,?,?,?)
+  ON CONFLICT(lookup) DO UPDATE SET id=excluded.id,digest=excluded.digest,issued=excluded.issued,attempts=0,link_session=excluded.link_session
+  WHERE issued<=?`, lookup, channel, address, id, a.digestCode(id, code), now, linkSession, now-60)
+	if err != nil {
+		return "", "", err
+	}
+	n, err := r.RowsAffected()
+	if err != nil {
+		return "", "", err
+	}
+	if n == 0 {
+		return "", "", errLimit
+	}
+	if _, err = tx.Exec("DELETE FROM registrations WHERE lookup=?", lookup); err != nil {
+		return "", "", err
+	}
+	return id, code, tx.Commit()
+}
+
+type verification struct {
+	profile      map[string]string
+	token        string
+	registration string
+}
+
+func (a *accounts) profile(tx *sql.Tx, owner string) (map[string]string, error) {
+	rows, err := tx.Query("SELECT lookup,channel,address FROM methods WHERE account=?", owner)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := map[string]string{}
+	for rows.Next() {
+		var lookup, channel string
+		var address []byte
+		if err = rows.Scan(&lookup, &channel, &address); err != nil {
+			return nil, err
+		}
+		plain, err := a.addresses.Open(nil, nil, address, []byte(lookup))
+		if err != nil {
+			return nil, err
+		}
+		value := string(plain)
+		if channel == telegramChannel {
+			value = "•••• " + value[len(value)-4:]
+		}
+		out[channel] = value
+	}
+	return out, rows.Err()
+}
+
+func (a *accounts) finish(tx *sql.Tx, owner string, newSession bool) (v verification, err error) {
+	v.profile, err = a.profile(tx, owner)
+	if err != nil {
+		return v, err
+	}
+	if newSession {
+		v.token = randomToken()
+		_, err = tx.Exec("INSERT INTO sessions VALUES(?,?,?)", tokenDigest(v.token), owner, a.now().Add(sessionAge).Unix())
+		if err != nil {
+			return v, err
+		}
+	}
+	return v, tx.Commit()
+}
+
+func insertIdentity(tx *sql.Tx, channel, lookup string, address []byte) (string, error) {
+	owner := randomToken()
+	if _, err := tx.Exec("INSERT INTO accounts VALUES(?)", owner); err != nil {
+		return "", err
+	}
+	_, err := tx.Exec("INSERT INTO methods VALUES(?,?,?,?)", lookup, channel, address, owner)
+	return owner, err
+}
+
+func (a *accounts) verify(ctx context.Context, id, code, token string) (v verification, err error) {
+	tx, err := a.db.BeginTx(ctx, nil)
+	if err != nil {
+		return v, err
+	}
+	defer tx.Rollback()
+	var lookup, channel string
+	var digest, address, binding []byte
+	var issued int64
+	now := a.now().Unix()
+	err = tx.QueryRow(`UPDATE challenges SET attempts=attempts+1 WHERE id=? AND issued>? AND attempts<5 AND (link_session IS NULL OR link_session=?) RETURNING lookup,channel,address,digest,issued,link_session`, id, now-int64(codeAge.Seconds()), tokenDigest(token)).Scan(&lookup, &channel, &address, &digest, &issued, &binding)
+	if errors.Is(err, sql.ErrNoRows) {
+		return v, errCode
+	}
+	if err != nil {
+		return v, err
+	}
+	if !hmac.Equal(digest, a.digestCode(id, code)) {
+		if err = tx.Commit(); err != nil {
+			return v, err
+		}
+		return v, errCode
+	}
+	if _, err = tx.Exec("DELETE FROM challenges WHERE id=?", id); err != nil {
+		return v, err
+	}
+	var owner string
+	err = tx.QueryRow("SELECT account FROM methods WHERE lookup=?", lookup).Scan(&owner)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return v, err
+	}
+	if binding != nil {
+		current, err := sessionOwner(tx, binding, now)
+		if err != nil {
+			return v, err
+		}
+		// Neither another account's method nor an existing method of the same
+		// channel on this account can be replaced.
+		if _, err = tx.Exec("INSERT INTO methods VALUES(?,?,?,?) ON CONFLICT DO NOTHING", lookup, channel, address, current); err != nil {
+			return v, err
+		}
+		var linked bool
+		if err = tx.QueryRow("SELECT EXISTS(SELECT 1 FROM methods WHERE lookup=? AND account=?)", lookup, current).Scan(&linked); err != nil {
+			return v, err
+		}
+		if !linked {
+			if err = tx.Commit(); err != nil {
+				return v, err
+			}
+			return v, errOccupied
+		}
+		return a.finish(tx, current, false)
+	}
+	if owner == "" && channel == telegramChannel {
+		v.registration = randomToken()
+		_, err = tx.Exec("INSERT INTO registrations VALUES(?,?,?,?)", tokenDigest(v.registration), lookup, address, issued+int64(codeAge.Seconds()))
+		if err != nil {
+			return v, err
+		}
+		return v, tx.Commit()
+	}
+	if owner == "" {
+		owner, err = insertIdentity(tx, channel, lookup, address)
+		if err != nil {
+			return v, err
+		}
+	}
+	return a.finish(tx, owner, true)
+}
+
+func (a *accounts) register(ctx context.Context, proof string) (v verification, err error) {
+	tx, err := a.db.BeginTx(ctx, nil)
+	if err != nil {
+		return v, err
+	}
+	defer tx.Rollback()
+	var lookup string
+	var address []byte
+	err = tx.QueryRow("DELETE FROM registrations WHERE digest=? AND expires>? RETURNING lookup,address", tokenDigest(proof), a.now().Unix()).Scan(&lookup, &address)
+	if errors.Is(err, sql.ErrNoRows) {
+		return v, errCode
+	}
+	if err != nil {
+		return v, err
+	}
+	owner, err := insertIdentity(tx, telegramChannel, lookup, address)
+	if err != nil {
+		return v, err
+	}
+	return a.finish(tx, owner, true)
 }
