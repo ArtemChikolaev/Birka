@@ -3,6 +3,9 @@ back: Back
 add: Add category
 expense: Expenses
 income: Income
+search: Find a category
+clearSearch: Clear search
+noMatches: No categories match this name.
 emptyTitle: No categories yet
 emptyHint: Take a ready set or make your own.
 addPresets: Add a ready set
