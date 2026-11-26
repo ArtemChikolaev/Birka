@@ -61,6 +61,77 @@ void main() {
     expect(_hrefOf('5-е число'), 'schedules/#pay');
   });
 
+  testComponents(
+    'discloses the scheduled deductions and updates the open list',
+    (tester) async {
+      final repository = FakeSchedulesRepository();
+      await pump(tester, repository);
+      final toggle = find.ancestor(
+        of: find.text('4 платежа до зарплаты'),
+        matching: find.tag('button'),
+      );
+      expect(find.text('Аренда'), findsNothing);
+      await tester.click(toggle);
+      await tester.pump();
+      expect(find.text('Аренда'), findsOneComponent);
+      expect(find.text('25 ноября'), findsOneComponent);
+      expect(find.text(nb('−45 000 ₽')), findsOneComponent);
+      await tester.click(toggle);
+      await tester.pump();
+      expect(find.text('Аренда'), findsNothing);
+      await tester.click(toggle);
+      await tester.pump();
+      repository
+        ..schedules = repository.schedules
+            .where((it) => it.id == 'pay')
+            .toList()
+        ..changed();
+      await tester.pump();
+      expect(find.text('Аренда'), findsNothing);
+      expect(find.text('0 платежей до зарплаты'), findsOneComponent);
+      expect(
+        find.ancestor(
+          of: find.text('0 платежей до зарплаты'),
+          matching: find.tag('button'),
+        ),
+        findsNothing,
+      );
+    },
+  );
+
+  testComponents('reveals a long payment list in pages with its full total', (
+    tester,
+  ) async {
+    final repository = FakeSchedulesRepository(
+      schedules: [
+        boardSchedules().firstWhere((item) => item.id == 'pay'),
+        for (int i = 0; i <= planPaymentPageSize; i++)
+          schedule('rent-$i', 'Rent $i', 1, boardToday.addDays(1)),
+      ],
+    );
+    await pump(tester, repository);
+    final toggle = find.ancestor(
+      of: find.text(
+        t.schedules.paymentsUntilPayday(n: planPaymentPageSize + 1),
+      ),
+      matching: find.tag('button'),
+    );
+    await tester.click(toggle);
+    await tester.pump();
+    final line = find.text(nb('−1 ₽'));
+    expect(line, findsNComponents(planPaymentPageSize));
+    await tester.click(
+      find.ancestor(of: find.text(t.app.more), matching: find.tag('button')),
+    );
+    await tester.pump();
+    expect(line, findsNComponents(planPaymentPageSize + 1));
+    await tester.click(toggle);
+    await tester.pump();
+    await tester.click(toggle);
+    await tester.pump();
+    expect(line, findsNComponents(planPaymentPageSize));
+  });
+
   testComponents('says what becomes of the money at the usual pace', (
     tester,
   ) async {

@@ -484,6 +484,61 @@ void main() {
       expect(salaries, ['pay']);
     });
 
+    testWidgets('expands only the deductions in the selected period', (
+      tester,
+    ) async {
+      final cubit = await pump(tester, FakeSchedulesRepository(), page());
+      expect(find.text('Аренда'), findsNothing);
+      await tester.tap(find.text('4 платежа до зарплаты'));
+      await tester.pumpAndSettle();
+      expect(find.text('25 ноября'), findsOneWidget);
+      expect(find.text(nb('−45 000 ₽')), findsOneWidget);
+      expect(find.text('Спортзал'), findsOneWidget);
+      await cubit.countUntil(SpendUntil.monthEnd);
+      await tester.idle();
+      await tester.pump();
+      expect(find.text('2 платежа до конца месяца'), findsOneWidget);
+      expect(find.text('Аренда'), findsOneWidget);
+      expect(find.text('Спортзал'), findsNothing);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('2 платежа до конца месяца'));
+      await tester.pumpAndSettle();
+      expect(find.text('Аренда'), findsNothing);
+    });
+
+    testWidgets('changing counted accounts immediately removes their bills', (
+      tester,
+    ) async {
+      final repository = FakeSchedulesRepository(
+        schedules: [
+          ...boardSchedules(),
+          Schedule(
+            id: 'bus',
+            kind: TransactionKind.expense,
+            name: 'Bus fare',
+            accountId: 'cash',
+            amount: rub(60),
+            every: ScheduleEvery.month,
+            day: 20,
+            next: CivilDate(2026, 11, 20),
+            onDay: ScheduleOnDay.ask,
+            reminder: ScheduleReminder.none,
+          ),
+        ],
+      );
+      final cubit = await pump(tester, repository, page());
+      await tester.tap(find.text('5 платежей до зарплаты'));
+      await tester.pumpAndSettle();
+      expect(find.text('Bus fare'), findsOneWidget);
+      await cubit.count('cash', counted: false);
+      await tester.idle();
+      await tester.pump();
+      expect(find.text('4 платежа до зарплаты'), findsOneWidget);
+      expect(find.text('Bus fare'), findsNothing);
+      expect(find.text('Аренда'), findsOneWidget);
+      await tester.pumpAndSettle();
+    });
+
     testWidgets('says what becomes of the money at the usual pace', (
       tester,
     ) async {

@@ -294,6 +294,14 @@ String planPeriodLabel(SpendingPlan plan) {
       : t.schedules.untilDate(date: fullDate(plan.end, plan.today), days: days);
 }
 
+/// How many dated deductions to reveal at a time.
+const planPaymentPageSize = 20;
+
+/// The row of scheduled deductions in the current spending plan.
+String planPaymentsLabel(SpendingPlan plan) => plan.until == SpendUntil.payday
+    ? t.schedules.paymentsUntilPayday(n: plan.payments.length)
+    : t.schedules.paymentsUntilMonth(n: plan.payments.length);
+
 /// What the card of the money of the day says under its bar: `Потратили
 /// 620 ₽ · до зарплаты 17 дней`, or what tomorrow allows once today took
 /// more than its share.
