@@ -119,6 +119,31 @@ void main() {
     expect(capital, findsOneWidget);
   });
 
+  testWidgets('opens native holdings and updates them while open', (
+    tester,
+  ) async {
+    final repository = FakeAccountsRepository([
+      row('Card', rub(1200)),
+      row('Cash', rub(100)),
+      row('Travel', eur(-25)),
+    ]);
+    await pump(tester, repository);
+    final toggle = find.text(t.accounts.byCurrency);
+    expect(find.text('в 2 счетах'), findsNothing);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(find.text('в 2 счетах'), findsOneWidget);
+    expect(find.text('13$space₽'), findsOneWidget);
+    repository
+      ..rows = [row('Card', rub(1500)), ...repository.rows.skip(1)]
+      ..changed();
+    await tester.pumpAndSettle();
+    expect(find.text('16$space₽'), findsOneWidget);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(find.text('в 2 счетах'), findsNothing);
+  });
+
   testWidgets('a single account takes the singular ending', (tester) async {
     await pump(tester, FakeAccountsRepository([row('Карта', rub(100))]));
 

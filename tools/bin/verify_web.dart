@@ -112,6 +112,14 @@ Future<void> _currencyTransfer(_Run run) => run.visit((browser) async {
   await browser.expect('.quick-add__line--active .amount', r'$12.34');
   await browser.saveOperation('Dollar card');
 
+  await browser.open('accounts/');
+  await browser.click('.accounts__currency-toggle', 'By currency');
+  const rows = '.accounts__holdings .glass-row';
+  await browser.expect('$rows:first-child .glass-row__line', 'Rubles');
+  await browser.expect('$rows:first-child .amount', '₽8,765.44');
+  await browser.expect('$rows:last-child .glass-row__line', 'Dollars');
+  await browser.expect('$rows:last-child .amount', r'$32.34');
+
   await browser.open('accounts/#rub');
   await browser.reload();
   await browser.checkAccount('₽8,765.44', ['−₽1,234.56']);

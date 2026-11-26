@@ -6,9 +6,11 @@ Ruble card starts at ₽10,000 and Dollar card at $20. Both histories are empty.
 1. In Operations, start a transfer from Ruble card to Dollar card.
 2. Enter ₽1,234.56 under Leaves and $12.34 under Arrives. Read both previews
    and save the transfer. Both amounts are entered on the keypad.
-3. Open and reload each account. Ruble card shows ₽8,765.44 and one debit
+3. On Accounts, expand By currency. Rubles shows ₽8,765.44 and Dollars shows
+   $32.34.
+4. Open and reload each account. Ruble card shows ₽8,765.44 and one debit
    of −₽1,234.56. Dollar card shows $32.34 and one credit of +$12.34.
-4. Open the credit. The operation is a transfer and shows ₽1,234.56 → $12.34.
+5. Open the credit. The operation is a transfer and shows ₽1,234.56 → $12.34.
 
 Run `make verify-web FLOW=currency-transfer BASE=/Birka/` after building the
 site with that base. The narrow form replaces the list at 390 × 844. At
@@ -22,7 +24,7 @@ Run `make verify-flutter FLOW=currency-transfer` on macOS or pass a native
 device ID as `DEVICE`. The test seeds the same two opening balances in a
 temporary SQLite ledger, checks both accounts, then enters both amounts with
 the quick-add keypad. It unmounts Birka, closes the ledger and reopens it.
-It reads the balances and signed rows on both account pages, then opens the
+It checks By currency on Accounts, reads both balances and signed rows, then opens the
 credit to check the operation type and the amounts. The GitHub workflow
 saves these observations and the tested commit in `flutter-currency-transfer`.
 

@@ -2,6 +2,7 @@ title: Accounts
 back: Back
 add: Add account
 capital: Capital
+byCurrency: By currency
 and: and
 inAccounts(n):
   one: in $n account

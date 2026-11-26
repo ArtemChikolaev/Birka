@@ -85,6 +85,7 @@ class AccountsPage extends StatelessWidget {
       if (overview.totals.isNotEmpty) ...[
         const SizedBox(height: BirkaTokens.spaceXxs),
         _Capital(overview: overview),
+        if (overview.showByCurrency) _CurrencyBreakdown(overview: overview),
       ],
       const SizedBox(height: BirkaTokens.spaceLg),
       // The rows open and close in their groups, and so do the groups: the
@@ -206,6 +207,97 @@ class _Capital extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _CurrencyBreakdown extends StatefulWidget {
+  const _CurrencyBreakdown({required this.overview});
+
+  final AccountsOverview overview;
+
+  @override
+  State<_CurrencyBreakdown> createState() => _CurrencyBreakdownState();
+}
+
+class _CurrencyBreakdownState extends State<_CurrencyBreakdown> {
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    final colors = BirkaColors.of(context);
+    final duration = BirkaMotion.reduced(context)
+        ? Duration.zero
+        : BirkaMotion.base;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          expanded: _open,
+          button: true,
+          child: InkWell(
+            onTap: () => setState(() => _open = !_open),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: BirkaTokens.sizeTouchTarget,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      t.accounts.byCurrency,
+                      style: styles.bodyStrong.copyWith(color: colors.text),
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: _open ? 0.25 : 0,
+                    duration: duration,
+                    curve: BirkaMotion.standardCurve,
+                    child: BirkaIcon(
+                      BirkaGlyph.chevron,
+                      size: 16,
+                      color: colors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        AnimatedSize(
+          alignment: Alignment.topCenter,
+          duration: duration,
+          curve: BirkaMotion.standardCurve,
+          child: _open
+              ? LayoutBuilder(
+                  builder: (context, constraints) => GlassListGroup(
+                    children: [
+                      for (final holding in widget.overview.holdings)
+                        GlassListRow(
+                          key: ValueKey(holding.balance.currency),
+                          title: holdingName(holding),
+                          subtitle: t.accounts.inAccounts(n: holding.accounts),
+                          trailing: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: constraints.maxWidth * 0.55,
+                            ),
+                            child: AmountText(
+                              holdingAmount(holding),
+                              value: holding.balance.minorUnits,
+                              rise: AmountRise.good,
+                              style: styles.bodyStrong.copyWith(
+                                color: colors.text,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
+      ],
     );
   }
 }

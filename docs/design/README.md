@@ -245,7 +245,9 @@ net balance and account count for each original currency, in the order of
 the first counted account. Only active accounts included in capital contribute.
 Zero and negative balances keep their place. The breakdown is available for
 multiple currencies and for a single currency converted into a different
-display currency. The rows work offline and respect hidden amounts.
+display currency. If a currency subtotal exceeds the supported money range,
+the breakdown shows the applicable bound with < or >. The rows work offline
+and respect hidden amounts.
 
 [Interactive mockup](mockups/capital-by-currency.html) ·
 [Phone preview](mockups/41-capital-currency-phone.png) ·

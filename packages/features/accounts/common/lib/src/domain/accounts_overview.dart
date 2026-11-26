@@ -12,6 +12,7 @@ final class AccountsOverview {
     required this.archived,
     required this.totals,
     required this.countedAccounts,
+    this.holdings = const [],
   });
 
   /// Sorts [accounts] into active and archived ones and adds up the totals in
@@ -37,6 +38,7 @@ final class AccountsOverview {
       ],
       totals: [?capital.main, ...capital.others],
       countedAccounts: counted.length,
+      holdings: capital.holdings,
     );
   }
 
@@ -49,6 +51,16 @@ final class AccountsOverview {
   /// What the counted accounts come to, and after it the amounts that no rate
   /// can add to it yet.
   final List<Money> totals;
+
+  /// Capital in the original currencies of the counted accounts.
+  final List<CurrencyHolding> holdings;
+
+  /// Whether the original currency breakdown adds to the headline.
+  bool get showByCurrency =>
+      holdings.length > 1 ||
+      (holdings.isNotEmpty &&
+          (holdings.first.exceedsRange ||
+              holdings.first.balance.currency != totals.firstOrNull?.currency));
 
   /// How many accounts the totals cover.
   final int countedAccounts;

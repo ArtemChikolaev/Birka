@@ -32,6 +32,10 @@ void main() {
 
     expect(overview.totals, [rub(100)]);
     expect(overview.countedAccounts, 1);
+    expect(overview.holdings, [
+      (balance: rub(100), accounts: 1, exceedsRange: false),
+    ]);
+    expect(overview.showByCurrency, isFalse);
   });
 
   test('sorts archived accounts out of the everyday ones', () {
@@ -56,6 +60,11 @@ void main() {
     );
 
     expect(overview.totals, [rub(109000)]);
+    expect(overview.holdings.map((part) => part.balance), [
+      rub(100000),
+      eur(100),
+    ]);
+    expect(overview.showByCurrency, isTrue);
   });
 
   test('shows the totals in the picked currency', () {
@@ -68,11 +77,38 @@ void main() {
     );
 
     expect(overview.totals, [eur(100)]);
+    expect(overview.holdings.single.balance, rub(9000));
+    expect(overview.showByCurrency, isTrue);
+  });
+
+  test('keeps a zero balance and counts both contributing accounts', () {
+    final overview = AccountsOverview.of([
+      row(account('Cash', rub(0)), rub(150)),
+      row(account('Card', rub(0)), rub(-150)),
+      row(account('Travel', eur(0)), eur(-40)),
+    ]);
+    expect(overview.holdings, [
+      (balance: rub(0), accounts: 2, exceedsRange: false),
+      (balance: eur(-40), accounts: 1, exceedsRange: false),
+    ]);
+    expect(overview.showByCurrency, isTrue);
+  });
+
+  test('marks a bound even when only one currency contributes', () {
+    final most = rub(Money.maxMinorUnits);
+    final overview = AccountsOverview.of([
+      row(account('Loan', rub(0)), -most),
+      row(account('Credit', rub(0)), rub(-1)),
+    ]);
+    expect(overview.showByCurrency, isTrue);
+    expect(overview.holdings.single.exceedsRange, isTrue);
+    expect(holdingAmount(overview.holdings.single), startsWith('< '));
   });
 
   test('has no totals without accounts', () {
     final overview = AccountsOverview.of(const []);
     expect(overview.totals, isEmpty);
     expect(overview.countedAccounts, 0);
+    expect(overview.showByCurrency, isFalse);
   });
 }

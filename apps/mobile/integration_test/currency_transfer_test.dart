@@ -98,6 +98,21 @@ void main() {
         debugPrint('Reopening the saved ledger');
         await reopen();
         await openAccounts();
+        final byCurrency = find.text('By currency');
+        await tester.tapVisible(byCurrency);
+        for (final (name, amount) in [
+          ('Rubles', '₽8,765.44'),
+          ('Dollars', r'$32.34'),
+        ]) {
+          await tester.observeText(
+            find.descendant(
+              of: find.widgetWithText(GlassListRow, name),
+              matching: find.text(amount),
+            ),
+            '$name in capital',
+          );
+        }
+        await tester.tapVisible(byCurrency);
         await openAccount('Ruble card', '₽8,765.44');
         await checkEntry('−₽1,234.56');
         await tester.tapVisible(back);
