@@ -113,6 +113,9 @@ class Translations$accounts$en {
   /// en: 'Capital'
   String get capital => 'Capital';
 
+  /// en: 'By currency'
+  String get byCurrency => 'By currency';
+
   /// en: 'and'
   String get and => 'and';
 
@@ -6488,6 +6491,7 @@ extension on Translations {
           'accounts.back' => 'Back',
           'accounts.add' => 'Add account',
           'accounts.capital' => 'Capital',
+          'accounts.byCurrency' => 'By currency',
           'accounts.and' => 'and',
           'accounts.inAccounts' =>
             ({required num n}) =>
@@ -7207,10 +7211,10 @@ extension on Translations {
           'help.letterTitle' => 'A letter to the developer',
           'help.letterText' =>
             'Your mail app opens with this letter. It holds only what you see below, and you can add to it.',
-          'help.to' => 'To',
           _ => null,
         } ??
         switch (path) {
+          'help.to' => 'To',
           'help.subject' => 'Subject',
           'help.letterPrivacy' =>
             'Operations, amounts and account names stay out of the letter.',
@@ -8166,12 +8170,12 @@ extension on Translations {
                 'The average spending of ${from} to ${to}, rounded up to ${step}. Checked are the categories whose spending is alike every month.',
           'limits.suggestions.average' =>
             ({required Object amount}) => '${amount} on average',
-          'limits.suggestions.jumps' =>
-            ({required Object least, required Object most}) =>
-                'jumps: from ${least} to ${most}',
           _ => null,
         } ??
         switch (path) {
+          'limits.suggestions.jumps' =>
+            ({required Object least, required Object most}) =>
+                'jumps: from ${least} to ${most}',
           'limits.suggestions.rare' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -9139,10 +9143,10 @@ extension on Translations {
           'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
           'settings.monthStartNote' => 'for the overview and the reports',
           'settings.monthStartCalendar' => 'as on the calendar',
-          'tags.title' => 'Tags',
           _ => null,
         } ??
         switch (path) {
+          'tags.title' => 'Tags',
           'tags.back' => 'Back',
           'tags.add' => 'New tag',
           'tags.close' => 'Close',

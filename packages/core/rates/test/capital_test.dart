@@ -149,6 +149,45 @@ void main() {
     ], rates: rates);
 
     expect(capital.main, most);
+    expect(capital.holdings.single, (
+      balance: most,
+      accounts: 2,
+      exceedsRange: true,
+    ));
+  });
+
+  test(
+    'sums before bounding even when an intermediate sum is unsafe on JS',
+    () {
+      final most = rub(Money.maxMinorUnits);
+      final capital = Capital.of([
+        balance('First', most),
+        balance('Second', rub(4)),
+        balance('Third', -most),
+        balance('Euro', eur(-75)),
+      ], rates: rates);
+      expect(capital.main, rub(4));
+      expect(capital.holdings, [
+        (balance: rub(4), accounts: 3, exceedsRange: false),
+        (balance: eur(-75), accounts: 1, exceedsRange: false),
+      ]);
+    },
+  );
+
+  test('a bounded native subtotal can still cancel in the headline', () {
+    final most = rub(Money.maxMinorUnits);
+    final capital = Capital.of(
+      [
+        balance('Card', most),
+        balance('Cash', most),
+        balance('Credit', usd(-Money.maxMinorUnits)),
+      ],
+      rates: RateBook([
+        DayRates(CivilDate(2026, 10, 31), {'USD': Decimal.fromInt(2)}),
+      ]),
+    );
+    expect(capital.holdings.first.exceedsRange, isTrue);
+    expect(capital.main, rub(0));
   });
 
   test('a total that took a rate is whole', () {

@@ -135,6 +135,8 @@ class _Translations$accounts$ru extends Translations$accounts$en {
   @override
   String get capital => 'Капитал';
   @override
+  String get byCurrency => 'По валютам';
+  @override
   String get and => 'и';
   @override
   String inAccounts({required num n}) =>
@@ -5449,6 +5451,7 @@ extension on TranslationsRu {
           'accounts.back' => 'Назад',
           'accounts.add' => 'Добавить счёт',
           'accounts.capital' => 'Капитал',
+          'accounts.byCurrency' => 'По валютам',
           'accounts.and' => 'и',
           'accounts.inAccounts' =>
             ({required num n}) =>
@@ -6195,10 +6198,10 @@ extension on TranslationsRu {
           'help.letterTitle' => 'Письмо разработчику',
           'help.letterText' =>
             'Откроется ваша почта с этим письмом. В нём будет только то, что видно ниже, и вы сможете его дописать.',
-          'help.to' => 'Кому',
           _ => null,
         } ??
         switch (path) {
+          'help.to' => 'Кому',
           'help.subject' => 'Тема',
           'help.letterPrivacy' =>
             'Операции, суммы и названия счетов в письмо не попадают.',
@@ -7243,12 +7246,12 @@ extension on TranslationsRu {
                 'Средние траты за ${from} — ${to}, округлили вверх до ${step}. Отметили категории, где траты каждый месяц похожи.',
           'limits.suggestions.average' =>
             ({required Object amount}) => 'в среднем ${amount}',
-          'limits.suggestions.jumps' =>
-            ({required Object least, required Object most}) =>
-                'скачут: от ${least} до ${most}',
           _ => null,
         } ??
         switch (path) {
+          'limits.suggestions.jumps' =>
+            ({required Object least, required Object most}) =>
+                'скачут: от ${least} до ${most}',
           'limits.suggestions.rare' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -8289,10 +8292,10 @@ extension on TranslationsRu {
           'settings.monthStartDay' => ({required Object day}) => '${day} число',
           'settings.monthStartNote' => 'для обзора и отчётов',
           'settings.monthStartCalendar' => 'как в календаре',
-          'tags.title' => 'Метки',
           _ => null,
         } ??
         switch (path) {
+          'tags.title' => 'Метки',
           'tags.back' => 'Назад',
           'tags.add' => 'Новая метка',
           'tags.close' => 'Закрыть',

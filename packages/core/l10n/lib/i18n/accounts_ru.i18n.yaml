@@ -2,6 +2,7 @@ title: Счета
 back: Назад
 add: Добавить счёт
 capital: Капитал
+byCurrency: По валютам
 and: и
 inAccounts(n):
   zero: в $n счетах

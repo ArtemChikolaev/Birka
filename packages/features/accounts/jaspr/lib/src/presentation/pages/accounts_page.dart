@@ -107,6 +107,7 @@ class AccountsPage extends StatelessComponent {
         GlassSurface(
           child: div(classes: 'accounts__side', [
             if (overview.totals.isNotEmpty) _Capital(overview: overview),
+            if (overview.showByCurrency) _CurrencyBreakdown(overview: overview),
             BirkaButton(label: t.accounts.form.newTitle, href: addHref),
           ]),
         ),
@@ -148,6 +149,7 @@ class AccountsPage extends StatelessComponent {
     final first = overview.active.firstOrNull;
     return [
       if (overview.totals.isNotEmpty) _Capital(overview: overview),
+      if (overview.showByCurrency) _CurrencyBreakdown(overview: overview),
       if (first != null) ...[
         AccountCard(
           art: cardArtOf(first.account.art),
@@ -183,6 +185,43 @@ class AccountsPage extends StatelessComponent {
     ),
     css('.accounts__capital strong').styles(
       raw: {'color': 'var(--color-text)'},
+    ),
+    css('.accounts__currency-toggle').styles(
+      raw: {
+        'align-items': 'center',
+        'background': 'none',
+        'border': '0',
+        'color': 'var(--color-text)',
+        'cursor': 'pointer',
+        'display': 'flex',
+        'gap': 'var(--space-sm)',
+        'justify-content': 'space-between',
+        'min-height': 'var(--size-touch-target)',
+        'padding': '0',
+        'width': '100%',
+      },
+    ),
+    css('.accounts__currency-toggle .birka-icon').styles(
+      raw: {
+        'color': 'var(--color-text-muted)',
+        'width': '16px',
+        'height': '16px',
+      },
+    ),
+    css(
+      '.accounts__currency-toggle[aria-expanded="true"] .birka-icon',
+    ).styles(raw: {'transform': 'rotate(90deg)'}),
+    css('.accounts__holdings .glass-row').styles(raw: {'flex-wrap': 'wrap'}),
+    css(
+      '.accounts__holdings .glass-row__text',
+    ).styles(raw: {'flex-basis': '6em'}),
+    css('.accounts__holdings .amount').styles(
+      raw: {
+        'margin-inline-start': 'auto',
+        'overflow-wrap': 'anywhere',
+        'white-space': 'normal',
+        'text-align': 'end',
+      },
     ),
     css('.accounts__cards').styles(
       raw: {
@@ -230,6 +269,53 @@ class _Capital extends StatelessComponent {
         ]),
       ],
       .text(' ${t.accounts.inAccounts(n: overview.countedAccounts)}'),
+    ]);
+  }
+}
+
+class _CurrencyBreakdown extends StatefulComponent {
+  const _CurrencyBreakdown({required this.overview});
+
+  final AccountsOverview overview;
+
+  @override
+  State<_CurrencyBreakdown> createState() => _CurrencyBreakdownState();
+}
+
+class _CurrencyBreakdownState extends State<_CurrencyBreakdown> {
+  bool _open = false;
+
+  @override
+  Component build(BuildContext context) {
+    return div(classes: 'accounts__holdings', [
+      button(
+        classes: 'text-body-strong accounts__currency-toggle',
+        type: ButtonType.button,
+        attributes: {'aria-expanded': '$_open'},
+        onClick: () => setState(() => _open = !_open),
+        [.text(t.accounts.byCurrency), const BirkaIcon(BirkaGlyph.chevron)],
+      ),
+      BirkaFold(
+        open: _open,
+        gap: '0px',
+        children: [
+          if (_open)
+            GlassListGroup(
+              children: [
+                for (final holding in component.overview.holdings)
+                  GlassListRow(
+                    key: ValueKey(holding.balance.currency),
+                    title: holdingName(holding),
+                    subtitle: t.accounts.inAccounts(n: holding.accounts),
+                    trailing: AmountText(
+                      holdingAmount(holding),
+                      textClass: 'text-body-strong',
+                    ),
+                  ),
+              ],
+            ),
+        ],
+      ),
     ]);
   }
 }

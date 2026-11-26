@@ -128,6 +128,34 @@ void main() {
     expect(find.text(' в 3 счетах'), findsOneComponent);
   });
 
+  for (final wide in [false, true]) {
+    testComponents('opens and closes currency holdings (wide: $wide)', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        FakeAccountsRepository([
+          row('Card', rub(1200)),
+          row('Cash', rub(100)),
+          row('Travel', eur(-25)),
+        ]),
+        wide: wide,
+      );
+      final toggle = find.ancestor(
+        of: find.text(t.accounts.byCurrency),
+        matching: find.tag('button'),
+      );
+      expect(find.text('в 2 счетах'), findsNothing);
+      await tester.click(toggle);
+      await tester.pump();
+      expect(find.text('в 2 счетах'), findsOneComponent);
+      expect(find.text('13$space₽'), findsNComponents(2));
+      await tester.click(toggle);
+      await tester.pump();
+      expect(find.text('в 2 счетах'), findsNothing);
+    });
+  }
+
   testComponents('a debt shows in the color of a fall', (tester) async {
     await pump(
       tester,
