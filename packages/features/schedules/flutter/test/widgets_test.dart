@@ -484,6 +484,25 @@ void main() {
       expect(salaries, ['pay']);
     });
 
+    testWidgets('expands only the deductions in the selected period', (
+      tester,
+    ) async {
+      final cubit = await pump(tester, FakeSchedulesRepository(), page());
+      expect(find.text('Аренда'), findsNothing);
+      await tester.tap(find.text('4 платежа до зарплаты'));
+      await tester.pumpAndSettle();
+      expect(find.text('25 ноября'), findsOneWidget);
+      expect(find.text(nb('−45 000 ₽')), findsOneWidget);
+      expect(find.text('Спортзал'), findsOneWidget);
+      await cubit.countUntil(SpendUntil.monthEnd);
+      await tester.pumpAndSettle();
+      expect(find.text('Аренда'), findsOneWidget);
+      expect(find.text('Спортзал'), findsNothing);
+      await tester.tap(find.text('2 платежа до конца месяца'));
+      await tester.pumpAndSettle();
+      expect(find.text('Аренда'), findsNothing);
+    });
+
     testWidgets('says what becomes of the money at the usual pace', (
       tester,
     ) async {

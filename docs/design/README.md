@@ -219,7 +219,7 @@ Reloading the HTML resets both devices and all sample identities.
 
 ### Payments in the daily spending plan
 
-Open the payments total on **Money until payday** to see the name, scheduled date and amount of each deduction in chronological order. The same list works when counting to the end of the budget month. A weekly payment appears once per occurrence. With zero payments the total is a plain row. The list respects hidden amounts.
+Open the payments total on **Money until payday** to see the name, scheduled date and amount of each deduction in chronological order. The same list works when counting to the end of the budget month. A weekly payment appears once per occurrence. A [long list](mockups/payday-payment-breakdown.html#many) opens 20 rows at a time, with the total for the entire period. With zero payments the total is a plain row. The list respects hidden amounts.
 
 [Interactive mockup](mockups/payday-payment-breakdown.html) ·
 [Phone preview](mockups/37-payday-payments-phone.png) ·

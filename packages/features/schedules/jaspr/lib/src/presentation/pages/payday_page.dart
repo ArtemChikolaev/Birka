@@ -67,6 +67,30 @@ class PaydayPage extends StatefulComponent {
         'justify-content': 'space-between',
       },
     ),
+    css('.payday__payments-toggle').styles(
+      raw: {
+        'align-items': 'center',
+        'background': 'transparent',
+        'border': '0',
+        'color': 'inherit',
+        'cursor': 'pointer',
+        'display': 'flex',
+        'gap': 'var(--space-xxs)',
+        'min-height': 'var(--size-touch-target)',
+        'padding': '0',
+        'text-align': 'start',
+        'width': '100%',
+      },
+    ),
+    css(
+      '.payday__payments-toggle .payday__line-label',
+    ).styles(raw: {'flex': '1'}),
+    css(
+      '.payday__payments-toggle .birka-icon',
+    ).styles(raw: {'color': 'var(--color-text-muted)'}),
+    css(
+      '.payday__payments-toggle[aria-expanded="true"] .birka-icon',
+    ).styles(raw: {'transform': 'rotate(90deg)'}),
     css('.payday__line-label').styles(
       raw: {'color': 'var(--color-text-muted)'},
     ),
@@ -326,8 +350,6 @@ class _Sum extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final short = plan.short;
-    final payday = plan.until == SpendUntil.payday;
-    final count = plan.payments.length;
     final advance = plan.advances.firstOrNull?.on;
     final near = plan.near;
     return TintedBox(
@@ -355,12 +377,10 @@ class _Sum extends StatelessComponent {
                 plan.advanced,
                 income: true,
               ),
-            _line(
-              payday
-                  ? t.schedules.paymentsUntilPayday(n: count)
-                  : t.schedules.paymentsUntilMonth(n: count),
-              -plan.paid,
-            ),
+            if (plan.payments.isEmpty)
+              _line(planPaymentsLabel(plan), -plan.paid)
+            else
+              _PaymentBreakdown(plan: plan),
             _line(t.schedules.aside, -plan.aside),
             const div(classes: 'payday__rule', []),
             _line(t.schedules.leftFor(n: plan.days), plan.free, strong: true),
@@ -414,6 +434,70 @@ class _Sum extends StatelessComponent {
         ),
       ],
     );
+  }
+}
+
+class _PaymentBreakdown extends StatefulComponent {
+  const _PaymentBreakdown({required this.plan});
+
+  final SpendingPlan plan;
+
+  @override
+  State<_PaymentBreakdown> createState() => _PaymentBreakdownState();
+}
+
+class _PaymentBreakdownState extends State<_PaymentBreakdown> {
+  int _visible = 0;
+
+  bool get _open => _visible > 0;
+
+  @override
+  Component build(BuildContext context) {
+    final plan = component.plan;
+    return div(classes: 'payday__sum', [
+      button(
+        classes: 'payday__payments-toggle',
+        type: ButtonType.button,
+        attributes: {'aria-expanded': '$_open'},
+        onClick: () =>
+            setState(() => _visible = _open ? 0 : planPaymentPageSize),
+        [
+          span(classes: 'text-body payday__line-label', [
+            .text(planPaymentsLabel(plan)),
+          ]),
+          AmountText(formatMoney(-plan.paid), textClass: 'text-body-strong'),
+          const BirkaIcon(BirkaGlyph.chevron),
+        ],
+      ),
+      BirkaFold(
+        open: _open,
+        gap: 'var(--space-xs)',
+        children: [
+          if (_open)
+            GlassListGroup(
+              children: [
+                for (final (:schedule, :on) in plan.payments.take(_visible))
+                  GlassListRow(
+                    key: ValueKey((schedule.id, on)),
+                    title: occurrenceName(schedule, on),
+                    subtitle: fullDate(on, plan.today),
+                    trailing: AmountText(
+                      formatMoney(-schedule.amountOn(on)),
+                      textClass: 'text-body-strong',
+                    ),
+                  ),
+              ],
+            ),
+          if (_open && _visible < plan.payments.length)
+            BirkaButton(
+              label: t.app.more,
+              quiet: true,
+              compact: true,
+              onPressed: () => setState(() => _visible += planPaymentPageSize),
+            ),
+        ],
+      ),
+    ]);
   }
 }
 

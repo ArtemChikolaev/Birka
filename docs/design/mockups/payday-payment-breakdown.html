@@ -46,7 +46,7 @@
     <section class="card">
       <h2 id="per-day"></h2><p class="period" id="period"></p>
       <div class="row"><span>Утром на счетах</span><b>89 600 ₽</b></div>
-      <details><summary><span id="label"></span><b id="paid"></b><span class="chevron" aria-hidden="true">›</span></summary><ul id="payments"></ul></details>
+      <details><summary><span id="label"></span><b id="paid"></b><span class="chevron" aria-hidden="true">›</span></summary><ul id="payments"></ul><button id="more" hidden>Ещё</button></details>
       <div class="row"><span>Отложить</span><b>−10 000 ₽</b></div>
       <div class="row total"><strong id="left"></strong><b id="free"></b></div>
     </section>
@@ -60,8 +60,13 @@
   const rows = [['Аренда','25 ноября',45000],['Интернет','28 ноября',650],['Netflix','1 декабря',799],['Спортзал','3 декабря',3500]];
   const rub = value => new Intl.NumberFormat('ru').format(value).replace('-', '−') + ' ₽';
   const byId = id => document.getElementById(id);
+  let visible = 20;
+  let untilPayday = true;
+  // The long-list sample keeps the same total, split across dated instalments.
+  if (location.hash === '#many') rows.splice(0,1,...Array.from({length:30},(_,i)=>['Платёж '+(i+1),'25 ноября',1500]));
   function period(payday) {
-    const payments = payday ? rows : rows.slice(0,2);
+    untilPayday = payday;
+    const payments = payday ? rows : rows.filter(row => row[1].endsWith('ноября'));
     const days = payday ? 17 : 13;
     const total = payments.reduce((sum,row) => sum+row[2],0);
     const free = 89600-total-10000;
@@ -69,12 +74,19 @@
     byId('month').setAttribute('aria-pressed',String(!payday));
     byId('per-day').textContent = rub(Math.floor(free/days))+' в день';
     byId('period').textContent = (payday ? 'до зарплаты 5 декабря' : 'до 30 ноября')+' · '+days+' дней';
-    byId('label').textContent = payday ? '4 платежа до зарплаты' : '2 платежа до конца месяца';
+    const plural = new Intl.PluralRules('ru').select(payments.length);
+    const noun = {one:'платёж',few:'платежа',many:'платежей'}[plural];
+    byId('label').textContent = payments.length+' '+noun+(payday?' до зарплаты':' до конца месяца');
+    byId('more').hidden = visible >= payments.length;
     byId('paid').textContent = rub(-total);
-    byId('payments').innerHTML = payments.map(([name,date,amount]) => '<li><span>'+name+'<small>'+date+'</small></span><b>'+rub(-amount)+'</b></li>').join('');
+    byId('payments').innerHTML = payments.slice(0,visible).map(([name,date,amount]) => '<li><span>'+name+'<small>'+date+'</small></span><b>'+rub(-amount)+'</b></li>').join('');
     byId('left').textContent = 'Остаётся на '+days+' дней';
     byId('free').textContent = rub(free);
   }
+  byId('more').onclick = () => { visible += 20; period(untilPayday); };
+  document.querySelector('details').ontoggle = event => {
+    if (!event.target.open) { visible = 20; period(untilPayday); }
+  };
   byId('payday').onclick = () => period(true);
   byId('month').onclick = () => period(false);
   period(true);

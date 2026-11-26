@@ -343,8 +343,6 @@ class _Sum extends StatelessWidget {
     final styles = BirkaTextStyles.of(context);
     final free = plan.free;
     final short = plan.short;
-    final payday = plan.until == SpendUntil.payday;
-    final count = plan.payments.length;
     final advance = plan.advances.firstOrNull?.on;
     final near = plan.near;
     return TintedBox(
@@ -376,12 +374,10 @@ class _Sum extends StatelessWidget {
               amount: plan.advanced,
               income: true,
             ),
-          _Line(
-            label: payday
-                ? t.schedules.paymentsUntilPayday(n: count)
-                : t.schedules.paymentsUntilMonth(n: count),
-            amount: -plan.paid,
-          ),
+          if (plan.payments.isEmpty)
+            _Line(label: planPaymentsLabel(plan), amount: -plan.paid)
+          else
+            _PaymentBreakdown(plan: plan),
           _Line(label: t.schedules.aside, amount: -plan.aside),
           const SizedBox(height: BirkaTokens.spaceXs),
           SizedBox(height: 1, child: ColoredBox(color: colors.hairline)),
@@ -420,6 +416,97 @@ class _Sum extends StatelessWidget {
   }
 }
 
+class _PaymentBreakdown extends StatefulWidget {
+  const _PaymentBreakdown({required this.plan});
+
+  final SpendingPlan plan;
+
+  @override
+  State<_PaymentBreakdown> createState() => _PaymentBreakdownState();
+}
+
+class _PaymentBreakdownState extends State<_PaymentBreakdown> {
+  int _visible = 0;
+
+  bool get _open => _visible > 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final plan = widget.plan;
+    final duration = BirkaMotion.reduced(context)
+        ? Duration.zero
+        : BirkaMotion.base;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          expanded: _open,
+          button: true,
+          child: InkWell(
+            onTap: () =>
+                setState(() => _visible = _open ? 0 : planPaymentPageSize),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: BirkaTokens.sizeTouchTarget,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _Line(
+                      label: planPaymentsLabel(plan),
+                      amount: -plan.paid,
+                    ),
+                  ),
+                  const SizedBox(width: BirkaTokens.spaceXxs),
+                  AnimatedRotation(
+                    turns: _open ? 0.25 : 0,
+                    duration: duration,
+                    curve: BirkaMotion.standardCurve,
+                    child: BirkaIcon(
+                      BirkaGlyph.chevron,
+                      size: 16,
+                      color: BirkaColors.of(context).textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        AnimatedSize(
+          alignment: Alignment.topCenter,
+          duration: duration,
+          curve: BirkaMotion.standardCurve,
+          child: _open
+              ? GlassListGroup(
+                  children: [
+                    for (final (:schedule, :on) in plan.payments.take(_visible))
+                      GlassListRow(
+                        key: ValueKey((schedule.id, on)),
+                        title: occurrenceName(schedule, on),
+                        subtitle: fullDate(on, plan.today),
+                        trailing: AmountText(
+                          formatMoney(-schedule.amountOn(on)),
+                          value: -schedule.amountOn(on).minorUnits,
+                          style: BirkaTextStyles.of(context).bodyStrong,
+                        ),
+                      ),
+                  ],
+                )
+              : const SizedBox.shrink(),
+        ),
+        if (_open && _visible < plan.payments.length)
+          BirkaButton(
+            label: t.app.more,
+            quiet: true,
+            compact: true,
+            onPressed: () => setState(() => _visible += planPaymentPageSize),
+          ),
+      ],
+    );
+  }
+}
+
 /// A line of the sum: what it is, and its amount, which rolls when it
 /// changes.
 class _Line extends StatelessWidget {
@@ -442,8 +529,8 @@ class _Line extends StatelessWidget {
     final colors = BirkaColors.of(context);
     final styles = BirkaTextStyles.of(context);
     final style = strong ? styles.bodyStrong : styles.body;
-    return SizedBox(
-      height: 28,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 28),
       child: Row(
         children: [
           Expanded(
