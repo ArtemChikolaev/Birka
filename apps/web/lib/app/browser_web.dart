@@ -9,6 +9,8 @@ import 'package:design_jaspr/design_jaspr.dart' show wideScreenQuery;
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 import 'package:help_common/help_common.dart';
+import 'package:http/browser_client.dart';
+import 'package:http/http.dart' as http;
 import 'package:import_common/import_common.dart';
 import 'package:sqlite3/wasm.dart';
 import 'package:web/web.dart' as web;
@@ -463,3 +465,6 @@ AppAbout get browserAbout => AppAbout(
   system: browserSystem(web.window.navigator.userAgent),
   locale: web.window.navigator.language,
 );
+
+/// HTTP transport for the optional account's HttpOnly session cookie.
+http.Client accountClient() => BrowserClient()..withCredentials = true;

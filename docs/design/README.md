@@ -176,7 +176,7 @@ welcome and a search with no matches have distinct messages.
 [Phone preview](mockups/31-tag-search-phone.png) ·
 [Desktop preview](mockups/32-tag-search-web.png)
 
-### Optional Birka account (proposal)
+### Optional Birka account
 
 The first-run setup stays focused on the local ledger. This prototype puts
 **Birka account** in More and explores a single email-code flow for a first
@@ -189,7 +189,7 @@ Signing in establishes an identity. An existing device keeps its records.
 A fresh device can recover records through the existing backup-file flow.
 Signing out leaves the local ledger in place. Encrypted device linking and
 recovery of encryption keys need a separate design before enabling sync.
-The delivery method and identity provider are open product decisions.
+Both hosts use the Birka email-code service described in [ADR 0035](../adr/0035-optional-account.md).
 
 [Interactive account prototype](mockups/optional-account.html) ·
 [Phone preview](mockups/33-account-phone.png) ·

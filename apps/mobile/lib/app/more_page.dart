@@ -30,6 +30,10 @@ class MorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final styles = BirkaTextStyles.of(context);
     final colors = BirkaColors.of(context);
+    final phone = switch (Theme.of(context).platform) {
+      TargetPlatform.iOS || TargetPlatform.android => true,
+      _ => false,
+    };
     return SafeArea(
       bottom: false,
       child: ListView(
@@ -116,18 +120,35 @@ class MorePage extends StatelessWidget {
                 ),
                 onTap: () => context.push(Paths.limits),
               ),
+              GlassListRow(
+                leading: ExcludeSemantics(
+                  child: GlyphBadge(
+                    glyph: BirkaGlyph.contact,
+                    color: colors.accent,
+                  ),
+                ),
+                title: t.identity.title,
+                trailing: BirkaIcon(
+                  BirkaGlyph.chevron,
+                  size: 18,
+                  color: colors.textSubtle,
+                ),
+                onTap: () => context.push(Paths.identity),
+              ),
               DebtsMoreRow(onOpen: () => context.push(Paths.debts)),
               // The widgets of the home screen live on phones (ADR 0031).
-              if (Theme.of(context).platform
-                  case TargetPlatform.iOS || TargetPlatform.android)
+              if (phone)
                 WidgetsMoreRow(onOpen: () => context.push(Paths.widgets)),
             ],
           ),
           const SizedBox(height: BirkaTokens.spaceLg),
           const SettingsSection(),
           const SizedBox(height: BirkaTokens.spaceLg),
-          const RemindersSection(),
-          const SizedBox(height: BirkaTokens.spaceLg),
+          // The calendar plugin is available on Android and iOS.
+          if (phone) ...[
+            const RemindersSection(),
+            const SizedBox(height: BirkaTokens.spaceLg),
+          ],
           SectionLabel(t.app.support, color: colors.textMuted),
           const SizedBox(height: BirkaTokens.spaceXs),
           GlassListGroup(

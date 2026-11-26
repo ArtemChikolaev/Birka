@@ -42,6 +42,10 @@ dependencies:
   help_jaspr:
     path: ../../packages/features/help/jaspr
   http: ^1.6.0
+  identity_common:
+    path: ../../packages/features/identity/common
+  identity_jaspr:
+    path: ../../packages/features/identity/jaspr
   import_common:
     path: ../../packages/features/import/common
   import_jaspr:

@@ -27,13 +27,15 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:help_common/help_common.dart' show HelpCubit, HelpLinks;
 import 'package:help_flutter/help_flutter.dart';
+import 'package:identity_common/identity_common.dart';
+import 'package:identity_flutter/identity_flutter.dart';
 import 'package:import_common/import_common.dart'
     show ImportCubit, StatementFiles;
 import 'package:import_flutter/import_flutter.dart';
 import 'package:inbox_common/inbox_common.dart'
     show InboxCubit, InboxSummaryCubit;
 import 'package:inbox_flutter/inbox_flutter.dart';
-import 'package:ledger/ledger.dart' show TagMarking;
+import 'package:ledger/ledger.dart' show LedgerRepository, TagMarking;
 import 'package:limits_common/limits_common.dart';
 import 'package:limits_flutter/limits_flutter.dart';
 import 'package:notifications_common/notifications_common.dart'
@@ -129,6 +131,9 @@ abstract final class Paths {
 
   /// Help and feedback.
   static const help = '/help';
+
+  /// Optional email-code sign-in.
+  static const identity = '/identity';
 
   /// The widgets of the home screen (ADR 0031).
   static const widgets = '/widgets';
@@ -479,6 +484,23 @@ GoRouter buildRouter(
             onBack: () => context.pop(),
             demo: demoStateIn(getIt<SettingsStore>()).isOn,
             onDemoChanged: onDemoChanged,
+          ),
+        ),
+      ),
+      GoRoute(
+        path: Paths.identity,
+        parentNavigatorKey: rootKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => getIt<IdentityCubit>(),
+          child: StreamBuilder(
+            stream: getIt<LedgerRepository>().watchCounts(),
+            builder: (_, snapshot) => IdentityPage(
+              accounts: snapshot.data?.accounts,
+              operations: snapshot.data?.transactions,
+              onBack: () =>
+                  context.canPop() ? context.pop() : context.go(Paths.more),
+              onData: () => context.push(Paths.backup),
+            ),
           ),
         ),
       ),

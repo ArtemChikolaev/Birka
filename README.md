@@ -79,6 +79,7 @@ packages/design/brand    the app icon and the art of the first screen: SVG and P
 packages/features        one folder per feature: accounts, backup, categories, help, import,
                          inbox, notifications, onboarding, overview, reports, schedules,
                          settings, tags, transactions
+server/auth              optional email-code service in Go with a private SQLite database
 tools                    repository tooling: package boundary checks, dev scripts
 third_party/drift        drift 2.31.0 with fixes of 2.34.2 and 2.35.1, until the Flutter upgrade
 docs/adr                 architecture decision records
@@ -91,7 +92,9 @@ data, domain and presentation layers and a Flutter and a Jaspr UI
 ## Getting started
 
 You need Flutter 3.38.10 (pinned in `.fvmrc`) and GNU Make, and CocoaPods to
-build for iOS and macOS.
+build for iOS and macOS. The account service tests also require Go 1.25 or later.
+See [local email-code sign-in](server/README.md) to run either host with a local
+SMTP inbox. Without a configured service, both hosts work as guest apps.
 
 ```bash
 make bootstrap                      # fetch dependencies

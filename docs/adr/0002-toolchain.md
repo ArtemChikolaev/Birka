@@ -78,3 +78,7 @@
 - drift itself comes from `third_party/drift`: 2.31.0 with one fix of 2.35.1,
   until this upgrade ([ADR 0015](0015-drift-closed-tabs.md)).
 - pub updates from Dependabot are off; GitHub Actions updates stay on.
+
+The optional identity service uses Go 1.25 or later and pure-Go SQLite through
+`modernc.org/sqlite` v1.53.0. Native sessions use `flutter_secure_storage`
+^10.3.4 ([ADR 0035](0035-optional-account.md)).

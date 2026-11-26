@@ -74,6 +74,10 @@ class TranslationsRu extends Translations
   @override
   late final _Translations$help$ru help = _Translations$help$ru._(_root);
   @override
+  late final _Translations$identity$ru identity = _Translations$identity$ru._(
+    _root,
+  );
+  @override
   late final _Translations$imports$ru imports = _Translations$imports$ru._(
     _root,
   );
@@ -816,6 +820,95 @@ class _Translations$help$ru extends Translations$help$en {
       'Почта не открылась. Адрес скопирован: ${address}';
   @override
   String get noPage => 'Страница не открылась. Попробуйте ещё раз.';
+}
+
+// Path: identity
+class _Translations$identity$ru extends Translations$identity$en {
+  _Translations$identity$ru._(TranslationsRu root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsRu _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'Аккаунт Birka';
+  @override
+  String get entry => 'Вход по почте';
+  @override
+  String get intro => 'При первом подтверждении адреса создадим аккаунт Birka.';
+  @override
+  String get email => 'Электронная почта';
+  @override
+  String get send => 'Получить код';
+  @override
+  String get guest => 'Продолжить без аккаунта';
+  @override
+  String get codeTitle => 'Введите код из письма';
+  @override
+  String sent({required Object email}) =>
+      'Шестизначный код отправлен на ${email}. Он действует 10 минут.';
+  @override
+  String get code => 'Код из письма';
+  @override
+  String get verify => 'Подтвердить';
+  @override
+  String get resend => 'Получить новый код';
+  @override
+  String get change => 'Изменить адрес';
+  @override
+  String get profile => 'Вы вошли в аккаунт';
+  @override
+  String get local =>
+      'Счета и операции хранятся на этом устройстве. Перенести записи можно через файл копии.';
+  @override
+  String get copy => 'Как перенести записи';
+  @override
+  String get logout => 'Выйти из аккаунта';
+  @override
+  String get back => 'Ещё';
+  @override
+  String get retry => 'Попробовать снова';
+  @override
+  String get offline =>
+      'Вход пока не настроен. Вы можете вести учёт без аккаунта.';
+  @override
+  String get unavailable =>
+      'Не удалось связаться с сервисом входа. Попробуйте ещё раз.';
+  @override
+  String get badEmail => 'Введите адрес электронной почты.';
+  @override
+  String get badCode =>
+      'Код не подошёл или истёк. Проверьте цифры или запросите новый.';
+  @override
+  String get limited =>
+      'Слишком много запросов. Подождите перед следующей попыткой.';
+  @override
+  String get cookies => 'Разрешите браузеру сохранять cookie для входа.';
+  @override
+  String get working => 'Подождите…';
+  @override
+  String get copyTitle => 'Перенос через файл';
+  @override
+  String get copySave =>
+      'На устройстве с записями откройте раздел «Данные» и сохраните копию.';
+  @override
+  String get copyMove => 'Передайте файл на новое устройство.';
+  @override
+  String get copyRestore =>
+      'Откройте там «Данные» → «Восстановить из копии». Проверьте сводку и подтвердите замену записей.';
+  @override
+  String get copyBack => 'К аккаунту';
+  @override
+  String get fresh =>
+      'Чтобы вернуть свои записи, перенесите файл копии с прежнего устройства.';
+  @override
+  String get empty => 'На устройстве пока нет записей';
+  @override
+  String device({required Object accounts, required Object operations}) =>
+      'На устройстве · ${accounts} · ${operations}';
+  @override
+  String get available => 'Учёт доступен на этом устройстве и без входа.';
 }
 
 // Path: imports
@@ -6058,6 +6151,55 @@ extension on TranslationsRu {
             ({required Object address}) =>
                 'Почта не открылась. Адрес скопирован: ${address}',
           'help.noPage' => 'Страница не открылась. Попробуйте ещё раз.',
+          'identity.title' => 'Аккаунт Birka',
+          'identity.entry' => 'Вход по почте',
+          'identity.intro' =>
+            'При первом подтверждении адреса создадим аккаунт Birka.',
+          'identity.email' => 'Электронная почта',
+          'identity.send' => 'Получить код',
+          'identity.guest' => 'Продолжить без аккаунта',
+          'identity.codeTitle' => 'Введите код из письма',
+          'identity.sent' =>
+            ({required Object email}) =>
+                'Шестизначный код отправлен на ${email}. Он действует 10 минут.',
+          'identity.code' => 'Код из письма',
+          'identity.verify' => 'Подтвердить',
+          'identity.resend' => 'Получить новый код',
+          'identity.change' => 'Изменить адрес',
+          'identity.profile' => 'Вы вошли в аккаунт',
+          'identity.local' =>
+            'Счета и операции хранятся на этом устройстве. Перенести записи можно через файл копии.',
+          'identity.copy' => 'Как перенести записи',
+          'identity.logout' => 'Выйти из аккаунта',
+          'identity.back' => 'Ещё',
+          'identity.retry' => 'Попробовать снова',
+          'identity.offline' =>
+            'Вход пока не настроен. Вы можете вести учёт без аккаунта.',
+          'identity.unavailable' =>
+            'Не удалось связаться с сервисом входа. Попробуйте ещё раз.',
+          'identity.badEmail' => 'Введите адрес электронной почты.',
+          'identity.badCode' =>
+            'Код не подошёл или истёк. Проверьте цифры или запросите новый.',
+          'identity.limited' =>
+            'Слишком много запросов. Подождите перед следующей попыткой.',
+          'identity.cookies' =>
+            'Разрешите браузеру сохранять cookie для входа.',
+          'identity.working' => 'Подождите…',
+          'identity.copyTitle' => 'Перенос через файл',
+          'identity.copySave' =>
+            'На устройстве с записями откройте раздел «Данные» и сохраните копию.',
+          'identity.copyMove' => 'Передайте файл на новое устройство.',
+          'identity.copyRestore' =>
+            'Откройте там «Данные» → «Восстановить из копии». Проверьте сводку и подтвердите замену записей.',
+          'identity.copyBack' => 'К аккаунту',
+          'identity.fresh' =>
+            'Чтобы вернуть свои записи, перенесите файл копии с прежнего устройства.',
+          'identity.empty' => 'На устройстве пока нет записей',
+          'identity.device' =>
+            ({required Object accounts, required Object operations}) =>
+                'На устройстве · ${accounts} · ${operations}',
+          'identity.available' =>
+            'Учёт доступен на этом устройстве и без входа.',
           'imports.account' => 'Счёт из выписки',
           'imports.formats.alfa' => 'Альфа-Банк',
           'imports.formats.tbank' => 'Т-Банк',
@@ -7093,6 +7235,9 @@ extension on TranslationsRu {
           'notifications.filters.import' => 'Импорт',
           'notifications.filtersLabel' => 'Чьи уведомления',
           'notifications.emptyTitle' => 'Пока тихо',
+          _ => null,
+        } ??
+        switch (path) {
           'notifications.emptyText' =>
             'Здесь появятся напоминания о платежах и сроках долгов, предупреждения о лимитах и итоги импорта.',
           'notifications.emptyImports' =>
@@ -7172,9 +7317,6 @@ extension on TranslationsRu {
             ({required Object left}) => 'Отдали часть · осталось ${left}',
           'notifications.debtWaits' =>
             ({required Object left}) => 'Ещё не вернули · осталось ${left}',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.debtWaitsRepaid' =>
             ({required Object left}) => 'Ещё не отдали · осталось ${left}',
           'notifications.debtGone' => 'Этого долга больше нет',
@@ -8099,6 +8241,9 @@ extension on TranslationsRu {
           'tags.report.beforeTrip' => 'До поездки',
           'tags.report.duringTrip' => 'В поездке',
           'tags.report.afterTrip' => 'После поездки',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.report.rateMissing' => 'Нет курса',
           'tags.report.expenses' =>
             ({required num n}) =>
@@ -8182,9 +8327,6 @@ extension on TranslationsRu {
             'Метку ставите сами — при вводе операции или в её карточке.',
           'tags.form.plainNote' =>
             'Метку ставите сами — при вводе операции или в её карточке. Отчёт соберёт траты во всех валютах.',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.form.footTrip' =>
             'Метку можно поставить и на билеты, купленные заранее',
           'tags.form.footPlain' => 'Метки живут в «Ещё» → «Метки»',

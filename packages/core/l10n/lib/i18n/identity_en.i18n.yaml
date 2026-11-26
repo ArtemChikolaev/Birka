@@ -1,0 +1,34 @@
+title: Birka account
+entry: Sign in by email
+intro: Confirm your address for the first time to create a Birka account.
+email: Email address
+send: Send code
+guest: Continue without an account
+codeTitle: Enter the code from your email
+sent: A six-digit code was sent to $email. It is valid for 10 minutes.
+code: Email code
+verify: Confirm
+resend: Send a new code
+change: Change email address
+profile: You are signed in
+local: Your accounts and operations stay on this device. Use a backup file to transfer your records.
+copy: How to transfer records
+logout: Sign out
+back: More
+retry: Try again
+offline: Sign-in is not configured yet. You can track your money without an account.
+unavailable: Could not reach the sign-in service. Please try again.
+badEmail: Enter an email address.
+badCode: The code is incorrect or has expired. Check it or request a new one.
+limited: Too many requests. Please wait before trying again.
+cookies: Allow the browser to keep cookies for sign-in.
+working: Please wait…
+copyTitle: Transfer using a file
+copySave: On the device with your records, open Data and save a backup.
+copyMove: Transfer the file to your new device.
+copyRestore: Open Data on that device and choose Restore from backup. Review the summary and confirm the replacement.
+copyBack: Back to account
+fresh: To bring back your records, transfer a backup file from your previous device.
+empty: No records on this device yet
+device: On this device · $accounts · $operations
+available: You can keep using Birka on this device without signing in.

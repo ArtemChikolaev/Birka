@@ -36,6 +36,9 @@ workspace:
   - packages/features/help/common
   - packages/features/help/flutter
   - packages/features/help/jaspr
+  - packages/features/identity/common
+  - packages/features/identity/flutter
+  - packages/features/identity/jaspr
   - packages/features/inbox/common
   - packages/features/inbox/flutter
   - packages/features/inbox/jaspr

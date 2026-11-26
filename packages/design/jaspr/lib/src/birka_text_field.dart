@@ -13,6 +13,7 @@ class BirkaTextField extends StatelessComponent {
     this.hint,
     this.error,
     this.inputMode,
+    this.autocomplete = 'off',
     this.maxLength,
     this.sentence = false,
     this.textClass = 'text-body',
@@ -38,6 +39,9 @@ class BirkaTextField extends StatelessComponent {
 
   /// The keyboard of the field: `decimal`, `numeric` and so on.
   final String? inputMode;
+
+  /// The browser autofill purpose for this field.
+  final String autocomplete;
 
   /// How many characters the field takes.
   final int? maxLength;
@@ -72,7 +76,7 @@ class BirkaTextField extends StatelessComponent {
               placeholder: hint,
               onInput: onChanged,
               attributes: {
-                'autocomplete': 'off',
+                'autocomplete': autocomplete,
                 'maxlength': ?maxLength?.toString(),
                 if (sentence) 'autocapitalize': 'sentences',
                 if (error != null) 'aria-invalid': 'true',
@@ -86,7 +90,7 @@ class BirkaTextField extends StatelessComponent {
               value: value,
               onInput: onChanged,
               attributes: {
-                'autocomplete': 'off',
+                'autocomplete': autocomplete,
                 'placeholder': ?hint,
                 'inputmode': ?inputMode,
                 'maxlength': ?maxLength?.toString(),

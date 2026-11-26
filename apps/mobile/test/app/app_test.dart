@@ -93,7 +93,7 @@ import 'package:schedules_common/schedules_common.dart'
         SchedulesCubit,
         SchedulesRepository;
 import 'package:schedules_flutter/schedules_flutter.dart'
-    show ScheduleFormPage, SchedulesPage;
+    show RemindersSection, ScheduleFormPage, SchedulesPage;
 import 'package:settings_common/settings_common.dart'
     show BaseCurrency, MonthStart, Settings, SettingsCubit, SettingsStore;
 import 'package:tags_common/tags_common.dart'
@@ -1338,6 +1338,21 @@ void main() {
     expect(find.text('Казань'), findsOneWidget);
     expect(find.text('+ ${t.transactions.addTag}'), findsNothing);
   });
+
+  testWidgets(
+    'More shows the account entry on macOS without a phone calendar',
+    (tester) async {
+      await tester.pumpWidget(BirkaApp(getIt: getIt));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.app.more));
+      await tester.pumpAndSettle();
+
+      await scrollMoreTo(tester, find.text(t.identity.title));
+      expect(find.text(t.identity.title), findsOneWidget);
+      expect(find.byType(RemindersSection), findsNothing);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.macOS),
+  );
 
   testWidgets('the widgets open from the more tab, over the bar', (
     tester,
