@@ -62,7 +62,7 @@ void main() {
   });
 
   testComponents('leads to the accounts, the categories, the import, the data, '
-      'the метки, the limits, the debts and help', (
+      'the метки, the limits, the optional account, the debts and help', (
     tester,
   ) async {
     pump(tester);
@@ -83,6 +83,7 @@ void main() {
         'data/',
         'tags/',
         'limits/',
+        'identity/',
         'debts/',
         'help/',
         'https://github.com/ArtemChikolaev/Birka',
