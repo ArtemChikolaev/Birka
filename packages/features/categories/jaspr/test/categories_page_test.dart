@@ -97,6 +97,41 @@ void main() {
     expect(indented, findsNComponents(2));
   });
 
+  testComponents('filtered rows keep their links and the archive heading', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      FakeCategoriesRepository([
+        category('Еда'),
+        category('Кофейни', parentId: 'Еда'),
+        category('Продукты', parentId: 'Еда'),
+        category('Кофе в офисе', archived: true),
+      ]),
+    );
+    GlassSearchField field() =>
+        find.byType(GlassSearchField).evaluate().single.component
+            as GlassSearchField;
+    field().onChanged('КОФЕ');
+    await tester.pump();
+    expect(links(), [
+      'add/expense',
+      'open/Еда',
+      'open/Кофейни',
+      'open/Кофе в офисе',
+    ]);
+    expect(find.text(t.categories.archive), findsOneComponent);
+
+    field().onChanged('xyz');
+    await tester.pump();
+    expect(find.text(t.categories.noMatches), findsOneComponent);
+    expect(find.text(t.categories.emptyTitle), findsNothing);
+    expect(links(), ['add/expense']);
+    field().onChanged('');
+    await tester.pump();
+    expect(links(), contains('open/Продукты'));
+  });
+
   testComponents('the switch shows the other kind, and adding follows it', (
     tester,
   ) async {

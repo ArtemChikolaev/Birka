@@ -516,6 +516,15 @@ class Translations$categories$en {
   /// en: 'Income'
   String get income => 'Income';
 
+  /// en: 'Find a category'
+  String get search => 'Find a category';
+
+  /// en: 'Clear search'
+  String get clearSearch => 'Clear search';
+
+  /// en: 'No categories match this name.'
+  String get noMatches => 'No categories match this name.';
+
   /// en: 'No categories yet'
   String get emptyTitle => 'No categories yet';
 
@@ -6843,6 +6852,9 @@ extension on Translations {
           'categories.add' => 'Add category',
           'categories.expense' => 'Expenses',
           'categories.income' => 'Income',
+          'categories.search' => 'Find a category',
+          'categories.clearSearch' => 'Clear search',
+          'categories.noMatches' => 'No categories match this name.',
           'categories.emptyTitle' => 'No categories yet',
           'categories.emptyHint' => 'Take a ready set or make your own.',
           'categories.addPresets' => 'Add a ready set',
@@ -7196,13 +7208,13 @@ extension on Translations {
           'help.letterText' =>
             'Your mail app opens with this letter. It holds only what you see below, and you can add to it.',
           'help.to' => 'To',
+          _ => null,
+        } ??
+        switch (path) {
           'help.subject' => 'Subject',
           'help.letterPrivacy' =>
             'Operations, amounts and account names stay out of the letter.',
           'help.openMail' => 'Open mail',
-          _ => null,
-        } ??
-        switch (path) {
           'help.cancel' => 'Cancel',
           'help.questionSubject' => 'Birka · question',
           'help.bugSubject' =>
@@ -8157,6 +8169,9 @@ extension on Translations {
           'limits.suggestions.jumps' =>
             ({required Object least, required Object most}) =>
                 'jumps: from ${least} to ${most}',
+          _ => null,
+        } ??
+        switch (path) {
           'limits.suggestions.rare' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -8168,9 +8183,6 @@ extension on Translations {
           'limits.suggestions.regular' => 'these are regular payments',
           'limits.suggestions.later' =>
             'You can change any limit later, on the page «Limits».',
-          _ => null,
-        } ??
-        switch (path) {
           'limits.suggestions.put' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -9128,12 +9140,12 @@ extension on Translations {
           'settings.monthStartNote' => 'for the overview and the reports',
           'settings.monthStartCalendar' => 'as on the calendar',
           'tags.title' => 'Tags',
-          'tags.back' => 'Back',
-          'tags.add' => 'New tag',
-          'tags.close' => 'Close',
           _ => null,
         } ??
         switch (path) {
+          'tags.back' => 'Back',
+          'tags.add' => 'New tag',
+          'tags.close' => 'Close',
           'tags.edit' => 'Edit',
           'tags.search' => 'Find a tag or trip',
           'tags.noMatches' => 'No tags or trips match this name.',

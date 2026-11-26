@@ -61,6 +61,34 @@ void main() {
     expect(cubit.state, loaded(CategoryKind.expense, ['Food']));
   });
 
+  test(
+    'keeps the query on updates and retries, and clears it on a new kind',
+    () async {
+      final repository = FakeCategoriesRepository([food, salary]);
+      final cubit = CategoriesCubit(repository);
+      addTearDown(cubit.close);
+      await settle();
+
+      cubit.queryChanged('tax');
+      repository.emit([food, salary, testCategory('Taxi')]);
+      await settle();
+      final loaded = cubit.state as CategoriesLoaded;
+      expect(
+        loaded.overview.matching(loaded.query).groups.single.category.name,
+        'Taxi',
+      );
+
+      repository.failStream();
+      await settle();
+      await cubit.retry();
+      await settle();
+      expect(cubit.state.query, 'tax');
+      await cubit.kindChanged(CategoryKind.income);
+      await settle();
+      expect(cubit.state.query, isEmpty);
+    },
+  );
+
   test('adds the ready set in the language of the user', () async {
     LocaleSettings.setLocaleSync(AppLocale.ru);
     addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));

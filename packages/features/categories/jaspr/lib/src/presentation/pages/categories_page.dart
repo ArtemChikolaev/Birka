@@ -109,22 +109,37 @@ class CategoriesPage extends StatelessComponent {
             ],
           ),
         ],
-        CategoriesLoaded(:final overview) => _content(overview),
+        CategoriesLoaded() => _content(context, state),
       },
       if (note != null && state is CategoriesLoaded)
         p(classes: 'text-caption categories__note', [.text(note)]),
     ];
   }
 
-  List<Component> _content(CategoriesOverview overview) {
+  List<Component> _content(BuildContext context, CategoriesLoaded state) {
+    final overview = state.overview.matching(state.query);
     return [
+      GlassSearchField(
+        key: ValueKey(state.kind),
+        label: t.categories.search,
+        hint: t.categories.search,
+        clearLabel: t.categories.clearSearch,
+        value: state.query,
+        onChanged: context.read<CategoriesCubit>().queryChanged,
+      ),
+      if (overview.isEmpty)
+        p(
+          classes: 'text-caption categories__note',
+          attributes: const {'role': 'status'},
+          [.text(t.categories.noMatches)],
+        ),
       if (overview.groups.isNotEmpty)
         GlassListGroup(
           children: [
             for (final group in overview.groups) ...[
               GlassListRow(
                 title: group.category.name,
-                subtitle: group.children.isEmpty
+                subtitle: state.searching || group.children.isEmpty
                     ? null
                     : t.categories.subcategories(n: group.children.length),
                 leading: categoryBadge(group.category),

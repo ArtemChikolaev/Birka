@@ -1,3 +1,4 @@
+import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 
@@ -50,6 +51,30 @@ final class CategoriesOverview {
 
   /// The categories that were put away.
   final List<Category> archived;
+
+  /// Matches names within this kind, keeping the parent of a matching child.
+  /// A matching active parent includes its family. Archive rows match by name.
+  CategoriesOverview matching(String query) {
+    final key = searchKey(query);
+    if (key.isEmpty) return this;
+
+    bool matches(Category category) => searchKey(category.name).contains(key);
+    final visible = <CategoryGroup>[];
+    for (final group in groups) {
+      if (matches(group.category)) {
+        visible.add(group);
+      } else {
+        final children = group.children.where(matches).toList();
+        if (children.isNotEmpty) {
+          visible.add(CategoryGroup(group.category, children));
+        }
+      }
+    }
+    return CategoriesOverview(
+      groups: visible,
+      archived: archived.where(matches).toList(),
+    );
+  }
 
   /// Whether there is nothing to show.
   bool get isEmpty => groups.isEmpty && archived.isEmpty;

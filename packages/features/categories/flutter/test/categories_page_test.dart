@@ -102,6 +102,43 @@ void main() {
     expect(find.byType(GlyphBadge), findsNWidgets(3));
   });
 
+  testWidgets('search keeps parent context and opens a matching child', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      FakeCategoriesRepository([
+        category('Еда'),
+        category('Кофейни', parentId: 'Еда'),
+        category('Продукты', parentId: 'Еда'),
+        category('Кофе в офисе', archived: true),
+        category('Зарплата', kind: CategoryKind.income),
+      ]),
+    );
+    final field = find.byType(TextField);
+    await tester.enterText(field, 'кофе');
+    await tester.pump();
+    expect(find.text('Еда'), findsOneWidget);
+    expect(find.text('Продукты'), findsNothing);
+    expect(find.text('Кофе в офисе'), findsOneWidget);
+    await tester.tap(find.text('Кофейни'));
+    expect(opened, ['Кофейни']);
+
+    await tester.enterText(field, 'xyz');
+    await tester.pump();
+    expect(find.text(t.categories.noMatches), findsOneWidget);
+    expect(find.text(t.categories.emptyTitle), findsNothing);
+    await tester.tap(find.bySemanticsLabel(t.categories.clearSearch));
+    await tester.pump();
+    expect(find.text('Продукты'), findsOneWidget);
+
+    await tester.enterText(field, 'кофе');
+    await tester.tap(find.text('ДОХОДЫ'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(field).controller!.text, isEmpty);
+    expect(find.text('Зарплата'), findsOneWidget);
+  });
+
   testWidgets('the switch shows the other kind, and adding follows it', (
     tester,
   ) async {

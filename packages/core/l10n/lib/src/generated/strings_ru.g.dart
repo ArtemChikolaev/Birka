@@ -477,6 +477,12 @@ class _Translations$categories$ru extends Translations$categories$en {
   @override
   String get income => 'Доходы';
   @override
+  String get search => 'Найти категорию';
+  @override
+  String get clearSearch => 'Очистить поиск';
+  @override
+  String get noMatches => 'Категорий с таким названием не найдено.';
+  @override
   String get emptyTitle => 'Пока нет категорий';
   @override
   String get emptyHint => 'Возьмите готовый набор или создайте свои.';
@@ -5825,6 +5831,9 @@ extension on TranslationsRu {
           'categories.add' => 'Добавить категорию',
           'categories.expense' => 'Расходы',
           'categories.income' => 'Доходы',
+          'categories.search' => 'Найти категорию',
+          'categories.clearSearch' => 'Очистить поиск',
+          'categories.noMatches' => 'Категорий с таким названием не найдено.',
           'categories.emptyTitle' => 'Пока нет категорий',
           'categories.emptyHint' => 'Возьмите готовый набор или создайте свои.',
           'categories.addPresets' => 'Добавить готовый набор',
@@ -6187,13 +6196,13 @@ extension on TranslationsRu {
           'help.letterText' =>
             'Откроется ваша почта с этим письмом. В нём будет только то, что видно ниже, и вы сможете его дописать.',
           'help.to' => 'Кому',
+          _ => null,
+        } ??
+        switch (path) {
           'help.subject' => 'Тема',
           'help.letterPrivacy' =>
             'Операции, суммы и названия счетов в письмо не попадают.',
           'help.openMail' => 'Открыть почту',
-          _ => null,
-        } ??
-        switch (path) {
           'help.cancel' => 'Отмена',
           'help.questionSubject' => 'Birka · вопрос',
           'help.bugSubject' =>
@@ -7237,6 +7246,9 @@ extension on TranslationsRu {
           'limits.suggestions.jumps' =>
             ({required Object least, required Object most}) =>
                 'скачут: от ${least} до ${most}',
+          _ => null,
+        } ??
+        switch (path) {
           'limits.suggestions.rare' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -7251,9 +7263,6 @@ extension on TranslationsRu {
           'limits.suggestions.regular' => 'это регулярные платежи',
           'limits.suggestions.later' =>
             'Сумму любого лимита можно поменять потом, на странице «Лимиты».',
-          _ => null,
-        } ??
-        switch (path) {
           'limits.suggestions.put' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -8281,12 +8290,12 @@ extension on TranslationsRu {
           'settings.monthStartNote' => 'для обзора и отчётов',
           'settings.monthStartCalendar' => 'как в календаре',
           'tags.title' => 'Метки',
-          'tags.back' => 'Назад',
-          'tags.add' => 'Новая метка',
-          'tags.close' => 'Закрыть',
           _ => null,
         } ??
         switch (path) {
+          'tags.back' => 'Назад',
+          'tags.add' => 'Новая метка',
+          'tags.close' => 'Закрыть',
           'tags.edit' => 'Изменить',
           'tags.search' => 'Найти метку или поездку',
           'tags.noMatches' => 'Меток и поездок с таким названием не найдено.',

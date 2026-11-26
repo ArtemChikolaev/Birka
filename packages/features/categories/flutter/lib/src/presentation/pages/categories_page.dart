@@ -80,11 +80,7 @@ class CategoriesPage extends StatelessWidget {
                   CategoriesLoaded(:final overview) when overview.isEmpty => [
                     _Empty(onAddOwn: () => onAdd(state.kind)),
                   ],
-                  CategoriesLoaded(:final overview) => _content(
-                    context,
-                    overview,
-                    state.kind,
-                  ),
+                  CategoriesLoaded() => _content(context, state),
                 },
               ],
             ),
@@ -96,69 +92,110 @@ class CategoriesPage extends StatelessWidget {
 
   List<Widget> _content(
     BuildContext context,
-    CategoriesOverview overview,
-    CategoryKind kind,
+    CategoriesLoaded state,
   ) {
     final colors = BirkaColors.of(context);
+    final overview = state.overview.matching(state.query);
     return [
-      // The categories of another kind come at once. Within a kind a row that
-      // comes opens and one that goes closes, and so does the archive with its
-      // first and its last category.
-      AnimatedColumn(
-        key: ValueKey(kind),
-        children: [
-          if (overview.groups.isNotEmpty)
-            GlassListGroup(
-              key: const ValueKey('groups'),
-              children: [
-                for (final group in overview.groups) ...[
-                  GlassListRow(
-                    key: ValueKey(group.category.id),
-                    title: group.category.name,
-                    subtitle: group.children.isEmpty
-                        ? null
-                        : t.categories.subcategories(n: group.children.length),
-                    leading: categoryBadge(group.category),
-                    onTap: () => onOpen(group.category.id),
-                  ),
-                  for (final child in group.children)
-                    Padding(
-                      key: ValueKey(child.id),
-                      padding: const EdgeInsets.only(left: BirkaTokens.spaceXl),
-                      child: GlassListRow(
-                        title: child.name,
-                        leading: categoryBadge(child, size: 28),
-                        onTap: () => onOpen(child.id),
-                      ),
+      _CategorySearch(key: ValueKey(state.kind), initialValue: state.query),
+      const SizedBox(height: BirkaTokens.spaceMd),
+      if (overview.isEmpty)
+        Text(
+          t.categories.noMatches,
+          style: BirkaTextStyles.of(
+            context,
+          ).caption.copyWith(color: colors.textMuted),
+        )
+      else
+        // A new kind or query replaces the list immediately. Ledger updates
+        // within the same search still animate.
+        AnimatedColumn(
+          key: ValueKey((state.kind, state.query)),
+          children: [
+            if (overview.groups.isNotEmpty)
+              GlassListGroup(
+                key: const ValueKey('groups'),
+                children: [
+                  for (final group in overview.groups) ...[
+                    GlassListRow(
+                      key: ValueKey(group.category.id),
+                      title: group.category.name,
+                      subtitle: state.searching || group.children.isEmpty
+                          ? null
+                          : t.categories.subcategories(
+                              n: group.children.length,
+                            ),
+                      leading: categoryBadge(group.category),
+                      onTap: () => onOpen(group.category.id),
                     ),
-                ],
-              ],
-            ),
-          if (overview.archived.isNotEmpty)
-            Column(
-              key: const ValueKey('archive'),
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: BirkaTokens.spaceLg),
-                SectionLabel(t.categories.archive, color: colors.textSubtle),
-                const SizedBox(height: BirkaTokens.spaceXs),
-                GlassListGroup(
-                  children: [
-                    for (final category in overview.archived)
-                      GlassListRow(
-                        key: ValueKey(category.id),
-                        title: category.name,
-                        leading: categoryBadge(category),
-                        onTap: () => onOpen(category.id),
+                    for (final child in group.children)
+                      Padding(
+                        key: ValueKey(child.id),
+                        padding: const EdgeInsets.only(
+                          left: BirkaTokens.spaceXl,
+                        ),
+                        child: GlassListRow(
+                          title: child.name,
+                          leading: categoryBadge(child, size: 28),
+                          onTap: () => onOpen(child.id),
+                        ),
                       ),
                   ],
-                ),
-              ],
-            ),
-        ],
-      ),
+                ],
+              ),
+            if (overview.archived.isNotEmpty)
+              Column(
+                key: const ValueKey('archive'),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: BirkaTokens.spaceLg),
+                  SectionLabel(t.categories.archive, color: colors.textSubtle),
+                  const SizedBox(height: BirkaTokens.spaceXs),
+                  GlassListGroup(
+                    children: [
+                      for (final category in overview.archived)
+                        GlassListRow(
+                          key: ValueKey(category.id),
+                          title: category.name,
+                          leading: categoryBadge(category),
+                          onTap: () => onOpen(category.id),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+          ],
+        ),
     ];
   }
+}
+
+class _CategorySearch extends StatefulWidget {
+  const _CategorySearch({required this.initialValue, super.key});
+
+  final String initialValue;
+
+  @override
+  State<_CategorySearch> createState() => _CategorySearchState();
+}
+
+class _CategorySearchState extends State<_CategorySearch> {
+  late final _controller = TextEditingController(text: widget.initialValue);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => GlassSearchField(
+    label: t.categories.search,
+    hint: t.categories.search,
+    clearLabel: t.categories.clearSearch,
+    controller: _controller,
+    onChanged: context.read<CategoriesCubit>().queryChanged,
+  );
 }
 
 class _Empty extends StatelessWidget {

@@ -45,6 +45,32 @@ void main() {
     expect(overview.groups.single.category.name, 'Orphan');
   });
 
+  test('matches families and archive names in directory order', () {
+    final all = CategoriesOverview.of([
+      testCategory('Еда'),
+      testCategory('Мёд', parentId: 'Еда'),
+      testCategory('Хлеб', parentId: 'Еда'),
+      testCategory('Медовые подарки'),
+      testCategory('Наборы', parentId: 'Медовые подарки'),
+      testCategory('Дом'),
+      testCategory('Мёд в офис', archived: true),
+      testCategory('Старые подарки', archived: true),
+    ]);
+    final result = all.matching('  МЕД ');
+    expect(result.groups.map((g) => g.category.name), [
+      'Еда',
+      'Медовые подарки',
+    ]);
+    expect(result.groups.first.children.map((c) => c.name), ['Мёд']);
+    expect(result.groups.last.children.map((c) => c.name), ['Наборы']);
+    expect(result.archived.map((c) => c.name), ['Мёд в офис']);
+    expect(all.matching('подарки').archived.single.name, 'Старые подарки');
+    expect(all.matching('офис').groups, isEmpty);
+    expect(all.matching('  '), same(all));
+    expect(all.matching('xyz').isEmpty, isTrue);
+    expect(all.groups.first.children, hasLength(2));
+  });
+
   test('is empty without categories', () {
     expect(CategoriesOverview.of(const []).isEmpty, isTrue);
   });

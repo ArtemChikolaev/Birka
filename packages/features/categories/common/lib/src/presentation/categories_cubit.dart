@@ -12,7 +12,10 @@ import 'package:meta/meta.dart';
 /// What the list of categories shows.
 @immutable
 sealed class CategoriesState {
-  const CategoriesState(this.kind);
+  const CategoriesState(this.kind, {this.query = ''});
+
+  /// The text in the search field for the current kind.
+  final String query;
 
   /// The kind on the screen.
   final CategoryKind kind;
@@ -21,22 +24,25 @@ sealed class CategoriesState {
 /// The first read has not come back yet.
 final class CategoriesLoading extends CategoriesState {
   /// Creates the state.
-  const CategoriesLoading(super.kind);
+  const CategoriesLoading(super.kind, {super.query});
 }
 
 /// The categories are here.
 final class CategoriesLoaded extends CategoriesState {
   /// Creates the state with [overview].
-  const CategoriesLoaded(super.kind, this.overview);
+  const CategoriesLoaded(super.kind, this.overview, {super.query});
 
   /// The categories of the kind.
   final CategoriesOverview overview;
+
+  /// Whether the list is narrowed by a name.
+  bool get searching => query.trim().isNotEmpty;
 }
 
 /// The categories could not be read.
 final class CategoriesFailed extends CategoriesState {
   /// Creates the state.
-  const CategoriesFailed(super.kind);
+  const CategoriesFailed(super.kind, {super.query});
 }
 
 /// Follows the categories of one kind in the local database.
@@ -56,8 +62,16 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     await _restart(kind);
   }
 
+  /// Filters the categories already loaded for the current kind.
+  void queryChanged(String query) {
+    final current = state;
+    if (current is CategoriesLoaded && current.query != query) {
+      emit(CategoriesLoaded(current.kind, current.overview, query: query));
+    }
+  }
+
   /// Reads the categories again after a failure.
-  Future<void> retry() => _restart(state.kind);
+  Future<void> retry() => _restart(state.kind, query: state.query);
 
   /// Adds the ready set of this kind, in the language of the user. The other
   /// kind stays as it is, because it may already hold categories of the user.
@@ -73,9 +87,9 @@ class CategoriesCubit extends Cubit<CategoriesState> {
   ]);
 
   /// Moves to [kind] at once and lets the old stream finish cancelling.
-  Future<void> _restart(CategoryKind kind) async {
+  Future<void> _restart(CategoryKind kind, {String query = ''}) async {
     final cancelled = _subscription?.cancel();
-    emit(CategoriesLoading(kind));
+    emit(CategoriesLoading(kind, query: query));
     _follow();
     await cancelled;
   }
@@ -86,9 +100,14 @@ class CategoriesCubit extends Cubit<CategoriesState> {
         .watchCategories(kind)
         .listen(
           (categories) => emit(
-            CategoriesLoaded(kind, CategoriesOverview.of(categories)),
+            CategoriesLoaded(
+              kind,
+              CategoriesOverview.of(categories),
+              query: categories.isEmpty ? '' : state.query,
+            ),
           ),
-          onError: (Object _) => emit(CategoriesFailed(kind)),
+          onError: (Object _) =>
+              emit(CategoriesFailed(kind, query: state.query)),
         );
   }
 
