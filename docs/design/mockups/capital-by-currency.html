@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Бирка · Капитал по валютам</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing: border-box }
+  body { min-height: 100vh; font-family: var(--font-family-text); background: radial-gradient(ellipse at top left,var(--color-ambient),transparent 65%),var(--color-background) }
+  main { max-width: 1180px; margin: auto; padding: var(--space-lg) }
+  header,summary,.line,.nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm) }
+  header { margin-bottom: var(--space-md) }
+  h1,p,dl,dt,dd { margin: 0 }
+  h1 { font: 800 30px var(--font-family-display); letter-spacing: -.04em }
+  .control { display: grid; place-items: center; width: var(--size-touch-target); height: var(--size-touch-target); border-radius: 50%; background: var(--color-surface-raised) }
+  svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round }
+  .back { display: none }
+  .capital,.group,.cards { display: grid; gap: var(--space-sm); align-content: start }
+  .total,small { color: var(--color-text-muted) }
+  .total strong,dd { color: var(--color-text); font-variant-numeric: tabular-nums }
+  summary { min-height: var(--size-touch-target); cursor: pointer; list-style: none; font-weight: 600 }
+  summary::-webkit-details-marker { display: none }
+  details[open] summary svg { transform: rotate(90deg) }
+  dl { padding: 0 var(--space-md) !important }
+  .line { min-height: 58px; padding: var(--space-xs) 0 }
+  .line + .line { border-top: 1px solid var(--color-hairline) }
+  dd { font: 700 16px var(--font-family-display) }
+  small { display: block; margin-top: var(--space-xxs) }
+  .cards { gap: var(--space-md); margin-top: var(--space-lg) }
+  .card { height: 188px; padding: var(--space-lg); border-radius: var(--radius-xl); border: 1px solid var(--color-glass-border); display: flex; flex-direction: column; justify-content: space-between; background: radial-gradient(ellipse at 15% 0%, color-mix(in srgb,var(--art) 88%,transparent),transparent 78%), linear-gradient(148deg,var(--art),var(--color-background) 95%); position: relative; overflow: hidden }
+  .card::after { content: ''; position: absolute; right: var(--space-lg); top: var(--space-lg); width: 38px; height: 28px; border-radius: var(--radius-xs); background: linear-gradient(135deg,var(--color-text-subtle),var(--color-surface-selected)); border: 1px solid var(--color-glass-border) }
+  .card b { font: 800 32px var(--font-family-display) }
+  .mobile-rows { margin-top: var(--space-md) }
+  .wide-action { display: none }
+  @media(max-width: 899px) {
+    .back { display: grid }
+    header { display: grid; grid-template-columns: 1fr auto }
+    h1 { grid-row: 2; margin-top: var(--space-xs) }
+    .card:not(:first-child) { display: none }
+  }
+  @media(min-width: 900px) {
+    main { padding-top: 44px }
+    .layout { display: grid; grid-template-columns: minmax(0,1fr) 340px; align-items: start; gap: var(--space-lg) }
+    .capital { grid-column: 2; grid-row: 1; padding: var(--space-md); border: 1px solid var(--color-glass-border); border-radius: var(--radius-lg); background: var(--color-surface) }
+    .cards { grid-column: 1; grid-row: 1; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 }
+    .mobile-rows { display: none }
+    .wide-action { display: block; text-align: center; padding: var(--space-sm); background: var(--color-accent); color: var(--color-background); font-weight: 700; border-radius: var(--radius-pill) }
+  }
+</style>
+<main>
+  <header><span class="control back" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg></span><h1>Счета</h1><span class="control" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></header>
+  <div class="layout">
+    <div class="capital">
+      <p class="total">Капитал <strong>129 200 ₽</strong> в 4 счетах</p>
+      <details>
+        <summary>По валютам <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></summary>
+        <dl class="glass">
+          <div class="line"><dt>Рубли<small>в 2 счетах</small></dt><dd>90 000 ₽</dd></div>
+          <div class="line"><dt>Евро<small>в 1 счёте</small></dt><dd>420 €</dd></div>
+          <div class="line"><dt>Доллары<small>в 1 счёте</small></dt><dd>−35 $</dd></div>
+        </dl>
+      </details>
+      <span class="wide-action">Новый счёт</span>
+    </div>
+    <div class="cards">
+      <article class="card" style="--art:var(--color-art-emerald)"><div>Зарплатная<small>Рубли · •• 4568</small></div><b>82 350 ₽</b></article>
+      <article class="card" style="--art:var(--color-art-sapphire)"><div>Для поездок<small>Евро · Дебетовая карта</small></div><b>420 €</b></article>
+      <article class="card" style="--art:var(--color-art-graphite)"><div>Наличные<small>Рубли · Наличные</small></div><b>7 650 ₽</b></article>
+      <article class="card" style="--art:var(--color-art-amber)"><div>Кредитная<small>Доллары · Кредитная карта</small></div><b>−35 $</b></article>
+    </div>
+    <dl class="glass mobile-rows">
+      <div class="line"><dt>Зарплатная<small>Рубли · •• 4568</small></dt><dd>82 350 ₽</dd></div>
+      <div class="line"><dt>Для поездок<small>Евро · Дебетовая карта</small></dt><dd>420 €</dd></div>
+      <div class="line"><dt>Наличные<small>Рубли · Наличные</small></dt><dd>7 650 ₽</dd></div>
+      <div class="line"><dt>Кредитная<small>Доллары · Кредитная карта</small></dt><dd>−35 $</dd></div>
+    </dl>
+  </div>
+</main>
+</html>

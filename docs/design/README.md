@@ -237,3 +237,16 @@ edit it and returning keeps the query.
 [Interactive mockup](mockups/category-directory-search.html) ·
 [Phone preview](mockups/39-category-search-phone.png) ·
 [Desktop preview](mockups/40-category-search-web.png)
+
+### Capital by currency
+
+On **Accounts**, expand **By currency** beneath the capital total to see the
+net balance and account count for each original currency, in the order of
+the first counted account. Only active accounts included in capital contribute.
+Zero and negative balances keep their place. The breakdown is available for
+multiple currencies and for a single currency converted into a different
+display currency. The rows work offline and respect hidden amounts.
+
+[Interactive mockup](mockups/capital-by-currency.html) ·
+[Phone preview](mockups/41-capital-currency-phone.png) ·
+[Desktop preview](mockups/42-capital-currency-web.png)
