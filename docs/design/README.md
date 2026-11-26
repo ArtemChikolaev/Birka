@@ -224,3 +224,16 @@ Open the payments total on **Money until payday** to see the name, scheduled dat
 [Interactive mockup](mockups/payday-payment-breakdown.html) ·
 [Phone preview](mockups/37-payday-payments-phone.png) ·
 [Desktop preview](mockups/38-payday-payments-web.png)
+
+### Finding a category
+
+In **More → Categories**, search within expenses or income by any part of a
+name. A matching parent shows its active children. A matching child keeps
+its parent above it. The archive lists its own name matches separately.
+Clearing the field restores the directory in its original order. Switching
+between expenses and income starts a fresh search. Opening a category to
+edit it and returning keeps the query.
+
+[Interactive mockup](mockups/category-directory-search.html) ·
+[Phone preview](mockups/39-category-search-phone.png) ·
+[Desktop preview](mockups/40-category-search-web.png)

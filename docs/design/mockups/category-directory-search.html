@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бирка · Поиск категорий</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing: border-box }
+  body { min-height: 100vh; background: radial-gradient(ellipse at top left,var(--color-ambient),transparent 65%),var(--color-background); font-family: var(--font-family-text) }
+  main { max-width: 1120px; margin: auto; padding: var(--space-lg) }
+  h1 { margin: var(--space-lg) 0; font: 800 30px var(--font-family-display); letter-spacing: -.04em }
+  header { display: flex; justify-content: space-between; align-items: center }
+  .control { display: grid; width: var(--size-touch-target); height: var(--size-touch-target); place-items: center; background: var(--color-surface-raised); border-radius: 50% }
+  .icon { display: inline-block; width: 20px; height: 20px; vertical-align: middle }
+  button,input { font: inherit; color: inherit }
+  .glass-segmented__option { text-transform: uppercase; letter-spacing: .06em; font-size: 13px; font-weight: 700 }
+  .field { display: flex; align-items: center; gap: var(--space-sm); margin: var(--space-md) 0; padding: 0 var(--space-md); border-radius: var(--radius-pill); color: var(--color-text-muted); min-height: var(--size-touch-target) }
+  .field:focus-within { border-color: var(--color-accent) }
+  input { flex: 1; min-width: 0; border: none; background: none; outline: none; font-size: 16px; color: var(--color-text) }
+  #clear { border: none; background: none; cursor: pointer; line-height: 0; min-height: var(--size-touch-target) }
+  .group { padding: 0 var(--space-md) }
+  .row { display: flex; align-items: center; min-height: 56px; gap: var(--space-sm); font-weight: 600 }
+  .row + .row { border-top: 1px solid var(--color-hairline) }
+  .row.child { margin-left: var(--space-xl) }
+  .child .glyph-badge { width: 28px; height: 28px }
+  .glyph-badge .icon { width: 60%; height: 60% }
+  .chevron { margin-left: auto; color: var(--color-text-muted); width: 16px; height: 16px }
+  h2 { color: var(--color-text-muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: var(--space-lg) 0 var(--space-xs) }
+  aside { display: none }
+  small,p,li { color: var(--color-text-muted); line-height: 1.5 }
+  small { display: block; font-weight: 400 }
+  @media(min-width: 900px) {
+    main { padding-top: 36px }
+    header { float: right } header .back { display: none }
+    h1 { margin-top: 0 }
+    .layout { display: grid; grid-template-columns: minmax(0,1fr) 400px; gap: var(--space-lg) }
+    aside { display: block; align-self: start } aside h2 { margin: 0 } ol { margin-bottom: 0; padding-left: 24px } li + li { margin-top: var(--space-sm) }
+  }
+</style>
+<svg aria-hidden="true" style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="icon-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.2l2-8H6.2"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/></symbol>
+  <symbol id="icon-cup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h12v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M9 3v2.5M13 3v2.5"/></symbol>
+  <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="icon-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="M10 13.5 21 3"/></symbol>
+  <symbol id="icon-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="11.5" rx="2.5"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3.5 13.5h17"/></symbol>
+  <symbol id="icon-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M12 9v11M4 13h16"/><path d="M12 9S10.5 4 8 4.5 7.5 9 12 9zm0 0s1.5-5 4-4.5S16.5 9 12 9z"/></symbol>
+  <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></symbol>
+</svg>
+<main>
+  <header aria-hidden="true"><span class="control back" data-icon="back"></span><span class="control" data-icon="plus"></span></header>
+  <h1>Категории</h1>
+  <div class="layout"><section>
+    <div class="glass-segmented" aria-label="Тип категории">
+      <button class="glass-segmented__option" id="expense">Расходы</button>
+      <button class="glass-segmented__option" id="income">Доходы</button>
+    </div>
+    <div class="glass field"><span data-icon="search"></span>
+      <input aria-label="Найти категорию" placeholder="Найти категорию" value="кофе">
+      <button id="clear" aria-label="Очистить поиск" data-icon="close"></button>
+    </div>
+    <div id="results" aria-live="polite"></div>
+  </section><aside class="glass"><h2>Как это устроено</h2><ol>
+    <li>Нажмите категорию — она откроется здесь, рядом со списком.</li>
+    <li>Расходы и доходы — отдельные списки: переключатель над ними.</li>
+    <li>Категории видны в операциях, отчётах и регулярных платежах.</li>
+  </ol></aside></div>
+</main>
+<script>
+  const lists = {
+    expense: {groups: [
+      [['Еда','cart'], [['Кофейни','cup'], ['Продукты','cart']]],
+      [['Дом','home'], [['Кофе для дома','cup'], ['Мебель','home']]],
+      [['Поездки','plane'], []]
+    ], archive: [['Кофе в офисе','cup']]},
+    income: {groups: [[['Зарплата','briefcase'], []], [['Подарки','gift'], []]], archive: []}
+  };
+  const input = document.querySelector('input');
+  const clear = document.querySelector('#clear');
+  const results = document.querySelector('#results');
+  const normalize = name => name.trim().toLowerCase().replaceAll('ё','е');
+  const icon = name => '<svg aria-hidden="true" class="icon"><use href="#icon-'+name+'"></use></svg>';
+  for (const target of document.querySelectorAll('[data-icon]')) target.innerHTML = icon(target.dataset.icon);
+  let kind = 'expense';
+  function row([name,glyph], child = false, detail = '') {
+    const color = {cart:'var(--color-positive)',cup:'var(--color-accent)',home:'var(--color-text-muted)'}[glyph] || 'var(--color-accent)';
+    return '<div class="row'+(child?' child':'')+'"><span class="glyph-badge" style="--badge-color:'+color+'">'+icon(glyph)+'</span><span>'+name+detail+'</span><span class="chevron">'+icon('chevron')+'</span></div>';
+  }
+  function render() {
+    const query = normalize(input.value);
+    const {groups,archive} = lists[kind];
+    clear.hidden = !input.value;
+    for (const key of Object.keys(lists)) {
+      const button = document.getElementById(key);
+      button.setAttribute('aria-pressed',kind === key);
+      button.classList.toggle('glass-segmented__option--selected',kind === key);
+    }
+    const matches = ([name]) => normalize(name).includes(query);
+    const rows = groups.map(([parent,children]) => {
+      const visible = matches(parent) ? children : children.filter(matches);
+      if (!matches(parent) && !visible.length) return '';
+      return row(parent,false,!query && children.length ? '<small>'+children.length+' подкатегории</small>' : '') + visible.map(child => row(child,true)).join('');
+    }).join('');
+    const archived = archive.filter(matches).map(item => row(item)).join('');
+    const group = rows => '<div class="glass group">'+rows+'</div>';
+    results.innerHTML = (rows ? group(rows) : '') + (archived ? '<h2>Архив</h2>'+group(archived) : '') || '<p>Категорий с таким названием не найдено.</p>';
+  }
+  input.oninput = render;
+  clear.onclick = () => { input.value = ''; render(); input.focus(); };
+  for (const key of Object.keys(lists)) document.getElementById(key).onclick = () => {
+    if (kind !== key) { kind = key; input.value = ''; render(); }
+  };
+  render();
+</script>
+</html>
