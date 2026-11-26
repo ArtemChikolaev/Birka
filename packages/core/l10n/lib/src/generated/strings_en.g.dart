@@ -1056,6 +1056,95 @@ class Translations$identity$en {
   /// en: 'You can keep using Birka on this device without signing in.'
   String get available =>
       'You can keep using Birka on this device without signing in.';
+
+  /// en: 'Sign-in method'
+  String get method => 'Sign-in method';
+
+  /// en: 'Email'
+  String get mailMethod => 'Email';
+
+  /// en: 'Telegram'
+  String get telegram => 'Telegram';
+
+  /// en: 'Telegram phone number'
+  String get phone => 'Telegram phone number';
+
+  /// en: 'Your Birka sign-in code will arrive in Telegram.'
+  String get telegramIntro =>
+      'Your Birka sign-in code will arrive in Telegram.';
+
+  /// en: 'I allow Birka to share this number with Telegram to deliver my code.'
+  String get consent =>
+      'I allow Birka to share this number with Telegram to deliver my code.';
+
+  /// en: 'Allow delivery to this number to request a code.'
+  String get needConsent => 'Allow delivery to this number to request a code.';
+
+  /// en: 'Enter the number with its country code, starting with +.'
+  String get badPhone =>
+      'Enter the number with its country code, starting with +.';
+
+  /// en: 'Send code via Telegram'
+  String get sendTelegram => 'Send code via Telegram';
+
+  /// en: 'Code from Telegram'
+  String get telegramCode => 'Code from Telegram';
+
+  /// en: 'Enter the Birka code for $phone. It is valid for 10 minutes.'
+  String telegramSent({required Object phone}) =>
+      'Enter the Birka code for ${phone}. It is valid for 10 minutes.';
+
+  /// en: 'Change number'
+  String get changePhone => 'Change number';
+
+  /// en: 'New code in ${seconds}s'
+  String resendAfter({required Object seconds}) => 'New code in ${seconds}s';
+
+  /// en: 'Sign in by email'
+  String get useEmail => 'Sign in by email';
+
+  /// en: 'Sign in via Telegram'
+  String get useTelegram => 'Sign in via Telegram';
+
+  /// en: 'Phone number verified'
+  String get confirmed => 'Phone number verified';
+
+  /// en: 'Create a Birka account with this number.'
+  String get newPhone => 'Create a Birka account with this number.';
+
+  /// en: 'If you already use email, sign in to that account and add Telegram from your profile.'
+  String get existingEmailHint =>
+      'If you already use email, sign in to that account and add Telegram from your profile.';
+
+  /// en: 'Create Birka account'
+  String get create => 'Create Birka account';
+
+  /// en: 'Link Telegram'
+  String get linkTelegram => 'Link Telegram';
+
+  /// en: 'Add email'
+  String get linkEmail => 'Add email';
+
+  /// en: 'Verify this sign-in method to use it for the same account.'
+  String get linkIntro =>
+      'Verify this sign-in method to use it for the same account.';
+
+  /// en: 'Cancel linking'
+  String get cancelLink => 'Cancel linking';
+
+  /// en: 'Could not deliver the code. Check the destination and try again.'
+  String get delivery =>
+      'Could not deliver the code. Check the destination and try again.';
+
+  /// en: 'This sign-in method is already linked. Try another number or email.'
+  String get occupied =>
+      'This sign-in method is already linked. Try another number or email.';
+
+  /// en: 'Your session expired. Sign in again.'
+  String get expiredSession => 'Your session expired. Sign in again.';
+
+  /// en: 'Six-digit Birka code'
+  String get birkaCode => 'Six-digit Birka code';
 }
 
 // Path: imports
@@ -7182,6 +7271,44 @@ extension on Translations {
                 'On this device · ${accounts} · ${operations}',
           'identity.available' =>
             'You can keep using Birka on this device without signing in.',
+          'identity.method' => 'Sign-in method',
+          'identity.mailMethod' => 'Email',
+          'identity.telegram' => 'Telegram',
+          'identity.phone' => 'Telegram phone number',
+          'identity.telegramIntro' =>
+            'Your Birka sign-in code will arrive in Telegram.',
+          'identity.consent' =>
+            'I allow Birka to share this number with Telegram to deliver my code.',
+          'identity.needConsent' =>
+            'Allow delivery to this number to request a code.',
+          'identity.badPhone' =>
+            'Enter the number with its country code, starting with +.',
+          'identity.sendTelegram' => 'Send code via Telegram',
+          'identity.telegramCode' => 'Code from Telegram',
+          'identity.telegramSent' =>
+            ({required Object phone}) =>
+                'Enter the Birka code for ${phone}. It is valid for 10 minutes.',
+          'identity.changePhone' => 'Change number',
+          'identity.resendAfter' =>
+            ({required Object seconds}) => 'New code in ${seconds}s',
+          'identity.useEmail' => 'Sign in by email',
+          'identity.useTelegram' => 'Sign in via Telegram',
+          'identity.confirmed' => 'Phone number verified',
+          'identity.newPhone' => 'Create a Birka account with this number.',
+          'identity.existingEmailHint' =>
+            'If you already use email, sign in to that account and add Telegram from your profile.',
+          'identity.create' => 'Create Birka account',
+          'identity.linkTelegram' => 'Link Telegram',
+          'identity.linkEmail' => 'Add email',
+          'identity.linkIntro' =>
+            'Verify this sign-in method to use it for the same account.',
+          'identity.cancelLink' => 'Cancel linking',
+          'identity.delivery' =>
+            'Could not deliver the code. Check the destination and try again.',
+          'identity.occupied' =>
+            'This sign-in method is already linked. Try another number or email.',
+          'identity.expiredSession' => 'Your session expired. Sign in again.',
+          'identity.birkaCode' => 'Six-digit Birka code',
           'imports.account' => 'Statement account',
           'imports.formats.alfa' => 'Alfa-Bank',
           'imports.formats.tbank' => 'T-Bank',
@@ -8041,6 +8168,9 @@ extension on Translations {
           'limits.suggestions.regular' => 'these are regular payments',
           'limits.suggestions.later' =>
             'You can change any limit later, on the page «Limits».',
+          _ => null,
+        } ??
+        switch (path) {
           'limits.suggestions.put' =>
             ({required num n}) =>
                 (_root.$meta.cardinalResolver ??
@@ -8111,9 +8241,6 @@ extension on Translations {
           'notifications.filters.import' => 'Imports',
           'notifications.filtersLabel' => 'Whose notifications',
           'notifications.emptyTitle' => 'All quiet',
-          _ => null,
-        } ??
-        switch (path) {
           'notifications.emptyText' =>
             'Reminders of your payments and of the days of your debts, warnings about your limits and the results of imports come here.',
           'notifications.emptyImports' =>
@@ -9004,6 +9131,9 @@ extension on Translations {
           'tags.back' => 'Back',
           'tags.add' => 'New tag',
           'tags.close' => 'Close',
+          _ => null,
+        } ??
+        switch (path) {
           'tags.edit' => 'Edit',
           'tags.search' => 'Find a tag or trip',
           'tags.noMatches' => 'No tags or trips match this name.',
@@ -9054,9 +9184,6 @@ extension on Translations {
           'tags.report.beforeTrip' => 'Before the trip',
           'tags.report.duringTrip' => 'During the trip',
           'tags.report.afterTrip' => 'After the trip',
-          _ => null,
-        } ??
-        switch (path) {
           'tags.report.rateMissing' => 'No rate',
           'tags.report.expenses' =>
             ({required num n}) =>

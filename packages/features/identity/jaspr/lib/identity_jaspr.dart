@@ -5,7 +5,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_bloc/jaspr_bloc.dart';
 import 'package:l10n/l10n.dart';
 
-/// Email-code access. Local record counts come from the host.
+/// Optional account access. Local record counts come from the host.
 class IdentityPage extends StatefulComponent {
   /// Creates the account page.
   const IdentityPage({
@@ -66,7 +66,7 @@ class IdentityPage extends StatefulComponent {
 }
 
 class _IdentityPageState extends State<IdentityPage> {
-  var _email = '';
+  var _destination = '';
   var _code = '';
 
   @override
@@ -86,26 +86,34 @@ class _IdentityPageState extends State<IdentityPage> {
     Component note(String value) => p(classes: 'text-body', [.text(value)]);
     return BlocConsumer<IdentityCubit, IdentityState>(
       listenWhen: (prior, next) =>
-          prior.challenge != next.challenge || prior.step != next.step,
+          prior.challenge != next.challenge ||
+          prior.step != next.step ||
+          prior.method != next.method,
       listener: (_, state) {
         _code = '';
-        if (state.step == AccountStep.email) _email = state.email;
+        if (state.step == AccountStep.entry) _destination = state.destination;
       },
       builder: (context, state) {
         final issue = state.issue;
         final back = switch (state.step) {
-          AccountStep.code => account.editEmail,
+          AccountStep.code ||
+          AccountStep.problem => () => account.entry(state.method),
+          AccountStep.registration => account.cancel,
+          AccountStep.entry when state.linking => account.cancel,
           AccountStep.copy => () => account.showCopy(open: false),
           _ => component.onBack,
         };
         final backLabel = switch (state.step) {
-          AccountStep.code => strings.change,
+          AccountStep.code || AccountStep.problem =>
+            state.telegram ? strings.changePhone : strings.change,
+          AccountStep.entry when state.linking => strings.copyBack,
+          AccountStep.registration => strings.method,
           AccountStep.copy => strings.copyBack,
           _ => strings.back,
         };
         Component action(
           String label,
-          VoidCallback call, {
+          VoidCallback? call, {
           bool quiet = false,
         }) => BirkaButton(
           label: label,
@@ -116,19 +124,22 @@ class _IdentityPageState extends State<IdentityPage> {
           required BirkaTextField field,
           required String label,
           required VoidCallback submit,
+          Component? consent,
+          bool enabled = true,
         }) => form(
           classes: 'identity__stack',
           events: {
             'submit': (event) {
               event.preventDefault();
-              if (!state.busy) submit();
+              if (!state.busy && enabled) submit();
             },
           },
           [
             field,
+            ?consent,
             BirkaButton(
               label: state.busy ? strings.working : label,
-              submits: !state.busy,
+              submits: !state.busy && enabled,
             ),
           ],
         );
@@ -143,34 +154,76 @@ class _IdentityPageState extends State<IdentityPage> {
                   action(strings.retry, account.restore),
                 action(strings.guest, component.onBack, quiet: true),
               ],
-              AccountStep.email => [
-                heading(strings.entry, glyph: BirkaGlyph.contact),
-                note(strings.intro),
+              AccountStep.entry => [
+                heading(state.entryHeading, glyph: BirkaGlyph.contact),
+                if (!state.linking && state.methods.length > 1)
+                  GlassSegmented(
+                    segments: {
+                      SignInMethod.email: strings.mailMethod,
+                      SignInMethod.telegram: strings.telegram,
+                    },
+                    selected: state.method,
+                    onChanged: account.entry,
+                  ),
+                note(
+                  state.linking
+                      ? strings.linkIntro
+                      : state.telegram
+                      ? strings.telegramIntro
+                      : strings.intro,
+                ),
                 fieldForm(
                   field: BirkaTextField(
-                    key: const ValueKey('email'),
-                    label: strings.email,
-                    value: _email,
-                    onChanged: (v) => _email = v,
-                    inputMode: 'email',
-                    autocomplete: 'email',
-                    maxLength: 254,
-                    error: issue == AccountIssue.email
-                        ? strings.badEmail
+                    key: ValueKey(state.method),
+                    label: state.telegram ? strings.phone : strings.email,
+                    value: _destination,
+                    onChanged: (value) {
+                      _destination = value;
+                      if (state.telegram) {
+                        account.allowPhone(value, allowed: false);
+                      }
+                    },
+                    inputMode: state.telegram ? 'tel' : 'email',
+                    autocomplete: state.telegram ? 'tel' : 'email',
+                    maxLength: state.telegram ? 32 : 254,
+                    error:
+                        issue == AccountIssue.phone ||
+                            issue == AccountIssue.email
+                        ? accountIssueLabel(issue!)
                         : null,
                   ),
-                  label: strings.send,
-                  submit: () => account.request(_email),
+                  consent: state.telegram
+                      ? div(classes: 'identity__heading', [
+                          BirkaCheckbox(
+                            checked: state.consent,
+                            label: strings.consent,
+                            onChanged: (checked) => account.allowPhone(
+                              _destination,
+                              allowed: checked,
+                            ),
+                          ),
+                          note(strings.consent),
+                        ])
+                      : null,
+                  enabled: !state.telegram || state.consent,
+                  label: state.telegram ? strings.sendTelegram : strings.send,
+                  submit: () => account.request(_destination),
                 ),
-                action(strings.guest, component.onBack, quiet: true),
+                action(
+                  state.linking ? strings.cancelLink : strings.guest,
+                  state.linking ? account.cancel : component.onBack,
+                  quiet: true,
+                ),
               ],
               AccountStep.code => [
-                heading(strings.codeTitle),
-                note(strings.sent(email: state.email)),
+                heading(
+                  state.telegram ? strings.telegramCode : strings.codeTitle,
+                ),
+                note(state.sentLabel),
                 fieldForm(
                   field: BirkaTextField(
                     key: ValueKey(state.challenge),
-                    label: strings.code,
+                    label: state.telegram ? strings.birkaCode : strings.code,
                     value: _code,
                     onChanged: (v) => _code = v,
                     inputMode: 'numeric',
@@ -182,19 +235,74 @@ class _IdentityPageState extends State<IdentityPage> {
                   submit: () => account.verify(_code),
                 ),
                 action(
-                  strings.resend,
-                  () => account.request(state.email),
+                  state.remaining > 0
+                      ? strings.resendAfter(seconds: state.remaining)
+                      : strings.resend,
+                  state.remaining > 0
+                      ? null
+                      : () => account.request(state.destination),
+                  quiet: true,
+                ),
+                if (state.linking)
+                  action(strings.cancelLink, account.cancel, quiet: true)
+                else if (state.methods.contains(state.other))
+                  action(
+                    state.telegram ? strings.useEmail : strings.useTelegram,
+                    () => account.entry(state.other),
+                    quiet: true,
+                  ),
+              ],
+              AccountStep.registration => [
+                heading(strings.confirmed, glyph: BirkaGlyph.check),
+                note(strings.newPhone),
+                if (state.methods.contains(SignInMethod.email))
+                  note(strings.existingEmailHint),
+                action(strings.create, account.register),
+                if (state.methods.contains(SignInMethod.email))
+                  action(
+                    strings.useEmail,
+                    () => account.entry(SignInMethod.email),
+                    quiet: true,
+                  ),
+                action(strings.guest, component.onBack, quiet: true),
+              ],
+              AccountStep.problem => [
+                heading(accountIssueLabel(issue!)),
+                if (state.linking)
+                  action(strings.copyBack, account.cancel)
+                else if (state.methods.contains(state.other))
+                  action(
+                    state.telegram ? strings.useEmail : strings.useTelegram,
+                    () => account.entry(state.other),
+                  ),
+                action(
+                  state.telegram ? strings.changePhone : strings.change,
+                  () => account.entry(state.method),
                   quiet: true,
                 ),
               ],
               AccountStep.profile => [
                 heading(strings.profile, glyph: BirkaGlyph.check),
-                strong([.text(state.email)]),
+                if (state.profile?.email case final value?) ...[
+                  note(strings.mailMethod),
+                  strong([.text(value)]),
+                ],
+                if (state.profile?.telegram case final value?) ...[
+                  note(strings.telegram),
+                  strong([.text(value)]),
+                ],
                 note(
                   component.accounts == 0 && component.operations == 0
                       ? strings.fresh
                       : strings.local,
                 ),
+                if (state.canLink case final method?)
+                  action(
+                    method == SignInMethod.telegram
+                        ? strings.linkTelegram
+                        : strings.linkEmail,
+                    () => account.entry(method),
+                  ),
                 action(
                   strings.copy,
                   () => account.showCopy(open: true),
@@ -217,8 +325,10 @@ class _IdentityPageState extends State<IdentityPage> {
               ],
             },
             if (issue != null &&
+                state.step != AccountStep.problem &&
+                issue != AccountIssue.phone &&
                 issue != AccountIssue.email &&
-                issue != AccountIssue.code)
+                (state.step != AccountStep.code || issue != AccountIssue.code))
               p(
                 attributes: const {'role': 'alert'},
                 [.text(accountIssueLabel(issue))],

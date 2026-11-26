@@ -1,8 +1,7 @@
 package main
 
 import (
-	"crypto/sha256"
-	"database/sql"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -14,11 +13,13 @@ import (
 )
 
 type application struct {
-	accounts *accounts
-	send     func(email, code, language string) error
-	origin   string
-	local    bool
-	proxy    bool
+	accounts      *accounts
+	send          func(email, code, language string) error
+	origin        string
+	local         bool
+	proxy         bool
+	telegram      func(context.Context, string, string) error
+	telegramLimit int
 }
 
 func reply(w http.ResponseWriter, status int, body any) {
@@ -45,6 +46,10 @@ func decode(w http.ResponseWriter, r *http.Request, dst any) bool {
 
 func (app *application) handler() http.Handler {
 	m := http.NewServeMux()
+	m.HandleFunc("GET /v1/methods", func(w http.ResponseWriter, r *http.Request) {
+		reply(w, 200, map[string]bool{"email": app.send != nil, "telegram": app.telegram != nil})
+	})
+	m.HandleFunc("POST /v1/register", app.register)
 	m.HandleFunc("POST /v1/code", app.request)
 	m.HandleFunc("POST /v1/verify", app.verify)
 	m.HandleFunc("GET /v1/session", app.session)
@@ -86,14 +91,39 @@ func validEmail(value string) bool {
 }
 
 func (app *application) request(w http.ResponseWriter, r *http.Request) {
-	var in struct{ Email, Language string }
+	var in struct {
+		Email, Phone, Language string
+		Consent, Link          bool
+	}
 	if !decode(w, r, &in) {
 		return
 	}
-	email := strings.ToLower(strings.TrimSpace(in.Email))
-	if !validEmail(email) {
-		reply(w, 400, nil)
-		return
+	channel := emailChannel
+	value := strings.ToLower(strings.TrimSpace(in.Email))
+	if in.Phone != "" {
+		channel = telegramChannel
+		value = normalizedPhone(in.Phone)
+		if in.Email != "" || !in.Consent || !phoneNumber.MatchString(value) {
+			reply(w, 400, nil)
+			return
+		}
+		if app.telegram == nil {
+			reply(w, 503, nil)
+			return
+		}
+	} else {
+		if !validEmail(value) {
+			reply(w, 400, nil)
+			return
+		}
+		if app.send == nil {
+			reply(w, 503, nil)
+			return
+		}
+	}
+	var binding []byte
+	if in.Link {
+		binding = tokenDigest(app.token(r))
 	}
 	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
 	if app.proxy && net.ParseIP(ip).IsLoopback() {
@@ -101,19 +131,23 @@ func (app *application) request(w http.ResponseWriter, r *http.Request) {
 			ip = remote.String()
 		}
 	}
-	id, code, err := app.accounts.issue(r.Context(), email, ip)
-	if errors.Is(err, errLimit) {
-		reply(w, 429, nil)
+	id, code, err := app.accounts.issue(r.Context(), channel, value, ip, binding, app.telegramLimit)
+	if err != nil {
+		accountError(w, err)
 		return
+	}
+	if channel == telegramChannel {
+		err = app.telegram(r.Context(), value, code)
+	} else {
+		err = app.send(value, code, in.Language)
 	}
 	if err != nil {
-		reply(w, 503, nil)
-		return
-	}
-	if err = app.send(email, code, in.Language); err != nil {
-		// Only invalidate the challenge whose delivery failed.
 		app.accounts.db.Exec("DELETE FROM challenges WHERE id=?", id)
-		reply(w, 503, nil)
+		if errors.Is(err, errLimit) {
+			reply(w, 429, nil)
+		} else {
+			reply(w, 502, nil)
+		}
 		return
 	}
 	reply(w, 200, map[string]string{"challenge": id})
@@ -130,22 +164,55 @@ func (app *application) verify(w http.ResponseWriter, r *http.Request) {
 		reply(w, 401, nil)
 		return
 	}
-	email, token, err := app.accounts.verify(r.Context(), in.Challenge, in.Code)
-	if errors.Is(err, errCode) {
+	result, err := app.accounts.verify(r.Context(), in.Challenge, in.Code, app.token(r))
+	app.verified(w, r, result, err)
+}
+
+func accountError(w http.ResponseWriter, err error) {
+	switch {
+	case errors.Is(err, errLimit):
+		reply(w, 429, nil)
+	case errors.Is(err, errCode):
+		reply(w, 401, nil)
+	case errors.Is(err, errSession):
+		reply(w, 401, map[string]string{"error": "session"})
+	case errors.Is(err, errOccupied):
+		reply(w, 409, nil)
+	default:
+		reply(w, 503, nil)
+	}
+}
+
+func (app *application) register(w http.ResponseWriter, r *http.Request) {
+	var in struct{ Registration string }
+	if !decode(w, r, &in) {
+		return
+	}
+	if len(in.Registration) != 43 {
 		reply(w, 401, nil)
 		return
 	}
+	result, err := app.accounts.register(r.Context(), in.Registration)
+	app.verified(w, r, result, err)
+}
+
+func (app *application) verified(w http.ResponseWriter, r *http.Request, result verification, err error) {
 	if err != nil {
-		reply(w, 503, nil)
+		accountError(w, err)
 		return
 	}
-	out := map[string]string{"email": email}
-	if r.Header.Get("X-Birka-Client") == "web" {
-		app.cookie(w, token, int(sessionAge.Seconds()))
-	} else {
-		out["token"] = token
+	if result.registration != "" {
+		reply(w, 200, map[string]string{"registration": result.registration})
+		return
 	}
-	reply(w, 200, out)
+	if result.token != "" {
+		if r.Header.Get("X-Birka-Client") == "web" {
+			app.cookie(w, result.token, int(sessionAge.Seconds()))
+		} else {
+			result.profile["token"] = result.token
+		}
+	}
+	reply(w, 200, result.profile)
 }
 
 func (app *application) cookieName() string {
@@ -168,28 +235,32 @@ func (app *application) token(r *http.Request) string {
 	return ""
 }
 func (app *application) session(w http.ResponseWriter, r *http.Request) {
-	hash := sha256.Sum256([]byte(app.token(r)))
-	var mailbox string
-	var address []byte
-	err := app.accounts.db.QueryRowContext(r.Context(), "SELECT accounts.email,accounts.address FROM sessions JOIN accounts USING(email) WHERE digest=? AND expires>?", hash[:], app.accounts.now().Unix()).Scan(&mailbox, &address)
-	if errors.Is(err, sql.ErrNoRows) {
-		reply(w, 401, nil)
-		return
-	}
+	a := app.accounts
+	tx, err := a.db.BeginTx(r.Context(), nil)
 	if err != nil {
-		reply(w, 503, nil)
+		accountError(w, err)
 		return
 	}
-	plain, err := app.accounts.addresses.Open(nil, nil, address, []byte(mailbox))
+	defer tx.Rollback()
+	owner, err := sessionOwner(tx, tokenDigest(app.token(r)), a.now().Unix())
 	if err != nil {
-		reply(w, 503, nil)
+		if errors.Is(err, errSession) {
+			reply(w, 401, nil)
+		} else {
+			accountError(w, err)
+		}
 		return
 	}
-	reply(w, 200, map[string]string{"email": string(plain)})
+	profile, err := a.profile(tx, owner)
+	if err != nil {
+		accountError(w, err)
+		return
+	}
+	reply(w, 200, profile)
 }
 func (app *application) logout(w http.ResponseWriter, r *http.Request) {
-	hash := sha256.Sum256([]byte(app.token(r)))
-	if _, err := app.accounts.db.ExecContext(r.Context(), "DELETE FROM sessions WHERE digest=?", hash[:]); err != nil {
+	hash := tokenDigest(app.token(r))
+	if _, err := app.accounts.db.ExecContext(r.Context(), "DELETE FROM sessions WHERE digest=?", hash); err != nil {
 		reply(w, 503, nil)
 		return
 	}

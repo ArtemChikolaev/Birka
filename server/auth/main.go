@@ -11,6 +11,7 @@ import (
 	"net/smtp"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -95,9 +96,25 @@ func run() error {
 		return errors.New("set BIRKA_WEB_ORIGIN to the exact HTTPS site origin (HTTP loopback for local testing)")
 	}
 	m := mailer{os.Getenv("BIRKA_SMTP_ADDR"), os.Getenv("BIRKA_MAIL_FROM"), os.Getenv("BIRKA_SMTP_USER"), os.Getenv("BIRKA_SMTP_PASSWORD"), local}
-	host, _, err := net.SplitHostPort(m.address)
-	if err != nil || !validEmail(m.from) || local && !loopback(host) || (m.user == "") != (m.password == "") {
-		return errors.New("invalid SMTP configuration; local delivery requires a loopback SMTP receiver")
+	app := application{origin: origin, local: local, proxy: os.Getenv("BIRKA_TRUST_LOCAL_PROXY") == "1", telegramLimit: 60}
+	if token := os.Getenv("BIRKA_TELEGRAM_GATEWAY_TOKEN"); token != "" {
+		app.telegram = telegramSender(token, nil)
+		if limit := os.Getenv("BIRKA_TELEGRAM_HOURLY_LIMIT"); limit != "" {
+			app.telegramLimit, err = strconv.Atoi(limit)
+			if err != nil || app.telegramLimit < 1 {
+				return errors.New("invalid BIRKA_TELEGRAM_HOURLY_LIMIT")
+			}
+		}
+	}
+	if m.address != "" || m.from != "" || m.user != "" || m.password != "" {
+		host, _, err := net.SplitHostPort(m.address)
+		if err != nil || !validEmail(m.from) || local && !loopback(host) || (m.user == "") != (m.password == "") {
+			return errors.New("invalid SMTP configuration; local delivery requires a loopback SMTP receiver")
+		}
+		app.send = m.send
+	}
+	if app.send == nil && app.telegram == nil {
+		return errors.New("configure SMTP or BIRKA_TELEGRAM_GATEWAY_TOKEN")
 	}
 	key, err := base64.StdEncoding.DecodeString(os.Getenv("BIRKA_AUTH_KEY"))
 	if err != nil || len(key) != 32 {
@@ -131,7 +148,7 @@ func run() error {
 			}
 		}
 	}()
-	app := application{db, m.send, origin, local, os.Getenv("BIRKA_TRUST_LOCAL_PROXY") == "1"}
+	app.accounts = db
 	server := http.Server{Addr: listen, Handler: app.handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 20 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16 << 10}
 	log.Printf("Birka account service listening on %s", listen)
 	return server.ListenAndServe()

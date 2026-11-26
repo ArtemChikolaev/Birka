@@ -32,3 +32,30 @@ fresh: Чтобы вернуть свои записи, перенесите ф�
 empty: На устройстве пока нет записей
 device: На устройстве · $accounts · $operations
 available: Учёт доступен на этом устройстве и без входа.
+method: Способ входа
+mailMethod: Почта
+telegram: Telegram
+phone: Номер телефона в Telegram
+telegramIntro: Код для входа в Birka придёт сообщением в Telegram.
+consent: Разрешаю Birka передать этот номер в Telegram для доставки кода.
+needConsent: Для отправки кода нужно ваше разрешение.
+badPhone: Введите номер с кодом страны, начиная с +.
+sendTelegram: Получить код в Telegram
+telegramCode: Код из Telegram
+telegramSent: Введите код Birka для $phone. Код действует 10 минут.
+changePhone: Изменить номер
+resendAfter: Новый код через $seconds с
+useEmail: Войти по почте
+useTelegram: Войти через Telegram
+confirmed: Номер подтверждён
+newPhone: Можно создать аккаунт Birka с этим номером.
+existingEmailHint: Если вы уже входили по почте, откройте свой профиль и привяжите Telegram там.
+create: Создать аккаунт Birka
+linkTelegram: Привязать Telegram
+linkEmail: Добавить почту
+linkIntro: Подтвердите этот способ входа, чтобы пользоваться им в том же аккаунте.
+cancelLink: Отменить привязку
+delivery: Не удалось доставить код. Проверьте адрес или номер и попробуйте ещё раз.
+occupied: Этот способ входа уже привязан. Попробуйте другой номер или адрес.
+expiredSession: Сеанс истёк. Войдите снова.
+birkaCode: Шестизначный код Birka

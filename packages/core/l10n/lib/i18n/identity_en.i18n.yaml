@@ -32,3 +32,30 @@ fresh: To bring back your records, transfer a backup file from your previous dev
 empty: No records on this device yet
 device: On this device · $accounts · $operations
 available: You can keep using Birka on this device without signing in.
+method: Sign-in method
+mailMethod: Email
+telegram: Telegram
+phone: Telegram phone number
+telegramIntro: Your Birka sign-in code will arrive in Telegram.
+consent: I allow Birka to share this number with Telegram to deliver my code.
+needConsent: Allow delivery to this number to request a code.
+badPhone: Enter the number with its country code, starting with +.
+sendTelegram: Send code via Telegram
+telegramCode: Code from Telegram
+telegramSent: Enter the Birka code for $phone. It is valid for 10 minutes.
+changePhone: Change number
+resendAfter: New code in ${seconds}s
+useEmail: Sign in by email
+useTelegram: Sign in via Telegram
+confirmed: Phone number verified
+newPhone: Create a Birka account with this number.
+existingEmailHint: If you already use email, sign in to that account and add Telegram from your profile.
+create: Create Birka account
+linkTelegram: Link Telegram
+linkEmail: Add email
+linkIntro: Verify this sign-in method to use it for the same account.
+cancelLink: Cancel linking
+delivery: Could not deliver the code. Check the destination and try again.
+occupied: This sign-in method is already linked. Try another number or email.
+expiredSession: Your session expired. Sign in again.
+birkaCode: Six-digit Birka code

@@ -9,19 +9,39 @@ import 'package:l10n/l10n.dart';
 class _Access implements AccountAccess {
   String? address;
   @override
-  Future<String?> session() async => null;
+  Future<Set<SignInMethod>> methods() async => {
+    SignInMethod.email,
+    SignInMethod.telegram,
+  };
   @override
-  Future<String> request(String email, String language) async {
+  Future<AccountProfile?> session() async => null;
+  @override
+  Future<String> request(
+    SignInMethod method,
+    String email,
+    String language, {
+    required bool link,
+    required bool consent,
+  }) async {
     address = email;
     return 'challenge';
   }
 
   @override
-  Future<String> verify(String challenge, String code) async {
+  Future<AccountVerification> verify(
+    String challenge,
+    String code, {
+    required bool link,
+  }) async {
     if (challenge != 'challenge' || code != '012345') throw AccountIssue.code;
-    return address!;
+    return address!.startsWith('+')
+        ? const RegistrationProof('proof')
+        : AccountProfile(email: address);
   }
 
+  @override
+  Future<AccountProfile> register(String proof) async =>
+      const AccountProfile(telegram: '•••• 0123');
   @override
   Future<void> logout() async {
     address = null;
@@ -33,7 +53,7 @@ class _Access implements AccountAccess {
 
 void main() {
   testWidgets(
-    'a guest can leave, verify an email, read transfer steps and sign out',
+    'guest access, email verification, transfer and explicit phone registration',
     (tester) async {
       tester.view.physicalSize = const Size(780, 2000);
       tester.view.devicePixelRatio = 2;
@@ -83,7 +103,25 @@ void main() {
       expect(find.textContaining(t.identity.copyRestore), findsOneWidget);
       await tap(t.identity.copyBack);
       await tap(t.identity.logout);
-      expect(find.text(t.identity.entry), findsOneWidget);
+      await tester.tap(find.text(t.identity.telegram.toUpperCase()));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), '+12025550122');
+      await tester.tap(find.byType(BirkaCheckbox));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), '+1 (202) 555-0123');
+      await tester.pumpAndSettle();
+      expect(cubit.state.consent, isFalse);
+      await tester.tap(find.byType(BirkaCheckbox));
+      await tester.pumpAndSettle();
+      await tap(t.identity.sendTelegram);
+      expect(find.textContaining('•••• 0123'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), '012345');
+      await tap(t.identity.verify);
+      expect(find.text(t.identity.confirmed), findsOneWidget);
+      await tap(t.identity.create);
+      expect(find.text('•••• 0123'), findsOneWidget);
+      await tap(t.identity.logout);
+      expect(find.text(t.identity.method), findsOneWidget);
     },
   );
 }

@@ -30,7 +30,7 @@ void main() {
   });
 
   test(
-    'native guest, validation, new challenge, verification and logout',
+    'native guest, validation, resend cooldown, verification and logout',
     () async {
       final vault = _Vault();
       var sent = 0;
@@ -40,6 +40,8 @@ void main() {
           expect(r.headers['X-Birka-Client'], 'native');
           expect(r.url.path, startsWith('/auth/v1/'));
           switch (r.url.pathSegments.last) {
+            case 'methods':
+              return http.Response('', 404);
             case 'code':
               expect(
                 (jsonDecode(r.body) as Map)['email'],
@@ -51,7 +53,7 @@ void main() {
               );
             case 'verify':
               final body = jsonDecode(r.body) as Map;
-              expect(body['challenge'], 'c2');
+              expect(body['challenge'], 'c1');
               if (body['code'] != '123456') return http.Response('', 401);
               return http.Response(
                 '{"email":"local@example.test","token":"device-token"}',
@@ -70,20 +72,20 @@ void main() {
       );
       final cubit = IdentityCubit(api);
       addTearDown(cubit.close);
-      await cubit.stream.firstWhere((s) => s.step == AccountStep.email);
+      await cubit.stream.firstWhere((s) => s.step == AccountStep.entry);
       await cubit.request('invalid');
       expect(cubit.state.issue, AccountIssue.email);
       expect(sent, 0);
       await cubit.request(' local@example.test ');
-      await cubit.request(cubit.state.email);
-      expect(cubit.state.challenge, 'c2');
+      await cubit.request(cubit.state.destination);
+      expect(cubit.state.challenge, 'c1');
       await cubit.verify('000000');
       expect(cubit.state.issue, AccountIssue.code);
       await cubit.verify('123456');
       expect(cubit.state.step, AccountStep.profile);
-      expect(await api.session(), 'local@example.test');
+      expect((await api.session())?.email, 'local@example.test');
       await cubit.logout();
-      expect(cubit.state.step, AccountStep.email);
+      expect(cubit.state.step, AccountStep.entry);
       expect(vault.token, isNull);
     },
   );
@@ -103,7 +105,7 @@ void main() {
       );
       addTearDown(api.close);
       await expectLater(
-        api.verify('challenge', '012345'),
+        api.verify('challenge', '012345', link: false),
         throwsA(AccountIssue.cookies),
       );
     },
@@ -129,6 +131,9 @@ void main() {
         endpoint,
         MockClient((r) {
           if (++requests == 1) return gate.future;
+          if (r.url.path.endsWith('/methods')) {
+            return Future.value(http.Response('{"email":true}', 200));
+          }
           return Future.value(http.Response('', 401));
         }),
       ),
@@ -138,7 +143,7 @@ void main() {
     gate.complete(http.Response('', 503));
     await cubit.stream.firstWhere((s) => s.step == AccountStep.retry);
     await cubit.restore();
-    expect(cubit.state.step, AccountStep.email);
-    expect(requests, 2);
+    expect(cubit.state.step, AccountStep.entry);
+    expect(requests, 3);
   });
 }

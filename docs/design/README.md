@@ -186,13 +186,13 @@ The shipped email flow is described in [ADR 0035](../adr/0035-optional-account.m
 [Email flow on a phone](mockups/33-account-phone.png) ·
 [Email flow on desktop](mockups/34-account-web.png)
 
-### Telegram codes for the Birka account (proposal)
+### Telegram codes for the Birka account
 
 In the [interactive prototype](mockups/optional-account.html#telegram), choose
 Telegram, enter a phone number with its country code, and allow Birka to share
-that number with Telegram for code delivery. The proposed provider delivers a
+that number with Telegram for code delivery. When enabled on the service, Telegram Gateway delivers a
 Birka verification code to the Telegram account registered to that number.
-[Telegram Gateway](https://core.telegram.org/gateway)
+[Gateway integration and account linking](../adr/0036-telegram-gateway.md)
 
 - **First sign-in.** After a new number is verified, choose to create an
   account or sign in to an existing email account. A known number opens the
