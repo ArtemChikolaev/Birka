@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Бирка · Отчёт по дням</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing:border-box }
+  body { color:var(--color-text); font-family:var(--font-family-text); background:radial-gradient(ellipse at top left,var(--color-ambient),transparent 65%),var(--color-background); min-height:100vh }
+  main { max-width:1000px; margin:auto; padding:var(--space-lg); display:grid; gap:var(--space-lg) }
+  header,.row { display:flex; align-items:center; justify-content:space-between; gap:var(--space-sm) }
+  h1,h2,p,ul { margin:0 }
+  h1 { font:800 28px var(--font-family-display) }
+  h2 { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--color-text-muted) }
+  small,p { color:var(--color-text-muted) }
+  .switch { display:flex; padding:var(--space-xxs); border-radius:var(--radius-pill); background:var(--color-surface-raised) }
+  button { min-height:var(--size-touch-target); cursor:pointer; font:inherit; color:inherit; background:transparent; border:0 }
+  .switch button { flex:1; border-radius:inherit; font-weight:600 }
+  .switch [aria-pressed=true] { background:var(--color-text); color:var(--color-background) }
+  .body,.summary,.details { display:grid; gap:var(--space-md); align-content:start }
+  .ring { width:154px; height:154px; justify-self:center; padding:14px; border-radius:50%; background:conic-gradient(var(--color-palette-green) 0 var(--share,66.7%),var(--color-palette-amber) var(--share,66.7%) 100%) }
+  .center { height:100%; border-radius:50%; background:var(--color-background); display:grid; place-content:center; justify-items:center; gap:var(--space-xs) }
+  .center b { font:800 21px var(--font-family-display) }
+  .glass { padding:var(--space-md); border-radius:var(--radius-lg) }
+  .row { padding:var(--space-sm) 0; min-height:44px }
+  .row + .row,.toggle { border-top:1px solid var(--color-hairline) }
+  .row b { display:block; text-align:right; font-variant-numeric:tabular-nums }
+  p { font-size:13px; margin:var(--space-xxs) 0 var(--space-xs) }
+  ul { list-style:none; padding:0 }
+  .toggle { color:var(--color-accent); font-weight:600; width:100% }
+  @media(min-width:901px) { main { padding-top:40px } .body { grid-template-columns:1fr 1fr; gap:var(--space-xl) } .ring { margin-top:var(--space-lg); width:196px; height:196px } }
+</style>
+<main>
+  <header><h1>Отчёты</h1><small>Ноябрь</small></header>
+  <div class="body">
+    <div class="summary">
+      <div class="switch"><button data-kind="expense">Расходы</button><button data-kind="income">Доходы</button></div>
+      <div class="ring"><div class="center"><small id="kind"></small><b id="total"></b></div></div>
+    </div>
+    <div class="details">
+      <section class="glass" id="categories" aria-label="Категории"></section>
+      <section class="glass" aria-labelledby="daily"><h2 id="daily">По дням</h2><p>В валюте операций</p><ul id="days"></ul><button class="toggle" aria-controls="days"></button></section>
+    </div>
+  </div>
+</main>
+<script>
+  const data = {
+    expense: {total:'12 000 ₽',categories:[['Продукты','8 000 ₽'],['Кафе','4 000 ₽']],days:[[27,'1 800 ₽','12 $'],[25,'1 250 ₽'],[23,'750 ₽'],[19,'4 200 ₽'],[16,'2 800 ₽']]},
+    income: {total:'65 000 ₽',categories:[['Зарплата','60 000 ₽'],['Подработка','5 000 ₽']],days:[[20,'5 000 ₽'],[5,'60 000 ₽']]}
+  };
+  let kind='expense', expanded=false;
+  function row(name,values,tag) {
+    const el=document.createElement(tag);
+    el.className='row';
+    const label=document.createElement('span'), amounts=document.createElement('span');
+    label.textContent=name;
+    for(const value of values) { const b=document.createElement('b'); b.textContent=value; amounts.append(b) }
+    el.append(label,amounts); return el;
+  }
+  function draw() {
+    const d=data[kind],toggle=document.querySelector('.toggle');
+    for(const button of document.querySelectorAll('[data-kind]')) button.setAttribute('aria-pressed',button.dataset.kind===kind);
+    document.querySelector('#kind').textContent=document.querySelector('[aria-pressed=true]').textContent;
+    document.querySelector('#total').textContent=d.total;
+    document.querySelector('.ring').style.setProperty('--share',kind==='expense'?'66.7%':'92.3%');
+    document.querySelector('#categories').replaceChildren(...d.categories.map(([n,a])=>row(n,[a],'div')));
+    document.querySelector('#days').replaceChildren(...d.days.slice(0,expanded?d.days.length:3).map(([day,...values])=>row(day+' ноября',values,'li')));
+    toggle.hidden=d.days.length<=3;
+    toggle.textContent=expanded?'Свернуть':'Все дни';
+    toggle.setAttribute('aria-expanded',expanded);
+  }
+  for(const button of document.querySelectorAll('[data-kind]')) button.onclick=()=>{if(kind!==button.dataset.kind){kind=button.dataset.kind;expanded=false;draw()}};
+  document.querySelector('.toggle').onclick=()=>{expanded=!expanded;draw()};
+  draw();
+</script>
+</html>
