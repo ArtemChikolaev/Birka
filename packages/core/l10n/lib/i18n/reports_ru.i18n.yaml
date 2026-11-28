@@ -2,6 +2,10 @@ expenses: Расходы
 income: Доходы
 biggestChanges: Главные изменения
 comparison: "$current по сравнению с $previous"
+byDay: По дням
+originalCurrencies: В валюте операций
+allDays: Все дни
+fewerDays: Свернуть
 byMonth: По месяцам
 average: в среднем $amount
 noExpenses: В этом месяце расходов нет.

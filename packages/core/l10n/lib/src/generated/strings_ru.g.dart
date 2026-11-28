@@ -2436,6 +2436,14 @@ class _Translations$reports$ru extends Translations$reports$en {
   String comparison({required Object current, required Object previous}) =>
       '${current} по сравнению с ${previous}';
   @override
+  String get byDay => 'По дням';
+  @override
+  String get originalCurrencies => 'В валюте операций';
+  @override
+  String get allDays => 'Все дни';
+  @override
+  String get fewerDays => 'Свернуть';
+  @override
   String get byMonth => 'По месяцам';
   @override
   String average({required Object amount}) => 'в среднем ${amount}';
@@ -7547,6 +7555,10 @@ extension on TranslationsRu {
           'reports.comparison' =>
             ({required Object current, required Object previous}) =>
                 '${current} по сравнению с ${previous}',
+          'reports.byDay' => 'По дням',
+          'reports.originalCurrencies' => 'В валюте операций',
+          'reports.allDays' => 'Все дни',
+          'reports.fewerDays' => 'Свернуть',
           'reports.byMonth' => 'По месяцам',
           'reports.average' =>
             ({required Object amount}) => 'в среднем ${amount}',
@@ -8297,13 +8309,13 @@ extension on TranslationsRu {
           'settings.baseCurrency' => 'Базовая валюта',
           'settings.firstAccountCurrency' => 'Первый счёт',
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.security' => 'Безопасность',
           'settings.hideAmounts' => 'Скрывать суммы',
           'settings.onLaunch' => 'При запуске',
           'settings.monthStart' => 'Начало месяца',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.monthStartDay' => ({required Object day}) => '${day} число',
           'settings.monthStartNote' => 'для обзора и отчётов',
           'settings.monthStartCalendar' => 'как в календаре',

@@ -8,6 +8,14 @@ void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.ru));
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.en));
 
+  test('the largest daily amount is a lower bound', () {
+    final max = Money(Money.maxMinorUnits, Currency.rub);
+    expect(reportDayAmount(max), '≥ ${formatMoney(max)}');
+    expect(reportDayAmount(max, hidden: true), formatMoney(max));
+    final cent = Money(1, Currency.usd);
+    expect(reportDayAmount(cent), formatMoney(cent));
+  });
+
   test('a kind has a name', () {
     expect(kindLabel(CategoryKind.expense), 'Расходы');
     expect(kindLabel(CategoryKind.income), 'Доходы');

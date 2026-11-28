@@ -184,6 +184,30 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.en);
   });
 
+  testComponents(
+    'expands daily totals in original currencies and collapses them',
+    (tester) async {
+      for (var i = 1; i <= 4; i++) {
+        repository.rows[(CategoryKind.expense, october.addDays(i))] = [
+          _total('Продукты', rub(500)),
+          _total('Кафе', Money(125, Currency.usd)),
+        ];
+      }
+      await pump(tester);
+      Future<void> toggle(String label) => tap(tester, label);
+      expect(find.text('5 октября'), findsOneComponent);
+      expect(find.text('2 октября'), findsNothing);
+      await toggle(t.reports.allDays);
+      expect(find.text('2 октября'), findsOneComponent);
+      expect(
+        find.text(formatMoney(Money(125, Currency.usd))),
+        findsNComponents(4),
+      );
+      await toggle(t.reports.fewerDays);
+      expect(find.text('2 октября'), findsNothing);
+    },
+  );
+
   testComponents('shows the month with the change against the last one', (
     tester,
   ) async {
@@ -192,8 +216,31 @@ void main() {
     expect(find.text('Отчёты'), findsOneComponent);
     expect(find.text('Октябрь'), findsOneComponent);
     expect(find.byType(BirkaRing), findsOneComponent);
-    expect(find.text('37${space}150$space₽'), findsOneComponent);
+    expect(
+      find.descendant(
+        of: find.byType(BirkaRing),
+        matching: find.text('37${space}150$space₽'),
+      ),
+      findsOneComponent,
+    );
     expect(find.text('+7% к сентябрю'), findsOneComponent);
+  });
+
+  testComponents('a tiny original amount still gives the day a row', (
+    tester,
+  ) async {
+    repository
+      ..rows.clear()
+      ..rows[(CategoryKind.expense, october)] = [
+        _total('Travel', Money(1, Currency.usd)),
+      ]
+      ..rates = RateBook([
+        DayRates(october, {'USD': Decimal.parse('0.01')}),
+      ]);
+    await pump(tester);
+    expect(find.text(t.reports.noExpenses), findsNothing);
+    expect(find.text('1 октября'), findsOneComponent);
+    expect(find.text(formatMoney(Money(1, Currency.usd))), findsOneComponent);
   });
 
   testComponents('the ring takes the colors of the categories', (tester) async {
@@ -352,7 +399,13 @@ void main() {
     await tap(tester, 'Октябрь');
     await tap(tester, 'Сентябрь');
 
-    expect(find.text('34${space}831,50$space₽'), findsOneComponent);
+    expect(
+      find.descendant(
+        of: find.byType(BirkaRing),
+        matching: find.text('34${space}831,50$space₽'),
+      ),
+      findsOneComponent,
+    );
     expect(find.text('Октябрь'), findsNothing);
   });
 
@@ -429,7 +482,7 @@ void main() {
     ];
     await pump(tester);
 
-    expect(find.text('5$space€'), findsOneComponent);
+    expect(find.text('5$space€'), findsNComponents(2));
   });
 
   testComponents('hidden amounts hide the figures and the average', (

@@ -265,3 +265,15 @@ Opening a payment and returning keeps the chosen period and visible rows.
 [Quiet week](mockups/schedule-calendar.html#quiet) ·
 [Phone preview](mockups/43-schedule-calendar-phone.png) ·
 [Desktop preview](mockups/44-schedule-calendar-web.png)
+
+### Daily totals in reports
+
+In **Reports**, the daily breakdown shows the three latest dates with expenses
+or income in the selected budget month. **All days** opens the rest, newest
+first. Each date lists its totals in the original currencies, including when
+exchange rates are unavailable. Switching month or report kind returns to
+three dates. The breakdown follows the eye that hides amounts.
+
+[Interactive mockup](mockups/report-daily-totals.html) ·
+[Phone preview](mockups/45-report-days-phone.png) ·
+[Desktop preview](mockups/46-report-days-web.png)

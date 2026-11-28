@@ -2,6 +2,34 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 
+/// A civil day with recorded activity and its totals in original currencies.
+typedef ReportDay = ({CivilDate day, List<Money> amounts});
+
+/// The latest active days shown before opening the full month.
+const reportDayPreviewCount = 3;
+
+/// Groups the selected month's category allocations by civil date and currency.
+List<ReportDay> reportDays(Iterable<CategoryDayTotal> rows) {
+  final amountsByDay = <CivilDate, List<Money>>{};
+  for (final row in rows) {
+    if (row.total.isPositive) (amountsByDay[row.day] ??= []).add(row.total);
+  }
+  final dates = amountsByDay.keys.toList()..sort((a, b) => b.compareTo(a));
+  return [
+    for (final day in dates)
+      (
+        day: day,
+        amounts: sumByCurrency(amountsByDay[day]!)
+          ..sort((a, b) {
+            final code = a.currency.code.compareTo(b.currency.code);
+            return code == 0
+                ? a.currency.decimalDigits.compareTo(b.currency.decimalDigits)
+                : code;
+          }),
+      ),
+  ];
+}
+
 /// A category of a report.
 @immutable
 final class ReportLine {

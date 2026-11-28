@@ -2835,6 +2835,18 @@ class Translations$reports$en {
   String comparison({required Object current, required Object previous}) =>
       '${current} compared with ${previous}';
 
+  /// en: 'By day'
+  String get byDay => 'By day';
+
+  /// en: 'In the original currencies'
+  String get originalCurrencies => 'In the original currencies';
+
+  /// en: 'All days'
+  String get allDays => 'All days';
+
+  /// en: 'Show fewer days'
+  String get fewerDays => 'Show fewer days';
+
   /// en: 'By month'
   String get byMonth => 'By month';
 
@@ -8448,6 +8460,10 @@ extension on Translations {
           'reports.comparison' =>
             ({required Object current, required Object previous}) =>
                 '${current} compared with ${previous}',
+          'reports.byDay' => 'By day',
+          'reports.originalCurrencies' => 'In the original currencies',
+          'reports.allDays' => 'All days',
+          'reports.fewerDays' => 'Show fewer days',
           'reports.byMonth' => 'By month',
           'reports.average' =>
             ({required Object amount}) => 'average ${amount}',
@@ -9150,13 +9166,13 @@ extension on Translations {
           'settings.baseCurrency' => 'Base currency',
           'settings.firstAccountCurrency' => 'First account',
           'settings.ratesCredit' => 'Курсы ЦБ РФ в XML и JSON, API',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.security' => 'Security',
           'settings.hideAmounts' => 'Hide amounts',
           'settings.onLaunch' => 'At launch',
           'settings.monthStart' => 'Month starts on',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
           'settings.monthStartNote' => 'for the overview and the reports',
           'settings.monthStartCalendar' => 'as on the calendar',

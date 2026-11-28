@@ -44,7 +44,12 @@
 3. A balance is the opening balance plus the entries that are not planned. It
    is computed, never stored.
 4. Reports in the base currency convert at the rate of the date of each
-   transaction. The capital converts at the latest rate.
+   transaction. The capital converts at the latest rate. The daily breakdown
+   in a monthly report groups the selected kind's allocations by civil date
+   and original currency within the same budget month. It shows the latest
+   three active dates, with the rest available in chronological order from
+   newest to oldest. At the ledger's upper money bound it shows a lower
+   bound (≥), since the stored query result may already be capped.
 5. Amounts are `int` minor units ([ADR 0003](0003-money-representation.md)),
    and rates are `Decimal` strings. `occurredOn` is a civil date, with an
    optional moment and offset beside it.

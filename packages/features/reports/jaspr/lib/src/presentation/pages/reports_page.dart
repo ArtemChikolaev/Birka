@@ -64,12 +64,36 @@ class ReportsPage extends StatefulComponent {
       },
     ),
     css(
-      '.reports__changes-heading',
+      '.reports__group-heading',
     ).styles(raw: {'padding': 'var(--space-md)'}),
-    css('.reports__changes-heading p').styles(
+    css('.reports__group-heading p').styles(
       raw: {
         'margin': 'var(--space-xxs) 0 0',
         'color': 'var(--color-text-muted)',
+      },
+    ),
+    css('.reports__day-amounts').styles(
+      raw: {
+        'display': 'grid',
+        'max-width': '55%',
+        'text-align': 'end',
+      },
+    ),
+    css('.reports__day-amounts .amount').styles(
+      raw: {
+        'overflow-wrap': 'anywhere',
+        'white-space': 'normal',
+      },
+    ),
+    css('.reports__days-toggle').styles(
+      raw: {
+        'color': 'var(--color-accent)',
+        'background': 'none',
+        'border': '0',
+        'border-top': '1px solid var(--color-hairline)',
+        'cursor': 'pointer',
+        'min-height': 'var(--size-touch-target)',
+        'width': '100%',
       },
     ),
     css('.reports__months').styles(
@@ -164,7 +188,7 @@ class _ReportsPageState extends State<ReportsPage> {
                 ],
               )
             : null;
-        final empty = ready && report.isEmpty
+        final empty = ready && report.isEmpty && state.dailyTotals.isEmpty
             ? GlassNotice(text: emptyLabel(state.kind))
             : null;
         final ring = ready && !report.isEmpty ? _ring(context, state) : null;
@@ -183,7 +207,10 @@ class _ReportsPageState extends State<ReportsPage> {
         final changes = ready && state.categoryChanges.isNotEmpty
             ? _changes(state)
             : null;
-        final after = [
+        final daily = ready && state.dailyTotals.isNotEmpty
+            ? _daily(context, state, cubit)
+            : null;
+        final currencyNotes = [
           if (ready && report.others.isNotEmpty)
             div(classes: 'reports__others', [
               AmountText(
@@ -196,8 +223,10 @@ class _ReportsPageState extends State<ReportsPage> {
             p(classes: 'text-caption reports__rate', [
               .text(t.reports.dayRates),
             ]),
-          if (ready && report.average != null) _byMonth(context, state),
         ];
+        final history = ready && report.average != null
+            ? _byMonth(context, state)
+            : null;
         final quiet = note != null && ready
             ? p(classes: 'text-caption reports__note', [.text(note)])
             : null;
@@ -212,7 +241,9 @@ class _ReportsPageState extends State<ReportsPage> {
               ?ring,
               ?lines,
               ?changes,
-              ...after,
+              ...currencyNotes,
+              ?daily,
+              ?history,
               ?quiet,
             ],
           );
@@ -223,8 +254,15 @@ class _ReportsPageState extends State<ReportsPage> {
             ?_monthChoice(state),
             BirkaSplit(
               halves: true,
-              main: [kinds, ?failure, ?empty, ?ring, ...after],
-              aside: [?lines, ?changes, ?quiet],
+              main: [
+                kinds,
+                ?failure,
+                ?empty,
+                ?ring,
+                ...currencyNotes,
+                ?history,
+              ],
+              aside: [?lines, ?changes, ?daily, ?quiet],
             ),
           ],
         );
@@ -291,7 +329,7 @@ class _ReportsPageState extends State<ReportsPage> {
   /// The last months as bars.
   Component _changes(ReportsState state) => GlassListGroup(
     children: [
-      div(classes: 'reports__changes-heading', [
+      div(classes: 'reports__group-heading', [
         SectionLabel(t.reports.biggestChanges),
         p(classes: 'text-caption', [.text(changesPeriodLabel(state))]),
       ]),
@@ -305,6 +343,50 @@ class _ReportsPageState extends State<ReportsPage> {
             textClass: 'text-body-strong',
           ),
         ),
+    ],
+  );
+
+  Component _daily(
+    BuildContext context,
+    ReportsState state,
+    ReportsCubit cubit,
+  ) => section(
+    classes: 'reports__days',
+    attributes: {'aria-label': t.reports.byDay},
+    [
+      GlassListGroup(
+        children: [
+          div(classes: 'reports__group-heading', [
+            SectionLabel(t.reports.byDay),
+            p(classes: 'text-caption', [.text(t.reports.originalCurrencies)]),
+          ]),
+          for (final (:day, :amounts) in state.visibleDays)
+            GlassListRow(
+              key: ValueKey(day),
+              title: reportDayLabel(day, today: state.today),
+              trailing: span(classes: 'reports__day-amounts', [
+                for (final amount in amounts)
+                  AmountText(
+                    reportDayAmount(amount, hidden: HiddenAmounts.of(context)),
+                    key: ValueKey(amount.currency),
+                    textClass: 'text-body-strong',
+                  ),
+              ]),
+            ),
+          if (state.dailyTotals.length > reportDayPreviewCount)
+            button(
+              classes: 'text-body-strong reports__days-toggle',
+              type: ButtonType.button,
+              attributes: {'aria-expanded': '${state.allDaysShown}'},
+              onClick: cubit.toggleDays,
+              [
+                .text(
+                  state.allDaysShown ? t.reports.fewerDays : t.reports.allDays,
+                ),
+              ],
+            ),
+        ],
+      ),
     ],
   );
 

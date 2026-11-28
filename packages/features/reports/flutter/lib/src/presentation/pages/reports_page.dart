@@ -81,9 +81,9 @@ class _ReportsPageState extends State<ReportsPage> {
                           ReportsStatus.loading => const <Widget>[],
                           ReportsStatus.failed => [const _Failure()],
                           ReportsStatus.ready => [
-                            if (report.isEmpty)
+                            if (report.isEmpty && state.dailyTotals.isEmpty)
                               _Empty(kind: state.kind)
-                            else ...[
+                            else if (!report.isEmpty) ...[
                               // Another month or kind starts the figures
                               // anew, so that they roll only when the money
                               // moves.
@@ -120,6 +120,17 @@ class _ReportsPageState extends State<ReportsPage> {
                             if (state.converted) ...[
                               const SizedBox(height: BirkaTokens.spaceSm),
                               const _RateNote(),
+                            ],
+                            if (state.dailyTotals.isNotEmpty) ...[
+                              gap,
+                              _DailyTotals(
+                                key: ValueKey((
+                                  'days',
+                                  state.month,
+                                  state.kind,
+                                )),
+                                state: state,
+                              ),
                             ],
                             if (report.average != null) ...[
                               gap,
@@ -401,6 +412,84 @@ class _Changes extends StatelessWidget {
                       (delta.isPositive == (state.kind == CategoryKind.income))
                       ? AmountTone.positive
                       : AmountTone.negative,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Daily amounts in the currencies of the original operations.
+class _DailyTotals extends StatelessWidget {
+  const _DailyTotals({required this.state, super.key});
+
+  final ReportsState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final styles = BirkaTextStyles.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) => GlassListGroup(
+        children: [
+          Padding(
+            key: const ValueKey('heading'),
+            padding: const EdgeInsets.all(BirkaTokens.spaceMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionLabel(t.reports.byDay),
+                const SizedBox(height: BirkaTokens.spaceXxs),
+                Text(
+                  t.reports.originalCurrencies,
+                  style: styles.caption.copyWith(
+                    color: BirkaColors.of(context).textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          for (final (:day, :amounts) in state.visibleDays)
+            GlassListRow(
+              key: ValueKey(day),
+              title: reportDayLabel(day, today: state.today),
+              trailing: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth * .55,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    for (final amount in amounts)
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        key: ValueKey(amount.currency),
+                        child: AmountText(
+                          reportDayAmount(
+                            amount,
+                            hidden: HiddenAmounts.of(context),
+                          ),
+                          value: amount.minorUnits,
+                          rise: _riseOf(state.kind),
+                          style: styles.bodyStrong,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          if (state.dailyTotals.length > reportDayPreviewCount)
+            Semantics(
+              key: const ValueKey('toggle'),
+              expanded: state.allDaysShown,
+              child: Center(
+                child: AccentLink(
+                  label: state.allDaysShown
+                      ? t.reports.fewerDays
+                      : t.reports.allDays,
+                  chevron: false,
+                  onTap: context.read<ReportsCubit>().toggleDays,
                 ),
               ),
             ),
