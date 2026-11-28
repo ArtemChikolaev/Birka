@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Бирка · Календарь платежей</title>
+<link rel="stylesheet" href="../../../packages/design/jaspr/lib/fonts/fonts.css">
+<link rel="stylesheet" href="../../../packages/design/tokens/lib/css/tokens.css">
+<link rel="stylesheet" href="../system/components/bundle.css">
+<style>
+  * { box-sizing:border-box }
+  body { min-height:100vh; color:var(--color-text); font-family:var(--font-family-text); background:radial-gradient(ellipse at top left,var(--color-ambient),transparent 65%),var(--color-background) }
+  main { max-width:1100px; padding:var(--space-lg); margin:auto }
+  header,.line,.filters,.head { display:flex; align-items:center; gap:var(--space-sm) }
+  header,.head { justify-content:space-between }
+  .back,.add { display:grid; place-items:center; width:var(--size-touch-target); height:var(--size-touch-target); border-radius:50%; background:var(--color-surface-raised); font-size:22px }
+  h1,h2,p,ul { margin:0 }
+  h1 { font:800 22px var(--font-family-display); letter-spacing:-.035em }
+  h2 { text-transform:uppercase; font-size:12px; letter-spacing:.07em; color:var(--color-text-muted) }
+  .layout { margin-top:var(--space-xl) }
+  .filters { flex-wrap:wrap; margin:var(--space-sm) 0 }
+  button { font:inherit; cursor:pointer }
+  .group { margin-top:var(--space-xs); padding:0 var(--space-md); list-style:none }
+  .line { min-height:62px; padding:var(--space-xs) 0 }
+  .line + .line { border-top:1px solid var(--color-hairline) }
+  time { display:grid; justify-items:center; min-width:32px; font:750 18px var(--font-family-display) }
+  time small { font:500 11px var(--font-family-text); text-transform:uppercase }
+  .dot { color:var(--color-accent); border-radius:var(--radius-sm); background:var(--color-accent-soft); width:32px; height:32px; display:grid; place-items:center }
+  .dot svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round }
+  .name { flex:1; min-width:0 }
+  small,.date,p,li { color:var(--color-text-muted) }
+  small { display:block }
+  b,.amount { color:var(--color-text); font-weight:650 }
+  .amount { font-variant-numeric:tabular-nums; white-space:nowrap }
+  .income { color:var(--color-positive) }
+  .date,p { font-size:13px } .date { text-align:right }
+  .more { margin-top:var(--space-sm) }
+  .all { margin-top:var(--space-lg) }
+  aside { display:none }
+  @media(min-width:901px) {
+    main { padding-top:40px } .back { display:none } h1 { font-size:30px }
+    .layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:var(--space-xl) }
+    aside { display:block; align-self:start } aside li { margin-top:var(--space-sm); line-height:1.5 } aside ol { padding-left:var(--space-lg); margin-bottom:0 }
+  }
+</style>
+<main>
+<header><span aria-hidden="true" class="back">‹</span><h1>Регулярные платежи</h1><span aria-hidden="true" class="add">+</span></header>
+<div class="layout"><section>
+  <div class="head"><h2>Календарь платежей</h2><span class="date" id="range"></span></div>
+  <div class="filters" aria-label="Период"><button data-days="7">7 дней</button><button data-days="30">30 дней</button><button data-days="90">90 дней</button></div>
+  <div aria-live="polite" id="results"></div>
+  <h2 class="all">Все регулярные</h2><ul id="all" class="glass group"></ul>
+</section>
+<aside class="glass"><h2>Как это устроено</h2><ol><li>В день платежа Бирка предложит его провести или проведёт сама — как выбрано в платеже.</li><li>Если платёж придёт в выписке банка, Бирка не задвоит его.</li></ol></aside>
+</div></main>
+<script>
+  // Synthetic monthly and yearly rules, starting on November 28, 2026.
+  const rules = [
+    ['Интернет','Дом · Основная','−650 ₽',[[2026,11,30],[2026,12,30],[2027,1,30]]],
+    ['Аренда','Жильё · Основная','−28 000 ₽',[[2026,12,3],[2027,1,3],[2027,2,3]]],
+    ['Музыка','Подписки · Основная','−299 ₽',[[2026,12,18],[2027,1,18],[2027,2,18]]],
+    ['Страховка','Авто · Основная','−9 600 ₽',[[2027,1,20]]]
+  ];
+  const chosen = location.hash === '#quiet' ? rules.slice(-1) : rules;
+  const start = Date.UTC(2026,10,28);
+  const date = parts => new Date(Date.UTC(parts[0],parts[1]-1,parts[2]));
+  const fmt = (d,opts) => d.toLocaleDateString('ru-RU',{timeZone:'UTC',...opts}).replace(/ г\.$/,'');
+  const stamp = d => fmt(d,{day:'numeric',month:'long',...(d.getUTCFullYear()!==2026?{year:'numeric'}:{})});
+  const icons=['<path d="M3 8c5-4 13-4 18 0M6 12c4-3 8-3 12 0m-9 4c2-1 4-1 6 0"/><circle cx="12" cy="20" r="1"/>','<path d="m3 10 9-7 9 7v10H3zm6 10v-7h6v7"/>','<path d="M9 17V6l10-2v11M9 8l10-2"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="16" cy="16" rx="3" ry="2"/>','<path d="m12 2 8 3v6c0 5-5 9-8 11-3-2-8-6-8-11V5z"/>'];
+  function row(rule,on) {
+    const [name,account,amount]=rule;
+    const day=on?'<time>'+on.getUTCDate()+'<small>'+fmt(on,{month:'short'}).replace('.','')+'</small></time>':'';
+    return '<li class="line">'+day+'<span class="dot"><svg aria-hidden="true" viewBox="0 0 24 24">'+icons[rules.indexOf(rule)]+'</svg></span><span class="name"><b>'+name+'</b><small>'+account+'</small></span><span class="amount">'+amount+'</span></li>';
+  }
+  let days=30, limit=20;
+  if(location.hash === '#busy') {
+    for (const rule of rules.slice(0,2)) {
+      const first=date(rule[3][0]).getTime();
+      rule[3]=Array.from({length:14},(_,i)=>{
+        const d=new Date(first+i*7*86400000);
+        return [d.getUTCFullYear(),d.getUTCMonth()+1,d.getUTCDate()];
+      });
+    }
+  }
+  function render() {
+    const end=new Date(start+(days-1)*86400000);
+    document.querySelector('#range').textContent=stamp(new Date(start))+' – '+stamp(end);
+    document.querySelectorAll('[data-days]').forEach(b=>{
+      const active=Number(b.dataset.days)===days;
+      b.setAttribute('aria-pressed',active);
+      b.className='birka-chip'+(active?' birka-chip--selected':'');
+    });
+    const times=chosen.flatMap(r=>r[3].map(p=>[r,date(p)])).filter(([,d])=>d>=start && d<=end).sort((a,b)=>a[1]-b[1]);
+    document.querySelector('#results').innerHTML=times.length ? '<ul class="glass group">'+times.slice(0,limit).map(([r,d])=>row(r,d)).join('')+'</ul>' : '<p>В этот период нет предстоящих платежей.</p>';
+    if(times.length>limit) {
+      const more=document.createElement('button');
+      more.className='more birka-chip'; more.textContent='Ещё';
+      more.onclick=()=>{limit+=20;render()};
+      document.querySelector('#results').append(more);
+    }
+    document.querySelector('#all').innerHTML=chosen.map(r=>row(r)).join('');
+  }
+  document.querySelectorAll('[data-days]').forEach(b=>b.onclick=()=>{if(days!==Number(b.dataset.days)){days=Number(b.dataset.days);limit=20;render()}});
+  render();
+</script>
+</html>
