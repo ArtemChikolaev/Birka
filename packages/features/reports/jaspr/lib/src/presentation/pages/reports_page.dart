@@ -210,7 +210,7 @@ class _ReportsPageState extends State<ReportsPage> {
         final daily = ready && state.dailyTotals.isNotEmpty
             ? _daily(context, state, cubit)
             : null;
-        final after = [
+        final currencyNotes = [
           if (ready && report.others.isNotEmpty)
             div(classes: 'reports__others', [
               AmountText(
@@ -223,8 +223,10 @@ class _ReportsPageState extends State<ReportsPage> {
             p(classes: 'text-caption reports__rate', [
               .text(t.reports.dayRates),
             ]),
-          if (ready && report.average != null) _byMonth(context, state),
         ];
+        final history = ready && report.average != null
+            ? _byMonth(context, state)
+            : null;
         final quiet = note != null && ready
             ? p(classes: 'text-caption reports__note', [.text(note)])
             : null;
@@ -239,8 +241,9 @@ class _ReportsPageState extends State<ReportsPage> {
               ?ring,
               ?lines,
               ?changes,
+              ...currencyNotes,
               ?daily,
-              ...after,
+              ?history,
               ?quiet,
             ],
           );
@@ -251,7 +254,14 @@ class _ReportsPageState extends State<ReportsPage> {
             ?_monthChoice(state),
             BirkaSplit(
               halves: true,
-              main: [kinds, ?failure, ?empty, ?ring, ...after],
+              main: [
+                kinds,
+                ?failure,
+                ?empty,
+                ?ring,
+                ...currencyNotes,
+                ?history,
+              ],
               aside: [?lines, ?changes, ?daily, ?quiet],
             ),
           ],
