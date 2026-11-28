@@ -18,6 +18,30 @@ typedef CountedAccount = ({
   bool locked,
 });
 
+/// Rolling windows for the regular payment calendar, including today.
+enum ScheduleWindow {
+  /// Seven civil days.
+  week(7),
+
+  /// The default thirty civil days.
+  month(30),
+
+  /// Ninety civil days.
+  quarter(90)
+  ;
+
+  const ScheduleWindow(this.days);
+
+  /// Number of days shown, including the first and last.
+  final int days;
+
+  /// The last day visible when the calendar starts [today].
+  CivilDate endFrom(CivilDate today) => today.addDays(days - 1);
+}
+
+/// How many upcoming occurrences the calendar reveals at a time.
+const scheduleCalendarPageSize = 20;
+
 /// Everything the regular payments show, as it is now.
 @immutable
 final class SchedulesView {
@@ -116,8 +140,19 @@ final class SchedulesView {
 
   /// The times of the next 30 days, today included, apart from those that
   /// wait, the earliest first.
-  late final List<Occurrence> ahead = () {
-    final end = today.addDays(29);
+  late final List<Occurrence> ahead = _occurrences(ScheduleWindow.month);
+  late final List<Occurrence> _quarter = _occurrences(ScheduleWindow.quarter);
+  late final List<Occurrence> _week = _occurrences(ScheduleWindow.week);
+
+  /// The selected window, independent of the overview and payday plan.
+  List<Occurrence> calendar(ScheduleWindow window) => switch (window) {
+    ScheduleWindow.week => _week,
+    ScheduleWindow.month => ahead,
+    ScheduleWindow.quarter => _quarter,
+  };
+
+  List<Occurrence> _occurrences(ScheduleWindow window) {
+    final end = window.endFrom(today);
     final waits = {for (final schedule in waiting) schedule.id};
     return [
       for (final schedule in schedules)
@@ -125,8 +160,11 @@ final class SchedulesView {
           if (on.compareTo(today) >= 0 &&
               !(waits.contains(schedule.id) && on == schedule.next))
             (schedule: schedule, on: on),
-    ]..sort((a, b) => a.on.compareTo(b.on));
-  }();
+    ]..sort((a, b) {
+      final day = a.on.compareTo(b.on);
+      return day != 0 ? day : a.schedule.id.compareTo(b.schedule.id);
+    });
+  }
 
   /// The nearest times from today on, the ones that wait first.
   late final List<Occurrence> upcoming = [
@@ -249,7 +287,24 @@ final class SchedulesLoading extends SchedulesState {
 /// The regular payments are here.
 final class SchedulesLoaded extends SchedulesState {
   /// Creates the state with [view].
-  const SchedulesLoaded(this.view);
+  const SchedulesLoaded(
+    this.view, {
+    this.window = ScheduleWindow.month,
+    this.visibleCount = scheduleCalendarPageSize,
+  });
+
+  /// The selected period on the regular payments page.
+  final ScheduleWindow window;
+
+  /// How many occurrences may currently be shown.
+  final int visibleCount;
+
+  /// The visible rows of the selected calendar.
+  Iterable<Occurrence> get visibleOccurrences =>
+      view.calendar(window).take(visibleCount);
+
+  /// Whether more dates can be revealed without changing the period.
+  bool get hasMore => view.calendar(window).length > visibleCount;
 
   /// What they show.
   final SchedulesView view;
@@ -286,6 +341,29 @@ class SchedulesCubit extends Cubit<SchedulesState> {
   List<Transaction>? _history;
   Set<String>? _dismissed;
 
+  ScheduleWindow _window = ScheduleWindow.month;
+  int _visibleCount = scheduleCalendarPageSize;
+
+  /// Selects a calendar period and starts it on the first page.
+  void selectWindow(ScheduleWindow window) {
+    final current = state;
+    if (current is! SchedulesLoaded || window == _window) return;
+    _window = window;
+    _visibleCount = scheduleCalendarPageSize;
+    _emitView(current.view);
+  }
+
+  /// Reveals the next page of the selected calendar.
+  void showMoreOccurrences() {
+    final current = state;
+    if (current is! SchedulesLoaded || !current.hasMore) return;
+    _visibleCount += scheduleCalendarPageSize;
+    _emitView(current.view);
+  }
+
+  void _emitView(SchedulesView view) =>
+      emit(SchedulesLoaded(view, window: _window, visibleCount: _visibleCount));
+
   /// Reads everything again after a failure.
   Future<void> retry() async {
     final cancelled = _cancel();
@@ -295,7 +373,7 @@ class SchedulesCubit extends Cubit<SchedulesState> {
   }
 
   /// Catches up with the calendar after a night in the background, since
-  /// the money of the day, the payments that wait and the next 30 days all
+  /// the money of the day, the payments that wait and the payment calendar all
   /// start today. What it shows stays until the new day comes in.
   Future<void> calendarChecked() async {
     if (_repository.today() == _today) return;
@@ -446,24 +524,22 @@ class SchedulesCubit extends Cubit<SchedulesState> {
           final history?,
           final dismissed?,
         )) {
-      emit(
-        SchedulesLoaded(
-          SchedulesView(
-            today: today,
-            schedules: schedules,
-            accounts: accounts,
-            categories: {
-              for (final category in [...expenses, ...incomes])
-                category.id: category,
-            },
-            base: totalsCurrency(picked, accounts),
-            settings: settings,
-            todays: todays,
-            imports: imports,
-            monthStart: monthStart,
-            history: history,
-            dismissed: dismissed,
-          ),
+      _emitView(
+        SchedulesView(
+          today: today,
+          schedules: schedules,
+          accounts: accounts,
+          categories: {
+            for (final category in [...expenses, ...incomes])
+              category.id: category,
+          },
+          base: totalsCurrency(picked, accounts),
+          settings: settings,
+          todays: todays,
+          imports: imports,
+          monthStart: monthStart,
+          history: history,
+          dismissed: dismissed,
         ),
       );
     }

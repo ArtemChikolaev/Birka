@@ -2525,10 +2525,17 @@ class _Translations$schedules$ru extends Translations$schedules$en {
   String waitingDay({required Object name, required Object day}) =>
       '${name} · ${day}';
   @override
-  String get ahead => 'Ближайшие 30 дней';
+  String get ahead => 'Календарь платежей';
+  @override
+  String calendarDays({required Object n}) => '${n} дней';
+  @override
+  String calendarRange({required Object from, required Object to}) =>
+      '${from} – ${to}';
+  @override
+  String get calendarEmpty => 'В этот период нет предстоящих платежей.';
   @override
   String aheadTotal({required Object date, required Object amount}) =>
-      'до ${date} ${amount}';
+      'По плану до ${date} · ${amount}';
   @override
   String leftAfterPayday({required Object date, required Object amount}) =>
       'К зарплате ${date} на счетах останется ≈ ${amount}, если не считать ежедневных трат.';
@@ -7595,10 +7602,15 @@ extension on TranslationsRu {
             'Придёт в выписке банка — Birka не задвоит его.',
           'schedules.waitingDay' =>
             ({required Object name, required Object day}) => '${name} · ${day}',
-          'schedules.ahead' => 'Ближайшие 30 дней',
+          'schedules.ahead' => 'Календарь платежей',
+          'schedules.calendarDays' => ({required Object n}) => '${n} дней',
+          'schedules.calendarRange' =>
+            ({required Object from, required Object to}) => '${from} – ${to}',
+          'schedules.calendarEmpty' =>
+            'В этот период нет предстоящих платежей.',
           'schedules.aheadTotal' =>
             ({required Object date, required Object amount}) =>
-                'до ${date} ${amount}',
+                'По плану до ${date} · ${amount}',
           'schedules.leftAfterPayday' =>
             ({required Object date, required Object amount}) =>
                 'К зарплате ${date} на счетах останется ≈ ${amount}, если не считать ежедневных трат.',
@@ -8289,12 +8301,12 @@ extension on TranslationsRu {
           'settings.hideAmounts' => 'Скрывать суммы',
           'settings.onLaunch' => 'При запуске',
           'settings.monthStart' => 'Начало месяца',
-          'settings.monthStartDay' => ({required Object day}) => '${day} число',
-          'settings.monthStartNote' => 'для обзора и отчётов',
-          'settings.monthStartCalendar' => 'как в календаре',
           _ => null,
         } ??
         switch (path) {
+          'settings.monthStartDay' => ({required Object day}) => '${day} число',
+          'settings.monthStartNote' => 'для обзора и отчётов',
+          'settings.monthStartCalendar' => 'как в календаре',
           'tags.title' => 'Метки',
           'tags.back' => 'Назад',
           'tags.add' => 'Новая метка',

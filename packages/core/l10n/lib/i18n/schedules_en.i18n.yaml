@@ -7,8 +7,11 @@ post: Post
 skip: Skip
 waitingNote: When it comes in a bank statement, Birka will not count it twice.
 waitingDay: "$name · $day"
-ahead: The next 30 days
-aheadTotal: until $date $amount
+ahead: Payment calendar
+calendarDays: $n days
+calendarRange: $from – $to
+calendarEmpty: No upcoming payments in this period.
+aheadTotal: Planned payments until $date · $amount
 leftAfterPayday: By the salary on $date your accounts will hold ≈ $amount, before everyday spending.
 leftAfterMonth: By the end of the month your accounts will hold ≈ $amount, before everyday spending.
 leftAfterPaydayAdvance: By the salary on $date your accounts will hold ≈ $amount with the advance, before everyday spending.

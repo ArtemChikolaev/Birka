@@ -7,8 +7,11 @@ post: Провести
 skip: Пропустить
 waitingNote: Придёт в выписке банка — Birka не задвоит его.
 waitingDay: "$name · $day"
-ahead: Ближайшие 30 дней
-aheadTotal: до $date $amount
+ahead: Календарь платежей
+calendarDays: $n дней
+calendarRange: $from – $to
+calendarEmpty: В этот период нет предстоящих платежей.
+aheadTotal: По плану до $date · $amount
 leftAfterPayday: К зарплате $date на счетах останется ≈ $amount, если не считать ежедневных трат.
 leftAfterMonth: К концу месяца на счетах останется ≈ $amount, если не считать ежедневных трат.
 leftAfterPaydayAdvance: К зарплате $date на счетах останется ≈ $amount с авансом, если не считать ежедневных трат.

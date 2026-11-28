@@ -27,6 +27,19 @@ String fullDate(CivilDate day, CivilDate today) => dateLabel(
   thisYear: today.year,
 );
 
+/// Period chips and inclusive bounds in the current language.
+Map<ScheduleWindow, String> get scheduleWindowLabels => {
+  for (final window in ScheduleWindow.values)
+    window: t.schedules.calendarDays(n: window.days),
+};
+
+/// The actual civil dates covered by a period.
+String scheduleWindowRange(ScheduleWindow window, CivilDate today) =>
+    t.schedules.calendarRange(
+      from: fullDate(today, today),
+      to: fullDate(window.endFrom(today), today),
+    );
+
 /// `сегодня`, `завтра` or `25 ноября`.
 String dayLabel(CivilDate day, CivilDate today) {
   if (day == today) return t.schedules.today;
