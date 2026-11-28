@@ -2937,12 +2937,22 @@ class Translations$schedules$en {
   String waitingDay({required Object name, required Object day}) =>
       '${name} · ${day}';
 
-  /// en: 'The next 30 days'
-  String get ahead => 'The next 30 days';
+  /// en: 'Payment calendar'
+  String get ahead => 'Payment calendar';
 
-  /// en: 'until $date $amount'
+  /// en: '$n days'
+  String calendarDays({required Object n}) => '${n} days';
+
+  /// en: '$from – $to'
+  String calendarRange({required Object from, required Object to}) =>
+      '${from} – ${to}';
+
+  /// en: 'No upcoming payments in this period.'
+  String get calendarEmpty => 'No upcoming payments in this period.';
+
+  /// en: 'Planned payments until $date · $amount'
   String aheadTotal({required Object date, required Object amount}) =>
-      'until ${date} ${amount}';
+      'Planned payments until ${date} · ${amount}';
 
   /// en: 'By the salary on $date your accounts will hold ≈ $amount, before everyday spending.'
   String leftAfterPayday({required Object date, required Object amount}) =>
@@ -8494,10 +8504,14 @@ extension on Translations {
             'When it comes in a bank statement, Birka will not count it twice.',
           'schedules.waitingDay' =>
             ({required Object name, required Object day}) => '${name} · ${day}',
-          'schedules.ahead' => 'The next 30 days',
+          'schedules.ahead' => 'Payment calendar',
+          'schedules.calendarDays' => ({required Object n}) => '${n} days',
+          'schedules.calendarRange' =>
+            ({required Object from, required Object to}) => '${from} – ${to}',
+          'schedules.calendarEmpty' => 'No upcoming payments in this period.',
           'schedules.aheadTotal' =>
             ({required Object date, required Object amount}) =>
-                'until ${date} ${amount}',
+                'Planned payments until ${date} · ${amount}',
           'schedules.leftAfterPayday' =>
             ({required Object date, required Object amount}) =>
                 'By the salary on ${date} your accounts will hold ≈ ${amount}, before everyday spending.',
@@ -9140,12 +9154,12 @@ extension on Translations {
           'settings.hideAmounts' => 'Hide amounts',
           'settings.onLaunch' => 'At launch',
           'settings.monthStart' => 'Month starts on',
-          'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
-          'settings.monthStartNote' => 'for the overview and the reports',
-          'settings.monthStartCalendar' => 'as on the calendar',
           _ => null,
         } ??
         switch (path) {
+          'settings.monthStartDay' => ({required Object day}) => 'day ${day}',
+          'settings.monthStartNote' => 'for the overview and the reports',
+          'settings.monthStartCalendar' => 'as on the calendar',
           'tags.title' => 'Tags',
           'tags.back' => 'Back',
           'tags.add' => 'New tag',

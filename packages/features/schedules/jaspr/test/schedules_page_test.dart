@@ -58,8 +58,11 @@ void main() {
 
     expect(find.text('Регулярные платежи'), findsOneComponent);
     expect(find.text('Ближайший 25 ноября · 6 платежей'), findsOneComponent);
-    expect(find.text('Ближайшие 30 дней'), findsOneComponent);
-    expect(find.text('до 5 декабря ${nb('−49 949 ₽')}'), findsOneComponent);
+    expect(find.text('Календарь платежей'), findsOneComponent);
+    expect(
+      find.text('По плану до 5 декабря · ${nb('−49 949 ₽')}'),
+      findsOneComponent,
+    );
     expect(find.text('Все регулярные · 6'), findsOneComponent);
     expect(
       find.text(
@@ -79,6 +82,38 @@ void main() {
       ),
       findsOneComponent,
     );
+  });
+
+  testComponents('shows later dates and expands a long calendar', (
+    tester,
+  ) async {
+    final repository = FakeSchedulesRepository(
+      schedules: [
+        for (var i = 0; i < 21; i++)
+          schedule('bill-$i', 'Bill $i', 100, boardToday.addDays(40)),
+      ],
+    );
+    await pump(tester, repository);
+    expect(find.text(t.schedules.calendarEmpty), findsOneComponent);
+
+    Future<void> click(String label) async {
+      await tester.click(
+        find.ancestor(of: find.text(label), matching: find.tag('button')),
+      );
+      await tester.pump();
+    }
+
+    await click('90 дней');
+    final calendar = _withClasses('schedules__section schedules__calendar');
+    final rows = find.descendant(of: calendar, matching: find.tag('a'));
+    expect(rows, findsNComponents(20));
+    await click(t.app.more);
+    expect(rows, findsNComponents(40));
+    await click('7 дней');
+    expect(rows, findsNothing);
+    expect(find.text(t.schedules.calendarEmpty), findsOneComponent);
+    await click('90 дней');
+    expect(rows, findsNComponents(20));
   });
 
   testComponents('beside the list says what a day may spend, and how', (

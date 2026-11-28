@@ -17,7 +17,7 @@ typedef _Toast = ({String text, ToastAction? action});
 
 /// The list of regular payments on the site (ADR 0023), as the boards
 /// «Регулярные платежи на сайте» draw it: the ones that wait for the person,
-/// the operations that look like payments, the next 30 days and every
+/// the operations that look like payments, the payment calendar and every
 /// payment. On a wide screen a side says what the days may spend and how a
 /// payment works; on a narrow one the page is the list alone.
 ///
@@ -86,13 +86,14 @@ class SchedulesPage extends StatefulComponent {
     css('.schedules__head').styles(
       raw: {
         'align-items': 'baseline',
+        'flex-wrap': 'wrap',
         'display': 'flex',
         'gap': 'var(--space-sm)',
         'justify-content': 'space-between',
       },
     ),
-    css('.schedules__total').styles(
-      raw: {'color': 'var(--color-text-subtle)', 'white-space': 'nowrap'},
+    css('.schedules__windows').styles(
+      raw: {'display': 'flex', 'flex-wrap': 'wrap', 'gap': 'var(--space-xs)'},
     ),
     css('.schedules__note').styles(
       raw: {'color': 'var(--color-text-muted)', 'margin': '0'},
@@ -297,7 +298,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
             ),
             SchedulesLoaded(:final view) => BirkaSplit(
               asideWhenNarrow: false,
-              main: _main(context, cubit, view),
+              main: _main(context, cubit, state),
               aside: _aside(context, view),
             ),
           },
@@ -366,8 +367,9 @@ class _SchedulesPageState extends State<SchedulesPage> {
   List<Component> _main(
     BuildContext context,
     SchedulesCubit cubit,
-    SchedulesView view,
+    SchedulesLoaded state,
   ) {
+    final view = state.view;
     if (view.schedules.isEmpty) {
       // Before the first payment, what came every month stands over the
       // empty page.
@@ -376,7 +378,6 @@ class _SchedulesPageState extends State<SchedulesPage> {
         _empty(),
       ];
     }
-    final plan = view.plan;
     return [
       for (final it in view.found)
         TintedNotice(
@@ -392,9 +393,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
       for (final schedule in view.waiting)
         _waiting(context, cubit, view, schedule),
       if (view.finds.isNotEmpty) _finds(context, cubit, view),
-      // The next 30 days go while no time comes in them and no salary is
-      // counted, as when the only payment waits today.
-      if (view.ahead.isNotEmpty || plan != null) _ahead(context, view, plan),
+      _ahead(context, state),
       _all(context, view),
     ];
   }
@@ -516,34 +515,41 @@ class _SchedulesPageState extends State<SchedulesPage> {
     );
   }
 
-  Component _ahead(
-    BuildContext context,
-    SchedulesView view,
-    SpendingPlan? plan,
-  ) {
+  Component _ahead(BuildContext context, SchedulesLoaded state) {
+    final view = state.view;
+    final plan = view.plan;
+    final cubit = context.read<SchedulesCubit>();
+    final rows = state.visibleOccurrences;
     String mask(String text) => HiddenAmounts.mask(context, text);
     return section(
-      classes: 'schedules__section',
+      classes: 'schedules__section schedules__calendar',
       key: const ValueKey('ahead'),
       [
         div(classes: 'schedules__head', [
           SectionLabel(t.schedules.ahead),
-          if (plan != null)
-            span(classes: 'text-caption schedules__total', [
-              .text(
-                mask(
-                  t.schedules.aheadTotal(
-                    date: fullDate(plan.payday ?? plan.end, view.today),
-                    amount: formatMoney(-plan.paid),
-                  ),
-                ),
-              ),
-            ]),
+          span(classes: 'text-caption schedules__note', [
+            .text(scheduleWindowRange(state.window, view.today)),
+          ]),
         ]),
-        if (view.ahead.isNotEmpty)
+        div(classes: 'schedules__windows', [
+          for (final entry in scheduleWindowLabels.entries)
+            BirkaChip(
+              label: entry.value,
+              compact: true,
+              selected: entry.key == state.window,
+              onTap: () => cubit.selectWindow(entry.key),
+            ),
+        ]),
+        if (rows.isEmpty)
+          p(
+            classes: 'text-caption schedules__note',
+            attributes: const {'role': 'status'},
+            [.text(t.schedules.calendarEmpty)],
+          )
+        else
           GlassListGroup(
             children: [
-              for (final it in view.ahead)
+              for (final it in rows)
                 GlassListRow(
                   key: ValueKey('${it.schedule.id} ${it.on}'),
                   leading: span(classes: 'schedules__lead', [
@@ -559,10 +565,28 @@ class _SchedulesPageState extends State<SchedulesPage> {
                 ),
             ],
           ),
-        if (plan != null)
+        if (state.hasMore)
+          BirkaButton(
+            label: t.app.more,
+            quiet: true,
+            compact: true,
+            onPressed: cubit.showMoreOccurrences,
+          ),
+        if (plan != null) ...[
+          p(classes: 'text-caption schedules__note', [
+            .text(
+              mask(
+                t.schedules.aheadTotal(
+                  date: fullDate(plan.payday ?? plan.end, view.today),
+                  amount: formatMoney(-plan.paid),
+                ),
+              ),
+            ),
+          ]),
           p(classes: 'text-caption schedules__note', [
             .text(mask(leftAfterLabel(plan, view.today))),
           ]),
+        ],
       ],
     );
   }

@@ -169,9 +169,9 @@ void main() {
     testWidgets('shows the next 30 days and every payment', (tester) async {
       await pump(tester, FakeSchedulesRepository(), page());
 
-      expect(find.text('БЛИЖАЙШИЕ 30 ДНЕЙ'), findsOneWidget);
+      expect(find.text('КАЛЕНДАРЬ ПЛАТЕЖЕЙ'), findsOneWidget);
       expect(
-        find.text('до 5 декабря ${nb('−49 949 ₽')}'),
+        find.text('По плану до 5 декабря · ${nb('−49 949 ₽')}'),
         findsOneWidget,
       );
       expect(find.text('ВСЕ РЕГУЛЯРНЫЕ · 6'), findsOneWidget);
@@ -180,11 +180,13 @@ void main() {
       expect(find.text('Дом · Зарплатная карта'), findsNWidgets(2));
       expect(find.textContaining('≈ ${nb('39 651 ₽')}'), findsOneWidget);
 
+      await tester.drag(find.byType(ListView), const Offset(0, -450));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Страховка авто'));
       expect(opened, ['car']);
     });
 
-    testWidgets('leaves out the next 30 days while nothing comes in them', (
+    testWidgets('a quiet calendar can look further while today waits', (
       tester,
     ) async {
       // The only payment waits today, and its next time is a month on.
@@ -195,7 +197,16 @@ void main() {
       await pump(tester, repository, page());
 
       expect(find.text('ЖДЁТ ПОДТВЕРЖДЕНИЯ'), findsOneWidget);
-      expect(find.text('БЛИЖАЙШИЕ 30 ДНЕЙ'), findsNothing);
+      expect(find.text(t.schedules.calendarEmpty), findsOneWidget);
+      await tester.tap(find.text('90 дней'));
+      await tester.pumpAndSettle();
+      expect(find.text(t.schedules.calendarEmpty), findsNothing);
+      expect(find.text('Аренда'), findsNWidgets(3));
+      await tester.tap(find.text('Аренда').first);
+      expect(opened, ['rent']);
+      await tester.tap(find.text('7 дней'));
+      await tester.pumpAndSettle();
+      expect(find.text(t.schedules.calendarEmpty), findsOneWidget);
       expect(find.text('ВСЕ РЕГУЛЯРНЫЕ · 1'), findsOneWidget);
     });
 

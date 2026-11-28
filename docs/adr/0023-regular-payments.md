@@ -66,9 +66,12 @@
      all of them. Without a salary to count until it asks for the payday,
      and without accounts it stays away.
    - «Регулярные платежи» lists the payments that wait for the person with
-     «Провести» and «Пропустить», the next 30 days and every payment. The
-     next 30 days stay away while no time comes in them and no salary is
-     counted, as when the only payment waits today.
+     «Провести» and «Пропустить», the payment calendar and every payment.
+     The calendar opens on 30 days. Its 7, 30 and 90-day windows count today
+     and the last civil day displayed. A due occurrence awaiting confirmation
+     stays above the calendar. An empty window keeps its period controls.
+     The calendar reveals 20 occurrences at a time, in date order. The payday
+     forecast keeps its own period.
    - The form of a payment is a sheet, as the other forms are
      ([ADR 0017](0017-motion.md)). Its name and amount come from a sheet with
      one field, which the note of an operation now shares.

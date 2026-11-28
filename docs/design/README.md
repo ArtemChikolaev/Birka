@@ -252,3 +252,16 @@ and respect hidden amounts.
 [Interactive mockup](mockups/capital-by-currency.html) ·
 [Phone preview](mockups/41-capital-currency-phone.png) ·
 [Desktop preview](mockups/42-capital-currency-web.png)
+
+### Regular payment calendar
+
+In **Regular payments**, the calendar opens on 30 days. Choose 7 or 90 days
+to see every occurrence in that window, including today and the last date
+shown. Payments awaiting confirmation appear above the calendar. The full
+directory remains below it. A [busy calendar](mockups/schedule-calendar.html#busy) shows 20 occurrences at a time.
+Opening a payment and returning keeps the chosen period and visible rows.
+
+[Interactive mockup](mockups/schedule-calendar.html) ·
+[Quiet week](mockups/schedule-calendar.html#quiet) ·
+[Phone preview](mockups/43-schedule-calendar-phone.png) ·
+[Desktop preview](mockups/44-schedule-calendar-web.png)
