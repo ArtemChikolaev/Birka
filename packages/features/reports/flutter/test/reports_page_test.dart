@@ -143,6 +143,37 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.en);
   });
 
+  testWidgets(
+    'expands daily totals in original currencies and collapses them',
+    (tester) async {
+      for (var i = 1; i <= 4; i++) {
+        repository.rows[(CategoryKind.expense, october.addDays(i))] = [
+          _total('Продукты', rub(500)),
+          _total('Кафе', Money(125, Currency.usd)),
+        ];
+      }
+      await pump(tester);
+      Future<void> toggle(String label) async {
+        final text = find.text(label);
+        await tester.ensureVisible(text);
+        await tester.pumpAndSettle();
+        await tester.tap(text);
+        await tester.pumpAndSettle();
+      }
+
+      expect(find.text('5 октября'), findsOneWidget);
+      expect(find.text('2 октября'), findsNothing);
+      await toggle(t.reports.allDays);
+      expect(find.text('2 октября'), findsOneWidget);
+      expect(
+        find.text(formatMoney(Money(125, Currency.usd))),
+        findsNWidgets(4),
+      );
+      await toggle(t.reports.fewerDays);
+      expect(find.text('2 октября'), findsNothing);
+    },
+  );
+
   testWidgets('shows the month with the change against the last one', (
     tester,
   ) async {
@@ -151,7 +182,13 @@ void main() {
     expect(find.text('Отчёты'), findsOneWidget);
     expect(find.text('Октябрь'), findsOneWidget);
     expect(find.byType(BirkaRing), findsOneWidget);
-    expect(find.text('37${space}150$space₽'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(BirkaRing),
+        matching: find.text('37${space}150$space₽'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('+7% к сентябрю'), findsOneWidget);
   });
 
@@ -265,7 +302,13 @@ void main() {
     await tapText(tester, 'Октябрь');
     await tapText(tester, 'Сентябрь');
 
-    expect(find.text('34${space}831,50$space₽'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(BirkaRing),
+        matching: find.text('34${space}831,50$space₽'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('a swipe turns to the month before and back', (tester) async {
@@ -286,7 +329,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Октябрь'), findsNothing);
-    expect(find.text('34${space}831,50$space₽'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(BirkaRing),
+        matching: find.text('34${space}831,50$space₽'),
+      ),
+      findsOneWidget,
+    );
 
     await tester.fling(
       find.byType(ListView),
@@ -362,7 +411,7 @@ void main() {
     ];
     await pump(tester);
 
-    expect(find.text('5$space€'), findsOneWidget);
+    expect(find.text('5$space€'), findsNWidgets(2));
   });
 
   testWidgets('hidden amounts hide the figures and the average', (

@@ -3,6 +3,8 @@ import 'package:ledger/ledger.dart';
 import 'package:meta/meta.dart';
 import 'package:money/money.dart';
 
+export 'package:money/money.dart' show sumByCurrency;
+
 /// A transaction with the names of its accounts, category and tags.
 @immutable
 final class Operation {
@@ -189,23 +191,5 @@ List<OperationDay> groupByDay(List<Operation> operations) {
   return [
     for (final MapEntry(key: day, value: operations) in days.entries)
       OperationDay(day, operations),
-  ];
-}
-
-/// Adds up [amounts], one sum for each currency in the order they first came.
-/// A sum of zero is left out. A sum too big to hold stops at the limit, so that
-/// the list survives two absurd amounts.
-List<Money> sumByCurrency(Iterable<Money> amounts) {
-  final sums = <Currency, int>{};
-  for (final amount in amounts) {
-    sums[amount.currency] = (sums[amount.currency] ?? 0) + amount.minorUnits;
-  }
-  return [
-    for (final MapEntry(key: currency, value: sum) in sums.entries)
-      if (sum != 0)
-        Money(
-          sum.clamp(-Money.maxMinorUnits, Money.maxMinorUnits),
-          currency,
-        ),
   ];
 }

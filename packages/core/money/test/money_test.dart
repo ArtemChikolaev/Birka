@@ -38,6 +38,14 @@ void main() {
       expect(rub(250) * 0, rub(0));
     });
 
+    test('currency subtotals can leave the safe range and cancel exactly', () {
+      final max = rub(Money.maxMinorUnits);
+      expect(sumByCurrency([max, rub(2), -max, Money(1, Currency.usd)]), [
+        rub(2),
+        Money(1, Currency.usd),
+      ]);
+    });
+
     test('0.1 + 0.2 is exactly 0.3', () {
       final sum =
           Money.parse('0.1', Currency.rub) + Money.parse('0.2', Currency.rub);

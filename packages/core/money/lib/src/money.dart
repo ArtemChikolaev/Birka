@@ -233,3 +233,23 @@ final class Money implements Comparable<Money> {
     }
   }
 }
+
+/// Adds [amounts] within their original currencies, in first-seen order.
+/// Zero totals are omitted. Bound the final sum after cancellation so that
+/// intermediate sums outside the JavaScript integer range lose no digits.
+List<Money> sumByCurrency(Iterable<Money> amounts) {
+  final sums = <Currency, BigInt>{};
+  for (final amount in amounts) {
+    sums[amount.currency] =
+        (sums[amount.currency] ?? BigInt.zero) + BigInt.from(amount.minorUnits);
+  }
+  final limit = BigInt.from(Money.maxMinorUnits);
+  return [
+    for (final MapEntry(key: currency, value: sum) in sums.entries)
+      if (sum != BigInt.zero)
+        Money(
+          sum.abs() > limit ? sum.sign * Money.maxMinorUnits : sum.toInt(),
+          currency,
+        ),
+  ];
+}

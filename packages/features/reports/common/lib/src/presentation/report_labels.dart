@@ -1,5 +1,6 @@
 import 'package:l10n/l10n.dart';
 import 'package:ledger/ledger.dart';
+import 'package:money/money.dart';
 import 'package:reports_common/src/domain/report.dart';
 import 'package:reports_common/src/presentation/reports_cubit.dart';
 
@@ -60,6 +61,21 @@ Map<String?, String> historyCategoryLabels(Map<String, Category?> categories) =>
         entry.key: entry.value?.name ?? t.app.noCategory,
     };
 
+/// The ledger caps each daily category total at the supported money bound.
+/// At the bound the actual daily total may be larger.
+String reportDayAmount(Money amount, {bool hidden = false}) =>
+    !hidden && amount.minorUnits == Money.maxMinorUnits
+    ? '≥ ${formatMoney(amount)}'
+    : formatMoney(amount);
+
+/// A full civil date for daily totals and report comparisons.
+String reportDayLabel(CivilDate date, {required CivilDate today}) => dateLabel(
+  year: date.year,
+  month: date.month,
+  day: date.day,
+  thisYear: today.year,
+);
+
 /// The date ranges behind the category changes.
 String changesPeriodLabel(ReportsState state) => t.reports.comparison(
   current: _period(state.month, state.comparisonEnd, today: state.today),
@@ -67,12 +83,7 @@ String changesPeriodLabel(ReportsState state) => t.reports.comparison(
 );
 
 String _period(CivilDate first, CivilDate last, {required CivilDate today}) {
-  String day(CivilDate date) => dateLabel(
-    year: date.year,
-    month: date.month,
-    day: date.day,
-    thisYear: today.year,
-  );
+  String day(CivilDate date) => reportDayLabel(date, today: today);
   if (first == last) return day(first);
   if (first.month != last.month || first.year != last.year) {
     return '${day(first)} – ${day(last)}';

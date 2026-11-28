@@ -2,6 +2,10 @@ expenses: Expenses
 income: Income
 biggestChanges: Biggest changes
 comparison: "$current compared with $previous"
+byDay: By day
+originalCurrencies: In the original currencies
+allDays: All days
+fewerDays: Show fewer days
 byMonth: By month
 average: average $amount
 noExpenses: Nothing spent this month.

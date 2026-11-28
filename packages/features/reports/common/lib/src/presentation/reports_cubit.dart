@@ -35,6 +35,7 @@ final class ReportsState {
     this.days = const [],
     this.monthStart = 1,
     this.historyCategoryId,
+    this.allDaysShown = false,
   });
 
   /// Where the reports stand.
@@ -87,6 +88,18 @@ final class ReportsState {
     monthTotals: sumMonthlyCategories(_monthly),
     preferred: _target,
   );
+
+  /// This month's active days, newest first, independently of exchange rates.
+  late final List<ReportDay> dailyTotals = reportDays(
+    _daysFrom(month, lastDayOf(month)),
+  );
+
+  /// Whether the daily breakdown shows every active day.
+  final bool allDaysShown;
+
+  /// The part of the daily breakdown currently on screen.
+  Iterable<ReportDay> get visibleDays =>
+      allDaysShown ? dailyTotals : dailyTotals.take(reportDayPreviewCount);
 
   /// Inclusive first day of the previous budget month.
   CivilDate get previousStart => monthsBefore(month, 1);
@@ -192,9 +205,11 @@ final class ReportsState {
     List<CategoryDayTotal>? days,
     int? monthStart,
     String? Function()? historyCategoryId,
+    bool? allDaysShown,
   }) {
     return ReportsState(
       status: status ?? this.status,
+      allDaysShown: allDaysShown ?? this.allDaysShown,
       today: today ?? this.today,
       month: month ?? this.month,
       kind: kind ?? this.kind,
@@ -264,6 +279,9 @@ class ReportsCubit extends Cubit<ReportsState> {
     if (kind != state.kind) await _restart(kind: kind);
   }
 
+  /// Opens or closes the daily totals for this month and report kind.
+  void toggleDays() => emit(state.copyWith(allDaysShown: !state.allDaysShown));
+
   /// Changes only the six-month chart without rereading the ledger.
   void historyCategoryChanged(String? id) {
     if (id != null && !state.historyCategories.containsKey(id)) return;
@@ -310,6 +328,9 @@ class ReportsCubit extends Cubit<ReportsState> {
         today: today,
         month: month,
         kind: kind,
+        allDaysShown: kind != null || (month != null && month != state.month)
+            ? false
+            : null,
         historyCategoryId: kind != null ? () => null : null,
         days: const [],
       ),

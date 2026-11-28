@@ -91,6 +91,46 @@ void main() {
     },
   );
 
+  test(
+    'daily totals follow the budget month, kind and original currencies',
+    () async {
+      repository
+        ..start = 5
+        ..days[CategoryKind.expense] = [
+          testDay('Before', CivilDate(2026, 10, 4), rub(123)),
+          testDay('Food', CivilDate(2026, 10, 5), rub(100)),
+          testDay('Food', CivilDate(2026, 11, 1), rub(15)),
+          testDay('Food', CivilDate(2026, 11, 2), rub(75)),
+          testDay('Foreign', CivilDate(2026, 11, 4), usd(50)),
+          CategoryDayTotal(null, CivilDate(2026, 11, 4), rub(101)),
+          testDay('Food', CivilDate(2026, 11, 4), rub(42)),
+          testDay('After', CivilDate(2026, 11, 5), rub(999)),
+        ];
+      final cubit = await open();
+      expect(cubit.state.visibleDays.map((row) => row.day), [
+        CivilDate(2026, 11, 4),
+        CivilDate(2026, 11, 2),
+        CivilDate(2026, 11, 1),
+      ]);
+      expect(cubit.state.visibleDays.first.amounts, [rub(143), usd(50)]);
+      final reads = repository.asked.length;
+      cubit.toggleDays();
+      expect(cubit.state.visibleDays.last.day, CivilDate(2026, 10, 5));
+      expect(repository.asked, hasLength(reads));
+      repository.days[CategoryKind.expense]!.add(
+        testDay('Late entry', CivilDate(2026, 11, 4), rub(17)),
+      );
+      repository.changedRows();
+      await settle();
+      expect(cubit.state.visibleDays, hasLength(4));
+      expect(cubit.state.visibleDays.first.amounts, [rub(160), usd(50)]);
+      await cubit.kindChanged(CategoryKind.income);
+      await settle();
+      expect(cubit.state.allDaysShown, isFalse);
+      expect(cubit.state.visibleDays, isEmpty);
+    },
+  );
+
   test('reads the months of the report', () async {
     await open();
 
